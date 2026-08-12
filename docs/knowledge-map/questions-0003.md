@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are two-column bits | description tables extracted
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -114,6 +116,8 @@
   > how does SpecForge handle one transaction and one rule writing the same named-drive target
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does SpecForge measure source-to-IntentIR stage loss
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > how does SpecForge prevent analog dB limits from becoming digital timing intent
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -294,7 +298,3 @@
   > how is AXI per-signal phase membership recoverable without a VLM
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > how is FigureRegion raw_image_path serialized
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how is IngestTerminatedBySignal different from IngestAbortedForMemory

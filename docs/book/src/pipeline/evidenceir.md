@@ -674,6 +674,22 @@ five intended I2S units, all 15 rebuilt canonical stage artifacts match their ba
 unchanged. *Authoritative tracking:* `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` (`.6c.i`); Knowledge Map
 `[[timing-caption-unit-and-table-provenance]]`.
 
+A timing/limits table can mix executable digital boundaries and physical measurements. EvidenceIR keeps both,
+but it does not give them the same intent status. When the explicit unit's first token is `dB` or `dBc`
+(case-insensitive, including spellings such as `dB_RMS`, `dB RMS`, and `dBc/Hz`), the record receives a typed
+`non_applicable` disposition for the `decibel` quantity domain. That disposition contains the causal reason,
+the first promotion boundary (`source_to_evidence_ir`), and a replay instruction. The scalar value and direct
+table support remain intact; nothing disappears from evidence.
+
+The grammar is deliberately unit-only. A parameter named `IL(settle)` with unit `ns` remains canonical, while
+an unfamiliar parameter with unit `dB` is physical. No vendor, document, table id, parameter name, or reviewed
+key participates. Canonical records omit the disposition field for compatibility, and older JSON defaults to
+canonical. In the two replayable OpenCAPI chains, 26 of 115 retained timing records gain this disposition with
+no other content change. Three older CCIX chains contain 48 matching retained records but lack normalized
+bundles, so their EvidenceIR cannot be recomputed until their task-owned refresh restores replayability.
+*Authoritative tracking:* `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` (`.6d.i`); Knowledge Map
+`[[decibel-domain-timing-intent-disposition]]`.
+
 ### `CORPUS-COVERAGE.2.47a` — scalar timing records require scalar values
 
 Timing *category* and scalar timing *layout* are separate contracts. A genuine timing table may contain several

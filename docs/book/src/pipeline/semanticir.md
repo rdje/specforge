@@ -77,6 +77,13 @@ explicit row unit or closed-grammar caption fallback and its direct `supporting_
 normalizes the source unit spelling nor converts a table id into statement provenance. Timing observations
 recovered from other modalities remain valid with an empty table-support list.
 
+Applicability is carried losslessly too. A decibel-domain timing/limits observation remains in
+`SemanticIR.timing_constraints` with its source values, table authority, reason, failing boundary, and replay
+route, but only canonical timing constraints enter temporal-rule derivation. Validation uses the same boundary:
+a document containing only deliberately non-applicable physical observations is not warned that an executable
+temporal-rule surface is missing. This separates capture completeness from executable-digital authority without
+turning a physical measurement into a silent drop.
+
 ### Heuristic grouping needs positive authority
 
 Statement-level signal co-mentions normally group signals that are already authoritative. `SemanticIR` first

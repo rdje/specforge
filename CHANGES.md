@@ -1,3 +1,22 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.i — preserve physical timing without canonical promotion
+
+- Added a backward-compatible timing-intent disposition. Explicit `dB`/`dBc` quantity units produce a typed,
+  actionable non-applicable record; UI/time units and legacy JSON remain canonical. Classification uses no
+  document, vendor, table, or parameter-name branch.
+- Kept every physical scalar value and source table through EvidenceIR, SemanticIR, and IntentIR, while excluding
+  only non-applicable records from temporal-rule derivation and its missing-surface validation diagnostic.
+- ADR 0025 identified exactly two measurable changed chains. Their 115 timing records remain present, 26 gain the
+  new disposition, all six promoted stages are otherwise equal, and both adapters are byte-identical. Currency
+  is green at 24/24 EvidenceIR plus 78/78 at every downstream stage.
+- Recorded the honest retained-corpus boundary: three older CCIX chains contain 48 matching legacy records but
+  cannot rebuild EvidenceIR until their reclaimed normalized bundles return through task-owned refreshes.
+  `.6d.ii` owns clean-revision reviewed-population result and controller publication.
+- Regenerated the bounded fact-title projection for the new durable carrier card. The required Rust-analysis
+  rollover seals ten exact older records (147 lines / 12,935 bytes, SHA-256 `75ee4242…404d`) and retains the
+  current carrier record in a warning-safe 54-record / 1,072-line live root.
+- Full CI passes all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,869
+  tests / five ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6c.ii — qualify the timing carrier
 
 - Replayed all 12 unchanged reviewed source identities and 48 isolated stages at committed production revision

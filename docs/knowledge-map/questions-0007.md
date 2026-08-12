@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what gives timing observation samples tick authority
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what global provenance and stage-conservation gates apply before executable lowering
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what grounded content survives the Cortex-A76 optimization guide refresh
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -124,6 +128,8 @@
   > what is SerialFrameField / serial_frame_fields / SerialFramePhase
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > what is SpecForge doing in academic or research terms
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > what is TimingIntentDisposition
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -291,9 +297,3 @@
   > what is the constraint-subject-must-be-declared filter
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what is the corpus impact of the authority empty interface fallback
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what is the corpus pre-bind subject measurement (26 false records across nine documents)

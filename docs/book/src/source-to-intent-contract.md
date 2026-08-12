@@ -145,6 +145,13 @@ executable digital intent and must receive a source-linked non-applicable or uns
 additional hard floor is zero false executable-intent facts: a near-empty `IntentIR` can be correct, but only
 after source-presence accounting proves why.
 
+The current scalar boundary implements one deliberately narrow part of that contract. An explicit decibel-domain
+unit (`dB`/`dBc` as the first unit token) is sufficient evidence that a captured row is a logarithmic physical
+measurement rather than executable digital timing. The same `TimingConstraintRecord` crosses all three promoted
+stages with a typed `non_applicable` disposition and actionable reason/boundary/replay fields, while canonical
+temporal derivation excludes it. UI- and time-unit rows remain canonical. Other physical quantity domains remain
+open until their units provide an equally closed, source-grounded grammar.
+
 ## Category 6 — methodology and guide
 
 The classifier must inspect enough front matter, structure, prose, tables, and figures to distinguish guidance

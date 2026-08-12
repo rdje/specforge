@@ -17,16 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `FSMGEN-REFRESH-INTEGRATE-7.1` closing commit; `SPEC-TO-INTENT-ALIGNMENT.6c.ii` and
-  `FSMGEN-REFRESH-INTEGRATE-6.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.i`; `.6c.ii`, `FSMGEN-REFRESH-INTEGRATE-6.1`, and the verified no-op
+  `FSMGEN-REFRESH-INTEGRATE-7.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: a pruned fetch and independent live remote query prove FSMGen `HEAD`/`main` are already the pinned
-  `a51dcdad0a7e752e638abfe3ab414f7f3911889d`; the range is 0 commits / 0 changed paths, so cycle 7 has no gitlink,
-  contract, product, Knowledge Map, or current-status delta. The clean detached pin passes all seven focused strict
-  canaries, and every declared pin copy agrees. Controller v5 still selects `SPEC-TO-INTENT-ALIGNMENT.6d`, starting
-  with the three OpenCAPI analog fabrications; current TP/FP/FN remain 24/5/16 with provenance 29/29.
-- Next action: commit the verified FSMGen no-op refresh, verify a clean tree and zero-byte message file, then activate
-  controller-selected `SPEC-TO-INTENT-ALIGNMENT.6d` before diagnosing the three OpenCAPI analog records.
-- In-flight uncommitted: completed and focused-verified `FSMGEN-REFRESH-INTEGRATE-7.1` closure awaiting doctrine and
-  mdBook gates plus its commit; no submodule-local change, project-data residue, or background process.
+- Current state: `.6d.i` is verified complete and ready to commit. A closed first-unit-token `dB`/`dBc` grammar
+  retains physical scalar observations with actionable non-applicable disposition while excluding them from
+  executable temporal derivation. ADR 0025 reconciles exactly two measurable OpenCAPI chains: 115 timings hold,
+  26 gain disposition, 6/6 stages otherwise equal, adapters equal, and currency is 24/24 plus 78/78 downstream.
+  Three bundle-less CCIX chains retain 48 legacy matches as an explicit refresh-owned replayability boundary.
+- Next action: commit `.6d.i`, verify a clean handoff, then activate `.6d.ii` for the clean 12-source replay and
+  exact result/controller publication at the committed carrier revision.
+- In-flight uncommitted: the completed `.6d.i` code, generated projections, docs, task evidence, and required
+  catalog/ledger maintenance await their single commit; both task scratch roots are absent and no job is running.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

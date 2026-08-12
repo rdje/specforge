@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > temporal rule eval false positives root cause
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > temporal rule predicate atom vocabulary
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > torch MPS float64 error during ingest
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -293,7 +297,3 @@
   > what gates protect the leading-identifier mnemonic form from bleed
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what gives timing observation samples tick authority
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what global provenance and stage-conservation gates apply before executable lowering

@@ -15,9 +15,10 @@ use crate::ir::prior_memory::{
 };
 use crate::ir::semantic::InterfaceSignalSemanticRole;
 use crate::ir::source::{
-    ActorSignalRelation, ConditionalRuleRecord, RegisterFieldEnumRecord, RegisterFieldRecord,
-    RegisterRecord, RelationKind, SignalConstraintKind, SignalConstraintRecord,
-    StructuredTableCellRecord, StructuredTableRecord, TimingConstraintRecord, TimingTableColumns,
+    ActorSignalRelation, ConditionalRuleRecord, NonApplicableTimingQuantityDomain,
+    RegisterFieldEnumRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
+    SignalConstraintKind, SignalConstraintRecord, StructuredTableCellRecord, StructuredTableRecord,
+    TimingConstraintRecord, TimingIntentBoundary, TimingIntentDisposition, TimingTableColumns,
     ValidationReportRecord, WidthHint, timing_caption_unit, timing_table_columns,
     timing_table_has_structural_authority,
 };
@@ -15068,6 +15069,29 @@ fn timing_row_has_independent_scalar_cells(
             .all(independent_scalar_cell)
 }
 
+/// Classify only quantity domains whose source unit is conclusive on its own. Decibel-domain
+/// quantities are logarithmic amplitude/power measurements, not executable digital timing
+/// boundaries. The first alphanumeric unit token is a closed grammar (`dB` or `dBc`), accepting
+/// source suffixes such as `_RMS`, ` RMS`, and `/Hz` without consulting names or document identity.
+fn timing_intent_disposition(unit: Option<&str>) -> TimingIntentDisposition {
+    let first_unit_token = unit
+        .unwrap_or_default()
+        .trim()
+        .split(|character: char| !character.is_ascii_alphanumeric())
+        .find(|token| !token.is_empty())
+        .unwrap_or_default();
+    if !matches!(first_unit_token.to_ascii_lowercase().as_str(), "db" | "dbc") {
+        return TimingIntentDisposition::Canonical;
+    }
+
+    TimingIntentDisposition::NonApplicable {
+        quantity_domain: NonApplicableTimingQuantityDomain::Decibel,
+        reason: "The explicit unit is a decibel-domain amplitude/power measurement, which is physical or analog rather than an executable digital timing boundary.".to_string(),
+        first_failing_stage: TimingIntentBoundary::SourceToEvidenceIr,
+        replay: "Re-run EvidenceIR synthesis from the same SourceIR table and inspect this source-linked disposition before any executable-digital promotion.".to_string(),
+    }
+}
+
 fn synthesize_timing_constraints(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -15138,16 +15162,19 @@ fn synthesize_timing_constraints(
                 continue;
             }
 
+            let unit = get_cell(unit_col).or_else(|| caption_unit.clone());
+            let intent_disposition = timing_intent_disposition(unit.as_deref());
             records.push(TimingConstraintRecord {
                 constraint_id: format!("timing_{}_{row_idx:03}", document_key(&table_id)),
                 parameter_name: name,
                 min_value,
                 typ_value,
                 max_value,
-                unit: get_cell(unit_col).or_else(|| caption_unit.clone()),
+                unit,
                 description: get_cell(desc_col),
                 supporting_statement_ids: Vec::new(),
                 supporting_table_ids: vec![table_id.clone()],
+                intent_disposition,
                 automation_confidence: AutomationConfidence::Medium,
             });
         }
@@ -17035,6 +17062,10 @@ mod tests {
             legacy.supporting_table_ids.is_empty(),
             "pre-carrier timing records remain loadable"
         );
+        assert!(
+            legacy.intent_disposition.is_canonical(),
+            "pre-disposition timing records remain canonical"
+        );
         Ok(())
     }
 
@@ -17123,6 +17154,126 @@ mod tests {
         assert_eq!(recs[0].supporting_table_ids, ["table_normal"]);
         assert_eq!(recs[1].parameter_name, "t HD");
         assert_eq!(recs[1].supporting_table_ids, ["table_normal"]);
+        Ok(())
+    }
+
+    // SPEC-TO-INTENT-ALIGNMENT.6d — a mixed timing/limits table may contain both executable
+    // digital boundary timing and physical logarithmic measurements. The unit is the only
+    // universal typed discriminator: decibel-domain rows stay captured and source-linked but
+    // receive an actionable non-applicable disposition, while UI/ns rows remain canonical even
+    // when their parameter name looks like insertion loss. No document, table, or symbol list.
+    #[test]
+    fn decibel_domain_rows_are_non_applicable_without_suppressing_digital_timing() -> Result<()> {
+        use crate::ir::source::{
+            NonApplicableTimingQuantityDomain, TimingIntentBoundary, TimingIntentDisposition,
+        };
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Channel requirements\nMixed scalar limits.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_mixed_limits".to_string(),
+            asset_id: "asset_mixed_limits".to_string(),
+            page_id: None,
+            caption_text: Some("Channel requirements".to_string()),
+            source_ref: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![vec![
+                make_table_cell("Symbol", true),
+                make_table_cell("Description", true),
+                make_table_cell("Maximum", true),
+                make_table_cell("Unit", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("T CH_SKEW", false),
+                    make_table_cell("Lane-to-lane skew", false),
+                    make_table_cell("132", false),
+                    make_table_cell("UI", false),
+                ],
+                vec![
+                    make_table_cell("IL(f)", false),
+                    make_table_cell("Channel insertion loss", false),
+                    make_table_cell("21", false),
+                    make_table_cell("dB", false),
+                ],
+                vec![
+                    make_table_cell("ILD(f)", false),
+                    make_table_cell("Insertion-loss deviation", false),
+                    make_table_cell("0.45", false),
+                    make_table_cell("dB_RMS", false),
+                ],
+                vec![
+                    make_table_cell("L_100K", false),
+                    make_table_cell("Phase noise", false),
+                    make_table_cell("-120", false),
+                    make_table_cell("dBc/Hz", false),
+                ],
+                vec![
+                    make_table_cell("IL(settle)", false),
+                    make_table_cell("Digital settle interval", false),
+                    make_table_cell("8", false),
+                    make_table_cell("ns", false),
+                ],
+            ],
+            row_count: 6,
+            col_count: 4,
+        });
+
+        let records = super::synthesize_timing_constraints(&source_ir, None);
+        assert_eq!(
+            records.len(),
+            5,
+            "every independent scalar row stays captured"
+        );
+        assert!(records[0].intent_disposition.is_canonical());
+        assert!(
+            records[4].intent_disposition.is_canonical(),
+            "an insertion-loss-shaped name with a time unit remains canonical"
+        );
+        for record in &records[1..4] {
+            let TimingIntentDisposition::NonApplicable {
+                quantity_domain,
+                reason,
+                first_failing_stage,
+                replay,
+            } = &record.intent_disposition
+            else {
+                panic!(
+                    "{} should be explicitly non-applicable",
+                    record.parameter_name
+                );
+            };
+            assert_eq!(*quantity_domain, NonApplicableTimingQuantityDomain::Decibel);
+            assert!(reason.contains("decibel-domain"));
+            assert_eq!(
+                *first_failing_stage,
+                TimingIntentBoundary::SourceToEvidenceIr
+            );
+            assert!(!replay.is_empty());
+            assert_eq!(record.supporting_table_ids, ["table_mixed_limits"]);
+        }
+
+        let encoded = serde_json::to_value(&records)?;
+        assert!(
+            encoded[0].get("intent_disposition").is_none(),
+            "canonical records retain stable compact JSON"
+        );
+        assert_eq!(encoded[1]["intent_disposition"]["status"], "non_applicable");
+        let unknown_disposition = serde_json::json!({
+            "status": "non_applicable",
+            "quantity_domain": "decibel",
+            "reason": "physical logarithmic measurement",
+            "first_failing_stage": "source_to_evidence_ir",
+            "replay": "re-run evidence synthesis",
+            "unreviewed_escape_hatch": true
+        });
+        assert!(
+            serde_json::from_value::<TimingIntentDisposition>(unknown_disposition).is_err(),
+            "the applicability disposition stays schema-closed"
+        );
         Ok(())
     }
 

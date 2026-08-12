@@ -687,7 +687,49 @@ pub struct RegisterFieldEnumRecord {
     pub meaning: String,
 }
 
-/// One timing constraint extracted from a timing parameter table.
+/// Quantity domain that can prove a scalar table row is outside executable digital intent.
+///
+/// This is deliberately a closed, evidence-derived vocabulary. A producer may add a domain only
+/// when the source unit proves it without relying on a parameter, document, vendor, or table name.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case", deny_unknown_fields)]
+pub enum NonApplicableTimingQuantityDomain {
+    /// A logarithmic amplitude/power ratio such as dB, dB RMS, or dBc/Hz.
+    Decibel,
+}
+
+/// First canonical-promotion boundary at which a captured timing/limits observation is rejected.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case", deny_unknown_fields)]
+pub enum TimingIntentBoundary {
+    SourceToEvidenceIr,
+}
+
+/// Whether a captured scalar timing/limits row may cross the executable-digital boundary.
+///
+/// Legacy records omit this field and therefore retain their historical canonical disposition.
+/// New non-applicable records carry the causal reason, first boundary, and replay instruction so
+/// the physical source fact remains actionable instead of disappearing from the IR chain.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "status", rename_all = "snake_case", deny_unknown_fields)]
+pub enum TimingIntentDisposition {
+    #[default]
+    Canonical,
+    NonApplicable {
+        quantity_domain: NonApplicableTimingQuantityDomain,
+        reason: String,
+        first_failing_stage: TimingIntentBoundary,
+        replay: String,
+    },
+}
+
+impl TimingIntentDisposition {
+    pub fn is_canonical(&self) -> bool {
+        matches!(self, Self::Canonical)
+    }
+}
+
+/// One scalar constraint or physical limit captured from a timing/limits table.
 /// Parameter names typically follow the tXX convention (tSU, tHD, tCKH, etc.).
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct TimingConstraintRecord {
@@ -708,6 +750,11 @@ pub struct TimingConstraintRecord {
     /// support. Additive/defaulted so retained artifacts written before the carrier still load.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub supporting_table_ids: Vec<String>,
+    /// Explicit applicability to executable digital intent. Canonical is omitted for stable
+    /// backward-compatible JSON; a non-applicable disposition keeps the physical fact, reason,
+    /// boundary, and replay path visible without promoting it as executable timing.
+    #[serde(default, skip_serializing_if = "TimingIntentDisposition::is_canonical")]
+    pub intent_disposition: TimingIntentDisposition,
     pub automation_confidence: AutomationConfidence,
 }
 

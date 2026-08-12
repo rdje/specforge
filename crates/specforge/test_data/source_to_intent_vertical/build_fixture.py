@@ -549,6 +549,18 @@ def timing_key(record: dict, full: bool) -> str:
     )
 
 
+def timing_is_canonical(record: dict) -> bool:
+    return record.get("intent_disposition", {}).get("status", "canonical") == "canonical"
+
+
+def physical_timing_family(record: dict, spec: dict) -> str:
+    return next(
+        value
+        for prefix, value in spec["families"].items()
+        if record["parameter_name"].startswith(prefix)
+    )
+
+
 def project_canonical(stage: dict, spec: dict) -> list[dict]:
     region_id = spec["region"][1]
     projection = spec["projection"]
@@ -574,6 +586,7 @@ def project_canonical(stage: dict, spec: dict) -> list[dict]:
             item
             for item in stage["timing_constraints"]
             if item["constraint_id"].startswith(f"timing_{region_id}_")
+            and timing_is_canonical(item)
         ]
         for item in records:
             if projection == "timing_full":
@@ -581,11 +594,7 @@ def project_canonical(stage: dict, spec: dict) -> list[dict]:
             elif projection == "timing_id":
                 family, key = "table_of_contents", item["constraint_id"]
             else:
-                family = next(
-                    value
-                    for prefix, value in spec["families"].items()
-                    if item["parameter_name"].startswith(prefix)
-                )
+                family = physical_timing_family(item, spec)
                 key = timing_key(item, False)
             projected.append(fact(region_id, family, key, source_ids(item)))
     elif projection.startswith("register"):
@@ -608,6 +617,30 @@ def project_canonical(stage: dict, spec: dict) -> list[dict]:
             projected.append(fact(region_id, family, key, source_ids(item)))
     elif projection != "none":
         raise AssertionError(f"unknown projection {projection}")
+    return sorted(projected, key=lambda item: (item["family"], item["fact_key"]))
+
+
+def project_residuals(stage: dict, spec: dict) -> list[dict]:
+    region_id = spec["region"][1]
+    if spec["projection"] != "physical_timing":
+        return []
+
+    projected = []
+    for item in stage["timing_constraints"]:
+        if not item["constraint_id"].startswith(f"timing_{region_id}_"):
+            continue
+        disposition = item.get("intent_disposition", {})
+        if disposition.get("status", "canonical") != "non_applicable":
+            continue
+        record = fact(
+            region_id,
+            physical_timing_family(item, spec),
+            timing_key(item, False),
+            source_ids(item),
+        )
+        for field in ("reason", "first_failing_stage", "replay"):
+            record[field] = disposition.get(field, "")
+        projected.append(record)
     return sorted(projected, key=lambda item: (item["family"], item["fact_key"]))
 
 
@@ -760,12 +793,12 @@ def build_document(spec: dict, replay_root: Path | None = None) -> dict:
         {
             "snapshot_format": "reviewed_bounded_projection_v1",
             "canonical": project_canonical(stages[2], spec),
-            "residuals": [],
+            "residuals": project_residuals(stages[2], spec),
         },
         {
             "snapshot_format": "reviewed_bounded_projection_v1",
             "canonical": project_canonical(stages[3], spec),
-            "residuals": [],
+            "residuals": project_residuals(stages[3], spec),
         },
     ]
     return {

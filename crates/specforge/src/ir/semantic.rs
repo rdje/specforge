@@ -325,6 +325,11 @@ impl SemanticIr {
         let (vlm_timing, vlm_signal_constraints, vlm_states, vlm_transitions) =
             extract_records_from_vlm_observations(&evidence_ir, &vlm_known_signal_names);
         timing_constraints.extend(vlm_timing);
+        let executable_timing_constraints = timing_constraints
+            .iter()
+            .filter(|record| record.intent_disposition.is_canonical())
+            .cloned()
+            .collect::<Vec<_>>();
         signal_constraints.extend(vlm_signal_constraints);
         let temporal_rules = build_temporal_rules(
             &context,
@@ -333,7 +338,7 @@ impl SemanticIr {
             signal_connectivity.as_slice(),
             signal_constraints.as_slice(),
             conditional_rules.as_slice(),
-            timing_constraints.as_slice(),
+            executable_timing_constraints.as_slice(),
             &known_actor_names,
             prior_guidance.as_ref(),
         );
@@ -10428,6 +10433,7 @@ fn parse_timing_diagram_observation(
                 description: Some(text.to_string()),
                 supporting_statement_ids: vec![evidence_id.to_string()],
                 supporting_table_ids: vec![],
+                intent_disposition: Default::default(),
                 automation_confidence: AutomationConfidence::Medium,
             });
         }
@@ -15116,6 +15122,69 @@ mod tests {
     }
 
     #[test]
+    fn non_applicable_timing_observation_is_carried_but_not_executed() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{
+            NonApplicableTimingQuantityDomain, TimingConstraintRecord, TimingIntentBoundary,
+            TimingIntentDisposition,
+        };
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("physical_limit.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            "# Interface\nSignal CLK is input width 1.\n\nClock CLK.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.timing_constraints.push(TimingConstraintRecord {
+            constraint_id: "timing_table_0001_000".to_string(),
+            parameter_name: "IL(f)".to_string(),
+            min_value: None,
+            typ_value: None,
+            max_value: Some("21".to_string()),
+            unit: Some("dB".to_string()),
+            description: Some("CLK sampled on rising edge".to_string()),
+            supporting_statement_ids: vec![],
+            supporting_table_ids: vec!["table_0001".to_string()],
+            intent_disposition: TimingIntentDisposition::NonApplicable {
+                quantity_domain: NonApplicableTimingQuantityDomain::Decibel,
+                reason: "physical logarithmic measurement".to_string(),
+                first_failing_stage: TimingIntentBoundary::SourceToEvidenceIr,
+                replay: "re-run evidence synthesis".to_string(),
+            },
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        assert_eq!(semantic_ir.timing_constraints.len(), 1);
+        assert!(matches!(
+            semantic_ir.timing_constraints[0].intent_disposition,
+            TimingIntentDisposition::NonApplicable { .. }
+        ));
+        assert!(
+            semantic_ir
+                .temporal_rules
+                .iter()
+                .all(|rule| rule.rule_id != "temporal_timing_timing_table_0001_000"),
+            "a non-applicable physical record must not create executable temporal behavior"
+        );
+        Ok(())
+    }
+
+    #[test]
     fn derives_cycle_window_from_temporal_constraint_text() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
@@ -17683,6 +17752,7 @@ mod tests {
                 description: Some("Wait-state latency".to_string()),
                 supporting_statement_ids: vec!["stmt_tick_unit".to_string()],
                 supporting_table_ids: vec![],
+                intent_disposition: Default::default(),
                 automation_confidence: AutomationConfidence::Medium,
             },
             "Wait-state latency",
@@ -22696,6 +22766,7 @@ mod tests {
             description: Some("setup time".to_string()),
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
+            intent_disposition: Default::default(),
             automation_confidence: super::AutomationConfidence::High,
         };
         let signals = known_signal_bset(&["CLK"]);
@@ -22727,6 +22798,7 @@ mod tests {
             description: Some("setup time".to_string()),
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
+            intent_disposition: Default::default(),
             automation_confidence: super::AutomationConfidence::High,
         };
         let signals = known_signal_bset(&["CLK"]);

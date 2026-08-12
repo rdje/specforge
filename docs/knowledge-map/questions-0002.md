@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge model-check temporal properties
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -295,5 +297,3 @@
   > how are the roadmap section bounds derived
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped

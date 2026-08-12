@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md) | 2026-08-11 | `current` | Converge emits a guarded per-run ledger for every production command and every capability island |
 | [definitional-signal-capture](../knowledge/definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
 | [dempster-fusion](../knowledge/dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
 | [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md) | 2026-08-09 | `current` | Independent false-signal seeds can reinforce through relation-derived directions and reach a syntactically va… |
@@ -60,4 +61,3 @@
 | [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md) | 2026-08-08 | `current` | Live-document lifecycle and control-plane proofs run on the repository volume |
 | [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md) | 2026-08-08 | `current` | Parent Git index defines SpecForge live-Markdown coverage |
 | [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md) | 2026-08-09 | `current` | Derived-state field and copy plane is independently closed |
-| [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md) | 2026-06-10 | `current` | Condition-only-subject gate — APB/AHB/AXI constraint task all P=R=F1=1.000 (FPs 3→0) |

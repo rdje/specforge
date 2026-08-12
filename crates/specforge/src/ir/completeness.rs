@@ -1448,6 +1448,7 @@ mod tests {
             description: None,
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
+            intent_disposition: Default::default(),
             automation_confidence: AutomationConfidence::Medium,
         }
     }

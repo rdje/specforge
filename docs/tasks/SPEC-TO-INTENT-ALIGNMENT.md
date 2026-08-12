@@ -209,9 +209,24 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6c.ii — qualify the timing-carrier repair`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `remove the largest remaining qualified fabricated-fact family after canonical provenance reaches complete closure`
   Acceptance: `the three reviewed OpenCAPI analog channel-loss records no longer promote as canonical timing facts unless the source-to-IntentIR contract can justify that type; all 24 current true positives and 29/29 provenance closure survive; the repair is generic, replay-qualified, and followed by controller re-ranking`
+  Verification: `pending`
+  Commit: `completed by .6d.i and .6d.ii child commits`
+  Children: `.6d.i`, `.6d.ii`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.i`
+  Status: `done`
+  Goal: `carry source-grounded physical timing observations without promoting decibel-domain quantities as executable digital timing intent`
+  Acceptance: `a closed unit grammar assigns an actionable non-applicable disposition without deleting the source record; downstream stages carry the disposition losslessly and exclude only that disposition from executable temporal derivation; every retained chain changed by the shared producer is measured, attributed, reconciled, validated, and current under ADR 0025; focused and full gates pass`
+  Verification: `closed unit grammar, legacy/schema/over-suppression guards, downstream execution/validation eligibility, exact two-chain ADR 0025 reconciliation, actionable reviewed projection, residue-free cleanup, live-doc catalog/rollover maintenance, and full CI; 115 timing records hold, 26 dispositions added, 6/6 stages otherwise equal, 2/2 adapters equal, EvidenceIR 24/24 plus downstream 78/78 current, 1,869 tests / five ignored / zero failed`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.i — preserve physical timing without canonical promotion`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
+  Status: `pending`
+  Goal: `replay the decibel-domain disposition repair across the complete reviewed population and publish the exact comparable result`
+  Acceptance: `all 12 sources and 48 stages replay at the committed .6d.i production revision; the exact OpenCAPI disposition and every collateral change are published; all 24 prior true positives and 29/29 provenance survive; controller, public/live documentation, retrieval, and cleanup evidence agree`
   Verification: `pending`
   Commit: `pending`
 
@@ -256,10 +271,11 @@ expressiveness as the bottleneck.
 | 14 | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `done` | resource-sized activation, fail-closed page counting, typed signal termination, exact live 400-page fidelity, cleanup, and full CI complete |
 | 15 | `SPEC-TO-INTENT-ALIGNMENT.6c.i` | `done` | generic caption-unit/table-provenance carrier, five-chain reconciliation, cleanup, and full CI complete |
 | 16 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `done` | 12-source replay closes I2S and all provenance, publishes exact current result, and selects `.6d` |
-| 17 | `SPEC-TO-INTENT-ALIGNMENT.6d` | `pending` | controller-selected three-record OpenCAPI analog fabrication family after provenance closes |
-| 18 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 19 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 20 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 17 | `SPEC-TO-INTENT-ALIGNMENT.6d.i` | `done` | typed disposition, exact two-chain reconciliation, cleanup, live-doc maintenance, and full CI complete |
+| 18 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii` | `pending` | clean 12-source replay must publish the exact repair and controller re-ranking |
+| 19 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 20 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 21 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -372,6 +388,24 @@ expressiveness as the bottleneck.
   reaches 72/88, and all 19 prior true positives survive. The remaining five fabrications are three OpenCAPI
   analog records plus one AMD IOMMU and one GIC-400 key, so the hard-first controller selects owned `.6d` before
   `.7` recall work. The exact 3,913-file / 1,090,908-KiB root and runtime map are removed and absent.
+- `2026-08-12`: activated `.6d` after committing the owner-requested FSMGen currentness verification. Start from
+  the qualified replay/result/controller authorities, pin the exact three false analog keys, and compare their
+  complete typed source/table shape with the four correct OpenCAPI digital-skew facts before changing production.
+- `2026-08-12`: `.6d` localizes the defect to `synthesize_timing_constraints` plus lossless downstream cloning:
+  every independent scalar row in a `timing_parameter` table enters the same canonical vector, with no typed
+  quantity-domain applicability. The reviewed controls are four `UI` lane-skew facts; the false facts are
+  `IL(f)|21 dB`, `ILD(f)|0.45 dB_RMS`, and `IL(f)|30 dB`, all directly supported by the mixed tables. The retained
+  census finds 74 decibel-domain records across five EvidenceIR artifacts: 11 and 15 in the two reviewed OpenCAPI
+  chains (all direct-table provenanced), plus 48 in three older CCIX chains. The generic seam is a closed unit-
+  grammar disposition on each captured record: keep its values and source authority, mark decibel-domain physical
+  quantities non-applicable to executable digital intent with actionable reason/boundary/replay data, and exclude
+  only that typed disposition from executable temporal derivation. Do not key on parameter, table, document, or
+  vendor; qualify the reviewed OpenCAPI family before deciding how much retained-corpus reconciliation is required.
+- `2026-08-12`: split `.6d` at the same isolation boundary as `.6c`. `.6d.i` owns the typed carrier, validation,
+  and ADR 0025 reconciliation; `.6d.ii` must replay the 12 reviewed sources at the committed `.6d.i` revision
+  before publishing metrics or controller state. The currency oracle names exactly two measurable EvidenceIR
+  chains. Three older CCIX chains have 48 matching retained records but no normalized bundles, so their EvidenceIR
+  is explicitly refresh-owned and unmeasurable rather than silently claimed current.
 
 ## Open Questions
 
@@ -454,6 +488,12 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6c.ii` clean population replay and projection | 12 source hash checks; 48 isolated stage identities at committed revision `74a658b3`; exact prior/current 14-cell diff | PASS: I2S 0/5/5/5→5/0/0/0 TP/FP/FN/unprovenanced; seven OpenCAPI records gain table provenance only; no other cell changes; all 19 prior true positives survive; aggregate TP/FP/FN 24/5/16, provenance 29/29, conservation 72/88 |
 | `2026-08-12` | `.6c.ii` controller, mutants, and cleanup | strict manifest/result loaders; coverage/hash/revision/cleanup/fabrication/population mutants; snapshot write/check; generic controller byte comparison; exact cleanup census | PASS: controller v5 meets 12/12 replay plus 29/29 provenance, fails exactly five fabrications, and selects `.6d`; manifest/result/input/report SHA-256 `e7fc88c0…826a` / `9bd0a8f6…33d9` / `a622385c…c392` / `d6f297aa…7082`; 3,913 files / 1,090,908 KiB and runtime map removed and absent |
 | `2026-08-12` | `.6c.ii` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6d.i` root cause and retained census | exact reviewed-key/table comparison; retained-unit census; focused two-source replay | PASS: four UI digital-skew facts and three false dB/dB_RMS facts share mixed timing/limits tables; 74 retained decibel-domain rows exist across five chains; both reviewed sources retain exact source hashes and all target table support |
+| `2026-08-12` | `.6d.i` focused carrier and eligibility tests | unit-only classification/over-suppression mutant; SemanticIR execution filter; SemanticIR/IntentIR validation filter; schema closure/legacy Serde | PASS: dB/dB_RMS/dBc/Hz are actionable non-applicable records; UI/ns and misleading `IL(settle)`+ns remain canonical; physical observations carry but create no temporal rule or false missing-surface diagnostic |
+| `2026-08-12` | `.6d.i` ADR 0025 measurement and reconciliation | exhaustive pre-change currency oracle; exact two-chain backup; disposition-neutral comparison; six stage validators; post-rebuild currency oracle | PASS: only two OpenCAPI EvidenceIR chains stale; 115 timing counts hold, exactly 26 gain disposition, 6/6 stages otherwise equal, 2/2 adapters byte-identical; EvidenceIR 24/24 and downstream 78/78 current; retention exact at 24 bundles |
+| `2026-08-12` | `.6d.i` projection and cleanup | physical-timing projector over both rebuilt IntentIRs; exact scratch census/removal | PASS: 4/4 digital facts stay canonical; 3/3 analog facts become actionable source-linked residual projections; exact 231-file / 59,296-KiB focused root and 241-file / 57,712-KiB reconciliation root removed and absent |
+| `2026-08-12` | `.6d.i` required live-doc maintenance | fact-title derive/write/check; Rust-analysis rollover dry-run/apply/report | PASS: 215-card bounded title catalog current; exact ten-record / 147-line / 12,935-byte segment `75ee4242…404d` sealed; resulting 54-record / 1,072-line root `7c460d92…6cef` warning-safe and the current carrier record remains live |
+| `2026-08-12` | `.6d.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,869 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -760,6 +800,29 @@ expressiveness as the bottleneck.
 - **LOCKSTEP** — focused carrier evidence, clean whole-population replay, controller re-ranking, task/book/live/
   retrieval truth, cleanup, and full CI agree before advancing to `.7` or another honesty child.
 
+The carrier/corpus transaction is owned by `.6d.i`; the clean committed-revision population qualification is
+owned by `.6d.ii`. This is the same isolation boundary used by `.6c`: ADR 0025 reconciliation must land before
+the reviewed replay can name its production revision.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.i`
+
+- [x] **REPRODUCE / MEASURE** — pin the exact three false analog and four correct digital facts, compare their
+  complete mixed-table shape, census the retained decibel-domain family, and run ADR 0025's exhaustive currency
+  replay before rebuilding anything.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_timing_constraints` promoted every independent scalar row from
+  a timing-class table into one canonical record type; SemanticIR cloned all records into temporal derivation and
+  validation had no typed applicability boundary.
+- [x] **ADDRESSED (verified)** — a schema-closed disposition keeps values/table authority/actionability through
+  IntentIR, while only canonical rows derive temporal rules; exactly 26/115 records move across the two measurable
+  chains, with six stage validators and whole-chain currency green.
+- [x] **NO REGRESSION** — focused timing/evaluator/trajectory tests, warning-deny Clippy, mdBook/retrieval/live-doc
+  checks, full CI, exact scratch cleanup, and post-commit continuity must all pass.
+- [x] **GENERICITY (ADR 0006)** — the first alphanumeric unit token alone recognizes closed `dB`/`dBc` grammar;
+  no parameter, table, document, vendor, layout, or reviewed-key branch exists, and an `IL`-shaped name with `ns`
+  is pinned canonical.
+- [x] **LOCKSTEP** — code, rebuilt corpus, task/live status, architecture analysis, mdBook, Knowledge Map, bounded
+  resume pointer, aggregate authority, and the `.6d.ii` clean-replay frontier must agree at commit.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -780,6 +843,8 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk` | resource-sized bounded activation, fail-closed page count, typed signal termination, exact live 400-page fidelity, residue-free cleanup, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6c.i` | `SPEC-TO-INTENT-ALIGNMENT.6c.i — preserve timing unit and table provenance` | closed caption grammar, backward-compatible typed provenance, exact five-chain ADR 0025 reconciliation, clean-replay boundary, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `SPEC-TO-INTENT-ALIGNMENT.6c.ii — qualify the timing-carrier repair` | clean 12-source / 48-stage replay, exact I2S closure and seven provenance-only collateral records, controller v5 `.6d` selection, and residue-free cleanup |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.i — preserve physical timing without canonical promotion` | typed decibel-domain disposition, exact two-chain reconciliation, catalog/ledger maintenance, clean-replay boundary, and full CI |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii` | `pending` | clean 12-source replay, exact comparable result, controller re-ranking, and residue-free cleanup |
 
 ## Changelog
 
@@ -817,6 +882,9 @@ expressiveness as the bottleneck.
 - `2026-08-12`: Closed `.6c.ii` and parent `.6c` with 12/12 clean-revision replay, exact 24/5/16 current
   TP/FP/FN, complete 29/29 provenance, 72/88 conservation, strict controller v5 and mutants, complete cleanup,
   and full CI. The controller selects `.6d`, the three-record OpenCAPI analog fabrication family.
+- `2026-08-12`: Closed `.6d.i` with the schema-closed decibel-domain disposition, exact two-chain ADR 0025
+  reconciliation, actionable projection, residue-free cleanup, required catalog/ledger maintenance, and all
+  eight doctrines plus 1,869 tests green. Frontier advances to `.6d.ii`, clean-revision population qualification.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

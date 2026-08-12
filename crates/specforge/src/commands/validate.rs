@@ -1518,6 +1518,7 @@ fn temporal_rule_surface_input_ids(
 ) -> Vec<String> {
     timing_constraints
         .iter()
+        .filter(|constraint| constraint.intent_disposition.is_canonical())
         .map(|constraint| constraint.constraint_id.clone())
         .chain(
             signal_constraints
@@ -5097,7 +5098,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         ));
     }
     if ir.temporal_rules.is_empty()
-        && (!ir.timing_constraints.is_empty()
+        && (ir
+            .timing_constraints
+            .iter()
+            .any(|constraint| constraint.intent_disposition.is_canonical())
             || !ir.signal_constraints.is_empty()
             || !ir.conditional_rules.is_empty())
     {
@@ -6920,7 +6924,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         ));
     }
     if ir.temporal_rules.is_empty()
-        && (!ir.timing_constraints.is_empty()
+        && (ir
+            .timing_constraints
+            .iter()
+            .any(|constraint| constraint.intent_disposition.is_canonical())
             || !ir.signal_constraints.is_empty()
             || !ir.conditional_rules.is_empty())
     {
@@ -13545,6 +13552,7 @@ mod tests {
             description: Some("HREADY setup requirement before HCLK.".to_string()),
             supporting_statement_ids: vec!["stmt_timing_hready_setup".to_string()],
             supporting_table_ids: vec![],
+            intent_disposition: Default::default(),
             automation_confidence: AutomationConfidence::Medium,
         });
         evidence_ir.write_to_disk()?;
@@ -13606,6 +13614,73 @@ mod tests {
             vec!["timing_hready_setup".to_string()]
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn validate_non_applicable_timing_does_not_require_temporal_rule_surface() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{
+            NonApplicableTimingQuantityDomain, TimingIntentBoundary, TimingIntentDisposition,
+        };
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("physical_limit.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(&source, "# Physical channel limit\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.timing_constraints.push(TimingConstraintRecord {
+            constraint_id: "timing_insertion_loss".to_string(),
+            parameter_name: "IL(f)".to_string(),
+            min_value: None,
+            typ_value: None,
+            max_value: Some("21".to_string()),
+            unit: Some("dB".to_string()),
+            description: Some("Insertion-loss limit".to_string()),
+            supporting_statement_ids: vec![],
+            supporting_table_ids: vec!["table_channel_limits".to_string()],
+            intent_disposition: TimingIntentDisposition::NonApplicable {
+                quantity_domain: NonApplicableTimingQuantityDomain::Decibel,
+                reason: "physical logarithmic measurement".to_string(),
+                first_failing_stage: TimingIntentBoundary::SourceToEvidenceIr,
+                replay: "re-run evidence synthesis".to_string(),
+            },
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        for report in [
+            validate_semantic_ir(&semantic_ir, "physical_limit".to_string()),
+            validate_intent_ir(&intent_ir, "physical_limit".to_string()),
+        ] {
+            assert_eq!(metric_value(&report, "timing_constraints"), Some("1"));
+            assert_eq!(metric_value(&report, "temporal_rules"), Some("0"));
+            assert!(
+                report
+                    .findings
+                    .iter()
+                    .all(|finding| !finding.finding_id.contains("temporal_rule_surface_missing")),
+                "non-applicable physical observations are not executable temporal-rule inputs"
+            );
+        }
         Ok(())
     }
 

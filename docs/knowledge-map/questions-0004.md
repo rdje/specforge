@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how is IngestTerminatedBySignal different from IngestAbortedForMemory
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how is SourceIr loaded from disk by downstream commands
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -293,7 +297,3 @@
   > how to read a chip-spec PDF when the Read tool refuses it
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > how to recover register field bit positions that live in the layout graphic, not the table
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how was AHB HREADY recovered for the temporal antecedent
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how was AXI constraint precision fixed

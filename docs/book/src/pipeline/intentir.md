@@ -31,6 +31,12 @@ closed caption-wide unit grammar remain source spelling, and direct structured a
 `supporting_table_ids`. IntentIR does not default a missing unit, reinterpret it, or substitute a table id into
 `supporting_statement_ids`.
 
+The timing record also carries its executable-intent disposition unchanged. A `non_applicable` decibel-domain
+record is still inspectable in IntentIR—with its original values, provenance, reason, first failing boundary,
+and replay route—but it is not a canonical digital timing fact and cannot have created a SemanticIR temporal
+rule. Canonical and legacy records continue to omit the field. This lets downstream consumers distinguish
+physical channel evidence from executable intent without re-parsing parameter names or units.
+
 Legacy section-derived `SemanticIR.phases` do not become IntentIR behavior or actor responsibilities. The old
 projection turned each synthetic section summary into a behavior assigned to every retained actor and used phase
 overlap to preserve pure-inferred actors. Corpus measurement found 2,238 such behaviors and 48 such actors with
