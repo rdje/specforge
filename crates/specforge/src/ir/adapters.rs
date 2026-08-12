@@ -7,6 +7,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
+use crate::ir::semantic::SystemResetPolarity;
 use crate::ir::source::{AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket};
 use crate::persisted_path::{
     PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
@@ -298,10 +299,10 @@ fn count_isf_signals(intent_ir: &IntentIr) -> usize {
 
 // ISF renderability policy (R6-ISF-ADAPTER.4 decision).
 //
-// ISF lowering blocks on exactly two conditions:
-//   1. no signals declared in any interface, and
-//   2. no behavioral content (temporal rules, conditional rules, signal
-//      constraints, or control blocks).
+// ISF lowering requires source-grounded clock/reset semantics in addition to signals and
+// behavior. FSMGen's grammar requires a clock plus reset timing and polarity; inventing those
+// values from names or conventional defaults would turn adapter syntax requirements into false
+// design intent.
 //
 // Missing per-signal direction or width is *deliberately not* a blocker:
 // `IsfIr::from_intent_ir` defaults an unknown direction to `output` and an
@@ -314,6 +315,14 @@ fn count_isf_signals(intent_ir: &IntentIr) -> usize {
 // target syntax; the `.isf` path can safely default and let FSMGen schedule.
 fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
     let mut reasons: Vec<String> = Vec::new();
+
+    match intent_ir.system_contract.as_ref() {
+        None => reasons.push("no source-grounded system clock/reset contract".to_string()),
+        Some(contract) if matches!(contract.reset_polarity, SystemResetPolarity::Unknown) => {
+            reasons.push("system reset polarity is unresolved".to_string())
+        }
+        Some(_) => {}
+    }
 
     let signal_count = count_isf_signals(intent_ir);
     if signal_count == 0 {
@@ -790,6 +799,144 @@ mod tests {
                 .unwrap()
                 .to_string_lossy()
                 .ends_with(".isf")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn isf_adapter_preserves_typed_clock_reset_semantics_under_alpha_renaming() -> Result<()> {
+        let tempdir = tempdir()?;
+        let conventional_root = tempdir.path().join("conventional");
+        let renamed_root = tempdir.path().join("renamed");
+        fs::create_dir_all(&conventional_root)?;
+        fs::create_dir_all(&renamed_root)?;
+
+        let conventional = build_intent_ir_from_markdown(
+            &conventional_root,
+            "contract.md",
+            concat!(
+                "# Contract\n",
+                "Clock clk.\n\n",
+                "Reset rst_n is asynchronous active low.\n\n",
+                "Signal DATA is output width 1.\n\n",
+                "Block emit: DATA <- 1.\n",
+            ),
+        )?;
+        let renamed = build_intent_ir_from_markdown(
+            &renamed_root,
+            "contract.md",
+            concat!(
+                "# Contract\n",
+                "Clock orbit.\n\n",
+                "Reset clear is asynchronous active low.\n\n",
+                "Signal DATA is output width 1.\n\n",
+                "Block emit: DATA <- 1.\n",
+            ),
+        )?;
+
+        let conventional_artifact = AdapterArtifact::build(
+            &conventional.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &conventional_root.join("adapter"),
+        )?;
+        let renamed_artifact = AdapterArtifact::build(
+            &renamed.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &renamed_root.join("adapter"),
+        )?;
+        let conventional_isf = conventional_artifact.isf.expect("conventional ISF");
+        let renamed_isf = renamed_artifact.isf.expect("renamed ISF");
+
+        assert!(conventional_isf.is_renderable);
+        assert!(renamed_isf.is_renderable);
+        assert_eq!(
+            conventional_isf
+                .source_text
+                .replace("rst_n", "clear")
+                .replace("clk", "orbit"),
+            renamed_isf.source_text,
+            "alpha-renaming may change identities but not reset timing, polarity, or lowering"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn isf_adapter_does_not_infer_clock_or_reset_contracts_from_identifier_spelling() -> Result<()>
+    {
+        let tempdir = tempdir()?;
+        let conventional_root = tempdir.path().join("conventional");
+        let renamed_root = tempdir.path().join("renamed");
+        fs::create_dir_all(&conventional_root)?;
+        fs::create_dir_all(&renamed_root)?;
+
+        let conventional = build_intent_ir_from_markdown(
+            &conventional_root,
+            "unresolved.md",
+            concat!(
+                "# Unresolved Contract\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal rst_n is input width 1.\n\n",
+                "Signal DATA is output width 1.\n\n",
+                "Block emit: DATA <- 1.\n",
+            ),
+        )?;
+        let renamed = build_intent_ir_from_markdown(
+            &renamed_root,
+            "unresolved.md",
+            concat!(
+                "# Unresolved Contract\n",
+                "Signal orbit is input width 1.\n\n",
+                "Signal clear is input width 1.\n\n",
+                "Signal DATA is output width 1.\n\n",
+                "Block emit: DATA <- 1.\n",
+            ),
+        )?;
+        assert!(conventional.system_contract.is_none());
+        assert!(renamed.system_contract.is_none());
+
+        let conventional_artifact = AdapterArtifact::build(
+            &conventional.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &conventional_root.join("adapter"),
+        )?;
+        let renamed_artifact = AdapterArtifact::build(
+            &renamed.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &renamed_root.join("adapter"),
+        )?;
+        let conventional_isf = conventional_artifact
+            .isf
+            .expect("conventional ISF diagnostics");
+        let renamed_isf = renamed_artifact.isf.expect("renamed ISF diagnostics");
+
+        for isf in [&conventional_isf, &renamed_isf] {
+            assert!(!isf.is_renderable);
+            assert_eq!(
+                isf.blocking_reasons,
+                vec!["no source-grounded system clock/reset contract".to_string()]
+            );
+            assert!(
+                isf.source_text
+                    .contains("(clock __specforge_unresolved_clock)")
+            );
+            assert!(
+                isf.source_text
+                    .contains("(reset (__specforge_unresolved_reset unknown unknown))")
+            );
+        }
+        assert!(
+            conventional_artifact
+                .artifact_layout
+                .emitted_target_path
+                .is_none()
+        );
+        assert!(
+            renamed_artifact
+                .artifact_layout
+                .emitted_target_path
+                .is_none()
         );
 
         Ok(())

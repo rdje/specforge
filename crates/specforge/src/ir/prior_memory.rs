@@ -723,19 +723,6 @@ pub fn is_meaningful_actor_term(text: &str) -> bool {
         return false;
     }
 
-    if normalized.contains("clock")
-        || normalized.contains("reset")
-        || normalized.contains("global")
-        || normalized.contains("system bus")
-        || normalized.contains("power")
-        || normalized.contains("ground")
-        || normalized.contains("supply")
-        || normalized.contains("vdd")
-        || normalized.contains("vss")
-    {
-        return false;
-    }
-
     true
 }
 
@@ -1670,57 +1657,48 @@ mod tests {
     // is_meaningful_actor_term unit tests
 
     #[test]
-    fn meaningful_actor_term_rejects_clock() {
-        // Catches ||→&& at line 620 — "clock" alone must trigger return false.
-        assert!(!is_meaningful_actor_term("clock signal"));
+    fn meaningful_actor_term_does_not_reject_clock_phrase() {
+        assert!(is_meaningful_actor_term("clock signal"));
     }
 
     #[test]
-    fn meaningful_actor_term_rejects_reset() {
-        // Catches ||→&& at line 621.
-        assert!(!is_meaningful_actor_term("reset controller"));
+    fn meaningful_actor_term_does_not_reject_reset_actor() {
+        assert!(is_meaningful_actor_term("reset controller"));
     }
 
     #[test]
-    fn meaningful_actor_term_rejects_global() {
-        // Catches ||→&& at line 622.
-        assert!(!is_meaningful_actor_term("global enable"));
+    fn meaningful_actor_term_does_not_reject_global_phrase() {
+        assert!(is_meaningful_actor_term("global enable"));
     }
 
     #[test]
-    fn meaningful_actor_term_rejects_system_bus() {
-        // Catches ||→&& at line 623.
-        assert!(!is_meaningful_actor_term("system bus interface"));
+    fn meaningful_actor_term_does_not_reject_system_bus_actor() {
+        assert!(is_meaningful_actor_term("system bus interface"));
     }
 
     #[test]
-    fn meaningful_actor_term_rejects_power() {
-        // Catches ||→&& at line 624.
-        assert!(!is_meaningful_actor_term("power management"));
+    fn meaningful_actor_term_does_not_reject_power_actor() {
+        assert!(is_meaningful_actor_term("power management"));
     }
 
     #[test]
-    fn meaningful_actor_term_rejects_ground() {
-        // Catches ||→&& at line 625.
-        assert!(!is_meaningful_actor_term("ground plane"));
+    fn meaningful_actor_term_does_not_reject_ground_phrase() {
+        assert!(is_meaningful_actor_term("ground plane"));
     }
 
     #[test]
-    fn meaningful_actor_term_rejects_supply() {
-        // Catches ||→&& at line 626.
-        assert!(!is_meaningful_actor_term("supply rail"));
+    fn meaningful_actor_term_does_not_reject_supply_phrase() {
+        assert!(is_meaningful_actor_term("supply rail"));
     }
 
     #[test]
-    fn meaningful_actor_term_rejects_vdd() {
-        // Catches ||→&& at line 627.
-        assert!(!is_meaningful_actor_term("vdd rail"));
+    fn meaningful_actor_term_does_not_reject_vdd_phrase() {
+        assert!(is_meaningful_actor_term("vdd rail"));
     }
 
     #[test]
-    fn meaningful_actor_term_rejects_vss() {
-        // Catches ||→&& at line 627.
-        assert!(!is_meaningful_actor_term("vss rail"));
+    fn meaningful_actor_term_does_not_reject_vss_phrase() {
+        assert!(is_meaningful_actor_term("vss rail"));
     }
 
     #[test]

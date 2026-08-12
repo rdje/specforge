@@ -1,4 +1,19 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii (`2026-08-12`) — neutrality requires positive authority
+
+Deleting a word denylist or uppercase check is not sufficient. During retained-corpus replay, two prose readers
+started treating the first word of an aside as a signal, and a descriptive invariant reader started treating
+ordinary “state”/“timing” prose as canonical. Those were latent grammar defects previously hidden by case-based
+rejection. The repair is positive and structural: a parenthetical name must fill the parentheses, a pin
+appositive must be bounded, a parenthesis cannot rename an already marked signal, and descriptive behavior must
+mention an exactly declared signal. No replacement vocabulary list was introduced.
+
+The same principle holds downstream. A model proposal cannot author the declaration that later validates it;
+roles cannot be reconstructed from fragments; and a target grammar's mandatory clock/reset fields cannot justify
+inventing design intent. Diagnostic placeholders make the absence inspectable while renderability stays blocked.
+This explains the deliberate 44→17 renderability change and is the architectural reason alpha-renaming is a
+semantic obligation rather than a token-census metric.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i (`2026-08-12`) — prior identity is provenance, never policy
 
 The prior path violated the neutral-core boundary at its selector. `ProtocolFamily::infer` inspected a document

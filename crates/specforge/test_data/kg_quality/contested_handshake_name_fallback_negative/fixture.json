@@ -127,7 +127,7 @@
       "decisive_semantic_arbitration_signal_names_exclude": ["XVALID"],
       "non_decisive_semantic_arbitration_signal_names_include": ["XVALID"],
       "non_decisive_semantic_arbitration_signal_names_exclude": ["XACK"],
-      "residual_decision_ids_include": ["semantic_handshake_name_fallback_blocked"],
+      "residual_decision_ids_include": ["semantic_signal_role_unresolved"],
       "signal_semantic_conflicts": 1,
       "temporal_rule_count": 1,
       "temporal_rules_with_handshake_completion": 0
@@ -142,7 +142,7 @@
       "decisive_semantic_arbitration_signal_names_exclude": ["XVALID"],
       "non_decisive_semantic_arbitration_signal_names_include": ["XVALID"],
       "non_decisive_semantic_arbitration_signal_names_exclude": ["XACK"],
-      "residual_decision_ids_include": ["semantic_handshake_name_fallback_blocked"],
+      "residual_decision_ids_include": ["semantic_signal_role_unresolved"],
       "signal_semantic_conflicts": 1,
       "temporal_rule_count": 1,
       "temporal_rules_with_handshake_completion": 0
@@ -152,7 +152,7 @@
         "finding_ids_include": [
           "semantic_non_decisive_semantic_arbitration_present",
           "semantic_role_arbitration_surface_rescan_guidance",
-          "semantic_handshake_name_fallback_blocked_present",
+          "semantic_unresolved_semantic_role_present",
           "semantic_signal_semantic_conflicts_present"
         ],
         "findings_include": [
@@ -181,7 +181,7 @@
         "finding_ids_include": [
           "intent_non_decisive_semantic_arbitration_present",
           "intent_role_arbitration_surface_rescan_guidance",
-          "intent_handshake_name_fallback_blocked_present",
+          "intent_unresolved_semantic_role_present",
           "intent_signal_semantic_conflicts_present"
         ],
         "findings_include": [

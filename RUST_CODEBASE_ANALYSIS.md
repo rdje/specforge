@@ -4,6 +4,27 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — opaque identifiers and one-way grounding; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii`)
+
+- EvidenceIR no longer assigns signal authority from case, length, suffix, familiar name fragments, or a
+  non-signal denylist. Signal-table structure and bounded definitional grammars establish identities; exact-first,
+  unique-only catalog resolution prevents case collisions and empty-catalog promotion.
+- The optional NLP paths consume the same current-document declaration catalog. User lists can narrow but not
+  expand it. Circular synthesis—where an LLM proposal created the declaration later used to ground itself—and
+  behavior-to-direction inference are removed.
+- SemanticIR interfaces and descriptive invariants require declared identity. Handshake roles, infrastructure
+  topology, clock/reset polarity, and VLM signal references use typed evidence or remain unresolved. IntentIR
+  deletes name-fragment synthesis for handshake, request/acknowledge, FIFO, drive, trigger, and transaction
+  behavior; validation measures unresolved roles without inspecting names.
+- ISF lowering consumes only the typed `system_contract`. Unknown polarity is explicit, missing contracts render
+  only diagnostic placeholders, and the adapter blocks rather than inventing conventional clock/reset semantics.
+  Renderability moves 44→17; all 17 current emitted ISFs pass pinned FSMGen strict.
+- Exact rollback attribution changes 18 EvidenceIR, 73 SemanticIR, 74 IntentIR, and 74 adapter artifacts.
+  Evidence signal constraints move 397→344, canonical invariants 31,767→28,876, transactions 281→239, and
+  signal-neutral conditional rules 2,156→2,489. Currency remains 24/24 measurable EvidenceIR and 78/78 later
+  stages. ADR 0037 owns the opaque-identifier boundary; prompts/corpus organization and structural/behavioral
+  proof remain open under `.d.iii`–`.f`.
+
 ## Session update (2026-08-12 — identity-independent prior memory; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i`)
 
 - CorpusMemory schema 7 replaces `ProtocolFamily` with one `PriorScope::Global`. EvidenceIR and SemanticIR prior

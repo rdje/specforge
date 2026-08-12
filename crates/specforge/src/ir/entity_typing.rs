@@ -20,6 +20,31 @@ use crate::cli::VlmProviderArg;
 use crate::commands::llm_text::{api_url, call_text_provider};
 use crate::ir::evidence::EvidenceIr;
 
+/// Resolve a proposed identifier against a current-document catalog. Exact spelling wins;
+/// case-insensitive recovery is accepted only when it identifies one unique opaque name.
+/// This permits presentation recovery without making case folding part of identifier identity.
+pub(crate) fn resolve_unique_document_identifier<'a>(
+    proposed: &str,
+    identities: impl IntoIterator<Item = &'a str>,
+) -> Option<&'a str> {
+    let identities = identities.into_iter().collect::<Vec<_>>();
+    if let Some(exact) = identities
+        .iter()
+        .find(|identity| identity.trim() == proposed.trim())
+    {
+        return Some(exact.trim());
+    }
+
+    let mut folded = identities
+        .iter()
+        .map(|identity| identity.trim())
+        .filter(|identity| identity.eq_ignore_ascii_case(proposed.trim()))
+        .collect::<Vec<_>>();
+    folded.sort_unstable();
+    folded.dedup();
+    (folded.len() == 1).then(|| folded[0])
+}
+
 /// The entity classes a chip-spec token can be. A constraint/relation may only take a `Signal`
 /// subject; the rest are exactly the things CHI mis-typed *as* signals.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -112,29 +137,45 @@ pub fn gather_entity_evidence(
     ir: &EvidenceIr,
     context_texts: &[String],
 ) -> EntityEvidence {
-    let up = token.trim().to_ascii_uppercase();
-    let declared = ir
-        .table_signal_declaration_provenance
-        .iter()
-        .any(|d| d.signal_name.trim().to_ascii_uppercase() == up);
-    let declared_field = ir
-        .message_field_records
-        .iter()
-        .any(|f| f.name.trim().to_ascii_uppercase() == up);
-    let semantic_hint_tags: Vec<String> = ir
-        .signal_semantic_hints
-        .iter()
-        .filter(|h| h.signal_name.trim().to_ascii_uppercase() == up)
-        .flat_map(|h| h.semantic_tags.iter().map(|t| format!("{t:?}")))
+    let declared_signal = resolve_unique_document_identifier(
+        token,
+        ir.table_signal_declaration_provenance
+            .iter()
+            .map(|declaration| declaration.signal_name.as_str()),
+    );
+    let declared_field_name = resolve_unique_document_identifier(
+        token,
+        ir.message_field_records
+            .iter()
+            .map(|field| field.name.as_str()),
+    );
+    let semantic_hint_signal = resolve_unique_document_identifier(
+        token,
+        ir.signal_semantic_hints
+            .iter()
+            .map(|hint| hint.signal_name.as_str()),
+    );
+    let semantic_hint_tags: Vec<String> = semantic_hint_signal
+        .into_iter()
+        .flat_map(|resolved| {
+            ir.signal_semantic_hints
+                .iter()
+                .filter(move |hint| hint.signal_name.trim() == resolved)
+        })
+        .flat_map(|hint| hint.semantic_tags.iter().map(|tag| format!("{tag:?}")))
         .collect();
-    let appears_as_actor = ir
-        .actor_signal_relations
-        .iter()
-        .any(|r| r.actor_name.trim().to_ascii_uppercase() == up);
-    let appears_as_signal = ir
-        .actor_signal_relations
-        .iter()
-        .any(|r| r.signal_name.trim().to_ascii_uppercase() == up);
+    let actor_identity = resolve_unique_document_identifier(
+        token,
+        ir.actor_signal_relations
+            .iter()
+            .map(|relation| relation.actor_name.as_str()),
+    );
+    let signal_identity = resolve_unique_document_identifier(
+        token,
+        ir.actor_signal_relations
+            .iter()
+            .map(|relation| relation.signal_name.as_str()),
+    );
     let tl = token.trim().to_ascii_lowercase();
     let structural_ref_context = context_texts.iter().any(|t| {
         let l = t.to_ascii_lowercase();
@@ -142,11 +183,11 @@ pub fn gather_entity_evidence(
     });
     EntityEvidence {
         token: token.to_string(),
-        declared_in_signal_table: declared,
-        declared_in_field_table: declared_field,
+        declared_in_signal_table: declared_signal.is_some(),
+        declared_in_field_table: declared_field_name.is_some(),
         semantic_hint_tags,
-        appears_as_actor,
-        appears_as_signal,
+        appears_as_actor: actor_identity.is_some(),
+        appears_as_signal: signal_identity.is_some(),
         structural_ref_context,
         context_snippets: context_texts.iter().take(3).cloned().collect(),
     }
@@ -323,5 +364,19 @@ mod tests {
             EntityType::Transaction
         );
         assert_eq!(EntityType::parse("???"), EntityType::Unknown);
+    }
+
+    #[test]
+    fn document_identifier_resolution_is_exact_first_and_ambiguity_failing() {
+        let catalog = ["sig", "SIG", "mixedCase"];
+        assert_eq!(
+            resolve_unique_document_identifier("SIG", catalog),
+            Some("SIG")
+        );
+        assert_eq!(
+            resolve_unique_document_identifier("MIXEDCASE", catalog),
+            Some("mixedCase")
+        );
+        assert_eq!(resolve_unique_document_identifier("SiG", catalog), None);
     }
 }

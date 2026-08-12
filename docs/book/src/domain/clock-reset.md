@@ -15,7 +15,7 @@ Clock and reset signals usually have system-level responsibilities:
 - reset trees should be treated carefully because they can affect many registers at once
 - reset assertion and release timing often matter as much as the signal name
 
-For example, an active-low reset such as `ARESETN` or `rst_n` is asserted when the signal is low, not high.
+For example, a reset the document declares active-low is asserted when the signal is low, not high.
 That is why `ASSERTED` must not be blindly treated as `HIGH`.
 It is polarity-relative.
 The same rule applies when a VLM timing diagram reports reset waveform values: an active-low reset observed as `asserted` and `LOW`, or as `deasserted` and `HIGH`, should stay equivalent temporal evidence, not become a contradiction.
@@ -67,6 +67,9 @@ In the Rust IR, this is represented by the system-contract records carried throu
 
 For adapter lowering, the system contract feeds the ISF clock/reset declaration.
 The `.isf` adapter takes the canonical `clock_signal` / `reset_signal` plus reset kind and polarity from the system contract and emits them as the ISF `(clock ...)` / `(reset ...)` clauses; missing per-signal direction or width is not a blocker because the ISF IR defaults them. This is adapter-local lowering from canonical system facts, not a mutation of `IntentIR`, and it does not invent undeclared clock/reset ports.
+If the contract is absent, or the reset timing/polarity is unresolved, the adapter remains blocked. Its diagnostic
+ISF tree uses explicit unresolved placeholders so inspection can explain the gap, but no target `.isf` is emitted.
+Names containing familiar clock/reset fragments and conventional active-low suffixes never fill that gap.
 If other evidence contradicts the system-contract shape, the normal sticky conflict behavior keeps the direction or width unresolved and blocks lowering.
 For example, if a local interface declaration says the clock is an output while the system contract says it is the clock, the adapter does not choose a side; it keeps the direction unresolved and asks for upstream correction.
 
@@ -133,7 +136,7 @@ For resets:
 
 - `active high` means asserted at logical high
 - `active low` means asserted at logical low
-- names like `rst_n` and `ARESETN` are useful cues, but explicit document evidence is stronger
+- an omitted polarity remains `unknown`; identifier spelling is not a polarity cue
 
 The same polarity rule applies to other single-bit control signals.
 If the current document says `CS_N is asserted when LOW`, the assertion level is locally grounded and `ASSERTED` can refine to `LOW`.

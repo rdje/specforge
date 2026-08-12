@@ -2,8 +2,8 @@ use crate::cli::{NlpEnrichArgs, VlmProviderArg};
 use crate::commands::llm_text;
 use crate::error::{AppError, Result};
 use crate::ir::evidence::{
-    EvidenceIr, EvidenceModality, ExtractedStatement, ExtractorTier, FactKind,
-    FactProvenanceRecord, StatementClass, signal_constraint_fact_key,
+    EvidenceIr, ExtractorTier, FactKind, FactProvenanceRecord, StatementClass,
+    collect_known_signal_names, signal_constraint_fact_key,
 };
 use crate::ir::source::{
     AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
@@ -96,17 +96,17 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
             };
 
             // Layer B: Build grounding signal list.
-            // Explicit --grounding-signals overrides auto-extraction.
-            // Empty string disables grounding.
-            let grounding_signals: Vec<String> = match &args.grounding_signals {
-                Some(explicit) if explicit.is_empty() => Vec::new(), // disabled
-                Some(explicit) => explicit
+            // The current document owns the declaration catalog. An explicit list may narrow
+            // that catalog, but cannot add external identities or disable grounding.
+            let mut grounding_signals = auto_extract_declared_signals(&evidence_ir);
+            if let Some(explicit) = &args.grounding_signals {
+                let requested = explicit
                     .split(',')
-                    .map(|s| s.trim().to_ascii_uppercase())
-                    .filter(|s| !s.is_empty())
-                    .collect(),
-                None => auto_extract_declared_signals(&evidence_ir), // auto
-            };
+                    .map(str::trim)
+                    .filter(|signal| !signal.is_empty())
+                    .collect::<std::collections::BTreeSet<_>>();
+                grounding_signals.retain(|signal| requested.contains(signal.as_str()));
+            }
             println!("grounding_signals: {}", grounding_signals.len());
             if !grounding_signals.is_empty() {
                 println!(
@@ -370,18 +370,6 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
             }
 
             if !args.dry_run {
-                // Post-process: extract signal direction/width from constraint texts
-                // and synthesize declarations. Free — no additional LLM calls.
-                let dir_synth_count =
-                    synthesize_signal_directions_from_nlp_constraints(&mut evidence_ir);
-                if dir_synth_count > 0 {
-                    println!(
-                        "nlp_direction_synthesis: {dir_synth_count} signal declarations synthesized"
-                    );
-                    evidence_ir.refresh_signal_semantic_hints()?;
-                    evidence_ir.write_to_disk()?;
-                }
-
                 println!("--- summary ---");
                 println!("total_llm_calls: {total_calls}");
                 println!("total_new_signal_constraints: {total_signal_constraints}");
@@ -442,285 +430,15 @@ fn count_candidate_statements(evidence_ir: &EvidenceIr) -> usize {
 /// in the EvidenceIR. These come from signal description tables and are authoritative.
 /// Used as grounding context so the LLM can resolve implicit/pronoun references.
 fn auto_extract_declared_signals(evidence_ir: &EvidenceIr) -> Vec<String> {
-    let mut signals: Vec<String> = evidence_ir
-        .extracted_statements
-        .iter()
-        .filter_map(|s| parse_signal_declaration_name(&s.text))
+    // Use EvidenceIR's canonical plural scanner: markdown normalization can merge multiple
+    // declarations into one statement, and the NLP catalog must not silently lose every identity
+    // after the first sentence.
+    let mut signals: Vec<String> = collect_known_signal_names(&evidence_ir.extracted_statements)
+        .into_iter()
         .collect();
     signals.sort();
     signals.dedup();
     signals
-}
-
-/// After NLP enrichment, scan extracted constraints for direction-indicating patterns
-/// and synthesize `"Signal X is output/input [width N]."` declarations.
-///
-/// These flow into SemanticIR's build_interfaces() and are parsed as High-confidence
-/// signal declarations. This is a free, deterministic post-processing step — no
-/// additional LLM calls are made.
-fn synthesize_signal_directions_from_nlp_constraints(evidence_ir: &mut EvidenceIr) -> usize {
-    use std::collections::{HashMap, HashSet};
-
-    // signal_name → (direction, width_text)
-    let mut signal_hints: HashMap<String, (Option<&str>, Option<String>)> = HashMap::new();
-
-    // ── Scan signal constraints ──
-    for sc in &evidence_ir.signal_constraints {
-        let signal = sc.subject_signal.trim().to_ascii_uppercase();
-        if signal.is_empty() {
-            continue;
-        }
-        let text = &sc.source_text;
-
-        // Direction from constraint kind (the signal's behavioral role)
-        let dir_from_kind = match sc.constraint_kind {
-            SignalConstraintKind::MustBeAsserted
-            | SignalConstraintKind::MustBeDeasserted
-            | SignalConstraintKind::MustBeHigh
-            | SignalConstraintKind::MustBeLow => Some("output"),
-            SignalConstraintKind::MustBeStable | SignalConstraintKind::MustNotChange => {
-                Some("input")
-            }
-            SignalConstraintKind::MustBeValue { .. } | SignalConstraintKind::MustHoldData => None,
-        };
-
-        // Direction from prose patterns in source text
-        let dir_from_text = extract_direction_from_text(text, &signal);
-
-        let direction: Option<&str> = dir_from_text.or(dir_from_kind);
-
-        // Width from text
-        let width = extract_width_from_text(text);
-
-        let entry = signal_hints.entry(signal.clone()).or_insert((None, None));
-        if direction.is_some() && entry.0.is_none() {
-            entry.0 = direction;
-        }
-        if width.is_some() && entry.1.is_none() {
-            entry.1 = width;
-        }
-    }
-
-    // ── Scan conditional rules ──
-    for cr in &evidence_ir.conditional_rules {
-        if let Some(ref signal) = cr.consequent_signal {
-            let signal = signal.trim().to_ascii_uppercase();
-            if !signal.is_empty() && signal != "NULL" {
-                // Consequent signals are controlled by the rule → output from some actor
-                let entry = signal_hints.entry(signal.clone()).or_insert((None, None));
-                if entry.0.is_none() {
-                    entry.0 = Some("output");
-                }
-            }
-        }
-    }
-
-    // ── Signal-name heuristics for well-known roles ──
-    for (signal, entry) in signal_hints.iter_mut() {
-        if entry.0.is_none() {
-            let upper = signal.to_ascii_uppercase();
-            if upper.contains("CLK") || upper.contains("CLOCK") {
-                entry.0 = Some("output");
-            } else if upper.contains("DATA") || upper == "SDA" || upper == "SD" {
-                entry.0 = Some("bidirectional");
-            } else if upper == "RST" || upper == "RESET" || upper.contains("RESETN") {
-                entry.0 = Some("input");
-            }
-        }
-    }
-
-    // ── Known bidirectional signal names (override constraint-derived direction) ──
-    for (signal, entry) in signal_hints.iter_mut() {
-        let upper = signal.to_ascii_uppercase();
-        if upper == "SDA" || upper == "SDAH" || upper == "USDA" || upper == "SD" || upper == "DQ" {
-            entry.0 = Some("bidirectional");
-        }
-    }
-
-    // ── Synthesize ExtractedStatement entries ──
-    let mut counter = evidence_ir.extracted_statements.len();
-    let mut count = 0usize;
-    let mut seen: HashSet<String> = HashSet::new();
-
-    for (signal, (dir_opt, width_opt)) in &signal_hints {
-        if let Some(dir) = dir_opt
-            && seen.insert(signal.clone())
-        {
-            counter += 1;
-            // Default width to 1 bit when none is found — most protocol
-            // control/status signals are single-bit.
-            let text = match width_opt {
-                Some(w) => format!("Signal {signal} is {dir} width {w}."),
-                None => format!("Signal {signal} is {dir} width 1."),
-            };
-            evidence_ir.extracted_statements.push(ExtractedStatement {
-                statement_id: format!("nlp_dir_synth_{counter:06}"),
-                class: StatementClass::SourceFact,
-                modality: EvidenceModality::Text,
-                text,
-                evidence_span_ids: vec![],
-                related_visual_evidence_ids: vec![],
-            });
-            count += 1;
-        }
-    }
-
-    // ── Synthesize clock/reset declarations for system contract ──
-    for signal in signal_hints.keys() {
-        let upper = signal.to_ascii_uppercase();
-        if (upper.contains("CLK") || upper.contains("CLOCK")) && seen.contains(signal) {
-            counter += 1;
-            let text = format!("Clock signal {signal} is the system clock.");
-            evidence_ir.extracted_statements.push(ExtractedStatement {
-                statement_id: format!("nlp_dir_synth_{counter:06}"),
-                class: StatementClass::SourceFact,
-                modality: EvidenceModality::Text,
-                text,
-                evidence_span_ids: vec![],
-                related_visual_evidence_ids: vec![],
-            });
-            count += 1;
-            break; // one clock is enough
-        }
-    }
-
-    count
-}
-
-/// Extract direction hint from prose text mentioning a signal.
-/// Returns "output" if the text indicates the signal is driven/asserted/generated,
-/// "input" if the text indicates the signal is received/sampled/monitored.
-fn extract_direction_from_text(text: &str, signal_name: &str) -> Option<&'static str> {
-    let lowered = text.to_ascii_lowercase();
-    let sig_lower = signal_name.to_ascii_lowercase();
-
-    // Find the signal mention position
-    let sig_pos = lowered.find(&sig_lower)?;
-
-    // Look at text around the signal for direction words
-    let window_start = sig_pos.saturating_sub(80);
-    let window_end = (sig_pos + sig_lower.len() + 80).min(lowered.len());
-    let window = &lowered[window_start..window_end];
-
-    // Output patterns: signal is driven, asserted, generated, controlled
-    let output_patterns = [
-        "driven by",
-        "is driven",
-        "asserted by",
-        "is asserted",
-        "generated by",
-        "is generated",
-        "produced by",
-        "is produced",
-        "controlled by",
-        "is controlled",
-        "drives the",
-        "shall drive",
-        "must drive",
-        "shall assert",
-        "must assert",
-        "shall set",
-        "must output",
-        "shall output",
-        "source of",
-        "is the source",
-    ];
-
-    for pat in &output_patterns {
-        if window.contains(pat) {
-            return Some("output");
-        }
-    }
-
-    // Input patterns: signal is sampled, received, monitored, detected
-    let input_patterns = [
-        "sampled",
-        "is sampled",
-        "are sampled",
-        "received by",
-        "is received",
-        "monitored by",
-        "is monitored",
-        "detected by",
-        "is detected",
-        "observed by",
-        "is observed",
-        "read by",
-        "is read",
-        "captured by",
-        "is captured",
-        "measured by",
-        "is measured",
-        "sensed by",
-        "is sensed",
-    ];
-
-    for pat in &input_patterns {
-        if window.contains(pat) {
-            return Some("input");
-        }
-    }
-
-    // Bidirectional patterns
-    if window.contains("bidirectional")
-        || window.contains("bi-directional")
-        || window.contains("input and output")
-        || window.contains("input/output")
-        || window.contains("i/o")
-    {
-        return Some("bidirectional");
-    }
-
-    None
-}
-
-/// Extract numeric width from prose text (e.g. "8-bit", "width of 32", "16-bit wide").
-fn extract_width_from_text(text: &str) -> Option<String> {
-    let lowered = text.to_ascii_lowercase();
-
-    // Pattern: "N-bit" or "N bit" (e.g. "16-bit", "32 bit")
-    for cap in ["bit ", "bits ", "-bit ", "-bits ", " bit ", " bits "] {
-        if let Some(pos) = lowered.find(cap) {
-            let before = &lowered[..pos];
-            if let Some(num) = before
-                .split_whitespace()
-                .next_back()
-                .and_then(|w| w.trim_end_matches(['(', '[', '{']).parse::<u32>().ok())
-            {
-                return Some(num.to_string());
-            }
-        }
-    }
-
-    // Pattern: "width of N" or "width N"
-    for prefix in &["width of ", "width "] {
-        if let Some(pos) = lowered.find(prefix) {
-            let after = &lowered[pos + prefix.len()..];
-            if let Some(num) = after.split_whitespace().next().and_then(|w| {
-                w.trim_end_matches(['.', ',', ')', ']', '}'])
-                    .parse::<u32>()
-                    .ok()
-            }) {
-                return Some(num.to_string());
-            }
-        }
-    }
-
-    // Pattern: "N-bit wide" or "N bits wide"
-    for suffix in &["-bit wide", " bits wide", "-bit bus", " bits bus"] {
-        if let Some(pos) = lowered.find(suffix) {
-            let before = &lowered[..pos];
-            if let Some(num) = before
-                .split_whitespace()
-                .next_back()
-                .and_then(|w| w.parse::<u32>().ok())
-            {
-                return Some(num.to_string());
-            }
-        }
-    }
-
-    None
 }
 
 /// Form 2: Extract a prose alias phrase for a signal from a sentence where Level 3
@@ -968,26 +686,6 @@ fn strip_leading_articles(text: &str) -> &str {
     text
 }
 
-/// Parse the signal name from a synthesized `Signal X is input/output [width N].` statement.
-fn parse_signal_declaration_name(text: &str) -> Option<String> {
-    let lowered = text.to_ascii_lowercase();
-    if !lowered.starts_with("signal ") {
-        return None;
-    }
-    // After "Signal ": the next whitespace-delimited token is the signal name.
-    let rest = &text[7..];
-    let name: String = rest
-        .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
-        .next()
-        .unwrap_or("")
-        .to_ascii_uppercase();
-    if name.len() >= 2 && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-        Some(name)
-    } else {
-        None
-    }
-}
-
 /// Result of one LLM extraction call on a single normative sentence.
 enum NlpExtractionResult {
     SignalConstraint(SignalConstraintRecord),
@@ -1060,7 +758,7 @@ fn call_llm_for_sentence(
         &prompt,
         NLP_MAX_TOKENS,
     )?;
-    parse_nlp_response(&raw_response, statement_id)
+    parse_nlp_response(&raw_response, statement_id, sentence, grounding_signals)
 }
 
 /// Parse the LLM's JSON response into a typed NlpExtractionResult.
@@ -1069,7 +767,33 @@ fn call_llm_for_sentence(
 /// - JSON wrapped in markdown code fences (```json ... ```)
 /// - Leading/trailing whitespace
 /// - Extra fields (ignored by serde)
-fn parse_nlp_response(raw: &str, statement_id: &str) -> Result<NlpExtractionResult> {
+fn grounded_signal_identifier(
+    candidate: &str,
+    sentence: &str,
+    grounding_signals: &[String],
+) -> Option<String> {
+    let candidate = candidate.trim();
+    let mut characters = candidate.chars();
+    let first = characters.next()?;
+    if !(first.is_ascii_alphabetic() || first == '_')
+        || !characters.all(|character| character.is_ascii_alphanumeric() || character == '_')
+    {
+        return None;
+    }
+
+    let _ = sentence;
+    grounding_signals
+        .iter()
+        .find(|declared| declared.as_str() == candidate)
+        .cloned()
+}
+
+fn parse_nlp_response(
+    raw: &str,
+    statement_id: &str,
+    sentence: &str,
+    grounding_signals: &[String],
+) -> Result<NlpExtractionResult> {
     // Strip markdown code fences if present.
     let json_str = strip_code_fence(raw.trim());
 
@@ -1085,20 +809,16 @@ fn parse_nlp_response(raw: &str, statement_id: &str) -> Result<NlpExtractionResu
 
     match extraction_type {
         "signal_constraint" => {
-            let subject_signal = value
+            let proposed_subject = value
                 .get("subject_signal")
                 .and_then(|s| s.as_str())
                 .unwrap_or("")
-                .trim()
-                .to_string();
-            if subject_signal.is_empty()
-                || !subject_signal
-                    .chars()
-                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
-            {
-                // Invalid signal name — not extractable.
+                .trim();
+            let Some(subject_signal) =
+                grounded_signal_identifier(proposed_subject, sentence, grounding_signals)
+            else {
                 return Ok(NlpExtractionResult::None);
-            }
+            };
 
             let constraint_kind_str = value
                 .get("constraint_kind")
@@ -1145,11 +865,22 @@ fn parse_nlp_response(raw: &str, statement_id: &str) -> Result<NlpExtractionResu
             if antecedent.is_empty() {
                 return Ok(NlpExtractionResult::None);
             }
-            let consequent_signal = value
+            let proposed_consequent = value
                 .get("consequent_signal")
                 .and_then(|s| s.as_str())
-                .filter(|s| !s.is_empty() && *s != "null")
-                .map(|s| s.to_string());
+                .map(str::trim)
+                .filter(|signal| !signal.is_empty() && !signal.eq_ignore_ascii_case("null"));
+            let consequent_signal = match proposed_consequent {
+                Some(signal) => {
+                    let Some(grounded) =
+                        grounded_signal_identifier(signal, sentence, grounding_signals)
+                    else {
+                        return Ok(NlpExtractionResult::None);
+                    };
+                    Some(grounded)
+                }
+                None => None,
+            };
             let consequent_action = value
                 .get("consequent_action")
                 .and_then(|a| a.as_str())
@@ -1247,6 +978,19 @@ mod tests {
         script_path
     }
 
+    fn add_declared_signal(evidence_ir: &mut EvidenceIr, signal: &str) {
+        evidence_ir
+            .extracted_statements
+            .push(crate::ir::evidence::ExtractedStatement {
+                statement_id: format!("stmt_declared_{signal}"),
+                text: format!("Signal {signal} is input."),
+                class: StatementClass::SourceFact,
+                modality: crate::ir::evidence::EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+    }
+
     #[test]
     fn nlp_enrich_upgrades_normative_statement_to_signal_constraint() -> Result<()> {
         // Tests the NLP Level 3 pipeline:
@@ -1271,6 +1015,7 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
+        add_declared_signal(&mut evidence_ir, "HTRANS");
         evidence_ir.write_to_disk()?;
 
         // Verify the sentence is NormativeStatement (not SignalValueConstraint).
@@ -1396,7 +1141,13 @@ mod tests {
     #[test]
     fn parse_nlp_response_handles_code_fence_wrapped_json() {
         let raw = "```json\n{\"type\":\"signal_constraint\",\"subject_signal\":\"HREADY\",\"constraint_kind\":\"must_be_high\",\"negated\":false}\n```";
-        let result = parse_nlp_response(raw, "stmt_001").unwrap();
+        let result = parse_nlp_response(
+            raw,
+            "stmt_001",
+            "HREADY must be HIGH.",
+            &["HREADY".to_string()],
+        )
+        .unwrap();
         assert!(
             matches!(result, NlpExtractionResult::SignalConstraint(r) if r.subject_signal == "HREADY"
                 && r.automation_confidence == AutomationConfidence::Medium
@@ -1405,17 +1156,41 @@ mod tests {
     }
 
     #[test]
-    fn parse_nlp_response_returns_none_for_invalid_signal_name() {
-        // LLM returns a lowercase or sentence-fragment signal name — reject it.
+    fn parse_nlp_response_returns_none_for_invalid_or_ungrounded_signal_name() {
         let raw = r#"{"type":"signal_constraint","subject_signal":"the signal","constraint_kind":"must_be_high","negated":false}"#;
-        let result = parse_nlp_response(raw, "stmt_002").unwrap();
+        let result = parse_nlp_response(raw, "stmt_002", "The signal must be high.", &[]).unwrap();
         assert!(matches!(result, NlpExtractionResult::None));
+        let ungrounded = r#"{"type":"signal_constraint","subject_signal":"invented","constraint_kind":"must_be_high","negated":false}"#;
+        let result =
+            parse_nlp_response(ungrounded, "stmt_002", "The channel must be high.", &[]).unwrap();
+        assert!(matches!(result, NlpExtractionResult::None));
+
+        let grounded = vec!["mixedCaseSignal".to_string()];
+        let mixed_case = r#"{"type":"signal_constraint","subject_signal":"mixedCaseSignal","constraint_kind":"must_be_high","negated":false}"#;
+        let result = parse_nlp_response(
+            mixed_case,
+            "stmt_002",
+            "The channel must be high.",
+            &grounded,
+        )
+        .unwrap();
+        assert!(matches!(
+            result,
+            NlpExtractionResult::SignalConstraint(record)
+                if record.subject_signal == "mixedCaseSignal"
+        ));
     }
 
     #[test]
     fn parse_nlp_response_extracts_conditional_rule() {
         let raw = r#"{"type":"conditional_rule","antecedent":"HREADY is LOW","consequent_signal":"HTRANS","consequent_action":"shall remain NONSEQ"}"#;
-        let result = parse_nlp_response(raw, "stmt_003").unwrap();
+        let result = parse_nlp_response(
+            raw,
+            "stmt_003",
+            "When HREADY is LOW, HTRANS shall remain NONSEQ.",
+            &["HREADY".to_string(), "HTRANS".to_string()],
+        )
+        .unwrap();
         assert!(
             matches!(result, NlpExtractionResult::ConditionalRule(r) if r.antecedent_text == "HREADY is LOW"
                 && r.automation_confidence == AutomationConfidence::Medium
@@ -1630,6 +1405,7 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
+        add_declared_signal(&mut evidence_ir, "HADDR");
         // Inject a NormativeStatement where the signal name is absent from the text.
         // "The address bus" is the prose subject; the mock LLM resolves it to HADDR.
         let alias_sentence = "The address bus shall remain stable when HREADY is LOW";
@@ -1661,7 +1437,7 @@ mod tests {
             vlm_model: Some("qwen2.5vl:7b".to_string()),
             dry_run: false,
             max_sentences: 0,
-            grounding_signals: None,
+            grounding_signals: Some("HADDR".to_string()),
         })?;
         unsafe { std::env::remove_var(VLM_HELPER_ENV) };
 
@@ -1705,6 +1481,7 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
+        add_declared_signal(&mut evidence_ir, "HWRITE");
         // Inject a NormativeStatement that the mock LLM will classify as SignalConstraint.
         let target_text = "HWRITE shall remain HIGH during the burst";
         evidence_ir
@@ -1790,22 +1567,6 @@ mod tests {
         );
     }
 
-    #[test]
-    fn parse_signal_declaration_name_extracts_uppercase_signal() {
-        assert_eq!(
-            parse_signal_declaration_name("Signal HADDR is output width 32."),
-            Some("HADDR".to_string())
-        );
-        assert_eq!(
-            parse_signal_declaration_name("Signal HTRANS is output width 2."),
-            Some("HTRANS".to_string())
-        );
-        assert_eq!(
-            parse_signal_declaration_name("Not a signal declaration."),
-            None
-        );
-    }
-
     // ── Layer C: multi-pass convergence ───────────────────────────────
 
     #[test]
@@ -1829,6 +1590,7 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
+        add_declared_signal(&mut evidence_ir, "HTRANS");
         // Inject a NormativeStatement for the mock to extract.
         evidence_ir
             .extracted_statements
@@ -1892,6 +1654,7 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
+        add_declared_signal(&mut evidence_ir, "HWRITE");
 
         let duplicate_text = "HWRITE shall remain HIGH during the burst";
         for suffix in ["a", "b"] {

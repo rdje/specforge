@@ -115,6 +115,11 @@ For example, the AHB specification yields `basic_transfer`, `burst_operation`,
 corroborated by the `HTRANS` enumeration. A document that defines no transactions
 (or a non-specification document) yields none.
 
+Signal-name fragments never create a transaction. In particular, request/acknowledge, valid/ready, full/empty,
+and similar-looking identifier pairs carry no built-in behavioral template. They can participate in a
+transaction only after current-document structure and typed semantic evidence establish the role. Alpha-renaming
+the document's declarations and occurrences therefore renames symbols without changing transaction admission.
+
 Once a transaction is recognized and named, the next question is *what does it do,
 step by step?* SpecForge fills that in only where the document grounds it, never by
 guessing:

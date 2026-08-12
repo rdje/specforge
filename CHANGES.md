@@ -1,3 +1,14 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii — make document identifiers opaque
+
+- Removed identifier-case, length, suffix, substring, and conventional-name authority across EvidenceIR,
+  SemanticIR, IntentIR, validation, NLP grounding, prior matching, and ISF lowering.
+- Replaced downstream re-inference with exact current-document declaration grounding and explicit unresolved
+  semantics. Missing clock/reset contracts now block ISF emission; all 17 honestly renderable outputs pass FSMGen
+  strict.
+- Reconciled the persisted population exactly: 18 EvidenceIR, 73 SemanticIR, 74 IntentIR, and 74 adapters change;
+  chain currency is 24/24 measurable EvidenceIR and 78/78 for every downstream stage. ADR 0037 and the mdBook
+  publish the one-way grounding contract and remaining genericity blockers.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i — make prior memory identity-independent
 
 - Replaced `ProtocolFamily` and filename/display-name inference with schema-7 `PriorScope::Global`. EvidenceIR,

@@ -14,8 +14,8 @@
       "git_index_is_authoritative": true,
       "file_count": 312,
       "fixture_count": 156,
-      "bytes": 991384,
-      "aggregate_sha256": "d53021644a72fa605f08048160a51fbe4cc7f0750439cf00a17cda9694ffe011"
+      "bytes": 991352,
+      "aggregate_sha256": "050e33f7a9e2380f6d317b6aad15fb1e9da02276c3ebbaeb12ea8ffad9a5712a"
     }
   },
   "outputs": {

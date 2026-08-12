@@ -57,10 +57,11 @@ not as successful lowering. `CORPUS-COVERAGE.2.33d.ii` fixes the shared groundin
 or token special cases. The real rebuild proves those four names and the phantom actor disappear, but also
 exposes a distinct authority-empty interface fallback: 918 low-confidence token-group interfaces become 556
 one-bit outputs even though the actor graph is empty. `CORPUS-COVERAGE.2.33d.iv.b` closes that second boundary:
-heuristic interface grouping now requires formal/system-contract authority or a signal-led deontic behavior
-statement. The retained-corpus census found 21 affected documents with 5,527 interfaces / 18,397 records; every
-member now dry-runs to zero interfaces, while a declaration-free `VALID`/`READY` handshake and the declared
-APB/AHB/AXI/SWD interface surfaces remain preserved.
+heuristic interface grouping now requires formal/system-contract authority. The later genericity audit tightened
+that boundary further: deontic prose may enrich only identities the current document has already declared. The
+retained-corpus census found 21 affected documents with 5,527 interfaces / 18,397 records; every unsupported
+member now dry-runs to zero interfaces, while declared interface surfaces remain preserved independently of
+their identifier spelling.
 
 The rebuilt USB adapter is now honestly blocked with `no signals declared in interface`, zero signals and
 rules, and no emitted `.isf`. A successful blocked write also removes the obsolete `channel.isf`, so the
@@ -207,13 +208,12 @@ assumptions but no actor, behavior, signal, or timing authority. Lowering theref
 keeps two canonicalization residuals, removes the obsolete target, and leaves its adapter manifest/report. The
 software guide remains useful engineering evidence without masquerading as a synthesizable interface.
 
-The corpus cache now has 60 current emitted `.isf` files, all covered by a fresh 60/60 FSMGen-strict sweep. The
-blocked/non-emitting set includes USB 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System,
-AArch64 External Debug, Introducing CoreSight, and the recently refreshed OpenCAPI notes/definitions/PHY
-Mechanical/Signaling/Discovery specs and Cortex-A76 optimization guide. A current four-document signal-authority
-replay also removes stale Wishbone and I2S targets: Wishbone has no declared bus signal after its example-memory
-`DO` is rejected, while
-I2S keeps `SCK`/`SD` but has no lowerable behavior. Honest blocking is the correct result for each.
+After identifier-spelling authority was removed, the corpus cache has 17 current emitted `.isf` files, all
+covered by a fresh 17/17 FSMGen-strict sweep. Twenty-seven formerly renderable documents are now blocked because
+they do not contain a complete typed clock/reset contract: the adapter no longer searches signal names for
+clock/reset fragments, infers active-low polarity from a suffix, or supplies conventional defaults. Other
+documents remain blocked for missing interfaces or behavior. Honest blocking is the correct result; extraction
+recall must be repaired upstream from evidence rather than by manufacturing target-language prerequisites.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without
@@ -285,7 +285,8 @@ from a cue-bearing sentence copied wholesale.
 The adapter walks `IntentIr` and populates the typed tree:
 
 1. **Clock** — from the system contract
-2. **Reset** — always populated; kind/polarity from system contract with sensible defaults
+2. **Reset** — always present in the typed diagnostic tree; kind/polarity come only from the system contract,
+   otherwise explicit unresolved placeholders keep the adapter non-renderable
 3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup. **Width** comes from the signal's own width hint; when that is absent (the flat hint is `None`/symbolic for most signals, since the grounded width lives on the actor-relative graph), the adapter recovers a *single unambiguous concrete* width from the actor-port graph (`actor_ports[].width_hint`) — so a sideband like AXI `ARSIZE` emits `(width 3)` rather than the `(width 1)` default. A signal whose graph widths disagree, or that has no grounded width, keeps the honest `(width 1)` default — never a guess (`KG-ISF-COMPLETENESS.2a.i`). **Direction** is lowered from the protocol's *initiator* actor's perspective — see [Which way does each signal point?](#which-way-does-each-signal-point) below (`KG-ISF-COMPLETENESS.2a.ii`).
 4. **Constants** — from declared symbolic constants
 5. **Types/enums** — from type definitions and enum member-value maps
@@ -669,12 +670,16 @@ ir/adapters.rs        AdapterArtifact + shared scaffolding, ISF adapter (build_i
 
 ## Renderability policy
 
-ISF lowering blocks on exactly two conditions:
+ISF lowering blocks when any required authority is missing:
 
-1. **No signals** — no signal records in any interface, and
-2. **No behavioral content** — no temporal rules, conditional rules, signal constraints, or control blocks.
+1. **No complete system contract** — no source-grounded clock/reset contract, or reset polarity remains unknown.
+2. **No signals** — no signal records in any interface.
+3. **No behavioral content** — no temporal rules, conditional rules, signal constraints, or control blocks.
 
-If either holds, the adapter artifact is `Blocked` with explicit `blocking_reasons` and no `.isf` text is emitted.
+If any holds, the adapter artifact is `Blocked` with explicit `blocking_reasons` and no target `.isf` is emitted.
+The embedded diagnostic `source_text` may contain `__specforge_unresolved_clock` /
+`__specforge_unresolved_reset` and `unknown` reset attributes; those values explain the missing contract and are
+never published as design intent.
 
 Crucially, **missing per-signal direction or width is _not_ a blocker**. `IsfIr::from_intent_ir` defaults an unknown direction to `output` and an unknown width to `1`, and emission proceeds. The rationale: FSMGen performs the cycle scheduling for `.isf` and accepts a default direction/width, so blocking on those would over-restrict otherwise-honest lowering without improving downstream correctness — the `.isf` adapter can safely default and let FSMGen schedule. (`.isf` is SpecForge's only adapter target; `.fsm`/HDL are owned by FSMGen downstream.) The policy lives next to `assess_isf_renderability` in `ir/adapters.rs`.
 

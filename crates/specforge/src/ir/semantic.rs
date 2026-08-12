@@ -306,17 +306,11 @@ impl SemanticIr {
         let mut signal_constraints = signal_constraints_grounded;
         let known_actor_names =
             collect_known_actor_names(actor_build.actors.as_slice(), actor_ports.as_slice());
-        let mut vlm_known_signal_names: HashSet<String> = interfaces
+        let vlm_known_signal_names: HashSet<String> = interfaces
             .iter()
             .flat_map(|iface| &iface.signal_records)
             .map(|record| record.signal_name.clone())
             .collect();
-        vlm_known_signal_names.extend(
-            context
-                .statements
-                .iter()
-                .flat_map(|statement| statement.signals.iter().cloned()),
-        );
 
         // Merge timing constraints: table-synthesized + VLM diagram observations.
         let mut timing_constraints = evidence_ir.timing_constraints.clone();
@@ -1144,6 +1138,7 @@ impl SystemResetKind {
 pub enum SystemResetPolarity {
     ActiveHigh,
     ActiveLow,
+    Unknown,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -1973,9 +1968,7 @@ fn build_interfaces(
         build_signal_polarity_lookup(signal_polarities, system_contract);
 
     for statement in &context.statements {
-        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text)
-            && !interface_signal_declaration_looks_like_width_symbol(&signal_declaration)
-        {
+        for signal_declaration in parse_explicit_signal_declarations(&statement.text) {
             authoritative_signal_names.insert(signal_declaration.signal_name);
         }
     }
@@ -1985,10 +1978,8 @@ fn build_interfaces(
     }
 
     for statement in &context.statements {
-        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text) {
-            if interface_signal_declaration_looks_like_width_symbol(&signal_declaration) {
-                continue;
-            }
+        let signal_declarations = parse_explicit_signal_declarations(&statement.text);
+        if !signal_declarations.is_empty() {
             // Signal declarations arrive from EvidenceIR via two paths:
             //   1. Formal `Signal X is input/output width N.` in source text
             //   2. Synthesized by EvidenceIR from structured table cell grids in SourceIR
@@ -2001,15 +1992,17 @@ fn build_interfaces(
                     signal_records: BTreeMap::new(),
                     supporting_statement_ids: BTreeSet::new(),
                 });
-            register_interface_signal_record(
-                entry,
-                &signal_declaration.signal_name,
-                signal_declaration.direction_hint,
-                signal_declaration.width_hint,
-                &statement.statement_id,
-                &statement.supporting_table_ids,
-                AutomationConfidence::High,
-            );
+            for signal_declaration in signal_declarations {
+                register_interface_signal_record(
+                    entry,
+                    &signal_declaration.signal_name,
+                    signal_declaration.direction_hint,
+                    signal_declaration.width_hint,
+                    &statement.statement_id,
+                    &statement.supporting_table_ids,
+                    AutomationConfidence::High,
+                );
+            }
             continue;
         }
 
@@ -2038,9 +2031,8 @@ fn build_interfaces(
             continue;
         }
         let candidate_signals = retain_authoritative_interface_candidate_signals(
-            filtered_interface_candidate_signals(statement.signals.as_slice()).as_slice(),
+            statement.signals.as_slice(),
             &authoritative_signal_names,
-            &statement.text,
         );
         // Single-signal control prose should enrich an explicit declaration, not mint a duplicate
         // low-confidence interface for the same canonical signal.
@@ -4061,6 +4053,9 @@ fn explicit_infrastructure_source_evidence(
 }
 
 fn parse_explicit_infrastructure_source_actor(text: &str, signal_name: &str) -> Option<String> {
+    if !contains_text_phrase(text, signal_name) {
+        return None;
+    }
     let lowered = text.to_ascii_lowercase();
     let signal_lower = signal_name.to_ascii_lowercase();
 
@@ -4207,6 +4202,9 @@ fn parse_explicit_infrastructure_topology(
 }
 
 fn parse_explicit_infrastructure_distribution_actors(text: &str, signal_name: &str) -> Vec<String> {
+    if !contains_text_phrase(text, signal_name) {
+        return Vec::new();
+    }
     let lowered = text.to_ascii_lowercase();
     let signal_lower = signal_name.to_ascii_lowercase();
     let mut actors = Vec::new();
@@ -4285,8 +4283,7 @@ fn parse_explicit_clock_gated_branch(
     signal_name: &str,
 ) -> Option<ParsedInfrastructureTopology> {
     let lowered = text.to_ascii_lowercase();
-    let signal_lower = signal_name.to_ascii_lowercase();
-    if !lowered.contains(&signal_lower)
+    if !contains_text_phrase(text, signal_name)
         || !(lowered.contains("clock gate")
             || lowered.contains("clock-gated")
             || lowered.contains("clock gated")
@@ -4337,8 +4334,7 @@ fn parse_explicit_reset_synchronizer_stages(
     signal_name: &str,
 ) -> Option<ParsedInfrastructureTopology> {
     let lowered = text.to_ascii_lowercase();
-    let signal_lower = signal_name.to_ascii_lowercase();
-    if !lowered.contains(&signal_lower)
+    if !contains_text_phrase(text, signal_name)
         || !(lowered.contains("synchronizer") || lowered.contains("synchroniser"))
     {
         return None;
@@ -4372,8 +4368,7 @@ fn parse_explicit_reset_tree_targets(
     signal_name: &str,
 ) -> Option<ParsedInfrastructureTopology> {
     let lowered = text.to_ascii_lowercase();
-    let signal_lower = signal_name.to_ascii_lowercase();
-    if !lowered.contains(&signal_lower)
+    if !contains_text_phrase(text, signal_name)
         || !(lowered.contains("reset tree") || lowered.contains("reset-tree"))
     {
         return None;
@@ -4820,7 +4815,7 @@ fn build_invariants(
     let mut seen = BTreeSet::new();
 
     for statement in &context.statements {
-        if !is_invariant_like(statement, context) {
+        if !is_invariant_like(statement, context, interface_ids_by_signal) {
             continue;
         }
 
@@ -5125,29 +5120,27 @@ fn build_residual_decisions(
         });
     }
 
-    let blocked_handshake_fallback_signals =
-        handshake_name_fallback_blocked_signal_names(interfaces);
-    if !blocked_handshake_fallback_signals.is_empty() {
+    let unresolved_semantic_role_signals = unresolved_semantic_role_signal_names(interfaces);
+    if !unresolved_semantic_role_signals.is_empty() {
         packets.push(ResidualDecisionPacket {
-            packet_id: "semantic_handshake_name_fallback_blocked".to_string(),
-            question:
-                "Should handshake-shaped signal names override contested or provisional semantic role evidence?"
-                    .to_string(),
+            packet_id: "semantic_signal_role_unresolved".to_string(),
+            question: "Which semantic role, if any, is supported for the unresolved signals?"
+                .to_string(),
             why_unresolved: format!(
-                "Signals {} look handshake-shaped by name, but their preserved semantic role state is still contested or only provisional, so SemanticIR blocks literal VALID/READY fallback instead of promoting a potentially wrong role.",
-                blocked_handshake_fallback_signals.join(", ")
+                "Signals {} carry semantic-role candidates without a grounded consensus. SemanticIR preserves the disagreement and does not infer a role from identifier spelling.",
+                unresolved_semantic_role_signals.join(", ")
             ),
             automation_confidence: AutomationConfidence::Medium,
             candidate_interpretations: vec![
                 CandidateInterpretation {
                     interpretation_id: "preserve_contested_semantics".to_string(),
                     description: "Keep the role unresolved until stronger multimodal evidence or user guidance turns the semantic meaning into a grounded consensus.".to_string(),
-                    downstream_impact: "Typed temporal handshake predicates stay conservative, but some protocol progress semantics remain deferred while provisional meaning stays explicit.".to_string(),
+                    downstream_impact: "Typed temporal predicates stay conservative while the unresolved meaning remains explicit.".to_string(),
                 },
                 CandidateInterpretation {
-                    interpretation_id: "trust_name_heuristic".to_string(),
-                    description: "Let the handshake-shaped signal name override the contested or provisional semantic evidence.".to_string(),
-                    downstream_impact: "More temporal handshake structure appears immediately, but semantic invention risk increases because spelling outranks preserved disagreement or weaker fallback-only meaning.".to_string(),
+                    interpretation_id: "collect_additional_grounding".to_string(),
+                    description: "Acquire another source-grounded observation and rerun semantic arbitration.".to_string(),
+                    downstream_impact: "A role is promoted only if the additional evidence creates a decisive, provenance-bearing consensus.".to_string(),
                 },
             ],
         });
@@ -5324,54 +5317,26 @@ fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignal
     })
 }
 
-fn interface_signal_declaration_looks_like_width_symbol(
-    declaration: &ParsedInterfaceSignalDeclaration,
-) -> bool {
-    declaration.direction_hint.is_none()
-        && declaration.width_hint.is_some()
-        && declaration.signal_name.ends_with("_WIDTH")
-}
-
-fn heuristic_interface_signal_looks_like_metadata(signal_name: &str) -> bool {
-    let normalized = signal_name.trim().to_ascii_uppercase();
-
-    normalized == "MIN"
-        || normalized == "MAX"
-        || normalized == "_WIDTH"
-        || normalized.ends_with("_WIDTH")
-}
-
-fn filtered_interface_candidate_signals(signals: &[String]) -> Vec<String> {
-    let mut filtered = Vec::new();
-    let mut seen = BTreeSet::new();
-
-    for signal in signals {
-        if heuristic_interface_signal_looks_like_metadata(signal) {
-            continue;
-        }
-        if seen.insert(signal.clone()) {
-            filtered.push(signal.clone());
-        }
-    }
-
-    filtered
+/// Parse every canonical signal declaration carried by one EvidenceIR statement. Markdown
+/// normalization can merge consecutive source lines into a single statement, so consuming only
+/// the leading declaration silently loses later document-grounded identities. Sentence boundaries
+/// are structural; no identifier spelling or document vocabulary participates.
+fn parse_explicit_signal_declarations(text: &str) -> Vec<ParsedInterfaceSignalDeclaration> {
+    normalize_sentence(text)
+        .split('.')
+        .filter_map(|sentence| parse_explicit_signal_declaration(sentence.trim()))
+        .collect()
 }
 
 fn retain_authoritative_interface_candidate_signals(
     signals: &[String],
     authoritative_signal_names: &BTreeSet<String>,
-    statement_text: &str,
 ) -> Vec<String> {
-    // Co-mention normally enriches only a formal declaration or the document system contract.
-    // A declaration-free document has one narrow positive path: a signal-led deontic behavior
-    // statement can ground its own multi-signal interface (for example, an asserted-until-
-    // observed handshake). Ordinary uppercase prose and table tokens still fail closed.
+    // Co-mention may enrich only identities already grounded by a formal declaration or the
+    // document system contract. Lexical shape and deontic prose can propose evidence, but cannot
+    // mint an interface or decide that an arbitrary token is a signal.
     if authoritative_signal_names.is_empty() {
-        return if statement_establishes_signal_behavior(signals, statement_text) {
-            signals.to_vec()
-        } else {
-            Vec::new()
-        };
+        return Vec::new();
     }
 
     signals
@@ -5379,28 +5344,6 @@ fn retain_authoritative_interface_candidate_signals(
         .filter(|signal| authoritative_signal_names.contains(*signal))
         .cloned()
         .collect()
-}
-
-fn statement_establishes_signal_behavior(signals: &[String], statement_text: &str) -> bool {
-    if signals.len() < 2 {
-        return false;
-    }
-
-    let trimmed = statement_text.trim();
-    let split_at = trimmed.find(char::is_whitespace).unwrap_or(trimmed.len());
-    let subject = &trimmed[..split_at];
-    if !signals.iter().any(|signal| signal == subject) {
-        return false;
-    }
-
-    let behavior = normalize_sentence(trimmed[split_at..].trim()).to_ascii_lowercase();
-    let deontic = behavior.starts_with("must ") || behavior.starts_with("shall ");
-    let signal_action = behavior.contains("assert")
-        || behavior.contains("deassert")
-        || behavior.contains("remain stable")
-        || behavior.contains("held stable");
-
-    deontic && signal_action
 }
 
 fn heuristic_interface_candidate_is_redundant_with_authoritative_surface(
@@ -5494,7 +5437,7 @@ fn parse_explicit_system_reset(text: &str) -> Option<ParsedSystemResetDeclaratio
     }
 
     let (reset_kind, reset_polarity, automation_confidence) =
-        parse_system_reset_descriptor(&signal_name, &tokens[is_token_index + 1..])?;
+        parse_system_reset_descriptor(&tokens[is_token_index + 1..])?;
 
     Some(ParsedSystemResetDeclaration {
         signal_name,
@@ -5508,7 +5451,6 @@ fn parse_explicit_system_reset(text: &str) -> Option<ParsedSystemResetDeclaratio
 }
 
 fn parse_system_reset_descriptor(
-    signal_name: &str,
     tokens: &[&str],
 ) -> Option<(SystemResetKind, SystemResetPolarity, AutomationConfidence)> {
     if tokens.is_empty() {
@@ -5556,28 +5498,10 @@ fn parse_system_reset_descriptor(
     let reset_kind = reset_kind?;
     let (reset_polarity, automation_confidence) = match reset_polarity {
         Some(reset_polarity) => (reset_polarity, AutomationConfidence::High),
-        None => (
-            infer_system_reset_polarity(signal_name),
-            AutomationConfidence::Medium,
-        ),
+        None => (SystemResetPolarity::Unknown, AutomationConfidence::Medium),
     };
 
     Some((reset_kind, reset_polarity, automation_confidence))
-}
-
-fn infer_system_reset_polarity(signal_name: &str) -> SystemResetPolarity {
-    if reset_signal_name_looks_active_low(signal_name) {
-        SystemResetPolarity::ActiveLow
-    } else {
-        SystemResetPolarity::ActiveHigh
-    }
-}
-
-fn reset_signal_name_looks_active_low(signal_name: &str) -> bool {
-    let lowered = signal_name.to_ascii_lowercase();
-    lowered.ends_with("_n")
-        || lowered.ends_with("_b")
-        || matches!(lowered.as_str(), "rstn" | "rstb" | "resetn" | "resetb")
 }
 
 fn parse_explicit_init_assignment(text: &str) -> Option<ParsedInitAssignment> {
@@ -6651,9 +6575,7 @@ fn known_explicit_signal_names(context: &SemanticContext) -> BTreeSet<String> {
     let mut signal_names = BTreeSet::new();
 
     for statement in &context.statements {
-        if let Some(signal_declaration) = parse_explicit_signal_declaration(&statement.text)
-            && !interface_signal_declaration_looks_like_width_symbol(&signal_declaration)
-        {
+        for signal_declaration in parse_explicit_signal_declarations(&statement.text) {
             signal_names.insert(signal_declaration.signal_name);
         }
         if let Some(clock_signal) = parse_explicit_system_clock(&statement.text) {
@@ -7170,19 +7092,10 @@ fn maybe_add_signal_token(signals: &mut BTreeSet<String>, token: &str) {
         return;
     }
 
-    let upper_token = token.to_ascii_uppercase();
-    if signal_stop_words().contains(&upper_token.as_str()) {
-        return;
-    }
-
-    signals.insert(upper_token);
+    signals.insert(token.to_string());
 }
 
 fn looks_like_signal_token(token: &str) -> bool {
-    if token.len() < 2 {
-        return false;
-    }
-
     let mut chars = token.chars();
     let Some(first) = chars.next() else {
         return false;
@@ -7198,450 +7111,13 @@ fn looks_like_signal_token(token: &str) -> bool {
         return false;
     }
 
-    let is_upper = token.chars().all(|character| {
-        character.is_ascii_uppercase() || character.is_ascii_digit() || character == '_'
-    });
-    if is_upper
-        && token
-            .chars()
-            .any(|character| character.is_ascii_uppercase())
-    {
-        return true;
-    }
-
-    let lowered_token = token.to_ascii_lowercase();
-    lowered_token.ends_with("_n") || lowered_token.ends_with("_b")
-}
-
-fn signal_stop_words() -> BTreeSet<&'static str> {
-    [
-        // --- Tool-internal terms ---
-        "IR",
-        "PDF",
-        "JSON",
-        "CLI",
-        "README",
-        "DOCS",
-        "LLM",
-        "RTL",
-        "FSM",
-        "VHDL",
-        "DOCLING",
-        "SOURCEIR",
-        "EVIDENCEIR",
-        "SEMANTICIR",
-        "INTENTIR",
-        "API",
-        "URL",
-        // --- Common English function words appearing in ALL CAPS in technical specs ---
-        "A",
-        "AN",
-        "THE",
-        "AND",
-        "OR",
-        "NOT",
-        "NOR",
-        "BUT",
-        "YET",
-        "SO",
-        "IF",
-        "AS",
-        "AT",
-        "BY",
-        "IN",
-        "ON",
-        "OF",
-        "TO",
-        "UP",
-        "OUT",
-        "IS",
-        "ARE",
-        "WAS",
-        "WERE",
-        "BE",
-        "BEEN",
-        "BEING",
-        "DO",
-        "DOES",
-        "DID",
-        "HAS",
-        "HAVE",
-        "HAD",
-        "CAN",
-        "MAY",
-        "MUST",
-        "SHALL",
-        "WILL",
-        "WOULD",
-        "SHOULD",
-        "COULD",
-        "NO",
-        "YES",
-        "OK",
-        "THIS",
-        "THAT",
-        "THESE",
-        "THOSE",
-        "WITH",
-        "FROM",
-        "INTO",
-        "ONTO",
-        "UPON",
-        "OVER",
-        "UNDER",
-        "ABOUT",
-        "ABOVE",
-        "BELOW",
-        "BEFORE",
-        "AFTER",
-        "DURING",
-        "SINCE",
-        "UNTIL",
-        "WHEN",
-        "WHERE",
-        "WHO",
-        "WHAT",
-        "HOW",
-        "WHY",
-        "WHICH",
-        "EACH",
-        "BOTH",
-        "ALL",
-        "ANY",
-        "SOME",
-        "NONE",
-        "MORE",
-        "LESS",
-        "SUCH",
-        "SAME",
-        "ONLY",
-        "ALSO",
-        "EVEN",
-        "JUST",
-        "THEN",
-        "THAN",
-        "FOR",
-        "EITHER",
-        "NEITHER",
-        "HOWEVER",
-        "THEREFORE",
-        "THUS",
-        "HENCE",
-        "ONE",
-        "TWO",
-        "THREE",
-        "FOUR",
-        "FIVE",
-        "SIX",
-        "ONCE",
-        "TWICE",
-        "II",
-        "III",
-        "IV",
-        "VI",
-        "VII",
-        "VIII",
-        "USE",
-        "USED",
-        "USING",
-        "USER",
-        "USERS",
-        "NEW",
-        "OLD",
-        "SAME",
-        "NEXT",
-        "LAST",
-        "FIRST",
-        "PRIOR",
-        // --- Common English words that appear ALL CAPS in formal/technical documents ---
-        // Note: do NOT add words that are legitimate hardware signal names such as VALID, READY,
-        // ACTIVE, IDLE, DONE, FULL, EMPTY, READ, WRITE, BUSY, GRANT, REQ — those ARE real signals.
-        "HIGH",
-        "LOW",
-        "TRUE",
-        "FALSE",
-        "NULL",
-        "VOID",
-        "OPTIONAL",
-        "MANDATORY",
-        "RECOMMENDED",
-        "PROHIBITED",
-        "RESERVED",
-        "IMPLEMENTATION",
-        "DEFINED",
-        "DEFAULT",
-        "NOTE",
-        "NOTES",
-        "WARNING",
-        "CAUTION",
-        "IMPORTANT",
-        // --- Legal and contractual vocabulary (common in chip spec front matter) ---
-        "LICENSE",
-        "LICENCE",
-        "LICENSEE",
-        "LICENSOR",
-        "LICENSED",
-        "LICENSES",
-        "COPYRIGHT",
-        "COPYRIGHTED",
-        "COPYRIGHTS",
-        "AGREEMENT",
-        "AGREED",
-        "AGREES",
-        "DISCLAIMER",
-        "DISCLAIMED",
-        "WARRANTY",
-        "WARRANTIES",
-        "WARRANTED",
-        "PATENT",
-        "PATENTS",
-        "PATENTED",
-        "CLAIM",
-        "CLAIMS",
-        "CLAIMED",
-        "LIABILITY",
-        "LIABILITIES",
-        "LIABLE",
-        "INDEMNIFY",
-        "INDEMNIFIED",
-        "INDEMNIFICATION",
-        "TERMINATE",
-        "TERMINATION",
-        "TERMINATED",
-        "SUBLICENSE",
-        "SUBLICENSED",
-        "ROYALTY",
-        "ROYALTIES",
-        "TRADEMARK",
-        "TRADEMARKS",
-        "CONFIDENTIAL",
-        "NON",
-        "PROPRIETARY",
-        "INTELLECTUAL",
-        "PROPERTY",
-        "RIGHTS",
-        "RIGHTSHOLDER",
-        "EXPRESS",
-        "IMPLIED",
-        "STATUTORY",
-        "LIMITATION",
-        "LIMITED",
-        "UNLIMITED",
-        "NOTWITHSTANDING",
-        "REGARDLESS",
-        "IRRESPECTIVE",
-        "PROVISION",
-        "PROVISIONS",
-        "CLAUSE",
-        "ARTICLE",
-        "SUBSECTION",
-        "CONTRACT",
-        "TERMS",
-        "CONDITIONS",
-        "CONDITION",
-        "ACCEPT",
-        "ACCEPTANCE",
-        "ACCOMPANYING",
-        "AGREE",
-        "BOUND",
-        "CLICKING",
-        "COPYING",
-        "END",
-        "ENTITY",
-        "INCLUDING",
-        "INDICATE",
-        "INDIVIDUAL",
-        "LEGAL",
-        "OBLIGATION",
-        "OBLIGATIONS",
-        "OTHERWISE",
-        "RELEVANT",
-        "SINGLE",
-        "SPECIFICATION",
-        "WITHOUT",
-        "YOU",
-        "YOUR",
-        "CLICKING",
-        "EXCEPT",
-        "SUBJECT",
-        "TORT",
-        "LAW",
-        "LAWS",
-        "CONSEQUENTIAL",
-        "INCIDENTAL",
-        "PUNITIVE",
-        "INDIRECT",
-        "DIRECT",
-        "SPECIAL",
-        "EXEMPLARY",
-        "AGGREGATE",
-        "MAXIMUM",
-        "DAMAGES",
-        "DAMAGE",
-        "LOSS",
-        "LOSSES",
-        "ARISING",
-        "CAUSED",
-        "THEORY",
-        "POSSIBILITY",
-        "ADVISED",
-        "EXTENT",
-        "EVENT",
-        "DOCUMENT",
-        "FULLEST",
-        "PETMITTED",
-        "RELEASES",
-        "DEMANDS",
-        "CONTAIN",
-        "CONTAINED",
-        "CREATED",
-        "EXCEED",
-        "EXCESS",
-        "ENLARGE",
-        "EXTEND",
-        "EXISTENCE",
-        "FEES",
-        "MADE",
-        "MATTER",
-        "OBLIGATIONS",
-        "PAID",
-        "PRODUCT",
-        "SUIT",
-        "TECHNOLOGY",
-        "UNDER",
-        "CONTRARY",
-        "CONNECT",
-        "CONNECTION",
-        "WAIVER",
-        // NOTE: protocol family names (AMBA/AHB/AXI/CHI/…) and vendor names
-        // (ARM/AMD/INTEL/…) were REMOVED here — they are chip-spec-specific and
-        // hardcoding them violates ADR 0006 (PDF-AGNOSTIC-EXTRACTION.3). A token
-        // mis-discovered as a signal is filtered downstream against the document's
-        // own declared signals (`declared_signal_names`). Only document-independent
-        // standards/structure/digital tokens remain below.
-        // --- Standards bodies (universal, document-independent) ---
-        "IEEE",
-        "JEDEC",
-        "IETF",
-        "ISO",
-        "IEC",
-        "ANSI",
-        "NIST",
-        // --- Document structure and publication metadata ---
-        "CHAPTER",
-        "SECTION",
-        "TABLE",
-        "FIGURE",
-        "APPENDIX",
-        "ANNEX",
-        "SCHEDULE",
-        "EXHIBIT",
-        "EXAMPLE",
-        "REFERENCE",
-        "REFERENCES",
-        "REVISION",
-        "VERSION",
-        "RELEASE",
-        "ISSUE",
-        "HISTORY",
-        "OVERVIEW",
-        "INTRODUCTION",
-        "SUMMARY",
-        "ABSTRACT",
-        "PREFACE",
-        "GLOSSARY",
-        "ACRONYM",
-        "ABBREVIATION",
-        "DEFINITION",
-        "DESCRIPTION",
-        // (ARM/AMBA publication-ID prefixes removed — chip-spec-specific, ADR 0006.)
-        // --- Timing diagram cycle/slot labels (T0–T9 are clock cycle markers, not signal names) ---
-        "T0",
-        "T1",
-        "T2",
-        "T3",
-        "T4",
-        "T5",
-        "T6",
-        "T7",
-        "T8",
-        "T9",
-        // --- Bit-position descriptors (Least/Most Significant; these describe field positions) ---
-        "LS",
-        "MS",
-        "LSB",
-        "MSB",
-        // (AMBA HTRANS/HBURST encoding values removed — chip-spec-specific, ADR 0006.)
-        // --- Interface/connection type names that appear as ALL CAPS context words ---
-        "OC",
-        // --- Memory technology type names (DRAM, SRAM etc. are memory arrays, not port signals) ---
-        "DRAM",
-        "SRAM",
-        // --- Timing diagram notation words (appear in legend explanations, not signal names) ---
-        "CAPITALS",
-        "SMALL",
-        // --- Common technology abbreviations that are never hardware signal names ---
-        "CPU",
-        "GPU",
-        "DMA",
-        "ROM",
-        "RAM",
-        "BIOS",
-        "USB",
-        "UART",
-        "FIFO",
-        "LIFO",
-        "CRC",
-        "ECC",
-        "SOC",
-        "NOC",
-        "NIC",
-        "PHY",
-        "PLL",
-        "DLL",
-        "ADC",
-        "DAC",
-        "FPGA",
-        "ASIC",
-        "EDA",
-        "ISA",
-        "ABI",
-        "MMU",
-        "TLB",
-        "PCIE",
-        "DDR",
-        "LPDDR",
-        "SDRAM",
-        "HDMI",
-        "MIPI",
-        "LVDS",
-        "SMP",
-        "AMP",
-        "NUMA",
-        "SIMD",
-        "SUBORDINATE",
-        "MANAGER",
-        "INITIATOR",
-        "MASTER",
-        "SLAVE",
-    ]
-    .into_iter()
-    .collect()
+    token
+        .chars()
+        .all(|character| character.is_ascii_alphanumeric() || character == '_')
 }
 
 fn should_emit_interface_candidate(signals: &[String]) -> bool {
-    if signals.len() >= 2 {
-        return true;
-    }
-
-    signals.first().is_some_and(|signal| {
-        signal.ends_with("_N")
-            || signal.ends_with("_B")
-            || signal.contains("RST")
-            || signal.contains("RESET")
-            || signal.contains("CLK")
-            || signal.contains("CLOCK")
-    })
+    signals.len() >= 2
 }
 
 fn interface_ids_by_signal(interfaces: &[InterfaceRecord]) -> HashMap<String, BTreeSet<String>> {
@@ -7696,7 +7172,11 @@ fn decomposition_like_title(title: &str) -> bool {
     )
 }
 
-fn is_invariant_like(statement: &StatementContext, context: &SemanticContext) -> bool {
+fn is_invariant_like(
+    statement: &StatementContext,
+    context: &SemanticContext,
+    interface_ids_by_signal: &HashMap<String, BTreeSet<String>>,
+) -> bool {
     if matches!(statement.class, StatementClass::ExplicitAbstraction) {
         return false;
     }
@@ -7722,7 +7202,11 @@ fn is_invariant_like(statement: &StatementContext, context: &SemanticContext) ->
         return true;
     }
 
-    if !statement.signals.is_empty()
+    let mentions_declared_signal = statement
+        .signals
+        .iter()
+        .any(|signal| interface_ids_by_signal.contains_key(signal));
+    if mentions_declared_signal
         && contains_any_phrase(
             &lowered_text,
             &[
@@ -8064,17 +7548,10 @@ fn parse_temporal_condition_predicates(
         split_temporal_condition_clauses(normalized, known_signals)
             .into_iter()
             .filter_map(|clause| {
-                // Resolve the clause's signal: an exactly-declared name first, else an
-                // un-indexed prose reference to a declared indexed family member
-                // (e.g. prose "PSEL" → declared "PSELx"/"PSELX"). The fallback fires
-                // only when the bare token is not itself declared, so it is purely
-                // additive and uses the canonical declared identity (WIRE-BASED-100.4).
-                find_known_signal_name(&clause, known_signals)
-                    .or_else(|| resolve_indexed_signal_family(&clause, known_signals))
-                    .map(|signal| {
-                        let value = temporal_clause_value(&clause, &signal, known_signals);
-                        (signal, value)
-                    })
+                find_known_signal_name(&clause, known_signals).map(|signal| {
+                    let value = temporal_clause_value(&clause, &signal, known_signals);
+                    (signal, value)
+                })
             })
             .collect();
 
@@ -8173,10 +7650,8 @@ fn split_temporal_condition_segment_on_and(
 /// value of its own. Check order is preserved from the original clause parser so a clause's
 /// own value is unchanged; the caller distributes a shared value to value-less clauses.
 ///
-/// A token that is itself a signal — declared, or an un-indexed reference to a declared
-/// indexed family member (e.g. "PSEL" → "PSELx") — is never a value: a bare list member like
-/// "PSEL" must stay value-less so the shared list value distributes to it, not leak the prose
-/// token as a fake value (`WIRE-BASED-100.4`).
+/// A token that is itself a declared signal is never a value: a bare list member stays
+/// value-less so the shared list value distributes to it.
 fn temporal_clause_value(
     text: &str,
     signal_name: &str,
@@ -8192,9 +7667,9 @@ fn temporal_clause_value(
         Some("DEASSERTED".to_string())
     } else {
         extract_symbolic_value(text, Some(signal_name)).filter(|candidate| {
-            let upper = candidate.to_ascii_uppercase();
-            !known_signals.contains(&upper)
-                && resolve_indexed_signal_family(candidate, known_signals).is_none()
+            !known_signals
+                .iter()
+                .any(|known| known.eq_ignore_ascii_case(candidate))
         })
     }
 }
@@ -8269,7 +7744,6 @@ enum HandshakeSignalRole {
 #[derive(Debug, Default)]
 struct HandshakeRoleContext {
     resolved_roles_by_signal: BTreeMap<String, HandshakeSignalRole>,
-    heuristic_blocked_signals: BTreeSet<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -8625,11 +8099,6 @@ fn handshake_role_context(interfaces: &[InterfaceRecord]) -> HandshakeRoleContex
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
     {
-        if handshake_name_fallback_is_blocked(signal) {
-            context
-                .heuristic_blocked_signals
-                .insert(signal.signal_name.clone());
-        }
         if let Some(role) = classify_handshake_signal_from_interface_signal(signal) {
             context
                 .resolved_roles_by_signal
@@ -8639,21 +8108,12 @@ fn handshake_role_context(interfaces: &[InterfaceRecord]) -> HandshakeRoleContex
     context
 }
 
-fn handshake_name_fallback_is_blocked(signal: &InterfaceSignalRecord) -> bool {
-    signal
-        .semantic_arbitration
-        .as_ref()
-        .is_some_and(|arbitration| !arbitration.decisive)
-        || (signal.resolved_semantic_role.is_some() && signal.semantic_consensus.is_none())
-}
-
-fn handshake_name_fallback_blocked_signal_names(interfaces: &[InterfaceRecord]) -> Vec<String> {
+fn unresolved_semantic_role_signal_names(interfaces: &[InterfaceRecord]) -> Vec<String> {
     interfaces
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
         .filter(|signal| {
-            handshake_name_fallback_is_blocked(signal)
-                && classify_handshake_signal_from_name(&signal.signal_name).is_some()
+            !signal.semantic_candidates.is_empty() && signal.semantic_consensus.is_none()
         })
         .map(|signal| signal.signal_name.clone())
         .collect::<BTreeSet<_>>()
@@ -8743,31 +8203,10 @@ fn classify_handshake_signal(
     signal_name: &str,
     handshake_role_context: &HandshakeRoleContext,
 ) -> Option<HandshakeSignalRole> {
-    if let Some(role) = handshake_role_context
+    handshake_role_context
         .resolved_roles_by_signal
         .get(signal_name)
         .copied()
-    {
-        return Some(role);
-    }
-    if handshake_role_context
-        .heuristic_blocked_signals
-        .contains(signal_name)
-    {
-        return None;
-    }
-    classify_handshake_signal_from_name(signal_name)
-}
-
-fn classify_handshake_signal_from_name(signal_name: &str) -> Option<HandshakeSignalRole> {
-    let normalized = signal_name.to_ascii_lowercase();
-    if normalized.contains("valid") {
-        Some(HandshakeSignalRole::Valid)
-    } else if normalized.contains("ready") {
-        Some(HandshakeSignalRole::Ready)
-    } else {
-        None
-    }
 }
 
 fn is_handshake_asserted_value(value: &str) -> bool {
@@ -9170,14 +8609,14 @@ fn explicit_clock_signal_from_text(text: &str, known_signals: &BTreeSet<String>)
             parse_named_cycle_like_diagram_position(&tokens, index, &known_signal_tokens).or_else(
                 || parse_named_generic_edge_diagram_position(&tokens, index, &known_signal_tokens),
             )
-            && let Some(signal_name) = known_signals
-                .iter()
-                .find(|signal| signal.eq_ignore_ascii_case(signal_token))
+            && let Some(signal_name) =
+                resolve_known_signal_token_in_text(signal_token, text, known_signals)
         {
-            return Some(signal_name.clone());
+            return Some(signal_name);
         }
     }
 
+    let mut matched_signals = BTreeSet::new();
     for signal in known_signals {
         let signal_lower = signal.to_ascii_lowercase();
         let explicit_patterns = [
@@ -9227,11 +8666,35 @@ fn explicit_clock_signal_from_text(text: &str, known_signals: &BTreeSet<String>)
             .iter()
             .any(|pattern| contains_phrase(&lowered, pattern))
         {
-            return Some(signal.clone());
+            matched_signals.insert(signal.clone());
         }
     }
 
-    None
+    if matched_signals.len() == 1 {
+        matched_signals.into_iter().next()
+    } else {
+        None
+    }
+}
+
+fn resolve_known_signal_token_in_text(
+    folded_token: &str,
+    original_text: &str,
+    known_signals: &BTreeSet<String>,
+) -> Option<String> {
+    let folded_candidates = known_signals
+        .iter()
+        .filter(|signal| signal.eq_ignore_ascii_case(folded_token))
+        .collect::<Vec<_>>();
+    let exact_mentions = folded_candidates
+        .iter()
+        .filter(|signal| contains_text_phrase(original_text, signal))
+        .collect::<Vec<_>>();
+    match exact_mentions.as_slice() {
+        [signal] => Some((***signal).clone()),
+        [] if folded_candidates.len() == 1 => Some(folded_candidates[0].clone()),
+        _ => None,
+    }
 }
 
 fn unit_mentions_cycle_like_unit(unit: &str) -> bool {
@@ -9366,12 +8829,16 @@ fn build_signal_polarity_lookup(
         .collect::<HashMap<_, _>>();
 
     if let Some(system_contract) = system_contract {
-        polarity_by_signal
-            .entry(system_contract.reset_signal.clone())
-            .or_insert_with(|| match system_contract.reset_polarity {
-                SystemResetPolarity::ActiveHigh => SignalPolarity::ActiveHigh,
-                SystemResetPolarity::ActiveLow => SignalPolarity::ActiveLow,
-            });
+        let resolved_polarity = match system_contract.reset_polarity {
+            SystemResetPolarity::ActiveHigh => Some(SignalPolarity::ActiveHigh),
+            SystemResetPolarity::ActiveLow => Some(SignalPolarity::ActiveLow),
+            SystemResetPolarity::Unknown => None,
+        };
+        if let Some(resolved_polarity) = resolved_polarity {
+            polarity_by_signal
+                .entry(system_contract.reset_signal.clone())
+                .or_insert(resolved_polarity);
+        }
     }
 
     polarity_by_signal
@@ -10204,61 +9671,29 @@ fn parse_diagram_cycle_count_value(token: &str) -> Option<u32> {
 }
 
 fn find_known_signal_name(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
-    let mut best_match = None::<String>;
-    for signal_name in known_signals {
-        if contains_phrase_case_insensitive(text, signal_name) {
-            match best_match.as_ref() {
-                Some(existing) if existing.len() >= signal_name.len() => {}
-                _ => best_match = Some(signal_name.clone()),
-            }
-        }
+    let mut exact_matches = known_signals
+        .iter()
+        .filter(|signal_name| contains_text_phrase(text, signal_name))
+        .collect::<Vec<_>>();
+    exact_matches.sort_by(|left, right| right.len().cmp(&left.len()).then_with(|| left.cmp(right)));
+    if let Some(exact) = exact_matches.first() {
+        return Some((**exact).clone());
     }
-    best_match
+
+    let mut folded_matches = known_signals
+        .iter()
+        .filter(|signal_name| contains_phrase_case_insensitive(text, signal_name));
+    let canonical = folded_matches.next()?;
+    if folded_matches.next().is_some() {
+        return None;
+    }
+    Some(canonical.clone())
 }
 
 fn contains_phrase_case_insensitive(text: &str, phrase: &str) -> bool {
     let text_lower = text.to_ascii_lowercase();
     let phrase_lower = phrase.to_ascii_lowercase();
     contains_text_phrase(&text_lower, &phrase_lower)
-}
-
-/// Resolve an un-indexed prose signal reference to its DECLARED indexed family
-/// member, using the universal index-suffix convention: a per-instance signal is
-/// written `PSELx` / `HSELx` (or numerically, `FOO0`/`FOO1`) in the declaration but
-/// referenced bare as `PSEL` / `HSEL` / `FOO` in prose. Returns the declared signal
-/// (e.g. `PSEL` → `PSELX`) so the IR uses one canonical identity everywhere — this is
-/// grammar (the `x`/digit index convention), never a hardcoded chip-spec name
-/// (ADR 0006). `WIRE-BASED-100.4`.
-///
-/// Fires ONLY for a candidate token that is not itself a known signal, so it is
-/// purely additive and can never override a real declaration. The trailing `X`
-/// marker matches the uppercased declared form of the lowercase-`x` instance index.
-fn resolve_indexed_signal_family(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
-    for token in text.split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')) {
-        if token.len() < 3
-            || !token
-                .chars()
-                .next()
-                .map(|c| c.is_ascii_uppercase())
-                .unwrap_or(false)
-        {
-            continue;
-        }
-        let upper = token.to_ascii_uppercase();
-        if known_signals.contains(&upper) {
-            continue; // already a declared signal — not an un-indexed family reference
-        }
-        for declared in known_signals {
-            if let Some(suffix) = declared.strip_prefix(upper.as_str()) {
-                let is_index_suffix = suffix == "X"
-                    || (!suffix.is_empty() && suffix.chars().all(|c| c.is_ascii_digit()));
-                if is_index_suffix {
-                    return Some(declared.clone());
-                }
-            }
-        }
-    }
-    None
 }
 
 fn contains_text_phrase(text: &str, phrase: &str) -> bool {
@@ -10412,7 +9847,7 @@ fn parse_timing_diagram_observation(
         for (idx, annotation) in annotations.iter().enumerate() {
             let text = annotation.as_str().unwrap_or_default().trim();
             if text.is_empty()
-                || is_spurious_timing_annotation_label(text)
+                || is_spurious_timing_annotation_label(text, known_signal_names)
                 || is_name_only_signal_annotation_label(text, known_signal_names)
                 || is_signal_value_annotation_label(text, known_signal_names)
             {
@@ -10624,9 +10059,7 @@ fn parse_allowed_vlm_observation_signal(
     known_signal_names: &HashSet<String>,
 ) -> Option<String> {
     let signal_name = parse_identifier(trim_vlm_guard_clause(signal_text))?;
-    if known_signal_names.contains(&signal_name)
-        || (known_signal_names.is_empty() && !is_generic_vlm_signal_term(&signal_name))
-    {
+    if known_signal_names.contains(&signal_name) {
         Some(signal_name)
     } else {
         None
@@ -10729,7 +10162,7 @@ fn normalize_vlm_waveform_motion_state(state: &str) -> String {
         .join(" ")
 }
 
-fn is_spurious_timing_annotation_label(text: &str) -> bool {
+fn is_spurious_timing_annotation_label(text: &str, known_signal_names: &HashSet<String>) -> bool {
     let trimmed = text.trim();
     if trimmed.is_empty() {
         return true;
@@ -10743,6 +10176,16 @@ fn is_spurious_timing_annotation_label(text: &str) -> bool {
     }
     if is_non_quantitative_waveform_motion_annotation(trimmed) {
         return true;
+    }
+
+    // A document-declared identifier is opaque evidence, even when its spelling also happens to
+    // be a common waveform word. Structural label and motion forms above remain noise regardless
+    // of the identifier; lexical noise classification below must not reinterpret the identity.
+    if known_signal_names
+        .iter()
+        .any(|signal_name| contains_text_phrase(trimmed, signal_name))
+    {
+        return false;
     }
 
     let tokens = trimmed
@@ -11237,29 +10680,11 @@ fn parse_allowed_vlm_guard_signal(
     known_signal_names: &HashSet<String>,
 ) -> Option<String> {
     let signal_name = parse_identifier(trim_vlm_guard_clause(signal_text))?;
-    if known_signal_names.contains(&signal_name)
-        || (known_signal_names.is_empty() && !is_generic_vlm_signal_term(&signal_name))
-    {
+    if known_signal_names.contains(&signal_name) {
         Some(signal_name)
     } else {
         None
     }
-}
-
-fn is_generic_vlm_signal_term(signal_name: &str) -> bool {
-    matches!(
-        signal_name.to_ascii_lowercase().as_str(),
-        "transfer"
-            | "transaction"
-            | "request"
-            | "response"
-            | "beat"
-            | "cycle"
-            | "phase"
-            | "state"
-            | "condition"
-            | "event"
-    )
 }
 
 fn parse_vlm_decision_tree_value(
@@ -11288,7 +10713,7 @@ fn parse_vlm_decision_tree_value(
     }
 
     if let Some(signal_name) = parse_identifier(value_text)
-        && (known_signal_names.is_empty() || known_signal_names.contains(&signal_name))
+        && known_signal_names.contains(&signal_name)
     {
         return Some(DecisionTreeValueRecord::SignalRef { signal_name });
     }
@@ -11762,7 +11187,7 @@ mod tests {
     }
 
     #[test]
-    fn builds_semantic_ir_from_handshake_evidence() -> Result<()> {
+    fn prose_signal_spellings_do_not_create_interface_authority() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("handshake.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -11802,10 +11227,10 @@ mod tests {
                 .any(|actor| actor.actor_id == "actor_receiver"
                     && !actor.supporting_statement_ids.is_empty())
         );
-        assert!(semantic_ir.interfaces.iter().any(|interface| {
-            interface.signals.contains(&"VALID".to_string())
-                && interface.signals.contains(&"READY".to_string())
-        }));
+        assert!(
+            semantic_ir.interfaces.is_empty(),
+            "undeclared prose tokens must not become an interface because of their spelling"
+        );
         assert!(semantic_ir.invariants.iter().any(|invariant| {
             invariant
                 .statement
@@ -11816,17 +11241,19 @@ mod tests {
             semantic_ir.gates.is_empty(),
             "cue-matched whole-statement gates are compatibility data only"
         );
-        // SEMANTIC-EMPTY-CATALOG-FILTER.1: this fixture is prose-only, so its VALID/READY
-        // interface records are Low-confidence and the declared-signal catalog is empty.
-        // The one residual packet is the grounding filter demoting the records that name
-        // them — the same answer a populated-catalog document has always given for an
-        // undeclared subject, no longer inverted by the absence of a catalog.
-        assert_eq!(semantic_ir.residual_decisions.len(), 1);
-        let packet = &semantic_ir.residual_decisions[0];
-        assert_eq!(packet.packet_id, "semantic_ungrounded_records_not_promoted");
-        assert!(packet.why_unresolved.contains("READY, VALID"));
+        assert!(semantic_ir.temporal_rules.is_empty());
+        assert!(
+            semantic_ir.residual_decisions.is_empty(),
+            "opaque prose identifiers must not create unresolved interface semantics"
+        );
         assert!(semantic_ir.signal_constraints.is_empty());
-        assert!(semantic_ir.conditional_rules.is_empty());
+        assert_eq!(semantic_ir.conditional_rules.len(), 2);
+        assert!(
+            semantic_ir
+                .conditional_rules
+                .iter()
+                .all(|rule| rule.consequent_signal.is_none())
+        );
 
         Ok(())
     }
@@ -12027,11 +11454,11 @@ mod tests {
         assert_eq!(
             super::classify_handshake_signal("XVALID", &context),
             None,
-            "fallback-only semantic roles should not drive typed handshake classification"
+            "roles without grounded consensus must not drive typed handshake classification"
         );
         assert!(
-            context.heuristic_blocked_signals.contains("XVALID"),
-            "handshake-shaped signals with provisional semantic roles should block raw name fallback"
+            context.resolved_roles_by_signal.is_empty(),
+            "identifier spelling must not create a role-context entry"
         );
     }
 
@@ -12391,7 +11818,7 @@ mod tests {
     }
 
     #[test]
-    fn infers_reset_polarity_when_explicit_level_is_omitted() -> Result<()> {
+    fn preserves_unknown_reset_polarity_when_explicit_level_is_omitted() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("inferred_reset.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -12421,10 +11848,7 @@ mod tests {
             .as_ref()
             .expect("explicit system contract should be present");
         assert_eq!(system_contract.reset_kind, SystemResetKind::Asynchronous);
-        assert_eq!(
-            system_contract.reset_polarity,
-            SystemResetPolarity::ActiveLow
-        );
+        assert_eq!(system_contract.reset_polarity, SystemResetPolarity::Unknown);
         assert_eq!(
             system_contract.assertion_timing,
             SystemResetTimingRelation::AsynchronousToClock
@@ -12440,6 +11864,42 @@ mod tests {
         assert_eq!(
             system_contract.automation_confidence,
             AutomationConfidence::Medium
+        );
+
+        let renamed_source = tempdir.path().join("renamed_reset.md");
+        fs::write(
+            &renamed_source,
+            "# Explicit Sequential Control\nSignal orbit is input width 1.\n\nSignal clear is input width 1.\n\nSignal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock orbit.\n\nReset clear is asynchronous.\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n",
+        )?;
+        let renamed_source_ir = SourceIr::build(&renamed_source, &source_artifact_base)?;
+        renamed_source_ir.write_to_disk()?;
+        let renamed_evidence_ir = EvidenceIr::build(
+            &renamed_source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        renamed_evidence_ir.write_to_disk()?;
+        let renamed_semantic_ir = SemanticIr::build(
+            &renamed_evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let renamed_contract = renamed_semantic_ir
+            .system_contract
+            .as_ref()
+            .expect("alpha-renamed explicit system contract should be present");
+        assert_eq!(renamed_contract.clock_signal, "orbit");
+        assert_eq!(renamed_contract.reset_signal, "clear");
+        assert_eq!(renamed_contract.reset_kind, system_contract.reset_kind);
+        assert_eq!(
+            renamed_contract.reset_polarity,
+            system_contract.reset_polarity
+        );
+        assert_eq!(
+            renamed_contract.assertion_timing,
+            system_contract.assertion_timing
+        );
+        assert_eq!(
+            renamed_contract.release_timing,
+            system_contract.release_timing
         );
 
         Ok(())
@@ -13615,7 +13075,10 @@ mod tests {
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
 
-        fs::write(&source, "# State Machine\n")?;
+        fs::write(
+            &source,
+            "# State Machine\nSignal PREADY is input width 1.\n",
+        )?;
 
         let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
         source_ir.visual_assets.push(VisualAsset {
@@ -15402,6 +14865,18 @@ mod tests {
             )
             .as_deref(),
             Some("HCLK")
+        );
+    }
+
+    #[test]
+    fn explicit_clock_signal_fails_closed_on_case_folded_identity_collision() {
+        let known_signals = BTreeSet::from(["sig".to_string(), "SIG".to_string()]);
+        assert_eq!(
+            super::explicit_clock_signal_from_text(
+                "DATA is sampled on rising edge of Sig.",
+                &known_signals,
+            ),
+            None
         );
     }
 
@@ -18081,7 +17556,7 @@ mod tests {
     }
 
     #[test]
-    fn derives_handshake_completion_from_valid_ready_guard() -> Result<()> {
+    fn valid_ready_spelling_alone_does_not_create_handshake_completion() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
 
@@ -18133,14 +17608,10 @@ mod tests {
             .iter()
             .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_payload_handshake")
             .expect("expected temporal rule derived from valid/ready guard");
-        assert!(rule.antecedents.iter().any(|predicate| {
+        assert!(!rule.antecedents.iter().any(|predicate| {
             matches!(
                 predicate,
-                super::TemporalPredicateRecord::HandshakeComplete {
-                    valid_signal,
-                    ready_signal,
-                    phase: super::TickPhase::PreTick,
-                } if valid_signal == "AWVALID" && ready_signal == "AWREADY"
+                super::TemporalPredicateRecord::HandshakeComplete { .. }
             )
         }));
 
@@ -18168,6 +17639,8 @@ mod tests {
                 "Signal clk is input width 1.\n\n",
                 "Signal XREQ is input width 1.\n\n",
                 "Signal XACK is input width 1.\n\n",
+                "Signal JUNO is input width 1.\n\n",
+                "Signal KITE is input width 1.\n\n",
                 "Signal PAYLOAD is output width 32.\n\n",
                 "Clock clk.\n",
             ),
@@ -18221,8 +17694,26 @@ mod tests {
                         false,
                     ),
                 ],
+                vec![
+                    make_cell("JUNO", false),
+                    make_cell("Requester", false),
+                    make_cell("1", false),
+                    make_cell(
+                        "Indicates that address and control information are valid for transfer.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_cell("KITE", false),
+                    make_cell("Subordinate", false),
+                    make_cell("1", false),
+                    make_cell(
+                        "Indicates that the subordinate can accept the transfer.",
+                        false,
+                    ),
+                ],
             ],
-            row_count: 2,
+            row_count: 4,
             col_count: 4,
         });
         source_ir.write_to_disk()?;
@@ -18240,6 +17731,17 @@ mod tests {
             negated: false,
             source_text: "PAYLOAD must not change when XREQ is HIGH and XACK is HIGH.".to_string(),
             supporting_statement_ids: vec!["stmt_temporal_semantic_handshake".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_alpha_renamed_handshake".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when JUNO is HIGH and KITE is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when JUNO is HIGH and KITE is HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_alpha_renamed_handshake".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         });
         evidence_ir.write_to_disk()?;
@@ -18266,12 +17768,29 @@ mod tests {
                 } if valid_signal == "XREQ" && ready_signal == "XACK"
             )
         }));
+        let renamed_rule = semantic_ir
+            .temporal_rules
+            .iter()
+            .find(|rule| {
+                rule.rule_id == "temporal_signal_constraint_sigcon_payload_alpha_renamed_handshake"
+            })
+            .expect("expected the alpha-renamed guard to use the same grounded semantics");
+        assert!(renamed_rule.antecedents.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::HandshakeComplete {
+                    valid_signal,
+                    ready_signal,
+                    phase: super::TickPhase::PreTick,
+                } if valid_signal == "JUNO" && ready_signal == "KITE"
+            )
+        }));
 
         Ok(())
     }
 
     #[test]
-    fn contested_semantic_roles_block_handshake_name_fallback() -> Result<()> {
+    fn contested_semantic_roles_remain_explicit_without_name_fallback() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
         use crate::ir::source::{
             ContentSectionRecord, SectionKind, SignalConstraintKind, SignalConstraintRecord,
@@ -18409,7 +17928,7 @@ mod tests {
             semantic_ir
                 .residual_decisions
                 .iter()
-                .any(|packet| { packet.packet_id == "semantic_handshake_name_fallback_blocked" })
+                .any(|packet| { packet.packet_id == "semantic_signal_role_unresolved" })
         );
 
         Ok(())
@@ -19157,8 +18676,7 @@ mod tests {
     }
 
     #[test]
-    fn width_only_width_parameter_declarations_do_not_become_interface_signal_records() -> Result<()>
-    {
+    fn width_suffixed_signal_declarations_keep_interface_authority() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("width_param_only.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -19183,14 +18701,13 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
-        assert!(
-            semantic_ir
-                .interfaces
-                .iter()
-                .flat_map(|interface| interface.signal_records.iter())
-                .all(|signal| signal.signal_name != "DATA_WIDTH"),
-            "width-parameter declarations should not survive as interface signals"
-        );
+        let data_width = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .find(|signal| signal.signal_name == "DATA_WIDTH")
+            .expect("an explicit signal declaration must outrank a naming convention");
+        assert_eq!(data_width.width_hint, Some(WidthHint::Numeric(32)));
         assert!(
             semantic_ir
                 .interfaces
@@ -19210,25 +18727,11 @@ mod tests {
         assert_eq!(
             signals,
             vec![
-                "RST_N".to_string(),
                 "TREADY".to_string(),
-                "TVALID".to_string()
+                "TVALID".to_string(),
+                "rst_n".to_string()
             ]
         );
-    }
-
-    #[test]
-    fn filtered_interface_candidate_signals_drop_width_and_table_metadata_noise() {
-        let filtered = super::filtered_interface_candidate_signals(&[
-            "TDATA_WIDTH".to_string(),
-            "TKEEP".to_string(),
-            "MIN".to_string(),
-            "MAX".to_string(),
-            "_WIDTH".to_string(),
-            "TVALID".to_string(),
-        ]);
-
-        assert_eq!(filtered, vec!["TKEEP".to_string(), "TVALID".to_string()]);
     }
 
     #[test]
@@ -19247,7 +18750,6 @@ mod tests {
                 "PREADY".to_string(),
             ],
             &authoritative,
-            "PADDR and PREADY participate in the transfer.",
         );
 
         assert_eq!(filtered, vec!["PADDR".to_string(), "PREADY".to_string()]);
@@ -19258,7 +18760,6 @@ mod tests {
         let filtered = super::retain_authoritative_interface_candidate_signals(
             &["A0".to_string(), "D0".to_string(), "F0".to_string()],
             &std::collections::BTreeSet::new(),
-            "| F0 84 | 01 | A0 | D0 |",
         );
 
         assert!(
@@ -19268,14 +18769,13 @@ mod tests {
     }
 
     #[test]
-    fn retain_authoritative_interface_candidate_signals_keeps_grounded_signal_behavior() {
+    fn retain_authoritative_interface_candidate_signals_rejects_behavior_without_declarations() {
         let filtered = super::retain_authoritative_interface_candidate_signals(
             &["READY".to_string(), "VALID".to_string()],
             &std::collections::BTreeSet::new(),
-            "VALID must remain asserted until READY is observed.",
         );
 
-        assert_eq!(filtered, vec!["READY".to_string(), "VALID".to_string()]);
+        assert!(filtered.is_empty());
     }
 
     #[test]
@@ -20236,18 +19736,53 @@ mod tests {
     // parse_allowed_vlm_observation_signal unit tests
 
     #[test]
-    fn allowed_vlm_signal_rejects_generic_term_when_known_set_empty() {
-        // Catches delete ! and &&→|| mutants at line 9687
+    fn allowed_vlm_signal_rejects_identifier_when_known_set_empty() {
         let known_signals = HashSet::new();
-        assert!(super::parse_allowed_vlm_observation_signal("Transfer", &known_signals).is_none());
+        assert!(
+            super::parse_allowed_vlm_observation_signal("bespoke_wire", &known_signals).is_none()
+        );
     }
 
     #[test]
     fn allowed_vlm_signal_rejects_unknown_signal_when_known_set_non_empty() {
-        // Catches &&→|| mutant at line 9687 — || would allow any non-generic signal
         let mut known_signals = HashSet::new();
         known_signals.insert("SIG1".to_string());
         assert!(super::parse_allowed_vlm_observation_signal("mysig", &known_signals).is_none());
+    }
+
+    #[test]
+    fn allowed_vlm_signal_accepts_document_declared_generic_word() {
+        let known_signals: HashSet<String> = ["request".to_string()].into();
+        assert_eq!(
+            super::parse_allowed_vlm_observation_signal("request", &known_signals),
+            Some("request".to_string())
+        );
+    }
+
+    #[test]
+    fn allowed_vlm_guard_signal_requires_document_declaration() {
+        let empty = HashSet::new();
+        assert!(super::parse_allowed_vlm_guard_signal("plausible_wire", &empty).is_none());
+
+        let known: HashSet<String> = ["data".to_string()].into();
+        assert_eq!(
+            super::parse_allowed_vlm_guard_signal("data", &known),
+            Some("data".to_string())
+        );
+    }
+
+    #[test]
+    fn spurious_timing_label_filter_does_not_depend_on_declared_identifier_spelling() {
+        for signal_name in ["data", "bespoke_wire", "A0"] {
+            let known: HashSet<String> = [signal_name.to_string()].into();
+            assert!(
+                !super::is_spurious_timing_annotation_label(
+                    &format!("{signal_name} transfer"),
+                    &known
+                ),
+                "declared identity {signal_name:?} must outrank waveform-noise vocabulary"
+            );
+        }
     }
 
     // normalize_vlm_waveform_motion_state unit tests
@@ -21036,6 +20571,16 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn vlm_decision_tree_value_does_not_mint_signal_ref_without_catalog() {
+        let known = HashSet::new();
+        let result = super::parse_vlm_decision_tree_value("plausible_wire", &known);
+        assert!(matches!(
+            result,
+            Some(super::DecisionTreeValueRecord::Literal { .. })
+        ));
+    }
+
     // is_false unit tests
 
     #[test]
@@ -21179,6 +20724,18 @@ mod tests {
         // Catches return None mutant
         let result = super::parse_explicit_infrastructure_source_actor("no signal here", "CLK");
         assert!(result.is_none());
+    }
+
+    #[test]
+    fn infrastructure_parsers_do_not_alias_case_folded_signal_identity() {
+        assert!(
+            super::parse_explicit_infrastructure_source_actor("the generator drives SIG", "sig",)
+                .is_none()
+        );
+        assert!(
+            super::parse_explicit_infrastructure_distribution_actors("SIG feeds the CPU", "sig",)
+                .is_empty()
+        );
     }
 
     // parse_explicit_infrastructure_distribution_actors unit tests
@@ -22226,11 +21783,10 @@ mod tests {
     // -- looks_like_signal_token high-value mutants --
 
     #[test]
-    fn looks_like_signal_token_short_token_returns_false() {
-        // Line 6281: <→== / <→<= — single-char token should be rejected.
+    fn looks_like_signal_token_accepts_single_letter_identifier() {
         assert!(
-            !super::looks_like_signal_token("A"),
-            "single char should return false"
+            super::looks_like_signal_token("A"),
+            "identifier length carries no signal authority"
         );
     }
 
@@ -22262,50 +21818,15 @@ mod tests {
     }
 
     #[test]
-    fn looks_like_signal_token_mixed_case_returns_false() {
-        // Line 6304: &&→|| — mixed case like "Clk" should NOT pass (needs all upper OR _n/_b suffix).
+    fn looks_like_signal_token_mixed_case_returns_true() {
         assert!(
-            !super::looks_like_signal_token("Clk"),
-            "mixed case should return false"
+            super::looks_like_signal_token("Clk"),
+            "identifier syntax is case-independent"
         );
     }
 
     #[test]
-    fn signal_stop_words_holds_no_chip_spec_vocabulary() {
-        // ADR 0006 guard (PDF-AGNOSTIC-EXTRACTION): the signal stop-word list must
-        // contain ZERO chip-spec-specific vocabulary — protocol family names, vendor
-        // names, or protocol encoding values. A token mis-discovered as a signal is
-        // filtered downstream against the document's own declared signals; the list
-        // must never hardcode one spec's words. (Forbidden tokens are concatenated so
-        // this guard can never trip on itself.)
-        let sw = super::signal_stop_words();
-        let forbidden = [
-            format!("AM{}", "BA"),
-            format!("AH{}", "B"),
-            format!("AP{}", "B"),
-            format!("AX{}", "I"),
-            format!("AC{}", "E"),
-            format!("CH{}", "I"),
-            "AR".to_string() + "M",
-            "AM".to_string() + "D",
-            "INT".to_string() + "EL",
-            "NON".to_string() + "SEQ",
-            "IN".to_string() + "CR4",
-            "WR".to_string() + "AP4",
-            "OK".to_string() + "AY",
-            "IH".to_string() + "I",
-        ];
-        for tok in &forbidden {
-            assert!(
-                !sw.iter().any(|w| *w == tok.as_str()),
-                "ADR 0006: '{tok}' is chip-spec-specific and must not be a hardcoded stop-word"
-            );
-        }
-    }
-
-    #[test]
-    fn looks_like_signal_token_lowered_suffix_n_returns_true() {
-        // Line 6312: ends_with("_n") — lowercased signal names with _n suffix.
+    fn looks_like_signal_token_accepts_lowercase_identifier_with_underscore() {
         assert!(
             super::looks_like_signal_token("rst_n"),
             "rst_n should look like signal"
@@ -22313,8 +21834,7 @@ mod tests {
     }
 
     #[test]
-    fn looks_like_signal_token_lowered_suffix_b_returns_true() {
-        // Line 6312: ends_with("_b") — lowercased signal names with _b suffix.
+    fn looks_like_signal_token_accepts_another_lowercase_identifier_with_underscore() {
         assert!(
             super::looks_like_signal_token("enable_b"),
             "enable_b should look like signal"
@@ -22333,6 +21853,20 @@ mod tests {
         );
         let decl = result.unwrap();
         assert_eq!(decl.signal_name, "clk");
+    }
+
+    #[test]
+    fn parse_signal_declarations_consumes_every_merged_declaration() {
+        let declarations = super::parse_explicit_signal_declarations(
+            "Signal a is input width 1. Signal MixedCase is output width 7.",
+        );
+        assert_eq!(
+            declarations
+                .iter()
+                .map(|declaration| declaration.signal_name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["a", "MixedCase"]
+        );
     }
 
     #[test]
@@ -22548,39 +22082,13 @@ mod tests {
     // -- should_emit_interface_candidate high-value mutants --
 
     #[test]
-    fn should_emit_interface_candidate_ends_with_n() {
-        // Lines 6786-6790: ||→&& — signal ending with _N should trigger emission.
-        assert!(
-            super::should_emit_interface_candidate(&["FOO_N".to_string()]),
-            "FOO_N should trigger interface candidate emission"
-        );
-    }
-
-    #[test]
-    fn should_emit_interface_candidate_contains_rst() {
-        // Line 6787: ||→&& — signal containing RST should trigger.
-        assert!(
-            super::should_emit_interface_candidate(&["nRST".to_string()]),
-            "nRST should trigger interface candidate emission"
-        );
-    }
-
-    #[test]
-    fn should_emit_interface_candidate_contains_clk() {
-        // Line 6789: ||→&& — signal containing CLK should trigger.
-        assert!(
-            super::should_emit_interface_candidate(&["SYS_CLK".to_string()]),
-            "SYS_CLK should trigger interface candidate emission"
-        );
-    }
-
-    #[test]
-    fn should_emit_interface_candidate_single_plain_signal_returns_false() {
-        // Lines 6786-6790: ||→&& — "data_out" doesn't match any pattern.
-        assert!(
-            !super::should_emit_interface_candidate(&["data_out".to_string()]),
-            "data_out should not trigger emission"
-        );
+    fn should_emit_interface_candidate_is_invariant_for_single_signal_spelling() {
+        for signal_name in ["FOO_N", "nRST", "SYS_CLK", "data_out", "arbitrary"] {
+            assert!(
+                !super::should_emit_interface_candidate(&[signal_name.to_string()]),
+                "a singleton must not gain interface authority from spelling: {signal_name}"
+            );
+        }
     }
 
     #[test]
@@ -22629,8 +22137,9 @@ mod tests {
             vec![],
         );
         let ctx = make_semantic_context();
+        let interfaces = HashMap::new();
         assert!(
-            !super::is_invariant_like(&stmt, &ctx),
+            !super::is_invariant_like(&stmt, &ctx, &interfaces),
             "ExplicitAbstraction should return false"
         );
     }
@@ -22644,8 +22153,9 @@ mod tests {
             vec!["clk".to_string()],
         );
         let ctx = make_semantic_context();
+        let interfaces = HashMap::new();
         assert!(
-            super::is_invariant_like(&stmt, &ctx),
+            super::is_invariant_like(&stmt, &ctx, &interfaces),
             "must + signals should return true"
         );
     }
@@ -22659,39 +22169,41 @@ mod tests {
             vec![],
         );
         let ctx = make_semantic_context();
+        let interfaces = HashMap::new();
         assert!(
-            super::is_invariant_like(&stmt, &ctx),
+            super::is_invariant_like(&stmt, &ctx, &interfaces),
             "must (no signals) should return true via first phrase check"
         );
     }
 
-    // -- reset_signal_name_looks_active_low high-value mutants --
-
     #[test]
-    fn reset_signal_name_looks_active_low_n_suffix() {
-        // Line 4673: ||→&& — _n suffix should return true.
-        assert!(
-            super::reset_signal_name_looks_active_low("rst_n"),
-            "rst_n should look active low"
+    fn descriptive_invariant_cues_require_alpha_equivariant_declaration_grounding() {
+        let context = make_semantic_context();
+        let ordinary = make_statement_context(
+            super::StatementClass::SourceFact,
+            "The timing state is observed by software.",
+            vec!["The".to_string(), "timing".to_string(), "state".to_string()],
         );
-    }
+        assert!(
+            !super::is_invariant_like(&ordinary, &context, &HashMap::new()),
+            "descriptive vocabulary alone is not invariant authority"
+        );
 
-    #[test]
-    fn reset_signal_name_looks_active_low_exact_rstb() {
-        // Line 4673: ||→&& — exact match "rstb" should return true.
-        assert!(
-            super::reset_signal_name_looks_active_low("rstb"),
-            "rstb should look active low"
-        );
-    }
-
-    #[test]
-    fn reset_signal_name_looks_active_low_plain_name_returns_false() {
-        // Line 4670: return true — "reset" without _n/_b should return false.
-        assert!(
-            !super::reset_signal_name_looks_active_low("reset"),
-            "reset (no _n/_b) should not look active low"
-        );
+        for signal in ["VALID", "mixedCase7", "x"] {
+            let statement = make_statement_context(
+                super::StatementClass::SourceFact,
+                &format!("{signal} is asserted and observed."),
+                vec![signal.to_string(), "is".to_string(), "asserted".to_string()],
+            );
+            let interfaces = HashMap::from([(
+                signal.to_string(),
+                BTreeSet::from(["interface_document_declared".to_string()]),
+            )]);
+            assert!(
+                super::is_invariant_like(&statement, &context, &interfaces),
+                "a declared identity remains grounded under alpha-renaming: {signal}"
+            );
+        }
     }
 
     // -- normalize_infrastructure_component_name high-value mutants --
@@ -22934,18 +22446,14 @@ mod tests {
     }
 
     #[test]
-    fn temporal_condition_canonicalizes_unindexed_select_to_declared_family() {
-        // WIRE-BASED-100.4: the doc declares the per-completer select as PSELx (→ PSELX) but
-        // prose writes the un-indexed "PSEL". The antecedent must resolve to the canonical
-        // declared PSELX so the IR uses one identity everywhere; the bare list members PENABLE
-        // and PREADY are declared and unaffected.
+    fn temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling() {
         let known: BTreeSet<String> = ["PSELX", "PENABLE", "PREADY"]
             .iter()
             .map(|s| s.to_string())
             .collect();
         let handshake = super::HandshakeRoleContext::default();
         let predicates = super::parse_temporal_condition_predicates(
-            "PSEL , PENABLE , and PREADY are asserted.",
+            "PSEL is asserted.",
             &known,
             super::TickPhase::PreTick,
             &handshake,
@@ -22959,21 +22467,11 @@ mod tests {
                 _ => None,
             })
             .collect();
-        assert_eq!(
-            asserted,
-            ["PENABLE", "PREADY", "PSELX"]
-                .iter()
-                .map(|s| s.to_string())
-                .collect::<BTreeSet<_>>(),
-            "the un-indexed 'PSEL' resolves to the declared 'PSELX'"
-        );
+        assert!(asserted.is_empty(), "unexpected predicates: {asserted:?}");
     }
 
     #[test]
-    fn temporal_condition_index_family_generalizes_across_specs() {
-        // WIRE-BASED-100.5c: the index-family resolver is GRAMMAR (the x-index convention),
-        // not an APB-specific name (ADR 0006) — it must work for AHB's `HSELx` exactly as for
-        // APB's `PSELx`. Un-indexed prose "HSEL" resolves to the declared "HSELX".
+    fn temporal_condition_does_not_infer_numeric_or_x_index_aliases() {
         let known: BTreeSet<String> = ["HSELX", "HREADY"].iter().map(|s| s.to_string()).collect();
         let handshake = super::HandshakeRoleContext::default();
         let predicates = super::parse_temporal_condition_predicates(
@@ -22991,14 +22489,33 @@ mod tests {
                 _ => None,
             })
             .collect();
-        assert_eq!(
-            asserted,
-            ["HSELX"]
-                .iter()
-                .map(|s| s.to_string())
-                .collect::<BTreeSet<_>>(),
-            "the un-indexed 'HSEL' resolves to the declared 'HSELX' (cross-spec generality)"
+        assert!(asserted.is_empty());
+    }
+
+    #[test]
+    fn temporal_condition_fails_closed_on_case_folded_identifier_collision() {
+        let known: BTreeSet<String> = ["sig", "SIG"]
+            .iter()
+            .map(|signal| signal.to_string())
+            .collect();
+        let handshake = super::HandshakeRoleContext::default();
+
+        let exact = super::parse_temporal_condition_predicates(
+            "SIG is asserted",
+            &known,
+            super::TickPhase::PreTick,
+            &handshake,
         );
+        assert!(exact.iter().any(|predicate| {
+            matches!(
+                predicate,
+                super::TemporalPredicateRecord::SignalValue { signal_name, .. }
+                    if signal_name == "SIG"
+            )
+        }));
+
+        let ambiguous = super::find_known_signal_name("SiG is asserted", &known);
+        assert!(ambiguous.is_none());
     }
 
     #[test]
@@ -23033,8 +22550,7 @@ mod tests {
 
     #[test]
     fn temporal_condition_does_not_invent_a_signal_for_unknown_token() {
-        // Guard: an un-indexed token with NO declared indexed family member is dropped,
-        // never fabricated (resolve_indexed_signal_family is purely additive).
+        // An undeclared token is dropped, never fabricated.
         let known: BTreeSet<String> = ["PENABLE"].iter().map(|s| s.to_string()).collect();
         let handshake = super::HandshakeRoleContext::default();
         let predicates = super::parse_temporal_condition_predicates(

@@ -1794,36 +1794,19 @@ fn interface_signals_with_prior_guided_semantic_arbitration(
     })
 }
 
-fn interface_signals_with_blocked_handshake_name_fallback(
+fn interface_signals_with_unresolved_semantic_role(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> Vec<String> {
     interfaces
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
         .filter(|signal| {
-            handshake_name_heuristic_role(&signal.signal_name).is_some()
-                && (signal
-                    .semantic_arbitration
-                    .as_ref()
-                    .is_some_and(|arbitration| !arbitration.decisive)
-                    || (signal.resolved_semantic_role.is_some()
-                        && signal.semantic_consensus.is_none()))
+            !signal.semantic_candidates.is_empty() && signal.semantic_consensus.is_none()
         })
         .map(|signal| signal.signal_name.clone())
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect()
-}
-
-fn handshake_name_heuristic_role(signal_name: &str) -> Option<&'static str> {
-    let normalized = signal_name.to_ascii_lowercase();
-    if normalized.contains("valid") {
-        Some("valid")
-    } else if normalized.contains("ready") {
-        Some("ready")
-    } else {
-        None
-    }
 }
 
 fn interface_signals_with_semantic_grounding_strength_count(
@@ -3950,8 +3933,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         interface_signals_with_prior_guided_semantic_arbitration_count(&ir.interfaces);
     let prior_guided_semantic_arbitration_signal_names =
         interface_signals_with_prior_guided_semantic_arbitration(&ir.interfaces);
-    let blocked_handshake_name_fallback =
-        interface_signals_with_blocked_handshake_name_fallback(&ir.interfaces);
+    let unresolved_semantic_role_signals =
+        interface_signals_with_unresolved_semantic_role(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
@@ -4067,8 +4050,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  with_non_decisive_semantic_arbitration: {with_non_decisive_semantic_arbitration}");
     println!("  with_prior_guided_semantic_arbitration: {with_prior_guided_semantic_arbitration}");
     println!(
-        "  with_blocked_handshake_name_fallback: {}",
-        blocked_handshake_name_fallback.len()
+        "  with_unresolved_semantic_role: {}",
+        unresolved_semantic_role_signals.len()
     );
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  with_semantic_consensus: {with_semantic_consensus}");
@@ -4709,16 +4692,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .collect(),
         ));
     }
-    if !blocked_handshake_name_fallback.is_empty() {
+    if !unresolved_semantic_role_signals.is_empty() {
         findings.push(finding(
-            "semantic_handshake_name_fallback_blocked_present",
+            "semantic_unresolved_semantic_role_present",
             ValidationFindingSeverity::Info,
             "semantic_role_arbitration",
             format!(
-                "{} handshake-shaped signal(s) intentionally block literal VALID/READY fallback because their preserved semantic role state is still contested or only provisional",
-                blocked_handshake_name_fallback.len()
+                "{} signal(s) preserve semantic-role candidates without grounded consensus; identifier spelling supplies no fallback",
+                unresolved_semantic_role_signals.len()
             ),
-            blocked_handshake_name_fallback.clone(),
+            unresolved_semantic_role_signals.clone(),
         ));
     }
     if resolved_semantic_roles_without_consensus > 0 {
@@ -5249,8 +5232,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 with_prior_guided_semantic_arbitration.to_string(),
             ),
             metric(
-                "with_blocked_handshake_name_fallback",
-                blocked_handshake_name_fallback.len().to_string(),
+                "with_unresolved_semantic_role",
+                unresolved_semantic_role_signals.len().to_string(),
             ),
             metric(
                 "with_resolved_semantic_role",
@@ -5549,8 +5532,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         interface_signals_with_prior_guided_semantic_arbitration_count(&ir.interfaces);
     let prior_guided_semantic_arbitration_signal_names =
         interface_signals_with_prior_guided_semantic_arbitration(&ir.interfaces);
-    let blocked_handshake_name_fallback =
-        interface_signals_with_blocked_handshake_name_fallback(&ir.interfaces);
+    let unresolved_semantic_role_signals =
+        interface_signals_with_unresolved_semantic_role(&ir.interfaces);
     let with_resolved_semantic_role =
         interface_signals_with_resolved_semantic_role_count(&ir.interfaces);
     let with_semantic_consensus = interface_signals_with_semantic_consensus_count(&ir.interfaces);
@@ -5659,8 +5642,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  with_non_decisive_semantic_arbitration: {with_non_decisive_semantic_arbitration}");
     println!("  with_prior_guided_semantic_arbitration: {with_prior_guided_semantic_arbitration}");
     println!(
-        "  with_blocked_handshake_name_fallback: {}",
-        blocked_handshake_name_fallback.len()
+        "  with_unresolved_semantic_role: {}",
+        unresolved_semantic_role_signals.len()
     );
     println!("  with_resolved_semantic_role: {with_resolved_semantic_role}");
     println!("  with_semantic_consensus: {with_semantic_consensus}");
@@ -6538,16 +6521,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .collect(),
         ));
     }
-    if !blocked_handshake_name_fallback.is_empty() {
+    if !unresolved_semantic_role_signals.is_empty() {
         findings.push(finding(
-            "intent_handshake_name_fallback_blocked_present",
+            "intent_unresolved_semantic_role_present",
             ValidationFindingSeverity::Info,
             "semantic_role_arbitration",
             format!(
-                "{} handshake-shaped signal(s) intentionally block literal VALID/READY fallback because their preserved semantic role state is still contested or only provisional",
-                blocked_handshake_name_fallback.len()
+                "{} signal(s) preserve semantic-role candidates without grounded consensus; identifier spelling supplies no fallback",
+                unresolved_semantic_role_signals.len()
             ),
-            blocked_handshake_name_fallback.clone(),
+            unresolved_semantic_role_signals.clone(),
         ));
     }
     if resolved_semantic_roles_without_consensus > 0 {
@@ -7164,8 +7147,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 with_prior_guided_semantic_arbitration.to_string(),
             ),
             metric(
-                "with_blocked_handshake_name_fallback",
-                blocked_handshake_name_fallback.len().to_string(),
+                "with_unresolved_semantic_role",
+                unresolved_semantic_role_signals.len().to_string(),
             ),
             metric(
                 "with_resolved_semantic_role",
@@ -9870,7 +9853,7 @@ mod tests {
     }
 
     #[test]
-    fn validate_semantic_ir_reports_blocked_handshake_name_fallback() -> Result<()> {
+    fn validate_semantic_ir_reports_unresolved_semantic_role() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir
             .path()
@@ -9955,24 +9938,41 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
-        let report =
-            validate_semantic_ir(&semantic_ir, "blocked_handshake_name_fallback".to_string());
+        let report = validate_semantic_ir(&semantic_ir, "unresolved_semantic_role".to_string());
         assert_eq!(
-            metric_value(&report, "with_blocked_handshake_name_fallback"),
+            metric_value(&report, "with_unresolved_semantic_role"),
             Some("1")
         );
         assert!(has_finding(
             &report,
-            "semantic_handshake_name_fallback_blocked_present"
+            "semantic_unresolved_semantic_role_present"
         ));
         let finding = report
             .findings
             .iter()
-            .find(|finding| {
-                finding.finding_id == "semantic_handshake_name_fallback_blocked_present"
-            })
-            .expect("expected blocked handshake fallback finding");
+            .find(|finding| finding.finding_id == "semantic_unresolved_semantic_role_present")
+            .expect("expected unresolved semantic-role finding");
         assert_eq!(finding.related_ids, vec!["XVALID".to_string()]);
+
+        let mut renamed_semantic_ir = semantic_ir.clone();
+        renamed_semantic_ir
+            .interfaces
+            .iter_mut()
+            .flat_map(|interface| interface.signal_records.iter_mut())
+            .filter(|signal| signal.signal_name == "XVALID")
+            .for_each(|signal| signal.signal_name = "JUNO".to_string());
+        let renamed_report =
+            validate_semantic_ir(&renamed_semantic_ir, "renamed_unresolved_role".to_string());
+        assert_eq!(
+            metric_value(&renamed_report, "with_unresolved_semantic_role"),
+            Some("1")
+        );
+        let renamed_finding = renamed_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "semantic_unresolved_semantic_role_present")
+            .expect("expected alpha-renamed unresolved semantic-role finding");
+        assert_eq!(renamed_finding.related_ids, vec!["JUNO".to_string()]);
 
         Ok(())
     }
@@ -13904,7 +13904,9 @@ mod tests {
                 "Signal AWVALID is input width 1.\n\n",
                 "Signal AWREADY is input width 1.\n\n",
                 "Signal PAYLOAD is output width 32.\n\n",
-                "Clock clk.\n",
+                "Clock clk.\n\n",
+                "AWVALID indicates that the transfer information is valid.\n\n",
+                "AWREADY indicates that the receiver can accept the transfer.\n",
             ),
         )?;
 
@@ -14635,7 +14637,7 @@ mod tests {
     }
 
     #[test]
-    fn validate_intent_ir_reports_blocked_handshake_fallback_for_provisional_roles() -> Result<()> {
+    fn validate_intent_ir_reports_unresolved_provisional_semantic_role() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;
 
         let tempdir = tempdir()?;
@@ -14700,27 +14702,49 @@ mod tests {
             &semantic_ir.artifact_layout.semantic_ir_path,
             &intent_artifact_base,
         )?;
-        let xreq = intent_ir
-            .interfaces
-            .iter_mut()
-            .flat_map(|interface| interface.signal_records.iter_mut())
-            .find(|signal| signal.signal_name == "XREQ")
-            .expect("expected XREQ interface signal");
-        xreq.signal_name = "XVALID".to_string();
-        xreq.semantic_consensus = None;
+        {
+            let xreq = intent_ir
+                .interfaces
+                .iter_mut()
+                .flat_map(|interface| interface.signal_records.iter_mut())
+                .find(|signal| signal.signal_name == "XREQ")
+                .expect("expected XREQ interface signal");
+            xreq.signal_name = "XVALID".to_string();
+            xreq.semantic_consensus = None;
+        }
 
         let report = validate_intent_ir(
             &intent_ir,
-            "blocked_handshake_fallback_for_provisional_roles".to_string(),
+            "unresolved_provisional_semantic_role".to_string(),
         );
         assert_eq!(
-            metric_value(&report, "with_blocked_handshake_name_fallback"),
+            metric_value(&report, "with_unresolved_semantic_role"),
             Some("1")
         );
         assert!(has_finding(
             &report,
-            "intent_handshake_name_fallback_blocked_present"
+            "intent_unresolved_semantic_role_present"
         ));
+
+        intent_ir
+            .interfaces
+            .iter_mut()
+            .flat_map(|interface| interface.signal_records.iter_mut())
+            .find(|signal| signal.signal_name == "XVALID")
+            .expect("expected unresolved XVALID interface signal")
+            .signal_name = "JUNO".to_string();
+        let renamed_report =
+            validate_intent_ir(&intent_ir, "renamed_unresolved_semantic_role".to_string());
+        assert_eq!(
+            metric_value(&renamed_report, "with_unresolved_semantic_role"),
+            Some("1")
+        );
+        let renamed_finding = renamed_report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "intent_unresolved_semantic_role_present")
+            .expect("expected alpha-renamed unresolved semantic-role finding");
+        assert_eq!(renamed_finding.related_ids, vec!["JUNO".to_string()]);
 
         Ok(())
     }
@@ -14828,7 +14852,7 @@ mod tests {
     }
 
     #[test]
-    fn validate_intent_ir_reports_blocked_handshake_name_fallback() -> Result<()> {
+    fn validate_intent_ir_reports_unresolved_semantic_role() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir
             .path()
@@ -14919,14 +14943,14 @@ mod tests {
             &intent_artifact_base,
         )?;
 
-        let report = validate_intent_ir(&intent_ir, "blocked_handshake_name_fallback".to_string());
+        let report = validate_intent_ir(&intent_ir, "unresolved_semantic_role".to_string());
         assert_eq!(
-            metric_value(&report, "with_blocked_handshake_name_fallback"),
+            metric_value(&report, "with_unresolved_semantic_role"),
             Some("1")
         );
         assert!(has_finding(
             &report,
-            "intent_handshake_name_fallback_blocked_present"
+            "intent_unresolved_semantic_role_present"
         ));
 
         Ok(())

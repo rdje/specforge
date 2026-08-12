@@ -41,12 +41,15 @@ fn strip_code_fences(raw: &str) -> String {
     t.strip_suffix("```").unwrap_or(t).trim().to_string()
 }
 
-/// A signal name is acceptable iff non-empty and uppercase-alphanumeric + `_`
-/// (the `nlp_enrich` signal-name discipline — keeps prose words out of the KG).
-fn is_signal_name(s: &str) -> bool {
-    !s.is_empty()
-        && s.chars()
-            .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+/// A signal identity is an opaque ASCII identifier. Whether that identifier denotes a
+/// signal comes from the current document's grounding catalog, never from letter case.
+fn is_signal_identifier(s: &str) -> bool {
+    let mut characters = s.chars();
+    let Some(first) = characters.next() else {
+        return false;
+    };
+    (first.is_ascii_alphabetic() || first == '_')
+        && characters.all(|character| character.is_ascii_alphanumeric() || character == '_')
 }
 
 fn parse_relation_kind(s: &str) -> Option<RelationKind> {
@@ -58,7 +61,7 @@ fn parse_relation_kind(s: &str) -> Option<RelationKind> {
 }
 
 /// Build a grounded `ActorSignalRelation` from one parsed JSON object — the shared gate
-/// logic (anti-fabrication: actor non-empty, signal an uppercase name and, when a declared
+/// logic (anti-fabrication: actor non-empty, signal an identifier and, when a declared
 /// signal list is given, a member of it). `relation_id` is the caller's namespaced id.
 fn relation_from_value(
     value: &serde_json::Value,
@@ -83,11 +86,11 @@ fn relation_from_value(
         .to_string();
     let relation = parse_relation_kind(value.get("relation").and_then(|r| r.as_str())?)?;
     // Grounding gates (anti-fabrication).
-    if actor.is_empty() || !is_signal_name(&signal) {
+    if actor.is_empty() || !is_signal_identifier(&signal) {
         return None;
     }
-    if !grounding.is_empty() && !grounding.iter().any(|g| g == &signal) {
-        return None; // ungrounded signal
+    if grounding.is_empty() || !grounding.iter().any(|grounded| grounded == &signal) {
+        return None; // no current-document declaration authority
     }
     Some(ActorSignalRelation {
         relation_id: relation_id.to_string(),
@@ -124,7 +127,7 @@ fn classify_relation_responses(
         let id = format!("r14:{statement_id}:{}", idx + 1);
         if let Some(rel) = relation_from_value(item, &id, statement_id, grounding) {
             let key = (
-                rel.actor_name.to_ascii_uppercase(),
+                rel.actor_name.clone(),
                 rel.signal_name.clone(),
                 matches!(rel.relation, RelationKind::Drives),
             );
@@ -178,15 +181,42 @@ fn candidate_work(ir: &EvidenceIr, max_statements: usize) -> Vec<(String, String
     work
 }
 
-fn grounding_signals(arg: &Option<String>) -> Vec<String> {
+fn declared_signal_name(statement: &str) -> Option<String> {
+    let mut tokens = statement.split_whitespace();
+    if !tokens.next()?.eq_ignore_ascii_case("signal") {
+        return None;
+    }
+    let name = tokens
+        .next()?
+        .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_');
+    is_signal_identifier(name).then(|| name.to_string())
+}
+
+fn grounding_signals(arg: &Option<String>, ir: &EvidenceIr) -> Vec<String> {
+    let mut declared = ir
+        .extracted_statements
+        .iter()
+        .filter_map(|statement| declared_signal_name(&statement.text))
+        .chain(
+            ir.table_signal_declaration_provenance
+                .iter()
+                .map(|declaration| declaration.signal_name.clone()),
+        )
+        .collect::<Vec<_>>();
+    declared.sort();
+    declared.dedup();
+
     match arg {
-        Some(explicit) if explicit.is_empty() => Vec::new(),
-        Some(explicit) => explicit
-            .split(',')
-            .map(|s| s.trim().to_ascii_uppercase())
-            .filter(|s| !s.is_empty())
-            .collect(),
-        None => Vec::new(),
+        Some(explicit) => {
+            let requested = explicit
+                .split(',')
+                .map(str::trim)
+                .filter(|signal| !signal.is_empty())
+                .collect::<std::collections::BTreeSet<_>>();
+            declared.retain(|signal| requested.contains(signal.as_str()));
+            declared
+        }
+        None => declared,
     }
 }
 
@@ -240,7 +270,7 @@ pub fn run(args: SignalResolveArgs) -> Result<()> {
         .clone()
         .unwrap_or_else(|| llm_text::default_model(args.provider));
     let url = llm_text::api_url(args.provider);
-    let grounding = grounding_signals(&args.grounding_signals);
+    let grounding = grounding_signals(&args.grounding_signals, &ir);
     println!("llm_provider: {}", llm_text::provider_name(args.provider));
     println!("llm_model: {model}");
 
@@ -310,7 +340,7 @@ mod tests {
     #[test]
     fn valid_drives_relation_is_accepted_with_provenance() {
         let raw = r#"{"actor":"Manager","signal":"AWVALID","relation":"drives"}"#;
-        let rels = classify_relation_responses(raw, "s7", &[]);
+        let rels = classify_relation_responses(raw, "s7", &["AWVALID".to_string()]);
         assert_eq!(rels.len(), 1, "got {rels:?}");
         let r = &rels[0];
         assert_eq!(r.actor_name, "Manager");
@@ -323,18 +353,26 @@ mod tests {
     #[test]
     fn valid_reads_relation_is_accepted() {
         let raw = r#"{"actor":"Subordinate","signal":"WDATA","relation":"reads"}"#;
-        let rels = classify_relation_responses(raw, "s8", &[]);
+        let rels = classify_relation_responses(raw, "s8", &["WDATA".to_string()]);
         assert_eq!(rels.len(), 1, "got {rels:?}");
         assert_eq!(rels[0].relation, RelationKind::Reads);
         assert_eq!(rels[0].signal_name, "WDATA");
     }
 
     #[test]
-    fn non_uppercase_signal_or_bad_relation_is_skipped() {
-        // lowercase / prose-word signal rejected
+    fn identifier_syntax_and_relation_kind_are_enforced_without_case_authority() {
+        let grounding = vec!["address".to_string()];
+        assert!(
+            !classify_relation_responses(
+                r#"{"actor":"Manager","signal":"address","relation":"drives"}"#,
+                "s1",
+                &grounding
+            )
+            .is_empty()
+        );
         assert!(
             classify_relation_responses(
-                r#"{"actor":"Manager","signal":"address","relation":"drives"}"#,
+                r#"{"actor":"Manager","signal":"bad-name","relation":"drives"}"#,
                 "s1",
                 &[]
             )
@@ -384,6 +422,12 @@ mod tests {
     }
 
     #[test]
+    fn empty_declaration_catalog_never_promotes_a_model_relation() {
+        let raw = r#"{"actor":"Manager","signal":"plausibleName","relation":"drives"}"#;
+        assert!(classify_relation_responses(raw, "s1", &[]).is_empty());
+    }
+
+    #[test]
     fn multiple_relations_in_one_response_are_all_extracted() {
         // PURE-NLP-INTENT-EXTRACTION.2: a sentence stating two edges yields two; an
         // ungrounded signal is still dropped (anti-fabrication).
@@ -415,14 +459,14 @@ mod tests {
         let one = classify_relation_responses(
             r#"{"actor":"Requester","signal":"PSEL","relation":"drives"}"#,
             "s1",
-            &[],
+            &["PSEL".to_string()],
         );
         assert_eq!(one.len(), 1);
         assert_eq!(one[0].signal_name, "PSEL");
         let dup = classify_relation_responses(
             r#"[{"actor":"M","signal":"PSEL","relation":"drives"},{"actor":"M","signal":"PSEL","relation":"drives"}]"#,
             "s2",
-            &[],
+            &["PSEL".to_string()],
         );
         assert_eq!(dup.len(), 1, "intra-response dedup: {dup:?}");
     }

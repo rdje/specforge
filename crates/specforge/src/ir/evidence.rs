@@ -627,14 +627,9 @@ pub struct FactProvenanceRecord {
 pub fn signal_constraint_fact_key(constraint: &SignalConstraintRecord) -> String {
     format!(
         "{}|{:?}|{}",
-        constraint.subject_signal.trim().to_ascii_uppercase(),
+        constraint.subject_signal.trim(),
         constraint.constraint_kind,
-        constraint
-            .target_value
-            .as_deref()
-            .unwrap_or("")
-            .trim()
-            .to_ascii_uppercase(),
+        constraint.target_value.as_deref().unwrap_or("").trim(),
     )
 }
 
@@ -645,9 +640,9 @@ pub fn signal_constraint_fact_key(constraint: &SignalConstraintRecord) -> String
 pub fn actor_signal_relation_fact_key(relation: &ActorSignalRelation) -> String {
     format!(
         "{}|{:?}|{}",
-        relation.actor_name.trim().to_ascii_uppercase(),
+        relation.actor_name.trim(),
         relation.relation,
-        relation.signal_name.trim().to_ascii_uppercase(),
+        relation.signal_name.trim(),
     )
 }
 
@@ -836,8 +831,11 @@ impl EvidenceIr {
         );
 
         // Extract system contract (clock + reset) from signal-description prose in tables.
+        let mut declared_signal_names = collect_known_signal_names(&extracted_statements);
+        declared_signal_names.extend(collect_known_signal_names(&synthesized));
         let contract_stmts = synthesize_system_contract_from_table_descriptions(
             &source_ir,
+            &declared_signal_names,
             &mut statement_counter,
             prior_guidance.as_ref(),
         );
@@ -2261,13 +2259,8 @@ fn parse_signal_declaration_at(
         .take_while(|(_, character)| character.is_ascii_alphanumeric() || *character == '_')
         .map(|(index, character)| index + character.len_utf8())
         .last()?;
-    let name = name_tail.get(..name_len)?.to_ascii_uppercase();
-    if name.len() < 2
-        || name.len() > 30
-        || !name.chars().all(|character| {
-            character.is_ascii_uppercase() || character.is_ascii_digit() || character == '_'
-        })
-    {
+    let name = name_tail.get(..name_len)?.to_string();
+    if !is_hardware_signal_token(&name) {
         return None;
     }
 
@@ -2369,8 +2362,11 @@ fn collect_signal_names_from_tables(
                 .split_whitespace()
                 .next()
                 .unwrap_or("")
-                .to_ascii_uppercase();
-            if is_hardware_signal_token(&token) && !is_signal_synthesis_non_signal(&token) {
+                .trim_matches(|character: char| {
+                    !character.is_ascii_alphanumeric() && character != '_'
+                })
+                .to_string();
+            if is_hardware_signal_token(&token) {
                 names.insert(token);
             }
         }
@@ -2410,10 +2406,9 @@ fn load_evidence_prior_guidance(
 /// value names either the driving or receiving actor, and the table structure implies
 /// the relation kind.
 ///
-/// Only plausible actor labels become KG relations. Direction placeholders ("input",
-/// "output"), infrastructure labels ("Clock", "Reset"), and similar non-actor values
-/// are filtered out so the canonical graph does not invent bogus actors from
-/// signal-description metadata.
+/// The column structure, not label spelling, decides whether a value names a source/destination.
+/// Empty values and closed direction/placeholding grammar are rejected; opaque infrastructure or
+/// endpoint labels such as a document's clock/reset source remain valid graph identities.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum RelationTableColumnKind {
     SourceLike,
@@ -2450,19 +2445,6 @@ fn normalize_table_actor_name(value: &str) -> Option<String> {
             | "see note"
             | "-"
     ) {
-        return None;
-    }
-
-    if lowered.contains("clock")
-        || lowered.contains("reset")
-        || lowered.contains("global")
-        || lowered.contains("system bus")
-        || lowered.contains("power")
-        || lowered.contains("ground")
-        || lowered.contains("supply")
-        || lowered.contains("vdd")
-        || lowered.contains("vss")
-    {
         return None;
     }
 
@@ -3127,90 +3109,11 @@ fn should_treat_table_as_top_level_signal_description(
         return false;
     }
 
-    if table_looks_like_abstract_transport_signal_table(table) {
-        return false;
-    }
-
     if !has_inventory_structure {
         return false;
     }
 
     true
-}
-
-fn table_looks_like_abstract_transport_signal_table(
-    table: &crate::ir::source::StructuredTableRecord,
-) -> bool {
-    let header_texts: Vec<String> = table
-        .header_rows
-        .first()
-        .map(|row| {
-            row.iter()
-                .map(|cell| cell.text.to_ascii_lowercase())
-                .collect()
-        })
-        .unwrap_or_default();
-    let relation_col = header_texts.iter().position(|header| {
-        header.contains("source")
-            || header.contains("driver")
-            || header.contains("destination")
-            || header.contains("dest")
-    });
-    let Some(relation_col) = relation_col else {
-        return false;
-    };
-
-    let mut signal_tokens = Vec::new();
-    let mut actor_terms = BTreeSet::new();
-    for row in &table.body_rows {
-        let Some(name_cell) = row.first() else {
-            continue;
-        };
-        let signal_token = name_cell
-            .text
-            .split_whitespace()
-            .next()
-            .unwrap_or("")
-            .to_ascii_uppercase();
-        if !is_hardware_signal_token(&signal_token) || is_signal_synthesis_non_signal(&signal_token)
-        {
-            continue;
-        }
-
-        let Some(actor_cell) = row.get(relation_col) else {
-            continue;
-        };
-        let actor_term = actor_cell.text.trim();
-        if actor_term.is_empty() {
-            continue;
-        }
-
-        signal_tokens.push(signal_token);
-        actor_terms.insert(actor_term.to_string());
-    }
-
-    signal_tokens.len() >= 2
-        && signal_tokens
-            .iter()
-            .all(|token| is_abstract_transport_signal_token(token))
-        && !actor_terms.is_empty()
-        && actor_terms
-            .iter()
-            .all(|term| is_abstract_transport_actor_term(term))
-}
-
-fn is_abstract_transport_signal_token(token: &str) -> bool {
-    matches!(
-        token,
-        "VALID" | "READY" | "PENDING" | "CRDT" | "CRDTSH" | "SHAREDCRD" | "RP"
-    )
-}
-
-fn is_abstract_transport_actor_term(term: &str) -> bool {
-    matches!(
-        normalize_actor_term(term).as_str(),
-        "tx" | "rx" | "transmitter" | "receiver"
-    )
 }
 
 fn actor_name_and_role_from_section_heading(
@@ -3393,10 +3296,11 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
                 .split_whitespace()
                 .next()
                 .unwrap_or("")
-                .to_ascii_uppercase();
-            if !is_hardware_signal_token(&signal_token)
-                || is_signal_synthesis_non_signal(&signal_token)
-            {
+                .trim_matches(|character: char| {
+                    !character.is_ascii_alphanumeric() && character != '_'
+                })
+                .to_string();
+            if !is_hardware_signal_token(&signal_token) {
                 continue;
             }
 
@@ -3531,9 +3435,11 @@ fn augment_check_signal_relations_from_tables(
                 .split_whitespace()
                 .next()
                 .unwrap_or("")
-                .to_ascii_uppercase();
+                .trim_matches(|character: char| {
+                    !character.is_ascii_alphanumeric() && character != '_'
+                })
+                .to_string();
             if !is_hardware_signal_token(&check_signal)
-                || is_signal_synthesis_non_signal(&check_signal)
                 || relations_by_signal.contains_key(&check_signal)
             {
                 continue;
@@ -3628,8 +3534,11 @@ fn collect_signal_widths_from_tables(
                 .split_whitespace()
                 .next()
                 .unwrap_or("")
-                .to_ascii_uppercase();
-            if !is_hardware_signal_token(&signal) || is_signal_synthesis_non_signal(&signal) {
+                .trim_matches(|character: char| {
+                    !character.is_ascii_alphanumeric() && character != '_'
+                })
+                .to_string();
+            if !is_hardware_signal_token(&signal) {
                 continue;
             }
             if let Some(width_hint) =
@@ -3680,8 +3589,9 @@ fn parse_width_hint_from_covered_signal_cell(text: &str) -> Option<WidthHint> {
 
     let tokens = trimmed.split_whitespace().collect::<Vec<_>>();
     if let Some(first) = tokens.first() {
-        let first_token = first.to_ascii_uppercase();
-        if is_hardware_signal_token(&first_token) && tokens.len() > 1 {
+        let first_token = first
+            .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_');
+        if is_hardware_signal_token(first_token) && tokens.len() > 1 {
             let remainder = tokens[1..].join(" ");
             if let Some(width_hint) = parse_table_width_hint_text(&remainder) {
                 return Some(width_hint);
@@ -3752,11 +3662,9 @@ fn extract_actor_signal_relations(
     let mut seen: std::collections::HashSet<(String, String, u8)> =
         std::collections::HashSet::new();
 
-    // EVIDENCE-DETERMINISM.2 — iterate the signals in a DETERMINISTIC (sorted) order. Iterating the
-    // `known_signals` HashSet directly made the relation `asr_NNNN` ids, the record order, and the
-    // first-seen dedup representative depend on hash-iteration order, so the build was non-deterministic
-    // run-to-run (`[[evidence-build-nondeterminism]]`). Sorting once here leaves the relation SET (the
-    // `(actor, signal, kind)` dedup keys) unchanged — only the order / ids / attribution become stable.
+    // EVIDENCE-DETERMINISM.2 — keep the declaration catalog in deterministic order. A statement is
+    // then matched only against the exact-first, unique-only identities it actually mentions; lowering
+    // every declaration before matching would let one spelling mint relations for a case-fold sibling.
     let mut sorted_signals: Vec<&String> = known_signals.iter().collect();
     sorted_signals.sort_unstable();
 
@@ -3772,12 +3680,10 @@ fn extract_actor_signal_relations(
 
         let text = &stmt.text;
         let lowered = text.to_ascii_lowercase();
+        let referenced_signals = known_signals_referenced_in_text(text, &sorted_signals);
 
-        for &signal in &sorted_signals {
+        for signal in &referenced_signals {
             let sig_lower = signal.to_ascii_lowercase();
-            if !lowered.contains(&sig_lower) {
-                continue;
-            }
 
             // ── Passive drives: "{sig} is {verb} by|from {actor}" ────────────
             // Direct full-pattern search: find the complete phrase then extract what follows.
@@ -4109,9 +4015,7 @@ fn extract_actor_phrase(text: &str) -> Option<String> {
 ///
 /// Examples:
 ///   `"The Manager"` → `Some("Manager")`
-/// Generic protocol actor-role terms (universal role grammar, NOT chip-spec names — ADR 0006),
-/// used to resolve a pronoun subject's antecedent. Mirrors the role vocabulary already treated as
-/// non-signals in `is_signal_synthesis_non_signal`, broadened to the common cross-protocol roles.
+/// Generic actor-role terms used to resolve a pronoun subject's antecedent.
 fn is_canonical_actor_role(word: &str) -> bool {
     matches!(
         word.to_ascii_lowercase().as_str(),
@@ -4667,20 +4571,19 @@ fn derive_encoding_enum_name(
     known_signals: Option<&HashSet<String>>,
 ) -> Option<String> {
     if let Some(known_signals) = known_signals {
-        let caption_lower = table
-            .caption_text
-            .as_deref()
-            .unwrap_or("")
-            .to_ascii_lowercase();
-        let section_lower = section_title.to_ascii_lowercase();
-        let header_lower = table
+        let header_context = table
             .header_rows
             .iter()
             .flatten()
             .map(|cell| cell.text.as_str())
             .collect::<Vec<_>>()
-            .join(" ")
-            .to_ascii_lowercase();
+            .join(" ");
+        let identity_context = [
+            table.caption_text.as_deref().unwrap_or(""),
+            section_title,
+            header_context.as_str(),
+        ]
+        .join(" ");
         // EVIDENCE-DETERMINISM.2 — sort longest-first with an alphabetical tie-break. Sorting by length
         // ALONE is a partial order: same-length candidates (e.g. `TDO`/`TDI`) stay tied and a stable sort
         // then preserves the non-deterministic `known_signals` HashSet order, so the first matching name
@@ -4689,23 +4592,24 @@ fn derive_encoding_enum_name(
         let mut ordered_signals: Vec<&String> = known_signals.iter().collect();
         ordered_signals.sort_by(|a, b| b.len().cmp(&a.len()).then_with(|| a.cmp(b)));
 
-        for signal in ordered_signals {
-            let signal_lower = signal.to_ascii_lowercase();
-            if contains_reference_token(&caption_lower, &signal_lower)
-                || contains_reference_token(&section_lower, &signal_lower)
-                || contains_reference_token(&header_lower, &signal_lower)
-                || header_lower.contains(&format!("{signal_lower}["))
-            {
-                return Some(signal.clone());
-            }
+        if let Some(signal) = known_signals_referenced_in_text(&identity_context, &ordered_signals)
+            .into_iter()
+            .next()
+        {
+            return Some(signal);
         }
     }
 
     let enum_name_source = table.caption_text.as_deref().unwrap_or(section_title);
     let candidate = enum_name_source
         .split_whitespace()
-        .find(|token| is_hardware_signal_token(&token.to_ascii_uppercase()))
-        .map(|token| token.to_ascii_uppercase())?;
+        .map(|token| {
+            token.trim_matches(|character: char| {
+                !character.is_ascii_alphanumeric() && character != '_'
+            })
+        })
+        .find(|token| is_hardware_signal_token(token))?
+        .to_string();
 
     // KG-ISF-COMPLETENESS.5.i — the fallback must NOT name an encoding table after a mere
     // document-structure caption keyword (`Table`/`Figure`/`Column`/`Data`/`Annex`/…) or a stray
@@ -4721,8 +4625,8 @@ fn derive_encoding_enum_name(
     // document is still accepted there, and a token a table actually columns on is accepted anywhere.
     let candidate_lower = candidate.to_ascii_lowercase();
     let is_declared_signal = known_signals
-        .map(|set| set.iter().any(|name| name.eq_ignore_ascii_case(&candidate)))
-        .unwrap_or(false);
+        .and_then(|set| resolve_declared_signal_identifier(&candidate, set))
+        .is_some();
     let header_lower = table
         .header_rows
         .iter()
@@ -5041,11 +4945,17 @@ fn extract_signal_polarity_from_prose(
         let mut signal_polarities = Vec::new();
 
         if let Some(polarity) = detect_signal_polarity(&lowered) {
-            let mentioned_signals = known_signals_referenced_in_text(&lowered, &ordered_signals);
+            let mentioned_signals =
+                known_signals_referenced_in_text(&statement.text, &ordered_signals);
             let signal_names = if mentioned_signals.len() == 1 {
                 mentioned_signals
             } else {
-                collective_polarity_subject_signals(&lowered, polarity, &ordered_signals)
+                collective_polarity_subject_signals(
+                    &statement.text,
+                    &lowered,
+                    polarity,
+                    &ordered_signals,
+                )
             };
 
             signal_polarities.extend(
@@ -5056,7 +4966,8 @@ fn extract_signal_polarity_from_prose(
         }
 
         if signal_polarities.is_empty() {
-            signal_polarities = clause_local_polarity_subject_signals(&lowered, &ordered_signals);
+            signal_polarities =
+                clause_local_polarity_subject_signals(&statement.text, &ordered_signals);
         }
 
         for (signal_name, polarity) in signal_polarities {
@@ -5263,7 +5174,7 @@ fn signal_name_from_signal_table_row(
             .next()
             .unwrap_or("")
             .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_')
-            .to_ascii_uppercase();
+            .to_string();
         if candidate.is_empty() {
             continue;
         }
@@ -5300,17 +5211,40 @@ fn detect_signal_polarity(text_lower: &str) -> Option<SignalPolarity> {
     }
 }
 
-fn known_signals_referenced_in_text(text_lower: &str, ordered_signals: &[&String]) -> Vec<String> {
+fn known_signals_referenced_in_text(text: &str, ordered_signals: &[&String]) -> Vec<String> {
+    let mut mentioned = HashSet::<String>::new();
+    for token in text
+        .split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+        .filter(|token| !token.is_empty())
+    {
+        if let Some(exact) = ordered_signals
+            .iter()
+            .find(|signal| signal.as_str() == token)
+        {
+            mentioned.insert((**exact).clone());
+            continue;
+        }
+
+        let mut folded = ordered_signals
+            .iter()
+            .filter(|signal| signal.eq_ignore_ascii_case(token));
+        let Some(unique) = folded.next() else {
+            continue;
+        };
+        if folded.next().is_none() {
+            mentioned.insert((**unique).clone());
+        }
+    }
+
     ordered_signals
         .iter()
-        .filter_map(|signal| {
-            let signal_lower = signal.to_ascii_lowercase();
-            contains_reference_token(text_lower, &signal_lower).then_some((*signal).clone())
-        })
+        .filter(|signal| mentioned.contains(signal.as_str()))
+        .map(|signal| (*signal).clone())
         .collect()
 }
 
 fn collective_polarity_subject_signals(
+    text: &str,
     text_lower: &str,
     polarity: SignalPolarity,
     ordered_signals: &[&String],
@@ -5342,7 +5276,7 @@ fn collective_polarity_subject_signals(
         let Some(index) = text_lower.find(marker) else {
             continue;
         };
-        let subject = &text_lower[..index];
+        let subject = &text[..index];
         let signals = known_signals_referenced_in_text(subject, ordered_signals);
         if signals.len() >= 2 {
             return signals;
@@ -5353,21 +5287,21 @@ fn collective_polarity_subject_signals(
 }
 
 fn clause_local_polarity_subject_signals(
-    text_lower: &str,
+    text: &str,
     ordered_signals: &[&String],
 ) -> Vec<(String, SignalPolarity)> {
-    let mentioned_signals = known_signals_referenced_in_text(text_lower, ordered_signals);
+    let mentioned_signals = known_signals_referenced_in_text(text, ordered_signals);
     if mentioned_signals.len() < 2 {
         return Vec::new();
     }
 
     let mut recovered_polarity_by_signal = BTreeMap::<String, SignalPolarity>::new();
-    for clause in polarity_clause_segments(text_lower) {
+    for clause in polarity_clause_segments(text) {
         let clause = clause.trim();
         if clause.is_empty() {
             continue;
         }
-        let polarity = detect_signal_polarity(clause);
+        let polarity = detect_signal_polarity(&clause.to_ascii_lowercase());
         let clause_signals = known_signals_referenced_in_text(clause, ordered_signals);
 
         let Some(polarity) = polarity else {
@@ -5402,24 +5336,35 @@ fn clause_local_polarity_subject_signals(
         .collect()
 }
 
-fn polarity_clause_segments(text_lower: &str) -> Vec<String> {
-    let mut clauses = vec![text_lower.to_string()];
+fn polarity_clause_segments(text: &str) -> Vec<String> {
+    let mut clauses = vec![text.to_string()];
 
     for delimiter in [";", ".", ",", " and ", " but ", " while ", " whereas "] {
         clauses = clauses
             .into_iter()
-            .flat_map(|clause| {
-                clause
-                    .split(delimiter)
-                    .map(str::trim)
-                    .filter(|segment| !segment.is_empty())
-                    .map(str::to_string)
-                    .collect::<Vec<_>>()
-            })
+            .flat_map(|clause| split_ascii_case_insensitive(&clause, delimiter))
             .collect();
     }
 
     clauses
+}
+
+fn split_ascii_case_insensitive(text: &str, delimiter: &str) -> Vec<String> {
+    let lowered = text.to_ascii_lowercase();
+    let mut segments = Vec::new();
+    let mut start = 0usize;
+    for (index, _) in lowered.match_indices(delimiter) {
+        let segment = text[start..index].trim();
+        if !segment.is_empty() {
+            segments.push(segment.to_string());
+        }
+        start = index + delimiter.len();
+    }
+    let tail = text[start..].trim();
+    if !tail.is_empty() {
+        segments.push(tail.to_string());
+    }
+    segments
 }
 
 fn record_signal_polarity_observation(
@@ -5963,7 +5908,8 @@ fn extract_dynamic_signal_constraints(
     let mut records = Vec::new();
     // Same catalog gate as the pattern path: a constraint subject must be a DECLARED signal, so
     // property/config/doc-meta prose ("RME_Support must be False", "MPAM_WIDTH must be 11") is not
-    // mined as a signal constraint (WIRE-BASED-100.5i). Skipped when no signals are declared.
+    // mined as a signal constraint (WIRE-BASED-100.5i). An empty catalog grants no authority:
+    // arbitrary identifier-shaped prose remains unresolved rather than becoming signal intent.
     let declared_signals = collect_known_signal_names(statements);
     for statement in statements {
         if matches!(statement.class, StatementClass::SignalValueConstraint) {
@@ -6020,9 +5966,7 @@ fn extract_dynamic_signal_constraints(
                 discovered_values,
             );
         }
-        if !declared_signals.is_empty() {
-            subject_signals.retain(|s| declared_signals.contains(s));
-        }
+        subject_signals.retain(|s| declared_signals.contains(s));
         // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the DESCRIPTIVE BODY of a
         // field-definition cell ("… This field indicates … A value of FFFFh …" → `FFFF`); the
         // field's own mnemonic (which precedes the "This field <verb>" marker) is kept.
@@ -6212,15 +6156,16 @@ fn synthesize_declarations_from_tables(
 /// Extract system contract declarations (clock signal, reset signal) from the
 /// Description column of signal-description tables.
 ///
-/// Pattern: the Description column of any `signal_description` table in AMBA
-/// specs always has the first sentence identify the signal role:
-///   - "Clock. PCLK is a clock signal..." → synthesise `"Clock PCLK."`
-///   - "Reset. PRESETn is the reset signal and is active-LOW." → `"Reset PRESETn is asynchronous active low."`
+/// Pattern: a Description cell explicitly identifies a declared signal as clock/reset. Clock role
+/// can be represented directly. A reset contract is synthesized only when the cell also states its
+/// timing kind; explicit polarity is preserved and absent polarity stays unknown. Identifier
+/// suffixes and conventional defaults never fill missing semantics.
 ///
 /// The synthesized statements are processed by `parse_explicit_system_clock()`
 /// and `parse_explicit_system_reset()` in SemanticIR without any downstream changes.
 fn synthesize_system_contract_from_table_descriptions(
     source_ir: &SourceIr,
+    declared_signal_names: &HashSet<String>,
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<ExtractedStatement> {
@@ -6243,10 +6188,9 @@ fn synthesize_system_contract_from_table_descriptions(
             // HRESETn in the last column even though they are in the first column of
             // the PDF.  Column-independent scanning is immune to this class of bug.
             //
-            // Signal-name candidates: cells with ≤2 whitespace tokens where the first
-            // token is a valid hardware signal name (not a role word like CLOCK/RESET).
-            // This excludes description cells (many words) and role cells like
-            // "Clock source" / "Reset controller" (first token in exclusion list).
+            // Signal-name candidates must already be admitted by this document's declaration
+            // surface. Cell spelling is never authority: the short-cell scan only recovers the
+            // declared identity when the PDF table grid is misaligned.
             //
             // For clock/reset descriptions: among all cells whose text contains a
             // matching keyword, keep the longest one so that a rich description cell
@@ -6267,15 +6211,16 @@ fn synthesize_system_contract_from_table_descriptions(
                     .split_whitespace()
                     .next()
                     .unwrap_or("")
-                    .to_ascii_uppercase();
+                    .trim_matches(|character: char| {
+                        !character.is_ascii_alphanumeric() && character != '_'
+                    });
 
-                // Signal name: short cell (name + optional footnote marker), valid token.
-                if row_signal.is_none()
-                    && word_count <= 2
-                    && is_hardware_signal_token(&first_token)
-                    && !is_signal_synthesis_non_signal(&first_token)
+                // Signal name: short cell (name + optional footnote marker), grounded to the
+                // declarations synthesized from the same current document.
+                if row_signal.is_none() && word_count <= 2 && is_hardware_signal_token(first_token)
                 {
-                    row_signal = Some(first_token);
+                    row_signal =
+                        resolve_declared_signal_identifier(first_token, declared_signal_names);
                 }
 
                 // Clock description — prefer longer / more informative text.
@@ -6335,38 +6280,44 @@ fn synthesize_system_contract_from_table_descriptions(
 
             // ── Reset detection ────────────────────────────────────────────────
             if !reset_found && let Some(desc) = row_reset_desc {
-                // Polarity: explicit keyword wins; signal ending with N or B is
-                // a secondary indicator (AMBA naming convention).
                 let polarity = if desc.contains("active-low")
                     || desc.contains("active low")
                     || desc.contains("active_low")
-                    || (!desc.contains("active-high")
-                        && !desc.contains("active high")
-                        && (signal.ends_with('N') || signal.ends_with('B')))
                 {
-                    "active low"
+                    Some("active low")
+                } else if desc.contains("active-high")
+                    || desc.contains("active high")
+                    || desc.contains("active_high")
+                {
+                    Some("active high")
                 } else {
-                    "active high"
+                    None
                 };
-                // Kind: explicit keyword wins; active-low AMBA resets are
-                // conventionally asserted asynchronously.
                 let explicit_async = desc.contains("asynchronous") || desc.contains("async");
-                let explicit_sync = desc.contains("synchronous");
-                let kind = if explicit_async || (!explicit_sync && polarity == "active low") {
-                    "asynchronous"
+                let explicit_sync =
+                    !explicit_async && (desc.contains("synchronous") || desc.contains("sync"));
+                let kind = if explicit_async {
+                    Some("asynchronous")
+                } else if explicit_sync {
+                    Some("synchronous")
                 } else {
-                    "synchronous"
+                    None
                 };
-                *statement_counter += 1;
-                statements.push(ExtractedStatement {
-                    statement_id: format!("statement_{statement_counter:04}"),
-                    class: StatementClass::SourceFact,
-                    modality: EvidenceModality::Text,
-                    text: format!("Reset {signal} is {kind} {polarity}."),
-                    evidence_span_ids: vec![],
-                    related_visual_evidence_ids: vec![],
-                });
-                reset_found = true;
+                if let Some(kind) = kind {
+                    let descriptor = polarity
+                        .map(|polarity| format!("{kind} {polarity}"))
+                        .unwrap_or_else(|| kind.to_string());
+                    *statement_counter += 1;
+                    statements.push(ExtractedStatement {
+                        statement_id: format!("statement_{statement_counter:04}"),
+                        class: StatementClass::SourceFact,
+                        modality: EvidenceModality::Text,
+                        text: format!("Reset {signal} is {descriptor}."),
+                        evidence_span_ids: vec![],
+                        related_visual_evidence_ids: vec![],
+                    });
+                    reset_found = true;
+                }
             }
 
             if clock_found && reset_found {
@@ -6680,17 +6631,19 @@ fn synthesize_signal_semantic_hints_from_tables(
             let Some(name_cell) = row.get(name_col) else {
                 continue;
             };
-            let signal_name = name_cell
+            let proposed_signal_name = name_cell
                 .text
                 .split_whitespace()
                 .next()
                 .unwrap_or("")
-                .to_ascii_uppercase();
-            if !is_hardware_signal_token(&signal_name)
-                || is_signal_synthesis_non_signal(&signal_name)
-            {
+                .trim_matches(|character: char| {
+                    !character.is_ascii_alphanumeric() && character != '_'
+                });
+            let Some(signal_name) =
+                resolve_declared_signal_identifier(proposed_signal_name, known_signals)
+            else {
                 continue;
-            }
+            };
 
             let Some(description_cell) = row.get(description_col) else {
                 continue;
@@ -7065,21 +7018,38 @@ fn collect_signal_semantic_target_mentions(
     let lowered = text.to_ascii_lowercase();
     let mut mentions = Vec::new();
 
-    let mut ordered_signals: Vec<&String> = known_signals.iter().collect();
-    ordered_signals.sort_by_key(|signal_name| std::cmp::Reverse(signal_name.len()));
-    for signal_name in ordered_signals {
-        let token = signal_name.to_ascii_lowercase();
-        for (start, end) in find_reference_spans(&lowered, &token) {
-            mentions.push(SignalSemanticTargetMention {
-                signal_name: signal_name.clone(),
-                alias_grounded: false,
-                start,
-                end,
-            });
+    // Direct signal mentions are resolved from each original token exact-first and unique-only.
+    // Lowercasing the whole sentence and scanning once per catalog entry spreads one occurrence
+    // across case-distinct identities (`sig` and `SIG`), which lets spelling collisions duplicate
+    // semantic authority.
+    let mut token_start = None::<usize>;
+    for (index, character) in text
+        .char_indices()
+        .chain(std::iter::once((text.len(), ' ')))
+    {
+        if index < text.len() && (character.is_ascii_alphanumeric() || character == '_') {
+            token_start.get_or_insert(index);
+            continue;
+        }
+        if let Some(start) = token_start.take() {
+            let token = &text[start..index];
+            if let Some(signal_name) = resolve_declared_signal_identifier(token, known_signals) {
+                mentions.push(SignalSemanticTargetMention {
+                    signal_name,
+                    alias_grounded: false,
+                    start,
+                    end: index,
+                });
+            }
         }
     }
 
-    let mut ordered_aliases: Vec<(&String, &String)> = signal_alias_map.iter().collect();
+    // Aliases are language phrases, not identifier spellings, so phrase matching is
+    // case-insensitive. Their target must still be one exact current-document identity.
+    let mut ordered_aliases: Vec<(&String, &String)> = signal_alias_map
+        .iter()
+        .filter(|(_, signal_name)| known_signals.contains(signal_name.as_str()))
+        .collect();
     ordered_aliases.sort_by_key(|(alias_phrase, _)| std::cmp::Reverse(alias_phrase.len()));
     for (alias_phrase, signal_name) in ordered_aliases {
         let alias_lower = alias_phrase.to_ascii_lowercase();
@@ -7374,11 +7344,8 @@ fn collect_hardware_signal_tokens(text: &str) -> Vec<String> {
         if current.is_empty() {
             return;
         }
-        let token = current.to_ascii_uppercase();
-        if is_hardware_signal_token(&token)
-            && !is_signal_synthesis_non_signal(&token)
-            && !tokens.contains(&token)
-        {
+        let token = current.clone();
+        if is_hardware_signal_token(&token) && !tokens.contains(&token) {
             tokens.push(token);
         }
         current.clear();
@@ -7491,14 +7458,6 @@ fn infer_signal_direction_from_actor_text(
     if lowered.contains("input") {
         return Some("input");
     }
-    if lowered.contains("clock")
-        || lowered.contains("reset")
-        || lowered.contains("system bus")
-        || lowered.contains("global")
-    {
-        return Some("input");
-    }
-
     actor_taxonomy_role_in_text(actor_text, prior_guidance)
         .map(|role| direction_for_actor_taxonomy_role(role, column_kind))
 }
@@ -7553,38 +7512,41 @@ fn infer_signal_direction_from_section(
         }
         _ => {}
     }
-    let lowered = title.to_ascii_lowercase();
-    // Infrastructure signals (clock, reset, global decoder) are distributed
-    // into all blocks — treat as input.
-    if lowered.contains("global")
-        || lowered.contains("system")
-        || lowered.contains("clock")
-        || lowered.contains("reset")
-        || lowered.contains("decoder")
-    {
-        return Some("input");
-    }
-
     actor_name_and_role_from_section_heading(title, prior_guidance).map(|(_actor_name, role)| {
         direction_for_actor_taxonomy_role(role, RelationTableColumnKind::SourceLike)
     })
 }
 
-/// Returns true if the token looks like a hardware signal name:
-/// all-uppercase with optional digits and underscores, at least 2 chars, and STARTING WITH A
-/// LETTER. The leading-letter rule drops binary/number literals like `0B0`/`0B1` (which pass the
-/// uppercase-or-digit test via the `B`) that a value cell otherwise mis-declares as a signal —
-/// real signal identifiers always start with a letter (WIRE-BASED-100.5j).
+/// Returns true for an opaque ASCII identifier. Signal meaning comes from the current
+/// document's declaration/table structure; case, length, and substrings carry no authority.
 pub(crate) fn is_hardware_signal_token(token: &str) -> bool {
-    token.len() >= 2
-        && token
-            .chars()
-            .next()
-            .map(|c| c.is_ascii_uppercase())
-            .unwrap_or(false)
-        && token
-            .chars()
-            .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+    let mut characters = token.chars();
+    let Some(first) = characters.next() else {
+        return false;
+    };
+    (first.is_ascii_alphabetic() || first == '_')
+        && characters.all(|character| character.is_ascii_alphanumeric() || character == '_')
+}
+
+/// Resolve an identifier to the exact spelling in the current document's declaration catalog.
+/// Exact matches win. A case-insensitive recovery is allowed only when it names one unique
+/// declaration; case-fold collisions fail closed instead of selecting an arbitrary symbol.
+fn resolve_declared_signal_identifier(
+    proposed: &str,
+    declared_signals: &HashSet<String>,
+) -> Option<String> {
+    if let Some(exact) = declared_signals.get(proposed) {
+        return Some(exact.clone());
+    }
+
+    let mut matches = declared_signals
+        .iter()
+        .filter(|declared| declared.eq_ignore_ascii_case(proposed));
+    let canonical = matches.next()?;
+    if matches.next().is_some() {
+        return None;
+    }
+    Some(canonical.clone())
 }
 
 /// Level 2 NLP — Extract `SignalConstraintRecord` entries from `SignalValueConstraint` sentences.
@@ -7743,20 +7705,9 @@ fn extract_signal_constraints(
             }
         };
 
-        // The constraint's own value (the token after the normative verb) is not a
-        // subject signal — exclude it positionally so value *names* need never be
-        // denylisted (ADR 0006). "<signal> must be <value>" → the subject is the
-        // signal, never the value.
-        if let Some(value) = extract_protocol_state_value(&lowered) {
-            subject_signals.retain(|s| !s.eq_ignore_ascii_case(&value));
-        }
         // Keep only subjects that are DECLARED signals — a property/config name or doc-meta token
-        // (AXI "RME_Support", "MPAM_WIDTH", "LICENSEE") is not in the catalog and is dropped
-        // (WIRE-BASED-100.5i). Skipped when the document declares no signals at all (e.g. a tiny
-        // fixture), so a no-catalog corpus is not silently emptied.
-        if !declared_signals.is_empty() {
-            subject_signals.retain(|s| declared_signals.contains(s));
-        }
+        // is not in the catalog and is dropped. An empty catalog grants no authority.
+        subject_signals.retain(|signal| declared_signals.contains(signal));
         // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the descriptive body of a
         // field-definition cell (CCIX `SRAM`/`DDR` enum-value names, NVMe `FFFF` hex literal); the
         // field's own leading mnemonic precedes the "This field <verb>" marker and is kept.
@@ -7882,57 +7833,11 @@ fn text_before_condition_marker(text: &str) -> &str {
     &text[..cut]
 }
 
-/// Collect all uppercase hardware signal tokens from a text fragment.
-/// Excludes logic-level values (HIGH/LOW), protocol state names (NONSEQ/SEQ/...),
-/// protocol family names (AHB/AXI/...), and document structure words.
-/// A logic-level word (`HIGH`/`LOW`/`TRUE`/`FALSE`/…) is a universal binary-logic VALUE — the
-/// centralized, owner-confirmed `normative_vocab` "how" — never a signal name, so it must not be
-/// collected as a constraint subject (ADR 0006; CONSTRAINT-EXTRACTION-V2.1).
-fn is_logic_level_token(tok: &str) -> bool {
-    let lower = tok.to_ascii_lowercase();
-    crate::ir::normative_vocab::LOGIC_HIGH_VALUES.contains(&lower.as_str())
-        || crate::ir::normative_vocab::LOGIC_LOW_VALUES.contains(&lower.as_str())
-}
-
+/// Collect syntactically plausible identifier tokens from a prospective subject fragment.
+/// Current-document declarations, not token vocabulary, decide which candidates are signals.
 fn collect_subject_signal_tokens(text: &str) -> Vec<String> {
-    text.split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
-        .filter(|tok| {
-            tok.len() >= 3
-                && tok
-                    .chars()
-                    .next()
-                    .map(|c| c.is_ascii_uppercase())
-                    .unwrap_or(false)
-                && tok
-                    .chars()
-                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
-                // Width parameters (e.g. DATA_WIDTH, USER_RESP_WIDTH) are integrator
-                // constants, not constrained signals — they appear in table width columns.
-                && !tok.ends_with("_WIDTH")
-                // A logic-level word (HIGH/LOW/…) is a universal value, never a signal —
-                // closes the "tied/driven LOW" → "LOW must be stable" leak that the
-                // positional "must be <value>" exclusion misses (CONSTRAINT-EXTRACTION-V2.1).
-                && !is_logic_level_token(tok)
-                && !matches!(
-                    *tok,
-                    // Constraint VALUE names (HIGH/LOW/IDLE/NONSEQ/…) are no longer
-                    // listed here — they are excluded positionally (the value is the
-                    // token after the normative verb), so no value vocabulary is
-                    // hardcoded (ADR 0006; PDF-AGNOSTIC-EXTRACTION.2).
-                    // Only document-independent tokens are listed here — no
-                    // protocol/vendor names (those were removed in
-                    // PDF-AGNOSTIC-EXTRACTION.3; ADR 0006).
-                    // English quantifiers (never signal subjects).
-                    "NONE" | "ALL" | "ANY" | "BOTH"
-                        // Generic technology abbreviations (document-independent).
-                        | "RISC" | "IP" | "SoC"
-                        // Document structure terms (document-independent).
-                        | "NOTE" | "TABLE" | "FIGURE" | "CHAPTER" | "SECTION" | "REF"
-                        // Interface role/component terms (generic across protocols).
-                        | "MANAGER" | "SUBORDINATE" | "DECODER" | "INITIATOR"
-                        | "MASTER" | "SLAVE" | "TARGET" | "SOURCE"
-                )
-        })
+    text.split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+        .filter(|token| is_hardware_signal_token(token))
         .map(|s| s.to_string())
         // Deduplicate while preserving order (same signal can appear twice in a sentence).
         .fold(Vec::new(), |mut acc, s| {
@@ -7949,6 +7854,7 @@ fn extract_conditional_rules(
     counter: &mut usize,
 ) -> Vec<ConditionalRuleRecord> {
     let mut records = Vec::new();
+    let declared_signals = collect_known_signal_names(statements);
 
     for statement in statements {
         if !matches!(statement.class, StatementClass::ConditionalRule) {
@@ -7963,27 +7869,10 @@ fn extract_conditional_rules(
             continue;
         }
 
-        // Try to find the consequent signal (uppercase token in the consequent clause).
+        // Try to find the consequent signal in the current document's declaration catalog.
         let consequent_signal = consequent
-            .split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
-            .find(|tok| {
-                tok.len() >= 3
-                    && tok
-                        .chars()
-                        .next()
-                        .map(|c| c.is_ascii_uppercase())
-                        .unwrap_or(false)
-                    && tok
-                        .chars()
-                        .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
-                    && !matches!(
-                        // Protocol encoding values (NONSEQ/SEQ/OKAY) removed — ADR 0006;
-                        // a value mis-picked as the consequent signal is filtered
-                        // downstream by `declared_signal_names`.
-                        *tok,
-                        "HIGH" | "LOW" | "IDLE" | "BUSY" | "ERROR"
-                    )
-            })
+            .split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+            .find(|token| declared_signals.contains(*token))
             .map(|s| s.to_string());
 
         // Extract the action verb phrase from the consequent.
@@ -8333,86 +8222,11 @@ fn is_signal_value_constraint(text: &str) -> bool {
         return false;
     }
 
-    // Step 2: The sentence must also contain at least one token that looks like a
-    // hardware signal name: all-uppercase, 3+ chars, starts with a letter.
-    // This prevents "values must be high quality" from matching.
-    text.split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
-        .any(|token| {
-            token.len() >= 3
-                && token
-                    .chars()
-                    .next()
-                    .map(|c| c.is_ascii_uppercase())
-                    .unwrap_or(false)
-                && token
-                    .chars()
-                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
-        })
-}
-
-/// Tokens that pass `is_hardware_signal_token` but are component names, role names,
-/// or descriptive words rather than hardware signal names. These appear as first
-/// cells in some table formats (e.g. AMBA Table 2-1 / Table 2-5 where signal
-/// names are in the last column rather than the first).
-pub(crate) fn is_signal_synthesis_non_signal(token: &str) -> bool {
-    matches!(
-        token,
-        "MANAGER"
-            | "SUBORDINATE"
-            | "INITIATOR"
-            | "TARGET"
-            | "SOURCE"
-            | "DECODER"
-            | "MASTER"
-            | "SLAVE"
-            | "RESPONDER"
-            | "CLOCK"
-            | "RESET"
-            | "NAME"
-            | "SIGNAL"
-            | "PORT"
-            | "PIN"
-            // Common English / description / logic words that pass `is_hardware_signal_token`
-            // (all-uppercase) but are never signal NAMES. They leak in when a scrambled
-            // signal-description table puts description prose in the name column (AXI
-            // table_0059/0187: "Signal THE is width AWPROT, ARPROT"). Universal-language words,
-            // not chip-spec names (ADR 0006) — same category as the role terms above.
-            // WIRE-BASED-100.5k.
-            | "THE"
-            | "THIS"
-            | "THAT"
-            | "WHEN"
-            | "WHERE"
-            | "WHICH"
-            | "AND"
-            | "OR"
-            | "FOR"
-            | "IF"
-            | "THEN"
-            | "WITH"
-            | "TRUE"
-            | "FALSE"
-            | "HIGH"
-            | "LOW"
-            | "ASSERTED"
-            | "DEASSERTED"
-            | "SECURE"
-            | "PHYSICAL"
-            | "PROTECTED"
-            | "INDICATES"
-            | "STREAM"
-            // Direction / generic words seen leaking from the ADI/SWD architecture spec.
-            | "IN"
-            | "OUT"
-            | "LEVEL"
-            // Cross-reference word ("… pin, see Figure B4-3") — not a signal name.
-            | "SEE"
-            // Operation / access verbs that appear as parenthetical acronyms near a signal descriptor
-            // (PDF-VARIANT-DIGESTION.3) — modes/operations, never signal names. Universal vocabulary.
-            | "READ"
-            | "WRITE"
-            | "MODE"
-    )
+    // Candidate syntax is intentionally case-neutral. Canonical extraction later intersects
+    // these tokens with the current document's declared-signal catalog, which is the
+    // load-bearing authority boundary.
+    text.split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+        .any(is_hardware_signal_token)
 }
 
 fn synthesize_signal_declarations(
@@ -8491,7 +8305,7 @@ fn synthesize_signal_declarations(
                     .unwrap_or("")
                     .to_ascii_uppercase()
             })
-            .filter(|t| is_hardware_signal_token(t) && !is_signal_synthesis_non_signal(t))
+            .filter(|t| is_hardware_signal_token(t))
             .collect();
         toks.sort();
         toks.dedup();
@@ -8536,8 +8350,9 @@ fn synthesize_signal_declarations(
             .split_whitespace()
             .next()
             .unwrap_or("")
-            .to_ascii_uppercase();
-        if !is_hardware_signal_token(&token) || is_signal_synthesis_non_signal(&token) {
+            .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+            .to_string();
+        if !is_hardware_signal_token(&token) {
             continue;
         }
 
@@ -8740,8 +8555,11 @@ fn synthesize_trapped_row_signal_declarations(
                 .split_whitespace()
                 .next()
                 .unwrap_or("")
-                .to_ascii_uppercase();
-            if !is_hardware_signal_token(&token) || is_signal_synthesis_non_signal(&token) {
+                .trim_matches(|character: char| {
+                    !character.is_ascii_alphanumeric() && character != '_'
+                })
+                .to_string();
+            if !is_hardware_signal_token(&token) {
                 continue;
             }
             // INVENTORY gate: duplicates are coverage-marked, never re-minted.
@@ -8852,21 +8670,36 @@ fn synthesize_signal_declarations_from_prose(
                 continue;
             }
             // The signal token follows the comma: fused ("pin," SIG) or separate ("pin" "," SIG).
-            let cand = if words[i].ends_with(',') {
-                words.get(i + 1)
+            let candidate_index = if words[i].ends_with(',') {
+                i + 1
             } else if words.get(i + 1).map(|w| *w == ",").unwrap_or(false) {
-                words.get(i + 2)
+                i + 2
             } else {
                 continue;
             };
-            let Some(cand) = cand else { continue };
+            let Some(cand) = words.get(candidate_index) else {
+                continue;
+            };
+            // An appositive identifier is a complete delimited constituent: `pin, NAME .` or
+            // `pin, NAME, ...`. Without the closing boundary, `pin, see Section ...` and similar
+            // continuations are ordinary prose, not declarations. This gate is punctuation grammar;
+            // identifier spelling and case remain opaque.
+            let candidate_has_boundary = cand
+                .chars()
+                .last()
+                .is_some_and(|character| matches!(character, ',' | '.' | ';' | ':'))
+                || words.get(candidate_index + 1).is_some_and(|next| {
+                    next.chars()
+                        .next()
+                        .is_some_and(|character| matches!(character, ',' | '.' | ';' | ':'))
+                });
+            if !candidate_has_boundary {
+                continue;
+            }
             let token: String = cand
                 .trim_matches(|c: char| !c.is_ascii_alphanumeric() && c != '_')
-                .to_ascii_uppercase();
-            if !is_hardware_signal_token(&token)
-                || is_signal_synthesis_non_signal(&token)
-                || !seen.insert(token.clone())
-            {
+                .to_string();
+            if !is_hardware_signal_token(&token) || !seen.insert(token.clone()) {
                 continue;
             }
             *statement_counter += 1;
@@ -8893,21 +8726,30 @@ fn synthesize_signal_declarations_from_prose(
         }
         for (i, w) in words.iter().enumerate() {
             let Some(open) = w.find('(') else { continue };
-            let name: String = w[open + 1..]
+            // A parenthetical declaration names exactly one opaque identifier. Do not consume the
+            // first word of a longer aside such as `line (for more detail)` or `signal (timing,
+            // jitter, ...)`; those phrases previously depended on identifier case to be rejected.
+            let parenthetical = &w[open + 1..];
+            let Some(close) = parenthetical.find(')') else {
+                continue;
+            };
+            let name = parenthetical[..close].trim();
+            if parenthetical[close + 1..]
                 .chars()
-                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
-                .collect();
-            // Must be an UPPERCASE acronym (2–10 chars, ≥1 letter, no lowercase) — a signal abbreviation
-            // like SDA/SCL, not a lowercase word grabbed from "(resulting from …)".
-            if name.len() < 2
-                || name.len() > 10
-                || !name.chars().any(|c| c.is_ascii_alphabetic())
-                || name.chars().any(|c| c.is_ascii_lowercase())
+                .any(|character| character.is_ascii_alphanumeric() || character == '_')
+                || name.is_empty()
+                || !name
+                    .chars()
+                    .all(|character| character.is_ascii_alphanumeric() || character == '_')
             {
                 continue;
             }
-            let token = name.to_ascii_uppercase();
-            if !is_hardware_signal_token(&token) || is_signal_synthesis_non_signal(&token) {
+            // The wire-noun head is the authority; identifier spelling is opaque.
+            if !is_hardware_signal_token(name) {
+                continue;
+            }
+            let token = name.to_string();
+            if !is_hardware_signal_token(&token) {
                 continue;
             }
             // EXTRACTION-GAP-FIX.1 — the noun-phrase HEAD (the word immediately before the "(NAME)", or
@@ -8938,13 +8780,12 @@ fn synthesize_signal_declarations_from_prose(
         // …". SWP (ETSI TS 102 613) names its two single-wire signals only this way — "S1 is a signal in
         // the voltage domain …", "S2 is a signal in the current domain …", "S1: signal from the master to a
         // slave" — so the pin-appositive ("pin," anchor) and parenthetical ("(NAME)") forms above miss them.
-        // The definitional anchor is precise AND the candidate must be an all-uppercase identifier token
-        // (`is_hardware_signal_token` on the ORIGINAL token, so lowercase English subjects like "an interrupt
-        // is a signal" / "it is a signal" can never qualify): a probe over ALL persisted evidence docs yields
-        // EXACTLY S1/S2 with zero garbage. General grammar, universal vocabulary (ADR 0006). Runs under the
-        // same sparse-catalog fallback gate as the parenthetical form, so table-rich specs are untouched.
+        // The definitional anchor is precise and the candidate must be the clause's bare grammatical subject.
+        // Identifier case and length carry no authority; articles and anaphoric pronouns are rejected by
+        // language grammar, not by a document-identifier vocabulary. Runs under the same sparse-catalog
+        // fallback gate as the parenthetical form, so table-rich specs are untouched.
         for name in definitional_signal_names(&statement.text) {
-            if is_signal_synthesis_non_signal(&name) || !seen.insert(name.clone()) {
+            if !seen.insert(name.clone()) {
                 continue;
             }
             *statement_counter += 1;
@@ -8994,6 +8835,15 @@ fn parenthetical_head_has_single_wire_authority(
         )
     };
 
+    // A marked identifier immediately before the wire noun means the signal is already named;
+    // the following parenthesis is a modifier, not a name introduction. For example,
+    // `[wire_ref] signal (respectively)` must not synthesize a signal named `respectively`.
+    // This is a grammatical/markup boundary rather than an identifier vocabulary: the spelling
+    // inside either marked reference remains opaque.
+    if modifier_word.is_some_and(is_marked_identifier_reference) {
+        return false;
+    }
+
     let normalize = |word: &str| {
         word.trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '-')
             .to_ascii_lowercase()
@@ -9012,19 +8862,75 @@ fn parenthetical_head_has_single_wire_authority(
     )
 }
 
+fn is_marked_identifier_reference(word: &str) -> bool {
+    let trimmed = word.trim_matches(|character: char| {
+        character.is_ascii_whitespace() || matches!(character, ',' | '.' | ';' | ':')
+    });
+    (trimmed.starts_with('[') && trimmed.contains(']'))
+        || (trimmed.starts_with('`') && trimmed[1..].contains('`'))
+}
+
 /// PDF-VARIANT-DIGESTION.9.8 — recover the NAME(s) of single-wire signal(s) a spec DEFINES in prose via a
-/// definitional copula (`<NAME> is a|an signal …`) or a glossary colon (`<NAME>: signal …`). Both anchors
-/// require the candidate to be an all-uppercase identifier token (`is_hardware_signal_token` on the ORIGINAL,
-/// un-cased token), so a lowercase English subject ("an interrupt is a signal", "it is a signal", "Note:
-/// signal …") can never qualify — the definitional structure plus the identifier shape keep it garbage-free
-/// (corpus-probed over all persisted evidence docs: SWP → S1/S2 only, zero garbage). General grammar, no chip
-/// names (ADR 0006).
+/// definitional copula (`<NAME> is a|an signal …`) or a glossary colon (`<NAME>: signal <relation> …`).
+/// Identifier spelling is opaque. Authority comes from the grammar: a copula candidate must be the clause's
+/// single bare subject (never an article-led noun phrase or an anaphoric pronoun), and a colon definition must
+/// carry a grammatical relation after `signal` rather than arbitrary discourse such as `signal integrity`.
+/// General language/digital-design grammar, no document names (ADR 0006).
 fn definitional_signal_names(text: &str) -> Vec<String> {
+    fn is_anaphoric_subject(token: &str) -> bool {
+        matches!(
+            token.to_ascii_lowercase().as_str(),
+            "i" | "you"
+                | "he"
+                | "she"
+                | "it"
+                | "we"
+                | "they"
+                | "this"
+                | "that"
+                | "these"
+                | "those"
+                | "one"
+        )
+    }
+
+    fn colon_signal_relation_tail(rest: &str) -> bool {
+        let mut words = rest.split_whitespace().map(|word| {
+            word.trim_matches(|character: char| {
+                !character.is_ascii_alphanumeric() && character != '-'
+            })
+            .to_ascii_lowercase()
+        });
+        if words.next().as_deref() != Some("signal") {
+            return false;
+        }
+        words.next().is_some_and(|relation| {
+            matches!(
+                relation.as_str(),
+                "from"
+                    | "to"
+                    | "between"
+                    | "for"
+                    | "of"
+                    | "on"
+                    | "into"
+                    | "out"
+                    | "connecting"
+                    | "carrying"
+                    | "driven"
+                    | "read"
+                    | "input"
+                    | "output"
+                    | "used"
+            )
+        })
+    }
+
     let mut out = Vec::new();
     let words: Vec<&str> = text.split_whitespace().collect();
-    // Copula: "<NAME> is a|an signal" — the token immediately before "is a/an signal".
+    // Copula: "<NAME> is a|an signal" — `<NAME>` must be the whole bare subject at clause start.
     for i in 1..words.len() {
-        if !words[i].eq_ignore_ascii_case("is") {
+        if i != 1 || !words[i].eq_ignore_ascii_case("is") {
             continue;
         }
         let article = words
@@ -9042,21 +8948,19 @@ fn definitional_signal_names(text: &str) -> Vec<String> {
             continue;
         }
         let tok = words[i - 1].trim_matches(|c: char| !c.is_ascii_alphanumeric() && c != '_');
-        if is_hardware_signal_token(tok) {
+        if is_hardware_signal_token(tok) && !is_anaphoric_subject(tok) {
             out.push(tok.to_string());
         }
     }
-    // Glossary colon: "<NAME>: signal …" — the single identifier token before the first colon, immediately
-    // followed by the descriptor noun "signal". A multi-word or lowercase head ("master: entity which …")
-    // fails `is_hardware_signal_token`, so only a clean glossary signal definition fires.
+    // Glossary colon: "<NAME>: signal <relation> …" — a single opaque identifier head followed by
+    // a grammatical signal relation. The relation requirement rejects discourse labels without consulting
+    // candidate spelling.
     if let Some((head, rest)) = text.split_once(':') {
         let head_tok = head.trim();
-        let rest_is_signal = rest
-            .split_whitespace()
-            .next()
-            .map(|w| w.eq_ignore_ascii_case("signal"))
-            .unwrap_or(false);
-        if rest_is_signal && is_hardware_signal_token(head_tok) {
+        if colon_signal_relation_tail(rest)
+            && is_hardware_signal_token(head_tok)
+            && !is_anaphoric_subject(head_tok)
+        {
             out.push(head_tok.to_string());
         }
     }
@@ -11609,9 +11513,6 @@ fn parse_control_bit_fields(text: &str) -> Vec<String> {
         if let Some(first) = cap.get_mut(0..1) {
             first.make_ascii_uppercase();
         }
-        if is_signal_synthesis_non_signal(&cap.to_ascii_uppercase()) {
-            continue;
-        }
         if !out.contains(&cap) {
             out.push(cap);
         }
@@ -11651,7 +11552,6 @@ fn parse_named_bit_list(text: &str) -> Vec<String> {
                     .next()
                     .map(|c| c.is_ascii_uppercase())
                     .unwrap_or(false)
-                && !is_signal_synthesis_non_signal(&cleaned.to_ascii_uppercase())
             {
                 out.push(cleaned);
             }
@@ -12586,8 +12486,7 @@ fn canonical_declared_signal(
     token: &str,
     known_signals: &std::collections::HashSet<String>,
 ) -> Option<String> {
-    let candidate = token.to_ascii_uppercase();
-    known_signals.contains(&candidate).then_some(candidate)
+    resolve_declared_signal_identifier(token, known_signals)
 }
 
 /// Document-stated operation or response branches with explicit phase cardinality.
@@ -14531,26 +14430,19 @@ fn is_presence_code(cell: &str) -> bool {
     (1..=2).contains(&len) && cell.chars().all(|c| c.is_ascii_uppercase())
 }
 
-/// PDF-VARIANT-DIGESTION.12b — the CASE-SOFT identifier rule for presence-matrix row labels:
-/// starts with an uppercase ASCII letter, identifier characters only, and ≥60% of its letters
-/// uppercase. Deliberately softer than [`is_hardware_signal_token`] (which requires ALL-caps):
-/// the `.12` census measured that the strict rule undercounts exactly the mixed-case reset names
-/// (`ARESETn`) and a document's own generic-name convention (`AxVALID`) — letter case is a soft
-/// readability convention, so participation (mostly-uppercase) decides, not strict case.
+/// PDF-VARIANT-DIGESTION.12b — opaque identifier rule for presence-matrix row labels. Matrix
+/// structure admits the row; identifier case, length, and substrings carry no authority.
 fn is_presence_identifier(token: &str) -> bool {
-    if token.len() < 2 {
-        return false;
-    }
-    let mut chars = token.chars();
-    if !chars.next().is_some_and(|c| c.is_ascii_uppercase()) {
-        return false;
-    }
-    if !token.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-        return false;
-    }
-    let letters = token.chars().filter(|c| c.is_ascii_alphabetic()).count();
-    let uppercase = token.chars().filter(|c| c.is_ascii_uppercase()).count();
-    letters > 0 && uppercase * 5 >= letters * 3
+    is_hardware_signal_token(token)
+}
+
+/// A possible row label while *inferring* a rotated presence-matrix name column. A one- or
+/// two-letter uppercase token is syntactically ambiguous: it can be both an opaque signal name
+/// and the matrix's uninterpreted presence code. Such a token remains admissible once table
+/// structure has established the name column, but it cannot itself vote to make a column the name
+/// column. This is an information-flow rule, not a vocabulary rule: column role supplies authority.
+fn is_presence_name_column_vote(token: &str) -> bool {
+    is_presence_identifier(token) && !is_presence_code(token)
 }
 
 /// PDF-VARIANT-DIGESTION.12b — what one table contributed to the signal-presence surface, plus
@@ -14658,15 +14550,17 @@ pub(crate) fn capture_signal_presence_rows(
         )
         .collect();
 
-    // Content-resolved name column (the `.5h` rotation detection, with the case-soft rule):
-    // the column carrying the most DISTINCT identifier-shaped row labels is the real name
-    // column; aligned tables keep the header-designated one (offset 0, no behavior change).
+    // Content-resolved name column (the `.5h` rotation detection): the column carrying the most
+    // DISTINCT unambiguous identifier-shaped row labels is the real name column; aligned tables
+    // keep the header-designated one (offset 0, no behavior change). Presence-code-shaped tokens
+    // do not vote because their spelling cannot distinguish an opaque identifier from a code.
+    // Once structure establishes the column, those same spellings remain valid row identifiers.
     let distinct_identifiers = |col: usize| -> usize {
         let mut tokens: Vec<String> = data_rows
             .iter()
             .filter_map(|row| row.get(col))
             .map(&first_token)
-            .filter(|tok| is_presence_identifier(tok))
+            .filter(|tok| is_presence_name_column_vote(tok))
             .collect();
         tokens.sort();
         tokens.dedup();
@@ -14743,7 +14637,7 @@ pub(crate) fn capture_signal_presence_rows(
             })
             .filter_map(|row| row.get(col))
             .map(&first_token)
-            .filter(|tok| is_presence_identifier(tok))
+            .filter(|tok| is_presence_name_column_vote(tok))
             .collect();
         orphans.sort();
         orphans.dedup();
@@ -15760,11 +15654,10 @@ mod tests {
         FactKind, ParticipantDriveRecord, ProtocolOperationRecord, SerialFrameField,
         SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass, VisualObservationKind,
         actor_signal_relation_fact_key, contains_any, contains_reference_token, diagram_kind_key,
-        is_abstract_transport_actor_term, is_abstract_transport_signal_token,
-        is_hardware_signal_token, is_image_line, is_signal_name_char,
-        is_signal_synthesis_non_signal, is_standalone_markdown_block, is_tie_off_actor_text,
-        looks_like_encoding_literal, looks_like_structural_contents_entry_for_semantic_hint,
-        numbered_list_prefix, parse_encoding_numeric_literal, signal_constraint_fact_key,
+        is_hardware_signal_token, is_image_line, is_signal_name_char, is_standalone_markdown_block,
+        is_tie_off_actor_text, looks_like_encoding_literal,
+        looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
+        parse_encoding_numeric_literal, signal_constraint_fact_key,
     };
 
     #[test]
@@ -17690,6 +17583,16 @@ mod tests {
         );
         assert_eq!(capture.records[3].signal_name, "ARESETn");
         assert_eq!(capture.records[0].table_id, "table_presence");
+    }
+
+    #[test]
+    fn presence_identifier_is_invariant_to_case_and_length() {
+        for identifier in ["A", "sig", "MixedCase", "UPPER_7"] {
+            assert!(super::is_presence_identifier(identifier));
+        }
+        for non_identifier in ["", "7sig", "has space", "sig-name"] {
+            assert!(!super::is_presence_identifier(non_identifier));
+        }
     }
 
     // PDF-VARIANT-DIGESTION.12b — a cyclically rotated version matrix (signal name in the LAST
@@ -20951,6 +20854,24 @@ mod tests {
         assert_eq!(super::derive_encoding_enum_name(&table, "", None), None);
     }
 
+    #[test]
+    fn encoding_enum_name_uses_exact_first_unique_only_signal_identity() {
+        let exact_table = encoding_table("sig encoding", &["Meaning", "Value"]);
+        let ambiguous_table = encoding_table("Sig encoding", &["Meaning", "Value"]);
+        let declared = ["sig".to_string(), "SIG".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+
+        assert_eq!(
+            super::derive_encoding_enum_name(&exact_table, "", Some(&declared)),
+            Some("sig".to_string())
+        );
+        assert_eq!(
+            super::derive_encoding_enum_name(&ambiguous_table, "", Some(&declared)),
+            None
+        );
+    }
+
     // --- per-member sentence-spine fragment gate (KG-ISF-COMPLETENESS.5.ii) ---
 
     #[test]
@@ -22092,7 +22013,7 @@ mod tests {
             // excluded *positionally* (the token after the normative verb) in
             // `extract_signal_constraints`, NOT by a hardcoded value denylist, so no
             // value vocabulary is baked into the code (ADR 0006).
-            let s = constraint_subjects("HTRANS must be IDLE");
+            let s = constraint_subjects("HTRANS must be IDLE", &["HTRANS"]);
             assert!(
                 s.contains(&"HTRANS".to_string()),
                 "HTRANS is the subject; got {s:?}"
@@ -22101,7 +22022,7 @@ mod tests {
                 !s.contains(&"IDLE".to_string()),
                 "IDLE is the value, not a subject; got {s:?}"
             );
-            let s2 = constraint_subjects("PSEL must be HIGH");
+            let s2 = constraint_subjects("PSEL must be HIGH", &["PSEL"]);
             assert!(
                 s2.contains(&"PSEL".to_string()),
                 "PSEL is the subject; got {s2:?}"
@@ -22120,6 +22041,7 @@ mod tests {
             // fire here (no "must be"), so a logic-level word is excluded as a value.
             let s = constraint_subjects(
                 "It is recommended that PSLVERR is driven LOW when PSEL, PENABLE, or PREADY are LOW",
+                &["PSLVERR", "PSEL", "PENABLE", "PREADY"],
             );
             assert!(
                 !s.contains(&"LOW".to_string()),
@@ -22134,6 +22056,7 @@ mod tests {
             // obligation is on the consequent signals.
             let s = constraint_subjects(
                 "The select signal, PSEL, is asserted, which means that PADDR, PWRITE, and PWDATA must be valid",
+                &["PSEL", "PADDR", "PWRITE", "PWDATA"],
             );
             assert!(
                 !s.contains(&"PSEL".to_string()),
@@ -22165,7 +22088,15 @@ mod tests {
                 related_visual_evidence_ids: vec![],
             };
             let mut counter = 0usize;
-            let records = extract_signal_constraints(&[stmt], &mut counter);
+            let declarations = ExtractedStatement {
+                statement_id: "decl".to_string(),
+                text: "Signal PAUSER is width 1. Signal PSELx is width 1.".to_string(),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            };
+            let records = extract_signal_constraints(&[declarations, stmt], &mut counter);
             assert!(
                 records.iter().any(|r| r.subject_signal == "PAUSER"),
                 "PAUSER extracted; got {records:?}"
@@ -22201,6 +22132,15 @@ mod tests {
                 related_visual_evidence_ids: vec![],
             };
             let stmts = vec![
+                ExtractedStatement {
+                    statement_id: "declarations".to_string(),
+                    text: "Signal PSTRB is width 1. Signal PCLK is width 1. Signal PRESETN is width 1."
+                        .to_string(),
+                    class: StatementClass::SourceFact,
+                    modality: EvidenceModality::Text,
+                    evidence_span_ids: vec![],
+                    related_visual_evidence_ids: vec![],
+                },
                 mk(
                     "s1",
                     "For read transfers, the Requester must drive all bits of PSTRB LOW.",
@@ -22231,9 +22171,21 @@ mod tests {
 
         // ── CONSTRAINT-SUBJECT-PRECISION: the 3 over-extraction classes the
         //    LLM-EXTRACTION-EVAL harness caught on the APB seed. ──────────────
-        fn constraint_subjects(text: &str) -> Vec<String> {
+        fn constraint_subjects(text: &str, declared_signals: &[&str]) -> Vec<String> {
             use crate::ir::evidence::{
                 EvidenceModality, ExtractedStatement, StatementClass, extract_signal_constraints,
+            };
+            let declaration = ExtractedStatement {
+                statement_id: "declarations".to_string(),
+                text: declared_signals
+                    .iter()
+                    .map(|signal| format!("Signal {signal} is width 1."))
+                    .collect::<Vec<_>>()
+                    .join(" "),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
             };
             let stmt = ExtractedStatement {
                 statement_id: "s".to_string(),
@@ -22244,7 +22196,7 @@ mod tests {
                 related_visual_evidence_ids: vec![],
             };
             let mut counter = 0usize;
-            extract_signal_constraints(&[stmt], &mut counter)
+            extract_signal_constraints(&[declaration, stmt], &mut counter)
                 .into_iter()
                 .map(|r| r.subject_signal)
                 .collect()
@@ -22256,6 +22208,7 @@ mod tests {
             // ("if PWAKEUP and PSELx are HIGH") are condition-clause signals, not subjects.
             let s = constraint_subjects(
                 "PWAKEUP must remain asserted until PREADY is asserted if PWAKEUP and PSELx are HIGH in the same cycle.",
+                &["PWAKEUP", "PREADY", "PSELX"],
             );
             assert!(
                 s.contains(&"PWAKEUP".to_string()),
@@ -22277,6 +22230,7 @@ mod tests {
             // width-column parameter, not a constrained signal.
             let s = constraint_subjects(
                 "| PBUSER | USER_RESP_WIDTH | Completer | User-defined response attribute. PBUSER must be valid when PSEL, PENABLE, and PREADY are asserted. |",
+                &["PBUSER", "PSEL", "PENABLE", "PREADY"],
             );
             assert!(
                 s.contains(&"PBUSER".to_string()),
@@ -22294,6 +22248,7 @@ mod tests {
             // live in earlier sentences and must not be swept into the stability clause.
             let s = constraint_subjects(
                 "The Access phase is shown at T2 where PENABLE is asserted. PREADY is asserted by the Completer at the rising edge of PCLK. PADDR, PWDATA, and any other control signals, must be stable until the transfer completes.",
+                &["PENABLE", "PREADY", "PCLK", "PADDR", "PWDATA"],
             );
             assert!(
                 s.contains(&"PADDR".to_string()),
@@ -22323,14 +22278,19 @@ mod tests {
             // subject is a forward-referenced list the extractor cannot resolve; PSEL
             // is the CONDITION, not the subject. The empty-subject full-text fallback
             // must not grab it (CONSTRAINT-CONDITION-SUBJECT; real-APB NLI finding).
-            let s =
-                constraint_subjects("The following signals must be valid when PSEL is asserted:");
+            let s = constraint_subjects(
+                "The following signals must be valid when PSEL is asserted:",
+                &["PSEL"],
+            );
             assert!(
                 !s.contains(&"PSEL".to_string()),
                 "PSEL is the condition, not the subject; got {s:?}"
             );
             // A normal conditional constraint still resolves its real subject.
-            let s2 = constraint_subjects("PADDR must be stable when HREADY is LOW.");
+            let s2 = constraint_subjects(
+                "PADDR must be stable when HREADY is LOW.",
+                &["PADDR", "HREADY"],
+            );
             assert!(
                 s2.contains(&"PADDR".to_string()),
                 "PADDR is the subject; got {s2:?}"
@@ -22397,6 +22357,66 @@ mod tests {
                 && r.actor_name == "Manager"),
             "active 'drives SIGNAL' must extract (Manager, Drives, HTRANS), got: {:?}",
             relations
+        );
+    }
+
+    #[test]
+    fn actor_relation_does_not_spread_across_case_folded_signal_identities() {
+        use super::{
+            EvidenceModality, ExtractedStatement, StatementClass, extract_actor_signal_relations,
+        };
+
+        let signals = ["sig".to_string(), "SIG".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let statements = vec![ExtractedStatement {
+            statement_id: "s_case".to_string(),
+            text: "The Manager drives sig.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+
+        let relations = extract_actor_signal_relations(&statements, &signals);
+        assert!(
+            relations
+                .iter()
+                .any(|relation| relation.signal_name == "sig")
+        );
+        assert!(
+            relations
+                .iter()
+                .all(|relation| relation.signal_name != "SIG")
+        );
+    }
+
+    #[test]
+    fn polarity_prose_does_not_spread_across_case_folded_signal_identities() {
+        use super::{EvidenceModality, ExtractedStatement, StatementClass};
+
+        let signals = ["sig".to_string(), "SIG".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let statements = vec![ExtractedStatement {
+            statement_id: "s_polarity_case".to_string(),
+            text: "sig is active low.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+
+        let observations = super::extract_signal_polarity_from_prose(&statements, &signals);
+        assert!(
+            observations
+                .iter()
+                .any(|observation| observation.signal_name == "sig")
+        );
+        assert!(
+            observations
+                .iter()
+                .all(|observation| observation.signal_name != "SIG")
         );
     }
 
@@ -22802,7 +22822,7 @@ mod tests {
     }
 
     #[test]
-    fn source_table_relations_skip_infrastructure_labels() -> Result<()> {
+    fn source_table_relations_preserve_arbitrary_actor_labels() -> Result<()> {
         use crate::ir::source::RelationKind;
 
         let tempdir = tempdir()?;
@@ -22870,15 +22890,18 @@ mod tests {
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
         )?;
-        assert_eq!(evidence_ir.actor_signal_relations.len(), 4);
+        assert_eq!(evidence_ir.actor_signal_relations.len(), 6);
         assert!(
             evidence_ir
                 .actor_signal_relations
                 .iter()
-                .all(|relation| { !matches!(relation.actor_name.as_str(), "Clock" | "Reset") }),
-            "infrastructure labels must not become actor-signal relations: {:?}",
+                .any(|relation| relation.actor_name == "Clock" && relation.signal_name == "PCLK"),
+            "the Source column, not actor spelling, must decide relation admission: {:?}",
             evidence_ir.actor_signal_relations
         );
+        assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
+            relation.actor_name == "Reset" && relation.signal_name == "PRESETn"
+        }));
         assert!(evidence_ir.actor_signal_relations.iter().any(|relation| {
             relation.actor_name == "Requester"
                 && relation.signal_name == "XREQ"
@@ -23022,7 +23045,7 @@ mod tests {
             !evidence_ir
                 .extracted_statements
                 .iter()
-                .any(|statement| statement.text == "Signal ARESETN is output width 1."),
+                .any(|statement| statement.text == "Signal ARESETn is output width 1."),
             "external reset source rows must not synthesize output declarations"
         );
         assert!(
@@ -23036,8 +23059,13 @@ mod tests {
             evidence_ir
                 .extracted_statements
                 .iter()
-                .any(|statement| { statement.text == "Reset ARESETN is asynchronous active low." })
+                .all(|statement| !statement.text.starts_with("Reset ARESETn is ")),
+            "an explicit reset role/polarity does not state synchronous/asynchronous timing"
         );
+        assert!(evidence_ir.signal_polarities.iter().any(|polarity| {
+            polarity.signal_name == "ARESETn"
+                && matches!(polarity.polarity, super::SignalPolarity::ActiveLow)
+        }));
         assert!(
             evidence_ir.actor_signal_relations.is_empty()
                 || evidence_ir.actor_signal_relations.iter().all(|relation| {
@@ -24097,7 +24125,8 @@ mod tests {
     }
 
     #[test]
-    fn abstract_transport_signal_tables_do_not_become_top_level_interfaces() -> Result<()> {
+    fn structurally_declared_signal_table_does_not_depend_on_signal_or_actor_spelling() -> Result<()>
+    {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("transport.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -24155,33 +24184,23 @@ mod tests {
             &evidence_artifact_base,
         )?;
 
-        assert!(
-            evidence_ir.extracted_statements.iter().all(|statement| {
-                !statement.text.contains("Signal VALID is")
-                    && !statement.text.contains("Signal PENDING is")
-                    && !statement.text.contains("Signal CRDT is")
-            }),
-            "abstract transport tables must not synthesize top-level signal declarations: {:?}",
-            evidence_ir.extracted_statements
-        );
-        assert!(
-            evidence_ir.actor_signal_relations.iter().all(|relation| {
-                relation.signal_name != "VALID"
-                    && relation.signal_name != "PENDING"
-                    && relation.signal_name != "CRDT"
-            }),
-            "abstract transport tables must not synthesize actor-signal relations: {:?}",
-            evidence_ir.actor_signal_relations
-        );
-        assert!(
-            evidence_ir.signal_semantic_hints.iter().all(|hint| {
-                hint.signal_name != "VALID"
-                    && hint.signal_name != "PENDING"
-                    && hint.signal_name != "CRDT"
-            }),
-            "abstract transport tables must not synthesize top-level semantic hints: {:?}",
-            evidence_ir.signal_semantic_hints
-        );
+        for signal_name in ["VALID", "PENDING", "CRDT"] {
+            assert!(
+                evidence_ir.extracted_statements.iter().any(|statement| {
+                    statement
+                        .text
+                        .starts_with(&format!("Signal {signal_name} is"))
+                }),
+                "the structural signal table must admit {signal_name} without consulting a name list"
+            );
+            assert!(
+                evidence_ir
+                    .actor_signal_relations
+                    .iter()
+                    .any(|relation| relation.signal_name == signal_name),
+                "the structural source column must ground a relation for {signal_name}"
+            );
+        }
 
         Ok(())
     }
@@ -25172,6 +25191,30 @@ mod tests {
     }
 
     #[test]
+    fn semantic_target_mentions_do_not_spread_across_case_folded_identities() {
+        let known = std::collections::HashSet::from(["sig".to_string(), "SIG".to_string()]);
+        let aliases = std::collections::BTreeMap::new();
+
+        let exact = super::collect_signal_semantic_target_mentions(
+            "sig indicates that information is valid.",
+            &known,
+            &aliases,
+        );
+        assert_eq!(exact.len(), 1);
+        assert_eq!(exact[0].signal_name, "sig");
+
+        assert!(
+            super::collect_signal_semantic_target_mentions(
+                "SiG indicates that information is valid.",
+                &known,
+                &aliases,
+            )
+            .is_empty(),
+            "an ambiguous presentation variant must fail closed"
+        );
+    }
+
+    #[test]
     fn explicit_signal_mentions_outrank_alias_grounding_for_same_statement() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("direct_signal_outranks_alias.md");
@@ -26049,39 +26092,6 @@ mod tests {
         assert!(!is_tie_off_actor_text(""));
     }
 
-    // --- is_abstract_transport_signal_token ---
-
-    #[test]
-    fn is_abstract_transport_signal_token_detects_known_tokens() {
-        assert!(is_abstract_transport_signal_token("VALID"));
-        assert!(is_abstract_transport_signal_token("READY"));
-        assert!(is_abstract_transport_signal_token("PENDING"));
-        assert!(is_abstract_transport_signal_token("CRDT"));
-    }
-
-    #[test]
-    fn is_abstract_transport_signal_token_rejects_unknown() {
-        assert!(!is_abstract_transport_signal_token("CLOCK"));
-        assert!(!is_abstract_transport_signal_token("data"));
-        assert!(!is_abstract_transport_signal_token(""));
-    }
-
-    // --- is_abstract_transport_actor_term ---
-
-    #[test]
-    fn is_abstract_transport_actor_term_detects_known_terms() {
-        assert!(is_abstract_transport_actor_term("tx"));
-        assert!(is_abstract_transport_actor_term("rx"));
-        assert!(is_abstract_transport_actor_term("transmitter"));
-        assert!(is_abstract_transport_actor_term("receiver"));
-    }
-
-    #[test]
-    fn is_abstract_transport_actor_term_rejects_unknown() {
-        assert!(!is_abstract_transport_actor_term("master"));
-        assert!(!is_abstract_transport_actor_term(""));
-    }
-
     // --- diagram_kind_key ---
 
     #[test]
@@ -26312,13 +26322,14 @@ mod tests {
     }
 
     #[test]
-    fn is_hardware_signal_token_rejects_lowercase() {
-        assert!(!is_hardware_signal_token("haddr"));
+    fn is_hardware_signal_token_accepts_lowercase() {
+        assert!(is_hardware_signal_token("haddr"));
+        assert!(is_hardware_signal_token("mixedCase"));
     }
 
     #[test]
-    fn is_hardware_signal_token_rejects_short() {
-        assert!(!is_hardware_signal_token("A"));
+    fn is_hardware_signal_token_accepts_single_letter_identifier() {
+        assert!(is_hardware_signal_token("A"));
     }
 
     #[test]
@@ -26341,48 +26352,6 @@ mod tests {
     #[test]
     fn is_hardware_signal_token_rejects_empty() {
         assert!(!is_hardware_signal_token(""));
-    }
-
-    // --- is_signal_synthesis_non_signal ---
-
-    #[test]
-    fn is_signal_synthesis_non_signal_detects_roles() {
-        assert!(is_signal_synthesis_non_signal("MANAGER"));
-        assert!(is_signal_synthesis_non_signal("SUBORDINATE"));
-        assert!(is_signal_synthesis_non_signal("INITIATOR"));
-        assert!(is_signal_synthesis_non_signal("CLOCK"));
-        assert!(is_signal_synthesis_non_signal("RESET"));
-    }
-
-    #[test]
-    fn is_signal_synthesis_non_signal_rejects_common_english_words() {
-        // WIRE-BASED-100.5k: common/description/logic words that pass `is_hardware_signal_token`
-        // (all-uppercase) but are never signal names — leaked from scrambled AXI tables
-        // ("Signal THE is width AWPROT, ARPROT").
-        for w in [
-            "THE",
-            "WHEN",
-            "AND",
-            "HIGH",
-            "LOW",
-            "SECURE",
-            "PHYSICAL",
-            "INDICATES",
-            "ASSERTED",
-        ] {
-            assert!(
-                is_signal_synthesis_non_signal(w),
-                "{w} must be rejected as a signal name"
-            );
-        }
-    }
-
-    #[test]
-    fn is_signal_synthesis_non_signal_rejects_real_signals() {
-        // Real signals must still pass (none of the added words collide with a real signal name).
-        for s in ["HADDR", "AWVALID", "ASKSTOP", "BCOMP", "AWPROT", "RDATA"] {
-            assert!(!is_signal_synthesis_non_signal(s), "{s} is a real signal");
-        }
     }
 
     #[test]
@@ -26435,8 +26404,9 @@ mod tests {
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         };
-        // Same fact found by two extractors (different id/source/case) -> same key.
-        let pattern = mk("sigcon_0001", "haddr", "the address bus shall be stable");
+        // Grounded extractors preserve the declaration spelling, so different ids/source text
+        // still converge without collapsing case-distinct document identifiers.
+        let pattern = mk("sigcon_0001", "HADDR", "the address bus shall be stable");
         let nlp = mk("nlp3_sigcon_0007", "HADDR", "HADDR must remain stable");
         assert_eq!(
             signal_constraint_fact_key(&pattern),
@@ -26448,6 +26418,12 @@ mod tests {
         assert_ne!(
             signal_constraint_fact_key(&pattern),
             signal_constraint_fact_key(&other)
+        );
+        let case_distinct = mk("sigcon_0003", "haddr", "haddr stable");
+        assert_ne!(
+            signal_constraint_fact_key(&pattern),
+            signal_constraint_fact_key(&case_distinct),
+            "case-distinct identifiers must not share provenance identity"
         );
     }
 
@@ -26462,13 +26438,25 @@ mod tests {
             source_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         };
-        // Same edge from two tiers (different id/case) -> same key.
+        // Grounded actor and signal identifiers remain exact so case-distinct names cannot collapse.
         let pattern = mk("r14:001", "manager", "HTRANS", RelationKind::Drives);
-        let llm = mk("r14:llm_007", "MANAGER", "htrans", RelationKind::Drives);
+        let llm = mk("r14:llm_007", "manager", "HTRANS", RelationKind::Drives);
         assert_eq!(
             actor_signal_relation_fact_key(&pattern),
             actor_signal_relation_fact_key(&llm),
             "the same edge from different tiers must share a canonical key (overlap)"
+        );
+        let case_distinct = mk("r14:003", "manager", "htrans", RelationKind::Drives);
+        assert_ne!(
+            actor_signal_relation_fact_key(&pattern),
+            actor_signal_relation_fact_key(&case_distinct),
+            "case-distinct signal identifiers must not share provenance identity"
+        );
+        let actor_case_distinct = mk("r14:004", "Manager", "HTRANS", RelationKind::Drives);
+        assert_ne!(
+            actor_signal_relation_fact_key(&pattern),
+            actor_signal_relation_fact_key(&actor_case_distinct),
+            "case-distinct actor identifiers must not share provenance identity"
         );
         // Different relation direction -> different key.
         let reads = mk("r14:002", "manager", "HTRANS", RelationKind::Reads);
@@ -26520,23 +26508,36 @@ mod wire_based_100_5b {
     //! <cond>` list-introducer yields NO constraint (the condition signal is not a subject).
     use super::*;
 
-    fn run(text: &str) -> Vec<SignalConstraintRecord> {
-        let stmts = vec![ExtractedStatement {
+    fn run(text: &str, declared_signals: &[&str]) -> Vec<SignalConstraintRecord> {
+        let declarations = ExtractedStatement {
+            statement_id: "declarations".into(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: declared_signals
+                .iter()
+                .map(|signal| format!("Signal {signal} is width 1."))
+                .collect::<Vec<_>>()
+                .join(" "),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let constraint = ExtractedStatement {
             statement_id: "s".into(),
             class: StatementClass::SignalValueConstraint,
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
             related_visual_evidence_ids: vec![],
-        }];
+        };
         let mut counter = 0usize;
-        extract_signal_constraints(&stmts, &mut counter)
+        extract_signal_constraints(&[declarations, constraint], &mut counter)
     }
 
     #[test]
     fn must_not_change_carries_no_redundant_negated() {
         let recs = run(
             "- The HAUSER signal must not change between cycles when HREADY is LOW, unless HRESP signal is ERROR.",
+            &["HAUSER", "HREADY", "HRESP"],
         );
         let r: Vec<_> = recs
             .iter()
@@ -26555,8 +26556,10 @@ mod wire_based_100_5b {
 
     #[test]
     fn validity_obligation_resolves_to_must_be_value_valid() {
-        let recs =
-            run("- The HWUSER signal must be valid during the data phase of a write transfer.");
+        let recs = run(
+            "- The HWUSER signal must be valid during the data phase of a write transfer.",
+            &["HWUSER"],
+        );
         let r: Vec<_> = recs
             .iter()
             .filter(|r| r.subject_signal == "HWUSER")
@@ -26578,7 +26581,7 @@ mod wire_based_100_5b {
             "The following signals must be valid when HTRANS is not IDLE:",
             "The following signals must be valid in the data phase of a write transaction when HREADY is HIGH and HRESP is LOW:",
         ] {
-            let recs = run(text);
+            let recs = run(text, &["HTRANS", "HREADY", "HRESP"]);
             assert!(
                 recs.is_empty(),
                 "list-introducer must yield no constraint, got {recs:?} for {text:?}"
@@ -26769,8 +26772,7 @@ mod wire_based_100_5h {
 mod wire_based_100_5i {
     //! WIRE-BASED-100.5i — a constraint subject must be a DECLARED signal: property/config/doc-meta
     //! prose ("RME_Support must be False" → "RME") is not mined as a signal constraint, while a real
-    //! declared-signal constraint is kept. Gated on a non-empty catalog (tiny no-declaration fixtures
-    //! are unaffected).
+    //! declared-signal constraint is kept. An empty catalog grants no signal authority.
     use super::*;
 
     fn stmt(id: &str, class: StatementClass, text: &str) -> ExtractedStatement {
@@ -26827,18 +26829,19 @@ mod wire_based_100_5i {
     }
 
     #[test]
-    fn no_catalog_fixture_is_not_emptied() {
-        // No "Signal X" declaration → catalog empty → filter skipped (constraint still extracted).
+    fn no_catalog_fixture_grants_no_signal_authority() {
+        // No "Signal X" declaration → neither deterministic path may promote the name-like token.
         let statements = vec![stmt(
             "c1",
             StatementClass::SignalValueConstraint,
             "HADDR must be stable.",
         )];
         let mut counter = 0usize;
-        let recs = extract_signal_constraints(&statements, &mut counter);
+        assert!(extract_signal_constraints(&statements, &mut counter).is_empty());
+        let mut dynamic_counter = 0usize;
         assert!(
-            recs.iter().any(|r| r.subject_signal == "HADDR"),
-            "with no catalog the filter must not drop the constraint, got {recs:?}"
+            extract_dynamic_signal_constraints(&statements, &mut dynamic_counter, &HashSet::new())
+                .is_empty()
         );
     }
 }
@@ -26874,15 +26877,37 @@ mod corpus_coverage_2_50a {
     }
 
     /// Every subject both deterministic paths mint for one statement.
-    fn subjects(text: &str, discovered: &HashSet<String>) -> Vec<String> {
+    fn subjects(
+        text: &str,
+        discovered: &HashSet<String>,
+        declared_signals: &[&str],
+    ) -> Vec<String> {
         let mut counter = 0usize;
-        let pattern = vec![stmt(StatementClass::SignalValueConstraint, text)];
+        let mut pattern: Vec<ExtractedStatement> = declared_signals
+            .iter()
+            .map(|signal| {
+                stmt(
+                    StatementClass::SourceFact,
+                    &format!("Signal {signal} is width 1."),
+                )
+            })
+            .collect();
+        pattern.push(stmt(StatementClass::SignalValueConstraint, text));
         let mut found: Vec<String> = extract_signal_constraints(&pattern, &mut counter)
             .into_iter()
             .map(|r| r.subject_signal)
             .collect();
         let mut dyn_counter = 0usize;
-        let dynamic = vec![stmt(StatementClass::NormativeStatement, text)];
+        let mut dynamic: Vec<ExtractedStatement> = declared_signals
+            .iter()
+            .map(|signal| {
+                stmt(
+                    StatementClass::SourceFact,
+                    &format!("Signal {signal} is width 1."),
+                )
+            })
+            .collect();
+        dynamic.push(stmt(StatementClass::NormativeStatement, text));
         found.extend(
             extract_dynamic_signal_constraints(&dynamic, &mut dyn_counter, discovered)
                 .into_iter()
@@ -26896,7 +26921,7 @@ mod corpus_coverage_2_50a {
         // `CAPI` is only the uppercase tail of "OpenCAPI"; `OCDE` names the enabling signal, not the
         // thing held in reset. Neither precedes "shall be" → the paragraph is an honest residual.
         assert_eq!(
-            subjects(RESET_PARAGRAPH, &values(&["RESET"])),
+            subjects(RESET_PARAGRAPH, &values(&["RESET"]), &["CAPI", "OCDE"]),
             Vec::<String>::new()
         );
     }
@@ -26905,7 +26930,11 @@ mod corpus_coverage_2_50a {
     fn later_sentence_candidates_yield_no_constraint() {
         // The obligation is on lane reversal; `CAPI`/`DLX` appear two sentences later.
         assert_eq!(
-            subjects(LANE_REVERSAL_PARAGRAPH, &values(&["COMPATIBLE"])),
+            subjects(
+                LANE_REVERSAL_PARAGRAPH,
+                &values(&["COMPATIBLE"]),
+                &["CAPI", "DLX"],
+            ),
             Vec::<String>::new()
         );
     }
@@ -26913,10 +26942,14 @@ mod corpus_coverage_2_50a {
     #[test]
     fn pre_lead_subject_is_kept() {
         // The ordinary passive obligation, single- and multi-signal, is untouched.
-        assert!(subjects("PSEL must be HIGH.", &values(&["HIGH"])).contains(&"PSEL".to_string()));
+        assert!(
+            subjects("PSEL must be HIGH.", &values(&["HIGH"]), &["PSEL"])
+                .contains(&"PSEL".to_string())
+        );
         let multi = subjects(
             "PADDR, PWDATA, and PWRITE must be stable when PSEL is asserted.",
             &HashSet::new(),
+            &["PADDR", "PWDATA", "PWRITE", "PSEL"],
         );
         for signal in ["PADDR", "PWDATA", "PWRITE"] {
             assert!(
@@ -26931,13 +26964,18 @@ mod corpus_coverage_2_50a {
         // An ACTIVE obligation states its object AFTER the verb, so it carries no passive lead and
         // the gate never fires — "must drive/set <signal> <level>" and "must have … tied HIGH".
         assert!(
-            subjects("The Requester must drive PSTRB LOW.", &HashSet::new())
-                .contains(&"PSTRB".to_string())
+            subjects(
+                "The Requester must drive PSTRB LOW.",
+                &HashSet::new(),
+                &["PSTRB"],
+            )
+            .contains(&"PSTRB".to_string())
         );
         assert!(
             subjects(
                 "An attached Subordinate must have its WSTRB input tied HIGH.",
-                &HashSet::new()
+                &HashSet::new(),
+                &["WSTRB"],
             )
             .contains(&"WSTRB".to_string())
         );
@@ -26962,7 +27000,7 @@ mod corpus_coverage_2_50a {
         // ID field; `FFFF` is the hex literal that field is set to, reached only via "set to".
         let nvme = "If an NVM subsystem supports the dynamic controller model, then all entries for that NVM subsystem shall have the Controller ID field set to FFFFh. For a particular NVM subsystem port and NVMe Transport address in an NVM subsystem, there shall be no more than one entry with the Controller ID field set to:";
         assert!(is_value_position_subject(nvme, "FFFF"));
-        assert!(!subjects(nvme, &values(&["NO"])).contains(&"FFFF".to_string()));
+        assert!(!subjects(nvme, &values(&["NO"]), &["FFFF"]).contains(&"FFFF".to_string()));
     }
 
     #[test]
@@ -26982,7 +27020,8 @@ mod corpus_coverage_2_50a {
     fn ordinary_value_binding_subject_survives() {
         // "<signal> must be set to <level>" still yields the signal: `PSEL` occurs standalone.
         assert!(
-            subjects("PSEL must be set to HIGH.", &values(&["HIGH"])).contains(&"PSEL".to_string())
+            subjects("PSEL must be set to HIGH.", &values(&["HIGH"]), &["PSEL"],)
+                .contains(&"PSEL".to_string())
         );
     }
 
@@ -27048,11 +27087,22 @@ mod swd_serial_extraction_2 {
 
     #[test]
     fn does_not_capture_cross_reference_after_pin() {
-        // "… pin, see Figure …" must not declare a signal SEE.
-        let names = declared(&[stmt(
+        for statement in [
             "Drive the line before tristating the pin, see Figure B4-3 .",
-        )]);
-        assert!(!names.iter().any(|n| n == "SEE"), "got {names:?}");
+            "For details about the reset pin, see System reset control behavior.",
+        ] {
+            let names = declared(&[stmt(statement)]);
+            assert!(
+                !names.iter().any(|name| name.eq_ignore_ascii_case("see")),
+                "a cross-reference continuation must not become an identifier: {names:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn pin_appositive_accepts_case_opaque_bounded_identifier() {
+        let names = declared(&[stmt("The interface requires a clock pin, clock_ref .")]);
+        assert_eq!(names, vec!["clock_ref".to_string()]);
     }
 
     #[test]
@@ -27063,6 +27113,42 @@ mod swd_serial_extraction_2 {
         )]);
         assert!(names.contains(&"SDA".to_string()), "got {names:?}");
         assert!(names.contains(&"SCL".to_string()), "got {names:?}");
+    }
+
+    #[test]
+    fn parenthetical_identifier_must_fill_the_complete_parentheses() {
+        let names = declared(&[
+            stmt("The line (for more detail see Section 3) remains idle."),
+            stmt("The clock (hold wire_ref low) is stretched."),
+            stmt("Signal (timing, jitter tolerance, etc.) is specified separately."),
+            stmt("The wire (after scrambling) carries the symbols."),
+            stmt("The signals (with the exception of clock edges) remain stable."),
+            stmt("The signal (i.e. there is a path) can be asynchronous."),
+        ]);
+        assert!(
+            names.is_empty(),
+            "a multi-token aside must not donate its first word as an identifier: {names:?}"
+        );
+
+        let names = declared(&[stmt("The serial clock (clock_ref) is sampled.")]);
+        assert_eq!(names, vec!["clock_ref".to_string()]);
+    }
+
+    #[test]
+    fn parenthetical_modifier_cannot_rename_an_already_marked_signal() {
+        for statement in [
+            "The [wire_ref] signal (respectively) is sampled here.",
+            "The `mixedCase7` clock (otherwise) drives this interface.",
+        ] {
+            let names = declared(&[stmt(statement)]);
+            assert!(
+                names.is_empty(),
+                "a modifier after an already named signal must not become a declaration: {names:?}"
+            );
+        }
+
+        let names = declared(&[stmt("The serial clock (mixedCase7) is sampled here.")]);
+        assert_eq!(names, vec!["mixedCase7".to_string()]);
     }
 
     #[test]
@@ -27204,25 +27290,38 @@ mod pdf_variant_digestion_9_8 {
     }
 
     #[test]
-    fn rejects_lowercase_subject_definitions() {
-        // A lowercase English subject must never become a signal — the identifier-shape guard, not a denylist.
+    fn rejects_non_bare_and_anaphoric_subject_definitions() {
+        // Articles and anaphora do not declare a wire identity; identifier case itself is irrelevant.
         let names = declared(
             &[
                 stmt("An interrupt is a signal that requests attention from the processor."),
                 stmt("In this protocol it is a signal asserted by the controller."),
+                stmt("it is a signal asserted by the controller."),
             ],
             true,
         );
         assert!(
             names.is_empty(),
-            "lowercase subjects must not be captured; got {names:?}"
+            "non-bare/anaphoric subjects must not be captured; got {names:?}"
         );
     }
 
     #[test]
+    fn accepts_case_and_length_neutral_bare_identifiers() {
+        let names = declared(
+            &[
+                stmt("sig is a signal used for synchronization."),
+                stmt("q is a signal from the producer to the consumer."),
+            ],
+            true,
+        );
+        assert!(names.contains(&"sig".to_string()), "got {names:?}");
+        assert!(names.contains(&"q".to_string()), "got {names:?}");
+    }
+
+    #[test]
     fn colon_rejects_non_identifier_head() {
-        // The glossary-colon head must be a single uppercase identifier: "master: entity which …" and
-        // "Note: signal …" are not signal definitions.
+        // The glossary-colon head must be one identifier and the tail must state a signal relation.
         let names = declared(
             &[
                 stmt("master: entity which provides the S1 signal"),
@@ -27246,10 +27345,10 @@ mod pdf_variant_digestion_9_8 {
     }
 
     #[test]
-    fn respects_synthesis_denylist() {
-        // Role/logic words that pass the identifier shape are still rejected by the shared denylist.
+    fn explicit_definition_outranks_identifier_spelling() {
+        // A document may legitimately name a signal CLOCK; the explicit definition is evidence.
         let names = declared(&[stmt("CLOCK is a signal used for synchronization.")], true);
-        assert!(!names.iter().any(|n| n == "CLOCK"), "got {names:?}");
+        assert!(names.iter().any(|n| n == "CLOCK"), "got {names:?}");
     }
 
     #[test]
@@ -27271,6 +27370,10 @@ mod pdf_variant_digestion_9_8 {
             vec!["S2".to_string()]
         );
         assert!(definitional_signal_names("an interrupt is a signal").is_empty());
+        assert_eq!(
+            definitional_signal_names("sig is a signal used for synchronization"),
+            vec!["sig".to_string()]
+        );
     }
 }
 

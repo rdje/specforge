@@ -17,17 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i`; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`,
-  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`, `.6d.ii.a`, `.6d.i`,
-  `.6c.ii`, `FSMGEN-REFRESH-INTEGRATE-6.1`, and the verified no-op `FSMGEN-REFRESH-INTEGRATE-7.1` are committed
-  complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
-  `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.6d.ii.d.i` is complete and full CI is green. CorpusMemory schema 7 has only
-  identity-independent global scope; schemas 1–6 quarantine named-family semantic priors. Thirteen validated
-  inputs relearn byte-identically at `a416cc8b…6239633`; KG fixtures pass 156/156, chain currency is 24/24
-  measurable EvidenceIR and 78/78 downstream, and the 1,880/6/0 warning-deny Rust suite plus docs pass.
-- Next action: commit `.6d.ii.d.i`, verify the tree clean, then activate `.6d.ii.d.ii` for signal-spelling
-  authority.
-- In-flight uncommitted: completed and fully verified `.6d.ii.d.i` commit set only; no background job or scratch
-  workspace.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` is complete and awaiting its required commit;
+  `.6d.ii.d.i`, `.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and `.6d.i` are committed
+  complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
+- Current state: document identifiers are opaque from EvidenceIR through ISF lowering, exact one-way declaration
+  grounding and alpha controls are implemented, all 78 persisted chains are reconciled, and 17/17 emitted ISFs
+  pass FSMGen strict. Full CI passes all doctrines, warning-denied Rust checks and docs, 1,890/6/0 Rust tests,
+  mdBook test/build, and the final locality residue check. ADR 0037 and public/live documentation agree. The exact
+  562-file rollback was consumed and removed.
+- Next action: commit `.6d.ii.d.ii`, verify a clean handoff, then activate
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` to neutralize compiled prompts and corpus organization.
+- In-flight uncommitted: the complete verified `.d.ii` code, generated artifacts, fixture authority, task-tree,
+  ADR, Knowledge Map projection, live docs, and mdBook transaction; no scratch workspace or background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

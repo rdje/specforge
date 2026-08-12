@@ -484,11 +484,13 @@ for the contract model itself.)
 **`signal-resolve`** mines actor→signal `drives`/`reads` edges from the same hard
 prose, appending grounded, de-duplicated `ActorSignalRelation` records to the
 knowledge graph the `SemanticIR` already consumes for actor ports and graph
-direction. Why it stays safe: every proposed edge must clear grounding gates —
-an upper-case signal name, a non-empty actor, a relation that is exactly `drives`
-or `reads`, and (with `--grounding-signals`) membership in the declared signal
-set — and is checked against existing edges before it is kept. An ungrounded or
-malformed answer is skipped, not invented. (See [Actor Connectivity](../domain/actor-connectivity.md).)
+direction. Why it stays safe: the EvidenceIR's current-document declarations are
+mandatory authority. Every proposed edge needs an identifier that exactly matches
+that catalog, a non-empty actor, and a relation that is exactly `drives` or `reads`.
+Identifier case and length have no semantic meaning. `--grounding-signals` may
+only narrow the document catalog; it cannot add an external name or disable
+grounding. An ungrounded, case-colliding, or malformed answer is skipped, not
+invented. (See [Actor Connectivity](../domain/actor-connectivity.md).)
 
 Use `--dry-run` to preview which sentences would be sent without making a single
 LLM call, `--max-statements` to cap how many candidates are sent (handy for a

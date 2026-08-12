@@ -268,11 +268,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i — make prior memory identity-independent`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii`
-  Status: `pending`
-  Goal: `remove identifier-spelling authority from EvidenceIR, SemanticIR, and validation`
-  Acceptance: `renaming a signal without changing its declarations/evidence cannot change interface admission, handshake role, clock/reset role, or validation outcome; unresolved semantics stay explicit`
-  Verification: `pending`
-  Commit: `pending`
+  Status: `done`
+  Goal: `remove identifier-spelling authority from EvidenceIR through SemanticIR, IntentIR validation, and adapter lowering`
+  Acceptance: `renaming a signal without changing its declarations/evidence cannot change signal admission, interface admission, handshake role, clock/reset role, validation outcome, or adapter lowering; unresolved semantics stay explicit and no downstream stage re-infers them from the identifier`
+  Verification: `case/length/suffix/collision/empty-catalog and alpha-renaming controls across EvidenceIR, optional NLP, SemanticIR, validation, IntentIR, and ISF lowering; exact same-volume 562-file rollback attribution; 18/73/74/74 changed Evidence/Semantic/Intent/adapter artifacts; 397→344 evidence constraints, 31,767→28,876 invariants, 281→239 transactions, 2,156→2,489 signal-neutral conditional rules, and renderability 44→17; all 17 emitted ISFs pinned-FSMGen-strict clean; exact 24/24 measurable EvidenceIR plus 78/78 downstream currency; full repository CI`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii — make document identifiers opaque`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii`
   Status: `pending`
@@ -290,8 +290,8 @@ expressiveness as the bottleneck.
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e`
   Status: `pending`
-  Goal: `install a fail-closed production-genericity architecture and doctrine gate`
-  Acceptance: `the production module graph is separated from conformance/oracle code; raw document text and identity cannot be inspected by extraction decision sites outside registered universal grammar interfaces; an AST-aware gate rejects forbidden dependency and raw-literal decision mutations; a finite vocabulary census is supplementary diagnostics only`
+  Goal: `install a fail-closed proof-carrying production-genericity architecture and doctrine gate`
+  Acceptance: `the production module graph is separated from conformance/oracle code; promoted claims carry machine-checkable derivations from typed current-document evidence; identifiers are opaque information-flow values whose spelling can be copied or identity-compared but cannot steer semantic branches; raw document text and identity cannot be inspected by extraction decision sites outside registered universal grammar interfaces; an AST-aware gate rejects forbidden dependency, taint-flow, and raw-literal decision mutations; every registered inference rule declares and passes an alpha-equivariance obligation; a finite vocabulary census is supplementary diagnostics only`
   Verification: `pending`
   Commit: `pending`
 
@@ -355,7 +355,7 @@ expressiveness as the bottleneck.
 | 19 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | `done` | SourceIR schema 2 and exact ten-chain reconciliation are committed and current |
 | 20 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `done` | EvidenceIR schema 2 and all 78 persisted downstream chains are generic, reconciled, and current |
 | 21 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i` | `done` | identity-independent schema-7 prior memory, neutral KG controls, fixed-point learning, and exact chain reconciliation are complete |
-| 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `pending` | remove signal-spelling authority from evidence, semantics, and validation |
+| 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `done` | opaque identifiers, one-way declaration grounding, alpha-equivariant semantics, and typed-only ISF clock/reset lowering are complete |
 | 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `pending` | neutralize prompts and production corpus organization |
 | 24 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `pending` | exact chain reconciliation and behavioral qualification close `.d` |
 | 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e` | `pending` | structurally gate the complete neutral production graph after remediation |
@@ -630,6 +630,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.d.i` fixed-point and ADR 0025 reconciliation | validate 13 learning inputs; learn/replay/revalidate loop; fourth independent learn byte comparison; 58 changed typed-IR validations plus two adapters; pinned FSMGen strict; `bash scripts/check_chain_currency.sh --check` | PASS: 13/13 accepted; 29/83/4/443/0/1,251/11 semantic prior records plus two structural profiles and one explicit contest; byte-stable SHA-256 `a416cc8b…6239633`; EvidenceIR 24/24 measurable and every downstream stage 78/78; two renderable ISFs strict-clean |
 | `2026-08-12` | `.6d.ii.d.i` focused quality and cleanup | formatting; warning-deny all-target Clippy; complete Rust suite; warning-deny rustdoc; mdBook test/build; exact scratch removal/residue census | PASS: 1,880 Rust tests passed / six ignored / zero failed; docs build and test; the exact repository-local rollback/fixed-point root is absent |
 | `2026-08-12` | `.6d.ii.d.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including exact chain currency, formatting, warning-deny Clippy, 1,880 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6d.ii.d.ii` production census and structural proof | EvidenceIR through optional NLP, SemanticIR, IntentIR, validation, completeness, and ISF adapter decision sites; case/length/suffix/collision/empty-catalog and alpha-renaming controls | PASS: no audited path assigns signal/interface/handshake/clock/reset/polarity/direction/transaction authority from identifier spelling; exact current-document declarations or typed evidence govern promotion, and unresolved semantics remain explicit |
+| `2026-08-12` | `.6d.ii.d.ii` ADR 0025 reconciliation and attribution | exact same-volume 562-file / 437-MiB rollback; 24 EvidenceIR plus all 78 downstream rebuilds; typed validation; structural JSON comparison; `scripts/check_chain_currency.sh`; pinned FSMGen strict | PASS: 18/73/74/74 Evidence/Semantic/Intent/adapter artifacts change; constraints 397→344, invariants 31,767→28,876, transactions 281→239, signal-neutral conditionals 2,156→2,489, renderability 44→17; all 17 emitted targets strict-clean; currency 24/24 plus 78/78; rollback removed and absent |
+| `2026-08-12` | `.6d.ii.d.ii` full repository gate | `bash scripts/run_ci.sh` | PASS: all doctrines including exact chain currency, formatting, warning-deny Clippy, 1,890 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -1054,6 +1057,27 @@ the reviewed replay can name its production revision.
   mdBook, pipeline audit, live/architecture docs, Knowledge Map, task frontier, and bounded resume pointer state
   the same identity-independent boundary and the remaining `.d.ii`–`.f` blockers.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii`
+
+- [x] **REPRODUCE / MEASURE** — preserve the exact pre-change four-stage population on the repository volume,
+  rebuild every replayable EvidenceIR and all 78 downstream chains, and attribute every non-validation field plus
+  aggregate constraint/invariant/transaction/renderability movement before deleting the rollback.
+- [x] **ROOT CAUSE (WHY + WHERE)** — case/length/suffix filters, name-substring roles, case-folded identity
+  collapse, circular NLP declaration synthesis, semantic/validation fallback, IntentIR pattern synthesis, and ISF
+  conventional clock/reset defaults made arbitrary spelling executable; removing case rejection also exposed
+  under-specified parenthetical/appositive and descriptive-invariant grammars.
+- [x] **ADDRESSED (verified)** — identities are opaque; typed structure or bounded grammar declares them;
+  exact-first unique-only current-document grounding governs optional proposals; later stages may carry, narrow,
+  contest, or residualize but cannot re-infer; missing clock/reset authority blocks target emission.
+- [x] **NO REGRESSION** — all 17 honestly renderable ISFs pass pinned FSMGen strict; validators and currency are
+  exact; complete Rust, rustdoc, mdBook, doctrine, and locality gates pass; the 562-file rollback is absent.
+- [x] **GENERICITY (ADR 0006)** — alpha-renaming changes only copied symbol identity, never admission, role,
+  validation, or lowering eligibility. No replacement allowlist/denylist was introduced; positive grammar and
+  current-document evidence supply authority.
+- [x] **LOCKSTEP** — ADR 0037, code, exact generated population, mdBook, audit, live/architecture docs, Knowledge
+  Map, task frontier, and bounded resume pointer publish the same one-way grounding boundary and remaining
+  `.d.iii`–`.f` release blockers.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1080,6 +1104,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — make SourceIR classification neutral` | SourceIR schema-2 structural classifiers, legacy fail-closure, exact ten-chain ADR 0025 reconciliation, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived` | generic schema-2 protocol evidence, legacy fail-closure, exact 78-chain ADR 0025 reconciliation, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i — make prior memory identity-independent` | schema-7 global prior scope, legacy quarantine, neutral KG controls, byte-stable relearning, and exact 78-chain currency |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii — make document identifiers opaque` | opaque identifiers, one-way current-document grounding, alpha-equivariant semantics, typed-only ISF clock/reset lowering, exact 78-chain reconciliation, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1159,6 +1184,33 @@ the reviewed replay can name its production revision.
   identity-scoped semantic authority, migrates KG fixtures to neutral mismatch controls, validates and relearns
   13 current inputs to a byte-stable fixed point, and restores exact 24/24 plus 78/78 chain currency. ADR 0036
   owns the migration boundary; `.d.ii` is next only after this leaf commits cleanly.
+- `2026-08-12`: Activated `.6d.ii.d.ii` only after `.d.i` committed at `4b8895d6` and the post-commit tree was
+  clean. This leaf owns every production decision where an arbitrary identifier spelling can admit a signal or
+  assign interface, handshake, clock, reset, or polarity semantics; tests remain conformance-only. The complete
+  production census found an additional downstream breach in `ir/isf_ir.rs`: adapter lowering selects
+  clock/reset signals from `clk`/`clock`/`rst`/`reset` substrings, overrides explicit reset timing from `_n`/`_b`,
+  and otherwise manufactures conventional clock/reset defaults. `.d.ii` owns that adapter path too; closing only
+  the originally recorded SemanticIR and validation sites would leave alpha-renaming observably false.
+- `2026-08-12`: The `.d.ii` production census found that spelling authority was broader than named-suffix
+  heuristics: case-folded provenance keys and ambiguous case-insensitive catalog recovery could collapse two
+  distinct current-document identifiers, while NLP enrichment could let a model-proposed signal synthesize the
+  declaration that later purported to ground it. The repair therefore enforces one-way grounding and exact-first,
+  unique-only identifier recovery; it deletes the circular declaration path. The future `.e` gate is strengthened
+  from vocabulary/AST policing to proof-carrying promotion plus opaque-identifier information-flow and per-rule
+  alpha-equivariance obligations. This is the durable architecture direction; vocabulary scanning remains only a
+  diagnostic tripwire.
+- `2026-08-12`: Director clarified the north star as domain-specialized but specification-instance-neutral:
+  SpecForge must reason as a digital-chip-design colleague across protocols, ISAs, interfaces, registers, timing,
+  state machines, and system infrastructure, produce justified SourceIR → EvidenceIR → SemanticIR → IntentIR, and
+  lower supported executable intent to FSMGen ISF. Closed digital-design concepts and language grammar are required;
+  vendor/family/document/identifier familiarity is never evidence. The `.d`–`.f` acceptance boundary uses this
+  distinction so neutrality cannot be misimplemented as a domain-blind PDF parser.
+- `2026-08-12`: Closed `.6d.ii.d.ii` with opaque identifier information flow and one-way current-document
+  grounding from EvidenceIR through adapter lowering. Exact rollback attribution changes 18/73/74/74 stage
+  artifacts, removes 2,891 ungrounded invariants and 42 name-created transactions, exposes 333 signal-neutral
+  conditional rules, and changes honest ISF renderability 44→17; all 17 targets pass pinned FSMGen strict and
+  exact chain currency remains green. ADR 0037 owns the boundary. After this commit is clean, `.d.iii` owns the
+  still-compiled named prompt and corpus-organization surfaces; `.e`/`.f` remain signoff blockers.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

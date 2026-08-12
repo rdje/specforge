@@ -226,20 +226,11 @@ impl IntentIr {
         let signal_constraints = semantic_ir.signal_constraints.clone();
         let conditional_rules = semantic_ir.conditional_rules.clone();
         let mut transactions = synthesize_transactions(&semantic_ir);
-        let mut actor_drive_relations = synthesize_actor_drive_relations(&semantic_ir);
-        let mut actor_sample_relations = synthesize_actor_sample_relations(&semantic_ir);
-        let mut actor_trigger_relations = synthesize_actor_trigger_relations(&semantic_ir);
-        let mut actor_temporal_dependencies = synthesize_actor_temporal_dependencies(&semantic_ir);
-        let mut temporal_invariants = synthesize_temporal_invariants(&semantic_ir);
-        recognize_digital_patterns(
-            &mut transactions,
-            &mut actor_drive_relations,
-            &mut actor_sample_relations,
-            &mut actor_trigger_relations,
-            &mut actor_temporal_dependencies,
-            &mut temporal_invariants,
-            &semantic_ir,
-        );
+        let actor_drive_relations = synthesize_actor_drive_relations(&semantic_ir);
+        let actor_sample_relations = synthesize_actor_sample_relations(&semantic_ir);
+        let actor_trigger_relations = synthesize_actor_trigger_relations(&semantic_ir);
+        let actor_temporal_dependencies = synthesize_actor_temporal_dependencies(&semantic_ir);
+        let temporal_invariants = synthesize_temporal_invariants(&semantic_ir);
         // KG-ISF-TRANSACTIONS.2a: structural, universal transaction recognition
         // (replaces the removed hardcoded AHB/APB/SPI recognizers).
         recognize_named_transactions(&mut transactions, &semantic_ir);
@@ -1188,221 +1179,6 @@ pub fn count_nested_steps(steps: &[TransactionStep]) -> usize {
 // Synthesis: populate new IntentIR temporal record types from SemanticIR data
 // ---------------------------------------------------------------------------
 
-fn recognize_digital_patterns(
-    transactions: &mut Vec<TransactionIntent>,
-    drive_relations: &mut Vec<ActorDriveRelationRecord>,
-    _sample_relations: &mut Vec<ActorSampleRelationRecord>,
-    trigger_relations: &mut Vec<ActorTriggerRelationRecord>,
-    _temporal_deps: &mut Vec<ActorTemporalDependencyRecord>,
-    invariants: &mut Vec<TemporalInvariantRecord>,
-    semantic_ir: &SemanticIr,
-) {
-    // Collect all signal names across interfaces and actor relations
-    let all_signals: BTreeSet<String> = semantic_ir
-        .actor_signal_relations
-        .iter()
-        .map(|r| r.signal_name.clone())
-        .chain(
-            semantic_ir
-                .interfaces
-                .iter()
-                .flat_map(|i| i.signal_records.iter().map(|s| s.signal_name.clone())),
-        )
-        .collect();
-
-    let signal_list: Vec<&str> = all_signals.iter().map(|s| s.as_str()).collect();
-
-    // --- Pattern 1: Valid/Ready handshake ---
-    // Look for pairs like *_VALID + *_READY, or VALID + READY
-    let valid_signals: Vec<&str> = signal_list
-        .iter()
-        .filter(|s| s.ends_with("VALID") || s.ends_with("_VALID") || s.starts_with("VALID_"))
-        .copied()
-        .collect();
-    let ready_signals: Vec<&str> = signal_list
-        .iter()
-        .filter(|s| s.ends_with("READY") || s.ends_with("_READY") || s.starts_with("READY_"))
-        .copied()
-        .collect();
-
-    for valid in &valid_signals {
-        for ready in &ready_signals {
-            // Pair signals that share a common prefix (e.g., AXI_AWVALID + AXI_AWREADY)
-            let v_base = valid.trim_end_matches("_VALID").trim_end_matches("VALID");
-            let r_base = ready.trim_end_matches("_READY").trim_end_matches("READY");
-            if v_base == r_base
-                || valid.contains(ready.trim_end_matches("_READY"))
-                || ready.contains(valid.trim_end_matches("_VALID"))
-            {
-                let tx_name = format!("{}_handshake", sanitize_id(v_base));
-                // Check if we already have a transaction for this handshake
-                let already_has = transactions.iter().any(|t| t.transaction_name == tx_name);
-                if !already_has {
-                    let steps = vec![
-                        TransactionStep::AwaitAll {
-                            done_port: format!("{}_handshake_done", sanitize_id(v_base)),
-                        },
-                        TransactionStep::Sample {
-                            port: valid.to_string(),
-                            as_name: format!("{}_val", sanitize_id(v_base)),
-                        },
-                    ];
-                    transactions.push(TransactionIntent {
-                        transaction_id: format!("txn_hs_{}", sanitize_id(v_base)),
-                        transaction_name: tx_name,
-                        activation_port: Some(ready.to_string()),
-                        ports: vec![
-                            TransactionPortRecord {
-                                port_name: valid.to_string(),
-                                direction: TransactionPortDirection::Input,
-                                width: None,
-                            },
-                            TransactionPortRecord {
-                                port_name: ready.to_string(),
-                                direction: TransactionPortDirection::Output,
-                                width: None,
-                            },
-                        ],
-                        steps,
-                        phase_membership: Vec::new(),
-                        channel_membership: Vec::new(),
-                        source_block_ids: Vec::new(),
-                        source_temporal_rule_ids: Vec::new(),
-                        supporting_statement_ids: Vec::new(),
-                        automation_confidence: AutomationConfidence::Medium,
-                    });
-                }
-                // Actor drive relations for handshake
-                let valid_driver = semantic_ir.actor_signal_relations.iter().find(|r| {
-                    r.signal_name == *valid && matches!(r.relation, RelationKind::Drives)
-                });
-                if let Some(driver) = valid_driver {
-                    let already_rel = drive_relations
-                        .iter()
-                        .any(|dr| dr.signal_name == *valid && dr.driver_actor == driver.actor_name);
-                    if !already_rel {
-                        drive_relations.push(ActorDriveRelationRecord {
-                            relation_id: format!("adr_hs_{}", sanitize_id(valid)),
-                            driver_actor: driver.actor_name.clone(),
-                            signal_name: valid.to_string(),
-                            consumer_actor: None,
-                            condition: Some(format!("{} asserted", ready)),
-                            value: None,
-                            source_text: String::new(),
-                            supporting_statement_ids: Vec::new(),
-                            automation_confidence: AutomationConfidence::Medium,
-                        });
-                    }
-                }
-            }
-        }
-    }
-
-    // --- Pattern 2: Request/Acknowledge/Grant ---
-    let req_signals: Vec<&str> = signal_list
-        .iter()
-        .filter(|s| {
-            s.ends_with("REQ")
-                || s.ends_with("_REQ")
-                || s.ends_with("REQUEST")
-                || s.ends_with("_REQUEST")
-        })
-        .copied()
-        .collect();
-    let ack_signals: Vec<&str> = signal_list
-        .iter()
-        .filter(|s| {
-            s.ends_with("ACK")
-                || s.ends_with("_ACK")
-                || s.ends_with("GNT")
-                || s.ends_with("_GNT")
-                || s.ends_with("GRANT")
-        })
-        .copied()
-        .collect();
-
-    for req in &req_signals {
-        for ack in &ack_signals {
-            let req_actor = semantic_ir
-                .actor_signal_relations
-                .iter()
-                .find(|r| r.signal_name == *req && matches!(r.relation, RelationKind::Drives));
-            let ack_actor = semantic_ir
-                .actor_signal_relations
-                .iter()
-                .find(|r| r.signal_name == *ack && matches!(r.relation, RelationKind::Drives));
-            if let (Some(req_a), Some(ack_a)) = (req_actor, ack_actor)
-                && req_a.actor_name != ack_a.actor_name
-            {
-                let already = trigger_relations.iter().any(|tr| {
-                    tr.source_actor == req_a.actor_name && tr.target_actor == ack_a.actor_name
-                });
-                if !already {
-                    trigger_relations.push(ActorTriggerRelationRecord {
-                        relation_id: format!(
-                            "atr_reqack_{}_{}",
-                            sanitize_id(&req_a.actor_name),
-                            sanitize_id(&ack_a.actor_name)
-                        ),
-                        source_actor: req_a.actor_name.clone(),
-                        target_actor: ack_a.actor_name.clone(),
-                        trigger_port: Some(req.to_string()),
-                        activation_kind: Some(ActivationKind::Do),
-                        source_text: String::new(),
-                        supporting_statement_ids: Vec::new(),
-                        automation_confidence: AutomationConfidence::Medium,
-                    });
-                }
-            }
-        }
-    }
-
-    // --- Patterns 3-5 (hardcoded AHB/APB/SPI recognizers) REMOVED in
-    //     KG-ISF-TRANSACTIONS.2a (G2 de-hardcode) ---
-    // They literal-tested HTRANS/HREADY/HADDR, PSEL/PENABLE/PREADY, and
-    // MISO/MOSI/SCLK to mint `ahb_transfer` / `apb_transfer` / `spi_transfer`
-    // (with hardcoded widths + enum literals) — an ADR-0006 breach that fired
-    // spuriously on any prose mentioning those names (e.g. the project README).
-    // Transaction recognition is now structural + universal: see
-    // `recognize_named_transactions`, which mints typed transactions from the
-    // document's own section-heading vocabulary (Cue A, `transaction_anchors`)
-    // corroborated by its signal-keyed enumeration tables (Cue B).
-
-    // --- Pattern 6: FIFO status ---
-    let has_full = signal_list
-        .iter()
-        .any(|s| *s == "FULL" || s.ends_with("_FULL"));
-    let has_empty = signal_list
-        .iter()
-        .any(|s| *s == "EMPTY" || s.ends_with("_EMPTY"));
-    if has_full {
-        invariants.push(TemporalInvariantRecord {
-            invariant_id: "tinv_fifo_full_write_protect".to_string(),
-            subject_signal: "WEN".to_string(),
-            invariant_kind: TemporalInvariantKind::OnlyValidWhen,
-            condition_signal: Some("FULL".to_string()),
-            condition_value: Some("LOW".to_string()),
-            target_value: None,
-            source_text: "FIFO: write enable only valid when FIFO is not full".to_string(),
-            supporting_statement_ids: Vec::new(),
-            automation_confidence: AutomationConfidence::Medium,
-        });
-    }
-    if has_empty {
-        invariants.push(TemporalInvariantRecord {
-            invariant_id: "tinv_fifo_empty_read_protect".to_string(),
-            subject_signal: "REN".to_string(),
-            invariant_kind: TemporalInvariantKind::OnlyValidWhen,
-            condition_signal: Some("EMPTY".to_string()),
-            condition_value: Some("LOW".to_string()),
-            target_value: None,
-            source_text: "FIFO: read enable only valid when FIFO is not empty".to_string(),
-            supporting_statement_ids: Vec::new(),
-            automation_confidence: AutomationConfidence::Medium,
-        });
-    }
-}
-
 /// KG-ISF-TRANSACTIONS.2a — fast, universal, structural transaction recognition.
 ///
 /// Mints a typed [`TransactionIntent`] for each transaction the document NAMES in
@@ -1440,30 +1216,30 @@ fn recognize_named_transactions(
     let declared_signals: BTreeSet<String> = semantic_ir
         .actor_signal_relations
         .iter()
-        .map(|r| r.signal_name.to_ascii_uppercase())
+        .map(|relation| relation.signal_name.clone())
         .chain(semantic_ir.interfaces.iter().flat_map(|i| {
             i.signal_records
                 .iter()
-                .map(|s| s.signal_name.to_ascii_uppercase())
+                .map(|signal| signal.signal_name.clone())
         }))
         .collect();
 
     // Cue B: map each signal-keyed enum's member name → the keyed signal, so a
     // transaction whose qualifier matches an enumerated transfer-type/opcode is
     // corroborated by the document's own enumeration table. Deterministic (sorted).
-    let mut enum_member_signal: BTreeMap<String, String> = BTreeMap::new();
+    let mut enum_member_signals: Vec<(String, String)> = Vec::new();
     for symbol in &semantic_ir.symbol_definitions {
         if symbol.kind != SymbolDefinitionKind::Enum
-            || !declared_signals.contains(&symbol.symbol_name.to_ascii_uppercase())
+            || !declared_signals.contains(&symbol.symbol_name)
         {
             continue;
         }
         for member in &symbol.members {
-            enum_member_signal
-                .entry(member.member_name.to_ascii_uppercase())
-                .or_insert_with(|| symbol.symbol_name.clone());
+            enum_member_signals.push((member.member_name.clone(), symbol.symbol_name.clone()));
         }
     }
+    enum_member_signals.sort();
+    enum_member_signals.dedup();
 
     // KG-ISF-TRANSACTIONS.2c: the document-grounded direction for each declared
     // signal, from its relation role — Drives → output (the signal is produced),
@@ -1525,7 +1301,7 @@ fn recognize_named_transactions(
         }
         transactions.push(mint_named_transaction(
             anchor,
-            &enum_member_signal,
+            &enum_member_signals,
             &signal_directions,
             &phase_groups,
             &signal_channels,
@@ -1560,7 +1336,7 @@ fn recognize_named_transactions(
 /// when the transaction is not yet `.isf`-rendered.
 fn mint_named_transaction(
     anchor: &TransactionAnchorRecord,
-    enum_member_signal: &BTreeMap<String, String>,
+    enum_member_signals: &[(String, String)],
     signal_directions: &BTreeMap<String, TransactionPortDirection>,
     phase_groups: &[(String, BTreeSet<String>)],
     signal_channels: &BTreeMap<String, String>,
@@ -1577,12 +1353,10 @@ fn mint_named_transaction(
     // drive that defines the transaction.
     let mut cue_b_corroborated = false;
     for token in anchor.transaction_name.split('_') {
-        // The enum member key is the uppercased member name; the matched value
-        // driven onto the keyed signal is that same canonical member spelling
-        // (it equals the emitted enum member, e.g. `IDLE`), so the lowered
-        // `(drive HTRANS IDLE)` resolves against the enum FSMGen emits.
-        let member = token.to_ascii_uppercase();
-        if let Some(signal) = enum_member_signal.get(&member) {
+        // A normalized heading token may recover one uniquely matching document enum member.
+        // The exact document spellings of both member and keyed signal are preserved; a member
+        // shared by multiple signal enums or a case-fold collision fails closed.
+        if let Some((member, signal)) = unique_enum_member_binding(token, enum_member_signals) {
             cue_b_corroborated = true;
             if !ports.iter().any(|p| &p.port_name == signal) {
                 ports.push(TransactionPortRecord {
@@ -1593,7 +1367,7 @@ fn mint_named_transaction(
             }
             let drive = TransactionStep::Drive {
                 drive_name: signal.clone(),
-                actuals: vec![member],
+                actuals: vec![member.clone()],
             };
             if !steps.contains(&drive) {
                 steps.push(drive);
@@ -1691,6 +1465,28 @@ fn mint_named_transaction(
         supporting_statement_ids: anchor.supporting_statement_ids.clone(),
         automation_confidence,
     }
+}
+
+fn unique_enum_member_binding<'a>(
+    proposed: &str,
+    bindings: &'a [(String, String)],
+) -> Option<&'a (String, String)> {
+    let exact = bindings
+        .iter()
+        .filter(|(member, _)| member == proposed)
+        .collect::<Vec<_>>();
+    if exact.len() == 1 {
+        return exact.first().copied();
+    }
+    if exact.len() > 1 {
+        return None;
+    }
+
+    let folded = bindings
+        .iter()
+        .filter(|(member, _)| member.eq_ignore_ascii_case(proposed))
+        .collect::<Vec<_>>();
+    (folded.len() == 1).then(|| folded[0])
 }
 
 fn synthesize_transactions(semantic_ir: &SemanticIr) -> Vec<TransactionIntent> {
@@ -2031,6 +1827,18 @@ fn synthesize_actor_temporal_dependencies(
 
 fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvariantRecord> {
     let mut invariants = Vec::new();
+    let declared_signals = semantic_ir
+        .interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .map(|signal| signal.signal_name.clone())
+        .chain(
+            semantic_ir
+                .actor_signal_relations
+                .iter()
+                .map(|relation| relation.signal_name.clone()),
+        )
+        .collect::<BTreeSet<_>>();
 
     // From InvariantRecord in SemanticIR
     for inv in &semantic_ir.invariants {
@@ -2051,7 +1859,8 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
     // From signal_constraints (these are temporal by nature — "must not change when...")
     for sc in &semantic_ir.signal_constraints {
         let kind = signal_constraint_to_temporal_invariant_kind(&sc.constraint_kind);
-        let (condition_signal, condition_value) = extract_condition_from_text(&sc.condition_text);
+        let (condition_signal, condition_value) =
+            extract_condition_from_text(&sc.condition_text, &declared_signals);
         invariants.push(TemporalInvariantRecord {
             invariant_id: format!("tinv_sc_{}", sc.constraint_id),
             subject_signal: sc.subject_signal.clone(),
@@ -2215,7 +2024,10 @@ fn signal_constraint_to_temporal_invariant_kind(
     }
 }
 
-fn extract_condition_from_text(text: &Option<String>) -> (Option<String>, Option<String>) {
+fn extract_condition_from_text(
+    text: &Option<String>,
+    declared_signals: &BTreeSet<String>,
+) -> (Option<String>, Option<String>) {
     let text = match text {
         Some(t) => t,
         None => return (None, None),
@@ -2223,10 +2035,23 @@ fn extract_condition_from_text(text: &Option<String>) -> (Option<String>, Option
     let lower = text.to_lowercase();
     if let Some(pos) = lower.find("when ") {
         let rest = &text[pos + 5..];
-        let signal = rest
+        let proposed = rest
             .split_whitespace()
             .next()
-            .map(|s| s.trim_matches(',').to_uppercase());
+            .map(|signal| signal.trim_matches(','));
+        let signal = proposed.and_then(|proposed| {
+            if declared_signals.contains(proposed) {
+                return Some(proposed.to_string());
+            }
+            let mut matches = declared_signals
+                .iter()
+                .filter(|declared| declared.eq_ignore_ascii_case(proposed));
+            let canonical = matches.next()?;
+            if matches.next().is_some() {
+                return None;
+            }
+            Some(canonical.clone())
+        });
         (signal, None)
     } else {
         (None, None)
@@ -2308,8 +2133,7 @@ mod tests {
         use std::collections::{BTreeMap, BTreeSet};
 
         // Cue B index: enum member IDLE is keyed by the declared signal HTRANS.
-        let mut enum_member_signal: BTreeMap<String, String> = BTreeMap::new();
-        enum_member_signal.insert("IDLE".to_string(), "HTRANS".to_string());
+        let enum_member_signals = vec![("IDLE".to_string(), "HTRANS".to_string())];
 
         // .2i: the document's recognised phases (each with its grounded signal set) —
         // address names HTRANS, data names HREADY. HADDR is in neither (it stays an
@@ -2358,7 +2182,7 @@ mod tests {
         };
         let txn = mint_named_transaction(
             &idle,
-            &enum_member_signal,
+            &enum_member_signals,
             &signal_directions,
             &phase_groups,
             &signal_channels,
@@ -2437,7 +2261,7 @@ mod tests {
         };
         let txn2 = mint_named_transaction(
             &basic,
-            &enum_member_signal,
+            &enum_member_signals,
             &signal_directions,
             &phase_groups,
             &signal_channels,
@@ -2465,6 +2289,19 @@ mod tests {
             txn2.channel_membership.is_empty(),
             "a member with no channel mapping stays in `ports` only, never a fabricated channel"
         );
+    }
+
+    #[test]
+    fn enum_member_binding_preserves_spelling_and_rejects_ambiguous_identity() {
+        let unique = vec![("IdleMode".to_string(), "modeSelect".to_string())];
+        let binding = super::unique_enum_member_binding("idlemode", &unique).unwrap();
+        assert_eq!(binding, &("IdleMode".to_string(), "modeSelect".to_string()));
+
+        let ambiguous = vec![
+            ("idle".to_string(), "modeA".to_string()),
+            ("IDLE".to_string(), "modeB".to_string()),
+        ];
+        assert!(super::unique_enum_member_binding("Idle", &ambiguous).is_none());
     }
 
     #[test]
@@ -2526,15 +2363,10 @@ mod tests {
                 .contains("backend-neutral transport abstraction")
                 && !assumption.supporting_semantic_ids.is_empty()
         }));
-        // SEMANTIC-EMPTY-CATALOG-FILTER.1: the prose-only fixture declares no signals, so
-        // SemanticIR demotes the records naming VALID/READY instead of promoting them, and
-        // IntentIR carries that one packet forward. The behaviors/constraints asserted
-        // above are statement-derived and unaffected.
-        assert_eq!(intent_ir.residual_decisions.len(), 1);
-        assert_eq!(
-            intent_ir.residual_decisions[0].packet_id,
-            "semantic_ungrounded_records_not_promoted"
-        );
+        // Opaque prose identifiers do not create interface candidates or unresolved
+        // signal-role decisions. The statement-derived behavior and constraint records
+        // asserted above remain available without claiming that VALID/READY are signals.
+        assert!(intent_ir.residual_decisions.is_empty());
 
         Ok(())
     }
@@ -2940,7 +2772,7 @@ mod tests {
     }
 
     #[test]
-    fn preserves_blocked_handshake_fallback_residual_decisions_in_intent_ir() -> Result<()> {
+    fn preserves_unresolved_semantic_role_decisions_in_intent_ir() -> Result<()> {
         use crate::ir::source::{
             ContentSectionRecord, SectionKind, SignalConstraintKind, SignalConstraintRecord,
         };
@@ -3048,7 +2880,7 @@ mod tests {
             intent_ir
                 .residual_decisions
                 .iter()
-                .any(|packet| { packet.packet_id == "semantic_handshake_name_fallback_blocked" })
+                .any(|packet| { packet.packet_id == "semantic_signal_role_unresolved" })
         );
 
         Ok(())
@@ -3367,7 +3199,7 @@ mod tests {
     }
 
     #[test]
-    fn carries_inferred_reset_polarity_into_intent_ir() -> Result<()> {
+    fn carries_unknown_reset_polarity_into_intent_ir() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("inferred_reset.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -3403,10 +3235,7 @@ mod tests {
             .as_ref()
             .expect("explicit system contract should be present");
         assert_eq!(system_contract.reset_kind, SystemResetKind::Asynchronous);
-        assert_eq!(
-            system_contract.reset_polarity,
-            SystemResetPolarity::ActiveLow
-        );
+        assert_eq!(system_contract.reset_polarity, SystemResetPolarity::Unknown);
         assert_eq!(
             system_contract.assertion_timing,
             SystemResetTimingRelation::AsynchronousToClock
@@ -4368,7 +4197,9 @@ mod tests {
                 "Signal AWVALID is input width 1.\n\n",
                 "Signal AWREADY is input width 1.\n\n",
                 "Signal PAYLOAD is output width 32.\n\n",
-                "Clock clk.\n",
+                "Clock clk.\n\n",
+                "AWVALID indicates that the transfer information is valid.\n\n",
+                "AWREADY indicates that the receiver can accept the transfer.\n",
             ),
         )?;
 
@@ -5399,9 +5230,7 @@ mod tests {
     }
 
     #[test]
-    fn pattern_recognition_detects_valid_ready_handshake() {
-        // Verify that when INTENT_IR is built from a spec with VALID/READY signals,
-        // the digital pattern recognizer adds handshake transactions
+    fn signal_spelling_does_not_mint_handshake_transactions() {
         let tempdir = tempdir().unwrap();
         let source = tempdir.path().join("hs.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -5434,24 +5263,23 @@ mod tests {
         )
         .unwrap();
 
-        // Pattern recognition should have added a handshake transaction
         let has_handshake_tx = intent_ir
             .transactions
             .iter()
             .any(|t| t.transaction_name.contains("handshake"));
         assert!(
-            has_handshake_tx,
-            "expected pattern recognition to add a valid/ready handshake transaction"
+            !has_handshake_tx,
+            "VALID/READY spelling alone must not invent a transaction"
         );
 
-        // Should also have a drive relation for VALID
+        // The explicitly grounded actor relation remains independent of transaction synthesis.
         let has_valid_drive = intent_ir
             .actor_drive_relations
             .iter()
             .any(|r| r.signal_name == "VALID");
         assert!(
             has_valid_drive,
-            "expected a drive relation for VALID signal"
+            "the document-grounded drive relation must remain available"
         );
     }
 

@@ -78,11 +78,11 @@ const CONDITION_CLAUSE_MARKERS: &[&str] = &[
 /// is kept. Returns `false` when the subject does not occur at all (other gates own that).
 pub fn is_condition_only_subject(subject: &str, sentence: &str) -> bool {
     let lowered = sentence.to_ascii_lowercase();
-    let needle = subject.trim().to_ascii_lowercase();
+    let needle = subject.trim();
     if needle.is_empty() {
         return false;
     }
-    let occurrences = token_occurrences(&lowered, &needle);
+    let occurrences = token_occurrences(sentence, needle);
     if occurrences.is_empty() {
         return false;
     }
@@ -92,7 +92,8 @@ pub fn is_condition_only_subject(subject: &str, sentence: &str) -> bool {
         .all(|&(start, end)| spans.iter().any(|&(cs, ce)| start >= cs && end <= ce))
 }
 
-/// Identifier-boundary occurrences of `needle` in `haystack` (both lowercased) as byte ranges.
+/// Exact, identifier-boundary occurrences of `needle` in `haystack` as byte ranges. Callers may
+/// pass lowercased language when matching grammar words, but opaque identifiers remain original.
 fn token_occurrences(haystack: &str, needle: &str) -> Vec<(usize, usize)> {
     let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
     let mut out = Vec::new();
@@ -168,7 +169,7 @@ pub fn is_permissive_only_subject_frame(subject: &str, source_text: &str) -> boo
         "could",
         "would",
     ];
-    let needle = subject.trim().to_ascii_lowercase();
+    let needle = subject.trim();
     if needle.is_empty() {
         return false;
     }
@@ -176,7 +177,7 @@ pub fn is_permissive_only_subject_frame(subject: &str, source_text: &str) -> boo
     for sentence in source_text.split(['.', ';', '\n', '•']) {
         let lowered = sentence.to_ascii_lowercase();
         let has_token = |word: &str| !token_occurrences(&lowered, word).is_empty();
-        if token_occurrences(&lowered, &needle).is_empty() {
+        if token_occurrences(sentence, needle).is_empty() {
             continue;
         }
         if has_token("must") || has_token("shall") {
@@ -205,16 +206,15 @@ pub enum GroundedConstraint {
 /// grounding); only the subject's entity type decides which surface the record belongs to.
 /// `type_subject` is injected (production = entity typing) so this is testable with no provider;
 /// `field_containers` reports the catalog containers declaring a field subject (provenance).
-/// `LLM-PRIMARY-PROMOTION.3a` candidate shape: an identifier token that plausibly IS a signal
-/// spelling — length ≥ 4, leading uppercase, at most one lowercase character (the `ARESETn`
-/// naming convention), everything else uppercase/digit/underscore. Deliberately only a SHAPE
-/// filter to keep prose words out of consideration: the load-bearing gate is that a candidate
-/// must additionally type as a valid subject against the document's own catalogs.
+/// `LLM-PRIMARY-PROMOTION.3a` candidate syntax. Signal identities are opaque; only the
+/// document's typed entity catalog may decide whether an identifier is a signal or field.
 fn is_snap_candidate_token(token: &str) -> bool {
-    token.len() >= 4
-        && token.chars().next().is_some_and(|c| c.is_ascii_uppercase())
-        && token.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
-        && token.chars().filter(|c| c.is_ascii_lowercase()).count() <= 1
+    let mut characters = token.chars();
+    let Some(first) = characters.next() else {
+        return false;
+    };
+    (first.is_ascii_alphabetic() || first == '_')
+        && characters.all(|character| character.is_ascii_alphanumeric() || character == '_')
 }
 
 /// Case-insensitive "exactly one edit away" (one substitution, insertion, or deletion).
@@ -282,7 +282,7 @@ pub fn snap_subject_to_sentence_token(
     type_subject: impl Fn(&str) -> EntityType,
 ) -> Option<String> {
     let proposed = proposed.trim();
-    if proposed.len() < 4 {
+    if proposed.is_empty() {
         return None;
     }
     let mut candidates: Vec<String> = Vec::new();
@@ -322,15 +322,14 @@ pub fn ground_constraint_typed(
     // snap to the document's own spelling BEFORE typing. A subject that does occur in the
     // sentence is never rewritten.
     let mut subject = raw.subject.trim().to_string();
-    if subject.len() >= 4
-        && token_occurrences(
-            &sentence.to_ascii_lowercase(),
-            &subject.to_ascii_lowercase(),
-        )
-        .is_empty()
+    if !subject.is_empty()
+        && token_occurrences(sentence, &subject).is_empty()
         && let Some(snapped) = snap_subject_to_sentence_token(&subject, sentence, &type_subject)
     {
         subject = snapped;
+    }
+    if subject.is_empty() || token_occurrences(sentence, &subject).is_empty() {
+        return None;
     }
     // .1/.FIELD.3 — the subject must type as a Signal or a declared Field (the model may not
     // invent subjects; actors, transactions, table refs, boilerplate are all dropped).
@@ -455,7 +454,21 @@ fn dedup_merge_by<T>(
 
 /// Normalized condition component of a dedup key.
 fn condition_key(condition_text: Option<&str>) -> String {
-    condition_text.unwrap_or("").trim().to_ascii_lowercase()
+    condition_text.unwrap_or("").trim().to_string()
+}
+
+fn exact_signal_constraint_key(record: &SignalConstraintRecord) -> String {
+    let target = match &record.constraint_kind {
+        SignalConstraintKind::MustBeValue { value } => Some(value.as_str()),
+        _ => record.target_value.as_deref(),
+    };
+    format!(
+        "{}|{}|{}|{}",
+        record.subject_signal.trim(),
+        crate::eval::constraint_kind_str(&record.constraint_kind),
+        record.negated,
+        target.unwrap_or("").trim(),
+    )
 }
 
 /// `.4` — collapse exact-duplicate SIGNAL constraints by (subject, kind incl. value, negation,
@@ -467,7 +480,7 @@ pub fn dedup_constraints(records: Vec<SignalConstraintRecord>) -> Vec<SignalCons
         |rec| {
             format!(
                 "{}|{}",
-                crate::eval::signal_constraint_record_key(rec),
+                exact_signal_constraint_key(rec),
                 condition_key(rec.condition_text.as_deref())
             )
         },
@@ -490,10 +503,10 @@ pub fn dedup_field_constraints(
             };
             format!(
                 "{}|{}|{}|{}|{}",
-                rec.subject_field.trim().to_ascii_uppercase(),
+                rec.subject_field.trim(),
                 crate::eval::constraint_kind_str(&rec.constraint_kind),
                 rec.negated,
-                value.unwrap_or("").trim().to_ascii_uppercase(),
+                value.unwrap_or("").trim(),
                 condition_key(rec.condition_text.as_deref())
             )
         },
@@ -583,6 +596,31 @@ mod tests {
             rec.condition_text.as_deref(),
             Some("after receiving a snoop")
         );
+    }
+
+    #[test]
+    fn grounding_does_not_treat_case_folded_sibling_as_subject_evidence() {
+        let raw = RawConstraint {
+            subject: "sig".into(),
+            kind: "must_be_asserted".into(),
+            condition: None,
+            value: None,
+        };
+        let record = ground_constraint(
+            &raw,
+            "SIG must be asserted.",
+            "s_case",
+            "c_case",
+            |subject| {
+                if matches!(subject, "sig" | "SIG") {
+                    EntityType::Signal
+                } else {
+                    EntityType::Unknown
+                }
+            },
+            is_grounded_in_source,
+        );
+        assert!(record.is_none());
     }
 
     #[test]
@@ -1056,9 +1094,9 @@ mod tests {
     }
 
     #[test]
-    fn snap_is_bounded_to_one_edit_and_real_token_shapes() {
+    fn snap_is_bounded_to_one_edit_and_document_entity_typing() {
         let type_subject = |s: &str| {
-            if s == "SYSCOREQ" || s == "When" {
+            if s == "SYSCOREQ" || s == "XREQ" || s == "mixedCase" {
                 EntityType::Signal
             } else {
                 EntityType::Boilerplate
@@ -1069,16 +1107,20 @@ mod tests {
             snap_subject_to_sentence_token("SYREQ", "SYSCOREQ must be deasserted.", type_subject),
             None
         );
-        // A short proposal never snaps (too loose at < 4 chars).
+        // Identifier length and case do not carry semantic authority.
         assert_eq!(
-            snap_subject_to_sentence_token("REQ", "XREQ must be asserted.", type_subject),
-            None
+            snap_subject_to_sentence_token("XRE", "XREQ must be asserted.", type_subject)
+                .as_deref(),
+            Some("XREQ")
         );
-        // A prose-shaped token ("When" — mostly lowercase) is never a candidate, even if a
-        // pathological typing closure would accept it.
         assert_eq!(
             snap_subject_to_sentence_token("Whan", "When XREQ is HIGH.", type_subject),
             None
+        );
+        assert_eq!(
+            snap_subject_to_sentence_token("mixedCas", "mixedCase must be asserted.", type_subject)
+                .as_deref(),
+            Some("mixedCase")
         );
         // Equal-ignoring-case is not a typo (typing already had its chance) → no snap.
         assert_eq!(
@@ -1311,6 +1353,31 @@ mod tests {
             "duplicate provenance merged, never lost"
         );
         assert_eq!(out[1].constraint_id, "f3");
+    }
+
+    #[test]
+    fn dedup_keeps_case_distinct_document_identifiers_and_values() {
+        let fields = vec![
+            field_record(
+                "f1",
+                "TagOp",
+                SignalConstraintKind::MustBeValue {
+                    value: "idle".into(),
+                },
+                None,
+                "s1",
+            ),
+            field_record(
+                "f2",
+                "tagop",
+                SignalConstraintKind::MustBeValue {
+                    value: "IDLE".into(),
+                },
+                None,
+                "s2",
+            ),
+        ];
+        assert_eq!(dedup_field_constraints(fields).len(), 2);
     }
 
     #[test]

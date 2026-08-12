@@ -151,7 +151,7 @@
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["PCLK", "PRESETN", "XREQ", "XACK"],
+      "signal_names_include": ["PCLK", "PRESETn", "XREQ", "XACK"],
       "actor_ports_include": [
         {
           "actor_name": "Requester",
@@ -168,7 +168,7 @@
       "semantic_consensus_signal_names_include": ["XREQ", "XACK"]
     },
     "intent": {
-      "signal_names_include": ["PCLK", "PRESETN", "XREQ", "XACK"],
+      "signal_names_include": ["PCLK", "PRESETn", "XREQ", "XACK"],
       "actor_ports_include": [
         {
           "actor_name": "Requester",
@@ -187,7 +187,7 @@
     "validation": {
       "evidence": {
         "metric_values": {
-          "actor_signal_relations": "4",
+          "actor_signal_relations": "6",
           "signal_semantic_hints": "2",
           "signal_semantic_hints_from_tables": "2",
           "signal_semantic_hints_from_prose": "0",
@@ -198,14 +198,14 @@
       },
       "semantic": {
         "metric_values": {
-          "actor_ports": "8",
+          "actor_ports": "6",
           "with_semantic_consensus": "4",
           "with_decisive_semantic_arbitration": "4"
         }
       },
       "intent": {
         "metric_values": {
-          "actor_ports": "8",
+          "actor_ports": "6",
           "with_semantic_consensus": "4",
           "with_decisive_semantic_arbitration": "4"
         }

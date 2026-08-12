@@ -155,7 +155,6 @@ fn format_bit_range(low: u32, high: u32) -> String {
 use crate::ir::evidence::{
     ExtractedStatement, ExtractorTier, FactKind, FactProvenanceRecord, StatementClass,
     TableSignalDeclarationProvenanceRecord, is_hardware_signal_token,
-    is_signal_synthesis_non_signal,
 };
 use crate::ir::source::{StructuredTableRecord, TableKind, TimingConstraintRecord};
 use std::collections::HashSet;
@@ -317,8 +316,11 @@ fn densest_signal_name_column_tokens(table: &StructuredTableRecord) -> Vec<Strin
                 .split_whitespace()
                 .next()
                 .unwrap_or("")
-                .to_ascii_uppercase();
-            if is_hardware_signal_token(&token) && !is_signal_synthesis_non_signal(&token) {
+                .trim_matches(|character: char| {
+                    !character.is_ascii_alphanumeric() && character != '_'
+                })
+                .to_string();
+            if is_hardware_signal_token(&token) {
                 tokens.push(token);
             }
         }

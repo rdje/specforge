@@ -374,12 +374,12 @@ fn harvest_actor_taxonomy_priors(
         .interfaces
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
-        .map(|signal| (signal.signal_name.to_ascii_lowercase(), signal))
+        .map(|signal| (signal.signal_name.clone(), signal))
         .collect::<BTreeMap<_, _>>();
     let conflicted_signals = intent_ir
         .signal_semantic_conflicts
         .iter()
-        .map(|conflict| conflict.signal_name.to_ascii_lowercase())
+        .map(|conflict| conflict.signal_name.clone())
         .collect::<BTreeSet<_>>();
     let mut actor_names = intent_ir
         .actor_ports
@@ -460,7 +460,7 @@ fn harvest_semantic_priors(
     let conflicted_signals = intent_ir
         .signal_semantic_conflicts
         .iter()
-        .map(|conflict| conflict.signal_name.to_ascii_lowercase())
+        .map(|conflict| conflict.signal_name.clone())
         .collect::<BTreeSet<_>>();
 
     for signal in intent_ir
@@ -468,7 +468,7 @@ fn harvest_semantic_priors(
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
     {
-        if conflicted_signals.contains(&signal.signal_name.to_ascii_lowercase()) {
+        if conflicted_signals.contains(&signal.signal_name) {
             continue;
         }
 
@@ -543,7 +543,7 @@ fn harvest_semantic_modality_reliability_priors(
     let conflicted_signals = intent_ir
         .signal_semantic_conflicts
         .iter()
-        .map(|conflict| conflict.signal_name.to_ascii_lowercase())
+        .map(|conflict| conflict.signal_name.clone())
         .collect::<BTreeSet<_>>();
 
     for signal in intent_ir
@@ -551,7 +551,7 @@ fn harvest_semantic_modality_reliability_priors(
         .iter()
         .flat_map(|interface| interface.signal_records.iter())
     {
-        if conflicted_signals.contains(&signal.signal_name.to_ascii_lowercase()) {
+        if conflicted_signals.contains(&signal.signal_name) {
             continue;
         }
 
@@ -1480,7 +1480,7 @@ fn infer_actor_taxonomy_role(
     let mut strongest_grounding_strength = SemanticGroundingStrength::SingleSource;
 
     for port in intent_ir.actor_ports.iter().filter(|port| {
-        port.actor_name.eq_ignore_ascii_case(actor_name)
+        port.actor_name == actor_name
             && matches!(
                 port.direction,
                 ActorRelativeDirection::Output | ActorRelativeDirection::InOut
@@ -1490,12 +1490,11 @@ fn infer_actor_taxonomy_role(
                 .iter()
                 .any(|basis| matches!(basis, crate::ir::source::RelationKind::Drives))
     }) {
-        if conflicted_signals.contains(&port.signal_name.to_ascii_lowercase()) {
+        if conflicted_signals.contains(&port.signal_name) {
             continue;
         }
 
-        let Some(signal) = signal_records_by_name.get(&port.signal_name.to_ascii_lowercase())
-        else {
+        let Some(signal) = signal_records_by_name.get(&port.signal_name) else {
             continue;
         };
         let Some(consensus) = &signal.semantic_consensus else {

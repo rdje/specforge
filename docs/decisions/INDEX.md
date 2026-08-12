@@ -48,6 +48,7 @@ changed* lives in git (layer D), not here.
 | [0034](0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md) | Trajectory steering is a reviewable multi-metric control loop, not one blended score | 2026-08-11 | accepted | objective, measurement, evaluation, convergence, automation, task-selection |
 | [0035](0035-protocol-evidence-is-generic-and-document-derived.md) | Protocol evidence is generic, document-derived, and fail-closed across schema migration | 2026-08-12 | accepted | genericity, evidence-ir, schema, extraction, projection, residual-honesty |
 | [0036](0036-prior-memory-is-identity-independent.md) | Prior memory is identity-independent, validation-gated, and fail-closed across migration | 2026-08-12 | accepted | genericity, prior-memory, learning, schema, validation, residual-honesty |
+| [0037](0037-identifiers-are-opaque-and-one-way-grounded.md) | Document identifiers are opaque and semantic promotion is one-way grounded | 2026-08-12 | accepted | genericity, evidence-ir, semantic-ir, intent-ir, validation, isf-adapter |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

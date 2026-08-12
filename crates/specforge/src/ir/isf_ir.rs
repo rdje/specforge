@@ -14,8 +14,8 @@ use crate::ir::intent::{IntentIr, TransactionStep};
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator,
     ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
-    ControlReferenceSuffix, ControlUnaryOperator, InterfaceSignalDirection, SymbolDefinitionKind,
-    SystemResetKind, SystemResetPolarity,
+    ControlReferenceSuffix, ControlUnaryOperator, InfrastructureSignalKind,
+    InterfaceSignalDirection, SymbolDefinitionKind, SystemResetKind, SystemResetPolarity,
 };
 // R16-CONTRACT-IR.3: `TemporalRuleRecord`/`TemporalPredicateRecord` are now
 // referenced only by the test-only parity oracle (`classify_temporal_rule`
@@ -706,61 +706,47 @@ impl IsfIr {
 impl IsfIr {
     pub(crate) fn from_intent_ir(intent_ir: &IntentIr, actor_name: &str) -> Self {
         // --- Clock ---
-        let clock = if let Some(sc) = &intent_ir.system_contract {
-            sc.clock_signal.clone()
-        } else if let Some(infra) = intent_ir.infrastructure_signals.iter().find(|s| {
-            s.signal_name.to_lowercase().contains("clk")
-                || s.signal_name.to_lowercase().contains("clock")
-        }) {
-            infra.signal_name.clone()
-        } else {
-            "clk".to_string()
-        };
+        let clock = intent_ir
+            .system_contract
+            .as_ref()
+            .map(|contract| contract.clock_signal.clone())
+            .or_else(|| {
+                intent_ir
+                    .infrastructure_signals
+                    .iter()
+                    .find(|signal| matches!(signal.kind, InfrastructureSignalKind::SystemClock))
+                    .map(|signal| signal.signal_name.clone())
+            })
+            .unwrap_or_else(|| "__specforge_unresolved_clock".to_string());
 
         // --- Reset (always populated — strict mode requires it) ---
-        // FSMGen strict mode rejects sync active-low on _n/_b suffixed signals;
-        // those suffixes conventionally mean async, so override timing.
+        // Only the typed upstream contract may supply timing or polarity. A stable internal
+        // placeholder keeps the diagnostic model deterministic when grounding is incomplete;
+        // adapter renderability rejects that model below, so it is never emitted as source intent.
         let reset = if let Some(sc) = &intent_ir.system_contract {
-            let is_n_suffix = sc.reset_signal.ends_with("_n") || sc.reset_signal.ends_with("_b");
             IsfReset {
                 signal: sc.reset_signal.clone(),
-                timing: if is_n_suffix {
-                    "async".to_string()
-                } else {
-                    match sc.reset_kind {
-                        SystemResetKind::Synchronous => "sync".to_string(),
-                        SystemResetKind::Asynchronous => "async".to_string(),
-                    }
+                timing: match sc.reset_kind {
+                    SystemResetKind::Synchronous => "sync".to_string(),
+                    SystemResetKind::Asynchronous => "async".to_string(),
                 },
                 polarity: match sc.reset_polarity {
                     SystemResetPolarity::ActiveHigh => "active_high".to_string(),
                     SystemResetPolarity::ActiveLow => "active_low".to_string(),
-                },
-            }
-        } else if let Some(infra) = intent_ir.infrastructure_signals.iter().find(|s| {
-            s.signal_name.to_lowercase().contains("rst")
-                || s.signal_name.to_lowercase().contains("reset")
-        }) {
-            let is_n_suffix =
-                infra.signal_name.ends_with("_n") || infra.signal_name.ends_with("_b");
-            IsfReset {
-                signal: infra.signal_name.clone(),
-                timing: if is_n_suffix {
-                    "async".to_string()
-                } else {
-                    "sync".to_string()
-                },
-                polarity: if is_n_suffix {
-                    "active_low".to_string()
-                } else {
-                    "active_high".to_string()
+                    SystemResetPolarity::Unknown => "unknown".to_string(),
                 },
             }
         } else {
+            let signal = intent_ir
+                .infrastructure_signals
+                .iter()
+                .find(|signal| matches!(signal.kind, InfrastructureSignalKind::SystemReset))
+                .map(|signal| signal.signal_name.clone())
+                .unwrap_or_else(|| "__specforge_unresolved_reset".to_string());
             IsfReset {
-                signal: "rst_n".to_string(),
-                timing: "async".to_string(),
-                polarity: "active_low".to_string(),
+                signal,
+                timing: "unknown".to_string(),
+                polarity: "unknown".to_string(),
             }
         };
 

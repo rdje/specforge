@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > do the wire docs (APB/AHB/AXI/SWD) change when register reset is lowered to ISF (no — ZERO composable resets, .isf byte-identical, WIRE-BASED-100 holds trivially)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > do the wire-gold .isf carry over-width value literals (only AXI ihi0022_l has one — AWCMO; and AXI already fails strict on the orthogonal (port expr) error; APB/AHB/SWD have none; WIRE-BASED-100 measures extraction F1 not .isf bytes so it is orthogonal)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -167,6 +169,8 @@
   > does relation-derived direction synthesis independently invent signal names
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > does removing sentence fallback remove address phase recognition
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > does renaming a signal change semantic extraction
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > does retiring gates remove conditional rules or temporal rules
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -293,7 +297,3 @@
   > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how are doctrines enforced in specforge
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > how are document keys in the source PDF registry derived from filenames
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > how are duplicate signal constraints deduplicated in the LLM-primary extractor

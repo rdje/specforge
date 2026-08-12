@@ -579,11 +579,11 @@ trap: a spec says *"control signal"*, *"these signals"*, *"the signal is asserte
 *"signal integrity"* thousands of times, and almost none of those words is a signal
 *name*. So this reader does the opposite of greedy matching. It fires only on a
 sentence that **defines** a token as a signal — the copula *"&lt;NAME&gt; is a/an
-signal …"* or the glossary colon *"&lt;NAME&gt;: signal …"* — and it requires the
-candidate to be an **all-uppercase identifier token** (the same `is_hardware_signal_token`
-shape used everywhere else). That second rule is what keeps it clean without a
-hand-maintained word-blocklist: *"an interrupt is a signal"* and *"it is a signal"*
-never qualify, because `interrupt` and `it` aren't identifier-shaped. The grammar was
+signal …"* or the glossary colon *"&lt;NAME&gt;: signal &lt;relation&gt; …"*. Candidate
+syntax is an opaque identifier and is independent of case and length. Precision comes
+from grammar: the candidate must be the clause's bare subject; article-led descriptions
+and anaphoric pronouns do not qualify, and a colon form needs a signal relation rather
+than an unrelated phrase such as “signal integrity.” The grammar was
 locked the same way every grammar in this stage is — by **probing all of the stored
 documents before writing a line of code**: across the whole corpus this definitional
 reader yields exactly `S1` and `S2`, and nothing else.

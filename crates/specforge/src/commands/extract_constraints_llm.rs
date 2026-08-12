@@ -18,7 +18,9 @@ use crate::ir::constraint_extract_llm::{
     DEFAULT_EXTRACT_MODEL, GroundedConstraint, dedup_constraints, dedup_field_constraints,
     ground_constraint_typed, propose_constraints_llm,
 };
-use crate::ir::entity_typing::{EntityType, classify_entity, gather_entity_evidence};
+use crate::ir::entity_typing::{
+    EntityType, classify_entity, gather_entity_evidence, resolve_unique_document_identifier,
+};
 use crate::ir::evidence::{EvidenceIr, ExtractorTier};
 use crate::ir::extractor::{ExtractorRunEntry, SurfaceManifest};
 use std::collections::BTreeSet;
@@ -92,10 +94,15 @@ pub fn promote_constraints(
             };
             // `.FIELD.4` — catalog containers declaring a field subject (provenance on the record).
             let field_containers = |name: &str| {
-                let up = name.trim().to_ascii_uppercase();
+                let resolved = resolve_unique_document_identifier(
+                    name,
+                    ir.message_field_records
+                        .iter()
+                        .map(|field| field.name.as_str()),
+                );
                 let mut containers: Vec<String> = Vec::new();
                 for f in &ir.message_field_records {
-                    if f.name.trim().to_ascii_uppercase() == up
+                    if resolved.is_some_and(|identity| f.name.trim() == identity)
                         && !containers.contains(&f.container)
                     {
                         containers.push(f.container.clone());

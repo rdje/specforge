@@ -44,7 +44,7 @@ The dedicated [Actor Connectivity And Graph Direction](../domain/actor-connectiv
 
 ### Meaning before spelling
 
-Handshake recovery should prefer grounded role evidence over raw `*VALID*` / `*READY*` name shape.
+Handshake recovery uses grounded role evidence; raw identifier shape supplies no fallback.
 
 The dedicated [Handshake And Semantic Roles](../domain/handshake-semantics.md) chapter explains the observation, candidate, arbitration, and consensus surfaces behind that rule.
 
@@ -86,11 +86,11 @@ turning a physical measurement into a silent drop.
 
 ### Heuristic grouping needs positive authority
 
-Statement-level signal co-mentions normally group signals that are already authoritative. `SemanticIR` first
+Statement-level signal co-mentions can group only signals that are already authoritative. `SemanticIR` first
 establishes authority from formal `Signal X is ...` declarations and the document system contract, then
-intersects candidates with that surface. A declaration-free document has one narrow positive path: a
-multi-signal statement may ground its own group when it starts with one candidate signal and immediately makes a
-deontic signal action (`must` or `shall` plus assertion, deassertion, or stability).
+intersects candidates with that surface. Deontic prose can enrich those declarations, but cannot make an
+arbitrary token a signal. A declaration-free document therefore produces no named interface merely because its
+prose resembles signal behavior.
 
 This fail-closed rule matters for prose-heavy and table-heavy documents. A row such as
 `| F0 84 | 01 | A0 | A4 | D5 |` may contain hardware-shaped uppercase tokens, but without a typed declaration
@@ -98,9 +98,9 @@ there is no evidence that those tokens are top-level interface wires. Before thi
 retained documents accumulated 5,527 low-confidence interfaces / 18,397 records and fed 4,060 signals into ISF
 adapters. The same documents now produce no interface because none satisfies the positive behavior grammar.
 
-The distinction preserves real heuristic-only behavior. `VALID must remain asserted until READY is observed`
-grounds the `VALID`/`READY` pair even without a separate declaration. In contrast, a raw encoding row, ordinary
-uppercase prose, or an actor relation such as `TBU reads DOWNSTREAM` does not declare a wire surface.
+For example, `request_flag must remain asserted until accept_flag is observed` enriches the pair only when the
+document has declared both identifiers as signals. Without those declarations it remains source behavior, not a
+fabricated wire surface. A raw encoding row, ordinary prose, or an actor relation does not declare a wire.
 
 Formal declarations are unaffected because they take the explicit interface path. System clock and reset are
 also preserved: the system contract inserts them into the authority set and emits an explicit document

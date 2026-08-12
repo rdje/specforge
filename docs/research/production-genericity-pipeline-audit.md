@@ -1,6 +1,6 @@
 # Production-genericity pipeline audit
 
-Status: **discovery complete; SourceIR, EvidenceIR protocol carriers, and prior identity routing remediated; downstream production breach remains**
+Status: **discovery complete; SourceIR, EvidenceIR protocol carriers, and prior identity routing remediated; spelling-driven EvidenceIR-through-adapter breach remains**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
 Audited revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the active `.6d.ii.a` replay publication
@@ -51,6 +51,21 @@ the production boundary.
 
 ## Audit denominator and method
 
+### North-star scope: domain-specialized, specification-instance-neutral
+
+SpecForge is not intended to be neutral across arbitrary document domains. It is a supersmart colleague for
+digital-chip design: protocols, interfaces, ISAs, registers, state machines, clock/reset and power topology,
+timing, ordering, exceptions, coherency, and related implementation intent are legitimate closed domain concepts.
+The neutrality obligation is across specification instances, PDF layouts, vendors, protocol families, and opaque
+document identifiers. The production core may implement universal digital-design and document-language semantics;
+it may not conclude that an arbitrary identifier, title, filename, vendor, family, or familiar example carries one
+of those semantics without typed evidence from the current input.
+
+The intended product path is explicit: source documents become successively justified SourceIR, EvidenceIR,
+SemanticIR, and IntentIR; supported executable intent lowers to FSMGen ISF; FSMGen owns scheduling and HDL
+lowering. A domain-capable model may supply expert proposals, but the verified IR and its provenance—not the
+model's familiarity with a named specification—are the authority.
+
 The denominator is the compiled production crate, not a selected word list:
 
 - all 71 Rust source files below `crates/specforge/src/`;
@@ -75,6 +90,22 @@ the task to protocols are also blocking latent bias even when they do not contai
 key. Named examples in production comments do not directly execute, but violate the production
 surface boundary and make a future leak easier to normalize; they must move to test/conformance
 documentation.
+
+### Signoff architecture direction: proof-carrying extraction, not vocabulary completeness
+
+Neutrality cannot be established by enumerating forbidden fragments: an unseen identifier can encode the same
+shortcut, and an innocent listed word can be legitimate input data. The signoff boundary is instead an
+information-flow and derivation boundary. Production recognizers and models may propose candidate claims, but a
+claim is promotable only when a small kernel can validate a proof term whose premises are typed structural facts or
+current-document evidence. Identifier values are opaque atoms: code may preserve them and perform exact identity
+comparisons, with unique-only recovery for case-normalized source presentation, but their characters cannot select
+a semantic rule. Every registered inference rule must be alpha-equivariant, and generated counter-specs will test
+that property under arbitrary renaming, paraphrase, formatting perturbation, and misleading familiar names.
+
+This architecture does not promise to recover intent that the source does not express. It promises that supported
+intent is justified without identity shortcuts and that missing, ambiguous, contradictory, external, or unreadable
+intent remains explicit. The finite forbidden-vocabulary census remains a useful diagnostic tripwire, never a proof
+of neutrality.
 
 ## What the pipeline does now
 
@@ -194,7 +225,7 @@ This closes only the protocol-structure carrier/extractor breach. The repository
 ready: `.6d.ii.d` owns remaining identity/spelling authority, `.e` owns structural production-boundary
 enforcement and named production commentary, and `.f` owns alpha-renaming/identity/paraphrase/held-out behavior.
 
-### P0 — signal spelling changes semantic authority
+### Resolved in `.6d.ii.d.ii` — signal spelling changed semantic authority
 
 `ir/semantic.rs::classify_handshake_signal_from_name` assigns handshake roles when a signal name
 contains `valid` or `ready`; `commands/validate.rs::handshake_name_heuristic_role` repeats the rule.
@@ -202,12 +233,42 @@ contains `valid` or `ready`; `commands/validate.rs::handshake_name_heuristic_rol
 such as active-low, reset, and clock naming conventions. `signal_stop_words` contains standards,
 technology, interface, and architecture names and thereby changes which uppercase input tokens can
 be signals. `ir/evidence.rs::is_abstract_transport_signal_token` likewise matches a fixed set of
-signal spellings.
+signal spellings. The downstream adapter repeats the prohibited inference:
+`ir/isf_ir.rs::IsfIr::from_intent_ir` selects clock/reset infrastructure from `clk`/`clock` and
+`rst`/`reset` substrings, overrides an explicit reset kind when the name ends in `_n`/`_b`, and
+otherwise manufactures conventional clock/reset identifiers and semantics. This adapter finding was
+not explicit in the initial discovery text; the active `.6d.ii.d.ii` census corrected its scope
+before product-code remediation.
 
 These are not closed digital semantics: they infer meaning from arbitrary identifiers. Roles must
-come from table columns, prose, diagrams, explicit declarations, or a model proposal grounded back
-to that evidence. Alpha-renaming must preserve the same graph and obligations modulo renamed
-symbols.
+come from table columns, prose, diagrams, explicit declarations, typed upstream records, or a model
+proposal grounded back to that evidence. Alpha-renaming must preserve the same graph, obligations,
+validation result, and lowering decision modulo renamed symbols; downstream stages may not
+reconstruct a role that the upstream evidence left unresolved.
+
+`.6d.ii.d.ii` replaces that entire path with opaque identity and one-way grounding. EvidenceIR signal
+admission uses typed table structure or bounded definition grammar; identifier syntax is case- and
+length-independent. Model/NLP proposals must match the current document's declaration catalog exactly, with
+exact-first unique-only resolution and no empty-catalog escape. SemanticIR interfaces and descriptive
+invariants require declared authority, semantic-role disagreement remains unresolved, and IntentIR no longer
+mints handshake, request/acknowledge, FIFO, drive, trigger, or transaction behavior from name fragments.
+Validation measures unresolved role evidence without testing the identifier. The ISF adapter accepts clock,
+reset timing, and reset polarity only from the typed system contract; missing or unknown semantics produce an
+explicit blocked diagnostic form rather than conventional defaults.
+
+Removing case-based rejection exposed two under-specified prose grammars during the required retained replay.
+The first word of a multi-word parenthetical aside and the word after `pin,` had been accepted only because
+ordinary prose was usually lowercase. The repaired grammar requires a complete one-token parenthetical, a
+bounded pin appositive, and rejects a parenthetical modifier when the wire noun is already modified by a marked
+identifier. This is positive structural authority, not a replacement word list. A second replay exposed an
+invariant grammar that had used “contains an uppercase token” as its grounding predicate; it now requires an
+exact declared signal for descriptive behavior, while deontic statements remain identifier-neutral.
+
+Exact rollback comparison accounts for the result: 18 EvidenceIR, 73 SemanticIR, 74 IntentIR, and 74 adapters
+change. Evidence signal constraints move 397→344; SemanticIR invariants 31,767→28,876; transactions 281→239;
+signal-neutral conditional rules 2,156→2,489. ISF renderability moves 44→17 because 27 documents lack a complete
+typed clock/reset contract. All 17 emitted targets pass pinned FSMGen strict, and chain currency is exact at
+24/24 measurable EvidenceIR and 78/78 for every downstream stage. ADR 0037 records the durable boundary.
 
 ### Resolved in `.6d.ii.b` — SourceIR PDF classification contained corpus-calibrated phrases
 
@@ -302,14 +363,14 @@ decision sites.
 | Test support | `test_support.rs`; test-only functions in `ir/mod.rs` | Test-only by design; keep outside production dependencies. |
 | Thin stage/utility commands | `adapt`, `clean`, `doctor`, `evidence`, `ingest`, `inspect`, `intent`, `semantic`, `extract_conditions`, `extract_contracts`, `recover_register_bits`, `rescan_plan`, `signal_resolve` | No identity-specific extraction branch found; they inherit the IR behavior they invoke. |
 | Model/quality commands | `audit_extraction`, `enrich`, `extract_constraints_llm`, `grits_consensus`, `nli_verify`, `nlp_enrich`, `project_validation` | Mixed: core transport/scoring is neutral; prompt framing/examples and inherited named schemas need correction. Corpus literals observed in these files are otherwise inside test modules. |
-| Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Mixed: prior family inference is removed and KG prior fixtures use global structural/content mismatches; signal-name inference and corpus test framework exposure remain blocking. |
+| Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Validation and orchestration no longer infer semantics from identifier spelling; named conformance/corpus organization still requires the `.d.iii`/`.e` dependency boundary. |
 | Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering and schema-7 learning are neutral; named corpus-KG page/routing behavior remains blocking. |
 | SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Neutral at schema 2: lifecycle is structural, classifiers use generic form/role grammar with honest unknown, and legacy semantic labels fail closed. |
-| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Generic protocol-structure schema/extractors shipped in `.6d.ii.c`; other signal/name-list decisions remain blocking for `.d`, and named production commentary remains for `.e`. Framework, grounding primitives, and most parsers are reusable. |
+| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Signal identities are opaque and one-way grounded; named prompt/comment surfaces remain for `.d.iii`/`.e`. Framework, grounding primitives, and parsers are reusable. |
 | Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Neutral at schema 7: one global scope, fail-closed legacy quarantine, normalized evidence keys, and structural fingerprints; no document identity selects a lookup. |
-| SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Core typed fusion/verification is neutral; semantic name inference and named public commentary are blocking. Figure-region corpus paths are test-only. |
-| IntentIR | `ir/intent.rs` | Structural synthesis is broadly neutral; protocol-specific carried schema/public names and named production commentary are blocking. |
-| Adapter | `ir/adapters.rs`, `ir/isf_ir.rs` | Typed lowering is broadly neutral; carried named schema and named production commentary remain. |
+| SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Typed fusion/verification no longer assigns interface, invariant, handshake, infrastructure, or polarity meaning from identifier spelling; named production commentary and structural enforcement remain open. Figure-region corpus paths are test-only. |
+| IntentIR | `ir/intent.rs` | Structural synthesis no longer creates transactions or actor/temporal behavior from name fragments; named production commentary and the proof-carrying boundary remain open. |
+| Adapter | `ir/adapters.rs`, `ir/isf_ir.rs` | Clock/reset lowering consumes the typed system contract and fails closed when it is absent/incomplete; named production commentary remains for `.e`. |
 | Completeness/evaluation | `ir/completeness.rs`, `eval.rs` | Corpus-calibrated model and named evaluation schema require separation/versioning; corpus examples after test boundaries are allowed. |
 | Replay/trajectory | `ir/source_to_intent_eval.rs`, `source_to_intent_replay.rs`, `trajectory.rs`; `test_support/trajectory_snapshot.rs` | Engines are generic; reviewed snapshot composition is now test/conformance-only. |
 | Module registry | `ir/mod.rs`, `commands/mod.rs` | Currently compiles corpus/evaluation specialization into production; must enforce the new dependency boundary. |

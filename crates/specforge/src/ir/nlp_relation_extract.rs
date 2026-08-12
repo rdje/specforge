@@ -66,18 +66,32 @@ pub fn parse_nlp_relations(
     let mut seen: HashSet<(String, String, bool)> = HashSet::new();
     for raw in raws {
         let actor = raw.actor.trim().to_string();
-        let signal = raw.signal.trim().to_ascii_uppercase();
+        let proposed_signal = raw.signal.trim();
+        let signal = if known_signals.contains(proposed_signal) {
+            proposed_signal.to_string()
+        } else {
+            let mut matches = known_signals
+                .iter()
+                .filter(|known| known.eq_ignore_ascii_case(proposed_signal));
+            let Some(canonical) = matches.next() else {
+                continue;
+            };
+            if matches.next().is_some() {
+                continue;
+            }
+            canonical.clone()
+        };
         let relation = match raw.relation.trim().to_ascii_lowercase().as_str() {
             "drives" => RelationKind::Drives,
             "reads" => RelationKind::Reads,
             _ => continue,
         };
         // Bounded: the signal must be one the document itself declares.
-        if actor.is_empty() || !known_signals.contains(&signal) {
+        if actor.is_empty() {
             continue;
         }
         let key = (
-            actor.to_ascii_uppercase(),
+            actor.clone(),
             signal.clone(),
             matches!(relation, RelationKind::Drives),
         );
@@ -161,17 +175,43 @@ mod tests {
     }
 
     #[test]
-    fn parse_collapses_duplicates_and_survives_garbage() {
+    fn parse_dedups_exact_identity_and_preserves_case_distinct_actors() {
         let known = signals(&["PSEL"]);
         let resp = r#"[
             {"actor":"Requester","relation":"drives","signal":"psel"},
+            {"actor":"Requester","relation":"drives","signal":"PSEL"},
             {"actor":"REQUESTER","relation":"drives","signal":"PSEL"}
         ]"#;
         let rels = parse_nlp_relations(resp, "s2", &known);
-        assert_eq!(rels.len(), 1, "case-insensitive dedup: {rels:?}");
-        assert_eq!(rels[0].signal_name, "PSEL");
+        assert_eq!(
+            rels.len(),
+            2,
+            "only the exact duplicate collapses: {rels:?}"
+        );
+        assert!(rels.iter().all(|relation| relation.signal_name == "PSEL"));
+        assert!(
+            rels.iter()
+                .any(|relation| relation.actor_name == "Requester")
+        );
+        assert!(
+            rels.iter()
+                .any(|relation| relation.actor_name == "REQUESTER")
+        );
         // No JSON array at all → empty, never panics.
         assert!(parse_nlp_relations("the model said no", "s3", &known).is_empty());
+    }
+
+    #[test]
+    fn parse_preserves_document_spelling_and_rejects_ambiguous_case_folding() {
+        let known = signals(&["mixedCase"]);
+        let response = r#"[{"actor":"orchid","relation":"drives","signal":"MIXEDCASE"}]"#;
+        let relations = parse_nlp_relations(response, "s4", &known);
+        assert_eq!(relations.len(), 1);
+        assert_eq!(relations[0].signal_name, "mixedCase");
+
+        let ambiguous = signals(&["sig", "SIG"]);
+        let response = r#"[{"actor":"orchid","relation":"drives","signal":"SiG"}]"#;
+        assert!(parse_nlp_relations(response, "s5", &ambiguous).is_empty());
     }
 
     #[test]
