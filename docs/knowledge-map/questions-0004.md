@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how does specforge handle a signal table whose name column is not first
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how does specforge model the JTAG TAP / SWD state machine (FSM)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > how does specforge model the SWD serial frame / packet
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how does specforge read free disk space without a new dependency
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how does specforge read system memory without a new dependency
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > how does specforge read total physical RAM without a new dependency
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
@@ -277,23 +297,3 @@
   > how many page objects does a /Type/Page regex report vs pdfinfo
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > how many pages elements and normalized files does the OpenCAPI data link ingest produce
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how many retained documents depended entirely on heuristic SemanticIR interfaces
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > how many retained legal semantic gates were measured
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > how many retained phases depended only on sequencing words
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > how many retained typed transaction phases were false positives
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many reviewed documents are locked per source category
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > how many reviewed documents have current binary replay evidence
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > how many reviewed source regions and modalities were found
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > how many sentence-start signal descriptor phrases pollute the retained corpus

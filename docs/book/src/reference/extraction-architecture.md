@@ -62,6 +62,40 @@ defines the current visual path, while the domain chapters define graph and temp
 - Remain specification-independent. Extraction logic may encode grammar and hardware concepts, but
   must not memorize one protocol's actor, signal, state, or value vocabulary.
 
+## Production genericity and proof status
+
+SpecForge is deliberately specialized for digital-chip design, not for arbitrary document domains. Signals,
+registers, fields, actors, states, events, timing, obligations, protocols, ISAs, and implementation relations are
+legitimate domain concepts. The neutrality boundary is across document instances: vendor, family, filename,
+title, corpus membership, and the spelling of a source-owned identifier are data and provenance, never evidence
+of what the document means.
+
+The accepted signoff architecture enforces that distinction structurally:
+
+- a compiler-visible generic core cannot depend on conformance fixtures, named examples, reviewed gold, replay,
+  corpus presentation, or calibrated document classifiers;
+- document and symbol identities become opaque values. Ordinary semantic code can preserve or exact-compare
+  identity but cannot inspect spelling; sealed grammar, persistence, presentation, and lowering capabilities
+  expose only the operations their boundary needs;
+- a registered grammar may inspect current-document raw evidence and emit a grounded proposal. Models and learned
+  priors likewise propose with provenance; none can construct canonical truth directly;
+- one small promotion kernel checks typed premises and returns proved claims. An artifact-level proof ledger binds
+  every promoted record to the current ruleset, source/table/visual or upstream premises, rule id, symbol uses,
+  and conclusion digest; and
+- every registered grammar, inference, carry, conflict, residual, and lowering rule declares an alpha-renaming
+  obligation. Static dependency/type/AST checks and controlled mutations complement that per-rule contract.
+
+This is not a finite forbidden-word policy. A name list cannot detect a hidden alias or neutral-looking encoded
+selector, and a listed term may be legitimate input evidence. The enforceable property is information flow and
+checkable derivation: changing only identity or bound-symbol spelling cannot change semantic admission or
+lowering eligibility.
+
+Current status: this proof architecture is accepted and the migration denominator is frozen at 71 compiled Rust
+modules, 38 claim families, and 168 top-level IR/adapter fields. It is not yet shipped end to end. The current
+pipeline still has partial extractor manifests and heterogeneous provenance; core/conformance separation,
+proof-kernel migration, rule registration, structural mutation gates, and whole-population behavioral
+qualification remain release blockers. Until those close, SpecForge does not claim production-genericity signoff.
+
 ## Target quality
 
 A high-quality result should expose, when the source supports them:

@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > how are Docling-fragmented register field tables de-fragmented without fabricating a field set
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > how are NAME[hi:lo] bit-ranges parsed into frame fields
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how are SWCLK and SWDIO captured if they are not in a signal table
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > how are SpecForge live documents kept bounded
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are TRM register bit assignments tables without access/reset columns handled
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > how are bit location | register description | attributes tables extracted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how are bits | name | function tables extracted
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -278,23 +298,3 @@
   > how does specforge fold an X interface relation subject onto the bare agent X
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how does specforge handle a signal table whose name column is not first
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how does specforge model the JTAG TAP / SWD state machine (FSM)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how does specforge model the SWD serial frame / packet
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does specforge read free disk space without a new dependency
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does specforge read system memory without a new dependency
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how does specforge read total physical RAM without a new dependency
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)

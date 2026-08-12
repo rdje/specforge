@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > do all corpus docs build through the pipeline without failure
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > do any chip-spec PDFs need a real password (no)
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > do convergence fact counts include serial frame fields
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > do evidence/semantic/intent stream source_ir.json or load it all into memory
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > do field constraints pass the same grounding gates as signal constraints
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > do host-local source libraries define tracked corpus membership
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > do old SemanticIR gates create IntentIR behaviors or constraints
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > do old SemanticIR phases create IntentIR behaviors
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > do signal presence records mint signals or declarations
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > do specforge extractors override applies_to / are any self-disabled opt-in
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > do text-reasoning tasks need a vision model
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
@@ -277,23 +297,3 @@
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how are ACK WDATA RDATA DATAIN bit-widths extracted
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > how are Docling-fragmented register field tables de-fragmented without fabricating a field set
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how are NAME[hi:lo] bit-ranges parsed into frame fields
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how are SWCLK and SWDIO captured if they are not in a signal table
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > how are SpecForge live documents kept bounded
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are TRM register bit assignments tables without access/reset columns handled
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > how are bit location | register description | attributes tables extracted

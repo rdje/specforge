@@ -49,6 +49,7 @@ changed* lives in git (layer D), not here.
 | [0035](0035-protocol-evidence-is-generic-and-document-derived.md) | Protocol evidence is generic, document-derived, and fail-closed across schema migration | 2026-08-12 | accepted | genericity, evidence-ir, schema, extraction, projection, residual-honesty |
 | [0036](0036-prior-memory-is-identity-independent.md) | Prior memory is identity-independent, validation-gated, and fail-closed across migration | 2026-08-12 | accepted | genericity, prior-memory, learning, schema, validation, residual-honesty |
 | [0037](0037-identifiers-are-opaque-and-one-way-grounded.md) | Document identifiers are opaque and semantic promotion is one-way grounded | 2026-08-12 | accepted | genericity, evidence-ir, semantic-ir, intent-ir, validation, isf-adapter |
+| [0038](0038-proof-carrying-genericity-kernel.md) | Production genericity is enforced by opaque capabilities and a proof-carrying promotion kernel | 2026-08-12 | accepted | genericity, architecture, information-flow, proof-ledger, rule-registry, doctrine-enforcement |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

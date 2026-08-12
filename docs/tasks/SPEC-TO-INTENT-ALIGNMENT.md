@@ -289,9 +289,59 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `install a fail-closed proof-carrying production-genericity architecture and doctrine gate`
   Acceptance: `the production module graph is separated from conformance/oracle code; promoted claims carry machine-checkable derivations from typed current-document evidence; identifiers are opaque information-flow values whose spelling can be copied or identity-compared but cannot steer semantic branches; raw document text and identity cannot be inspected by extraction decision sites outside registered universal grammar interfaces; an AST-aware gate rejects forbidden dependency, taint-flow, and raw-literal decision mutations; every registered inference rule declares and passes an alpha-equivariance obligation; a finite vocabulary census is supplementary diagnostics only`
+  Verification: `pending`
+  Commit: `completed by .6d.ii.e.i through .6d.ii.e.vii child commits`
+  Children: `.6d.ii.e.i`, `.6d.ii.e.ii`, `.6d.ii.e.iii`, `.6d.ii.e.iv`, `.6d.ii.e.v`, `.6d.ii.e.vi`, `.6d.ii.e.vii`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i`
+  Status: `done`
+  Goal: `freeze the proof-carrying genericity architecture and exact migration denominator before changing production code`
+  Acceptance: `an accepted decision record defines the trusted promotion kernel, opaque-symbol capability boundary, typed evidence/grammar premises, rule registry, derivation schema, core-to-conformance dependency direction, AST information-flow gate, alpha obligation, compatibility policy, and residual behavior; every current production producer/claim family and named/calibrated surface is assigned exactly one migration lane with no vocabulary-list proof claim`
+  Verification: `ADR 0038 accepted; exact checker classifies all 71 compiled Rust modules and all 168 top-level SourceIR/EvidenceIR/SemanticIR/IntentIR/adapter fields once across 38 families; three controlled self-tests pass and reject unclassified module/field drift; exact dry-run-first rollover seals 15/17/10 whole engineering/status/Rust records with warning-safe live roots and no residue; no production Rust or generated artifact changed; full CI passes all eight doctrines, formatting, warning-deny Clippy, 1,900/6/0 Rust tests, rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i — freeze proof architecture`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii`
+  Status: `pending`
+  Goal: `separate generic production core from conformance/oracle and named calibration surfaces`
+  Acceptance: `the compiled core has no dependency on named fixtures, reviewed snapshots, corpus identities, or document-specific commentary/examples; generic evaluation primitives remain reusable behind a one-way conformance dependency; calibrated classifiers are either structurally justified and versioned or moved out of promotion authority; dependency mutations fail closed`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`
+  Status: `pending`
+  Goal: `install the trusted derivation kernel and opaque identity capability types`
+  Acceptance: `promotion accepts only typed current-document evidence, registered grammar output, or provenance-bearing model/prior proposals; document and symbol identities can be preserved, displayed, and exact-compared only through explicit capabilities; unsupported legacy/future derivations fail closed or residualize under a versioned compatibility policy`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv`
+  Status: `pending`
+  Goal: `register production grammar and inference rules and migrate promoted claim families to proof terms`
+  Acceptance: `every raw-text interpretation and semantic promotion site is owned by a registered universal rule with typed premises, source span/provenance, declared output kind, and alpha obligation; unregistered production decisions cannot create canonical SourceIR, EvidenceIR, SemanticIR, IntentIR, or ISF authority`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v`
+  Status: `pending`
+  Goal: `enforce the module, raw-text, identity-flow, derivation, and rule-registry boundaries with an AST-aware doctrine`
+  Acceptance: `one registered doctrine parses the compiled Rust surface and rejects core-to-conformance dependencies, raw identity/text semantic branches outside registered interfaces, unproved promotion constructors, undeclared inference rules, and bypasses hidden behind aliases/macros/modules; parse uncertainty fails closed and the finite vocabulary census remains diagnostic only`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`
+  Status: `pending`
+  Goal: `prove the structural gate with adversarial mutations and per-rule alpha obligations`
+  Acceptance: `controlled mutations for forbidden dependency, identity selector, raw literal/substring/regex decision, unregistered rule, proofless promotion, taint laundering, schema specialization, and missing alpha declaration all fail; every registered rule passes its structural alpha obligation and legal display/provenance/test uses remain admitted`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`
+  Status: `pending`
+  Goal: `qualify the complete structural genericity boundary and publish exact migration deltas`
+  Acceptance: `all retained chains are current; every migrated claim/proof and residual delta is attributed; core/conformance builds, mutation gates, rule obligations, full CI, public/live/book/retrieval truth, and cleanup agree; only `.f` behavioral population qualification remains before the genericity parent can close`
   Verification: `pending`
   Commit: `pending`
 
@@ -358,12 +408,18 @@ expressiveness as the bottleneck.
 | 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `done` | opaque identifiers, one-way declaration grounding, alpha-equivariant semantics, and typed-only ISF clock/reset lowering are complete |
 | 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `done` | opaque prompt information flow and structural corpus routing are verified |
 | 24 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `done` | combined qualification is exact; `.d` is closed without a named exception |
-| 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e` | `pending` | structurally gate the complete neutral production graph after remediation |
-| 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
-| 27 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
-| 28 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 29 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 30 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` | `done` | ADR 0038, exact inventories, lossless live-ledger rollover, and full CI are complete |
+| 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `pending` | make the generic-core → conformance dependency direction structural |
+| 27 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `pending` | install the promotion kernel and opaque identity capabilities |
+| 28 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv` | `pending` | migrate every production grammar/inference family to registered proof terms |
+| 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
+| 30 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
+| 31 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
+| 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
+| 33 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
+| 34 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 35 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 36 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -635,6 +691,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.d.ii` full repository gate | `bash scripts/run_ci.sh` | PASS: all doctrines including exact chain currency, formatting, warning-deny Clippy, 1,890 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 | `2026-08-12` | `.6d.ii.d.iv` exact combined range and focused behavior | `git diff 89d8dee7..9c38b569`; `cargo test -p specforge --lib` filters `alpha`, `identity`, `prompt`, `spelling`, `fixture_name`, `empty_declaration_catalog`, and `undeclared_contract_signal` | PASS: exact three commits / 129 files / +5,922/-4,357, including 24 compiled-crate Rust source and 40 conformance-fixture files; filters pass 13/19/14/14/2/1/1 with zero failures and cover prior scope, opaque identity, prompts, corpus routing, and provider fail-closure |
 | `2026-08-12` | `.6d.ii.d.iv` current state and full repository gate | `bash scripts/run_ci.sh`; generated chain-currency doctrine; prior `.d.ii` pinned-FSMGen strict population | PASS: current at 24/24 measurable EvidenceIR and 78/78 SemanticIR/IntentIR/adapters; 17/17 renderable ISFs retain strict qualification; all eight doctrines, formatting, warning-deny Clippy, 1,900 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final locality |
+| `2026-08-12` | `.6d.ii.e.i` exact architecture denominator | full 71-file module census; top-level SourceIR/EvidenceIR/SemanticIR/IntentIR/`AdapterArtifact` field derivation; `perl scripts/check_production_genericity_inventory.pl --self-test`; live checker | PASS: 71/71 modules assigned once to current/target plane and one `.e.ii`–`.e.iv` lane; 168/168 fields assigned once across 38 families; clean fixture plus unclassified-module and unclassified-field controls pass 3/3; no residue |
+| `2026-08-12` | `.6d.ii.e.i` mandatory live-ledger containment | exact three-row plan at clean boundary `f7da4ab8`; authenticated dry run; guarded root-last apply; protocol/report/residue census | PASS: development/status/Rust segments seal 15/17/10 whole records at `a72ebc47…1515` / `e97e52c5…5595` / `967477bd…e432`; resulting live roots are 61/51/51 records and 1,366/85/1,017 lines; every warning band and archive chain passes; no transaction workspace remains |
+| `2026-08-12` | `.6d.ii.e.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including exact chain currency, formatting, warning-deny Clippy, 1,900 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -1117,6 +1176,26 @@ the reviewed replay can name its production revision.
 - [x] **LOCKSTEP** — the pipeline audit, Knowledge Map fact/projection, mdBook, live docs, task status, and resume
   pointer publish the exact combined range and state that `.e`/`.f`, not `.d`, still block whole-core signoff.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i`
+
+- [x] **REPRODUCE / MEASURE** — derive the complete compiled Rust module set and all top-level fields of SourceIR,
+  EvidenceIR, SemanticIR, IntentIR, and `AdapterArtifact`; classify 71 modules and 168 fields in 38 families
+  exactly once rather than estimating the migration from vocabulary hits.
+- [x] **ROOT CAUSE (WHY + WHERE)** — record that identity can be encoded through unseen strings, aliases, paths,
+  hashes, ordering, numeric selectors, prompts, or learned labels, while direct record construction and partial
+  manifests cannot prove per-claim authority. A finite denylist and syntax scan therefore cannot establish
+  noninterference.
+- [x] **ADDRESSED (verified)** — accept ADR 0038's compiler-visible core/conformance direction, opaque spelling
+  capabilities, registered grounded proposals, sealed promotion kernel, artifact proof ledger, rule descriptors,
+  per-rule alpha obligations, compatibility policy, and explicit residual behavior before production migration.
+- [x] **NO REGRESSION** — change no production Rust behavior or generated canonical artifact; the inventory checker
+  and three-part self-test pass, full CI remains green, and repository-volume scratch residue is absent.
+- [x] **GENERICITY (ADR 0006)** — prove coverage through closed module/claim denominators and information-flow/
+  derivation architecture. Vocabulary scanning remains supplementary diagnostics and cannot grant signoff.
+- [x] **LOCKSTEP** — decision index, audit, task frontier, mdBook, live status, architecture analysis, development
+  rationale, change ledger, Knowledge Map projection, and bounded resume pointer publish the same accepted-but-not-
+  implemented boundary and next `.e.ii` owner.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1146,6 +1225,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii — make document identifiers opaque` | opaque identifiers, one-way current-document grounding, alpha-equivariant semantics, typed-only ISF clock/reset lowering, exact 78-chain reconciliation, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii — neutralize prompts and corpus organization` | identifier-redacted provider policy, declaration-ordered catalogs, structural KG capabilities, schema-2 candidate projection, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation` | exact three-commit range, combined alpha/identity/prompt/corpus qualification, current-chain proof, lockstep publication, and full CI |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i — freeze proof architecture` | ADR 0038, exact 71-module / 38-family / 168-field migration inventories, drift-rejecting checker, and no production behavior change |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1165,6 +1245,19 @@ the reviewed replay can name its production revision.
   cross-path behavioral controls, current-binary chain currency, and full repository qualification. The closure
   preserves every measured honesty delta and makes no whole-core claim: `.e` owns structural proof enforcement,
   named production commentary/calibration disposition, and mutation gates; `.f` owns population metamorphics.
+- `2026-08-12`: Activated `.6d.ii.e.i` only after `.d.iv` committed at `f7da4ab8` and the post-commit tree was
+  clean. The parent is split into seven commit-bounded lanes so proof architecture, dependency separation,
+  derivation/identity capabilities, rule migration, AST enforcement, adversarial mutations, and final
+  qualification cannot collapse into an unauditable rewrite. `.e.i` is design/inventory only; no production
+  edit may precede its accepted architecture and complete producer/claim migration denominator.
+- `2026-08-12`: The first doctrine run after mandatory live-doc alignment correctly refused the commit because
+  development notes, status, and Rust analysis crossed their declared 90% rollover milestones. The current leaf
+  owns the required exact whole-record, repository-volume rollover as a closing dependency; no limit may widen and
+  no record may be dropped, edited, or reordered.
+- `2026-08-12`: Closed `.6d.ii.e.i` after the authenticated rollover dry-run and root-last apply sealed exact
+  15/17/10-record engineering/status/Rust segments, restored every live warning band, and preserved all archive
+  chains without residue. ADR 0038 plus the 71-module / 38-family / 168-field inventories are now the accepted
+  implementation denominator; no production extraction behavior changed. Full CI passes, and `.e.ii` is next.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

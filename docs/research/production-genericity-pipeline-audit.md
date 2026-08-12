@@ -1,10 +1,12 @@
 # Production-genericity pipeline audit
 
-Status: **discovery complete; SourceIR, EvidenceIR, prior/identifier authority, prompts, and corpus organization remediated and jointly qualified; structural/comment/calibration signoff remains**
+Status: **discovery and proof-architecture freeze complete; production dependency, proof, rule, structural, and behavioral implementation remains**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
 Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
 Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
+
+Accepted signoff architecture: [`ADR 0038`](../decisions/0038-proof-carrying-genericity-kernel.md)
 
 ## Question and non-negotiable boundary
 
@@ -87,6 +89,27 @@ whole-core production-genericity signoff. Named production commentary and calibr
 the proof-carrying core/conformance and registered-grammar architecture, AST/dependency/taint mutations,
 and whole-population alpha/identity/paraphrase/held-out behavior remain release blockers in `.e` and `.f`.
 
+## Proof-architecture freeze (`.6d.ii.e.i`)
+
+ADR 0038 makes the signoff direction concrete before production code moves. The target is a compiler-visible
+`specforge-core <- specforge-conformance` dependency, opaque document/symbol identities with sealed spelling
+capabilities, registered grammars that emit grounded proposals, and one small promotion kernel that admits only
+proof-covered canonical claims. Each artifact carries a ruleset-bound proof ledger; each rule declares its premise
+kinds, conclusion surface, symbol capability, compatibility, and executable alpha obligation. Proofless historical
+artifacts may be inspected, but cannot steer a current canonical build or lower to ISF.
+
+Two checked TSV inventories freeze the migration denominator. `module_inventory.tsv` classifies all 71 compiled
+Rust files exactly once, including every mixed, named, calibrated, evaluation, replay, and test-support location.
+`claim_family_inventory.tsv` assigns all 168 top-level fields of SourceIR, EvidenceIR, SemanticIR, IntentIR, and
+the adapter artifact exactly once across 38 claim families. `check_production_genericity_inventory.pl` derives
+both live sets and rejects new, missing, duplicate, malformed, or stale entries; its controlled self-test proves
+that an unclassified module and an unclassified artifact field both fail.
+
+This slice changes no production extraction behavior. The architecture and denominator are accepted, not yet
+implemented: `.e.ii`–`.e.vii` still own the physical core/conformance split, trusted kernel and capabilities,
+rule/claim migration, AST-aware doctrine, adversarial mutations, and exact qualification. `.f` still owns
+whole-population behavioral qualification. A vocabulary scan remains supplementary diagnostics only.
+
 ## Audit denominator and method
 
 ### North-star scope: domain-specialized, specification-instance-neutral
@@ -129,7 +152,7 @@ key. Named examples in production comments do not directly execute, but violate 
 surface boundary and make a future leak easier to normalize; they must move to test/conformance
 documentation.
 
-### Signoff architecture direction: proof-carrying extraction, not vocabulary completeness
+### Accepted signoff architecture: proof-carrying extraction, not vocabulary completeness
 
 Neutrality cannot be established by enumerating forbidden fragments: an unseen identifier can encode the same
 shortcut, and an innocent listed word can be legitimate input data. The signoff boundary is instead an
@@ -144,6 +167,10 @@ This architecture does not promise to recover intent that the source does not ex
 intent is justified without identity shortcuts and that missing, ambiguous, contradictory, external, or unreadable
 intent remains explicit. The finite forbidden-vocabulary census remains a useful diagnostic tripwire, never a proof
 of neutrality.
+
+The full type, proof, dependency, rule-registry, mutation, and compatibility contract is accepted in
+[`ADR 0038`](../decisions/0038-proof-carrying-genericity-kernel.md). Its live migration denominator is reverified
+with `perl scripts/check_production_genericity_inventory.pl`.
 
 ## What the pipeline does now
 

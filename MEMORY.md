@@ -17,15 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` is complete awaiting commit; `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`, `.6d.ii.c`,
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` is complete awaiting commit; `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`, `.6d.ii.c`,
   `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and `.6d.i` are committed complete. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: the exact `89d8dee7..9c38b569` range and all child deltas are published; focused alpha,
-  identity, prompt, spelling, fixture-name, and provider fail-closed controls pass; current-binary currency is
-  24/24 measurable EvidenceIR and 78/78 downstream. Full CI passes all eight doctrines, 1,900/6/0 Rust tests,
-  mdBook, and final locality. Parent `.d` is closed without a named exception; `.e`/`.f` still block signoff.
-- Next action: commit `.6d.ii.d.iv`, verify the clean handoff and cleared message brief, then activate
-  `.6d.ii.e` from that clean revision.
-- In-flight uncommitted: the `.d.iv` qualification and lockstep documentation transaction; no production-code,
-  generated-IR, scratch-workspace, or background-job state.
+- Current state: ADR 0038 accepts the proof-carrying genericity design. Exact checked inventories classify all 71
+  compiled Rust modules and all 168 top-level artifact fields across 38 claim families once. This leaf changes no
+  production extraction behavior; `.e.ii`–`.e.vii` own implementation, enforcement, and qualification.
+- Next action: commit `.e.i` through `COMMIT.md`; only after the clean boundary, activate `.e.ii` and make the
+  core-to-conformance dependency direction compiler-visible while moving named/calibrated authority out of core.
+- In-flight uncommitted: verified `.e.i` decision, inventories/checker, exact lossless live-ledger rollover, and
+  task/live/book/audit/retrieval alignment awaiting commit; no production-code, generated-artifact, or background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

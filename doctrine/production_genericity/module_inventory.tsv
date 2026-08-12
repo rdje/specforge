@@ -1,0 +1,72 @@
+path	current_plane	target_plane	primary_lane	disposition
+crates/specforge/src/cli.rs	application	application	e.ii	CLI schema may depend on core and conformance, never the reverse
+crates/specforge/src/commands/adapt.rs	application	application	e.ii	thin orchestration over core adapter
+crates/specforge/src/commands/audit_extraction.rs	conformance	conformance	e.ii	move evaluation policy out of core dependency graph
+crates/specforge/src/commands/clean.rs	application	application	e.ii	non-semantic repository lifecycle
+crates/specforge/src/commands/converge.rs	application	application	e.ii	orchestration may compose registered core producers
+crates/specforge/src/commands/corpus_cluster.rs	application	application	e.ii	thin orchestration over identity-independent core learning
+crates/specforge/src/commands/corpus_kb.rs	conformance	conformance	e.ii	corpus projection and fixture presentation
+crates/specforge/src/commands/doctor.rs	application	application	e.ii	runtime diagnostics only
+crates/specforge/src/commands/enrich.rs	application	application	e.iv	provider orchestration must submit grounded proposals to kernel
+crates/specforge/src/commands/entity_type.rs	application	application	e.iv	provider orchestration must submit grounded proposals to kernel
+crates/specforge/src/commands/eval_extraction.rs	conformance	conformance	e.ii	labeled-dataset evaluation
+crates/specforge/src/commands/evidence.rs	application	application	e.ii	thin EvidenceIR build command
+crates/specforge/src/commands/extract_conditions.rs	application	application	e.iv	provider orchestration must submit grounded proposals to kernel
+crates/specforge/src/commands/extract_constraints_llm.rs	application	application	e.iv	provider orchestration must submit grounded proposals to kernel
+crates/specforge/src/commands/extract_contracts.rs	application	application	e.iv	provider orchestration must submit grounded proposals to kernel
+crates/specforge/src/commands/grits_consensus.rs	conformance	conformance	e.ii	model-consensus measurement, not canonical authority
+crates/specforge/src/commands/ingest.rs	application	application	e.ii	thin SourceIR build command
+crates/specforge/src/commands/inspect.rs	application	application	e.ii	read-only presentation
+crates/specforge/src/commands/intent.rs	application	application	e.ii	thin IntentIR build command
+crates/specforge/src/commands/kg_bench.rs	conformance	conformance	e.ii	named fixtures and oracle patches
+crates/specforge/src/commands/learn_priors.rs	application	application	e.iv	validated identity-independent learning through kernel
+crates/specforge/src/commands/llm_text.rs	core_provider	core_provider	e.iii	transport only; no semantic authority
+crates/specforge/src/commands/mod.rs	application	application	e.ii	one-way module registry
+crates/specforge/src/commands/nli_verify.rs	application	application	e.iv	verdict proposal must cite claim and premise
+crates/specforge/src/commands/nlp_enrich.rs	application	application	e.iv	provider orchestration must submit grounded proposals to kernel
+crates/specforge/src/commands/project_validation.rs	conformance	conformance	e.ii	quality characterization and rescan advice
+crates/specforge/src/commands/recover_register_bits.rs	application	application	e.iv	visual proposal must satisfy typed tiling proof
+crates/specforge/src/commands/rescan_plan.rs	conformance	conformance	e.ii	reviewable improvement plan, not extraction authority
+crates/specforge/src/commands/semantic.rs	application	application	e.ii	thin SemanticIR build command
+crates/specforge/src/commands/signal_resolve.rs	application	application	e.iv	provider proposal must resolve through symbol table
+crates/specforge/src/commands/validate.rs	mixed	application+conformance	e.ii	split generic proof validation from calibrated classification/reporting
+crates/specforge/src/error.rs	core_foundation	core	e.ii	shared typed failures
+crates/specforge/src/eval.rs	mixed	core+conformance	e.ii	split generic metric primitives from labeled datasets and named tests
+crates/specforge/src/ir/adapters.rs	core	core	e.iii	lower only proof-covered IntentIR with explicit lowering capability
+crates/specforge/src/ir/ambiguity.rs	core_grammar	core_rule	e.iv	register universal ambiguity grammar
+crates/specforge/src/ir/completeness.rs	mixed	core+conformance	e.ii	split structural residual checks from calibrated document classification
+crates/specforge/src/ir/condition_extract.rs	core_grammar	core_rule	e.iv	register condition grammar and grounded proposal proof
+crates/specforge/src/ir/constraint_extract_llm.rs	core_grammar	core_rule	e.iv	register typed grounding and provider-proof boundary
+crates/specforge/src/ir/contract.rs	core_schema	core	e.iii	proof-covered contract schema
+crates/specforge/src/ir/corpus_cluster.rs	core_learning	core	e.iii	identity-independent structural fingerprints only
+crates/specforge/src/ir/cve.rs	core_verifier	core	e.iii	constrained verifier kernel support
+crates/specforge/src/ir/entity_typing.rs	core_grammar	core_rule	e.iv	registered type proposal and opaque symbol handling
+crates/specforge/src/ir/evidence.rs	core	core	e.iv	migrate every EvidenceIR producer family to registered proof terms
+crates/specforge/src/ir/extraction_filters.rs	core_grammar	core_rule	e.iv	register universal filtering grammar
+crates/specforge/src/ir/extractor.rs	core_registry	core	e.iii	extend registry from run manifest to rule descriptors and claim proofs
+crates/specforge/src/ir/fidelity.rs	core_verifier	core	e.iii	proof-ledger fidelity validation
+crates/specforge/src/ir/figure_region.rs	core_grammar	core_rule	e.iv	register region grounding and verification
+crates/specforge/src/ir/fusion.rs	core_inference	core_rule	e.iv	register evidence fusion derivations
+crates/specforge/src/ir/intent.rs	core	core	e.iv	migrate every IntentIR synthesis family to registered proof terms
+crates/specforge/src/ir/isf_ir.rs	core_lowering	core	e.iv	lower only typed proved claims; named examples move to conformance
+crates/specforge/src/ir/mod.rs	core	core	e.ii	remove conformance modules from core registry
+crates/specforge/src/ir/nli_verify.rs	core_verifier	core_rule	e.iv	register entailment verdict derivation
+crates/specforge/src/ir/nlp_relation_extract.rs	core_grammar	core_rule	e.iv	register relation grammar and symbol grounding
+crates/specforge/src/ir/normative_vocab.rs	core_grammar	core_rule	e.iv	closed universal digital/normative axiom registry
+crates/specforge/src/ir/prior_memory.rs	core_learning	core	e.iii	prior records are proposals with validation and evidence premises
+crates/specforge/src/ir/protocol_graph.rs	core_inference	core_rule	e.iv	register graph projection derivations
+crates/specforge/src/ir/register_bits.rs	core_verifier	core_rule	e.iv	register tiling proof and visual proposal admission
+crates/specforge/src/ir/semantic.rs	core	core	e.iv	migrate every SemanticIR inference family to registered proof terms
+crates/specforge/src/ir/source_to_intent_eval.rs	conformance	conformance	e.ii	generic evaluation engine lives downstream of core
+crates/specforge/src/ir/source_to_intent_replay.rs	conformance	conformance	e.ii	replay harness lives downstream of core
+crates/specforge/src/ir/source.rs	core	core	e.iv	capture axioms plus registered structural classifications
+crates/specforge/src/ir/source/docling_backend.rs	core_capture	core_rule	e.iv	backend attestation and registered structural classifiers
+crates/specforge/src/ir/temporal_ltl.rs	core_lowering	core_rule	e.iv	registered temporal rendering from typed predicates
+crates/specforge/src/ir/trajectory.rs	conformance	conformance	e.ii	measurement controller cannot feed extraction authority
+crates/specforge/src/ir/waveform.rs	core_grammar	core_rule	e.iv	register waveform generalization and verification
+crates/specforge/src/lib.rs	application	application	e.ii	application depends on core and optional conformance commands
+crates/specforge/src/main.rs	application	application	e.ii	binary entrypoint only
+crates/specforge/src/persisted_path.rs	core_foundation	core	e.iii	path identity is provenance/lifecycle only
+crates/specforge/src/project_data.rs	core_foundation	core	e.ii	repository-local runtime boundary
+crates/specforge/src/test_support.rs	test_support	conformance	e.ii	move named test-support registry out of production core
+crates/specforge/src/test_support/trajectory_snapshot.rs	test_support	conformance	e.ii	named reviewed snapshot remains conformance-only

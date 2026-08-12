@@ -1,3 +1,16 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i — freeze proof architecture
+
+- Accepted ADR 0038: production genericity will be enforced by a one-way core/conformance crate graph, opaque
+  document/symbol capabilities, registered grounded proposals, and one proof-checking promotion kernel.
+- Froze an exact machine-checked migration denominator: all 71 compiled Rust modules and all 168 top-level
+  IR/adapter fields across 38 claim families are classified exactly once. Controlled self-tests reject an
+  unclassified module and an unclassified artifact field.
+- Applied the mandatory lossless live-ledger rollover after alignment crossed declared thresholds: sealed exact
+  15-record engineering, 17-record status, and 10-record Rust-analysis segments through the dry-run-first,
+  repository-volume root-last transaction; all archive chains and live warning bands validate.
+- Kept the claim honest: this slice changes no production extraction behavior. `.e.ii`–`.e.vii` still own the
+  implementation and structural qualification, while `.f` owns population-level behavioral qualification.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation
 
 - Qualified the exact three-commit `89d8dee7..9c38b569` identity-remediation range: 129 changed files,

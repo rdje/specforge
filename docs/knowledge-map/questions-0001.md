@@ -12,6 +12,8 @@
   > Can fixture names decide KG capability or prior-candidate routing?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > Can legacy named-family priors steer current extraction?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > Can old proofless IR artifacts still steer extraction or lower to ISF?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > Cannot convert a MPS Tensor to float64
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -24,6 +26,8 @@
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How are frame fields extracted without hardcoding a protocol?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > How are grammar rules admitted into production?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > How are old CorpusMemory schemas migrated?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -34,8 +38,14 @@
   > How does EvidenceIR schema 2 remove protocol-specific extraction authority?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does SourceIR classification remain specification neutral?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > How does a canonical IR claim prove where it came from?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > How does alpha-renaming become a per-rule obligation?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the corpus knowledge base group fixtures without protocol-family names?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > How will SpecForge enforce that identifiers are opaque?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Is SpecForge production-genericity signoff complete after identity remediation?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -50,16 +60,26 @@
   > What happens when schema-1 SourceIR is loaded?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > What is PriorScope in CorpusMemory schema 7?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > What is SpecForge's trusted promotion kernel?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > What is the canonical claim-family migration denominator?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > What is the production genericity module denominator?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > What replaced SwdOperation and SerialFramePhase?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > What replaced swd_operations and swdio_direction?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > What replaces a forbidden vocabulary list as the proof of production genericity?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Where is the whole extraction-pipeline genericity audit?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Why can neutral extraction lose recall after removing shortcuts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why is a forbidden vocabulary list insufficient?
+- [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
+  > Why is an AST scan not sufficient by itself?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why was PDF-AGNOSTIC-EXTRACTION closure superseded?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -277,23 +297,3 @@
   > do SemanticIR and IntentIR preserve timing units and table provenance
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > do SourceIR and EvidenceIR keep absolute paths in memory
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > do all corpus docs build through the pipeline without failure
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > do any chip-spec PDFs need a real password (no)
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > do convergence fact counts include serial frame fields
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > do evidence/semantic/intent stream source_ir.json or load it all into memory
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > do field constraints pass the same grounding gates as signal constraints
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > do host-local source libraries define tracked corpus membership
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > do old SemanticIR gates create IntentIR behaviors or constraints
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > do old SemanticIR phases create IntentIR behaviors
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > do signal presence records mint signals or declarations
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > do specforge extractors override applies_to / are any self-disabled opt-in

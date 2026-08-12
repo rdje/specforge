@@ -2,6 +2,27 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > is the empty catalog caused by the table authority gate rejecting real signal tables
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > is the eval gold / answer key trustworthy or reliable
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > is the eval-extraction temporal precision 0.6 a real defect
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > is the extraction audit chip-spec-PDF agnostic (yes)
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > is the frozen source to intent result current binary output
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the generic-TABLE enum conflation fixed / what did KG-ISF-COMPLETENESS.5.i do (LANDED 2026-06-24: derive_encoding_enum_name fallback keeps the candidate only when independently evidenced — a declared signal OR a column-header reference token of the table — else None; emitter isf_ir.rs gates the (types) block by emitted_enums() so a member-dropped enum leaves no orphan
+  > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > is the jesd235 HBM artifact a truncated ingest
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > is the old claim that FSMGen has no declarative static-topology construct still current (no — that premise is superseded and must be reassessed)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -277,23 +298,3 @@
   > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > what does MessageFieldRecord.bit_range mean and when is it set
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > what does MessageFieldRecord.byte_offset mean
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what does SPECFORGE_INGEST_RAM_SAMPLE_SECS do
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > what does SPECFORGE_INGEST_SAVE_PAGE_IMAGES do
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what does SWD Figure B4-1 show (single SWDIO wire packet, bit-field time-phases, Host/Target/Host driver)
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
