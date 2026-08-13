@@ -1,3 +1,34 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi — prove ISF lowering authority
+
+- Advanced the ISF adapter artifact to schema 2 and made the complete verified IntentIR ledger its exact ordered
+  proof prefix. All 12 public adapter fields are covered across four capability-homogeneous families, every
+  populated array record has a stable claim, and every nonblank rendered ISF source line plus every blocking reason
+  has an addressable lowering conclusion.
+- Made adapter authority executable at every canonical seam. Build reloads verified IntentIR; load,
+  serialization, manifest persistence, emitted-target reconciliation, and validation backannotation replay the
+  current registered lowering. Proofless, stale, forged, unauthorized, legacy, and future artifacts cannot emit
+  or preserve an authoritative `.isf` file.
+- Closed mutation to validation backannotation. Production may change only `validation_reports`; a separately
+  compiled test-fixture mutation remains unavailable to production and still requires a typed proof extension.
+- Migrated exactly the 24 adapters reachable from current IntentIR with zero pre-existing public-field delta after
+  excluding schema/proof/validation. All 24 are honestly blocked and therefore reconcile to zero emitted files;
+  the other 54 chains remain proof-unmeasurable behind legacy upstream authority rather than receiving synthetic
+  proof.
+- Corrected the chain-currency report to count checked adapter states separately from actual emitted `.isf`
+  files. Exact reconciliation had been correct, but the old summary mislabeled 24 blocked/no-file states as 24
+  emitted files; the gate now reports 24 states, zero emitted files, and 24 blocked/no-file states.
+- Restored the canonical production-genericity audit below its mandatory rollover boundary. It was already 613
+  lines before this slice and reached 621 after current alignment; removing duplicated implementation narration
+  while routing exact evidence to ADR 0038, the owning task, and Knowledge Map reduced it to 512 lines without
+  dropping an audit conclusion.
+- Expanded the checked production graph to 41 families / 168 field rules / 116 producer-mutator entrypoints / 53
+  canonical seams / four conformance-only bypass obligations. Focused proof, forgery, compatibility, mutation,
+  persistence, chain-currency, formatting, and warnings-denied workspace checks pass; final repository
+  qualification is recorded in the owning task-tree.
+- Removed the exact 4,985-file / 4,982,260-KiB rebuildable Cargo incremental cache and proved
+  `target/debug/incremental` absent with zero `.bin`/`.log` residue. Retained the 108-KiB signal-catalog
+  workspace because the active signoff tree references it, along with legitimate same-volume tool caches.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v — make IntentIR proof-carrying
 
 - Advanced IntentIR to schema 2 and registered all 49 public fields across nine capability-homogeneous

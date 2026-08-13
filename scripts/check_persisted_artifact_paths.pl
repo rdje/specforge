@@ -161,7 +161,9 @@ sub validate_producer_contract {
             'persisted.artifact_layout.normalize_for_storage()?;',
         ],
         'crates/specforge/src/ir/adapters.rs' => [
-            'to_string_pretty(&self.persisted_clone()?)',
+            'let persisted = self.persisted_clone()?;',
+            'persisted.verify_canonical_proof()?;',
+            'to_string_pretty(&persisted)?',
             'artifact.runtime_clone()',
             'persisted.artifact_layout.normalize_for_storage()?;',
         ],

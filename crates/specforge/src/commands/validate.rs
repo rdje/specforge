@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use crate::cli::ValidateArgs;
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::adapters::AdapterArtifact;
+use crate::ir::adapters::{AdapterArtifact, AdapterMutationKind};
 use crate::ir::evidence::{
     EvidenceIr, EvidenceMutationKind, SignalSemanticConflictRecord, SignalSemanticHintRecord,
     SignalSemanticHintSourceKind, StatementClass, VisualEvidenceRole, VisualObservationKind,
@@ -2244,6 +2244,7 @@ fn persist_isf_adapter_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut artifact.validation_reports, report);
+    artifact.authorize_mutation(AdapterMutationKind::ValidationBackannotation)?;
     write_backannotated_artifact(artifact_path, artifact.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }
@@ -2251,7 +2252,9 @@ fn persist_isf_adapter_validation(
 fn isf_adapter_fingerprint(artifact: &AdapterArtifact) -> Result<String> {
     let mut fp = artifact.clone();
     fp.validation_reports.clear();
-    Ok(stable_fingerprint(&fp.to_pretty_json()?))
+    // Clearing validation deliberately makes a canonical proof stale. Fingerprinting is a
+    // diagnostic projection, so serialize the in-memory value without invoking persistence.
+    Ok(stable_fingerprint(&serde_json::to_string_pretty(&fp)?))
 }
 
 fn validate_source_ir(ir: &SourceIr, artifact_fingerprint: String) -> ValidationReportRecord {
@@ -7491,7 +7494,7 @@ fn validate_isf_adapter(
     let isf = artifact.isf.as_ref();
     let isf_absent = isf.is_none();
 
-    let schema_ok = artifact.schema_version == 1;
+    let schema_ok = artifact.schema_version == 2;
     let is_renderable = isf.is_some_and(|i| i.is_renderable);
     let blocking_reasons: &[String] = isf.map(|i| i.blocking_reasons.as_slice()).unwrap_or(&[]);
     let signal_count = isf.map(|i| i.signal_count).unwrap_or(0);
@@ -7544,7 +7547,7 @@ fn validate_isf_adapter(
             ValidationFindingSeverity::Warning,
             "structural",
             format!(
-                "adapter artifact schema version is {}; expected 1",
+                "adapter artifact schema version is {}; expected 2",
                 artifact.schema_version
             ),
             Vec::new(),
@@ -16690,8 +16693,8 @@ mod tests {
 
         // The report records the ISF adapter stage.
         assert_eq!(report.validated_stage, IrStage::IsfAdapter);
-        // Structural: schema version is 1.
-        assert_eq!(metric_value(&report, "schema_version"), Some("1"));
+        // Structural: current proof-carrying schema version is 2.
+        assert_eq!(metric_value(&report, "schema_version"), Some("2"));
         // Coverage metrics are present.
         assert!(metric_value(&report, "signal_count").is_some());
         assert!(metric_value(&report, "transaction_count").is_some());

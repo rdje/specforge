@@ -1,10 +1,16 @@
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::derivation::{
+    AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
+    PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
+    RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
+    SymbolCapabilityClass, VerifiedProofLedger,
+};
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
 use crate::ir::semantic::SystemResetPolarity;
@@ -12,6 +18,85 @@ use crate::ir::source::{AutomationConfidence, CandidateInterpretation, ResidualD
 use crate::persisted_path::{
     PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
 };
+
+const ADAPTER_ARTIFACT_SCHEMA_VERSION: u32 = 2;
+const ADAPTER_PROOF_CONTEXT_SCHEMA_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct AdapterProofContext {
+    schema_version: u32,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    mutations: Vec<AdapterMutationEvent>,
+    #[cfg(any(test, feature = "test-support"))]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    test_fixture: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+#[doc(hidden)]
+pub enum AdapterMutationKind {
+    ValidationBackannotation,
+    #[cfg(any(test, feature = "test-support"))]
+    TestFixture,
+}
+
+impl AdapterMutationKind {
+    fn allowed_fields(self) -> Vec<&'static str> {
+        match self {
+            Self::ValidationBackannotation => vec!["validation_reports"],
+            #[cfg(any(test, feature = "test-support"))]
+            Self::TestFixture => ADAPTER_RULE_FIELDS
+                .iter()
+                .map(|(field, _)| *field)
+                .collect(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct AdapterMutationEvent {
+    mutation_id: String,
+    kind: AdapterMutationKind,
+    fields: BTreeMap<String, serde_json::Value>,
+}
+
+#[derive(Debug)]
+struct AdapterClaimInput {
+    address: ClaimAddress,
+    rule_id: RuleId,
+    conclusion: serde_json::Value,
+}
+
+#[derive(Debug)]
+struct AdapterProofPremises {
+    claim_replays: BTreeMap<ClaimAddress, PremiseRef>,
+    mutations: Vec<(AdapterMutationKind, PremiseRef)>,
+}
+
+impl AdapterProofPremises {
+    fn for_claim(
+        &self,
+        address: &ClaimAddress,
+    ) -> DerivationResult<(Vec<PremiseRef>, ProofConfidence)> {
+        let mut premises = vec![self.claim_replays.get(address).cloned().ok_or_else(|| {
+            DerivationError::new(format!(
+                "adapter claim '{}:{}' lacks its registered replay",
+                address.surface(),
+                address.stable_record_key()
+            ))
+        })?];
+        premises.extend(
+            self.mutations
+                .iter()
+                .filter(|(kind, _)| kind.allowed_fields().contains(&address.surface()))
+                .map(|(_, premise)| premise.clone()),
+        );
+        Ok((premises, ProofConfidence::Deterministic))
+    }
+}
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum AdapterTarget {
@@ -88,16 +173,207 @@ pub struct AdapterArtifact {
     pub validation_reports: Vec<crate::ir::source::ValidationReportRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub isf: Option<IsfAdapterArtifact>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_context: Option<AdapterProofContext>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_ledger: Option<ProofLedger>,
+}
+
+const ADAPTER_RULE_FIELDS: &[(&str, &str)] = &[
+    ("stage", "adapter.envelope"),
+    ("schema_version", "adapter.envelope"),
+    ("target", "adapter.envelope"),
+    ("required_input_stage", "adapter.envelope"),
+    ("intent_ir_path", "adapter.envelope"),
+    ("artifact_layout", "adapter.envelope"),
+    ("adapter_identity", "adapter.envelope"),
+    ("document_identity", "adapter.envelope"),
+    ("lowering_status", "adapter.lowering"),
+    ("isf", "adapter.lowering"),
+    ("residual_decisions", "adapter.residual"),
+    ("validation_reports", "adapter.validation"),
+];
+
+fn adapter_derivation_error(error: impl std::fmt::Display) -> AppError {
+    AppError::InvalidStageArtifact(format!("adapter proof verification failed: {error}"))
+}
+
+fn adapter_rule_registry() -> DerivationResult<RuleRegistry> {
+    let implementation_sha256 = Sha256Digest::of_serializable(&[
+        Sha256Digest::of_bytes(include_bytes!("adapters.rs")),
+        Sha256Digest::of_bytes(include_bytes!("isf_ir.rs")),
+    ])?;
+    let registrations = ADAPTER_RULE_FIELDS
+        .iter()
+        .map(|(field, family)| {
+            let (capability, alpha, compatibility) = match *family {
+                "adapter.lowering" => (
+                    SymbolCapabilityClass::TargetLowering,
+                    AlphaObligation::TargetSafeRenaming,
+                    RuleCompatibility::CurrentOnly,
+                ),
+                "adapter.residual" => (
+                    SymbolCapabilityClass::Residual,
+                    AlphaObligation::ResidualTopologyInvariant,
+                    RuleCompatibility::CurrentOnly,
+                ),
+                _ => (
+                    SymbolCapabilityClass::ExactIdentityOnly,
+                    AlphaObligation::IdentityGraphInvariant,
+                    RuleCompatibility::CurrentOnly,
+                ),
+            };
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            let descriptor = RuleDescriptor::new(
+                rule_id,
+                1,
+                "crate::ir::adapters",
+                implementation_sha256.clone(),
+                [
+                    PremiseKind::RegisteredDerivation,
+                    PremiseKind::UpstreamClaim,
+                ],
+                IrStage::IsfAdapter,
+                *field,
+                capability,
+                alpha,
+                compatibility,
+            )?;
+            Ok(RuleRegistration::new(
+                descriptor,
+                verify_adapter_rule_relation,
+            ))
+        })
+        .collect::<DerivationResult<Vec<_>>>()?;
+    RuleRegistry::new(registrations, [])
+}
+
+fn verify_adapter_rule_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
+    let expected_bytes = context
+        .premise_bytes(0)?
+        .ok_or_else(|| DerivationError::new("adapter rule lacks claim replay bytes"))?;
+    if expected_bytes == context.conclusion_json() {
+        Ok(())
+    } else {
+        Err(DerivationError::new(format!(
+            "adapter field '{}' is not the current registered replay",
+            context.proof().address().surface()
+        )))
+    }
+}
+
+fn apply_adapter_mutations(
+    artifact: &mut AdapterArtifact,
+    mutations: &[AdapterMutationEvent],
+) -> DerivationResult<()> {
+    let mut seen = BTreeSet::new();
+    for mutation in mutations {
+        if !seen.insert(mutation.mutation_id.as_str()) {
+            return Err(DerivationError::new(format!(
+                "duplicate adapter mutation id '{}'",
+                mutation.mutation_id
+            )));
+        }
+        let allowed = mutation
+            .kind
+            .allowed_fields()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        let present = mutation
+            .fields
+            .keys()
+            .map(String::as_str)
+            .collect::<BTreeSet<_>>();
+        if present != allowed {
+            return Err(DerivationError::new(format!(
+                "adapter {:?} mutation field set is not exact",
+                mutation.kind
+            )));
+        }
+        let mut value = serde_json::to_value(&*artifact).map_err(|error| {
+            DerivationError::new(format!("cannot serialize adapter mutation base: {error}"))
+        })?;
+        let object = value.as_object_mut().ok_or_else(|| {
+            DerivationError::new("serialized adapter mutation base is not an object")
+        })?;
+        for (field, replacement) in &mutation.fields {
+            object.insert(field.clone(), replacement.clone());
+        }
+        object.remove("proof_context");
+        object.remove("proof_ledger");
+        *artifact = serde_json::from_value(value).map_err(|error| {
+            DerivationError::new(format!("invalid typed adapter mutation payload: {error}"))
+        })?;
+    }
+    Ok(())
 }
 
 impl AdapterArtifact {
     pub fn load_from_path(path: &Path) -> Result<Self> {
+        Self::load_with_verified_proof(path).map(|(artifact, _)| artifact)
+    }
+
+    fn load_with_verified_proof(path: &Path) -> Result<(Self, VerifiedProofLedger)> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
-        let artifact = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        let value = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let version = value
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "adapter is missing an integer schema_version".to_string(),
+                )
+            })?;
+        if version != u64::from(ADAPTER_ARTIFACT_SCHEMA_VERSION) {
+            let disposition = if version < u64::from(ADAPTER_ARTIFACT_SCHEMA_VERSION) {
+                "is legacy/proofless and inspection-only; rebuild it from verified IntentIR"
+            } else {
+                "is newer than this binary"
+            };
+            return Err(AppError::InvalidStageArtifact(format!(
+                "adapter schema version {version} {disposition}"
+            )));
+        }
+        let artifact = serde_json::from_value::<Self>(value)?;
         if !matches!(artifact.stage, IrStage::IsfAdapter) {
             return Err(AppError::InvalidStageArtifact(
                 "artifact must be an ISF adapter document before loading an adapter".to_string(),
             ));
+        }
+        let runtime = artifact.runtime_clone()?;
+        let canonical = runtime.persisted_clone()?;
+        let verified = canonical.verified_canonical_proof()?;
+        Ok((runtime, verified))
+    }
+
+    /// Parse historical adapter output for diagnostics without granting it canonical or emitted
+    /// target authority. Only current schema with verified proof may serialize, write, or emit ISF.
+    pub fn load_for_inspection(path: &Path) -> Result<Self> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let value = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let version = value
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "adapter is missing an integer schema_version".to_string(),
+                )
+            })?;
+        if version > u64::from(ADAPTER_ARTIFACT_SCHEMA_VERSION) {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "adapter schema version {version} is newer than this binary"
+            )));
+        }
+        let artifact = serde_json::from_value::<Self>(value)?;
+        if !matches!(artifact.stage, IrStage::IsfAdapter) {
+            return Err(AppError::InvalidStageArtifact(
+                "artifact must be an ISF adapter document before inspection".to_string(),
+            ));
+        }
+        if version == u64::from(ADAPTER_ARTIFACT_SCHEMA_VERSION) {
+            artifact.verify_canonical_proof()?;
         }
         artifact.runtime_clone()
     }
@@ -109,7 +385,7 @@ impl AdapterArtifact {
     ) -> Result<Self> {
         let intent_ir_path =
             resolve_existing(intent_ir_path, PersistedPathOrigin::RepositoryOwned)?;
-        let intent_ir = IntentIr::load_from_path(&intent_ir_path)?;
+        let (intent_ir, intent_proof) = IntentIr::load_with_verified_proof(&intent_ir_path)?;
 
         if !matches!(intent_ir.stage, IrStage::IntentIr) {
             return Err(AppError::InvalidStageArtifact(format!(
@@ -120,17 +396,23 @@ impl AdapterArtifact {
 
         match target {
             AdapterTarget::Isf => {
-                build_isf_adapter_artifact(&intent_ir, &intent_ir_path, artifact_base_root)
+                let mut artifact =
+                    build_isf_adapter_artifact(&intent_ir, &intent_ir_path, artifact_base_root)?;
+                artifact.refresh_canonical_proof(&intent_proof)?;
+                Ok(artifact)
             }
         }
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
+        let persisted = self.persisted_clone()?;
+        persisted.verify_canonical_proof()?;
+        Ok(serde_json::to_string_pretty(&persisted)?)
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
         let persisted = self.persisted_clone()?;
+        persisted.verify_canonical_proof()?;
         let runtime_layout = persisted.artifact_layout.runtime_layout()?;
         fs::create_dir_all(&runtime_layout.artifact_root)?;
         fs::write(
@@ -148,6 +430,19 @@ impl AdapterArtifact {
         reconcile_emitted_isf_files(&runtime_layout)?;
 
         Ok(())
+    }
+
+    /// Persist a deliberately synthetic adapter fixture. Production builds do not compile this
+    /// mutation kind, so arbitrary target text cannot cross the canonical write seam.
+    #[cfg(any(test, feature = "test-support"))]
+    #[doc(hidden)]
+    pub fn write_test_fixture_to_disk(&self) -> Result<()> {
+        if self.persisted_clone()?.verify_canonical_proof().is_ok() {
+            return self.write_to_disk();
+        }
+        let mut fixture = self.clone();
+        fixture.authorize_mutation(AdapterMutationKind::TestFixture)?;
+        fixture.write_to_disk()
     }
 
     fn persisted_clone(&self) -> Result<Self> {
@@ -175,6 +470,430 @@ impl AdapterArtifact {
             Some(isf) if isf.is_renderable => Some(isf.source_text.clone()),
             _ => None,
         }
+    }
+
+    fn public_field_values(&self) -> DerivationResult<BTreeMap<String, serde_json::Value>> {
+        let mut fields = BTreeMap::new();
+        macro_rules! insert_field {
+            ($field:ident) => {
+                fields.insert(
+                    stringify!($field).to_string(),
+                    serde_json::to_value(&self.$field).map_err(|error| {
+                        DerivationError::new(format!(
+                            "cannot serialize adapter field '{}': {error}",
+                            stringify!($field)
+                        ))
+                    })?,
+                );
+            };
+        }
+        insert_field!(stage);
+        insert_field!(schema_version);
+        insert_field!(target);
+        insert_field!(required_input_stage);
+        insert_field!(intent_ir_path);
+        insert_field!(artifact_layout);
+        insert_field!(adapter_identity);
+        insert_field!(document_identity);
+        insert_field!(lowering_status);
+        insert_field!(residual_decisions);
+        insert_field!(validation_reports);
+        insert_field!(isf);
+        if fields.len() != ADAPTER_RULE_FIELDS.len() {
+            return Err(DerivationError::new(
+                "adapter proof field projection is incomplete",
+            ));
+        }
+        Ok(fields)
+    }
+
+    fn claim_inputs(&self) -> DerivationResult<Vec<AdapterClaimInput>> {
+        let fields = self.public_field_values()?;
+        let mut claims = Vec::new();
+        for (field, family) in ADAPTER_RULE_FIELDS {
+            let value = fields.get(*field).cloned().ok_or_else(|| {
+                DerivationError::new(format!("adapter claim field '{field}' is absent"))
+            })?;
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            claims.push(AdapterClaimInput {
+                address: ClaimAddress::new(IrStage::IsfAdapter, *field, "root", None)?,
+                rule_id: rule_id.clone(),
+                conclusion: value.clone(),
+            });
+            if let Some(records) = value.as_array() {
+                for (index, record) in records.iter().enumerate() {
+                    claims.push(AdapterClaimInput {
+                        address: ClaimAddress::new(
+                            IrStage::IsfAdapter,
+                            *field,
+                            format!("record-{index:08}"),
+                            Some(format!("[{index}]")),
+                        )?,
+                        rule_id: rule_id.clone(),
+                        conclusion: record.clone(),
+                    });
+                }
+            }
+        }
+        if let Some(isf) = &self.isf {
+            let rule_id = RuleId::try_from("adapter.lowering.isf.v1".to_string())
+                .map_err(DerivationError::new)?;
+            for (index, line) in isf.source_text.lines().enumerate() {
+                if line.trim().is_empty() {
+                    continue;
+                }
+                claims.push(AdapterClaimInput {
+                    address: ClaimAddress::new(
+                        IrStage::IsfAdapter,
+                        "isf",
+                        format!("source-line-{index:08}"),
+                        Some(format!("source_text.lines[{index}]")),
+                    )?,
+                    rule_id: rule_id.clone(),
+                    conclusion: serde_json::Value::String(line.to_string()),
+                });
+            }
+            for (index, reason) in isf.blocking_reasons.iter().enumerate() {
+                claims.push(AdapterClaimInput {
+                    address: ClaimAddress::new(
+                        IrStage::IsfAdapter,
+                        "isf",
+                        format!("blocking-reason-{index:08}"),
+                        Some(format!("blocking_reasons[{index}]")),
+                    )?,
+                    rule_id: rule_id.clone(),
+                    conclusion: serde_json::Value::String(reason.clone()),
+                });
+            }
+        }
+        Ok(claims)
+    }
+
+    fn proof_kernel(
+        &self,
+        context: &AdapterProofContext,
+        intent_proof: &VerifiedProofLedger,
+        replay_bytes: &[u8],
+        claims: &[AdapterClaimInput],
+    ) -> DerivationResult<(crate::ir::derivation::PromotionKernel, AdapterProofPremises)> {
+        if context.schema_version != ADAPTER_PROOF_CONTEXT_SCHEMA_VERSION {
+            return Err(DerivationError::new(format!(
+                "unsupported adapter proof-context schema {}",
+                context.schema_version
+            )));
+        }
+        let intent_ledger_bytes = serde_json::to_vec(intent_proof.ledger()).map_err(|error| {
+            DerivationError::new(format!(
+                "cannot serialize verified IntentIR ledger: {error}"
+            ))
+        })?;
+        let capture_digest = Sha256Digest::of_serializable(&(
+            context,
+            intent_proof.ruleset_sha256(),
+            Sha256Digest::of_bytes(&intent_ledger_bytes),
+        ))?;
+        let registry = adapter_rule_registry()?;
+        let mut builder =
+            PromotionKernelBuilder::with_verified_upstream(capture_digest, registry, intent_proof)?;
+        let proof_premises = {
+            let mut capture = builder.capture();
+            let intent_grounding =
+                capture.source_span("adapter-verified-intent-ledger", &intent_ledger_bytes)?;
+            let mut inputs = intent_proof
+                .claims()
+                .iter()
+                .map(|proof| PremiseRef::UpstreamClaim {
+                    address: proof.address().clone(),
+                    conclusion_sha256: proof.conclusion_sha256().clone(),
+                })
+                .collect::<Vec<_>>();
+            inputs.push(intent_grounding.clone());
+            let mut mutation_premises = Vec::new();
+            for mutation in &context.mutations {
+                let payload = serde_json::to_vec(mutation).map_err(|error| {
+                    DerivationError::new(format!(
+                        "cannot serialize registered adapter mutation: {error}"
+                    ))
+                })?;
+                let premise = capture.registered_derivation(
+                    mutation.mutation_id.clone(),
+                    &payload,
+                    vec![intent_grounding.clone()],
+                )?;
+                inputs.push(premise.clone());
+                mutation_premises.push((mutation.kind, premise));
+            }
+            let registered_replay =
+                capture.registered_derivation("adapter.current-replay", replay_bytes, inputs)?;
+            let mut claim_replays = BTreeMap::new();
+            for claim in claims {
+                let exact_conclusion = serde_json::to_vec(&claim.conclusion).map_err(|error| {
+                    DerivationError::new(format!("cannot serialize adapter claim replay: {error}"))
+                })?;
+                let premise = capture.registered_derivation(
+                    format!(
+                        "adapter.claim.{}.{}",
+                        claim.address.surface(),
+                        claim.address.stable_record_key()
+                    ),
+                    &exact_conclusion,
+                    vec![registered_replay.clone()],
+                )?;
+                if claim_replays
+                    .insert(claim.address.clone(), premise)
+                    .is_some()
+                {
+                    return Err(DerivationError::new(
+                        "duplicate adapter claim replay address",
+                    ));
+                }
+            }
+            AdapterProofPremises {
+                claim_replays,
+                mutations: mutation_premises,
+            }
+        };
+        Ok((builder.seal(), proof_premises))
+    }
+
+    fn refresh_canonical_proof(&mut self, intent_proof: &VerifiedProofLedger) -> Result<()> {
+        let context = AdapterProofContext {
+            schema_version: ADAPTER_PROOF_CONTEXT_SCHEMA_VERSION,
+            mutations: Vec::new(),
+            #[cfg(any(test, feature = "test-support"))]
+            test_fixture: false,
+        };
+        self.refresh_proof_from_context(context, intent_proof)
+    }
+
+    fn refresh_proof_from_context(
+        &mut self,
+        context: AdapterProofContext,
+        intent_proof: &VerifiedProofLedger,
+    ) -> Result<()> {
+        let mut persisted = self.persisted_clone()?;
+        persisted.proof_context = None;
+        persisted.proof_ledger = None;
+        let replay_bytes = serde_json::to_vec(
+            &persisted
+                .public_field_values()
+                .map_err(adapter_derivation_error)?,
+        )?;
+        let claims = persisted.claim_inputs().map_err(adapter_derivation_error)?;
+        let (mut kernel, proof_premises) = persisted
+            .proof_kernel(&context, intent_proof, &replay_bytes, &claims)
+            .map_err(adapter_derivation_error)?;
+        for claim in claims {
+            let (premises, confidence) = proof_premises
+                .for_claim(&claim.address)
+                .map_err(adapter_derivation_error)?;
+            let proposal = kernel.grammar_capability().propose(
+                claim.address,
+                claim.rule_id,
+                premises,
+                Vec::new(),
+                confidence,
+                claim.conclusion,
+            );
+            kernel.promote(proposal).map_err(adapter_derivation_error)?;
+        }
+        let local = kernel.finish().map_err(adapter_derivation_error)?;
+        let cumulative =
+            VerifiedProofLedger::compose(intent_proof, local).map_err(adapter_derivation_error)?;
+        self.proof_context = Some(context);
+        self.proof_ledger = Some(cumulative.into_ledger());
+        Ok(())
+    }
+
+    /// Authorize one closed-family post-build mutation and rebuild the cumulative proof.
+    #[doc(hidden)]
+    pub fn authorize_mutation(&mut self, kind: AdapterMutationKind) -> Result<bool> {
+        let mut context = self.proof_context.clone().ok_or_else(|| {
+            adapter_derivation_error("proofless adapter cannot authorize a mutation")
+        })?;
+        #[cfg(any(test, feature = "test-support"))]
+        if kind == AdapterMutationKind::TestFixture {
+            context.test_fixture = true;
+        }
+        let intent_runtime_path =
+            resolve_existing(&self.intent_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let (intent_ir, intent_proof) = IntentIr::load_with_verified_proof(&intent_runtime_path)?;
+        let runtime_layout = self.artifact_layout.runtime_layout()?;
+        let artifact_base_root = runtime_layout
+            .artifact_root
+            .parent()
+            .and_then(Path::parent)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "adapter artifact root has no repository-owned base".to_string(),
+                )
+            })?;
+        let mut predecessor =
+            build_isf_adapter_artifact(&intent_ir, &intent_runtime_path, artifact_base_root)?;
+        apply_adapter_mutations(&mut predecessor, &context.mutations)
+            .map_err(adapter_derivation_error)?;
+        let predecessor_fields = predecessor
+            .persisted_clone()?
+            .public_field_values()
+            .map_err(adapter_derivation_error)?;
+        let current_fields = self
+            .persisted_clone()?
+            .public_field_values()
+            .map_err(adapter_derivation_error)?;
+        let allowed = kind
+            .allowed_fields()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for (field, predecessor_value) in &predecessor_fields {
+            if !allowed.contains(field.as_str())
+                && current_fields.get(field) != Some(predecessor_value)
+            {
+                return Err(adapter_derivation_error(format!(
+                    "{:?} mutation changed unauthorized adapter field '{field}'",
+                    kind
+                )));
+            }
+        }
+        if kind
+            .allowed_fields()
+            .iter()
+            .all(|field| current_fields.get(*field) == predecessor_fields.get(*field))
+        {
+            return Ok(false);
+        }
+        let fields = kind
+            .allowed_fields()
+            .iter()
+            .map(|field| {
+                current_fields
+                    .get(*field)
+                    .cloned()
+                    .map(|value| ((*field).to_string(), value))
+                    .ok_or_else(|| {
+                        adapter_derivation_error(format!(
+                            "adapter mutation field '{field}' is absent"
+                        ))
+                    })
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let kind_name = serde_json::to_value(kind)?
+            .as_str()
+            .expect("AdapterMutationKind serializes as a string")
+            .to_string();
+        let event = AdapterMutationEvent {
+            mutation_id: format!(
+                "adapter-mutation-{index:08}-{kind_name}",
+                index = context.mutations.len()
+            ),
+            kind,
+            fields,
+        };
+        apply_adapter_mutations(&mut predecessor, std::slice::from_ref(&event))
+            .map_err(adapter_derivation_error)?;
+        if predecessor
+            .persisted_clone()?
+            .public_field_values()
+            .map_err(adapter_derivation_error)?
+            != current_fields
+        {
+            return Err(adapter_derivation_error(
+                "typed adapter mutation replay does not reproduce the requested artifact",
+            ));
+        }
+        context.mutations.push(event);
+        self.refresh_proof_from_context(context, &intent_proof)?;
+        Ok(true)
+    }
+
+    fn verify_canonical_proof(&self) -> Result<()> {
+        self.verified_canonical_proof().map(|_| ())
+    }
+
+    fn verified_canonical_proof(&self) -> Result<VerifiedProofLedger> {
+        if self.schema_version != ADAPTER_ARTIFACT_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "adapter schema {} cannot receive current canonical authority",
+                self.schema_version
+            )));
+        }
+        let context = self.proof_context.as_ref().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current adapter is proofless; rebuild it from verified IntentIR".to_string(),
+            )
+        })?;
+        let cumulative = self.proof_ledger.clone().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current adapter is missing its cumulative proof ledger".to_string(),
+            )
+        })?;
+        let intent_runtime_path =
+            resolve_existing(&self.intent_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let (intent_ir, intent_proof) = IntentIr::load_with_verified_proof(&intent_runtime_path)?;
+        let runtime_layout = self.artifact_layout.runtime_layout()?;
+        let artifact_base_root = runtime_layout
+            .artifact_root
+            .parent()
+            .and_then(Path::parent)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "adapter artifact root has no repository-owned base".to_string(),
+                )
+            })?;
+        let mut expected_runtime =
+            build_isf_adapter_artifact(&intent_ir, &intent_runtime_path, artifact_base_root)?;
+        apply_adapter_mutations(&mut expected_runtime, &context.mutations)
+            .map_err(adapter_derivation_error)?;
+        let expected = expected_runtime.persisted_clone()?;
+        let replay_fields = expected
+            .public_field_values()
+            .map_err(adapter_derivation_error)?;
+        let replay_bytes = serde_json::to_vec(&replay_fields)?;
+        let actual_fields = self
+            .public_field_values()
+            .map_err(adapter_derivation_error)?;
+        let claims = self.claim_inputs().map_err(adapter_derivation_error)?;
+        let conclusions = claims
+            .iter()
+            .map(|claim| {
+                serde_json::to_vec(&claim.conclusion)
+                    .map(|bytes| (claim.address.clone(), bytes))
+                    .map_err(AppError::from)
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let (kernel, _) = self
+            .proof_kernel(context, &intent_proof, &replay_bytes, &claims)
+            .map_err(adapter_derivation_error)?;
+        let local_ruleset = adapter_rule_registry()
+            .map_err(adapter_derivation_error)?
+            .ruleset_sha256()
+            .clone();
+        let local_ledger = cumulative
+            .local_suffix_after(&intent_proof, &local_ruleset)
+            .map_err(adapter_derivation_error)?;
+        let verified_local = kernel
+            .verify_persisted(local_ledger, &conclusions)
+            .map_err(adapter_derivation_error)?;
+        let verified = VerifiedProofLedger::compose(&intent_proof, verified_local)
+            .map_err(adapter_derivation_error)?;
+        if verified.ledger() != &cumulative {
+            return Err(adapter_derivation_error(
+                "cumulative adapter proof differs from verified IntentIR prefix plus local replay",
+            ));
+        }
+        if actual_fields != replay_fields {
+            return Err(adapter_derivation_error(
+                "adapter public fields differ from current registered replay",
+            ));
+        }
+        Ok(verified)
+    }
+
+    /// Current cumulative proof ledger. This is inspection-only; canonical authority still
+    /// requires executing the current loader and lowering relation.
+    pub fn proof_ledger(&self) -> Option<&ProofLedger> {
+        self.proof_ledger.as_ref()
     }
 }
 
@@ -551,7 +1270,7 @@ fn build_isf_adapter_artifact(
 
     Ok(AdapterArtifact {
         stage: IrStage::IsfAdapter,
-        schema_version: 1,
+        schema_version: ADAPTER_ARTIFACT_SCHEMA_VERSION,
         target: AdapterTarget::Isf,
         required_input_stage: IrStage::IntentIr,
         intent_ir_path: intent_ir_path.to_path_buf(),
@@ -562,18 +1281,23 @@ fn build_isf_adapter_artifact(
         residual_decisions,
         validation_reports: vec![],
         isf: Some(isf),
+        proof_context: None,
+        proof_ledger: None,
     })
 }
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeSet;
     use std::fs;
     use std::path::Path;
 
     use tempfile::tempdir;
 
     use crate::error::Result;
-    use crate::ir::adapters::{AdapterArtifact, AdapterLoweringStatus, AdapterTarget};
+    use crate::ir::adapters::{
+        AdapterArtifact, AdapterLoweringStatus, AdapterMutationKind, AdapterTarget,
+    };
     use crate::ir::evidence::{
         EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ParticipantDriveRecord,
         ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField,
@@ -1008,7 +1732,7 @@ mod tests {
         blocked_isf
             .blocking_reasons
             .push("test-only blocked transition".to_string());
-        blocked.write_to_disk()?;
+        blocked.write_test_fixture_to_disk()?;
 
         assert!(
             !current_isf.exists(),
@@ -1421,6 +2145,223 @@ mod tests {
             "emitted temporal `.isf` was rejected by fsmgen strict"
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn adapter_proof_covers_every_field_record_rendered_line_and_exact_intent_prefix() -> Result<()>
+    {
+        let workspace = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            workspace.path(),
+            "adapter_proof.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &workspace.path().join("generated/adapters"),
+        )?;
+        artifact.write_to_disk()?;
+        let (artifact, adapter_proof) = AdapterArtifact::load_with_verified_proof(
+            &artifact.artifact_layout.adapter_artifact_path,
+        )?;
+        let (_, intent_proof) = IntentIr::load_with_verified_proof(&artifact.intent_ir_path)?;
+
+        let fields = artifact
+            .persisted_clone()?
+            .public_field_values()
+            .map_err(super::adapter_derivation_error)?;
+        let array_records = fields
+            .values()
+            .filter_map(serde_json::Value::as_array)
+            .map(Vec::len)
+            .sum::<usize>();
+        let isf = artifact.isf.as_ref().expect("ISF payload");
+        let rendered_lines = isf
+            .source_text
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .count();
+        let expected_local = super::ADAPTER_RULE_FIELDS.len()
+            + array_records
+            + rendered_lines
+            + isf.blocking_reasons.len();
+        let intent_claims = intent_proof.ledger().claims();
+        let cumulative_claims = adapter_proof.ledger().claims();
+        assert_eq!(super::ADAPTER_RULE_FIELDS.len(), 12);
+        assert_eq!(
+            super::ADAPTER_RULE_FIELDS
+                .iter()
+                .map(|(_, family)| *family)
+                .collect::<BTreeSet<_>>()
+                .len(),
+            4
+        );
+        assert_eq!(
+            cumulative_claims.len(),
+            intent_claims.len() + expected_local
+        );
+        assert_eq!(
+            &cumulative_claims[..intent_claims.len()],
+            intent_claims,
+            "adapter must retain the exact verified cumulative IntentIR ledger as its prefix"
+        );
+        let local = &cumulative_claims[intent_claims.len()..];
+        assert!(local.iter().all(|claim| matches!(
+            claim.premises().first(),
+            Some(crate::ir::derivation::PremiseRef::RegisteredDerivation { .. })
+        )));
+        assert_eq!(
+            local
+                .iter()
+                .filter(|claim| {
+                    claim.address().surface() == "isf"
+                        && claim
+                            .address()
+                            .stable_record_key()
+                            .starts_with("source-line-")
+                })
+                .count(),
+            rendered_lines,
+            "every rendered nonblank ISF line must carry one lowering claim"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn proofless_and_forged_adapter_cannot_load_serialize_or_write() -> Result<()> {
+        let workspace = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            workspace.path(),
+            "adapter_forgery.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &workspace.path().join("generated/adapters"),
+        )?;
+        artifact.write_to_disk()?;
+        let path = artifact.artifact_layout.adapter_artifact_path.clone();
+        let canonical = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&path)?)?;
+
+        let mut proofless = canonical.clone();
+        proofless
+            .as_object_mut()
+            .expect("adapter object")
+            .remove("proof_context");
+        proofless
+            .as_object_mut()
+            .expect("adapter object")
+            .remove("proof_ledger");
+        fs::write(&path, serde_json::to_string_pretty(&proofless)?)?;
+        assert!(AdapterArtifact::load_from_path(&path).is_err());
+        let decoded = serde_json::from_value::<AdapterArtifact>(proofless)?;
+        assert!(decoded.to_pretty_json().is_err());
+        assert!(decoded.write_to_disk().is_err());
+
+        let mut forged = canonical;
+        forged["isf"]["source_text"] =
+            serde_json::Value::String("(actor forged\n  (interface)\n)\n".to_string());
+        fs::write(&path, serde_json::to_string_pretty(&forged)?)?;
+        assert!(AdapterArtifact::load_from_path(&path).is_err());
+        let forged = serde_json::from_value::<AdapterArtifact>(forged)?;
+        assert!(forged.to_pretty_json().is_err());
+        assert!(forged.write_to_disk().is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn adapter_validation_is_closed_and_unrelated_mutation_rejects() -> Result<()> {
+        let workspace = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            workspace.path(),
+            "adapter_mutation.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let mut artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &workspace.path().join("generated/adapters"),
+        )?;
+        let report = crate::ir::source::ValidationReportRecord {
+            report_id: "adapter-validation".to_string(),
+            validated_stage: crate::ir::IrStage::IsfAdapter,
+            artifact_fingerprint: "fingerprint".to_string(),
+            summary: "test report".to_string(),
+            overall_score: None,
+            grade: None,
+            metrics: Vec::new(),
+            findings: Vec::new(),
+        };
+        artifact.validation_reports.push(report);
+        assert!(artifact.authorize_mutation(AdapterMutationKind::ValidationBackannotation)?);
+        assert!(!artifact.authorize_mutation(AdapterMutationKind::ValidationBackannotation)?);
+        artifact.write_to_disk()?;
+        assert!(
+            AdapterArtifact::load_from_path(&artifact.artifact_layout.adapter_artifact_path)
+                .is_ok()
+        );
+
+        artifact.adapter_identity.summary.push_str(" forged");
+        artifact
+            .validation_reports
+            .push(crate::ir::source::ValidationReportRecord {
+                report_id: "second".to_string(),
+                validated_stage: crate::ir::IrStage::IsfAdapter,
+                artifact_fingerprint: "second".to_string(),
+                summary: "second".to_string(),
+                overall_score: None,
+                grade: None,
+                metrics: Vec::new(),
+                findings: Vec::new(),
+            });
+        assert!(
+            artifact
+                .authorize_mutation(AdapterMutationKind::ValidationBackannotation)
+                .is_err()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn legacy_adapter_is_inspection_only_and_future_schema_rejects() -> Result<()> {
+        let workspace = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            workspace.path(),
+            "adapter_compatibility.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &workspace.path().join("generated/adapters"),
+        )?;
+        let path = artifact.artifact_layout.adapter_artifact_path.clone();
+        artifact.write_to_disk()?;
+        let canonical = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&path)?)?;
+
+        let mut legacy = canonical.clone();
+        legacy["schema_version"] = serde_json::json!(1);
+        legacy
+            .as_object_mut()
+            .expect("adapter object")
+            .remove("proof_context");
+        legacy
+            .as_object_mut()
+            .expect("adapter object")
+            .remove("proof_ledger");
+        fs::write(&path, serde_json::to_string_pretty(&legacy)?)?;
+        assert!(AdapterArtifact::load_from_path(&path).is_err());
+        assert!(AdapterArtifact::load_for_inspection(&path).is_ok());
+
+        let mut future = canonical;
+        future["schema_version"] =
+            serde_json::json!(u64::from(super::ADAPTER_ARTIFACT_SCHEMA_VERSION) + 1);
+        fs::write(&path, serde_json::to_string_pretty(&future)?)?;
+        assert!(AdapterArtifact::load_from_path(&path).is_err());
+        assert!(AdapterArtifact::load_for_inspection(&path).is_err());
         Ok(())
     }
 }

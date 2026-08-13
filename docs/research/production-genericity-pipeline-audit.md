@@ -1,9 +1,9 @@
 # Production-genericity pipeline audit
 
-Status: **discovery, dependency boundary, trusted kernel, rule census, and SourceIR→IntentIR proof migration complete; adapter proof, AST information-flow enforcement, and behavioral qualification remain**
+Status: **discovery, dependency boundary, trusted kernel, rule census, and SourceIR→ISF-adapter proof migration complete; digest precision, AST information-flow enforcement, and behavioral qualification remain**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
-Latest proof-migration update: 2026-08-13 (`.6d.ii.e.iv.v`)
+Latest proof-migration update: 2026-08-13 (`.6d.ii.e.iv.vi`)
 Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
 Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
 
@@ -23,97 +23,46 @@ that property and is not the planned signoff mechanism.
 
 ## What this finding means for project feasibility
 
-The breach does **not** show that a neutral specification-to-intent system is impossible. It shows
-that the implementation admitted corpus-specific shortcuts instead of making neutrality a structural
-property.
+The breach does **not** show that neutral specification-to-intent is impossible; it shows that shortcuts were
+admitted instead of making neutrality structural. A domain extractor necessarily knows universal digital intent—
+signals, fields, registers, states, events, obligations, timing, provenance, conflict, and uncertainty. It must
+not let document/vendor/protocol identity, symbol spelling, or one tuned corpus phrase decide a result.
 
-Neutrality is not absence of all prior concepts. An extractor necessarily has a universal digital
-intent ontology: signals, fields, registers, states, events, participants, obligations, timing,
-provenance, conflict, and uncertainty. The prohibited coupling is different: a production decision
-must not depend on which document is being read, a vendor/protocol identity, a symbol's spelling, or
-similarity to one tuned corpus phrase.
-
-The feasible architecture therefore has three layers:
+The feasible architecture has three layers:
 
 1. universal typed digital-intent semantics and document-structure grammars;
 2. opaque names, values, relations, and evidence derived from the current input;
 3. optional learned/model proposals with explicit provenance, uncertainty, and grounding back to that
    input, never selected by filename/title identity.
 
-No tool can promise perfect automatic recall over every possible PDF: an input can be corrupt,
-encrypted, image-only, contradictory, omit necessary context, or state intent ambiguously. The
-signoff interpretation of “works on any digital-chip specification” is that the same neutral engine
-accepts every input, promotes only justified intent, and emits explicit residuals for undecidable or
-unsupported content. It must not silently fabricate an answer or require a new named extraction
-branch.
-
-Existing structural fingerprints, typed provenance, declared-symbol grounding, fusion, fidelity
-gates, and residual decisions are evidence that this architecture is implementable inside SpecForge.
-The correct remediation may temporarily reduce recall: remove specialized shortcuts first, then
-recover recall through universal grammars and grounded models. Benchmark retention cannot override
-the production boundary.
+No tool can promise perfect recall from corrupt, encrypted, image-only, contradictory, incomplete, or ambiguous
+input. “Works on any digital-chip specification” means one neutral engine accepts it, promotes only justified
+intent, and residualizes uncertainty without a named branch. Existing typed provenance, grounding, fusion,
+fidelity, and residual mechanisms show this is implementable. Removing shortcuts may reduce recall temporarily;
+universal grammars and grounded models must recover it without letting benchmarks override the boundary.
 
 ## Combined identity-remediation qualification (`.6d.ii.d.iv`)
 
-The qualification boundary is the exact three-commit range after generic EvidenceIR landed:
-`89d8dee7..9c38b569` (`.d.i` through `.d.iii`). Git measures 129 changed files, 5,922 insertions,
-and 4,357 deletions. The crate-source part is 24 Rust files (+3,522/-3,328), including production edits
-and their embedded `cfg(test)` controls; the principal
-qualification/data surfaces are 40 conformance-fixture files (+75/-75), 17 corpus-KB files
-(+1,000/-347), and ten mdBook files (+145/-77). Those counts describe the complete range rather than
-an estimated word-list census.
-
-The resulting current state is exact:
-
-- prior memory is schema 7 with one global identity-independent scope; the validation-gated 13-input
-  fixed point is byte-stable at `a416cc8b…6239633`, exposes one contested prior, and removes 37 stale
-  prior-created timing constraints while retaining their source statements;
-- identifier remediation changes 18 EvidenceIR, 73 SemanticIR, 74 IntentIR, and 74 adapter artifacts;
-  evidence constraints move 397→344, invariants 31,767→28,876, transactions 281→239, and
-  signal-neutral conditional rules 2,156→2,489. Renderability moves 44→17 because the adapter no
-  longer invents clock/reset semantics; all 17 emitted ISFs pass pinned FSMGen strict;
-- prompt remediation covers all 13 production constructor families. Corpus-KB routing has ten managed
-  Markdown outputs plus schema-2 JSON, and all 156 typed fixtures reproduce. This child intentionally
-  changes provider instructions and conformance projections, not persisted canonical IR;
-- retained-chain currency is 24/24 for measurable EvidenceIR and 78/78 for each SemanticIR, IntentIR,
-  and adapter stage under the current binary.
-
-The focused cross-path qualification is deliberately behavioral, not lexical: the `alpha`, `identity`,
-`prompt`, `spelling`, `fixture_name`, empty-declaration, and undeclared-contract filters pass 13, 19,
-14, 14, 2, 1, and 1 tests respectively. They cover renamed prompt policy, source classification,
-prior-scope quarantine, exact/ambiguous identifier resolution, signal/interface/handshake/clock/reset
-non-inference, typed ISF lowering, structural corpus membership, and fail-closed provider proposals.
-The complete Rust and repository gates then cover all non-filtered paths and persisted currentness.
-
-This closes the bounded identity/spelling/prompt/corpus remediation parent `.d`; it does **not** claim
-whole-core production-genericity signoff. Named production commentary and calibrated evaluation claims,
-the proof-carrying core/conformance and registered-grammar architecture, AST/dependency/taint mutations,
-and whole-population alpha/identity/paraphrase/held-out behavior remain release blockers in `.e` and `.f`.
+The exact `89d8dee7..9c38b569` qualification range spans 129 files. It establishes schema-7 global prior
+identity, neutral prompts across 13 constructor families, typed structural corpus routing over 156 fixtures,
+and exact 18/73/74/74 Evidence/Semantic/Intent/adapter deltas. Removing invented clock/reset authority moves
+renderability 44→17; every retained emitted ISF passes pinned FSMGen strict. Focused alpha, identity, prompt,
+spelling, fixture-name, declaration, and grounding controls plus full gates qualify the bounded remediation.
+The owning task retains exact file/test/metric arithmetic. This closes identity/spelling/prompt/corpus repair,
+not structural or population-level genericity signoff.
 
 ## Proof-architecture freeze (`.6d.ii.e.i`)
 
-ADR 0038 makes the signoff direction concrete before production code moves. The target is a compiler-visible
-`specforge-core <- specforge-conformance` dependency, opaque document/symbol identities with sealed spelling
-capabilities, registered grammars that emit grounded proposals, and one small promotion kernel that admits only
-proof-covered canonical claims. Each artifact carries a ruleset-bound proof ledger; each rule declares its premise
-kinds, conclusion surface, symbol capability, compatibility, and executable alpha obligation. Proofless historical
-artifacts may be inspected, but cannot steer a current canonical build or lower to ISF.
-
-Two checked TSV inventories freeze the migration denominator. `module_inventory.tsv` classifies all 71 compiled
-Rust files exactly once, including every mixed, named, calibrated, evaluation, replay, and test-support location.
-`claim_family_inventory.tsv` assigns all 168 top-level fields of SourceIR, EvidenceIR, SemanticIR, IntentIR, and
-the adapter artifact exactly once across 38 claim families. `check_production_genericity_inventory.pl` derives
-both live sets and rejects new, missing, duplicate, malformed, or stale entries; its controlled self-test proves
-that an unclassified module and an unclassified artifact field both fail.
-
-This slice changes no production extraction behavior. The architecture and denominator are accepted, not yet
-implemented: `.e.ii`–`.e.vii` still own the physical core/conformance split, trusted kernel and capabilities,
-rule/claim migration, AST-aware doctrine, adversarial mutations, and exact qualification. `.f` still owns
-whole-population behavioral qualification. A vocabulary scan remains supplementary diagnostics only.
+ADR 0038 fixes the signoff architecture: a compiler-visible one-way core/conformance dependency, opaque
+document/symbol identities, sealed spelling capabilities, registered grounded proposals, and one promotion
+kernel that alone grants canonical authority. Rules declare typed premises, conclusion surface, symbol
+capability, compatibility, and alpha obligation; proofless history is inspection-only. Checked module and claim
+inventories reject drift across the compiled surface and every top-level artifact field. The ADR and owning task
+retain the full frozen denominator and controlled-failure evidence; this audit retains the resulting boundary.
 
 ## Compiler-visible core/conformance boundary (`.6d.ii.e.ii`)
 
-The first architecture layer is now implemented as three workspace packages:
+The architecture compiles as three workspace packages:
 
 ```text
 specforge-core  <-  specforge-conformance
@@ -121,94 +70,44 @@ specforge-core  <-  specforge-conformance
       +------ specforge application/CLI
 ```
 
-`specforge-core` compiles capture, generic provider transport, SourceIR/EvidenceIR/SemanticIR/IntentIR,
-validation primitives, and adapter lowering. It does not name or depend on the conformance package.
-`specforge-conformance` depends only one way on core and compiles `eval`, completeness/category
-characterization, source-to-intent evaluation/replay, trajectory control, and reviewed named snapshot
-composition. The application composes both and keeps the former `specforge::eval` and `specforge::ir::*`
-public paths as compatibility re-exports. Named fixture identities remain legal in conformance tests; an
-expanded production-core diagnostic finds no known named corpus term in the non-test compiled output. That
-vocabulary result is review assistance, not the dependency proof.
-
-`scripts/check_production_genericity_dependencies.pl` derives the manifest and module-registry direction and
-has five controlled cases: clean graph, direct reverse edge, aliased reverse edge, conformance-to-application
-cycle, and oracle-module reinsertion. `cargo tree -p specforge-core --edges normal` independently shows no
-internal SpecForge dependency. The exact live inventory grows from the frozen 71-file pre-migration denominator
-to 76 classified Rust files while retaining the same 38 claim families and 168 fields. This changes packaging
-and visibility, not canonical extraction behavior or persisted schemas.
-
-The boundary removes conformance feedback as a representable core dependency; it does not prove each core claim.
-At that checkpoint `.e.iii` still owned the sealed capability/kernel substrate described next; `.e.iv`–`.e.vi`
-continue to own rule migration, AST/information-flow enforcement, and adversarial proof/alpha mutations. `.e.vii`
-and `.f` own structural and population qualification, so whole-core signoff remains explicitly open.
+Core owns generic capture, IR, extraction, validation primitives, and adapter lowering. Conformance depends one
+way on core and owns evaluation, completeness/category characterization, replay, trajectory, and reviewed named
+snapshots; the application composes both and preserves public compatibility paths. Five dependency mutations
+reject direct and aliased reverse edges, an application cycle, and oracle-module reinsertion. This makes
+conformance feedback unrepresentable as a core dependency; vocabulary diagnostics remain supplementary only.
 
 ## Sealed capability and derivation substrate (`.6d.ii.e.iii`)
 
-The trusted substrate now compiles in `specforge-core::ir::derivation`. `OpaqueSymbol` and
-`OpaqueDocumentIdentity` retain private spelling but expose only spelling-free scope/ordinal identity and exact
-comparison. They implement no `Display`, string conversion, spelling-based ordering, or Serde. Grammar,
-persistence, presentation, and lowering access requires a sealed token that application/conformance code cannot
-construct. Five external compile-fail tests pin those negative API properties; this is a type boundary, not a
-known-word scan.
-
-The schema-1 proof ledger and deterministic SHA-256 ruleset bind each unique stage/surface/record address to its
-rule, typed premises, spelling-free symbol-use modes, confidence class, and exact conclusion digest. The promotion
-kernel validates current-scope source spans, table cells, and visual regions; independently grounded model
-proposals; validated current-document or global-identity-independent priors; registered universal axioms; and
-already-verified upstream claims in ledger order. It rejects an unknown or wrong-surface rule, stale/cross-document
-premise, unsupported premise kind, excess symbol capability, missing symbol origin, duplicate address, stale
-ruleset, and altered conclusion bytes.
-
-Compatibility distinguishes envelope shape from authority. Missing, old, or stale ledgers are inspect-only and
-must rebuild or residualize; future and malformed ledgers reject. Even a schema-valid, ruleset-matching
-deserialized envelope requires full kernel verification. Only the non-deserializable `VerifiedProofLedger` token
-permits canonical use, so persisted bytes cannot forge authority around a claim. Sixteen focused controls plus
-five compile-fail controls exercise the boundary.
-
-This slice changes no current IR schema, producer, or canonical artifact. It therefore does not claim that the
-existing 168 fields are proof-covered: `.e.iv` owns exact migration of all 38 claim families and removal of the
-temporary pre-integration dead-code allowance. The live module denominator is 77; rule completeness, AST/taint
-enforcement, per-rule alpha execution, and population qualification remain `.e.iv`–`.f` blockers.
+`specforge-core::ir::derivation` implements source-order opaque symbol/document atoms with no ordinary spelling,
+display, ordering, or Serde API; sealed capabilities grant grammar, persistence, presentation, or lowering access.
+The deterministic ruleset and proof ledger bind unique addresses to typed premises, spelling-free symbol uses,
+confidence, and exact conclusions. The kernel checks capture/model/prior/axiom/upstream authority and returns the
+only non-deserializable witness accepted by canonical seams. Old/stale ledgers rebuild or residualize; malformed
+or future ledgers reject; schema-valid bytes never self-authorize. Focused and compile-fail controls pin those
+properties. ADR 0038 and the production-genericity Knowledge Map card retain the full type/premise/error contract.
 
 ## Exact rule and canonical-seam census (`.6d.ii.e.iv.i`)
 
-The migration census now joins all 41 claim families to 168 deterministic field-root rule ids, 116 current
-producer or post-build mutator entrypoints, and 47 canonical insertion/write seams. The latter include every
-stage writer and `validate`'s separate raw backannotation writer. `rule_family_inventory.tsv` fixes, for every
-family, the current entrypoints, allowed typed premises, symbol capability, mandatory alpha obligation,
-compatibility, target module, schema owner, canonical seams, and one stage migration leaf. The checker resolves
-every declared path/function and rejects missing families, duplicate rules, premise/capability mismatches, stale
-seams, and unsafe compatibility.
+The checked graph joins 41 families to 168 field rules, 116 producer/post-build-mutator entrypoints, 53 canonical
+seams, and four conformance-only bypass obligations. It includes constructor-independent reclassification,
+enrichment, validation, and persistence paths; temporary fixture location grants no authority. SourceIR proves
+capture, each downstream stage retains the verified ledger as an exact prefix, and every field plus populated
+record receives a claim. Canonical load/serialize/write/build/lower seams re-execute proof; closed mutators extend
+it; history is inspection/rebuild/residual input only. The inventories and task evidence own the exact path-level
+denominator and controlled checker failures.
 
-This inspection found two important classes that a constructor-only migration would miss. First, EvidenceIR can
-carry an existing artifact's aliases, statement classes, constraints, and conditional rules, then deduplicate or
-reclassify them; provider commands, register recovery, signal resolution, and validation can also mutate an
-already-built stage. These paths must verify the incoming cumulative ledger and extend it through a registered
-rule. Second, conformance/evaluation code currently patches temporary SourceIR, EvidenceIR, and SemanticIR structs
-or rewrites artifact layout before using ordinary persistence/build paths. The four exact entrypoints are tracked
-separately in `conformance_bypass_inventory.tsv`; temporary location is not authority.
+Adapter schema 2 preserves the verified IntentIR ledger as an exact ordered prefix and proves all 12 local fields
+across envelope, lowering, residual, and validation families. Every populated array record, nonblank rendered ISF
+line, and blocking reason has a claim. Canonical build/load/serialize/write/emitted-file reconciliation and closed
+validation mutation re-execute current lowering, so proofless, stale, forged, unauthorized, legacy, or future
+artifacts cannot emit or preserve authoritative ISF. Exactly 24 reachable adapters migrated with zero public
+delta outside schema/proof/validation; all 24 are currently blocked and reconcile to zero emitted files. Fifty-four
+historical chains remain upstream-proof-unmeasurable rather than receiving synthetic authority.
 
-The accepted integration is one cumulative proof chain. SourceIR proves exact capture before classification;
-downstream stages verify and retain the exact ordered upstream ledger as a prefix, then append current-stage
-claims. Every top-level field receives a root conclusion even when empty, and populated record collections also
-receive stable per-record conclusions. Canonical load, serialization, write, downstream build, and lowering all
-verify the current artifact/ledger; public mutation invalidates its digests until a registered mutator extends the
-proof chain. Proofless history is inspection/rebuild/residual input only, and future versions fail closed.
-
-Conformance patches will move to noncanonical typed overlays unable to call canonical production sinks; the
-evaluation storage rebase will preserve verified proof bytes without authorizing semantic changes. This slice
-freezes the reviewed high-level migration graph and cumulative-ledger contract only. It changes no artifact schema,
-producer behavior, or canonical output. SourceIR through IntentIR are now migrated; adapter lowering remains
-`.e.iv.vi`, and `.e.iv.vii` owns implementation-digest precision before `.e.v` derives helper-level
-AST/information-flow closure rather than treating a reviewed entrypoint inventory as sufficient proof.
-
-The IntentIR closing gate exposed why digest precision is distinct from fail-closure. Each current stage derives
-its implementation digest from the whole Rust module. Adding a rollback assertion only inside `#[cfg(test)]` made
-all 24 persisted IntentIR proofs stale, and every adapter load rejected them. That is safe—no false authority
-crossed the seam—but broader than production semantics. Exact canonical regeneration from verified SemanticIR
-changed zero non-validation IntentIR fields and zero non-validation adapter fields. `.e.iv.vii` therefore requires
-a mechanically derived digest over compiled production verifier/rule semantics and their dependency closure:
-test/comment-only changes must preserve currency, while any real production relation change must invalidate it.
+Whole-module implementation digests safely fail closed but over-invalidate: one test-only edit staled all 24
+IntentIR proofs without changing product fields. `.e.iv.vii` therefore scopes digests to compiled production
+verifier/rule semantics and dependencies, preserving currency for test/comment edits while invalidating real
+relation changes. `.e.v` then derives helper-level AST/information-flow closure.
 
 ## Audit denominator and method
 
@@ -306,7 +205,7 @@ prior memory.
 | Text LLM/NLP | Per-sentence JSON extraction, declared-signal grounding, entity typing, dedup, optional promotion | Remediated by `.6d.ii.d.iii`: typed tasks, declaration-ordered catalogs, undeclared-contract residualization, model-proposal-independent constraint typing, and identifier-redacted entity judgment. |
 | SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Schema-2 authority proves all 49 fields across 12 families, directly binds true EvidenceIR carries, and registers filtered/extended projections, synthesis, residual, and validation replay. |
 | IntentIR | Exact carry-forward; filtered actor/contract projection; actor/temporal relations; generic transaction synthesis; residual decisions | Schema-2 authority proves all 49 fields across nine homogeneous families, directly binds 30 true SemanticIR carries, and closes validation plus demotion-only NLI mutation. |
-| ISF adapter | Typed lowering, syntax validation, conflict rejection, unsupported-record residuals | Lowering consumes typed system/actor/temporal contracts and fails closed; proof-covered lowering remains open. |
+| ISF adapter | Typed lowering, syntax validation, conflict rejection, unsupported-record residuals | Schema-2 authority proves all 12 fields, rendered source lines, blocking reasons, residuals, and closed validation from current verified IntentIR; proofless/stale artifacts cannot emit. |
 | Validation/evaluation | Stage metrics, negative-knowledge lookup, extraction scores, completeness/category classification | Prior and signal validation are identity-neutral. Evaluation and calibrated classification now compile downstream in `specforge-conformance`, so they cannot feed a core dependency. |
 | Corpus/trajectory utilities | Learn priors, structural clustering, KG pages, reviewed replay/controller | Corpus-KB routing derives capabilities/prior surfaces/control status only from populated fixture-schema fields; names are display/provenance. Replay, trajectory, and reviewed snapshot composition compile downstream of core. |
 
@@ -548,7 +447,7 @@ decision sites.
 | Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Neutral at schema 7: one global scope, fail-closed legacy quarantine, normalized evidence keys, and structural fingerprints; no document identity selects a lookup. |
 | SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Typed fusion/verification no longer assigns meaning from identifier spelling; schema-2 proof executes carry/projection/synthesis/residual relations and closed validation. Figure-region corpus paths are test-only. |
 | IntentIR | `ir/intent.rs` | Structural synthesis no longer creates behavior from name fragments; schema-2 proof executes exact carry, projection, product/relation synthesis, residual, validation, and conservative NLI demotion. |
-| Adapter | `ir/adapters.rs`, `ir/isf_ir.rs` | Clock/reset lowering consumes the typed system contract and fails closed when it is absent/incomplete; compiled documentation is neutral and proof-covered lowering remains open. |
+| Adapter | `ir/adapters.rs`, `ir/isf_ir.rs` | Clock/reset lowering consumes typed system authority and fails closed when absent/incomplete; schema-2 proof covers every field, rendered line, blocking reason, residual, and canonical output seam. |
 | Completeness/evaluation | `ir/completeness.rs`, `eval.rs` | Public reusable APIs compile only in `specforge-conformance`; corpus calibration and named tests cannot become core dependencies. |
 | Replay/trajectory | `ir/source_to_intent_eval.rs`, `source_to_intent_replay.rs`, `trajectory.rs`; `test_support/trajectory_snapshot.rs` | Public engines and named reviewed snapshot composition compile only downstream in `specforge-conformance`. |
 | Module registry | core `ir/mod.rs`; conformance `ir.rs`; application facade | Core excludes every oracle module; conformance imports core one way; the application preserves compatibility re-exports. Dependency mutations fail closed. |

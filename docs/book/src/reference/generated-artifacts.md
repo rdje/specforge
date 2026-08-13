@@ -197,8 +197,23 @@ The adapter artifact (`AdapterArtifact` with an `isf` payload) records:
 - `lowering_status` (`renderable` / `blocked`), `residual_decisions`, and
   `validation_reports`
 
+Current adapter manifests use schema 2 and carry a private cumulative derivation ledger. The complete verified
+IntentIR ledger is retained as an exact ordered prefix. Adapter-local proof then covers every public field, every
+populated array record, every nonblank line of rendered ISF text, and every blocking reason. That last category is
+important: an adapter that correctly refuses to emit is a proved product state, not an unchecked absence.
+
+Only verified IntentIR may build an authoritative adapter. Canonical manifest load, pretty serialization, write,
+and emitted-file reconciliation replay the current lowering before acting. Current proofless, stale, forged, or
+unauthorized manifests reject; schema 1 is inspection-only and future schemas reject. Validation backannotation
+is a closed mutation that may replace only `validation_reports` and must extend proof before persistence.
+
 When the artifact is renderable, the emitted `.isf` text is also written to
 `generated/adapters/isf/<document_key>/<actor_name>.isf`.
+
+When it is blocked, the manifest has no emitted target and a successful write removes obsolete `.isf` siblings.
+Chain currency checks these two states separately. It reports how many adapter states it checked, how many actual
+files those states emitted, and how many were blocked/no-file; it never treats a checked blocked state as an
+emitted file.
 
 Its `input_artifact`, artifact layout, and optional `emitted_target` follow the same two-form contract as the
 four main IR stages: relative in `adapter.json`, current-root absolute after loading. This lets validation and

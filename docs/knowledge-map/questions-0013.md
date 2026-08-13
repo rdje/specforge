@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > why was the ISF explicit-FSM feature request withdrawn
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > why was the spike's 'manager Reads ARID' direction error not in production
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > why were BDF DL and VPD removed from OpenCAPI Discovery
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why were PWR and OPEN promoted as conditional-rule consequent signals
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why were RISC-V/TRM register tables unextracted (unknown table_kind)
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)

@@ -77,42 +77,30 @@
 
 The near-term north star is a complete, faithful `IntentIR` knowledge graph that lowers to strict-valid `.isf`:
 all real agents, relations, constraints, behaviors, transactions, symbols, and storage must be represented without
-fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-ISF-COMPLETENESS.md) and
-[`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar; [`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md)
-is the hard wire-protocol gate.
+fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-ISF-COMPLETENESS.md) and [`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar;
+[`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md) is the hard wire-protocol gate.
 
-The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical `IntentIR`
-before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual executable boundary, but
-SpecForge does not anticipate a language gap without a source-grounded value. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md)
-makes that ordering measurable (ADR 0033/0034).
+The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical `IntentIR` before adapter expressiveness can be called the blocker.
+ISF/FSMGen remains the eventual executable boundary, but SpecForge does not anticipate a language gap without a source-grounded value. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).
 Its reviewed 12/12 current replay and access/provenance correction ship. Generic timing unit/provenance and
-physical-applicability carriers now have clean whole-population qualification: current IntentIR is 24/2/16
-TP/FP/FN with complete 29/29 provenance, and physical-link is the first supported reviewed category. The
+physical-applicability carriers now have clean whole-population qualification: current IntentIR is 24/2/16 TP/FP/FN with complete 29/29 provenance, and physical-link is the first supported reviewed category. The
 metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400 register fabrications under
 `.6e`; however, the owner-mandated whole-production genericity audit made structural neutrality a release blocker.
-SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are complete, and ADR 0038 freezes the
-proof-carrying migration. The workspace enforces the core/conformance boundary, and the sealed opaque-identity,
+SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are complete, and ADR 0038 freezes the proof-carrying migration. The workspace enforces the core/conformance boundary, and the sealed opaque-identity,
 ruleset, proof-ledger, compatibility, and promotion-kernel substrate is installed. A deserialized proof envelope
 cannot self-authorize. The current checked 41-family / 168-field graph resolves 116 producer/mutator entrypoints,
-47 canonical seams, four conformance-only bypasses, and the one cumulative-ledger compatibility contract.
-Four IR stages now carry cumulative proof; adapter migration remains `.e.iv.vi`, and `.e.iv.vii` scopes whole-module digests to production semantics.
-A finite forbidden-vocabulary list remains diagnostic, not
-proof. `.e.iv.vi`–`.e.vii` still must migrate lowering, close digest precision, and enforce AST/information-flow
-obligations, and qualify the structural result; `.f` then owns population alpha-renaming, identity, paraphrase,
+53 canonical seams, four conformance-only bypasses, and the one cumulative-ledger compatibility contract.
+All four IR stages and the ISF adapter carry cumulative proof; 24 reachable adapters are current but honestly blocked/no-file, while 54 legacy chains are unmeasurable. `.e.iv.vii` next scopes production-semantic digests.
+A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.iv.vii`–`.e.vii` still must close digest precision, enforce AST/information-flow obligations, and
+qualify the structural result; `.f` then owns population alpha-renaming, identity, paraphrase,
 and held-out qualification before `.6e`. A reproduced 400-page failure also drove resource-sized bounded
 activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.
 
 Five active program groups support that north star:
 
-- extraction quality and breadth: [`EXTRACTION-QUALITY-GAUGE`](docs/tasks/EXTRACTION-QUALITY-GAUGE.md),
-  [`PDF-VARIANT-DIGESTION`](docs/tasks/PDF-VARIANT-DIGESTION.md),
-  [`EXTRACTION-GAP-FIX`](docs/tasks/EXTRACTION-GAP-FIX.md),
-  [`CORPUS-COVERAGE`](docs/tasks/CORPUS-COVERAGE.md),
-  [`CORPUS-HARDENING`](docs/tasks/CORPUS-HARDENING.md),
-  [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md), and
-  [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md); the completed
-  [`SWD-SERIAL-EXTRACTION`](docs/tasks/SWD-SERIAL-EXTRACTION.md) program supplies the serial-protocol
-  29/29 signoff and exact canonical projection baseline;
+- extraction quality and breadth: [`EXTRACTION-QUALITY-GAUGE`](docs/tasks/EXTRACTION-QUALITY-GAUGE.md), [`PDF-VARIANT-DIGESTION`](docs/tasks/PDF-VARIANT-DIGESTION.md), [`EXTRACTION-GAP-FIX`](docs/tasks/EXTRACTION-GAP-FIX.md),
+  [`CORPUS-COVERAGE`](docs/tasks/CORPUS-COVERAGE.md), [`CORPUS-HARDENING`](docs/tasks/CORPUS-HARDENING.md), [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md), and [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md);
+  completed [`SWD-SERIAL-EXTRACTION`](docs/tasks/SWD-SERIAL-EXTRACTION.md) supplies the serial-protocol 29/29 signoff and exact canonical projection baseline;
 - size-immune ingest: [`MEMORY-BOUNDED-INGEST`](docs/tasks/MEMORY-BOUNDED-INGEST.md) keeps large-PDF
   work bounded in RAM and repository-volume storage;
 - meaning-based language extraction: [`PURE-NLP-INTENT-EXTRACTION`](docs/tasks/PURE-NLP-INTENT-EXTRACTION.md),
@@ -125,9 +113,8 @@ Five active program groups support that north star:
   [`LIVE-DOC-STOP-RISK`](docs/tasks/LIVE-DOC-STOP-RISK.md), under the rule that a bound a surface can
   actually reach must have a remedy compliant work can take.
 
-The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md).
-This roadmap owns only high-level direction and milestone status; it does not mirror leaf frontiers,
-delivery chronology, or per-leaf measurements. Direction retired by a rollover is sealed byte-exact in
+The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md). This roadmap owns only high-level direction and milestone status;
+it does not mirror leaf frontiers, delivery chronology, or per-leaf measurements. Direction retired by a rollover is sealed byte-exact in
 the [roadmap archive](docs/archive/roadmap/INDEX.md) rather than deleted.
 
 ## Workstream status

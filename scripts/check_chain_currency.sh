@@ -96,6 +96,16 @@ current_from_counts() {
   printf '%s\n' "$(( $1 - $2 ))"
 }
 
+# adapter_emission_summary <checked-adapter-states> <checked-emitted-files>
+# A blocked adapter's proven absence is an output state, not an emitted file.
+adapter_emission_summary() {
+  case "$1" in ''|*[!0-9]*) return 1 ;; esac
+  case "$2" in ''|*[!0-9]*) return 1 ;; esac
+  [ "$2" -le "$1" ] || return 1
+  printf '%s adapter output state(s) checked (%s emitted .isf file(s), %s blocked/no-file state(s))\n' \
+    "$1" "$2" "$(( $1 - $2 ))"
+}
+
 # ── The comparison core ─────────────────────────────────────────────────────
 # compare_stage_artifact <persisted.json> <replay.json>
 # Exit 0 when both carry the same content identity. On a difference, print the differing top-level
@@ -470,13 +480,22 @@ run_self_test() {
     fail_note 'self-test 14: stale replay failures were allowed to produce a negative current count'
   else passed=$((passed + 1)); fi
 
-  # 15-20) The retention leg: exact declared-versus-measured agreement over a schema-closed file.
+  # 15-16) Adapter emission reporting distinguishes checked states from actual files.
+  output="$(adapter_emission_summary 24 0)"; status=$?
+  if [ "$status" -eq 0 ] && [ "$output" = '24 adapter output state(s) checked (0 emitted .isf file(s), 24 blocked/no-file state(s))' ]; then
+    passed=$((passed + 1))
+  else fail_note "self-test 15: blocked adapter states were reported as emitted files (got '$output')"; fi
+  if adapter_emission_summary 1 2 >/dev/null 2>&1; then
+    fail_note 'self-test 16: more emitted files than checked adapter states was accepted'
+  else passed=$((passed + 1)); fi
+
+  # 17-22) The retention leg: exact declared-versus-measured agreement over a schema-closed file.
   printf '%s\n' alpha beta gamma > "$work/corpus.txt"
   printf '%s\n' alpha beta       > "$work/retained.txt"
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[{"document_key":"gamma","owning_leaf":"T.2","date":"2026-08-10","reason":"r"}]}' > "$work/retention.json"
 
   if compare_retention "$work/retention.json" "$work/retained.txt" "$work/corpus.txt" >/dev/null; then passed=$((passed + 1))
-  else fail_note 'self-test 15: an exactly-declared retained set was reported as a breach'; fi
+  else fail_note 'self-test 17: an exactly-declared retained set was reported as a breach'; fi
 
   printf '%s\n' alpha > "$work/retained-shrunk.txt"
   output="$(compare_retention "$work/retention.json" "$work/retained-shrunk.txt" "$work/corpus.txt")"; status=$?
@@ -485,7 +504,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 16: a reclaimed declared bundle was not caught (got '$output')"; fi
+  else fail_note "self-test 18: a reclaimed declared bundle was not caught (got '$output')"; fi
 
   printf '%s\n' alpha beta gamma > "$work/retained-extra.txt"
   output="$(compare_retention "$work/retention.json" "$work/retained-extra.txt" "$work/corpus.txt")"; status=$?
@@ -494,7 +513,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 17: an undeclared retained bundle was not caught (got '$output')"; fi
+  else fail_note "self-test 19: an undeclared retained bundle was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[],"note":"free-form"}' > "$work/retention-unknown.json"
   output="$(compare_retention "$work/retention-unknown.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -503,7 +522,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 18: an unknown declaration field was not caught (got '$output')"; fi
+  else fail_note "self-test 20: an unknown declaration field was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["beta","alpha"],"reclamations":[]}' > "$work/retention-unsorted.json"
   output="$(compare_retention "$work/retention-unsorted.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -512,7 +531,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 19: an unsorted retained list was not caught (got '$output')"; fi
+  else fail_note "self-test 21: an unsorted retained list was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[{"document_key":"beta","owning_leaf":"T.2","date":"2026-08-10","reason":"r"}]}' > "$work/retention-contradictory.json"
   output="$(compare_retention "$work/retention-contradictory.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -521,14 +540,14 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 20: a key declared both retained and reclaimed was not caught (got '$output')"; fi
+  else fail_note "self-test 22: a key declared both retained and reclaimed was not caught (got '$output')"; fi
 
   rm -rf "$work"
-  if [ "$passed" -ne 20 ]; then
-    fail_note "self-test $passed/20 passed"
+  if [ "$passed" -ne 22 ]; then
+    fail_note "self-test $passed/22 passed"
     return 1
   fi
-  note 'self-test 20/20 passed.'
+  note 'self-test 22/22 passed.'
   return 0
 }
 
@@ -576,7 +595,8 @@ for stage in evidence semantic intent isf-adapter; do
   orphaned=0
   stale=0
   compared_stale=0
-  emitted_compared=0
+  emission_states_checked=0
+  emitted_files_checked=0
 
   for source_ir in "$GENERATED_ROOT"/source_ir/*/source_ir.json; do
     [ -f "$source_ir" ] || continue
@@ -659,7 +679,10 @@ for stage in evidence semantic intent isf-adapter; do
     fi
 
     if [ "$stage" = 'isf-adapter' ]; then
-      emitted_compared=$((emitted_compared + 1))
+      emission_states_checked=$((emission_states_checked + 1))
+      if jq -e '.artifact_layout.emitted_target_path != null' "$replay" >/dev/null; then
+        emitted_files_checked=$((emitted_files_checked + 1))
+      fi
       if ! breach="$(compare_emitted_isf "$replay" "$GENERATED_ROOT/adapters/isf/$key")"; then
         fail_note "$key isf-emit — $breach"
         stale=$((stale + 1))
@@ -689,7 +712,12 @@ for stage in evidence semantic intent isf-adapter; do
     summary="$summary, $orphaned orphaned"
   fi
   if [ "$stage" = 'isf-adapter' ]; then
-    summary="$summary; $emitted_compared emitted .isf file(s) checked against the rendered source_text"
+    if ! emission_summary="$(adapter_emission_summary "$emission_states_checked" "$emitted_files_checked")"; then
+      fail_note "$stage — internal emission counts are inconsistent: $emission_states_checked states / $emitted_files_checked files"
+      emission_summary='invalid adapter emission counts'
+      fail=1
+    fi
+    summary="$summary; $emission_summary"
   fi
   note "$summary"
 done

@@ -23,6 +23,26 @@ IsfIr::render()                  ← emitter: recursive tree walk → S-expressi
 .isf source text                 ← valid ISF consumed by FSMGen
 ```
 
+## Proof-gated lowering authority
+
+The diagram describes computation; adapter schema 2 additionally proves that the current verified input and
+registered lowering determined the result. `AdapterArtifact::build` accepts only a proof-verified IntentIR and
+preserves that complete cumulative ledger as the exact prefix of the adapter ledger. It then proves all 12 public
+adapter fields across envelope, lowering, residual, and validation families.
+
+Coverage does not stop at a top-level JSON hash. Every populated array record has a stable claim, every nonblank
+rendered source line has a lowering claim, and every blocking reason has a claim. The exact `isf` field-root claim
+binds the whole typed model and source text; line claims make it possible to audit that no rendered text appeared
+outside lowering authority. A blocked adapter is equally explicit: its reasons and absence of an emitted target
+are part of the proved state.
+
+Canonical load, pretty serialization, manifest write, and emitted-target reconciliation all execute the current
+registered replay. Proofless, stale, forged, unauthorized, or future artifacts cannot emit or retain an
+authoritative `.isf`. Schema-1 manifests remain available only through inspection and cannot cross those seams.
+Validation may update only `validation_reports` through one closed typed mutation that rebuilds the predecessor
+and extends proof. Test fixtures have separately compiled authority and cannot enable a production bypass through
+artifact data.
+
 ## Why the ISF IR exists
 
 Before the ISF IR, the adapter emitted ISF text by string concatenation ("string-bashing"). This caused bugs that were invisible to the compiler:
@@ -694,6 +714,12 @@ inventory metadata, and explicit residual decisions, including one per canonical
 lacks complete executable bindings. It is tagged with the `isf_adapter` `IrStage`, which stage-keyed tooling
 (e.g. `specforge validate`, `project-validation`) dispatches on.
 
+The current retained proof frontier has 24 adapter manifests derived from verified IntentIR. All 24 are honestly
+blocked by their present source-grounded content and therefore reconcile to zero emitted `.isf` files. The other
+54 historical chains remain inspection-only behind legacy upstream proof; their old later-stage files do not
+restore authority. Renderable proof behavior is independently locked by synthetic typed controls and the real
+FSMGen strict canaries.
+
 ### Portable artifact paths
 
 The adapter report persists its IntentIR `input_artifact`, report layout, and optional emitted `.isf` target as
@@ -736,6 +762,9 @@ Two complementary checks cover ISF output:
 
 - **FSMGen strict acceptance** — ISF text is validated against FSMGen `--strict --check --json` in the test `isf_output_passes_fsmgen_strict_validation`, ensuring SPECFORGE-generated ISF passes FSMGen's strict surface with zero diagnostics and zero syntax errors.
 - **`specforge validate <isf adapter.json>`** — auto-detects the `isf_adapter` stage and runs `validate_isf_adapter`, reporting structural and coverage findings (missing ISF payload, unexpected schema version, not renderable, empty signal inventory, no behavioral surface, residual decisions).
+
+Validation backannotation does not bypass proof. It authorizes the exact `validation_reports` replacement and
+refreshes the adapter ledger before the canonical serializer/writer accepts the manifest.
 
 ## Closed task trees — how each was implemented and verified
 

@@ -4,6 +4,29 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-13 — proof-carrying ISF adapter; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi`)
+
+- Adapter schema 2 owns all 12 public fields across four capability-homogeneous families. Its ledger retains the
+  complete verified IntentIR ledger as an exact ordered prefix, then appends field roots, per-array-record claims,
+  per-nonblank-rendered-line claims, and per-blocking-reason claims.
+- `AdapterArtifact::build` requires current verified IntentIR and deterministically reconstructs identity,
+  layout, typed `IsfIr`, rendered text, renderability, residuals, and counts. Canonical load, pretty serialization,
+  manifest persistence, and emitted-target reconciliation execute that relation again; compatible JSON shape or
+  recomputed hashes cannot self-authorize output.
+- Validation is the only production mutation kind and can replace only `validation_reports`. Synthetic adapter
+  projection compiles only for tests/test-support and still records a typed proof extension. Schema 1 is
+  inspection-only; current proofless/stale/forged/unauthorized and future artifacts reject.
+- The exact 24 reachable adapter manifests migrate with zero pre-existing public-field delta after removing
+  schema/proof/validation. Their current proved state is blocked/no-file, so canonical reconciliation checks zero
+  emitted ISF files; a renderable synthetic control exercises the positive emission path. Fifty-four historical
+  chains remain upstream-proof-unmeasurable.
+- Chain currency now distinguishes checked adapter states from emitted files. The previous counter performed the
+  right state/file comparison but mislabeled 24 blocked states as 24 emitted files; the checked result is 24
+  states, zero emitted files, 24 blocked/no-file states.
+- The production graph resolves 41 families / 168 field rules / 116 producer-mutator entrypoints / 53 canonical
+  seams / four conformance-only bypass obligations. Whole-module implementation-digest precision remains the
+  bounded `.e.iv.vii` risk; helper-level structural and population-level behavioral signoff are still open.
+
 ## Session update (2026-08-13 — proof-carrying IntentIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v`)
 
 - IntentIR schema 2 owns all 49 public fields across nine capability-homogeneous families. Its cumulative ledger

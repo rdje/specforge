@@ -7,7 +7,11 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can SpecForge theoretically be specification and PDF neutral?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can a blocked adapter be a proof-checked result with no emitted file?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can a deserialized proof ledger authorize a canonical claim?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can a legacy or proofless adapter emit ISF?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can a model proposal authorize EvidenceIR by itself?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
@@ -42,6 +46,8 @@
   > Does SemanticIR and IntentIR preserve generic protocol records?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Does every carried SemanticIR record cite EvidenceIR directly?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Does every rendered ISF line have lowering authority?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Does moving the repository invalidate IntentIR proof?
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
@@ -81,6 +87,8 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is EvidenceIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is ISF adapter lowering proof-carrying?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is IntentIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is IntentIR validation backannotation authorized?
@@ -92,6 +100,8 @@
   > How is SemanticIR validation backannotation authorized?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is SourceIR proof-carrying?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is adapter validation backannotation authorized?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How many IntentIR fields and rule families are proved?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -287,13 +297,3 @@
   > can low confidence statement tokens create an interface without a formal signal declaration
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
   > can prior memory select extraction by filename or protocol family
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > can provenance load after source normalized cleanup removes its leaf
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > can specforge emit a symbolic signal width like (width ADDR_WIDTH) to the .isf
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > can strict-valid ISF prove that a PDF was understood (no)
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > can the Docling-flattened register diagram table be parsed into bits_high/bits_low (no — garbled: wrong explicit positions, dropped field bands, doubled cells, two stacked halves, or symbolic XLEN-relative positions)
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > can the downstream corpus chain be rebuilt without re-ingesting documents

@@ -109,7 +109,7 @@ grounded model attestations, validated scoped priors, registered universal axiom
 spelling-free symbol uses, unique claim addresses, and conclusion digests. It returns a non-deserializable
 verification witness; a merely schema-valid persisted ledger still has no canonical authority.
 
-This is still not end-to-end proof-carrying genericity, but the first four stage migrations are now concrete.
+This is still not whole-core genericity signoff, but all five stage migrations are now concrete.
 SourceIR schema 3 executes all five source-family derivations. EvidenceIR schema 3 verifies that exact source
 ledger as its ordered prefix, then executes all 11 EvidenceIR families from exact current-document capture,
 optional validated prior, and ordered typed enrichment proposals. Historical claims are never wrapped in a
@@ -118,7 +118,10 @@ semantic carry, merge, conflict, synthesis, residual, and validation families. I
 cumulative SemanticIR prefix and executes all nine product families: 30 exact carried fields receive direct
 SemanticIR antecedents, while filtered actors, conservatively NLI-filterable contracts, synthesized products,
 relations, identities, residuals, and validation use their registered projection or mutation authority. Adapter
-migration, followed by AST/information-flow gates, per-rule
+schema 2 preserves that complete IntentIR ledger and proves four local families covering all 12 fields, every
+populated array record, every nonblank rendered ISF line, and every blocking reason. Canonical build, load,
+serialization, write, emitted-file reconciliation, and closed validation mutation execute current replay.
+AST/information-flow gates, per-rule
 alpha execution, structural qualification, and whole-population behavioral qualification, remain mandatory.
 Until those close, SpecForge does not claim production-genericity signoff.
 
@@ -129,7 +132,7 @@ must derive each digest from production proof semantics and its dependency closu
 real verifier or rule change.
 
 That migration now has an exact checked contract. The 41 claim families expand to 168 current top-level-field
-rules and cover 116 reviewed producer/mutator entrypoints plus 47 canonical seams. One cumulative ledger starts
+rules and cover 116 reviewed producer/mutator entrypoints plus 53 canonical seams. One cumulative ledger starts
 from exact SourceIR capture, is verified and retained as an ordered prefix at every downstream stage, and gains
 field-root proofs (including empty fields) plus stable per-record proofs. Canonical load, serialization, write,
 downstream build, and ISF lowering require a complete current ledger; post-build mutation invalidates authority

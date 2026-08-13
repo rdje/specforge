@@ -50,6 +50,11 @@ answers:
   - "How is IntentIR validation backannotation authorized?"
   - "How is NLI contract demotion authorized without permitting contract invention?"
   - "Does moving the repository invalidate IntentIR proof?"
+  - "How is ISF adapter lowering proof-carrying?"
+  - "Does every rendered ISF line have lowering authority?"
+  - "Can a blocked adapter be a proof-checked result with no emitted file?"
+  - "Can a legacy or proofless adapter emit ISF?"
+  - "How is adapter validation backannotation authorized?"
   - "Why can a test-only Rust edit currently stale production proof?"
   - "Which task owns production-semantic implementation digest scoping?"
 date: 2026-08-13
@@ -133,7 +138,7 @@ Existing later-stage producers remain proofless until the
 exact `.e.iv` migration, so whole-core signoff remains open.
 
 The first `.e.iv` child froze the exact reviewed migration graph before a stage schema changed. Its current 41 rows
-expand to 168 field-root rules and resolve 116 producer/mutator entrypoints, 47 canonical seams, and four
+expand to 168 field-root rules and resolve 116 producer/mutator entrypoints, 53 canonical seams, and four
 conformance-only mutation bypasses. The target is one cumulative ledger: each stage verifies and preserves the
 exact upstream proof prefix, then appends its own field-root and per-record claims. Canonical load, serialization,
 write, downstream build, and ISF lowering all require a current complete ledger; an unregistered mutation makes
@@ -194,8 +199,8 @@ load, serialize, persist, or feed IntentIR; schemas older than 2 are inspection-
 
 Exactly 24 retained chains could migrate because they have current EvidenceIR. Their semantic fields are
 unchanged; only schema/proof metadata is added. The other 54 remain explicitly proof-unmeasurable. Currency is
-24 current / 54 unmeasurable through EvidenceIR, SemanticIR, and IntentIR. The IntentIR proof migration below
-supersedes the old later-stage-local result; adapter proof migration remains open.
+24 current / 54 unmeasurable through EvidenceIR, SemanticIR, and IntentIR. The IntentIR and adapter proof
+migrations below supersede the old later-stage-local result.
 
 IntentIR schema 2 is the fourth completed stage migration. It retains the complete verified cumulative SemanticIR
 ledger as an exact ordered prefix, then appends root and per-record claims for all 49 public fields across nine
@@ -219,6 +224,21 @@ self-authorize an edit. Current proofless, stale, or unauthorized artifacts reje
 inspection-only and cannot feed adapters; future schemas reject. Exactly 24 reachable IntentIRs migrated with
 zero pre-existing public-field change. The other 54 remain explicitly proof-unmeasurable behind legacy
 SemanticIR, and only the 24 verified product artifacts may build fresh adapters.
+
+Adapter schema 2 completes the five-stage cumulative authority chain. It preserves the entire verified IntentIR
+ledger as an exact ordered prefix, then proves all 12 public fields across envelope, lowering, residual, and
+validation families. Every populated array record receives a stable claim. Every nonblank rendered ISF line and
+every blocking reason also receives an addressable conclusion, while the exact `isf` root binds the complete
+typed/rendered model. Thus neither emitted syntax nor honest refusal to emit lives outside the proof graph.
+
+Canonical adapter construction accepts only verified IntentIR and reconstructs identity, paths, typed `IsfIr`,
+rendered source, counts, residuals, and renderability. Load, pretty serialization, manifest write, and emitted-file
+reconciliation execute that current relation. Validation is a closed mutation limited to `validation_reports`;
+test-fixture projection is separately compiled and cannot be enabled through production artifact data. Current
+proofless, stale, forged, or unauthorized manifests reject, schema 1 is inspection-only, and future schemas
+reject. Exactly 24 reachable adapters migrated with zero pre-existing public-field delta outside
+schema/proof/validation. All 24 current manifests are honestly blocked and reconcile to zero emitted files; the
+54 historical chains remain upstream-proof-unmeasurable.
 
 Current implementation digests have a safe but over-broad boundary: each migrated stage hashes its whole Rust
 module. A change confined to `#[cfg(test)]` code in `intent.rs` therefore staled all 24 current IntentIR proofs;

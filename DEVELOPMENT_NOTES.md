@@ -1,4 +1,54 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi (`2026-08-13`) — lowering authority includes honest non-emission
+
+The ISF adapter is now the fifth and final proof-carrying product stage. Adapter schema 2 retains the complete
+verified IntentIR ledger byte-for-byte as its prefix, then proves all 12 public fields across envelope, lowering,
+residual, and validation families. Every populated array record receives a stable claim. The lowering proof also
+addresses each nonblank line of rendered `isf.source_text` and each explicit blocking reason, so neither emitted
+syntax nor the decision not to emit can exist outside the proof graph. A source-line claim is textual coverage,
+not an assertion that one semantic construct always occupies exactly one line; the exact `isf` root claim binds
+the complete typed/rendered model.
+
+`AdapterArtifact::build` accepts only `IntentIr::load_with_verified_proof`, reconstructs the typed `IsfIr`,
+renderability decision, residuals, layout, and identity fields, then composes that exact result with the verified
+upstream ledger. Canonical load, pretty serialization, manifest write, and emitted-file reconciliation independently
+execute the current proof. An edited artifact cannot gain authority by recomputing JSON hashes, and a stale,
+proofless, forged, unauthorized, legacy, or future artifact cannot create or preserve an emitted `.isf` through a
+canonical writer. Legacy schema 1 remains inspection-only.
+
+Post-build authority is closed to validation backannotation. The typed mutation may change only
+`validation_reports`, rebuilds the verified predecessor, and extends proof before the manifest can serialize or
+write. Synthetic adapter fixtures use a `cfg(test)`/`test-support`-only mutation kind; production cannot enable it
+through persisted data. This keeps named conformance examples legal without turning them into lowering authority.
+
+The retained proof frontier contains exactly 24 verified IntentIR inputs. Canonical migration of their schema-1
+adapter manifests adds only schema/proof/validation data: deleting those fields from the before/after comparison
+leaves zero public delta. All 24 current adapters are blocked by their present source-grounded content, so their
+authoritative state is `adapter.json` plus no `.isf`; the other 54 historical chains remain inspection-only behind
+legacy upstream proof. Unit coverage exercises a renderable synthetic IntentIR path as well, proving per-line
+lowering authority and emitted-file reconciliation even though the retained proof population currently exercises
+the blocked path.
+
+The migration exposed a reporting defect in `CHAIN-CURRENCY`: the adapter/ISF comparison already enforced the
+right presence-or-absence outcome, but its counter incremented once per checked adapter state and described that
+number as emitted files. The gate now derives the actual emitted-file count from
+`artifact_layout.emitted_target_path`, reports checked states, emitted files, and blocked/no-file states separately,
+and rejects impossible arithmetic. The current result is 24 checked adapter states, zero emitted files, and 24
+blocked/no-file states—not 24 emitted files. This distinction matters because honest non-emission is a positive,
+proof-checked product outcome rather than skipped work.
+
+The checked migration graph is now complete at the stage boundary: 41 families expand to 168 field rules and
+resolve 116 producer/mutator entrypoints, 53 canonical seams, and four conformance-only bypass obligations. This
+does not yet establish whole-core production-genericity signoff. `.e.iv.vii` still must scope implementation
+digests to compiled production proof semantics; `.e.v`–`.e.vii` must enforce and qualify helper-level information
+flow; `.f` must prove population-level renaming, identity, paraphrase, and held-out invariance.
+
+Live-document containment also found that the canonical pipeline audit was already 613/640 lines before this
+slice, beyond its 90% rollover point, and the necessary current update temporarily made it 621. The remedy removes
+duplicated implementation narration whose exact arithmetic and negative controls already live in ADR 0038, the
+task evidence, and the Knowledge Map. The audit retains every conclusion and current boundary at 512 lines,
+restoring ordinary-update headroom without widening a ceiling or inventing a second source of truth.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v (`2026-08-13`) — product authority is replay, not a plausible JSON shape
 
 IntentIR schema 2 is the fourth canonical stage to become proof-carrying. It preserves the complete verified

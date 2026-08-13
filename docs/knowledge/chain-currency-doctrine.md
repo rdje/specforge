@@ -7,6 +7,7 @@ answers:
   - "why does the chain-currency check ignore validation_reports"
   - "which corpus stages are measurable without re-ingesting a document"
   - "what makes a corpus document unmeasurable for chain currency"
+  - "how does chain currency distinguish a checked blocked adapter from an emitted ISF file"
   - "how is a CI-tier doctrine registered without slowing down the pre-commit hook"
   - "what does DEFER mean in the doctrine enforcement report"
 date: 2026-08-10
@@ -31,19 +32,28 @@ Content identity excludes `validation_reports`. `specforge validate` back-annota
 the stage has run, and the product's own `source_ir_fingerprint` / `evidence_ir_fingerprint` /
 `semantic_ir_fingerprint` / `intent_ir_fingerprint` / `isf_adapter_fingerprint` helpers in
 `crates/specforge/src/commands/validate.rs` clear the same field before hashing. The check adopts the
-code's identity rule rather than inventing one.
+code's identity rule rather than inventing one. For proof-carrying stages, the proof bytes derived from that
+typed validation mutation belong to the same exclusion; canonical loaders still execute current proof before
+downstream use.
 
-**Only the evidence stage needs a normalized markdown bundle.** `EvidenceIr::build_with_prior_memory`
+**Only the evidence stage needs a normalized markdown bundle for content replay.** `EvidenceIr::build_with_prior_memory`
 resolves `normalization_plan.promoted_markdown_path`, so a document whose bundle was reclaimed cannot be
 replayed there and is reported as an explicit *unmeasurable* count — never as a pass. `SemanticIr::build`,
-`IntentIr::build`, and `AdapterArtifact::build` each read only the persisted upstream JSON, so the whole
-downstream chain is measurable — and rebuildable — for the entire corpus without any re-ingest.
+`IntentIr::build`, and `AdapterArtifact::build` read their persisted upstream JSON, but current canonical builds
+also require that upstream artifact's verified cumulative proof. A legacy/proofless frontier therefore remains
+explicitly unmeasurable at every later proof-gated stage instead of being mistaken for stage-local currency.
+
+Adapter output has two equally checkable states. A renderable manifest names an emitted target whose bytes must
+equal replayed `isf.source_text`; a blocked manifest names no target and requires every obsolete sibling `.isf`
+to be absent. The summary tracks checked adapter states, actual emitted files, and blocked/no-file states as
+separate counts and rejects impossible arithmetic. This corrected an old reporting label that described one
+checked state per document as one emitted file even when every state was blocked; the state/file comparison itself
+was already exact.
 
 An absent `generated/` skips loudly and exits 0: a fresh clone and a hosted CI runner have no corpus, and
-silence would read as a pass. `--self-test` proves both comparison cores fail-closed in sixteen cases
-(identity, the `validation_reports` exclusion, key-order independence, shrunken and vanished sections,
-the four `.isf` emission outcomes, the end-to-end absent-corpus skip, and six retention cases) before any
-PASS is trusted.
+silence would read as a pass. `--self-test` currently proves 22 controlled comparison, arithmetic, absent-corpus,
+and retention outcomes before any PASS is trusted, including emitted/no-file state counting and impossible
+adapter summary counts.
 
 Its second leg checks *which documents are measurable at all*: the retained normalized bundles must be
 exactly the set declared in `doctrine/chain_currency/retained_bundles.json`, so neither a silent
