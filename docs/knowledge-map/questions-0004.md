@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how does SpecForge extract register fields from tables
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > how does SpecForge flag vague or ambiguous spec language
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -295,5 +297,3 @@
   > how is the page-range batch size chosen / adapted
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how is the precision of the broadened (non-gold) extraction measured / estimated
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)

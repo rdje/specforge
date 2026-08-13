@@ -54,17 +54,17 @@ remains directly browsable and exactly recoverable.
   Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0 — own and pin alignment task boundary`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1`
-  Status: `pending`
+  Status: `in_progress`
   Goal: measure and decide the target-specific information architecture
   Children: `.1.1`, `.1.2`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1`
-  Status: `pending`
+  Status: `done`
   Goal: census semantic regions, current authority, routes, readers, writers, and exact reconstruction constraints
   Acceptance: a repository-local report accounts for every source byte and consumer, derives candidate semantic
   boundaries, and reconciles the actual current frontier without editing the target
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `21 exact regions close 2,049 lines / 278,178 bytes; 58 ids, 45 frontier rows, 40 leaf commits, 31 stable-path and 92 id consumers, manual writer, executable root-id reader, seven feasible semantic groups, generic-checker bounds, contradictions, and reconstruction invariants published; target remains byte-identical; focused currentness/catalog/retrieval/live-size/doctrine gates pass; 2,901 incremental files / 2,050,216 KiB removed with residue absent`
+  Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1 — census alignment task evidence`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2`
   Status: `pending`
@@ -116,8 +116,9 @@ remains directly browsable and exactly recoverable.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0` | `done` | clean untouched target is pinned exactly |
-| 2 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1` | `pending` | target-specific evidence is required before selecting a topology |
-| 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
+| 2 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1` | `done` | exact target roles, constraints, and candidate groups are measured |
+| 3 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` | `pending` | accept the target-specific topology before implementing it |
+| 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
 
 ## Decisions
 
@@ -125,6 +126,9 @@ remains directly browsable and exactly recoverable.
   278,528-byte health target and enforcement ceiling. Ordinary `.f` activation plus durable evidence cannot fit.
 - `2026-08-14`: use a separately committed prerequisite tree and leave the target byte-identical through
   measurement and design. ADR 0019 permits adoption only through a target-specific measured contract.
+- `2026-08-14`: `.1.1` finds 21 exact source regions, 58 formal IDs, 31 stable-path consumers, and a load-bearing
+  production reader that requires every exact ID declaration in the root. Seven semantic groups fit the neutral
+  checker's existing portable caps; `.1.2` decides the target-specific hybrid and current-state precedence.
 
 ## Open Questions
 
@@ -143,14 +147,18 @@ remains directly browsable and exactly recoverable.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-08-14` | `.0` baseline | `wc`; SHA-256; Git blob/history; status; target diff | 2,049 lines / 278,178 bytes / e70892a5…a26c / blob 66ae9b6c…3632 / 40 commits; untouched at `112bc333` |
+| `2026-08-14` | `.1.1` census | exact closure; path/id/readers/writers; trajectory currentness; catalogs/retrieval/live-size/doctrine; cleanup | 21 regions / 58 ids / 31 path and 92 id consumers; seven groups; target byte-identical; 2,901 files / 2,050,216 KiB removed |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0 — own and pin alignment task boundary` | ownership and exact untouched baseline only |
+| `.1.1` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1 — census alignment task evidence` | complete read-only target-specific architecture input |
 
 ## Changelog
 
 - `2026-08-14`: created after the clean `.e.vii` pivot exposed only 350 bytes of target headroom; no target byte
   changed and `.6d.ii.f` remains the next product leaf after containment.
+- `2026-08-14`: `.1.1` publishes complete source, current-state, consumer, writer, checker-reuse, candidate, and
+  reconstruction evidence without changing the target; `.1.2` is next.

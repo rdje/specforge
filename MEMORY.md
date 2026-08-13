@@ -17,16 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0` is complete and awaiting commit from clean
-  predecessor `112bc333`.
+- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1` is complete and awaiting commit from clean
+  predecessor `5032b378`.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.e.vii` committed at `112bc333`. Its next product leaf `.6d.ii.f` cannot safely append to the
-  2,049-line / 278,178-byte active task file, only 350 bytes below its unchanged 278,528-byte ceiling. New
-  containment `.0` pins that target byte-identically at SHA-256 e70892a5…a26c / Git blob 66ae9b6c…3632.
-- Next action: commit containment `.0`, verify the clean handoff, then activate `.1.1` for the target-specific
-  semantic-region, current-authority, route, reader, writer, and reconstruction census.
-- In-flight uncommitted: new containment ownership/tree route, exact baseline, retrieval update, and resume
-  pointer awaiting commit; the target task file remains untouched and no background job exists.
+- Current state: `.1.1` accounts exactly for 21 source regions, 58 formal ids, 45 frontier rows, 40 committed
+  leaves, 31 stable-path and 92 identifier consumers, the manual writer, and the load-bearing trajectory reader.
+  Seven semantic groups fit existing checker caps; the target remains byte-identical to `112bc333`.
+- Next action: commit `.1.1`, verify the clean handoff, then activate `.1.2` to accept exact authorities,
+  partitions, current-state precedence, bounds, writer/rotation rules, migration stages, and rejection cases.
+- In-flight uncommitted: completed census report/task/retrieval/resume updates awaiting commit; no background job.
 - Blockers: `.6d.ii.f` waits only for bounded task-evidence migration; product direction is unambiguous. The
   user-owned `.claude/settings.json` is untouched.

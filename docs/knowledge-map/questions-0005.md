@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how is the protocol initiator actor identified structurally without a name list
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -296,5 +298,3 @@
   > is lower recall acceptable when removing protocol-specific shortcuts
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > is mdbook test part of the canonical SpecForge CI gate
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > is qwen2.5:14b-instruct good enough for NLI

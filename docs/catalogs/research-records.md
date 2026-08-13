@@ -59,6 +59,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/root-rolling-ledger-pressure-audit.md](../../docs/research/root-rolling-ledger-pressure-audit.md) | Root rolling-ledger pressure independent closure audit |
 | [docs/research/root-rolling-ledger-pressure-plan.md](../../docs/research/root-rolling-ledger-pressure-plan.md) | Root rolling-ledger pressure census and transaction plan |
 | [docs/research/semantic-phase-authority-measurement.md](../../docs/research/semantic-phase-authority-measurement.md) | Semantic-phase authority measurement — `CORPUS-COVERAGE.2.43a` |
+| [docs/research/spec-to-intent-task-evidence-containment-census.md](../../docs/research/spec-to-intent-task-evidence-containment-census.md) | Spec-to-intent active task-evidence containment census |
 | [docs/research/specforge-trajectory-control.md](../../docs/research/specforge-trajectory-control.md) | SpecForge trajectory control: measuring convergence, stall, and divergence |
 | [docs/research/task-evidence-terminal-containment-design.md](../../docs/research/task-evidence-terminal-containment-design.md) | Terminal task-evidence containment design |
 | [docs/research/transaction-capture-census.md](../../docs/research/transaction-capture-census.md) | Transaction-capture census (`KG-ISF-TRANSACTIONS.1`) |

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why did 88 CoreSight Base System interfaces disappear
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did APB unexplained_intent_bearing_tables go to zero
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -292,9 +298,3 @@
   > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > why does recover-register-bits still recover 0 bits after the plumbing is complete
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does setportfeature port over current become the USB 3.2 adapter actor
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO

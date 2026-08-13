@@ -24,10 +24,14 @@ answers:
   - "have the PDF task migration destinations been created"
   - "which active task tree now requires bounded evidence containment"
   - "what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline"
+  - "what did the SPEC-TO-INTENT-ALIGNMENT task containment census find"
+  - "why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id"
+  - "who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree"
+  - "can the active-task evidence checker support the alignment task through data"
 date: 2026-08-14
 status: current
 tags: [documentation, containment, git, submodule]
-evidence: docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md; docs/tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md
+evidence: docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md; docs/tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md; docs/research/spec-to-intent-task-evidence-containment-census.md
 reverify: git ls-files '*.md' | wc -l
 ---
 
@@ -105,6 +109,16 @@ unchanged 278,528-byte `task_evidence` target and ceiling, so the `.6d.ii.f` beh
 an ordinary activation plus durable results safely. `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT` owns a separate
 target-specific measurement, decision, enforcement, migration, and fresh-reader audit; the alignment source
 remains byte-identical through its `.0` ownership boundary.
+
+The `.1.1` census closes that source in 21 exact regions and finds 58 formal IDs, 45 frontier rows, 40
+ID-bearing leaf commits, 31 exact-path consumers, and 92 identifier consumers. Unlike the PDF target, alignment
+has a production reader: `trajectory.rs::validate_task_owner` opens the stable root and searches exact `- ID:`
+owner declarations used by historical tests and current `.6e`/`.7`/`.8`/`.9` controller artifacts. A migrated
+root must therefore retain all 58 compact ID declarations. Seven measured semantic groups fit the existing
+contract-driven checker's portable 24-part / 32-region / 128-route, 98,304-byte-part, and 6,400-byte-line caps;
+the 1,605-byte legacy maximum requires only a target-derived part limit, not a global-cap change. The source's
+root-child lists and `.4`/`.5b` open-question/blocker prose are stale current-state surfaces, so `.1.2` must set
+explicit precedence while the exact capsule retains every literal byte.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

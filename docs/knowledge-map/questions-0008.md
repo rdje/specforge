@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what is EvidenceIr.extraction_quality_gauge and who writes it
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -293,7 +297,3 @@
   > what is the presence-matrix structural gate and how many tables fire it
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > what is the present blocking point on the specification-to-executable-intent path
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)

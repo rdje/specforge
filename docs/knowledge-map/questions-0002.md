@@ -28,6 +28,8 @@
   > can strict-valid ISF prove that a PDF was understood (no)
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > can the Docling-flattened register diagram table be parsed into bits_high/bits_low (no — garbled: wrong explicit positions, dropped field bands, doubled cells, two stacked halves, or symbolic XLEN-relative positions)
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > can the active-task evidence checker support the alignment task through data
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > can the downstream corpus chain be rebuilt without re-ingesting documents
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
@@ -295,5 +297,3 @@
   > does raising max_facts alone create fact-card headroom
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > does register extraction require the table_kind register classification
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > does relation-derived direction synthesis independently invent signal names

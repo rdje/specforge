@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does relation-derived direction synthesis independently invent signal names
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > does removing sentence fallback remove address phase recognition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -296,5 +298,3 @@
   > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how does SpecForge extract register fields from tables

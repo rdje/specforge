@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what are the current source to IntentIR precision recall and provenance counts
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what are the deeper enum member-quality residual classes after .5.ii / what did the .5.iii measurement find (measured 2026-06-24 read-only, reproducer scripts/measure_enum_width_leak.py: of the 5 deferred classes — glossary SEE…, front-matter/ToC, section-caption B2_3_1_…, _WIDTH parameter leaks, value-restart-of-clean — most are SUBSUMED by .5.i (47/54 _WIDTH members
   > and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)
@@ -65,6 +67,8 @@
   > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > what did the OpenCAPI AFU address note prove about legal boilerplate
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what did the active PDF task containment census find
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -293,7 +297,3 @@
   > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > what is DOC-INTENT-TAXONOMY.4c.ii
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is EvidenceIr.extraction_quality_gauge and who writes it
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > is qwen2.5:14b-instruct good enough for NLI
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is relation-completeness the right bar dimension for register / command / coherency protocols
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -296,5 +298,3 @@
   > what are the current USB4 Inter-Domain artifact hashes
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > what are the current corpus KB live-document size metrics
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what are the current source to IntentIR precision recall and provenance counts

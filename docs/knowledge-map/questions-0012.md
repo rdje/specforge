@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does setportfeature port over current become the USB 3.2 adapter actor
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > why does slicing idx minus 2 before signal panic
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
@@ -277,6 +283,8 @@
   > why must source-library paths not determine whether a corpus document was refreshed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why must terminal task tree containment use two commits
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > why not CTL for temporal behavior
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -290,11 +298,3 @@
   > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > why should corpus counts leave MEMORY md
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why was APB write_transfer / read_transfer membership only PCLK
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)

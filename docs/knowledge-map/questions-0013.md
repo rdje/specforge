@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > why was APB write_transfer / read_transfer membership only PCLK
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)

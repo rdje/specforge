@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > where is the acceptance checklist a code change must satisfy
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where is the authoritative chipdoc source library now
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > where is the biggest register extraction gap across the corpus
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -197,6 +201,8 @@
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > who reads and writes docs tasks CORPUS-COVERAGE md
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > who reads or writes the active PDF task tree
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > why a parallel field-constraint surface instead of a subject-kind discriminator
@@ -291,9 +297,3 @@
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did 64 AArch64 External Debug interfaces disappear
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why did 88 CoreSight Base System interfaces disappear
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did APB unexplained_intent_bearing_tables go to zero
