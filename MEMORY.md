@@ -17,13 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` is complete and awaiting its commit from predecessor
-  `07b1f874`.
+- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0` is complete and awaiting commit from clean
+  predecessor `112bc333`.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: the complete structural `.e` boundary is qualified over 15 commits / 24 current chains / 148,708
-  claims with zero non-proof migration delta. Full CI passes 1,953 Rust tests / six ignores / zero failures, five
-  doctests, all nine doctrines and all nine genericity components; exact disposable-artifact cleanup is complete.
-- Next action: commit `.e.vii`, verify the post-commit handoff state, then activate `.6d.ii.f` from the clean tree.
-- In-flight uncommitted: completed `.e.vii` docs/report/signoff awaiting commit; no background job.
-- Blockers: none. The user-owned `.claude/settings.json` is untouched.
+- Current state: `.e.vii` committed at `112bc333`. Its next product leaf `.6d.ii.f` cannot safely append to the
+  2,049-line / 278,178-byte active task file, only 350 bytes below its unchanged 278,528-byte ceiling. New
+  containment `.0` pins that target byte-identically at SHA-256 e70892a5…a26c / Git blob 66ae9b6c…3632.
+- Next action: commit containment `.0`, verify the clean handoff, then activate `.1.1` for the target-specific
+  semantic-region, current-authority, route, reader, writer, and reconstruction census.
+- In-flight uncommitted: new containment ownership/tree route, exact baseline, retrieval update, and resume
+  pointer awaiting commit; the target task file remains untouched and no background job exists.
+- Blockers: `.6d.ii.f` waits only for bounded task-evidence migration; product direction is unambiguous. The
+  user-owned `.claude/settings.json` is untouched.

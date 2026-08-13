@@ -22,10 +22,12 @@ answers:
   - "how is an active task source locked before migration"
   - "what does the active task evidence checker verify"
   - "have the PDF task migration destinations been created"
-date: 2026-08-08
+  - "which active task tree now requires bounded evidence containment"
+  - "what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline"
+date: 2026-08-14
 status: current
 tags: [documentation, containment, git, submodule]
-evidence: docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md
+evidence: docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md; docs/tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md
 reverify: git ls-files '*.md' | wc -l
 ---
 
@@ -95,6 +97,14 @@ records govern the index, part collection, and capsule, and the 34-case checker 
 non-ASCII raw-byte preservation and rollback. `.3.2` independently reproduces the committed result from a clean
 clone and adds a positive post-migration root+part continuation fixture, bringing the suite to 35 cases and
 closing the containment tree.
+
+The next measured active target is `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md`. At clean commit `112bc333` it is
+2,049 lines / 278,178 bytes, SHA-256 `e70892a5c6acbe794bea6a9dd4484a90481e31d0aba64d8b8e8dcaaeae90a26c`,
+and Git blob `66ae9b6cde51476d5b45a180c756f0f9463d3632`, with 40 path commits. That leaves only 350 bytes below the
+unchanged 278,528-byte `task_evidence` target and ceiling, so the `.6d.ii.f` behavioral frontier cannot receive
+an ordinary activation plus durable results safely. `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT` owns a separate
+target-specific measurement, decision, enforcement, migration, and fresh-reader audit; the alignment source
+remains byte-identical through its `.0` ownership boundary.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

@@ -158,6 +158,7 @@ The author template is linked separately and is never classified as active work.
 | `SIGNOFF-REMEDIATION` | `done` | Restore signoff quality at HEAD | [open](tasks/SIGNOFF-REMEDIATION.md) |
 | `SPEC-MINING-PROVENANCE` | `done` | name the discipline + a per-author adopt/defer ledger | [open](tasks/SPEC-MINING-PROVENANCE.md) |
 | `SPEC-TO-INTENT-ALIGNMENT` | `active` | steer PDF evidence into complete executable-intent IR | [open](tasks/SPEC-TO-INTENT-ALIGNMENT.md) |
+| `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT` | `active` | keep the active alignment program bounded and resumable | [open](tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md) |
 | `STATUS-LEDGER-ROLLOVER` | `active` | roll the status ledger before its next product record is refused | [open](tasks/STATUS-LEDGER-ROLLOVER.md) |
 | `SWD-SERIAL-EXTRACTION` | `done` | serial-protocol/architecture extraction for SWD/ADI → WIRE-BASED-100 100% | [open](tasks/SWD-SERIAL-EXTRACTION.md) |
 | `SYMBOL-CLOSURE-CORPUS-VALIDATION` | `done` | corpus-validate (and settle) the descoped symbol-closure detector | [open](tasks/SYMBOL-CLOSURE-CORPUS-VALIDATION.md) |
