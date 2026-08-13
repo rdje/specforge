@@ -17,19 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` is complete and awaiting its commit; parent `.e.iv`
-  is complete. `.6d.ii.e.iv.vi`, `.6d.ii.e.iv.v`, `.6d.ii.e.iv.iv`, `.6d.ii.e.iv.iii`, `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.i`, `.6d.ii.e.iii`,
-  `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
-  `.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and
-  `.6d.i` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`
-  and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: all five proof-bearing stages use compiler-derived production-semantic implementation identity
-  rooted at their canonical registries and selected verifier/local-item/import/kernel closures. Test/comment and
-  unrelated edits are inert; referenced helper/import changes alter identity. Exact proof-only migration leaves
-  120 non-proof/non-validation comparisons unchanged; chain replay is 24 current / zero stale / 54 unmeasurable.
-  Full CI passes 1,948 Rust tests / six ignores / zero failures plus all repository gates.
-- Next action: commit `.e.iv.vii` with the `COMMIT.md` workflow, verify a clean tree and zero-byte brief, then
-  activate `.6d.ii.e.v` to implement the whole-core AST information-flow doctrine.
-- In-flight uncommitted: completed `.e.iv.vii` code, proof-only generated migration, docs/book/retrieval sync, and
-  the required lossless CHANGES rollover. No background job.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` is complete; `.e.v` is active and split into four bounded
+  children. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
+- Current state: all five proof-bearing stages use compiler-derived production-semantic implementation identity,
+  and the exact live denominator is 77 production modules / 41 claim families / 168 artifact fields. The existing
+  dependency, inventory, and rule checks pass, but no registered whole-core AST information-flow doctrine exists
+  yet. The accepted composition keeps compiler privacy/types and proof-carrying promotion primary, adds a
+  fail-closed derived module/item/call graph, then enforces raw/identity noninterference and proof-only promotion.
+- Next action: from a clean handoff, implement `.e.v.ii`, the deterministic compiled production graph with closed
+  alias/configuration/macro/parse handling.
+- In-flight uncommitted: this commit records the completed `.e.v.i` contract and continuity alignment. No
+  production code or background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

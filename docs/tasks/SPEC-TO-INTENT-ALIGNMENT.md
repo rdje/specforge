@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: extraction quality and breadth
 - Created: `2026-08-11`
-- Last updated: `2026-08-12`
+- Last updated: `2026-08-13`
 - Owner: project owner and repo-local workflow
 
 ## Goal
@@ -375,9 +375,38 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii — scope proof digests to production semantics`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v`
-  Status: `pending`
+  Status: `active`
   Goal: `enforce the module, raw-text, identity-flow, derivation, and rule-registry boundaries with an AST-aware doctrine`
   Acceptance: `one registered doctrine parses the compiled Rust surface and rejects core-to-conformance dependencies, raw identity/text semantic branches outside registered interfaces, unproved promotion constructors, undeclared inference rules, and bypasses hidden behind aliases/macros/modules; parse uncertainty fails closed and the finite vocabulary census remains diagnostic only`
+  Verification: `pending`
+  Commit: `pending`
+  Children: `.6d.ii.e.v.i`, `.6d.ii.e.v.ii`, `.6d.ii.e.v.iii`, `.6d.ii.e.v.iv`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i`
+  Status: `done`
+  Goal: `freeze the structural doctrine's executable trust boundary and bounded implementation slices before checker code changes`
+  Acceptance: `the task tree fixes one compiler-backed plus AST-aware proof composition, the complete compiled-module denominator, closed raw/identity source and semantic-sink classes, registered declassification boundaries, fail-closed alias/macro/module/parse policy, deterministic data-plane ownership, doctrine-driver integration point, and non-overlapping implementation children; the contract does not treat vocabulary scanning or AST pattern matching alone as proof`
+  Verification: `startup continuity plus the intervening 45-file commit reviewed; exact live inventory/rule/dependency checks pass at 77 modules / 41 families / 168 fields / 116 producer-mutators / 53 seams / four bypasses; Cargo metadata and toolchain capabilities inspected; the seven-stage proof composition, trust planes, taint/sink/declassifier classes, closed syntax policy, data ownership, and child boundaries are durable; task-tree catalog, roadmap projection, memory architecture, live-document size, and all seven gate-tier doctrines pass; no production code, generated artifact, mdBook contract, or product status changed`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i — freeze structural doctrine contract`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`
+  Status: `pending`
+  Goal: `derive the exact compiled production module and syntax graph with fail-closed name, alias, configuration, and macro resolution`
+  Acceptance: `a repository-root-derived analyzer parses every inventoried production Rust module, derives the reachable module/item/call graph under the production Cargo target, resolves imports and aliases needed by the trust boundary, classifies macro definitions/invocations, rejects missing/duplicate/ambiguous/unparsed nodes, and emits only deterministic diagnostics; Cargo compilation remains the independent type/privacy oracle`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii`
+  Status: `pending`
+  Goal: `enforce raw-evidence and identity noninterference plus proof-only canonical promotion over the derived graph`
+  Acceptance: `closed data registries name raw/identity sources, registered grammar or sealed-capability declassifiers, semantic branch/selection sinks, canonical constructors/writers/lowerers, and rule-entry roots; the analyzer derives interprocedural helper closure and rejects undeclared raw/identity control flow, proofless promotion, unregistered inference, capability construction or laundering, and unresolved semantic macro expansion without document/vendor/protocol vocabulary rules`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv`
+  Status: `pending`
+  Goal: `register the structural genericity doctrine and qualify the clean production baseline`
+  Acceptance: `one production-genericity doctrine entry runs unconditionally through scripts/check_doctrines.sh, composes the existing dependency/inventory/rule checks with the AST information-flow analyzer, documents its exact proof and honest limits, passes the complete current production surface, and leaves adversarial mutation breadth plus executable per-rule alpha obligations exclusively to .e.vi`
   Verification: `pending`
   Commit: `pending`
 
@@ -468,14 +497,17 @@ expressiveness as the bottleneck.
 | 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `done` | all nine IntentIR families and 49 fields are proof-carrying; 30 exact carries are separated from projection authority |
 | 33 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `done` | all four adapter families, rendered lines, blocked output, and exact filesystem reconciliation are proof-gated |
 | 34 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `done` | compiler-derived production registry/verifier/item/import/kernel closures exclude test/comment churn and bind all five proof rulesets |
-| 35 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
-| 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
-| 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
-| 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
-| 38 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
-| 39 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 40 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 41 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 35 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` | `done` | compiler/type proof composition, exact trust planes, taint/declassifier/sink classes, and four bounded children are fixed |
+| 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `pending` | derive the complete production module/item/call graph and fail closed on unresolved syntax |
+| 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `pending` | enforce raw/identity noninterference and proof-only promotion over the derived graph |
+| 38 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | `pending` | register the composed doctrine and qualify the current production baseline |
+| 39 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
+| 40 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
+| 41 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
+| 42 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
+| 43 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 44 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 45 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -637,6 +669,49 @@ expressiveness as the bottleneck.
   schemas 1–6 quarantine seven family-scoped semantic arrays, while structural extraction profiles may survive
   because their applicability key is a derived document fingerprint rather than a name. Neutral learning must
   validate its declared inputs and converge byte-for-byte after every affected-chain replay.
+- `2026-08-13`: `.e.v` is not one honest signoff slice. Its acceptance combines compiler-visible package/type
+  boundaries, exact production-module discovery, syntax/name/macro closure, interprocedural information flow,
+  canonical-promotion enforcement, and doctrine registration. Split it into `.e.v.i`–`.iv`: freeze the executable
+  trust contract; derive a fail-closed production graph; enforce raw/identity noninterference and proof-only
+  promotion; then register and qualify the composed doctrine. Compiler privacy and the existing proof kernel stay
+  primary. AST analysis supplies whole-surface closure and reviewable diagnostics, while the finite vocabulary
+  census remains diagnostic only and `.e.vi` retains adversarial mutations plus executable per-rule alpha proof.
+
+### Structural doctrine execution contract (`.6d.ii.e.v.i`)
+
+The doctrine proves a composition, not a single source scan:
+
+1. Cargo compilation and the existing package-dependency gate establish the real crate edge, Rust visibility,
+   private capability seals, and type-correct production target.
+2. `module_inventory.tsv` remains the exact 77-file denominator. Every row is parsed, while its target plane
+   determines the rule: `core`/`core_rule` receive full noninterference analysis; provider/application code may
+   orchestrate registered proposals but cannot mint proof or capabilities; conformance/test-support may contain
+   named data but cannot reach a canonical sink or reverse the package edge.
+3. A deterministic Rust syntax analyzer derives module, item, import/alias, local macro, and call edges. It starts
+   from Cargo package targets and declared modules rather than a filename glob. Missing inventory membership,
+   unresolved or duplicate item identity, ambiguous aliasing, unsupported configuration, parse failure, or an
+   unexpanded semantic macro is a failure, not an omitted row. Cargo remains the independent type/privacy oracle;
+   the analyzer must not pretend an untyped AST pattern alone proves information flow.
+4. Closed taint classes are: private source-owned symbol/document spelling; filename/title/key/path identity; raw
+   current-document prose, captions, labels, table cells, and model/prior text. Propagation includes arguments,
+   returns, bindings, assignments, aggregates, closures, helper calls, formatting/serialization, hashing, sorting,
+   and macro inputs/outputs. Semantic sinks are branch/match guards, equality/substrings/regex/prefix/suffix,
+   ordering/hash/numeric selection, admission/classification/role/conflict/residual/validation/lowering decisions,
+   and canonical construction, mutation, persistence, or lowering seams.
+5. Declassification is closed: a registered grammar may inspect typed current-document raw evidence and return a
+   grounded proposal; persistence and presentation may copy/render without returning decision authority; lowering
+   may encode a symbol only after its role is proved; exact opaque identity comparison remains spelling-blind.
+   The analyzer derives every registered entrypoint's helper closure. An undeclared helper or a declassified value
+   that flows back into a semantic sink fails.
+6. `rule_family_inventory.tsv` remains the authority for rule roots, proof classes, capabilities, alpha categories,
+   and canonical seams. `.e.v.iii` adds one bounded data-only boundary registry for exact source/declassifier/sink
+   paths; checker source may interpret those closed roles but may not hide executable allowlists or exemptions.
+   Every `GroundedProposal`, `RuleDescriptor`, promotion, canonical writer/mutator, and lowering path must resolve
+   to that joined graph. Direct constructors, aliases, macros, or module re-exports cannot create a second path.
+7. `.e.v.iv` registers one gate-tier `PRODUCTION-GENERICITY` doctrine that composes dependency, inventory, rule,
+   and AST/information-flow checks. `.e.vi` owns the independent controlled mutation matrix and executable
+   per-rule alpha obligations; `.e.v` does not pre-claim those results. Vocabulary scanning remains a diagnostic
+   report and never enters the pass/fail proof.
 
 ## Open Questions
 
@@ -784,6 +859,7 @@ expressiveness as the bottleneck.
 | `2026-08-13` | `.6d.ii.e.iv.vii` production-semantic implementation identity | compiler-visible schema-1 digest generator; five canonical registry roots; recursive local item/import closure; trusted-kernel closure; nested configuration sanitizer; controlled inert/sensitive mutants; runtime closure inspection | PASS: comments/docs/formatting, top-level and nested test code, known-inert configuration, unrelated production items, and unrelated imports preserve identity; referenced helper and import-binding mutations change it; absent/ambiguous roots fail; all five generated registry/verifier/rule-field closures are distinct and consume exactly six repository-relative production Rust inputs |
 | `2026-08-13` | `.6d.ii.e.iv.vii` exact proof-only corpus migration | final frozen digest rebuild; 24 SourceIR + 24 EvidenceIR + 24 SemanticIR + 24 IntentIR + 24 adapter comparisons excluding `.proof_context`, `.proof_ledger`, and `.validation_reports`; same-volume rollback lifecycle | PASS: all 120 non-proof/non-validation comparisons are exact; the signoff snapshot was exactly 120 files / 964,137,330 bytes and is removed with path residue absent |
 | `2026-08-13` | `.6d.ii.e.iv.vii` complete proof-chain replay | `bash scripts/check_chain_currency.sh --check`; adapter state/file reconciliation; retained-bundle census | PASS: EvidenceIR, SemanticIR, IntentIR, and adapter are each 24 replayed/current / zero stale / 54 explicit proof-unmeasurable; 24 adapter states reconcile to zero emitted files and 24 blocked/no-file states; retention remains exactly 24 bundles |
+| `2026-08-13` | `.6d.ii.e.v.i` structural doctrine contract | startup and intervening-commit review; Cargo metadata/toolchain inspection; production inventory, dependency, and rule checks; task-tree/roadmap/memory/live-size checks; `bash scripts/check_doctrines.sh` | PASS: exact current denominator is 77 modules / 41 families / 168 fields / 116 producer-mutators / 53 seams / four bypasses; compiler/privacy, syntax graph, information-flow, proof-promotion, and registration layers are non-overlapping; all seven gate-tier doctrines pass with chain currency explicitly deferred; no code, generated artifact, or user-visible contract changed |
 | `2026-08-13` | scheduled artifact cleanup | exact `.bin`/`.log` census under generated and Cargo release/debug trees; rebuildable incremental-cache removal; residue census | PASS: removed 5,085 files / 5,325,300 KiB from `target/debug/incremental`; the directory is absent and zero `.bin`/`.log` files remain in generated/release/debug-deps |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
@@ -1504,10 +1580,18 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v — prove IntentIR authority` | IntentIR schema-2 cumulative proof for nine families / 49 fields, 30 direct true-carry antecedents, actor/contract projection separation, closed validation and NLI demotion, exact 24 retained migrations, and proof-frontier currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi — prove ISF lowering authority` | Adapter schema-2 cumulative proof for four families / 12 fields plus every array record/rendered line/blocking reason, closed validation, exact 24 retained migrations, and emitted-versus-blocked reconciliation |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii — scope proof digests to production semantics` | compiler-derived registry/verifier/item/import/kernel closures, inert/sensitive mutations, exact proof-only 120-artifact migration, and complete chain qualification |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i — freeze structural doctrine contract` | exact compiler-plus-AST proof composition, trust planes, closed flow boundaries, fail-closed syntax policy, data-plane ownership, and bounded `.e.v.ii`–`.iv` implementation frontier |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
 
+- `2026-08-13`: Activated and completed `.6d.ii.e.v.i` from clean commit `61aa47f0`. The original `.e.v` mixed
+  compiler/privacy proof, exact module and syntax closure, interprocedural raw/identity flow, canonical-promotion
+  enforcement, and doctrine registration, so it is now the active container for four bounded children. The frozen
+  execution contract treats compilation and sealed types as primary, requires AST/name/macro/module uncertainty to
+  fail closed, keeps every executable boundary in data rather than checker-source allowlists, and reserves
+  adversarial mutations plus executable per-rule alpha obligations for `.e.vi`. Existing code, generated artifacts,
+  and mdBook product truth remain unchanged; `.e.v.ii` is the next leaf only after this commit is clean.
 - `2026-08-12`: Activated `.6d.ii.d.iii` only after `.d.ii` committed at `f88d463d` and the post-commit
   tree was clean. This leaf owns compiled model prompts and production corpus/KG organization: prompts may teach
   generic digital-design concepts with synthetic symbols and current-document evidence, while vendor, protocol,
