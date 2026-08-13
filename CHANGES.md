@@ -1,3 +1,21 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii — qualify the complete structural boundary
+
+- Reconciled the exact 15-commit `.e` range (`f7da4ab8..07b1f874`): 146 tracked files, 26,093 insertions, and
+  3,756 deletions implement the one-way package graph, proof kernel and five-stage migration, production-semantic
+  digests, compiled graph/flow doctrine, adversarial mutations, and per-rule structural alpha obligations.
+- Published exact per-chain proof attribution for the same 24 current document keys at all five stages. Their
+  final adapter ledgers share one ruleset, cover all 168 rule ids, and contain 148,708 cumulative claims partitioned
+  as 31,382 SourceIR / 89,758 EvidenceIR / 12,399 SemanticIR / 14,288 IntentIR / 881 adapter claims.
+- Reconciled migration and residual truth: all 120 non-proof/non-validation artifact comparisons are exact;
+  current SourceIR/SemanticIR/IntentIR/adapter residual surfaces contain 0/3/8/62 objects with zero migration
+  delta. All 24 current adapters are blocked/no-file; 54 legacy chains remain explicitly proof-unmeasurable.
+- Structural qualification is complete. Population alpha-renaming, identity perturbation, paraphrase, negative
+  controls, held-out families, and complete-population replay remain exclusively `.f`.
+- Full CI passes all nine doctrines and genericity components, formatting, warning-denied Clippy/rustdoc,
+  1,953 Rust tests / six ignores / zero failures, five doctests, mdBook, containment, and locality. Cleanup removed
+  73 HTML-book plus 144 Rust incremental files (223,680 KiB total); both roots and requested `.bin`/`.log` residue
+  are absent.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi — qualify structural genericity
 
 - Made every rule's alpha declaration executable in a test-only CI oracle that enforces the required

@@ -417,6 +417,25 @@ descriptor's capability/compatibility/premise-shaped alpha contract, and its exa
 checks all 168 rule ids, stages, surfaces, premises, capabilities, obligations, compatibilities, and runtime
 module owners against the independent inventories. Population alpha-renaming remains `.f`.
 
+### Final structural qualification (`.6d.ii.e.vii`)
+
+The exact implementation range is `f7da4ab8..07b1f874`: 15 committed slices, 146 changed tracked files, 26,093
+insertions, and 3,756 deletions. All 24 retained, verifiable chains are current through the adapter; the 54
+legacy chains remain proof-unmeasurable. The final adapter ledgers share one ruleset hash, contain all 168 rule
+ids, and contain 148,708 cumulative claims partitioned as 31,382 SourceIR, 89,758 EvidenceIR, 12,399 SemanticIR,
+14,288 IntentIR, and 881 adapter claims.
+
+The proof-only migration compared 24 artifacts at each of five stages after excluding only proof context,
+ledger, and validation reports. All 120 remaining comparisons—including residual decisions—were exact. The
+current 24-chain surfaces contain zero SourceIR, three SemanticIR, eight IntentIR, and 62 adapter residual
+objects, hence the migration residual delta is exactly zero. All 24 adapters are honestly blocked and reconcile
+to zero current emitted files. The complete per-chain attribution and commands are published in
+[`production-genericity-structural-qualification.md`](../research/production-genericity-structural-qualification.md).
+
+This closes the structural `.e` program. It does not close ADR 0006 behavioral signoff: `.f` still owns
+whole-population alpha-renaming, identity perturbation, paraphrase, negative-control, held-out, and replay
+qualification.
+
 ## Consequences
 
 - Schema and artifact churn will be large. Every changed retained chain is governed by ADR 0025; recall loss is
@@ -452,3 +471,4 @@ core/conformance migration are SpecForge's architecture for this problem.
 - Opaque identifiers: [`0037-identifiers-are-opaque-and-one-way-grounded.md`](0037-identifiers-are-opaque-and-one-way-grounded.md)
 - Task tree: [`SPEC-TO-INTENT-ALIGNMENT.md`](../tasks/SPEC-TO-INTENT-ALIGNMENT.md)
 - Pipeline audit: [`production-genericity-pipeline-audit.md`](../research/production-genericity-pipeline-audit.md)
+- Structural qualification: [`production-genericity-structural-qualification.md`](../research/production-genericity-structural-qualification.md)

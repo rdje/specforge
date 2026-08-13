@@ -98,9 +98,11 @@ closed typed boundary registry to that graph and enforces fixed-point raw/identi
 authority, and proof-only canonical promotion across the complete production surface. `.e.v.iv` now composes
 that analyzer with the dependency, inventory, and rule checks as the unconditional `PRODUCTION-GENERICITY`
 doctrine. `.e.vi` adds 27 controlled dependency/schema/rule/flow faults, legal display/provenance/test controls,
-and executable inventory-bound structural alpha obligations for all 168 runtime rules.
-A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.vii` must publish the final structural and
-migration-delta qualification; `.f` then owns population alpha-renaming, identity, paraphrase,
+and executable inventory-bound structural alpha obligations for all 168 runtime rules. `.e.vii` publishes the
+complete 15-commit structural range and exact final migration: 24 current chains carry 148,708 cumulative claims
+across 120 proof-bearing artifacts, all 120 non-proof/non-validation comparisons have zero delta, and 54 legacy
+chains remain explicitly unmeasurable rather than receiving synthetic authority.
+A finite forbidden-vocabulary list remains diagnostic, not proof. `.f` now owns population alpha-renaming, identity, paraphrase,
 and held-out qualification before `.6e`. A reproduced 400-page failure also drove resource-sized bounded
 activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.
 

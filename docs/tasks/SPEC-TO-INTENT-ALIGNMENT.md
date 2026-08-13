@@ -289,10 +289,10 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e`
-  Status: `in_progress`
+  Status: `done`
   Goal: `install a fail-closed proof-carrying production-genericity architecture and doctrine gate`
   Acceptance: `the production module graph is separated from conformance/oracle code; promoted claims carry machine-checkable derivations from typed current-document evidence; identifiers are opaque information-flow values whose spelling can be copied or identity-compared but cannot steer semantic branches; raw document text and identity cannot be inspected by extraction decision sites outside registered universal grammar interfaces; an AST-aware gate rejects forbidden dependency, taint-flow, and raw-literal decision mutations; every registered inference rule declares and passes an alpha-equivariance obligation; a finite vocabulary census is supplementary diagnostics only`
-  Verification: `pending`
+  Verification: `15 commits / 146 files close package, proof, flow, mutation, alpha, 24/0/54-chain, 148,708-claim, and zero-public-delta structure; child gates pass and .f retains behavior`
   Commit: `completed by .6d.ii.e.i through .6d.ii.e.vii child commits`
   Children: `.6d.ii.e.i`, `.6d.ii.e.ii`, `.6d.ii.e.iii`, `.6d.ii.e.iv`, `.6d.ii.e.v`, `.6d.ii.e.vi`, `.6d.ii.e.vii`
 
@@ -418,11 +418,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi — qualify structural genericity`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`
-  Status: `pending`
+  Status: `done`
   Goal: `qualify the complete structural genericity boundary and publish exact migration deltas`
   Acceptance: `all retained chains are current; every migrated claim/proof and residual delta is attributed; core/conformance builds, mutation gates, rule obligations, full CI, public/live/book/retrieval truth, and cleanup agree; only `.f` behavioral population qualification remains before the genericity parent can close`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the 15-commit / 24-chain report attributes all 168 rules, 148,708 claims, 0/3/8/62 residuals, and zero public migration delta; package builds, nine components/doctrines, 1,953/6/0 Rust tests, five doctests, mdBook, containment, locality, and exact 217-file cleanup pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii — qualify structural boundary`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`
   Status: `pending`
@@ -502,7 +502,7 @@ expressiveness as the bottleneck.
 | 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `done` | closed registry and fixed-point AST flow enforce raw/identity control and proof-only promotion |
 | 38 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | `done` | four structural witnesses now run as one unconditional gate-tier doctrine over the clean production baseline |
 | 39 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `done` | 27 controlled faults and all 168 inventory-bound runtime alpha obligations pass |
-| 40 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
+| 40 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `done` | exact structural/migration qualification is published and green |
 | 41 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
 | 42 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
 | 43 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
@@ -870,6 +870,8 @@ The doctrine proves a composition, not a single source scan:
 | `2026-08-13` | `.6d.ii.e.vi` proof-identity boundary correction | first `bash scripts/run_ci.sh`; exact chain-currency failure; production/test configuration inspection; final `bash scripts/check_chain_currency.sh --check` | ROOT-CAUSED/PASS: a production validator plus `pub(super)` registry-root visibility changed trusted implementation identity and correctly made all 24 proof-current chains stale; restored private production roots behind `cfg(test)` accessors because `.e.vii`, not `.e.vi`, owns proof migration; final EvidenceIR/SemanticIR/IntentIR/adapter replay is each 24 current / zero stale / 54 unmeasurable with 24 blocked adapter states and zero emitted files |
 | `2026-08-13` | `.6d.ii.e.vi` focused workspace qualification | `RUSTFLAGS='-D warnings' cargo clippy --workspace --all-targets -- -D warnings`; `RUSTFLAGS='-D warnings' cargo test --workspace -- --format terse` | PASS: warning-deny Clippy; application 470/0/0 + conformance 139/1/0 + core 1,340/5/0 + graph 4/0/0 = 1,953 Rust tests passed / six ignored / zero failed plus five compile-fail doctests |
 | `2026-08-13` | `.6d.ii.e.vi` public/retrieval projection | Knowledge Map and fact-catalog generators/checkers; exact mdBook aggregate authority; `scripts/check_book_current_truth.sh` | PASS: 233 facts / 1,787 unique question keys and 218-card bounded title catalog regenerate exactly; maintained book is 38 files / 15,700 lines / 999,878 bytes from exact 15,696-line / 999,396-byte baseline plus authorized +4-line / +482-byte delta |
+| `2026-08-14` | `.6d.ii.e.vii` exact range/population | Git/artifact census; prior exact comparisons | PASS: report publishes 15 commits / 146 paths / +26,093/-3,756; identical 24 current keys, 54 legacy; all 168 ids / 148,708 claims; 0/3/8/62 residual objects; zero delta in 120 comparisons |
+| `2026-08-14` | `.6d.ii.e.vii` signoff/cleanup | focused gates; `run_ci`; census | PASS: nine components/doctrines, 24/0/54 replay, 1,953/6/0 tests plus five doctests, book/locality, and 217-file / 223,680-KiB cleanup; residue absent |
 | `2026-08-13` | scheduled artifact cleanup | exact `.bin`/`.log` census under generated and Cargo release/debug trees; rebuildable incremental-cache removal; residue census | PASS: removed 5,085 files / 5,325,300 KiB from `target/debug/incremental`; the directory is absent and zero `.bin`/`.log` files remain in generated/release/debug-deps |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
@@ -1648,6 +1650,19 @@ the reviewed replay can name its production revision.
   final locality; cleanup removes the exact 6,714-file / 5,118,480-KiB ignored HTML-book and incremental trees,
   with both roots and requested `.bin`/`.log` residue absent.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`
+
+- [x] **REPRODUCE / MEASURE** — Git/artifacts derive the 15-commit range, identical 24-key sets, 168 rules,
+  148,708 claims, and every residual; the report publishes each chain.
+- [x] **ROOT CAUSE (WHY + WHERE)** — prior slices lacked one whole-`.e` migration/legacy/`.f` boundary result.
+- [x] **ADDRESSED (verified)** — report, package builds, nine structural components, and exact replay agree.
+- [x] **NO REGRESSION** — 120 public values remain exact; replay is 24/0/54 and adapters are 24 blocked/zero-file.
+- [x] **GENERICITY (ADR 0006)** — inventory/evidence/proof/flow/mutation/alpha—not names—prove structure; `.f`
+  retains behavior.
+- [x] **LOCKSTEP** — ADR, audit/report, retrieval, roadmap/task, live/book/containment, and memory agree.
+- [x] **COMPLETE GATE / CLEANUP** — full CI passes 1,953/6/0 plus five doctests and all required gates; exact
+  HTML/incremental cleanup is residue-free.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1692,10 +1707,13 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii — enforce production information flow` | closed typed flow registry, fixed-point helper/macro propagation, raw/identity noninterference, protected authority, and proof-only canonical seams |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv — register production genericity doctrine` | one unconditional four-component structural doctrine, clean baseline qualification, exact public/durable synchronization, and required Rust-analysis rollover |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi — qualify structural genericity` | 27 controlled dependency/schema/rule/flow faults, legal non-authority controls, and exact executable structural alpha obligations for all 168 runtime rules |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii — qualify structural boundary` | exact structural/migration/full-gate signoff; `.f` retains behavior |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
 
+- `2026-08-14`: Completed `.e.vii` and structural `.e`: exact migration publication, all gates including
+  1,953/6/0 Rust tests, and 217-file cleanup pass; `.f` retains population behavior.
 - `2026-08-13`: Completed `.6d.ii.e.vi`. The CI form of the single production-genericity wrapper now runs 27
   controlled dependency, inventory/schema, rule/alpha/bypass, and flow/authority faults; distinct identity, raw
   literal/substring/regex, unregistered inference, proofless promotion, laundering, schema specialization, and

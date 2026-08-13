@@ -18,7 +18,6 @@ answers:
   - "What exact range qualified the identity and spelling remediation?"
   - "Is SpecForge production-genericity signoff complete after identity remediation?"
   - "Is the generic production core physically separated from conformance code?"
-  - "Can specforge-core depend on named fixtures or reviewed evaluation?"
   - "Which crate owns replay, completeness classification, and trajectory snapshots?"
   - "How does SpecForge keep source-owned symbol spelling opaque?"
   - "Can a deserialized proof ledger authorize a canonical claim?"
@@ -66,10 +65,11 @@ answers:
   - "How does the structural analyzer enforce proof-only canonical promotion?"
   - "Which registered doctrine enforces the complete clean production-genericity boundary?"
   - "How are runtime alpha obligations, adversarial mutations, and legal raw-spelling uses structurally qualified?"
+  - "What exact proof population and migration delta closed structural genericity qualification?"
 date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; doctrine/production_genericity/information_flow_boundary.tsv; tools/production-genericity-graph/src/analyzer.rs; tools/production-genericity-graph/src/flow.rs; scripts/check_production_genericity.sh; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_doctrines.sh; scripts/check_chain_currency.sh
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/research/production-genericity-structural-qualification.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; doctrine/production_genericity/information_flow_boundary.tsv; tools/production-genericity-graph/src/analyzer.rs; tools/production-genericity-graph/src/flow.rs; scripts/check_production_genericity.sh; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_doctrines.sh; scripts/check_chain_currency.sh
 reverify: scripts/check_production_genericity.sh --self-test && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && bash scripts/check_chain_currency.sh --check
 ---
 
@@ -293,3 +293,7 @@ the independent oracle expands the two TSV inventories and exactly joins all 168
 surfaces, premise kinds, capabilities, obligations, compatibilities, and implementation owners. Population
 renaming, paraphrase, negative-control, and held-out behavior remains `.f`, so whole-core genericity signoff is
 still open.
+
+Final qualification covers `f7da4ab8..07b1f874`: 24 keys are current and 54 remain unmeasurable. One ruleset
+covers 168 rules / 148,708 claims; all 120 public comparisons and 0/3/8/62 residual-object deltas are exact, while
+24 adapters remain blocked/zero-file. See `docs/research/production-genericity-structural-qualification.md`; `.f` owns behavior.

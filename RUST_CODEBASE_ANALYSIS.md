@@ -4,6 +4,23 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-14 — final structural qualification; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`)
+
+- The complete structural implementation range is `f7da4ab8..07b1f874`: 15 commits, 146 tracked files,
+  26,093 insertions, and 3,756 deletions. This range installs the package boundary, sealed derivation kernel,
+  five-stage cumulative proof, production-semantic digests, compiled syntax/flow graph, unconditional doctrine,
+  and adversarial/per-rule-alpha qualification.
+- The persisted population has one identical 24-document current set at every stage and 54 explicit legacy
+  chains. Final adapter ledgers share one ruleset, cover all 168 rule ids, and contain 148,708 cumulative claims:
+  31,382 SourceIR, 89,758 EvidenceIR, 12,399 SemanticIR, 14,288 IntentIR, and 881 adapter claims.
+- Exact migration compared 24 artifacts at each of five stages while excluding only proof context, ledger, and
+  validation reports. All 120 public comparisons—including residual decisions—were unchanged. Current residual
+  surfaces contain 0/3/8/62 SourceIR/SemanticIR/IntentIR/adapter objects; the migration delta is zero. All 24
+  current adapters remain blocked/no-file and all 54 legacy chains remain proof-unmeasurable.
+- This closes structural `.e`, not production genericity as a whole. `.f` exclusively owns behavioral
+  alpha-renaming, identity perturbation, paraphrase, negative controls, held-out families, and full-population
+  replay.
+
 ## Session update (2026-08-13 — structural mutation and alpha qualification; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`)
 
 - A test-only `RuleDescriptor` oracle executes more than the production capability/obligation enum pairing. It

@@ -184,6 +184,30 @@ A high-quality result should expose, when the source supports them:
 This target is deliberately stronger than a score or one protocol fixture. Validation and corpus
 benchmarks measure progress; they do not redefine the architecture.
 
+### Structural qualification snapshot
+
+The complete structural program spans 15 committed slices. Its final persisted boundary is exact:
+
+| Stage | Current / legacy | Registered families / fields | Stage-local claims in the 24 final ledgers | Public migration delta |
+| --- | ---: | ---: | ---: | ---: |
+| SourceIR | 24 / 54 | 5 / 19 | 31,382 | 0 |
+| EvidenceIR | 24 / 54 | 11 / 39 | 89,758 | 0 |
+| SemanticIR | 24 / 54 | 12 / 49 | 12,399 | 0 |
+| IntentIR | 24 / 54 | 9 / 49 | 14,288 | 0 |
+| ISF adapter | 24 / 54 | 4 / 12 | 881 | 0 |
+
+The same 24 retained document keys are current at every stage. Their final cumulative adapter ledgers contain
+148,708 claims under one ruleset and exercise all 168 registered rules. Exact migration comparisons excluded
+only proof context, proof ledger, and validation reports, so the zero public delta also proves zero residual
+delta. The current residual surfaces contain 0 SourceIR, 3 SemanticIR, 8 IntentIR, and 62 adapter objects; all 24
+adapters are honestly blocked with zero current emitted files. The 54 legacy chains remain inspectable but
+cannot feed canonical authority. The [structural qualification report](../../../research/production-genericity-structural-qualification.md)
+publishes the per-chain ledger and residual counts.
+
+This closes structural qualification only. Whole-document symbol renaming, identity perturbation,
+structure-preserving paraphrases, negative controls, held-out families, and complete-population replay remain
+the behavioral gate before the project can claim production genericity as a whole.
+
 ## Completion order
 
 The specification-to-executable-intent endpoint does not make adapter syntax the first problem. SpecForge

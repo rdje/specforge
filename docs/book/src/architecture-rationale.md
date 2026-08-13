@@ -140,7 +140,7 @@ criterion. A more ambitious future option — letting a language model
 read the spec end-to-end — is captured but deliberately parked until the current approach is proven;
 even then it would generalize the *how* and still never memorize names.
 
-### Current implementation status: the invariant is not yet met
+### Current implementation status: structural proof complete, behavioral signoff open
 
 The rule above is the required architecture, but an August 2026 whole-production audit found that the
 current implementation does not yet satisfy it completely. SourceIR classification, generic protocol evidence,
@@ -154,8 +154,8 @@ every honest blocking reason; proofless or stale input cannot emit or preserve o
 tool derives the complete Cargo-rooted production syntax graph and fails closed on missing, ambiguous, unparsed,
 or unsupported structure. A closed typed registry now drives fixed-point helper/macro information flow over that
 graph and rejects raw/identity semantic control, unregistered canonical mutation, protected-authority forgery,
-and proofless seams. Doctrine integration and full behavioral qualification remain release-blocking work, not
-accepted shortcuts.
+and proofless seams. The structural doctrine and its adversarial qualification are now complete; full
+population behavioral qualification remains release-blocking work, not an accepted shortcut.
 
 The bounded identity-remediation parent remains jointly qualified over the exact three-commit range
 `89d8dee7..9c38b569`. The later proof migration exposes a stricter current frontier: exactly 24 documents retain
@@ -163,8 +163,8 @@ verifiable source capture and current SourceIR/EvidenceIR proof, while 54 histor
 SemanticIR, IntentIR, and adapter replay are consequently 24 current / 54 unmeasurable; all 24 current adapters
 are honestly blocked and reconcile to zero emitted files. Existing later-stage files for the other 54 documents
 are historical, not a substitute for the missing upstream proof chain. Focused alpha-renaming, identity, prompt, spelling, fixture-name, and fail-closed proposal
-controls cover the repaired paths. Structural enforcement and population-level metamorphic
-qualification remain mandatory before the implementation can claim this invariant as a whole.
+controls cover the repaired paths. Structural enforcement is complete; population-level metamorphic
+qualification remains mandatory before the implementation can claim this invariant as a whole.
 
 The remediation is tracked by `SPEC-TO-INTENT-ALIGNMENT.6d.ii`. Its proof is deliberately stronger than
 a forbidden-word list: the production/conformance dependency boundary must prevent named test knowledge
@@ -213,7 +213,10 @@ authority and all proof-only seams are checked independently of taint. Cargo com
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
 dependency/schema/rule/flow faults and joins every one of the 168 runtime descriptors to its independently
-inventoried structural alpha contract. Population renaming/paraphrase/held-out qualification still follows.
+inventoried structural alpha contract. Final structural qualification covers 15 committed slices and 120
+proof-bearing artifacts: the 24 current chain ledgers contain all 168 rule ids and 148,708 cumulative claims,
+while exact comparison finds zero non-proof/non-validation or residual delta. The other 54 chains remain
+explicitly proof-unmeasurable. Population renaming/paraphrase/held-out qualification still follows.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

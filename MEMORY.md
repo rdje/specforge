@@ -17,20 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` is complete and awaiting commit from
-  clean predecessor `9f37989f`.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` is complete and awaiting its commit from predecessor
+  `07b1f874`.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: all five proof-bearing stages use compiler-derived production-semantic implementation identity,
-  and the exact live denominator is 77 production modules / 41 claim families / 168 artifact fields. The
-  dependency, inventory, rule, and compiled graph/flow checks execute unconditionally as `PRODUCTION-GENERICITY`;
-  CI adds 27 controlled faults and an exact inventory-bound structural alpha join over all 168 runtime rules.
-  The 140-row flow remains 2,169 functions / 11,295 helper edges / 10,419 decisions / 1,371 macros. Qualification,
-  warning-deny Clippy, and 1,953/6/0 Rust tests plus five doctests pass. This is structural, not `.f` behavioral,
-  signoff. Complete CI passes all nine doctrines, formatting, warning-denied Clippy/rustdoc, 1,953 Rust tests /
-  six ignores / zero failures, five compile-fail doctests, mdBook, and final locality. Scheduled cleanup removed
-  6,714 ignored files / 5,118,480 KiB from the HTML-book and incremental trees with residue absent.
-- Next action: commit `.e.vi`, verify the handoff-ready tree, then activate `.e.vii` only from that clean state.
-- In-flight uncommitted: completed `.e.vi` code, tests, CI evidence, cleanup evidence, and synchronized
-  documentation; no background job.
+- Current state: the complete structural `.e` boundary is qualified over 15 commits / 24 current chains / 148,708
+  claims with zero non-proof migration delta. Full CI passes 1,953 Rust tests / six ignores / zero failures, five
+  doctests, all nine doctrines and all nine genericity components; exact disposable-artifact cleanup is complete.
+- Next action: commit `.e.vii`, verify the post-commit handoff state, then activate `.6d.ii.f` from the clean tree.
+- In-flight uncommitted: completed `.e.vii` docs/report/signoff awaiting commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

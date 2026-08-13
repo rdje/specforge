@@ -38,8 +38,6 @@
   > Can recomputing a SemanticIR conclusion hash authorize an edit?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can recomputing an IntentIR conclusion hash authorize an edit?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
-  > Can specforge-core depend on named fixtures or reviewed evaluation?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > Cannot convert a MPS Tensor to float64
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -136,6 +134,8 @@
   > What current priors are learned without protocol families?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What does spec-neutral extraction mean?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > What exact proof population and migration delta closed structural genericity qualification?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What exact range qualified the identity and spelling remediation?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)

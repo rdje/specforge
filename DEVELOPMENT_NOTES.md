@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii (`2026-08-14`) — the structural proof closes on exact migration truth
+
+The final structural leaf adds no new enforcement mechanism. It reconciles the clean 15-commit range from the
+pre-`.e` identity-remediation boundary through adversarial alpha qualification, then reads the current persisted
+population and the exact earlier migration comparisons as one signoff result. The range changes 146 tracked
+files with 26,093 insertions and 3,756 deletions.
+
+The same 24 retained document keys are current at SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter. The
+other 54 keys are legacy at every stage and stay proof-unmeasurable. The final adapter ledgers all carry the same
+ruleset, reference every one of the 168 runtime rules, and contain 148,708 cumulative claims: 31,382 source,
+89,758 evidence, 12,399 semantic, 14,288 intent, and 881 lowering claims. This is individual claim attribution in
+the artifacts plus an aggregate and per-document publication, not an inferred average.
+
+The proof-only reconciliation compared 120 artifacts after excluding only proof context, proof ledger, and
+validation reports. Residual decisions remained in scope, and every comparison was exact. Current residual
+surfaces contain zero SourceIR, three SemanticIR, eight IntentIR, and 62 adapter objects, so the migration changed
+zero residuals. All 24 current adapters remain honestly blocked and reconcile to zero emitted files.
+
+This distinction is the closure condition: `.e` proves static structure, executable authority, mutation
+detection, and migration integrity. It does not claim behavior under a transformed document population. `.f`
+remains the only owner of alpha-renamed documents, identity perturbations, paraphrases, negative controls,
+held-out families, complete replay, and the final genericity-parent decision.
+
+The final run passed all nine doctrines and genericity components, formatting, warning-denied Clippy/rustdoc,
+1,953 Rust tests with six ignores, five doctests, mdBook, containment, and locality. The first pre-final doctrine
+pass correctly caught two live surfaces above their existing caps plus a stale derived catalog; compaction and
+regeneration fixed the drift without raising a limit. Cleanup then removed 73 HTML-book and 144 incremental
+files (223,680 KiB), including all observed disposable `.bin` files, with both roots and requested residue absent.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi (`2026-08-13`) — alpha metadata becomes executable structure
 
 The earlier registry made an alpha obligation mandatory and enforced its one-to-one capability category, but it

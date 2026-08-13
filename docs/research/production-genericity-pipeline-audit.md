@@ -1,9 +1,9 @@
 # Production-genericity pipeline audit
 
-Status: **discovery, dependency boundary, trusted kernel, rule census, SourceIR→ISF-adapter proof migration, digest precision, compiled syntax graph, AST information-flow enforcement, and unconditional doctrine integration complete; adversarial/alpha and behavioral qualification remain**
+Status: **discovery, proof migration, structural enforcement, adversarial mutation, per-rule alpha, and final structural/migration-delta qualification complete; population behavioral qualification remains**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
-Latest structural update: 2026-08-13 (`.6d.ii.e.v.iv`)
+Latest structural update: 2026-08-13 (`.6d.ii.e.vii`)
 Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
 Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
 
@@ -562,6 +562,27 @@ and the 120-file same-volume rollback snapshot is removed. This closes registere
 did not close the audit alone; the later `.e.v` graph/flow/doctrine work and `.e.vi` adversarial/alpha work now
 close structural qualification. `.e.vii` owns final structural/migration-delta publication, and `.f` still owns
 population-level behavioral invariance.
+
+## Final structural qualification
+
+Leaf `.6d.ii.e.vii` reconciles the whole structural program rather than adding another enforcement mechanism.
+The exact clean range `f7da4ab8..07b1f874` contains 15 committed `.e` slices and changes 146 tracked files with
+26,093 insertions and 3,756 deletions. The final 24-chain adapter population contains one ruleset hash, all 168
+registered rule ids, and 148,708 cumulative claims: 31,382 SourceIR, 89,758 EvidenceIR, 12,399 SemanticIR,
+14,288 IntentIR, and 881 adapter claims.
+
+Schema and currentness agree at every stage: SourceIR is 24 schema-3 current / 54 schema-1 legacy; EvidenceIR is
+24 schema-3 current / 54 schema-2 legacy; SemanticIR, IntentIR, and adapters are each 24 schema-2 current / 54
+schema-1 legacy. The 24 document-key sets are identical. Exact proof-only migration compared 120 artifacts after
+excluding only proof context, proof ledger, and validation reports; every remaining value, including all
+residual decisions, was unchanged. Current residual surfaces contain zero SourceIR, three SemanticIR, eight
+IntentIR, and 62 adapter objects, so the proof-migration residual delta is zero. All 24 current adapters are
+blocked/no-file, and 54 chains remain explicitly proof-unmeasurable rather than receiving synthetic proof.
+
+The detailed per-chain ledger/residual attribution and reproducible commands live in
+[`production-genericity-structural-qualification.md`](production-genericity-structural-qualification.md).
+Structural qualification is therefore complete. Population alpha-renaming, identity perturbation, paraphrase,
+negative controls, held-out families, and full behavioral replay remain exclusively `.f`.
 
 ## Historical correction
 
