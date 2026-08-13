@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > does removing sentence fallback remove address phase recognition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > does renaming a signal change semantic extraction
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -296,5 +298,3 @@
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how does SpecForge extract register fields from tables
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > how does SpecForge flag vague or ambiguous spec language

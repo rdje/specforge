@@ -182,6 +182,8 @@ mod tests {
         assert_eq!(clean.rule_roots, 1);
         assert_eq!(clean.canonical_seams, 1);
         assert_eq!(clean.proof_gates, 1);
+        assert_eq!(clean.non_authoritative_regions, 0);
+        assert_eq!(clean.protected_types, 2);
 
         fixture.mutate_shared(
             r#"
@@ -195,6 +197,15 @@ pub fn identity_selector(identity: &OpaqueIdentity) -> bool {
         fixture.mutate_shared(
             r#"
 pub fn raw_literal_selector(raw: &RawEvidence) -> bool {
+    raw.text == "named-token"
+}
+"#,
+        );
+        assert_flow_error(&fixture.root, "raw_evidence reaches semantic control");
+
+        fixture.mutate_shared(
+            r#"
+pub fn raw_substring_selector(raw: &RawEvidence) -> bool {
     raw.text.contains("named-token")
 }
 "#,
@@ -203,7 +214,7 @@ pub fn raw_literal_selector(raw: &RawEvidence) -> bool {
         fixture.write(
             "doctrine/production_genericity/information_flow_boundary.tsv",
             format!(
-                "{FLOW_BOUNDARY}declassify.wrong_class\tdeclassifier\tsymbol_identity\tcrates/specforge/src/core_shared.rs#raw_literal_selector\texact_identity_only\n"
+                "{FLOW_BOUNDARY}declassify.wrong_class\tdeclassifier\tsymbol_identity\tcrates/specforge/src/core_shared.rs#raw_substring_selector\texact_identity_only\n"
             ),
         );
         assert_flow_error(&fixture.root, "raw_evidence reaches semantic control");
@@ -211,6 +222,19 @@ pub fn raw_literal_selector(raw: &RawEvidence) -> bool {
             "doctrine/production_genericity/information_flow_boundary.tsv",
             FLOW_BOUNDARY,
         );
+
+        fixture.mutate_shared(
+            r#"
+pub struct FixtureRegex;
+impl FixtureRegex {
+    pub fn is_match(&self, _value: &str) -> bool { false }
+}
+pub fn raw_regex_selector(raw: &RawEvidence) -> bool {
+    FixtureRegex.is_match(&raw.text)
+}
+"#,
+        );
+        assert_flow_error(&fixture.root, "raw_evidence reaches semantic control");
 
         fixture.mutate_shared(
             r#"
@@ -373,7 +397,7 @@ pub fn macro_launder(raw: &RawEvidence) -> String {
             );
             fixture.write(
                 "crates/specforge/src/test_support.rs",
-                "pub fn named_fixture_only() {}\n",
+                "pub fn named_fixture_only(value: &str) -> bool { value.contains(\"fixture-name\") }\n",
             );
             fixture.write_inventory(BASE_INVENTORY);
             fixture.write(
@@ -444,6 +468,7 @@ pub fn build(raw: &RawEvidence) -> CanonicalArtifact {
 pub fn verified_canonical_proof(_value: &CanonicalArtifact) -> bool { true }
 pub fn write_canonical(value: &CanonicalArtifact) { let _ = verified_canonical_proof(value); }
 pub fn display(raw: &RawEvidence) -> String { format!("{}", raw.text) }
+pub fn record_provenance(raw: &RawEvidence) -> String { raw.text.clone() }
 "#;
 
     const BASE_INVENTORY: &str = "path\tcurrent_plane\ttarget_plane\tprimary_lane\tdisposition\n\

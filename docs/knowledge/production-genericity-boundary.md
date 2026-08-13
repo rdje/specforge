@@ -65,11 +65,12 @@ answers:
   - "What closed registry defines the production information-flow boundary?"
   - "How does the structural analyzer enforce proof-only canonical promotion?"
   - "Which registered doctrine enforces the complete clean production-genericity boundary?"
+  - "How are runtime alpha obligations, adversarial mutations, and legal raw-spelling uses structurally qualified?"
 date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
 evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; doctrine/production_genericity/information_flow_boundary.tsv; tools/production-genericity-graph/src/analyzer.rs; tools/production-genericity-graph/src/flow.rs; scripts/check_production_genericity.sh; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_doctrines.sh; scripts/check_chain_currency.sh
-reverify: scripts/check_production_genericity.sh && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && bash scripts/check_chain_currency.sh --check
+reverify: scripts/check_production_genericity.sh --self-test && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -257,9 +258,10 @@ binding change changes the digest; runtime tests prove the generated closure is 
 registries. Exact proof-only migration changes no non-proof/non-validation bytes across 120 stage artifacts, and
 chain replay remains 24 current / zero stale / 54 proof-unmeasurable.
 
-This closes registered proof-relation identity, not whole-core genericity. Current-binary reconstruction still
-observes builder/lowering dependencies outside the registry-rooted digest. AST-aware information-flow,
-adversarial structural qualification, and population behavior remain open work.
+This closes registered proof-relation identity, not whole-core genericity by itself. Current-binary
+reconstruction still observes builder/lowering dependencies outside the registry-rooted digest. The following
+AST information-flow and adversarial structural layers close that structural gap; population behavior remains
+open work.
 
 The production syntax substrate derives the complete current graph. Cargo exposes four library/binary
 targets; their module graph reaches 76 of the 77 inventoried files, with the remaining application test-support
@@ -276,12 +278,18 @@ field, and provider-return sources; universal grammar and exact-identity declass
 trusted/non-authoritative regions; and protected types. A deterministic fixed point propagates dependencies
 through 2,169 functions and 11,295 helper edges, checking 10,419 semantic decision sites plus macro, mutation,
 construction, capability-call, proof-value, and canonical-seam topology. Sensitive unresolved macros reject.
-Eight fixture mutations prove identity/raw control, unregistered inference, authority forgery/laundering,
-proofless persistence, and registry duplication fail closed.
+Thirteen flow mutations independently reject identity selection, raw literal equality, substring and regex
+decisions, cross-class declassification, direct/aliased unregistered inference, authority forgery, helper/macro
+laundering, proofless/wrong-stage persistence, and registry duplication. The clean fixture admits display,
+provenance capture, and excluded test-only uses because none grants semantic or canonical authority.
 
 The registry names data classes and Rust structure, never a document/vendor/protocol vocabulary. Cargo and Rust
 privacy remain the type/capability oracle; executable replay remains semantic authority; the AST proves closed
 whole-surface flow/topology. `scripts/check_production_genericity.sh` composes the dependency, inventory, rule,
-and graph/flow checks under the unconditional `PRODUCTION-GENERICITY` doctrine. Broader adversarial and alpha
-qualification remains `.e.vi`, and population behavior remains `.f`; whole-core genericity signoff is therefore
+and graph/flow checks under the unconditional `PRODUCTION-GENERICITY` doctrine. Its `--self-test` CI mode runs
+27 controlled dependency, inventory/schema, rule/alpha/bypass, and flow/authority mutations. Every
+test-only `RuleDescriptor` qualification executes each capability/premise/compatibility-shaped alpha condition;
+the independent oracle expands the two TSV inventories and exactly joins all 168 runtime rule ids, stages,
+surfaces, premise kinds, capabilities, obligations, compatibilities, and implementation owners. Population
+renaming, paraphrase, negative-control, and held-out behavior remains `.f`, so whole-core genericity signoff is
 still open.

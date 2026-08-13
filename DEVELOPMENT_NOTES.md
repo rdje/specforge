@@ -1,4 +1,42 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi (`2026-08-13`) — alpha metadata becomes executable structure
+
+The earlier registry made an alpha obligation mandatory and enforced its one-to-one capability category, but it
+did not independently prove that the declared premises could satisfy the category. That distinction matters:
+`introduced_symbols_preserve_origins` without any current-document grounding, or `lossless_topology_invariant`
+without an upstream claim and lossless compatibility, would be well-typed metadata with no structural witness.
+
+The CI qualification oracle executes the premise/compatibility shape for all seven closed obligation categories.
+The conditions deliberately stop at structural invariants: identity-preserving rules are current-only; introduced
+symbols require direct grounding; lossless carry requires an upstream claim; merge/conflict requires registered
+derivation plus upstream or direct grounding; source and downstream residuals use one of two closed shapes; and
+target lowering requires registered upstream authority. `.f` still owns behavioral alpha-renaming and held-out
+population evidence, so this does not turn metadata into a behavioral claim.
+
+A single parent-IR test constructs all five real stage registries, expands the independent claim and rule
+inventories, and compares all 168 descriptors exactly. This prevents the code and TSVs from agreeing only in
+aggregate: one wrong stage, surface, premise, capability, obligation, compatibility, rule id, or implementation
+owner fails. The registered distribution is 45 identity / 30 introduced-origin / 35 lossless / 52 merge-conflict /
+four residual / two target-lowering rules.
+
+The same production-genericity wrapper now exposes a `--self-test` CI mode. It runs the four clean witnesses plus
+27 controlled dependency, inventory/schema, rule/alpha/bypass, and flow/authority faults. Raw literal equality,
+substring search, and regex-style matching are separate cases. The clean graph simultaneously exercises legal
+display, provenance capture, and excluded test-only spelling use. CI calls the qualification explicitly; the
+pre-commit doctrine remains the fast clean-tree default. The oracle is compiled only for tests, so the live flow
+remains 2,169 functions / 11,295 helper edges / 10,419 decisions / 1,371 sensitive macros and the production-
+semantic proof digest stays unchanged. The first full CI run proved why that boundary matters: a production
+validator plus `pub(super)` visibility on the five registry roots changed trusted implementation identity and
+correctly made all 24 proof-current chains stale. Test-only accessors now wrap the original private roots; final
+replay is 24 current / zero stale / 54 unmeasurable at all four downstream stages. `.e.vii`, not this
+qualification leaf, owns any proof migration.
+
+Complete repository qualification passes all nine doctrines, formatting, warning-denied Clippy and rustdoc,
+1,953 Rust tests with six intentional ignores and zero failures, five compile-fail doctests, mdBook test/build,
+containment, and final project-data locality. The scheduled cleanup removed the ignored 6,714-file /
+5,118,480-KiB HTML-book plus Rust incremental trees; neither tree nor any requested `.bin`/`.log` residue outside
+them remains.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv (`2026-08-13`) — one structural proof, four independent witnesses
 
 The production-genericity boundary is now an unconditional doctrine rather than a set of individually callable

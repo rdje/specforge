@@ -373,9 +373,12 @@ identity information-flow plus proof-only canonical-authority analysis. The regi
 typed Rust paths and structural classes, never a finite document/vendor/protocol/signal vocabulary.
 The proof is deliberately compositional: Cargo compilation and Rust privacy remain the type/capability
 oracle, executable current-binary proof replay remains semantic authority, and the AST layer supplies
-closed production flow/topology coverage. This clean-tree doctrine does not claim the adversarial
-mutation breadth or executable per-rule alpha obligations owned by
-`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`, nor the population behavioral qualification owned by `.f`.
+closed production flow/topology coverage. The default invocation remains the fast clean-tree gate.
+`scripts/check_production_genericity.sh --self-test`, called explicitly by `scripts/run_ci.sh`, adds six
+forbidden dependency mutations, two inventory/schema mutations, six rule/alpha/bypass mutations, thirteen
+flow/authority mutations, legal display/provenance/test-only controls, and an exact runtime join that executes
+the structural alpha obligation of all 168 registered rules. This structural qualification does not claim the
+population renaming/paraphrase/held-out behavior owned by `.f`.
 
 `CHAIN-CURRENCY` is the registry's first `ci`-tier doctrine. It re-executes the pipeline rather than
 reading a claim: each stage is replayed `--dry-run` from the **persisted** upstream artifact, and the

@@ -97,9 +97,10 @@ module/item/import/call/macro graph with fail-closed syntax and configuration ha
 closed typed boundary registry to that graph and enforces fixed-point raw/identity noninterference, protected
 authority, and proof-only canonical promotion across the complete production surface. `.e.v.iv` now composes
 that analyzer with the dependency, inventory, and rule checks as the unconditional `PRODUCTION-GENERICITY`
-doctrine.
-A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.vi`–`.e.vii` still must adversarially and
-alpha-qualify the registered structural result; `.f` then owns population alpha-renaming, identity, paraphrase,
+doctrine. `.e.vi` adds 27 controlled dependency/schema/rule/flow faults, legal display/provenance/test controls,
+and executable inventory-bound structural alpha obligations for all 168 runtime rules.
+A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.vii` must publish the final structural and
+migration-delta qualification; `.f` then owns population alpha-renaming, identity, paraphrase,
 and held-out qualification before `.6e`. A reproduced 400-page failure also drove resource-sized bounded
 activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.
 

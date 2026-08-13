@@ -4,6 +4,31 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-13 — structural mutation and alpha qualification; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`)
+
+- A test-only `RuleDescriptor` oracle executes more than the production capability/obligation enum pairing. It
+  checks the premise and compatibility topology required by each structural alpha category: introduced symbols need direct
+  grounding, lossless carry needs an upstream claim and lossless compatibility, merge/conflict needs a registered
+  derivation plus upstream or direct grounding, residuals need one of the two closed source/downstream shapes,
+  and target lowering needs registered upstream authority.
+- The five stage-local registry constructors are visible only to their IR parent for qualification. One test
+  expands the independent claim/rule TSVs and exactly joins all 168 runtime descriptors by id, stage, conclusion
+  surface, premise set, capability, alpha obligation, compatibility, and stage implementation owner. The current
+  population is 45 identity-graph, 30 introduction-origin, 35 lossless-topology, 52 merge/conflict-topology,
+  four residual-topology, and two target-safe-renaming obligations.
+- `scripts/check_production_genericity.sh --self-test` retains the four-component clean baseline, then runs the
+  dependency 7/7, inventory 3/3, and rule 7/7 fixture suites, thirteen flow/authority mutations, and the exact
+  runtime alpha join. The 27 faults distinguish raw literal equality, substring, and regex selection; cover
+  unregistered/proofless/laundered/schema/missing-alpha cases; and retain clean display, provenance, and excluded
+  test-only spelling use. `scripts/run_ci.sh` invokes this qualification explicitly while the pre-commit doctrine
+  remains the fast default form of the same wrapper.
+- The oracle is excluded from production-semantic identity, so the live census remains 2,169 functions / 11,295
+  helper edges / 10,419 decision sites / 1,371 sensitive macros and existing proofs remain current. A first
+  production placement plus widened registry-root visibility correctly staled all 24 proof-current chains by
+  changing trusted implementation identity. Restoring private roots behind test-only accessors returns all four
+  replayed stages to 24 current / zero stale / 54 unmeasurable. `.e.vii`, not this leaf, owns migration. This
+  closes structural alpha and adversarial breadth, not `.f` population metamorphics.
+
 ## Session update (2026-08-13 — unconditional structural genericity doctrine; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv`)
 
 - `scripts/check_production_genericity.sh` is now the single clean-tree composition point for the production

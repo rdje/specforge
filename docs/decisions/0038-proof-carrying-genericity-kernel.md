@@ -403,15 +403,19 @@ closure; protected proof and capability construction/calls obey their type contr
 reach its artifact stage's registered proof gate; non-authoritative and identity-declassifier closure cannot
 reach a seam; and verified persistence sinks require a value returned by a registered proof serializer. The live
 report also accounts for 10,419 semantic decisions, 19 protected constructions, 28 protected calls, and 1,371
-sensitive macros. Eleven fixture mutations reject identity/raw decisions, cross-class declassification,
+sensitive macros. Thirteen flow fixtures reject identity selection, distinct raw literal/substring/regex
+decisions, cross-class declassification,
 direct or aliased unregistered mutation, capability forgery, helper/macro laundering, proofless/wrong-stage persistence, and
 duplicate registry identity.
 
 This remains a composition, not an AST-only proof: Cargo compilation and Rust privacy are the type/capability
 oracle, executable ledger replay is canonical authority, and the AST supplies closed whole-surface flow and
 topology coverage. `.e.v.iv` registers the dependency, inventory, rule, and graph/flow checks as one
-unconditional `PRODUCTION-GENERICITY` doctrine. `.e.vi` still owns the broader mutation matrix and executable
-alpha obligations.
+unconditional `PRODUCTION-GENERICITY` doctrine. Its `.e.vi` qualification mode runs 27 controlled dependency,
+inventory/schema, rule/alpha/bypass, and flow/authority mutations. A test-only oracle executes each runtime
+descriptor's capability/compatibility/premise-shaped alpha contract, and its exact independent join
+checks all 168 rule ids, stages, surfaces, premises, capabilities, obligations, compatibilities, and runtime
+module owners against the independent inventories. Population alpha-renaming remains `.f`.
 
 ## Consequences
 

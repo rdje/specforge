@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > can an external absolute input be rebased into the repository
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > can automatic steering mutate canonical IntentIR without review
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -295,5 +297,3 @@
   > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does relation-derived direction synthesis independently invent signal names
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > does removing sentence fallback remove address phase recognition

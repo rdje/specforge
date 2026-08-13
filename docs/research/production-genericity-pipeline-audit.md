@@ -146,17 +146,22 @@ Sensitive input entering an unclassified semantic macro fails instead of being i
 Canonical authority is checked separately: canonical field assignment/mutation, 19 protected constructions, and
 28 protected calls are confined to their registered rule/kernel regions; all 12 seams must reach stage-matched
 proof gates; non-authoritative and identity-declassifier closure must remain disjoint from seams; and persistence
-sinks accept only values produced by registered verified serializers. Eleven controlled mutations reject an
-identity selector, raw literal decision, cross-class declassification, direct or aliased unregistered canonical mutation,
-capability forgery, helper laundering, macro laundering, a proofless or wrong-stage seam, and duplicate registry
-row.
+sinks accept only values produced by registered verified serializers. Thirteen controlled flow mutations reject
+an identity selector; distinct raw literal, substring, and regex decisions; cross-class declassification; direct
+or aliased unregistered canonical mutation; capability forgery; helper or macro laundering; a proofless or
+wrong-stage seam; and duplicate registry identity. The clean fixture simultaneously admits raw spelling in
+display, provenance capture, and excluded test support.
 
 The implementation contains no named-spec vocabulary rule. It is deliberately stronger than a vocabulary
 census and deliberately not presented as AST-alone proof: Cargo/Rust privacy owns types and sealed capabilities,
 the AST owns closed flow/topology coverage, and executable current-binary replay owns semantic authority. The
 registered `PRODUCTION-GENERICITY` doctrine now composes the dependency, exact inventory, rule-join, and graph/
-flow checks unconditionally over the current production surface. `.e.vi` and `.f` retain broader adversarial/
-alpha and population-behavior qualification.
+flow checks unconditionally over the current production surface. Its CI qualification mode adds 27 controlled
+mutations across dependency, inventory/schema, rule/alpha/bypass, and flow/authority boundaries. A test-only
+oracle executes the structural premise/compatibility condition for each selected alpha obligation, and an exact
+independent join proves all 168 runtime descriptors agree with the inventory without changing proof identity.
+`.f` retains population-level
+renaming, paraphrase, negative-control, and held-out behavior qualification.
 
 ## Audit denominator and method
 
@@ -554,8 +559,9 @@ and unrelated imports preserve identity, while a referenced helper or import bin
 binding-aware migration changes only proof/validation metadata across 24 artifacts at each of five stages;
 all 120 remaining public comparisons are exact, chain currency is 24 current / zero stale / 54 unmeasurable,
 and the 120-file same-volume rollback snapshot is removed. This closes registered proof-relation identity. It
-does not close the audit: `.e.v`–`.e.vii` still own AST information-flow enforcement and structural
-qualification, and `.f` still owns population-level behavioral invariance.
+did not close the audit alone; the later `.e.v` graph/flow/doctrine work and `.e.vi` adversarial/alpha work now
+close structural qualification. `.e.vii` owns final structural/migration-delta publication, and `.f` still owns
+population-level behavioral invariance.
 
 ## Historical correction
 
@@ -567,11 +573,11 @@ neutrality and must be annotated as superseded by this audit and the `.6d.ii` re
 
 ## Exit criteria
 
-This audit closes only the discovery slice. The production-genericity parent remains open until:
+Discovery and structural qualification are complete. The production-genericity parent remains open until:
 
 - every P0/P1 item above is removed or relocated to conformance;
 - the core compiles without corpus-specific public types/modules;
-- the AST/dependency mutations fail closed;
+- the already-green AST/dependency mutation and per-rule structural-alpha gates remain green;
 - alpha-renaming, identity perturbation, paraphrase, negative-control, held-out, full replay, and full
   repository gates pass;
 - code, roadmap, task tree, live docs, Knowledge Map, and mdBook all state the same verified boundary.

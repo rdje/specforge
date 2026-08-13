@@ -17,16 +17,20 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` is complete from clean predecessor `acd2326e`.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` is complete and awaiting commit from
+  clean predecessor `9f37989f`.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
 - Current state: all five proof-bearing stages use compiler-derived production-semantic implementation identity,
   and the exact live denominator is 77 production modules / 41 claim families / 168 artifact fields. The
-  dependency, inventory, rule, and compiled graph/flow checks now execute unconditionally as the gate-tier
-  `PRODUCTION-GENERICITY` doctrine over the closed 140-row boundary and 2,169-function / 11,295-helper-edge /
-  10,419-decision surface. All nine doctrines, 1,952/6/0 Rust tests, mdBook, containment, locality, rollover, and
-  cleanup pass. This is the clean structural baseline, not behavioral signoff.
-- Next action: activate `.6d.ii.e.vi` from the clean `.e.v.iv` commit, then add the broader adversarial mutation
-  matrix and execute every registered rule's alpha obligation without folding those oracles into the baseline.
-- In-flight uncommitted: none after the handoff commit. No background job.
+  dependency, inventory, rule, and compiled graph/flow checks execute unconditionally as `PRODUCTION-GENERICITY`;
+  CI adds 27 controlled faults and an exact inventory-bound structural alpha join over all 168 runtime rules.
+  The 140-row flow remains 2,169 functions / 11,295 helper edges / 10,419 decisions / 1,371 macros. Qualification,
+  warning-deny Clippy, and 1,953/6/0 Rust tests plus five doctests pass. This is structural, not `.f` behavioral,
+  signoff. Complete CI passes all nine doctrines, formatting, warning-denied Clippy/rustdoc, 1,953 Rust tests /
+  six ignores / zero failures, five compile-fail doctests, mdBook, and final locality. Scheduled cleanup removed
+  6,714 ignored files / 5,118,480 KiB from the HTML-book and incremental trees with residue absent.
+- Next action: commit `.e.vi`, verify the handoff-ready tree, then activate `.e.vii` only from that clean state.
+- In-flight uncommitted: completed `.e.vi` code, tests, CI evidence, cleanup evidence, and synchronized
+  documentation; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

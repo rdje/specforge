@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > how does SpecForge flag vague or ambiguous spec language
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
@@ -295,5 +297,3 @@
   > how is the precision of the broadened (non-gold) extraction measured / estimated
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how is the protocol initiator actor identified structurally without a name list

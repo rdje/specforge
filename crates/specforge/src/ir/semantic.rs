@@ -440,6 +440,11 @@ fn semantic_rule_registry() -> DerivationResult<RuleRegistry> {
     RuleRegistry::new(registrations, [])
 }
 
+#[cfg(test)]
+pub(super) fn rule_registry_for_qualification() -> DerivationResult<RuleRegistry> {
+    semantic_rule_registry()
+}
+
 fn verify_semantic_rule_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
     let expected_bytes = context
         .premise_bytes(0)?

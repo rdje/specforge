@@ -411,11 +411,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv — register production genericity doctrine`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`
-  Status: `pending`
+  Status: `done`
   Goal: `prove the structural gate with adversarial mutations and per-rule alpha obligations`
   Acceptance: `controlled mutations for forbidden dependency, identity selector, raw literal/substring/regex decision, unregistered rule, proofless promotion, taint laundering, schema specialization, and missing alpha declaration all fail; every registered rule passes its structural alpha obligation and legal display/provenance/test uses remain admitted`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `scripts/check_production_genericity.sh --self-test reports all nine baseline/qualification components PASS: dependency 7/7, inventory 3/3, and rule 7/7 fixture suites plus thirteen flow/authority mutations reject 27 controlled faults while legal display/provenance/excluded-test use passes; the test-only independent runtime join proves all 168 exact rule descriptors and executes their structural alpha obligations without changing proof identity; live flow remains 2,169 functions / 11,295 helper edges / 10,419 decisions / 19 protected constructions / 28 protected calls / 1,371 macros; exact chain replay is 24 current / zero stale / 54 unmeasurable at all four downstream stages; full CI passes all nine doctrines, formatting, warning-deny Clippy/rustdoc, 1,953 Rust tests / six ignores / zero failures, five compile-fail doctests, mdBook test/build, containment, and final locality; cleanup removes 6,714 ignored files / 5,118,480 KiB from the disposable HTML-book and incremental trees with requested .bin/.log residue absent`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi — qualify structural genericity`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`
   Status: `pending`
@@ -501,7 +501,7 @@ expressiveness as the bottleneck.
 | 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `done` | all 77 inventoried files are deterministically accounted for; the complete production syntax graph and fail-closed resolution controls pass |
 | 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `done` | closed registry and fixed-point AST flow enforce raw/identity control and proof-only promotion |
 | 38 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | `done` | four structural witnesses now run as one unconditional gate-tier doctrine over the clean production baseline |
-| 39 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
+| 39 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `done` | 27 controlled faults and all 168 inventory-bound runtime alpha obligations pass |
 | 40 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
 | 41 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
 | 42 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
@@ -865,6 +865,11 @@ The doctrine proves a composition, not a single source scan:
 | `2026-08-13` | `.6d.ii.e.v.iv` composed structural doctrine | `bash -n scripts/check_production_genericity.sh scripts/check_doctrines.sh`; `bash scripts/check_production_genericity.sh`; `bash scripts/check_doctrines.sh` | PASS: all four dependency, exact inventory, exact rule-join, and compiled information-flow components pass; the shared driver reports `PRODUCTION-GENERICITY` PASS and 8/8 gate-tier doctrines executed from nine registered, with only chain currency explicitly deferred |
 | `2026-08-13` | `.6d.ii.e.v.iv` live-doc containment and mandatory rollover | Knowledge Map generation/check; mdBook aggregate authority; exact rollover-plan dry run and root-last apply; `bash scripts/check_live_document_size.sh` | PASS: 233 facts / 1,786 question keys regenerate exactly; 38 book files total 15,696 lines / 999,396 bytes under a unique task authority; `rust-codebase-analysis-0006` seals eight records / 163 lines / 14,679 bytes and leaves 53 records / 1,066 lines warning-safe; all four archive chains and 804 governed Markdown files pass |
 | `2026-08-13` | `.6d.ii.e.v.iv` complete repository qualification and cleanup | `bash scripts/run_ci.sh`; exact disposable-artifact and `.bin`/`.log` census | PASS: all nine doctrines including exact chain currency, formatting, warning-deny Clippy/rustdoc, application 470/0/0 + conformance 139/1/0 + core 1,339/5/0 + graph 4/0/0 = 1,952 Rust tests passed / six ignored / zero failed, five compile-fail doctests, 156/156 KG fixtures, mdBook test/build, and final locality; removed 73-file / 8,912-KiB disposable HTML plus the empty incremental directory; requested `.bin`/`.log` residue is zero |
+| `2026-08-13` | `.6d.ii.e.vi` structural mutation matrix | `bash scripts/check_production_genericity.sh --self-test`; dependency/inventory/rule fixture suites; focused compiled-flow fixture | PASS: all nine baseline/qualification components pass; six dependency, two inventory/schema, six rule/alpha/bypass, and thirteen flow/authority mutations reject 27/27 faults; identity plus distinct raw literal/substring/regex decisions, unregistered inference, proofless/wrong-stage promotion, capability/helper/macro laundering, schema specialization, and missing alpha fail while display/provenance/excluded-test uses remain admitted |
+| `2026-08-13` | `.6d.ii.e.vi` exact runtime alpha join | five production stage registries; independent claim/rule TSV expansion; `cargo test -p specforge-core --lib ir::production_genericity_qualification_tests::every_registered_rule_satisfies_its_inventory_bound_structural_alpha_obligation -- --exact` | PASS: all 168 runtime ids, stages, surfaces, premise sets, capabilities, obligations, compatibilities, and stage implementation owners match inventory exactly; the test-only oracle executes 45 identity-graph / 30 introduction-origin / 35 lossless / 52 merge-conflict / four residual / two target-lowering structural obligations; invalid introduction-origin and lossless-carry shapes reject |
+| `2026-08-13` | `.6d.ii.e.vi` proof-identity boundary correction | first `bash scripts/run_ci.sh`; exact chain-currency failure; production/test configuration inspection; final `bash scripts/check_chain_currency.sh --check` | ROOT-CAUSED/PASS: a production validator plus `pub(super)` registry-root visibility changed trusted implementation identity and correctly made all 24 proof-current chains stale; restored private production roots behind `cfg(test)` accessors because `.e.vii`, not `.e.vi`, owns proof migration; final EvidenceIR/SemanticIR/IntentIR/adapter replay is each 24 current / zero stale / 54 unmeasurable with 24 blocked adapter states and zero emitted files |
+| `2026-08-13` | `.6d.ii.e.vi` focused workspace qualification | `RUSTFLAGS='-D warnings' cargo clippy --workspace --all-targets -- -D warnings`; `RUSTFLAGS='-D warnings' cargo test --workspace -- --format terse` | PASS: warning-deny Clippy; application 470/0/0 + conformance 139/1/0 + core 1,340/5/0 + graph 4/0/0 = 1,953 Rust tests passed / six ignored / zero failed plus five compile-fail doctests |
+| `2026-08-13` | `.6d.ii.e.vi` public/retrieval projection | Knowledge Map and fact-catalog generators/checkers; exact mdBook aggregate authority; `scripts/check_book_current_truth.sh` | PASS: 233 facts / 1,787 unique question keys and 218-card bounded title catalog regenerate exactly; maintained book is 38 files / 15,700 lines / 999,878 bytes from exact 15,696-line / 999,396-byte baseline plus authorized +4-line / +482-byte delta |
 | `2026-08-13` | scheduled artifact cleanup | exact `.bin`/`.log` census under generated and Cargo release/debug trees; rebuildable incremental-cache removal; residue census | PASS: removed 5,085 files / 5,325,300 KiB from `target/debug/incremental`; the directory is absent and zero `.bin`/`.log` files remain in generated/release/debug-deps |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
@@ -1617,6 +1622,32 @@ the reviewed replay can name its production revision.
   codebase analysis, status/change/rationale ledgers, mdBook, containment authority, and resume pointer publish
   the same registered clean baseline and preserve `.e.vi`/`.f` as the remaining qualification owners.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`
+
+- [x] **REPRODUCE / MEASURE** — `bash scripts/check_production_genericity.sh --self-test` independently reports
+  all nine requested components PASS: the four live structural witnesses, dependency 7/7, inventory 3/3, rule
+  7/7, thirteen flow mutations, and the 168-rule runtime alpha join.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/derivation.rs:822` previously validated only the
+  capability/alpha enum pair, so a descriptor could name an obligation without the premise/compatibility shape
+  needed to witness it; the earlier flow fixture also combined raw literal and substring selection and did not
+  directly exercise regex-style selection or all legal spelling sinks.
+- [x] **ADDRESSED (verified)** — a test-only CI oracle now executes all seven structural obligation shapes; an
+  independent two-inventory expansion joins every id/stage/surface/premise/capability/alpha/compatibility/owner
+  of all 168 live descriptors; 27/27 controlled dependency/schema/rule/flow faults reject.
+- [x] **NO REGRESSION** — legal display, provenance, and excluded test-only uses remain admitted; warning-deny
+  `cargo clippy --workspace --all-targets` passes, and `cargo test --workspace` passes application 470 +
+  conformance 139 + core 1,340 + graph 4 = 1,953 Rust tests / six ignores / zero failures plus five doctests.
+- [x] **GENERICITY (ADR 0006)** — faults and obligations are expressed as dependency direction, source class,
+  premise kind, capability, topology, and proof authority. No document, vendor, protocol, signal, corpus, or
+  finite forbidden-vocabulary exception participates.
+- [x] **LOCKSTEP** — code, CI, toolbox, doctrine standard, ADR 0038, audit, roadmap, task tree, Knowledge Map,
+  codebase analysis, live docs, mdBook, and resume pointer publish structural qualification while leaving exact
+  migration-delta signoff to `.e.vii` and population behavior to `.f`.
+- [x] **COMPLETE GATE / CLEANUP** — full CI passes all nine doctrines, formatting, warning-denied Clippy/rustdoc,
+  1,953 Rust tests / six ignores / zero failures, five compile-fail doctests, mdBook test/build, containment, and
+  final locality; cleanup removes the exact 6,714-file / 5,118,480-KiB ignored HTML-book and incremental trees,
+  with both roots and requested `.bin`/`.log` residue absent.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1660,10 +1691,24 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii — derive compiled production graph` | four Cargo-rooted production targets, exact 77-file accounting, deterministic module/item/import/call/macro graph, honest compiler-owned dispatch, and eight fail-closed controls |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii — enforce production information flow` | closed typed flow registry, fixed-point helper/macro propagation, raw/identity noninterference, protected authority, and proof-only canonical seams |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv — register production genericity doctrine` | one unconditional four-component structural doctrine, clean baseline qualification, exact public/durable synchronization, and required Rust-analysis rollover |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi — qualify structural genericity` | 27 controlled dependency/schema/rule/flow faults, legal non-authority controls, and exact executable structural alpha obligations for all 168 runtime rules |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
 
+- `2026-08-13`: Completed `.6d.ii.e.vi`. The CI form of the single production-genericity wrapper now runs 27
+  controlled dependency, inventory/schema, rule/alpha/bypass, and flow/authority faults; distinct identity, raw
+  literal/substring/regex, unregistered inference, proofless promotion, laundering, schema specialization, and
+  missing-alpha cases reject while display/provenance/excluded-test uses pass. Registry admission executes the
+  premise/compatibility shape of each alpha category, and an independent inventory expansion exactly joins all
+  168 live descriptors. Full CI passes all nine doctrines, formatting, warning-deny Clippy/rustdoc, 1,953/6/0
+  Rust tests, five doctests, mdBook, containment, and locality; cleanup removes 6,714 ignored files /
+  5,118,480 KiB with residue absent. `.e.vii` remains the next structural/migration-delta owner; `.f` retains
+  population behavior.
+- `2026-08-13`: Activated `.6d.ii.e.vi` only after `.e.v.iv` committed at `9f37989f`, the post-commit tree was
+  clean, the commit brief was zero bytes, and all nine doctrines plus the complete 1,952-test repository gate
+  passed. This leaf owns the closed mutation matrix and executable alpha obligation for every registered rule;
+  it may not absorb `.e.vii` migration-delta qualification or `.f` whole-population behavioral signoff.
 - `2026-08-13`: Completed `.6d.ii.e.v.iv` and parent `.e.v`. One repository-root-derived wrapper composes all
   four dependency/inventory/rule/compiled-flow witnesses without hiding later failures, and the shared driver now
   executes it unconditionally as gate-tier `PRODUCTION-GENERICITY`. Direct composition, all eight gate doctrines,

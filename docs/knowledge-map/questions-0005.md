@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > how is the protocol initiator actor identified structurally without a name list
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how is the purpose category different from document_class (richer 6-way semantic taxonomy vs coarse 4-way structural proxy; consumes document_class as one input, never replaces it)
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -296,5 +298,3 @@
   > is mdbook test part of the canonical SpecForge CI gate
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > is qwen2.5:14b-instruct good enough for NLI
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is relation-completeness the right bar dimension for register / command / coherency protocols

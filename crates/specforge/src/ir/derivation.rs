@@ -788,6 +788,11 @@ impl RuleDescriptor {
         self.alpha_obligation
     }
 
+    #[cfg(test)]
+    pub(crate) fn compatibility(&self) -> RuleCompatibility {
+        self.compatibility
+    }
+
     fn validate(&self) -> DerivationResult<()> {
         if self.schema_version != RULE_DESCRIPTOR_SCHEMA_VERSION {
             return Err(DerivationError::new(format!(
@@ -816,6 +821,60 @@ impl RuleDescriptor {
         }
         validate_identifier("rule conclusion surface", &self.conclusion_surface, 128)?;
         validate_alpha_pair(self.symbol_capability, self.alpha_obligation)
+    }
+
+    /// Qualify the premise and compatibility shape required by this rule's alpha contract.
+    ///
+    /// This CI-only structural oracle deliberately does not participate in production-semantic proof
+    /// identity. Population-level metamorphic behavior remains a separate qualification boundary.
+    #[cfg(test)]
+    pub(crate) fn validate_structural_alpha_obligation(&self) -> DerivationResult<()> {
+        validate_alpha_pair(self.symbol_capability, self.alpha_obligation)?;
+
+        let has = |kind| self.premise_kinds.contains(&kind);
+        let direct_grounding = has(PremiseKind::SourceSpan)
+            || has(PremiseKind::TableCell)
+            || has(PremiseKind::VisualRegion)
+            || has(PremiseKind::GroundedModelProposal);
+        let valid = match self.alpha_obligation {
+            AlphaObligation::ByteIdenticalNonSymbolOutput => {
+                self.compatibility == RuleCompatibility::CurrentOnly
+            }
+            AlphaObligation::IdentityGraphInvariant => {
+                self.compatibility == RuleCompatibility::CurrentOnly
+            }
+            AlphaObligation::IntroducedSymbolsPreserveOrigins => {
+                self.compatibility == RuleCompatibility::CurrentOnly && direct_grounding
+            }
+            AlphaObligation::LosslessTopologyInvariant => {
+                self.compatibility == RuleCompatibility::LosslessCarry
+                    && has(PremiseKind::UpstreamClaim)
+            }
+            AlphaObligation::MergeConflictTopologyInvariant => {
+                self.compatibility == RuleCompatibility::CurrentOnly
+                    && has(PremiseKind::RegisteredDerivation)
+                    && (has(PremiseKind::UpstreamClaim) || direct_grounding)
+            }
+            AlphaObligation::ResidualTopologyInvariant => {
+                self.compatibility == RuleCompatibility::CurrentOnly
+                    && ((has(PremiseKind::SourceSpan) && has(PremiseKind::UniversalAxiom))
+                        || (has(PremiseKind::RegisteredDerivation)
+                            && has(PremiseKind::UpstreamClaim)))
+            }
+            AlphaObligation::TargetSafeRenaming => {
+                self.compatibility == RuleCompatibility::CurrentOnly
+                    && has(PremiseKind::RegisteredDerivation)
+                    && has(PremiseKind::UpstreamClaim)
+            }
+        };
+        if valid {
+            Ok(())
+        } else {
+            Err(DerivationError::new(format!(
+                "rule '{}' does not satisfy the premise/compatibility shape required by its structural alpha obligation",
+                self.rule_id.as_str()
+            )))
+        }
     }
 }
 
@@ -2542,6 +2601,11 @@ mod tests {
         capability: SymbolCapabilityClass,
         obligation: AlphaObligation,
     ) -> RuleDescriptor {
+        let compatibility = if capability == SymbolCapabilityClass::LosslessCarry {
+            RuleCompatibility::LosslessCarry
+        } else {
+            RuleCompatibility::CurrentOnly
+        };
         RuleDescriptor::new(
             RuleId::try_from(id.to_string()).unwrap(),
             1,
@@ -2552,7 +2616,7 @@ mod tests {
             "synthetic_claims",
             capability,
             obligation,
-            RuleCompatibility::CurrentOnly,
+            compatibility,
         )
         .unwrap()
     }
@@ -2805,6 +2869,45 @@ mod tests {
         )
         .unwrap_err();
         assert!(error.to_string().contains("incompatible"));
+
+        let descriptor = RuleDescriptor::new(
+            RuleId::try_from("synthetic.missing_origin".to_string()).unwrap(),
+            1,
+            "crate::ir::derivation::tests",
+            Sha256Digest::of_bytes(b"derivation test verifier v1"),
+            [PremiseKind::UniversalAxiom],
+            IrStage::EvidenceIr,
+            "synthetic_claims",
+            SymbolCapabilityClass::GrammarIntroduces,
+            AlphaObligation::IntroducedSymbolsPreserveOrigins,
+            RuleCompatibility::CurrentOnly,
+        )
+        .unwrap();
+        let error = descriptor
+            .validate_structural_alpha_obligation()
+            .unwrap_err();
+        assert!(error.to_string().contains("structural alpha obligation"));
+
+        let descriptor = RuleDescriptor::new(
+            RuleId::try_from("synthetic.nonlossless_carry".to_string()).unwrap(),
+            1,
+            "crate::ir::derivation::tests",
+            Sha256Digest::of_bytes(b"derivation test verifier v1"),
+            [
+                PremiseKind::RegisteredDerivation,
+                PremiseKind::UpstreamClaim,
+            ],
+            IrStage::EvidenceIr,
+            "synthetic_claims",
+            SymbolCapabilityClass::LosslessCarry,
+            AlphaObligation::LosslessTopologyInvariant,
+            RuleCompatibility::CurrentOnly,
+        )
+        .unwrap();
+        let error = descriptor
+            .validate_structural_alpha_obligation()
+            .unwrap_err();
+        assert!(error.to_string().contains("structural alpha obligation"));
     }
 
     #[test]

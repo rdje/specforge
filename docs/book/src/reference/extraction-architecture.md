@@ -138,9 +138,10 @@ sensitive macro input, canonical mutations, protected construction/calls, proof 
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
 The dependency, inventory, rule, compiled-graph, and information-flow checks now run together as the
-unconditional `PRODUCTION-GENERICITY` doctrine. Executable per-rule alpha qualification, broader adversarial
-structural qualification, and whole-population behavioral qualification remain mandatory. Until those close,
-SpecForge does not claim production-genericity signoff.
+unconditional `PRODUCTION-GENERICITY` doctrine. CI adds 27 controlled faults, distinct literal/substring/regex
+decisions, legal display/provenance/test controls, and an exact inventory-to-runtime join that executes the
+structural alpha obligation of all 168 rules. Whole-population renaming, paraphrase, negative-control, and
+held-out qualification remain mandatory, so SpecForge does not yet claim production-genericity signoff.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively

@@ -124,8 +124,10 @@ analysis. The graph follows the complete production Cargo surface and rejects ra
 semantic control outside registered universal grammar/declassification, unregistered canonical mutation,
 protected capability or proof forgery, and proofless persistence. Its registry contains typed Rust paths and
 data classes, not document, vendor, protocol, or signal names. Cargo/Rust privacy remains the type oracle and
-executable replay remains semantic authority. The clean-tree pass does not replace the broader adversarial
-mutation, per-rule alpha, held-out, or population behavioral qualifications, which remain separate signoff work.
+executable replay remains semantic authority. CI adds the `--self-test` qualification: 27 controlled dependency,
+schema, rule, and flow faults; legal display/provenance/test-only uses; and an exact join from all 168 runtime
+rules to their inventory-declared structural alpha contracts. Population renaming, paraphrase, negative-control,
+and held-out behavior remain separate signoff work.
 
 It also runs the roadmap current/history contract. The structural check authenticates the exact
 1,487-line source capsule, five exhaustive source regions, all 23 workstream ids and owning task

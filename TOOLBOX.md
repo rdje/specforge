@@ -326,9 +326,11 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   proof-only canonical-authority analysis. All four components run and report even when one fails.
 - **WHEN:** before any production extraction, proof, persistence, or package-boundary change; it also runs
   unconditionally through the doctrine driver and pre-commit hook.
-- **HOW:** `bash scripts/check_production_genericity.sh`
-- **LIMIT:** this proves the clean current structural surface. The broader mutation matrix and executable
-  per-rule alpha obligations are separate qualification oracles, not hidden inside this baseline check.
+- **HOW:** `bash scripts/check_production_genericity.sh` for the fast clean-tree doctrine;
+  `bash scripts/check_production_genericity.sh --self-test` for the CI qualification matrix and exact
+  inventory-to-runtime alpha-obligation join over all 168 rules.
+- **LIMIT:** structural alpha qualification proves declared capability/premise/topology invariants, not the
+  population renaming/paraphrase/held-out behavior owned by `.f`.
 
 ### 7.3 `scripts/check_task_tree_archive.pl`
 - **WHAT:** validates the contract-driven terminal task lifecycle. `source_locked` pins the still-live source and

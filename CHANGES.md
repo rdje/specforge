@@ -1,3 +1,22 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi — qualify structural genericity
+
+- Made every rule's alpha declaration executable in a test-only CI oracle that enforces the required
+  capability/premise/compatibility topology, and added an independent exact join from both checked inventories to
+  all 168 runtime descriptors across the five stage registries without changing production proof identity.
+- Added the production-genericity `--self-test` mode and wired it into full CI. It runs 27 controlled dependency,
+  schema, rule, alpha, bypass, information-flow, and proof-authority faults while keeping legal display,
+  provenance, and excluded test-only spelling uses admitted.
+- Split raw-content qualification into distinct literal equality, substring, and regex-style decisions; added a
+  missing-alpha mutation; and retained explicit forbidden dependency, schema specialization, unregistered rule,
+  proofless promotion, capability forgery, and helper/macro laundering coverage.
+- The structural census remains 140 boundary rows / 2,169 functions / 11,295 helper edges / 10,419 decisions / 19
+  protected constructions / 28 protected calls / 1,371 sensitive macros. Population-level alpha-renaming,
+  paraphrase, negative-control, and held-out signoff remains `.f`.
+- Passed complete repository qualification: all nine doctrines including exact chain currency, formatting,
+  warnings-denied Clippy/rustdoc, 1,953 Rust tests passed / six ignored / zero failed, five compile-fail doctests,
+  mdBook test/build, containment, and final project-data locality. Removed the 6,714-file / 5,118,480-KiB
+  disposable HTML-book and Rust incremental trees; requested `.bin`/`.log` residue outside those trees is zero.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv — register the production-genericity doctrine
 
 - Added one repository-root-derived `scripts/check_production_genericity.sh` composition that runs all four

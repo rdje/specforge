@@ -70,6 +70,8 @@
   > How are production implementation digests derived?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How are production prompts kept specification neutral?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How are runtime alpha obligations, adversarial mutations, and legal raw-spelling uses structurally qualified?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How does EvidenceIR schema 2 handle old protocol-specific artifacts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -295,5 +297,3 @@
   > (:4715-4733), so the header is a veto and never a source. Corpus: 2,540 encoding tables -> 281 header-nameable <FIELD> value|Description -> 134 minting a non-empty enum after the .5.ii spine gate, in 10 docs. GO on the lever, NO-GO on the naive predicate; CODE deferred to .5.iv.a)
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > can an estimated point claim a trend without paired uncertainty history
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > can an external absolute input be rebased into the repository

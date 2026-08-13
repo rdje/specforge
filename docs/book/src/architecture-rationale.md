@@ -211,8 +211,9 @@ raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary
 2,169 functions, 11,295 helper edges, 10,419 decision sites, and sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
-checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`; adversarial alpha and behavioral
-renaming/paraphrase/held-out qualification still follow.
+checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
+dependency/schema/rule/flow faults and joins every one of the 168 runtime descriptors to its independently
+inventoried structural alpha contract. Population renaming/paraphrase/held-out qualification still follows.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

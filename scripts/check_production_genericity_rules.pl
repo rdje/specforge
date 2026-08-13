@@ -390,6 +390,11 @@ sub run_self_tests {
         die "capability-alpha mutation was admitted\n"
             if !grep { /requires alpha obligation/ } @{$alpha};
 
+        write_text($rules, $original =~ s/\tidentity_graph_invariant\t/\t\t/r);
+        my ($missing_alpha) = inspect_rules($fixture);
+        die "missing-alpha-declaration mutation was admitted\n"
+            if !grep { /13 non-empty TSV fields/ } @{$missing_alpha};
+
         write_text($rules, $original =~ s/source\.family\tsource_ir\tsource\.family/source.family\tsource_ir\tevidence.family/r);
         my ($stem) = inspect_rules($fixture);
         die "rule-stem mutation was admitted\n"
@@ -413,7 +418,7 @@ sub run_self_tests {
     remove_tree($fixture) if -e $fixture;
     die "self-test residue remains at $fixture\n" if -e $fixture;
     die $failure if $failure;
-    print "production-genericity-rules self-test: 6/6 pass\n";
+    print "production-genericity-rules self-test: 7/7 pass\n";
 }
 
 $root //= abs_path(File::Spec->catdir($Bin, '..'));
