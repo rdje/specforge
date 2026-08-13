@@ -43,6 +43,11 @@ Validation may update only `validation_reports` through one closed typed mutatio
 and extends proof. Test fixtures have separately compiled authority and cannot enable a production bypass through
 artifact data.
 
+Adapter proof currency uses the shared
+[production-semantic registry/verifier closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met),
+not whole `adapters.rs`/`isf_ir.rs` file hashes. The current binary still reconstructs typed lowering and compares
+the complete result, while the pending AST doctrine owns whole-core helper and information-flow enforcement.
+
 ## Why the ISF IR exists
 
 Before the ISF IR, the adapter emitted ISF text by string concatenation ("string-bashing"). This caused bugs that were invisible to the compiler:

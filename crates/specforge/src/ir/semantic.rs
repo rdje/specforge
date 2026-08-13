@@ -11,6 +11,7 @@ use crate::ir::derivation::{
     PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
     SymbolCapabilityClass, ValidatedPriorScope, VerifiedProofLedger,
+    production_semantic_implementation_digest,
 };
 use crate::ir::evidence::{
     EvidenceIr, InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
@@ -386,7 +387,7 @@ fn semantic_derivation_error(error: impl std::fmt::Display) -> AppError {
 }
 
 fn semantic_rule_registry() -> DerivationResult<RuleRegistry> {
-    let implementation_sha256 = Sha256Digest::of_bytes(include_bytes!("semantic.rs"));
+    let implementation_sha256 = production_semantic_implementation_digest(IrStage::SemanticIr)?;
     let registrations = SEMANTIC_RULE_FIELDS
         .iter()
         .map(|(field, family)| {

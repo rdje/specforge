@@ -11,7 +11,7 @@ use crate::ir::derivation::{
     AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
     PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
-    SymbolCapabilityClass, VerifiedProofLedger,
+    SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
 use crate::persisted_path::{
     PersistedPathOrigin, infer_existing_origin, normalize_for_storage, resolve_existing,
@@ -66,13 +66,6 @@ impl SourceGroundedProposal {
         }
     }
 
-    fn surface(&self) -> &'static str {
-        match self {
-            Self::VisualObservation { .. } => "visual_assets",
-            Self::TableGridRepair { .. } | Self::TableClassification { .. } => "structured_tables",
-        }
-    }
-
     fn target_index(
         &self,
         visual_assets: &[VisualAsset],
@@ -98,6 +91,14 @@ impl SourceGroundedProposal {
                     })
             }
         }
+    }
+}
+
+fn source_grounded_proposal_surface(proposal: &SourceGroundedProposal) -> &'static str {
+    match proposal {
+        SourceGroundedProposal::VisualObservation { .. } => "visual_assets",
+        SourceGroundedProposal::TableGridRepair { .. }
+        | SourceGroundedProposal::TableClassification { .. } => "structured_tables",
     }
 }
 
@@ -1060,7 +1061,7 @@ fn source_derivation_error(error: impl std::fmt::Display) -> AppError {
 }
 
 fn source_rule_registry() -> DerivationResult<RuleRegistry> {
-    let implementation_sha256 = Sha256Digest::of_bytes(include_bytes!("source.rs"));
+    let implementation_sha256 = production_semantic_implementation_digest(IrStage::SourceIr)?;
     let registrations = SOURCE_RULE_FIELDS
         .iter()
         .map(|(field, family)| {
@@ -1111,10 +1112,16 @@ fn source_rule_registry() -> DerivationResult<RuleRegistry> {
                 alpha,
                 RuleCompatibility::CurrentOnly,
             )?;
-            Ok(RuleRegistration::new(
-                descriptor,
-                verify_source_rule_relation,
-            ))
+            Ok(RuleRegistration::new(descriptor, {
+                #[cfg(any(test, feature = "test-support"))]
+                {
+                    verify_source_test_rule_relation
+                }
+                #[cfg(not(any(test, feature = "test-support")))]
+                {
+                    verify_source_rule_relation
+                }
+            }))
         })
         .collect::<DerivationResult<Vec<_>>>()?;
     RuleRegistry::new(registrations, [])
@@ -1886,6 +1893,24 @@ fn source_validation_report_from_fields(
     })
 }
 
+#[cfg(any(test, feature = "test-support"))]
+fn verify_source_test_rule_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
+    let premise = context
+        .premise_bytes(0)?
+        .ok_or_else(|| DerivationError::new("SourceIR rule requires exact captured bytes"))?;
+    if context.proof().premises().iter().any(|premise| {
+        matches!(
+            premise,
+            PremiseRef::SourceSpan { span_id, .. }
+                if span_id.starts_with("test-fixture-source-field:")
+        )
+    }) && premise == context.conclusion_json()
+    {
+        return Ok(());
+    }
+    verify_source_rule_relation(context)
+}
+
 fn verify_source_rule_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
     if context.proof().address().surface() == "validation_reports" {
         if context.proof().address().field_path().is_some() {
@@ -1975,17 +2000,6 @@ fn verify_source_rule_relation(context: RuleVerificationContext<'_>) -> Derivati
     let premise = context
         .premise_bytes(0)?
         .ok_or_else(|| DerivationError::new("SourceIR rule requires exact captured bytes"))?;
-    #[cfg(any(test, feature = "test-support"))]
-    if context.proof().premises().iter().any(|premise| {
-        matches!(
-            premise,
-            PremiseRef::SourceSpan { span_id, .. }
-                if span_id.starts_with("test-fixture-source-field:")
-        )
-    }) && premise == context.conclusion_json()
-    {
-        return Ok(());
-    }
     let per_record = context.proof().address().field_path().is_some();
     match context.proof().address().surface() {
         "visual_assets" | "structured_tables" | "document_sections" => {
@@ -2040,7 +2054,9 @@ fn verify_source_rule_relation(context: RuleVerificationContext<'_>) -> Derivati
                     .map_err(|error| {
                         DerivationError::new(format!("invalid grounded SourceIR proposal: {error}"))
                     })?;
-                if proposal.surface() != context.proof().address().surface() {
+                if source_grounded_proposal_surface(&proposal)
+                    != context.proof().address().surface()
+                {
                     return Err(DerivationError::new(
                         "grounded SourceIR proposal targets the wrong classification surface",
                     ));
@@ -3071,7 +3087,10 @@ impl SourceIr {
                     })?;
             for proposal in &context.grounded_proposals {
                 let target_index = proposal.target_index(&base_visuals, &base_tables)?;
-                let record_key = format!("{}[{target_index}]", proposal.surface());
+                let record_key = format!(
+                    "{}[{target_index}]",
+                    source_grounded_proposal_surface(proposal)
+                );
                 let target_premises = premises.get(&record_key).ok_or_else(|| {
                     DerivationError::new(format!(
                         "grounded proposal '{}' lacks target capture",
@@ -3103,7 +3122,7 @@ impl SourceIr {
                     vec![direct_grounding],
                 )?;
                 premises
-                    .get_mut(proposal.surface())
+                    .get_mut(source_grounded_proposal_surface(proposal))
                     .expect("classification root premise")
                     .push(model_premise.clone());
                 premises

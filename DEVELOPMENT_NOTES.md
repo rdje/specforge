@@ -1,4 +1,51 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii (`2026-08-13`) — proof identity follows production semantics
+
+The five proof-bearing stages no longer use their complete Rust source modules as implementation identity.
+`crates/specforge-core/build.rs` now derives schema-1 production-semantic digests while the core package is being
+compiled. The derivation roots each stage at its canonical production registry constructor, follows the selected
+verifier plus every referenced stage-local production item and exact import binding, and incorporates a normalized
+digest of the complete trusted derivation kernel. Root absence or ambiguity is a build error. The generated Rust
+constants are compiler inputs and the runtime registries consume those constants directly; there is no separately
+maintained manifest that can drift from the binary.
+
+The normalization boundary is deliberate. Rust comments, doc attributes, formatting, lint attributes, known-true
+production configuration, and known-false `cfg_attr` do not define proof authority. `cfg(test)`, `test-support`, and
+`conformance-support` items and nested fields/statements/match arms are removed. Unknown platform or feature
+configuration is retained conservatively rather than guessed away. Referenced macros are parsed as expression
+trees where possible and scanned conservatively otherwise. Import declarations participate as exact leaf
+bindings, so rebinding a verifier dependency changes identity even when the called identifier is unchanged.
+
+SourceIR exposed the important fixture case. Its test-only typed fixture premise used to sit inside the production
+verifier behind `cfg(test)`. It is now a separately compiled wrapper selected by the registry only in test/support
+builds; production selects `verify_source_rule_relation` directly. This preserves conformance construction without
+letting fixture authority or named examples enter the production proof relation or its digest.
+
+The build self-test mutates an in-memory synthetic module. Comments, docs, formatting, top-level and nested test
+code, a known-true production `cfg`, a false `cfg_attr`, unrelated production items, and unrelated imports leave
+the digest unchanged. Changing a referenced helper body or rebinding a referenced import changes it. Runtime
+coverage then checks all five rule-field declarations, registry roots, production verifier roots, SourceIR's
+deeper helper closure, import nodes, unique stage digests, and the exact six repository-relative production input
+files. The pre-existing adversarial ledger test still proves that changing an implementation digest changes the
+ruleset and makes persisted proof stale.
+
+This is exact for registered proof-relation identity; it is not the later whole-core information-flow theorem.
+Canonical verification still rebuilds each stage with the current binary, so changes in builder or lowering
+dependencies are observed and stale conclusions reject even when they are outside this registry-rooted digest.
+Leaf `.6d.ii.e.v` next makes the broader module/raw-text/identity/inference boundary AST-enforced, and `.e.vi`
+supplies the adversarial taint and alpha-obligation qualification.
+
+After the final digest inputs froze, a proof-only migration rebuilt exactly 24 artifacts at each of SourceIR,
+EvidenceIR, SemanticIR, IntentIR, and adapter. Removing `.proof_context`, `.proof_ledger`, and
+`.validation_reports` from comparison leaves all 120 artifacts byte-identical. Chain replay is 24 current, zero
+stale, and 54 explicitly proof-unmeasurable at each proof-bearing downstream stage; 24 adapter states remain
+blocked and reconcile to zero emitted `.isf` files. The exact 120-file / 964,137,330-byte same-volume rollback
+snapshot was deleted after verification and its path is absent.
+
+Final qualification passes all eight doctrines, exact 24-current/zero-stale/54-unmeasurable chain replay,
+formatting, warnings-denied workspace Clippy and rustdoc, 1,948 Rust tests with six intentional ignores and zero
+failures, five compile-fail doctests, 156/156 KG fixtures, mdBook test/build, and final project-data locality.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi (`2026-08-13`) — lowering authority includes honest non-emission
 
 The ISF adapter is now the fifth and final proof-carrying product stage. Adapter schema 2 retains the complete
@@ -97,14 +144,11 @@ Code signatures, dylib references, and copied bytes verified; both binaries beca
 post-link processing completed. No migration write used the release executable before that readiness check, and
 all exact probe files and processes were removed.
 
-The final gate also exposed a proof-currency precision debt. IntentIR currently derives every local rule's
-implementation digest from the whole `intent.rs` source file. That is safely fail-closed—a test-only edit made all
-24 current proofs stale rather than silently accepting them—but it is broader than semantic authority: tests and
-comments are not part of the compiled production verifier relation. The exact 24 artifacts were rebuilt from
-verified SemanticIR after source freeze, with zero non-validation public-field or adapter delta. New leaf
-`.6d.ii.e.iv.vii` owns a mechanically exact digest over compiled production proof semantics and dependency
-closure, with positive tests showing test/comment changes preserve currency and adversarial tests showing a
-production relation edit invalidates it.
+The final gate also exposed the proof-currency precision debt subsequently closed by `.6d.ii.e.iv.vii`.
+IntentIR then derived every local rule's implementation digest from the whole `intent.rs` source file. That was
+safely fail-closed—a test-only edit made all 24 current proofs stale rather than silently accepting them—but it
+was broader than semantic authority. The production-semantic build derivation described at the top of this file
+now makes test/comment changes inert while binding the registered production relation and its selected closure.
 
 Final qualification passes all eight doctrines, exact chain replay at 24 current and 54 explicitly
 unmeasurable per proof-bearing stage, formatting, warnings-denied Clippy/rustdoc, 1,943 Rust tests with six

@@ -56,6 +56,9 @@ comparison, so moving the repository does not invalidate otherwise identical aut
 rebasing still rejects. In the retained population, 24 chains currently have verifiable EvidenceIR
 and SemanticIR; 54 historical chains remain explicitly unmeasurable until their upstream capture can be
 re-ingested.
+SemanticIR ruleset identity uses the shared
+[production-semantic digest closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met)
+rather than a hash of its complete Rust module.
 
 ## Why this stage exists
 

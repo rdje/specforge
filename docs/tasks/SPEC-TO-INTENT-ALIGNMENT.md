@@ -318,10 +318,10 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii — install trusted derivation kernel`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv`
-  Status: `in_progress`
+  Status: `done`
   Goal: `register production grammar and inference rules and migrate promoted claim families to proof terms`
   Acceptance: `every raw-text interpretation and semantic promotion site is owned by a registered universal rule with typed premises, source span/provenance, declared output kind, and alpha obligation; unregistered production decisions cannot create canonical SourceIR, EvidenceIR, SemanticIR, IntentIR, or ISF authority`
-  Verification: `pending`
+  Verification: `all 41 claim families / 168 field rules across SourceIR, EvidenceIR, SemanticIR, IntentIR, and the ISF adapter are cumulative executable-proof-carrying; canonical build/load/serialize/write/mutate/lower seams replay current registered authority; the 24 reachable chains migrate with zero non-proof/non-validation public delta while 54 legacy chains remain explicit proof-unmeasurable; compiler-derived production-semantic registry/verifier/item/import/kernel closures bind implementation identity without test/comment churn; all child gates, exact chain replay, formatting, warning-deny Clippy/rustdoc, 1,948 Rust tests / six ignores / zero failures, five compile-fail doctests, 156/156 KG fixtures, mdBook, containment, cleanup, and final locality pass`
   Commit: `completed by .6d.ii.e.iv.i through .6d.ii.e.iv.vii child commits`
   Children: `.6d.ii.e.iv.i`, `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.iii`, `.6d.ii.e.iv.iv`, `.6d.ii.e.iv.v`, `.6d.ii.e.iv.vi`, `.6d.ii.e.iv.vii`
 
@@ -368,11 +368,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi — prove ISF lowering authority`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii`
-  Status: `pending`
+  Status: `done`
   Goal: `make implementation digests exact to compiled production proof semantics rather than whole source files`
   Acceptance: `every ruleset implementation digest is mechanically derived from the compiled production verifier/rule implementation and its semantic dependency closure; edits confined to cfg(test), conformance fixtures, comments, or documentation cannot stale canonical proof, while any production relation change does; controlled positive and adversarial mutations prove both directions before the proof-migration parent closes`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `compiler-visible schema-1 derivation roots all five stage digests at canonical production registries and includes selected verifier, recursively referenced stage-local items, exact import bindings, and complete trusted-kernel tokens; nested sanitizer removes comments/docs/formatting and test/conformance branches while retaining unknown configuration conservatively; controlled mutants prove inert edits preserve identity, referenced helper/import changes alter it, and absent/ambiguous roots fail; runtime closure and stale-ledger controls pass; exact proof-only migration changes zero non-proof/non-validation content across 120 artifacts; chain replay is 24 current / zero stale / 54 unmeasurable with 24 blocked adapter states / zero emitted files; all eight doctrines, formatting, warning-deny Clippy/rustdoc, 1,948 Rust tests / six ignores / zero failures, five compile-fail doctests, 156/156 KG fixtures, mdBook test/build, rolling-ledger containment, and final locality pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii — scope proof digests to production semantics`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v`
   Status: `pending`
@@ -467,7 +467,7 @@ expressiveness as the bottleneck.
 | 31 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` | `done` | all 12 SemanticIR families are executable-proof-carrying; true carry, mixed evidence projection, relocation, and complete synthesis/conflict/residual topology are verified |
 | 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `done` | all nine IntentIR families and 49 fields are proof-carrying; 30 exact carries are separated from projection authority |
 | 33 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `done` | all four adapter families, rendered lines, blocked output, and exact filesystem reconciliation are proof-gated |
-| 34 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `pending` | scope implementation digests to compiled production proof semantics and exclude test/comment-only churn |
+| 34 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `done` | compiler-derived production registry/verifier/item/import/kernel closures exclude test/comment churn and bind all five proof rulesets |
 | 35 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
 | 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
 | 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
@@ -781,6 +781,9 @@ expressiveness as the bottleneck.
 | `2026-08-13` | `.6d.ii.e.iv.vi` roadmap projection containment | first full doctrine run; `perl scripts/check_roadmap_projection_contract.pl` | PASS after correction: current priorities initially reached 59/56 lines and blocked the gate; per-leaf detail was routed here and existing link groups compacted without removing direction, restoring the section below warning with source identity, 23-workstream coverage, reader contract, and migrated lifecycle current |
 | `2026-08-13` | `.6d.ii.e.iv.vi` focused and workspace qualification | 14 adapter tests; `cargo fmt --all -- --check`; warning-deny all-workspace/all-target Clippy; `cargo test --workspace -- --format terse` | PASS: adapter proof/mutation/compatibility/emission controls are 14/14; formatting and Clippy pass; application 470/0/0 + conformance 139/1/0 + core 1,338/5/0 = 1,947 Rust tests passed / six ignored / zero failed plus five compile-fail doctests |
 | `2026-08-13` | `.6d.ii.e.iv.vi` complete repository qualification | `bash scripts/run_ci.sh`; tracked `kg-bench`; final locality and book gates | PASS: all eight doctrines including exact cumulative chain currency, formatting, warning-deny Clippy/rustdoc, application 470/0/0 + conformance 139/1/0 + core 1,338/5/0 = 1,947 Rust tests passed / six ignored / zero failed, five compile-fail doctests, KG 156/156, mdBook test/build, and final project-data locality pass |
+| `2026-08-13` | `.6d.ii.e.iv.vii` production-semantic implementation identity | compiler-visible schema-1 digest generator; five canonical registry roots; recursive local item/import closure; trusted-kernel closure; nested configuration sanitizer; controlled inert/sensitive mutants; runtime closure inspection | PASS: comments/docs/formatting, top-level and nested test code, known-inert configuration, unrelated production items, and unrelated imports preserve identity; referenced helper and import-binding mutations change it; absent/ambiguous roots fail; all five generated registry/verifier/rule-field closures are distinct and consume exactly six repository-relative production Rust inputs |
+| `2026-08-13` | `.6d.ii.e.iv.vii` exact proof-only corpus migration | final frozen digest rebuild; 24 SourceIR + 24 EvidenceIR + 24 SemanticIR + 24 IntentIR + 24 adapter comparisons excluding `.proof_context`, `.proof_ledger`, and `.validation_reports`; same-volume rollback lifecycle | PASS: all 120 non-proof/non-validation comparisons are exact; the signoff snapshot was exactly 120 files / 964,137,330 bytes and is removed with path residue absent |
+| `2026-08-13` | `.6d.ii.e.iv.vii` complete proof-chain replay | `bash scripts/check_chain_currency.sh --check`; adapter state/file reconciliation; retained-bundle census | PASS: EvidenceIR, SemanticIR, IntentIR, and adapter are each 24 replayed/current / zero stale / 54 explicit proof-unmeasurable; 24 adapter states reconcile to zero emitted files and 24 blocked/no-file states; retention remains exactly 24 bundles |
 | `2026-08-13` | scheduled artifact cleanup | exact `.bin`/`.log` census under generated and Cargo release/debug trees; rebuildable incremental-cache removal; residue census | PASS: removed 5,085 files / 5,325,300 KiB from `target/debug/incremental`; the directory is absent and zero `.bin`/`.log` files remain in generated/release/debug-deps |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
@@ -1444,6 +1447,24 @@ the reviewed replay can name its production revision.
 - [x] **LOCKSTEP** — code, schema, rule inventory, chain-currency state/file accounting, roadmap, mdBook, live
   docs, Knowledge Map, task frontier, and retained population must pass derive-and-diff/full gates before closure.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii`
+
+- [x] **REPRODUCE / MEASURE** — whole-module hashes were shown to stale 24 valid chains after a test-only edit;
+  final stage closures and all 120 migrated artifacts were enumerated and compared exactly.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `include_bytes!` treated comments, docs, tests, fixtures, and unrelated code
+  as verifier authority, while omitting the structural distinction between a referenced production relation and
+  inert source-file content.
+- [x] **ADDRESSED (verified)** — compiler-visible schema-1 derivation roots each digest at its canonical registry,
+  follows the selected production verifier, referenced local items and exact import bindings, includes the full
+  trusted kernel, removes nested test/conformance/inert syntax, and fails on absent or ambiguous roots.
+- [x] **NO REGRESSION** — controlled inert/sensitive mutants and runtime closure/stale-ledger controls pass; the
+  final proof-only migration leaves every non-proof/non-validation value unchanged across 120 artifacts; full
+  workspace, chain, KG, book, doctrine, and locality gates pass.
+- [x] **GENERICITY (ADR 0006)** — digest authority derives from code structure and registered proof semantics,
+  never a finite vocabulary or named corpus; test-only named fixtures cannot enter production identity.
+- [x] **LOCKSTEP** — code, ADR 0038, task tree, roadmap, research audit, Knowledge Map, live docs, mdBook, retained
+  proof population, archive rollover, and resume pointer state the same exact boundary and remaining AST work.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1482,6 +1503,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv — prove SemanticIR authority` | SemanticIR schema-2 cumulative proof for 12 families / 49 fields, direct true-carry antecedents, registered mixed evidence projection, repository relocation, closed validation mutation, exact 24 retained migrations, and proof-frontier currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v — prove IntentIR authority` | IntentIR schema-2 cumulative proof for nine families / 49 fields, 30 direct true-carry antecedents, actor/contract projection separation, closed validation and NLI demotion, exact 24 retained migrations, and proof-frontier currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi — prove ISF lowering authority` | Adapter schema-2 cumulative proof for four families / 12 fields plus every array record/rendered line/blocking reason, closed validation, exact 24 retained migrations, and emitted-versus-blocked reconciliation |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii — scope proof digests to production semantics` | compiler-derived registry/verifier/item/import/kernel closures, inert/sensitive mutations, exact proof-only 120-artifact migration, and complete chain qualification |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1613,6 +1635,30 @@ the reviewed replay can name its production revision.
   writer ambiguity, exact adapter refresh and typed validation completed 24/24, all eight doctrines and the
   1,947-pass workspace plus 156/156 KG fixtures passed, and roadmap/research containment was restored without
   widening bounds. `.e.iv.vii` is next only after this child commits and the repository is clean.
+- `2026-08-13`: Activated `.6d.ii.e.iv.vii` only after `.e.iv.vi` committed at `367353a5`, the post-commit tree
+  was clean, and the commit brief was zero bytes. This child owns mechanical production-semantic implementation
+  digests and the positive/adversarial proof that test, fixture, comment, and documentation edits are inert while
+  every production proof-relation change stales canonical authority.
+- `2026-08-13`: Froze the implementation-digest contract before proof-code edits. A build-time, schema-versioned
+  compiler-token Merkle closure roots each stage at its canonical production registry constructor, recursively
+  includes the selected production verifier, referenced stage-local production items and exact import bindings,
+  plus the complete trusted-kernel token graph. It strips comments/docs/formatting and nested configured test or
+  conformance branches, retains unknown platform configuration conservatively, and fails closed on an
+  absent/ambiguous root. Current-binary stage replay remains the observational guard for builder/lowering
+  dependencies outside this registry-rooted proof relation. In-memory controlled mutants prove
+  comment/doc/test/fixture/formatting/unrelated-item invariance and referenced-helper/import sensitivity; runtime
+  tests prove the generated closure is the one consumed by every stage registry.
+- `2026-08-13`: The final binding-aware proof identity is installed for SourceIR, EvidenceIR, SemanticIR,
+  IntentIR, and the adapter. Exact proof-only migration rebuilds 24 artifacts at each stage; after excluding proof
+  context, proof ledger, and validation reports, all 120 comparisons are byte-identical. Complete chain replay is
+  24 current / zero stale / 54 explicitly proof-unmeasurable at every downstream proof stage, with 24 blocked
+  adapter states and zero emitted files. The exact 120-file / 964,137,330-byte same-volume rollback snapshot was
+  removed and its path is absent. Final doctrine/workspace/book qualification remains before closure.
+- `2026-08-13`: Closed `.6d.ii.e.iv.vii` and the `.e.iv` proof-migration parent after all eight doctrines,
+  warnings-denied Clippy/rustdoc, 1,948 Rust tests / six ignores / zero failures, five compile-fail doctests,
+  156/156 KG fixtures, mdBook test/build, exact rolling-ledger containment, and final locality passed. `.e.v` is
+  next only after this child commits and the repository is clean; it owns whole-core AST information-flow
+  enforcement rather than widening the completed registry-rooted digest claim.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

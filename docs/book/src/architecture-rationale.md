@@ -169,6 +169,37 @@ alpha-renaming plus filename/title perturbation must preserve the typed result m
 census remains useful for diagnostics, but cannot prove neutrality because an unseen alias, hash, threshold,
 or neutral-looking corpus phrase could still encode the same coupling.
 
+Proof identity now follows production semantics rather than source-file churn. During compilation, the core
+derives one digest per stage from this closure:
+
+```text
+canonical production rule registry
+          │
+          ├── selected production verifier
+          ├── referenced local production items
+          ├── exact referenced import bindings
+          └── complete trusted derivation kernel
+                         │
+                         ▼
+              stage implementation digest
+                         │
+                         ▼
+                 ruleset / proof currency
+```
+
+Comments, documentation, formatting, and configured test/conformance branches are removed from that identity,
+including nested test-only fields or statements. A referenced helper change or import rebinding changes it;
+an unrelated production item does not. Missing or ambiguous registry roots stop the build. Controlled build
+mutants prove both directions, and the runtime proves that all five registries consume the generated digests.
+The final migration changed only proof/validation metadata across 24 artifacts at each of five stages—120 exact
+comparisons—and left every measurable chain current.
+
+This result is deliberately bounded. It proves the identity of the registered production proof relation and
+removes false staleness from tests/comments. Canonical verification also reconstructs each stage with the current
+binary, so builder or lowering changes still cannot silently authorize a mismatching old conclusion. The next
+AST-aware doctrine must make the broader raw-text, opaque-identity, helper, macro, module, and unregistered-rule
+boundary mechanically unmergeable; behavioral renaming/paraphrase/held-out qualification still follows that.
+
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and
 uncertainty—while deriving every document-owned symbol and relation from the current input. The honest ceiling

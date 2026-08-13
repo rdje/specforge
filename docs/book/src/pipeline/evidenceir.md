@@ -89,6 +89,9 @@ artifacts until their SourceIR inputs can be recaptured under an owned refresh. 
 EvidenceIR-to-SemanticIR replay as unmeasurable rather than pretending it is current. SemanticIR and IntentIR now
 enforce the same proof frontier: the 24 reachable chains are current through the product boundary, while the 54
 historical later-stage files cannot regain authority from their storage location or old stage-local bytes.
+EvidenceIR implementation identity uses the shared
+[production-semantic digest closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met),
+so test/comment churn is inert while a referenced production verifier dependency changes proof currency.
 
 ## Typical evidence-level wins
 

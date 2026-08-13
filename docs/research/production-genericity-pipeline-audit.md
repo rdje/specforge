@@ -492,6 +492,22 @@ The release proof must combine structural prevention with behavioral invariance:
    identifiers, and suspicious constants. It assists review and enforces the owner's zero-named-example
    production-surface rule, but is explicitly not the semantic proof.
 
+## Production-semantic proof identity result
+
+Leaf `.6d.ii.e.iv.vii` replaces whole-module proof implementation hashes with compiler-visible,
+schema-versioned stage closures. Each closure starts at the canonical production registry, follows the selected
+verifier plus referenced stage-local production items and exact import bindings, and includes the complete
+trusted derivation kernel. It removes comments, docs, formatting, and configured test/conformance branches;
+unknown platform configuration is retained conservatively. Root absence or ambiguity fails the build.
+
+Controlled mutations prove comments, docs, formatting, top-level/nested test code, unrelated production items,
+and unrelated imports preserve identity, while a referenced helper or import binding changes it. The final
+binding-aware migration changes only proof/validation metadata across 24 artifacts at each of five stages;
+all 120 remaining public comparisons are exact, chain currency is 24 current / zero stale / 54 unmeasurable,
+and the 120-file same-volume rollback snapshot is removed. This closes registered proof-relation identity. It
+does not close the audit: `.e.v`–`.e.vii` still own AST information-flow enforcement and structural
+qualification, and `.f` still owns population-level behavioral invariance.
+
 ## Historical correction
 
 `PDF-AGNOSTIC-EXTRACTION.4` previously closed genericity using a small seeded check focused on

@@ -4,6 +4,31 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-13 — production-semantic proof identity; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii`)
+
+- `specforge-core` now owns a build-time Rust AST derivation that emits five schema-versioned implementation
+  digests. Stage roots are the canonical rule-registry constructors; closures contain their selected production
+  verifier, recursively referenced local items, exact import bindings, and the normalized trusted derivation
+  kernel. Missing or ambiguous roots stop compilation.
+- The sanitizer evaluates the project's test/conformance configuration model recursively and removes inert
+  comments, docs, formatting, lint attributes, and non-production branches. Unknown target configuration is kept
+  conservatively. This replaces whole-file freshness with proof-relation identity without a hand-authored hash
+  manifest or vocabulary list.
+- SourceIR's typed test-fixture exception is now a test/support-only verifier wrapper. Production registry code
+  binds the fixture-free verifier, so named fixtures remain usable downstream without entering core authority.
+- Controlled build mutants prove inert and sensitive edits in both directions; runtime tests prove all five
+  registry/rule/verifier roots, closure inputs, import participation, and digest uniqueness. The persisted-proof
+  adversarial test still proves that a semantic implementation change changes the ruleset and stales authority.
+- Exact proof-only migration of 24 artifacts at each of five stages changes no non-proof/non-validation public
+  content. Chain replay is 24 current / zero stale / 54 proof-unmeasurable at each downstream proof stage, with
+  24 blocked adapter states and zero emitted `.isf` files.
+- Remaining risk is intentionally narrower and still release-blocking: this digest closes registered verifier
+  identity, while `.6d.ii.e.v` must AST-enforce the broader raw-text, identity-flow, promotion, registry, alias,
+  macro, and module boundary. Current-binary reconstruction remains the observational guard in the meantime.
+- Complete qualification is green: all eight doctrines, warnings-denied Clippy/rustdoc, application 470 +
+  conformance 139 + core 1,339 = 1,948 Rust tests passed / six ignored / zero failed, five compile-fail doctests,
+  156/156 KG fixtures, mdBook test/build, exact chain replay, and final locality.
+
 ## Session update (2026-08-13 — proof-carrying ISF adapter; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi`)
 
 - Adapter schema 2 owns all 12 public fields across four capability-homogeneous families. Its ledger retains the

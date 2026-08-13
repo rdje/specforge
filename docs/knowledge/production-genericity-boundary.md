@@ -55,13 +55,14 @@ answers:
   - "Can a blocked adapter be a proof-checked result with no emitted file?"
   - "Can a legacy or proofless adapter emit ISF?"
   - "How is adapter validation backannotation authorized?"
-  - "Why can a test-only Rust edit currently stale production proof?"
-  - "Which task owns production-semantic implementation digest scoping?"
+  - "Can a test-only Rust edit stale production proof?"
+  - "How are production implementation digests derived?"
+  - "What changes a production implementation digest?"
 date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
-reverify: cargo test -p specforge-core intent_proof --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
+reverify: cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -240,12 +241,15 @@ reject. Exactly 24 reachable adapters migrated with zero pre-existing public-fie
 schema/proof/validation. All 24 current manifests are honestly blocked and reconcile to zero emitted files; the
 54 historical chains remain upstream-proof-unmeasurable.
 
-Current implementation digests have a safe but over-broad boundary: each migrated stage hashes its whole Rust
-module. A change confined to `#[cfg(test)]` code in `intent.rs` therefore staled all 24 current IntentIR proofs;
-canonical adapter loading rejected every artifact, proving fail-closure. Exact regeneration from verified
-SemanticIR changed zero non-validation IntentIR public fields and zero non-validation adapter fields. Leaf
-`.6d.ii.e.iv.vii` owns the stronger target: derive digests from compiled production proof semantics and their
-dependency closure, so tests/comments do not create false staleness while a production relation change still
-invalidates proof.
+Implementation digests now have a production-semantic boundary. The compiler-visible core build roots each stage
+at its canonical production registry, follows the selected verifier plus referenced stage-local production items
+and exact import bindings, and includes the complete trusted derivation kernel. It removes comments, docs,
+formatting, and test/conformance branches, including nested configured code. Missing or ambiguous roots fail the
+build. Controlled mutants prove those inert edits preserve identity while a referenced helper-body or import
+binding change changes the digest; runtime tests prove the generated closure is the one consumed by all five
+registries. Exact proof-only migration changes no non-proof/non-validation bytes across 120 stage artifacts, and
+chain replay remains 24 current / zero stale / 54 proof-unmeasurable.
 
-AST-aware information-flow and population qualification also remain open work.
+This closes registered proof-relation identity, not whole-core genericity. Current-binary reconstruction still
+observes builder/lowering dependencies outside the registry-rooted digest. AST-aware information-flow,
+adversarial structural qualification, and population behavior remain open work.

@@ -19,6 +19,8 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can a temporary conformance artifact use a canonical stage writer?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can a test-only Rust edit stale production proof?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can fixture names decide KG capability or prior-candidate routing?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can legacy EvidenceIR feed SemanticIR?
@@ -64,6 +66,8 @@
   > How are named SourceIR fixtures kept out of canonical production authority?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > How are old CorpusMemory schemas migrated?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How are production implementation digests derived?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How are production prompts kept specification neutral?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
@@ -114,6 +118,8 @@
   > Is the generic production core physically separated from conformance code?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Were downstream artifacts reconciled after SourceIR schema 2?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > What changes a production implementation digest?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > What current priors are learned without protocol families?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -145,11 +151,7 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which premise kinds can the trusted promotion kernel accept?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
-  > Which task owns production-semantic implementation digest scoping?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why are actors and actor contracts IntentIR projections rather than lossless carries?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
-  > Why can a test-only Rust edit currently stale production proof?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why can downstream chain currency be unmeasurable rather than stale?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -295,5 +297,3 @@
   > can legal boilerplate become a SemanticIR gate
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > can low confidence statement tokens create an interface without a formal signal declaration
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > can prior memory select extraction by filename or protocol family

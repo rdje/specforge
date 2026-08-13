@@ -125,11 +125,14 @@ AST/information-flow gates, per-rule
 alpha execution, structural qualification, and whole-population behavioral qualification, remain mandatory.
 Until those close, SpecForge does not claim production-genericity signoff.
 
-The current implementation digests fail closed but are intentionally recorded as provisional: each migrated
-stage hashes its whole Rust source module, so even a test-only or comment-only edit can require proof refresh.
-That causes no false authority, but it is broader than the compiled production relation. The tracked closing work
-must derive each digest from production proof semantics and its dependency closure, while still invalidating any
-real verifier or rule change.
+Implementation digests now follow the registered production relation rather than whole Rust modules. The core
+build roots each stage at its canonical production registry and hashes the selected verifier, recursively
+referenced stage-local production items, exact import bindings, and the complete trusted derivation kernel after
+removing comments, docs, formatting, and test/conformance branches. Controlled mutants prove inert edits preserve
+identity and referenced production edits change it; missing or ambiguous roots fail compilation. The exact
+proof-only migration changes no non-proof/non-validation content across 120 artifacts and leaves the measurable
+chain current. Current-binary replay remains the behavioral guard outside that registry-rooted relation, while
+the pending AST doctrine owns the broader helper/raw-text/identity-flow boundary.
 
 That migration now has an exact checked contract. The 41 claim families expand to 168 current top-level-field
 rules and cover 116 reviewed producer/mutator entrypoints plus 53 canonical seams. One cumulative ledger starts

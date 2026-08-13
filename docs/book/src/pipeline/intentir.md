@@ -51,6 +51,9 @@ Repository-owned paths are resolved and normalized before verification, so movin
 otherwise identical authority. The retained population has 24 proof-current IntentIR chains whose migration
 changed no pre-existing public field; 54 historical chains remain explicitly unmeasurable behind legacy
 SemanticIR. No synthetic proof is assigned to them.
+IntentIR implementation identity is the shared
+[production-semantic registry/verifier closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met),
+not its test-and-comment-bearing source file.
 
 `IntentIR.register_records` is a lossless clone of the canonical SemanticIR register surface. Optional
 register-level access stays separate from optional field-level access, and structured-table support remains in

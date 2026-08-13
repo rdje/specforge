@@ -64,6 +64,30 @@ pub const PROOF_LEDGER_SCHEMA_VERSION: u32 = 1;
 /// Current registered-rule descriptor schema.
 pub const RULE_DESCRIPTOR_SCHEMA_VERSION: u32 = 1;
 
+include!(concat!(env!("OUT_DIR"), "/production_semantic_digests.rs"));
+
+/// Digest the compiler-token closure of the registered production verifier for one IR stage.
+///
+/// The build-time derivation roots at the canonical production registry constructor, recursively
+/// follows its stage-local production items (including the verifier it binds), and incorporates
+/// the complete production trusted-kernel token graph. Rust comments, doc attributes, formatting,
+/// `cfg(test)` items, and conformance sources are not inputs. The returned value is therefore
+/// implementation authority, not a whole-file freshness proxy.
+pub(crate) fn production_semantic_implementation_digest(
+    stage: IrStage,
+) -> DerivationResult<Sha256Digest> {
+    debug_assert_eq!(PRODUCTION_SEMANTIC_DIGEST_SCHEMA_VERSION, 1);
+    debug_assert_eq!(PRODUCTION_KERNEL_SEMANTIC_SHA256.len(), 64);
+    let digest = match stage {
+        IrStage::SourceIr => SOURCE_PRODUCTION_SEMANTIC_SHA256,
+        IrStage::EvidenceIr => EVIDENCE_PRODUCTION_SEMANTIC_SHA256,
+        IrStage::SemanticIr => SEMANTIC_PRODUCTION_SEMANTIC_SHA256,
+        IrStage::IntentIr => INTENT_PRODUCTION_SEMANTIC_SHA256,
+        IrStage::IsfAdapter => ADAPTER_PRODUCTION_SEMANTIC_SHA256,
+    };
+    Sha256Digest::try_from(digest.to_string()).map_err(DerivationError::new)
+}
+
 /// A validated lowercase SHA-256 digest.
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(try_from = "String", into = "String")]
@@ -2373,6 +2397,111 @@ pub type DerivationResult<T> = Result<T, DerivationError>;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn production_semantic_digests_are_compiler_derived_stage_closures() {
+        let stages = [
+            (
+                IrStage::SourceIr,
+                SOURCE_PRODUCTION_SEMANTIC_SHA256,
+                SOURCE_PRODUCTION_SEMANTIC_ITEMS,
+                [
+                    "const:SOURCE_RULE_FIELDS",
+                    "fn:source_rule_registry",
+                    "fn:verify_source_rule_relation",
+                ],
+            ),
+            (
+                IrStage::EvidenceIr,
+                EVIDENCE_PRODUCTION_SEMANTIC_SHA256,
+                EVIDENCE_PRODUCTION_SEMANTIC_ITEMS,
+                [
+                    "const:EVIDENCE_RULE_FIELDS",
+                    "fn:evidence_rule_registry",
+                    "fn:verify_evidence_rule_relation",
+                ],
+            ),
+            (
+                IrStage::SemanticIr,
+                SEMANTIC_PRODUCTION_SEMANTIC_SHA256,
+                SEMANTIC_PRODUCTION_SEMANTIC_ITEMS,
+                [
+                    "const:SEMANTIC_RULE_FIELDS",
+                    "fn:semantic_rule_registry",
+                    "fn:verify_semantic_rule_relation",
+                ],
+            ),
+            (
+                IrStage::IntentIr,
+                INTENT_PRODUCTION_SEMANTIC_SHA256,
+                INTENT_PRODUCTION_SEMANTIC_ITEMS,
+                [
+                    "const:INTENT_RULE_FIELDS",
+                    "fn:intent_rule_registry",
+                    "fn:verify_intent_rule_relation",
+                ],
+            ),
+            (
+                IrStage::IsfAdapter,
+                ADAPTER_PRODUCTION_SEMANTIC_SHA256,
+                ADAPTER_PRODUCTION_SEMANTIC_ITEMS,
+                [
+                    "const:ADAPTER_RULE_FIELDS",
+                    "fn:adapter_rule_registry",
+                    "fn:verify_adapter_rule_relation",
+                ],
+            ),
+        ];
+        let mut unique = BTreeSet::new();
+        for (stage, expected, items, required_items) in stages {
+            assert_eq!(
+                production_semantic_implementation_digest(stage)
+                    .unwrap()
+                    .as_str(),
+                expected
+            );
+            assert!(!items.is_empty(), "{stage:?} semantic closure is empty");
+            assert!(
+                items.iter().all(|item| {
+                    !item.contains("test")
+                        && !item.contains("fixture")
+                        && !item.contains("conformance")
+                }),
+                "{stage:?} semantic closure contains non-production authority: {items:?}"
+            );
+            for required in required_items {
+                assert!(
+                    items.contains(&required),
+                    "{stage:?} semantic closure omits {required}"
+                );
+            }
+            assert!(
+                items.iter().any(|item| item.starts_with("use:")),
+                "{stage:?} semantic closure omits referenced import bindings"
+            );
+            assert!(unique.insert(expected), "duplicate stage semantic digest");
+        }
+        for required in [
+            "fn:classify_source_captures",
+            "fn:apply_source_grounded_proposal",
+            "fn:source_validation_report_from_fields",
+        ] {
+            assert!(
+                SOURCE_PRODUCTION_SEMANTIC_ITEMS.contains(&required),
+                "SourceIR semantic closure omits {required}"
+            );
+        }
+        assert_eq!(PRODUCTION_SEMANTIC_DIGEST_SCHEMA_VERSION, 1);
+        assert_eq!(PRODUCTION_KERNEL_SEMANTIC_SHA256.len(), 64);
+        assert_eq!(PRODUCTION_SEMANTIC_INPUTS.len(), 6);
+        assert!(PRODUCTION_SEMANTIC_INPUTS.iter().all(|path| {
+            path.ends_with(".rs")
+                && !path.contains("conformance")
+                && !path.contains("test")
+                && !path.contains("fixture")
+                && !path.contains("docs/")
+        }));
+    }
 
     #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     struct SyntheticConclusion {

@@ -90,7 +90,7 @@ SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are c
 ruleset, proof-ledger, compatibility, and promotion-kernel substrate is installed. A deserialized proof envelope
 cannot self-authorize. The current checked 41-family / 168-field graph resolves 116 producer/mutator entrypoints,
 53 canonical seams, four conformance-only bypasses, and the one cumulative-ledger compatibility contract.
-All four IR stages and the ISF adapter carry cumulative proof; 24 reachable adapters are current but honestly blocked/no-file, while 54 legacy chains are unmeasurable. `.e.iv.vii` next scopes production-semantic digests.
+All four IR stages and the ISF adapter carry cumulative proof; 24 reachable adapters are current but honestly blocked/no-file, while 54 legacy chains are unmeasurable. `.e.iv.vii` now binds proof identity to compiler-derived production registry/verifier/item/import/kernel closures; `.e.v` next installs the whole-core AST information-flow doctrine.
 A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.iv.vii`–`.e.vii` still must close digest precision, enforce AST/information-flow obligations, and
 qualify the structural result; `.f` then owns population alpha-renaming, identity, paraphrase,
 and held-out qualification before `.6e`. A reproduced 400-page failure also drove resource-sized bounded

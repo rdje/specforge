@@ -182,6 +182,7 @@ RuleDescriptor {
   rule_id,
   version,
   implementation_module,
+  implementation_sha256,
   premise_kinds,
   conclusion_stage,
   conclusion_surface,
@@ -195,6 +196,15 @@ Registry membership is closed and hashed. The existing `Extractor` framework is 
 `Extractor` implementations already expose stable names and tiers—but its run manifest is not a proof: it records
 counts rather than a derivation for each kept record and covers only part of the pipeline. `.e.iv` extends or
 adapts it; it does not create a second competing extractor framework.
+
+`implementation_sha256` is production-semantic identity, not a whole-source freshness stamp. The core build
+derives it from a schema-versioned normalized closure rooted at the canonical stage registry: the selected
+production verifier, referenced stage-local production items and exact import bindings, and the complete trusted
+derivation kernel participate. Comments, docs, formatting, test/conformance branches, and unrelated local items
+do not. Missing or ambiguous roots fail compilation. Controlled mutations must prove both inert edits and
+referenced production edits before a digest derivation can authorize persisted proof. Current-binary stage
+reconstruction remains the observational check for builder/lowering behavior outside that registry-rooted
+relation; the AST doctrine below owns the broader whole-core information-flow boundary.
 
 Rules may call helpers, but only the registered entrypoint may return a grounded proposal or proved conclusion.
 The registry declares whether a rule is symbol-blind, exact-identity-only, symbol-introducing grammar,

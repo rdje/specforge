@@ -11,6 +11,7 @@ use crate::ir::derivation::{
     PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
     SymbolCapabilityClass, ValidatedPriorScope, VerifiedProofLedger,
+    production_semantic_implementation_digest,
 };
 use crate::ir::extractor::{
     ExtractionContext, ExtractionManifest, Extractor, run_surface, run_surface_concat,
@@ -904,7 +905,7 @@ fn evidence_derivation_error(error: impl std::fmt::Display) -> AppError {
 }
 
 fn evidence_rule_registry() -> DerivationResult<RuleRegistry> {
-    let implementation_sha256 = Sha256Digest::of_bytes(include_bytes!("evidence.rs"));
+    let implementation_sha256 = production_semantic_implementation_digest(IrStage::EvidenceIr)?;
     let registrations = EVIDENCE_RULE_FIELDS
         .iter()
         .map(|(field, family)| {

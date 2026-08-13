@@ -9,7 +9,7 @@ use crate::ir::derivation::{
     AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
     PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
-    SymbolCapabilityClass, VerifiedProofLedger,
+    SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
@@ -199,10 +199,7 @@ fn adapter_derivation_error(error: impl std::fmt::Display) -> AppError {
 }
 
 fn adapter_rule_registry() -> DerivationResult<RuleRegistry> {
-    let implementation_sha256 = Sha256Digest::of_serializable(&[
-        Sha256Digest::of_bytes(include_bytes!("adapters.rs")),
-        Sha256Digest::of_bytes(include_bytes!("isf_ir.rs")),
-    ])?;
+    let implementation_sha256 = production_semantic_implementation_digest(IrStage::IsfAdapter)?;
     let registrations = ADAPTER_RULE_FIELDS
         .iter()
         .map(|(field, family)| {

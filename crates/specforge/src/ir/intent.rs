@@ -10,7 +10,7 @@ use crate::ir::derivation::{
     AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
     PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
-    SymbolCapabilityClass, VerifiedProofLedger,
+    SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
 use crate::ir::evidence::{
     InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField,
@@ -353,7 +353,7 @@ fn intent_derivation_error(error: impl std::fmt::Display) -> AppError {
 }
 
 fn intent_rule_registry() -> DerivationResult<RuleRegistry> {
-    let implementation_sha256 = Sha256Digest::of_bytes(include_bytes!("intent.rs"));
+    let implementation_sha256 = production_semantic_implementation_digest(IrStage::IntentIr)?;
     let registrations = INTENT_RULE_FIELDS
         .iter()
         .map(|(field, family)| {

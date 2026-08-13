@@ -94,6 +94,10 @@ reloads its upstream artifact through the canonical verifier before persistence.
 Whole-pipeline production-genericity signoff still depends on the downstream remediation and
 qualification work described in
 [Extraction Architecture](../reference/extraction-architecture.md).
+SourceIR proof currency now uses the shared
+[production-semantic digest closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met):
+test/comment-only edits are inert, while the production registry, verifier closure, import bindings, and trusted
+kernel determine implementation identity.
 
 ## Path identity and repository moves
 
