@@ -21,6 +21,37 @@
 This is the stage the rest of the project is trying to reach.
 Everything earlier exists to make this artifact strong, inspectable, and reusable.
 
+## Canonical authority and proof
+
+Current IntentIR is schema 2. Its JSON shape, provenance strings, or stored hashes do not authorize it. Canonical
+load, serialization, persistence, validation backannotation, NLI demotion, and adapter construction first verify
+the complete cumulative SemanticIR proof, independently rebuild IntentIR with the current registered
+implementation, replay any closed mutations, and compare every public field exactly.
+
+The ledger preserves the verified cumulative SemanticIR ledger as an exact ordered prefix, then appends root and
+per-record claims for all 49 public fields across nine rule families. Every IntentIR claim depends on an exact
+registered replay over the entire upstream claim graph. Thirty fields are byte-for-byte SemanticIR carries: the
+actor/interface graph except for the filtered `actors` collection, plus the semantic collections except for
+`actor_contracts`. Every root and record on those exact-carry surfaces also cites a direct SemanticIR claim with
+identical conclusion bytes.
+
+The remaining fields are typed projections, not weaker unnamed carries. `actors` is filtered to remove
+unsupported inferred phantoms. Identities, summaries, behaviors, constraints, assumptions, transactions, actor
+relations, temporal invariants, and residuals are deterministically synthesized. `actor_contracts` has its own
+projection family because the optional NLI gate may conservatively remove a contract. That gate is demotion-only:
+it may preserve contract order, remove contracts, and append one matching `nli_unentailed_...` residual per
+removal; it cannot add or reorder contracts, rewrite prior residuals, or touch another field. Validation may
+change only `validation_reports`. Both mutations must replay the independently rebuilt predecessor and extend
+proof before canonical serialization or writing succeeds. NLI authorization is transactional: a failed replay
+returns the original in-memory IntentIR unchanged.
+
+Schemas older than 2 are inspection-only and cannot feed an adapter. A current proofless artifact, a stale
+ruleset, a field edit with a recomputed digest, an unauthorized mutation, or a future schema fails closed.
+Repository-owned paths are resolved and normalized before verification, so moving the repository does not alter
+otherwise identical authority. The retained population has 24 proof-current IntentIR chains whose migration
+changed no pre-existing public field; 54 historical chains remain explicitly unmeasurable behind legacy
+SemanticIR. No synthetic proof is assigned to them.
+
 `IntentIR.register_records` is a lossless clone of the canonical SemanticIR register surface. Optional
 register-level access stays separate from optional field-level access, and structured-table support remains in
 `supporting_table_ids` alongside the independent statement-provenance list. The product stage does not fill an
@@ -74,10 +105,13 @@ source terms changes only those strings—not the record shape, admission decisi
 If the source merely mentions a bit range without binding it to a frame/packet or named phase, no frame record
 is manufactured.
 
-`IntentIR` also carries `SemanticIR.actor_contracts` unchanged, including verified figure-provenance contracts
-and their residual dispositions. It does not reinterpret a timing trace, restore a lane rejected by semantic
-grounding, or upgrade verifier disagreement. That makes the EvidenceIR → SemanticIR boundary the only place a
-typed figure becomes canonical temporal intent, while IntentIR remains a faithful product projection.
+`IntentIR` initially carries `SemanticIR.actor_contracts` unchanged, including verified figure-provenance
+contracts and their residual dispositions. It does not reinterpret a timing trace, restore a lane rejected by
+semantic grounding, or upgrade verifier disagreement. When explicitly requested, the typed NLI gate may only
+demote a source sentence that does not entail its rendered contract claim; the removed contract becomes a
+matching residual rather than disappearing. This makes the EvidenceIR → SemanticIR boundary the only place a
+typed figure becomes canonical temporal intent, while IntentIR remains a faithful, conservatively filterable
+product projection.
 
 ## How transactions are recognized
 

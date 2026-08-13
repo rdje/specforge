@@ -1797,13 +1797,9 @@ fn semantic_grounding_strength_rank(strength: SemanticGroundingStrength) -> u8 {
 mod tests {
     use super::*;
     use std::fs;
-    use std::path::PathBuf;
-
     use tempfile::tempdir;
 
-    use crate::ir::intent::{
-        IntentActor, IntentArtifactLayout, IntentDocumentIdentity, IntentIdentity,
-    };
+    use crate::ir::intent::IntentActor;
     use crate::ir::semantic::{
         ActorPortRecord, CycleWindowRecord, InterfaceRecord, InterfaceSignalDirection,
         InterfaceSignalRecord, InterfaceSignalSemanticArbitrationRecord,
@@ -1816,83 +1812,27 @@ mod tests {
     };
 
     fn base_intent_ir(document_key: &str, display_name: &str) -> IntentIr {
-        IntentIr {
-            schema_version: 1,
-            stage: IrStage::IntentIr,
-            semantic_ir_path: PathBuf::from("/tmp/semantic_ir.json"),
-            artifact_layout: IntentArtifactLayout {
-                artifact_root: PathBuf::from("/tmp"),
-                intent_ir_path: PathBuf::from("/tmp/intent_ir.json"),
-            },
-            document_identity: IntentDocumentIdentity {
-                document_key: document_key.to_string(),
-                display_name: display_name.to_string(),
-            },
-            intent_identity: IntentIdentity {
-                intent_id: "intent".to_string(),
-                summary: "summary".to_string(),
-            },
-            actors: vec![IntentActor {
-                actor_id: "actor_1".to_string(),
-                actor_name: Some("Manager".to_string()),
-                responsibilities: Vec::new(),
-                supporting_actor_ids: Vec::new(),
+        let mut intent_ir = IntentIr::diagnostic_test_fixture(document_key, display_name);
+        intent_ir.actors = vec![IntentActor {
+            actor_id: "actor_1".to_string(),
+            actor_name: Some("Manager".to_string()),
+            responsibilities: Vec::new(),
+            supporting_actor_ids: Vec::new(),
+        }];
+        intent_ir.validation_reports = vec![ValidationReportRecord {
+            report_id: "report_1".to_string(),
+            validated_stage: IrStage::IntentIr,
+            artifact_fingerprint: "fingerprint".to_string(),
+            summary: "good".to_string(),
+            overall_score: Some(95),
+            grade: Some("EXCELLENT".to_string()),
+            metrics: vec![ValidationMetricRecord {
+                name: "score".to_string(),
+                value: "95".to_string(),
             }],
-            actor_signal_relations: Vec::new(),
-            actor_ports: Vec::new(),
-            signal_connectivity: Vec::new(),
-            infrastructure_signals: Vec::new(),
-            interface_signal_conflicts: Vec::new(),
-            signal_connectivity_conflicts: Vec::new(),
-            signal_polarities: Vec::new(),
-            signal_polarity_conflicts: Vec::new(),
-            signal_semantic_conflicts: Vec::new(),
-            interfaces: Vec::new(),
-            serial_frame_fields: Vec::new(),
-            protocol_operations: Vec::new(),
-            protocol_states: Vec::new(),
-            interface_edge_timings: Vec::new(),
-            system_contract: None,
-            behaviors: Vec::new(),
-            constraints: Vec::new(),
-            assumptions: Vec::new(),
-            regular_states: Vec::new(),
-            state_transitions: Vec::new(),
-            symbol_definitions: Vec::new(),
-            control_blocks: Vec::new(),
-            explicit_modules: Vec::new(),
-            explicit_tops: Vec::new(),
-            register_records: Vec::new(),
-            timing_constraints: Vec::new(),
-            temporal_rules: Vec::new(),
-            actor_contracts: Vec::new(),
-            constrained_extraction_stats: None,
-            protocol_graph: Default::default(),
-            fidelity_findings: Vec::new(),
-            temporal_conflicts: Vec::new(),
-            signal_constraints: Vec::new(),
-            conditional_rules: Vec::new(),
-            transactions: Vec::new(),
-            actor_drive_relations: Vec::new(),
-            actor_sample_relations: Vec::new(),
-            actor_trigger_relations: Vec::new(),
-            actor_temporal_dependencies: Vec::new(),
-            temporal_invariants: Vec::new(),
-            residual_decisions: Vec::new(),
-            validation_reports: vec![ValidationReportRecord {
-                report_id: "report_1".to_string(),
-                validated_stage: IrStage::IntentIr,
-                artifact_fingerprint: "fingerprint".to_string(),
-                summary: "good".to_string(),
-                overall_score: Some(95),
-                grade: Some("EXCELLENT".to_string()),
-                metrics: vec![ValidationMetricRecord {
-                    name: "score".to_string(),
-                    value: "95".to_string(),
-                }],
-                findings: Vec::new(),
-            }],
-        }
+            findings: Vec::new(),
+        }];
+        intent_ir
     }
 
     #[test]
@@ -2749,27 +2689,28 @@ mod tests {
     #[test]
     fn learn_priors_writes_repository_relative_source_artifact_paths() -> Result<()> {
         let tempdir = crate::project_data::tempdir()?;
-        let semantic_ir_path = tempdir
-            .path()
-            .join("generated/semantic_ir/spec/semantic_ir.json");
-        fs::create_dir_all(semantic_ir_path.parent().expect("semantic parent"))?;
-        fs::write(&semantic_ir_path, b"{}")?;
-
-        let mut intent_ir = base_intent_ir("spec", "Spec");
-        intent_ir.semantic_ir_path = semantic_ir_path;
-        intent_ir.artifact_layout = IntentArtifactLayout {
-            artifact_root: tempdir.path().join("generated/intent_ir/spec"),
-            intent_ir_path: tempdir
-                .path()
-                .join("generated/intent_ir/spec/intent_ir.json"),
-        };
-        // This path-normalization unit uses a deliberately synthetic upstream stub. Serialize the
-        // fixture explicitly instead of asking the canonical writer to bless a nonexistent chain.
-        fs::create_dir_all(&intent_ir.artifact_layout.artifact_root)?;
+        let source_path = tempdir.path().join("spec.md");
         fs::write(
-            &intent_ir.artifact_layout.intent_ir_path,
-            serde_json::to_string_pretty(&intent_ir)?,
+            &source_path,
+            "# Specification\nSignal ALPHA is input width 1.\n",
         )?;
+        let source_ir = SourceIr::build(&source_path, &tempdir.path().join("generated/source_ir"))?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &tempdir.path().join("generated/evidence_ir"),
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &tempdir.path().join("generated/semantic_ir"),
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &tempdir.path().join("generated/intent_ir"),
+        )?;
+        intent_ir.write_to_disk()?;
 
         let output = tempdir
             .path()

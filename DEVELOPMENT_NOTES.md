@@ -1,4 +1,68 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v (`2026-08-13`) — product authority is replay, not a plausible JSON shape
+
+IntentIR schema 2 is the fourth canonical stage to become proof-carrying. It preserves the complete verified
+cumulative SemanticIR ledger byte-for-byte as its prefix, then appends exact root and per-record claims for all 49
+public fields. Each local claim first cites a registered replay over the complete upstream graph. Canonical load,
+serialization, persistence, prior learning, and adapter construction independently rebuild from current verified
+SemanticIR and compare those public fields; an edited conclusion plus a recomputed hash therefore still lacks the
+registered relation and rejects.
+
+The field audit changed the original seven-family inventory into nine homogeneous families. Eleven actor and
+interface graph fields are exact carries, but `actors` is a filtered projection because unsupported inferred
+phantoms can be removed. Nineteen other semantic collections are exact carries. `actor_contracts` is deliberately
+not the twentieth: optional NLI can remove a contract, so its final collection root is a projection even when the
+ordinary no-NLI path begins byte-identical. The 30 true carries receive direct immediate-SemanticIR antecedents at
+both root and record granularity; projection, synthesis, identity, relation, and residual claims retain complete
+transitive authority through registered replay without making a false lossless assertion.
+
+Post-build authority is closed. Validation can replace only `validation_reports`. NLI can only retain an ordered
+subsequence of the predecessor contracts, preserve all predecessor residuals as an exact prefix, and append one
+typed `nli_unentailed_...` residual for each removed contract. Contract addition/reorder, unmatched residuals, or
+any unrelated field edit rejects before proof refresh. Test fixtures retain a separately compiled mutation kind;
+noncanonical overlays still have no canonical persistence surface. NLI applies and authorizes on a cloned
+candidate, committing it only after proof refresh, so even an in-memory caller receives no partially demoted
+artifact when authorization fails.
+
+One adapter test deliberately alters an ordinarily lossless carried field to model a synthetic fixture. That
+does not weaken production proof: `allow_test_fixture_projection` is false in the production compilation path
+and can mirror `context.test_fixture` only under `cfg(test)` or the explicit `test-support` feature. The same
+operation must still append the closed `TestFixture` mutation premise. Thus fixtures can construct controlled
+counterexamples, while production carried fields continue to require exact immediate SemanticIR antecedents.
+
+Compatibility is explicit. Schemas older than 2 load only for inspection and cannot feed adapters; current
+proofless, stale, forged, or unauthorized artifacts reject; future schemas reject. Runtime path resolution is
+followed by canonical repository-relative normalization before proof comparison, so a repository move changes no
+authority while ambiguous or external lineage remains invalid.
+
+Exactly 24 IntentIRs had verified SemanticIR inputs. Their migration changed zero pre-existing public field; only
+schema/proof and subsequently registered validation changed. Those 24 product artifacts and adapters validate.
+The other 54 remain behind legacy SemanticIR and receive no synthetic proof. Chain currency treats validation and
+its derived proof bytes as one post-build content-identity exclusion; downstream canonical loading still executes
+the proof, so stale current authority is not downgraded to a byte-comparison pass.
+
+One environment-level verification hazard was isolated before migration: immediately after linking on the SSD,
+both the release CLI and an optimized trivial Rust control temporarily waited inside macOS `dyld` before `main`.
+Code signatures, dylib references, and copied bytes verified; both binaries became immediately runnable after the
+post-link processing completed. No migration write used the release executable before that readiness check, and
+all exact probe files and processes were removed.
+
+The final gate also exposed a proof-currency precision debt. IntentIR currently derives every local rule's
+implementation digest from the whole `intent.rs` source file. That is safely fail-closed—a test-only edit made all
+24 current proofs stale rather than silently accepting them—but it is broader than semantic authority: tests and
+comments are not part of the compiled production verifier relation. The exact 24 artifacts were rebuilt from
+verified SemanticIR after source freeze, with zero non-validation public-field or adapter delta. New leaf
+`.6d.ii.e.iv.vii` owns a mechanically exact digest over compiled production proof semantics and dependency
+closure, with positive tests showing test/comment changes preserve currency and adversarial tests showing a
+production relation edit invalidates it.
+
+Final qualification passes all eight doctrines, exact chain replay at 24 current and 54 explicitly
+unmeasurable per proof-bearing stage, formatting, warnings-denied Clippy/rustdoc, 1,943 Rust tests with six
+intentional ignores and zero failures, five compile-fail doctests, all 156 KG fixtures, mdBook test/build, and
+the final project-data-locality check. Cleanup removed 5,012 rebuildable incremental files / 5,058,468 KiB and
+71 checker scratch directories / 1,638 files / 6,844 KiB; the exact directories and requested `.bin`/`.log`
+residue are absent.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv (`2026-08-13`) — semantic conclusions require replay, not vocabulary trust
 
 SemanticIR schema 2 is the third canonical stage to become proof-carrying. It verifies the complete cumulative

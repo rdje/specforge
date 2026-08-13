@@ -322,8 +322,8 @@ expressiveness as the bottleneck.
   Goal: `register production grammar and inference rules and migrate promoted claim families to proof terms`
   Acceptance: `every raw-text interpretation and semantic promotion site is owned by a registered universal rule with typed premises, source span/provenance, declared output kind, and alpha obligation; unregistered production decisions cannot create canonical SourceIR, EvidenceIR, SemanticIR, IntentIR, or ISF authority`
   Verification: `pending`
-  Commit: `completed by .6d.ii.e.iv.i through .6d.ii.e.iv.vi child commits`
-  Children: `.6d.ii.e.iv.i`, `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.iii`, `.6d.ii.e.iv.iv`, `.6d.ii.e.iv.v`, `.6d.ii.e.iv.vi`
+  Commit: `completed by .6d.ii.e.iv.i through .6d.ii.e.iv.vii child commits`
+  Children: `.6d.ii.e.iv.i`, `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.iii`, `.6d.ii.e.iv.iv`, `.6d.ii.e.iv.v`, `.6d.ii.e.iv.vi`, `.6d.ii.e.iv.vii`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i`
   Status: `done`
@@ -354,16 +354,23 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv — prove SemanticIR authority`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v`
-  Status: `pending`
+  Status: `done`
   Goal: `make every IntentIR carry and canonical behavioral synthesis family proof-carrying`
-  Acceptance: `all seven IntentIR families consume a verified cumulative SemanticIR ledger; carry, identity summary, behavior, constraint, assumption, transaction, actor relation, temporal invariant, and residual outputs are registered and cite exact upstream claims; proofless or stale SemanticIR cannot produce IntentIR`
-  Verification: `pending`
-  Commit: `pending`
+  Acceptance: `all nine capability-homogeneous IntentIR families consume a verified cumulative SemanticIR ledger; every one of 49 public fields and each populated record has registered exact replay; the 30 true carried fields cite direct SemanticIR claims while filtered actors, NLI-filterable contracts, identity, product synthesis, behavioral relations, residuals, and validation cannot claim lossless authority; validation and demotion-only NLI are closed mutations; proofless or stale SemanticIR cannot produce IntentIR and proofless, forged, unauthorized, legacy, or future IntentIR cannot load, serialize, persist, or feed an adapter`
+  Verification: `IntentIR schema 2 proves all 49 public fields across nine homogeneous families, retains the exact cumulative SemanticIR ledger as an ordered prefix, and gives every populated collection a record claim; every local claim depends on registered exact replay, all 30 true carried fields cite direct immediate SemanticIR antecedents, and actor/contract projection cannot claim lossless authority; validation changes only its field, NLI is transactional one-to-one order-preserving demotion, and separately compiled TestFixture projection cannot enter production; canonical load/serialize/write/prior/adapter seams reject proofless, stale, forged, unauthorized, legacy, and future authority; exact migration of 24 reachable chains changes zero non-validation public fields, all 24 adapters validate and emitted ISF matches, while 54 legacy chains remain explicitly proof-unmeasurable; chain self-tests pass 20/20; all eight doctrines, formatting, warning-deny Clippy/rustdoc, 1,943 Rust tests pass / six ignored / zero failed plus five compile-fail doctests, 156/156 KG fixtures, mdBook, and final locality pass; 5,012-file incremental and 71-directory checker scratch residue is removed and absent; production-semantic digest precision is owned by .e.iv.vii`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v — prove IntentIR authority`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi`
   Status: `pending`
-  Goal: `make ISF lowering proof-gated and qualify the complete 39-family cumulative chain`
-  Acceptance: `all four adapter families consume a verified IntentIR ledger; target encoding and every rendered ISF construct cite registered lowering proofs while unsupported content remains source-linked residual; proofless/stale/future artifacts cannot emit ISF; all 39 families and every canonical write/lower seam are proof-covered and current artifacts are reconciled exactly`
+  Goal: `make ISF lowering proof-gated and qualify the complete 41-family cumulative chain`
+  Acceptance: `all four adapter families consume a verified IntentIR ledger; target encoding and every rendered ISF construct cite registered lowering proofs while unsupported content remains source-linked residual; proofless/stale/future artifacts cannot emit ISF; all 41 families and every canonical write/lower seam are proof-covered and current artifacts are reconciled exactly`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii`
+  Status: `pending`
+  Goal: `make implementation digests exact to compiled production proof semantics rather than whole source files`
+  Acceptance: `every ruleset implementation digest is mechanically derived from the compiled production verifier/rule implementation and its semantic dependency closure; edits confined to cfg(test), conformance fixtures, comments, or documentation cannot stale canonical proof, while any production relation change does; controlled positive and adversarial mutations prove both directions before the proof-migration parent closes`
   Verification: `pending`
   Commit: `pending`
 
@@ -458,11 +465,12 @@ expressiveness as the bottleneck.
 | 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` | `done` | all five SourceIR families are executable-proof-carrying; 24 retained chains are reconciled and 54 legacy SourceIRs remain inspection-only |
 | 30 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` | `done` | all 11 EvidenceIR families and every productive post-build mutation are executable-proof-carrying; 24 retained chains migrate without field delta and 54 legacy inputs remain inspection-only |
 | 31 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` | `done` | all 12 SemanticIR families are executable-proof-carrying; true carry, mixed evidence projection, relocation, and complete synthesis/conflict/residual topology are verified |
-| 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `pending` | prove all seven IntentIR carry and synthesis families |
+| 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `done` | all nine IntentIR families and 49 fields are proof-carrying; 30 exact carries are separated from projection authority |
 | 33 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `pending` | proof-gate all four adapter families and reconcile the complete chain |
-| 34 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
-| 35 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
-| 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
+| 34 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `pending` | scope implementation digests to compiled production proof semantics and exclude test/comment-only churn |
+| 35 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
+| 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
+| 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
 | 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
 | 38 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
 | 39 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
@@ -759,6 +767,12 @@ expressiveness as the bottleneck.
 | `2026-08-13` | `.6d.ii.e.iv.iv` proof migration and chain attribution | canonical rebuild of exactly the 24 schema-3 EvidenceIR inputs; public-field comparison; `bash scripts/check_chain_currency.sh --check` | PASS: all 24 reachable SemanticIRs migrate with zero semantic field delta; EvidenceIR, SemanticIR, and IntentIR are each 24 current / 54 explicit proof-unmeasurable; all 78 adapters and emitted ISF files remain stage-locally current; zero stale artifacts |
 | `2026-08-13` | `.6d.ii.e.iv.iv` focused qualification | `cargo test -p specforge-core --lib ir::semantic::tests`; adversarial proof/projection/relocation filters; production inventory/rule checks; formatting; warning-deny all-target/all-feature Clippy | PASS: focused SemanticIR and all proof/forgery/mutation/projection/relocation controls pass; 39 families / 168 field rules / 112 producer-mutators / 41 seams / four bypasses resolve; formatting and Clippy pass |
 | `2026-08-13` | `.6d.ii.e.iv.iv` full repository and locality gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including exact chain currency, formatting, warning-deny Clippy, 1,936 Rust tests / six intentional ignores / zero failures, five compile-fail doctests, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-13` | `.6d.ii.e.iv.v` exact IntentIR authority and mutation closure | schema-2 registry/ledger inspection; focused proof, forgery, proofless, legacy/future, downstream, direct-carry/projection, relocation, validation, and NLI controls; checked production rule inventory | PASS: all 49 fields in nine homogeneous families receive roots, populated collections receive record claims, cumulative SemanticIR is an exact prefix, 30 true carried fields directly cite immediate SemanticIR, filtered actors and NLI-filterable contracts cannot claim lossless carry, validation changes one field, NLI is order-preserving one-to-one demotion only, and the current inventory resolves 116 producer/mutator entrypoints, 47 seams, and four bypass obligations |
+| `2026-08-13` | `.6d.ii.e.iv.v` proof migration and chain attribution | exact 24-artifact schema-1 snapshot; release rebuild; pre-existing public-field comparison; typed validation and 24 adapter rebuilds; chain-currency validation/proof identity self-test | PASS: all 24 reachable IntentIRs migrate with zero public-field delta outside schema/proof/validation; 24 IntentIRs and adapters validate; the 11,032-KiB comparison scratch is removed and absent; chain comparator self-test is 20/20, excludes validation plus its proof-derived bytes while canonical downstream loaders still execute proof, and rejects inconsistent counts instead of reporting a negative current population |
+| `2026-08-13` | `.6d.ii.e.iv.v` final-source proof currency and implementation-digest finding | full-gate stale-proof reproduction after a test-only `intent.rs` edit; exact current-schema selection; 24 IntentIR / 24 adapter SSD-local before snapshots; canonical rebuild, typed validation, adapter rebuild, and field comparison | PASS with owned follow-up: the whole-file implementation digest correctly failed closed but unnecessarily staled all 24 IntentIR proofs for a test-only source change; exact regeneration changes zero IntentIR public fields outside validation/proof and zero adapter fields outside validation; all 48 artifacts validate; the exact 209,756-KiB scratch is removed and absent; `.e.iv.vii` now owns production-semantic digest scoping |
+| `2026-08-13` | `.6d.ii.e.iv.v` newly linked release readiness probe | release CLI pre-main stall; process sample; codesign/hash/dylib checks; same-SSD optimized trivial Rust control; delayed re-execution | PASS with environment note: both new binaries temporarily waited in macOS `dyld` before `main`, signatures and bytes verified, and both became immediately runnable after post-link processing; no SpecForge runtime deadlock or migration write occurred before readiness; exact probes/processes were removed |
+| `2026-08-13` | `.6d.ii.e.iv.v` test-fixture closure and final artifact refresh | complete-core adapter fixture reproduction; separately compiled TestFixture projection; exact 24 IntentIR / 24 adapter before snapshots, canonical rebuild, public-field comparison, and validation | PASS: production carried fields still require direct SemanticIR antecedents; only test/test-support code can authorize synthetic projection and it still records the closed mutation premise; core is 1,334/5/0; all 24 IntentIR and adapter artifacts validate with zero non-validation public-field or adapter-content delta; exact 209,756-KiB scratch is absent |
+| `2026-08-13` | `.6d.ii.e.iv.v` complete repository qualification | `bash scripts/run_ci.sh`; `cargo test --workspace -- --format terse`; tracked `kg-bench`; exact artifact census and cleanup | PASS: all eight doctrines including 24-current/54-unmeasurable exact chain replay, formatting, warning-deny Clippy/rustdoc, application 470/0/0 + conformance 139/1/0 + core 1,334/5/0 = 1,943 Rust tests passed / six ignored / zero failed, five compile-fail doctests, KG 156/156, mdBook test/build, and final locality; removed 5,012 incremental files / 5,058,468 KiB plus 71 checker scratch directories / 1,638 files / 6,844 KiB; requested `.bin`/`.log` residue is absent |
 | `2026-08-13` | scheduled artifact cleanup | exact `.bin`/`.log` census under generated and Cargo release/debug trees; rebuildable incremental-cache removal; residue census | PASS: removed 5,085 files / 5,325,300 KiB from `target/debug/incremental`; the directory is absent and zero `.bin`/`.log` files remain in generated/release/debug-deps |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
@@ -1379,6 +1393,29 @@ the reviewed replay can name its production revision.
   retained population publish the same 24-current / 54-inspection-only SemanticIR authority boundary and leave
   IntentIR/adapter proof migration honestly open.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v`
+
+- [x] **REPRODUCE / MEASURE** — all 49 IntentIR public fields classify once across nine homogeneous rule
+  families; 30 exact carries are distinct from filtered actors, NLI-filterable contracts, synthesis, residual,
+  and validation; the live graph resolves 116 producer/mutator entrypoints, 47 canonical seams, and four
+  conformance-only bypass obligations.
+- [x] **ROOT CAUSE (WHY + WHERE)** — ordinary IntentIR construction cloned, filtered, and synthesized from
+  SemanticIR, while validation and optional NLI mutated the product afterward; schema-valid JSON and provenance
+  could not prove the current verified SemanticIR plus registered implementation determined every conclusion.
+- [x] **ADDRESSED (verified)** — schema 2 retains cumulative SemanticIR proof as an exact prefix, registers every
+  field and record replay, directly binds every true carry to immediate SemanticIR, independently rebuilds the
+  product, and closes validation plus one-to-one order-preserving NLI demotion before serialization or writing.
+- [x] **NO REGRESSION** — exact migration of the 24 reachable chains changes zero pre-existing public field;
+  focused transformation/proof/forgery/compatibility/relocation/mutation tests pass; the remaining 54 chains stay
+  explicit proof-unmeasurable rather than receiving synthetic authority. Full repository qualification is
+  recorded in this leaf's verification ledger before closure.
+- [x] **GENERICITY (ADR 0006)** — authority follows exact current upstream claims, registered replay, and typed
+  conservative mutation. No vendor, protocol, document, filename, corpus family, or source-symbol vocabulary
+  selects admission; a forbidden-token list remains diagnostic only.
+- [x] **LOCKSTEP** — code, schema, rule inventory, chain-currency validation identity, roadmap, mdBook, live docs,
+  Knowledge Map, task frontier, and retained population publish the same 24-current / 54-inspection-only
+  IntentIR boundary and leave adapter proof migration honestly open.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1415,6 +1452,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii — prove SourceIR authority` | SourceIR schema-3 executable relation proofs for five families / 19 fields, exact 24 retained migrations, and fail-closed history |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii — prove EvidenceIR authority` | EvidenceIR schema-3 cumulative proof for 11 families / 39 fields, closed mutation replay, exact 24 retained migrations, and proof-frontier currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv — prove SemanticIR authority` | SemanticIR schema-2 cumulative proof for 12 families / 49 fields, direct true-carry antecedents, registered mixed evidence projection, repository relocation, closed validation mutation, exact 24 retained migrations, and proof-frontier currency |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v — prove IntentIR authority` | IntentIR schema-2 cumulative proof for nine families / 49 fields, 30 direct true-carry antecedents, actor/contract projection separation, closed validation and NLI demotion, exact 24 retained migrations, and proof-frontier currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1516,6 +1554,22 @@ the reviewed replay can name its production revision.
   transitive upstream topology; validation is the only production mutation. Exact migration changes no semantic
   field. Currency is 24 current / 54 proof-unmeasurable through IntentIR, with all 78 adapters/ISF stage-locally
   current. `.e.iv.v` is next only after this child commits cleanly.
+- `2026-08-13`: Activated `.6d.ii.e.iv.v` only after `.e.iv.iv` committed at `684b6214`, the post-commit tree
+  was clean, and the commit brief was zero bytes. This child began from seven inventoried IntentIR families and
+  owns all 49 public fields, exact cumulative
+  SemanticIR prefix carry, canonical summary/behavior/relation/residual derivations, validation mutation,
+  compatibility, and every canonical IntentIR load/serialize/write/adapter seam. It begins with an exact
+  field-by-field carry-versus-projection audit so no filtered, synthesized, or extended surface can claim
+  lossless authority. The audit split filtered actors and NLI-filterable actor contracts from exact carry,
+  yielding nine capability-homogeneous families rather than preserving a misleading mixed family merely to keep
+  the initial row count.
+- `2026-08-13`: Closed `.6d.ii.e.iv.v` after exact replay made every IntentIR field and populated record
+  proof-carrying, true carries gained immediate SemanticIR antecedents, actor/contract projections were kept
+  distinct, and validation plus transactional NLI became closed mutations. Exact migration changes no
+  non-validation product field across the 24 reachable chains; 54 legacy chains remain inspection-only. A
+  test-only adapter fixture exposed and closed the need for separately compiled synthetic projection without
+  weakening production. Full CI and 156/156 KG fixtures pass. `.e.iv.vi` is next only after this child commits
+  cleanly; `.e.iv.vii` durably owns the surfaced whole-module digest precision debt.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

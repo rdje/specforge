@@ -21,6 +21,8 @@
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > Can legacy named-family priors steer current extraction?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can legacy or proofless IntentIR feed an adapter?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can legacy or proofless SemanticIR feed IntentIR?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > Can old proofless IR artifacts still steer extraction or lower to ISF?
@@ -28,6 +30,8 @@
   > Can recomputing SourceIR JSON hashes self-attest an edited claim?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can recomputing a SemanticIR conclusion hash authorize an edit?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can recomputing an IntentIR conclusion hash authorize an edit?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can specforge-core depend on named fixtures or reviewed evaluation?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -38,6 +42,8 @@
   > Does SemanticIR and IntentIR preserve generic protocol records?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Does every carried SemanticIR record cite EvidenceIR directly?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Does moving the repository invalidate IntentIR proof?
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > EXTRACTION-QUALITY-GAUGE.3f what is the alphabetic-value word-boundary gate
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
@@ -75,11 +81,19 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is EvidenceIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is IntentIR proof-carrying?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is IntentIR validation backannotation authorized?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is NLI contract demotion authorized without permitting contract invention?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is SemanticIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is SemanticIR validation backannotation authorized?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is SourceIR proof-carrying?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How many IntentIR fields and rule families are proved?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
@@ -115,9 +129,17 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Where is the whole extraction-pipeline genericity audit?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Which IntentIR fields are exact SemanticIR carries?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which crate owns replay, completeness classification, and trajectory snapshots?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which premise kinds can the trusted promotion kernel accept?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Which task owns production-semantic implementation digest scoping?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Why are actors and actor contracts IntentIR projections rather than lossless carries?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Why can a test-only Rust edit currently stale production proof?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why can downstream chain currency be unmeasurable rather than stale?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -275,25 +297,3 @@
   > can the Docling-flattened register diagram table be parsed into bits_high/bits_low (no — garbled: wrong explicit positions, dropped field bands, doubled cells, two stacked halves, or symbolic XLEN-relative positions)
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > can the downstream corpus chain be rebuilt without re-ingesting documents
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > can the subject snap fabricate or rewrite a signal name
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > can the trajectory controller mutate canonical semantic artifacts
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > can the trajectory controller use one weighted score
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > can the word when in a statement make its whole section a semantic phase
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > can validating a copied artifact modify the canonical generated artifact
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > could a huge PDF OOM the downstream stages even though ingest is bounded
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > default model for the ollama provider
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > did DOC-INTENT-TAXONOMY.4d.i build a deterministic RISC-V CSR bit-position parser (NO — measured non-viable: bits live in the image, flattened tables garbled/XLEN-symbolic, ~0 correct recovery + fabrication risk; honest residual, no Rust code, no FR)

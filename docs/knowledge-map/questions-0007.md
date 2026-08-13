@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > what causes actor_signal_relations / extracted_statements to differ run-to-run
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > what changed between stale and current OpenCAPI Certified Definition artifacts
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > what changed between stale and current OpenCAPI Ready Definition artifacts
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > what confidence axis correlates with extracted-constraint correctness
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what debug/diagnostic tools does specforge have (TOOLBOX.md)
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what did KG-ISF-TRANSACTIONS.2l measure / decide
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what did KG-ISF-TRANSACTIONS.2n measure / decide
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -276,25 +298,3 @@
   > what is ProtocolStateRecord / protocol_states / DBGTAPSM
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what is SWD's actual intent / protocol (from the spec)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > what is SerialFrameField / serial_frame_fields / SerialFramePhase
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what is SpecForge doing in academic or research terms
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > what is TimingIntentDisposition
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
-- [contested-priors](../knowledge/contested-priors.md)
-  > what is a contested prior
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > what is aggregate_composition in surfaces.jsonl
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is capture_signal_presence_rows and who shares it
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what is content-based name-column detection / rotation offset remapping

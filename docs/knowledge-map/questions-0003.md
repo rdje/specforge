@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > does the ISF adapter lower generic gate behaviors
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > does the NLI verifier actually catch real extraction errors
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > does the USB4 Inter-Domain adapter still emit a USB4 signal
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > does the administrative classifier name OpenCAPI or a vendor
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > does the agent-identity gate keep Class-B fragments like Subordinate extends
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > does the authority empty repair preserve formal and system contract interfaces
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does the converge NLI pass measure quality or demote unsupported intent
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > does the current SWD chain come from the tracked ADI PDF
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > does the current SpecForge binary still fabricate AIA TOC timing constraints
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > does the emitted .isf signal direction affect FSMGen downstream correctness
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
@@ -276,25 +298,3 @@
   > how does SpecForge serialize repository owned paths
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how does SpecForge verify an extracted claim semantically / catch hallucination
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > how does a VLM timing note become a FigureRegion
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how does a deliberate normalized-bundle reclamation get authorized
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > how does a heterogeneous collection declare its legal maximum
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > how does a repair prove its change is isolated if it also rebuilds drifted documents
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how does a section-heading register avoid double-counting an existing register record
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > how does an unknown-kind Continued from previous page table fragment get a kind
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does automatic task ranking keep hard failures ahead of breadth work
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance

@@ -4,6 +4,28 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-13 — proof-carrying IntentIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v`)
+
+- IntentIR schema 2 owns all 49 public fields across nine capability-homogeneous families. Its cumulative ledger
+  retains the exact verified SemanticIR ledger as an ordered prefix, then appends roots and stable per-record
+  claims under registered executable replay.
+- Thirty exact carries cite direct immediate-SemanticIR antecedents at root and record granularity. The filtered
+  `actors` surface and NLI-filterable `actor_contracts` surface are projection families rather than misleading
+  lossless carries; identities, product summaries, behavioral relations, and residuals likewise use their
+  registered derivation capabilities.
+- Canonical verification reloads current SemanticIR, rebuilds the complete product, replays its closed mutation
+  sequence, verifies the local suffix, and composes it with the exact upstream prefix. Load, serialization,
+  persistence, prior learning, validation, NLI demotion, and adapter construction therefore reject proofless,
+  stale, forged, unauthorized, legacy, and future authority.
+- Production mutation is closed to validation backannotation and conservative NLI demotion. NLI must retain an
+  ordered contract subsequence, preserve existing residuals as an exact prefix, and append one typed residual per
+  removed contract. It authorizes on a cloned candidate and commits only after proof refresh, so failure is
+  transactional even for an in-memory caller.
+- Repository-owned lineage is resolved then normalized before verification, preserving proof across repository
+  relocation without accepting ambiguous or external paths. Exactly 24 reachable IntentIRs migrate with zero
+  pre-existing public-field delta; 54 remain inspection-only behind legacy SemanticIR. Adapter proof authority
+  remains `.e.iv.vi` work.
+
 ## Session update (2026-08-13 — proof-carrying SemanticIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv`)
 
 - SemanticIR schema 2 owns 49 public fields across 12 registered families. The cumulative proof preserves the

@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > what is SerialFrameField / serial_frame_fields / SerialFramePhase
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > what is SpecForge doing in academic or research terms
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > what is TimingIntentDisposition
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
+- [contested-priors](../knowledge/contested-priors.md)
+  > what is a contested prior
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is aggregate_composition in surfaces.jsonl
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is capture_signal_presence_rows and who shares it
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what is content-based name-column detection / rotation offset remapping
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is continuation_inherited_table_heads and what grounds the join
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
@@ -275,26 +297,3 @@
   > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > what kind of extractor actually needs the cross-document cluster mechanism
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what limits govern the corpus task root index parts and capsule
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > what made 14 corpus documents stop emitting an .isf
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what makes a corpus document unmeasurable for chain currency
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > what makes a source-to-Intent residual actionable
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > what makes a valid activate-only opt-in extractor candidate
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > what makes legacy absolute path rebasing safe and unambiguous
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > what message field metrics does validate emit
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > what model do converge / enrich / nlp-enrich use by default
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what model does the NLI verifier use
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what must .5.iv.a exclude before header-sourced naming can land (four measured junk classes among the 134: OFFSET-headed register-offset tables where the header names a column concept not a field (3, CoreSight SDC-600); *_WIDTH self-named pseudo-enums whose only member is LEGAL_VALUES (the .5.iii honest residual, reappearing from the header side); garbled members (AXADDR ->
-  > VA_40/NUM_2_0_A); and 12 RESERVED-only enums carrying no intent. It is byte-changing on the AXI wire gold ihi0022_l (a new AWATOP enum) so it needs the full before/after WIRE-BASED-100 protocol)
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what must SpecForge derive to fully capture SWD; what are the gaps

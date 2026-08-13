@@ -369,13 +369,19 @@ pub fn nli_gate_contracts(
 pub fn apply_nli_gate(
     intent_ir: &mut crate::ir::intent::IntentIr,
     verify: impl Fn(&str, &str) -> NliVerdict,
-) -> usize {
-    let contracts = std::mem::take(&mut intent_ir.actor_contracts);
+) -> crate::error::Result<usize> {
+    // Authorize on a candidate so a proof/replay failure cannot leave the caller holding a
+    // partially demoted, proof-stale artifact. Commit the mutation only after its closed NLI
+    // relation has rebuilt the cumulative IntentIR proof successfully.
+    let mut candidate = intent_ir.clone();
+    let contracts = std::mem::take(&mut candidate.actor_contracts);
     let (kept, residuals) = nli_gate_contracts(contracts, verify);
     let demoted = residuals.len();
-    intent_ir.actor_contracts = kept;
-    intent_ir.residual_decisions.extend(residuals);
-    demoted
+    candidate.actor_contracts = kept;
+    candidate.residual_decisions.extend(residuals);
+    candidate.authorize_mutation(crate::ir::intent::IntentMutationKind::NliDemotion)?;
+    *intent_ir = candidate;
+    Ok(demoted)
 }
 
 /// Prefix on the `packet_id` of every residual the NLI gate creates.

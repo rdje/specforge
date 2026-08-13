@@ -1,8 +1,9 @@
 # Production-genericity pipeline audit
 
-Status: **discovery and proof-architecture freeze complete; production dependency, proof, rule, structural, and behavioral implementation remains**
+Status: **discovery, dependency boundary, trusted kernel, rule census, and SourceIR→IntentIR proof migration complete; adapter proof, AST information-flow enforcement, and behavioral qualification remain**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
+Latest proof-migration update: 2026-08-13 (`.6d.ii.e.iv.v`)
 Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
 Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
 
@@ -171,8 +172,8 @@ enforcement, per-rule alpha execution, and population qualification remain `.e.i
 
 ## Exact rule and canonical-seam census (`.6d.ii.e.iv.i`)
 
-The migration census now joins all 38 claim families to 168 deterministic field-root rule ids, 113 current
-producer or post-build mutator entrypoints, and 39 canonical insertion/write seams. The latter include every
+The migration census now joins all 41 claim families to 168 deterministic field-root rule ids, 116 current
+producer or post-build mutator entrypoints, and 47 canonical insertion/write seams. The latter include every
 stage writer and `validate`'s separate raw backannotation writer. `rule_family_inventory.tsv` fixes, for every
 family, the current entrypoints, allowed typed premises, symbol capability, mandatory alpha obligation,
 compatibility, target module, schema owner, canonical seams, and one stage migration leaf. The checker resolves
@@ -197,8 +198,17 @@ proof chain. Proofless history is inspection/rebuild/residual input only, and fu
 Conformance patches will move to noncanonical typed overlays unable to call canonical production sinks; the
 evaluation storage rebase will preserve verified proof bytes without authorizing semantic changes. This slice
 freezes the reviewed high-level migration graph and cumulative-ledger contract only. It changes no artifact schema,
-producer behavior, or canonical output. Stage migrations remain `.e.iv.ii`–`.e.iv.vi`, while `.e.v` must derive
-helper-level AST/information-flow closure rather than treating a reviewed entrypoint inventory as sufficient proof.
+producer behavior, or canonical output. SourceIR through IntentIR are now migrated; adapter lowering remains
+`.e.iv.vi`, and `.e.iv.vii` owns implementation-digest precision before `.e.v` derives helper-level
+AST/information-flow closure rather than treating a reviewed entrypoint inventory as sufficient proof.
+
+The IntentIR closing gate exposed why digest precision is distinct from fail-closure. Each current stage derives
+its implementation digest from the whole Rust module. Adding a rollback assertion only inside `#[cfg(test)]` made
+all 24 persisted IntentIR proofs stale, and every adapter load rejected them. That is safe—no false authority
+crossed the seam—but broader than production semantics. Exact canonical regeneration from verified SemanticIR
+changed zero non-validation IntentIR fields and zero non-validation adapter fields. `.e.iv.vii` therefore requires
+a mechanically derived digest over compiled production verifier/rule semantics and their dependency closure:
+test/comment-only changes must preserve currency, while any real production relation change must invalidate it.
 
 ## Audit denominator and method
 
@@ -291,11 +301,11 @@ prior memory.
 | Source registration/materialization | Source kind, repository-local artifacts, Docling page/table/visual conversion, closed visual-form/section grammar, typed table-role classification, timing-table structural revalidation | Remediated by `.6d.ii.b`: schema-2 classification is identity-independent and fail-closed; schema-1 semantic labels are neutralized on load. |
 | VLM enrichment | Caption-selected timing/state images; typed JSON prompts; table kind/grid proposals checked against headers | Prompts now describe generic digital-hardware structure, require visible/current-document grounding, and treat labels as opaque. |
 | Evidence assembly | Markdown blocks, spans, section anchors, references, table declarations, typed provenance | Broadly structural/input-derived. |
-| Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Protocol structure and identifier-spelling authority are remediated; named compiled documentation is neutralized. Proof-carrying rule admission remains open. |
+| Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Protocol structure and identifier-spelling authority are remediated; schema-3 EvidenceIR proves all 39 fields across 11 registered families and closes productive mutations. |
 | Prior-guided EvidenceIR | Table/visual/actor/semantic/temporal priors | Remediated by `.6d.ii.d.i`: schema 7 has one global scope; normalized current-document evidence and structural fingerprints select priors, while identity is provenance only. |
 | Text LLM/NLP | Per-sentence JSON extraction, declared-signal grounding, entity typing, dedup, optional promotion | Remediated by `.6d.ii.d.iii`: typed tasks, declaration-ordered catalogs, undeclared-contract residualization, model-proposal-independent constraint typing, and identifier-redacted entity judgment. |
-| SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Identifier-spelling inference and named compiled documentation are removed; proof-carrying inference admission remains open. |
-| IntentIR | Lossless carry-forward; actor/temporal relations; generic transaction synthesis; residual decisions | Name-created behavior is removed and generic carriers are preserved; proof-carrying structural enforcement remains open. |
+| SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Schema-2 authority proves all 49 fields across 12 families, directly binds true EvidenceIR carries, and registers filtered/extended projections, synthesis, residual, and validation replay. |
+| IntentIR | Exact carry-forward; filtered actor/contract projection; actor/temporal relations; generic transaction synthesis; residual decisions | Schema-2 authority proves all 49 fields across nine homogeneous families, directly binds 30 true SemanticIR carries, and closes validation plus demotion-only NLI mutation. |
 | ISF adapter | Typed lowering, syntax validation, conflict rejection, unsupported-record residuals | Lowering consumes typed system/actor/temporal contracts and fails closed; proof-covered lowering remains open. |
 | Validation/evaluation | Stage metrics, negative-knowledge lookup, extraction scores, completeness/category classification | Prior and signal validation are identity-neutral. Evaluation and calibrated classification now compile downstream in `specforge-conformance`, so they cannot feed a core dependency. |
 | Corpus/trajectory utilities | Learn priors, structural clustering, KG pages, reviewed replay/controller | Corpus-KB routing derives capabilities/prior surfaces/control status only from populated fixture-schema fields; names are display/provenance. Replay, trajectory, and reviewed snapshot composition compile downstream of core. |
@@ -533,11 +543,11 @@ decision sites.
 | Model/quality commands | `audit_extraction`, `enrich`, `extract_constraints_llm`, `grits_consensus`, `nli_verify`, `nlp_enrich`, `project_validation` | Prompt policy is typed, current-document-grounded, opaque-symbol, and alpha-controlled. Corpus literals observed in these files are test-only or historical commentary owned by `.e`. |
 | Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Validation/orchestration do not infer semantics from identifier spelling; KG fixture capability metadata is structural. The application may compose core and conformance, while neither package can depend on it. |
 | Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering, schema-7 learning, and schema-field-derived corpus-KB organization are neutral; fixture identity is display/provenance only. |
-| SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Neutral at schema 2: lifecycle is structural, classifiers use generic form/role grammar with honest unknown, and legacy semantic labels fail closed. |
-| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Signal identities and prompt symbols are opaque and one-way grounded; compiled documentation uses only structural examples. Framework, grounding primitives, and parsers are reusable; proof-rule migration remains open. |
+| SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Neutral at schema 3: lifecycle is structural, classifiers use generic form/role grammar with honest unknown, exact capture/classification relations are executable, and legacy semantic labels fail closed. |
+| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Signal identities and prompt symbols are opaque and one-way grounded; schema-3 EvidenceIR proves deterministic extraction plus every closed enrichment/backannotation mutation. |
 | Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Neutral at schema 7: one global scope, fail-closed legacy quarantine, normalized evidence keys, and structural fingerprints; no document identity selects a lookup. |
-| SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Typed fusion/verification no longer assigns interface, invariant, handshake, infrastructure, or polarity meaning from identifier spelling; compiled documentation is neutral. Proof-rule enforcement remains open. Figure-region corpus paths are test-only. |
-| IntentIR | `ir/intent.rs` | Structural synthesis no longer creates transactions or actor/temporal behavior from name fragments; compiled documentation is neutral and the proof-carrying boundary remains open. |
+| SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Typed fusion/verification no longer assigns meaning from identifier spelling; schema-2 proof executes carry/projection/synthesis/residual relations and closed validation. Figure-region corpus paths are test-only. |
+| IntentIR | `ir/intent.rs` | Structural synthesis no longer creates behavior from name fragments; schema-2 proof executes exact carry, projection, product/relation synthesis, residual, validation, and conservative NLI demotion. |
 | Adapter | `ir/adapters.rs`, `ir/isf_ir.rs` | Clock/reset lowering consumes the typed system contract and fails closed when it is absent/incomplete; compiled documentation is neutral and proof-covered lowering remains open. |
 | Completeness/evaluation | `ir/completeness.rs`, `eval.rs` | Public reusable APIs compile only in `specforge-conformance`; corpus calibration and named tests cannot become core dependencies. |
 | Replay/trajectory | `ir/source_to_intent_eval.rs`, `source_to_intent_replay.rs`, `trajectory.rs`; `test_support/trajectory_snapshot.rs` | Public engines and named reviewed snapshot composition compile only downstream in `specforge-conformance`. |

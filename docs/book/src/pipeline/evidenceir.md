@@ -86,9 +86,9 @@ Schemas 1 and 2 remain available through the inspection API only. They cannot fe
 corpus, the 24 documents with retained, verified SourceIR captures now have schema-3 EvidenceIR and no extracted
 field changed during migration. The other 54 EvidenceIR files remain historical, proofless, inspection-only
 artifacts until their SourceIR inputs can be recaptured under an owned refresh. The currency gate reports their
-EvidenceIR-to-SemanticIR replay as unmeasurable rather than pretending it is current. Persisted SemanticIR can
-still reproduce IntentIR and adapter outputs stage-locally until those stages receive proof schemas; those local
-replays do not establish an end-to-end verified chain.
+EvidenceIR-to-SemanticIR replay as unmeasurable rather than pretending it is current. SemanticIR and IntentIR now
+enforce the same proof frontier: the 24 reachable chains are current through the product boundary, while the 54
+historical later-stage files cannot regain authority from their storage location or old stage-local bytes.
 
 ## Typical evidence-level wins
 

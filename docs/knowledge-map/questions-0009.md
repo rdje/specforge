@@ -2,6 +2,29 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what limits govern the corpus task root index parts and capsule
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > what made 14 corpus documents stop emitting an .isf
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what makes a corpus document unmeasurable for chain currency
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > what makes a source-to-Intent residual actionable
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > what makes a valid activate-only opt-in extractor candidate
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > what makes legacy absolute path rebasing safe and unambiguous
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > what message field metrics does validate emit
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > what model do converge / enrich / nlp-enrich use by default
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what model does the NLI verifier use
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what must .5.iv.a exclude before header-sourced naming can land (four measured junk classes among the 134: OFFSET-headed register-offset tables where the header names a column concept not a field (3, CoreSight SDC-600); *_WIDTH self-named pseudo-enums whose only member is LEGAL_VALUES (the .5.iii honest residual, reappearing from the header side); garbled members (AXADDR ->
+  > VA_40/NUM_2_0_A); and 12 RESERVED-only enums carrying no intent. It is byte-changing on the AXI wire gold ihi0022_l (a new AWATOP enum) so it needs the full before/after WIRE-BASED-100 protocol)
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what must SpecForge derive to fully capture SWD; what are the gaps
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > what must be rebuilt after moving the SpecForge repository
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
@@ -274,27 +297,3 @@
   > where is the persisted source-to-IntentIR result snapshot
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > where is the register-field gold seed
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > where is the reviewed source-to-intent dataset
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > where is the set of retained normalized bundles declared
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > where is the shared section-heading container-walk that .10f and .10g both use
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > where is the source-to-Intent vertical evaluation schema
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > where is the spawn+poll+kill memory guard in materialize_pdf
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > where is the structural gate that drops function-word-led and verb-led actor candidates
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > where is the tiling-gated register bit recovery implemented
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > where is the trailing function-word strip in consolidate_trailing_fragment
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > where is the weak-phrase / NASA ARM ambiguity detector
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > where may diagnostic scratch files and comparison lists be written

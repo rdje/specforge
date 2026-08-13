@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why does the OpenCAPI Ready Definition emit no ISF
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why does the OpenCAPI Ready engineering note emit no ISF
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > why does the USB4 Connection Manager Guide emit no ISF
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why does the VLM misread register-diagram bit positions and how is it fixed
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > why does the batch size depend on total RAM instead of free memory
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > why does the chain-currency check ignore validation_reports
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > why does the corpus task reuse the active task evidence checker
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > why does the eMMC actor count drop 153 to 138 after .1c.i
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why does the emitted .isf default ~98% of signals to output and width 1
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why does the fact-card file count differ from the Knowledge Map fact count
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > why does the fact-card landing have one line per card
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -274,15 +298,3 @@
   > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why were PWR and OPEN promoted as conditional-rule consequent signals
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were RISC-V/TRM register tables unextracted (unknown table_kind)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were register names synthetic register_table_NNNN and how is the heading association done
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > will a new standalone extraction command fail if converge does not account for it
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > will generated stage artifacts survive moving the repository
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > would a table-column phase cue move AXI/SWD off empty per-phase grouping (no — .2j NO-GO; the cue is already captured where present and genuinely absent on AXI/SWD)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > would header-sourced naming have recovered the Arm SMMU guide's SEC_SID enum (NO — honest correction recorded at .5.iv: that table's members are whole description sentences, so the .5.ii spine gate drops them all and the enum empties however it is named. The lever is real but does not help the document that surfaced it)

@@ -93,11 +93,11 @@ metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400
 SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are complete, and ADR 0038 freezes the
 proof-carrying migration. The workspace enforces the core/conformance boundary, and the sealed opaque-identity,
 ruleset, proof-ledger, compatibility, and promotion-kernel substrate is installed. A deserialized proof envelope
-cannot self-authorize. The current checked 39-family / 168-field graph resolves 112 producer/mutator entrypoints,
-41 canonical seams, four conformance-only bypasses, and the one cumulative-ledger compatibility contract.
-SourceIR, EvidenceIR, and SemanticIR now carry executable cumulative proof; IntentIR and the adapter remain
-fail-closed migration work under `.e.iv.v`–`.e.iv.vi`. A finite forbidden-vocabulary list remains diagnostic, not
-proof. `.e.iv.v`–`.e.vii` still must migrate the later rules, enforce AST/information-flow
+cannot self-authorize. The current checked 41-family / 168-field graph resolves 116 producer/mutator entrypoints,
+47 canonical seams, four conformance-only bypasses, and the one cumulative-ledger compatibility contract.
+Four IR stages now carry cumulative proof; adapter migration remains `.e.iv.vi`, and `.e.iv.vii` scopes whole-module digests to production semantics.
+A finite forbidden-vocabulary list remains diagnostic, not
+proof. `.e.iv.vi`–`.e.vii` still must migrate lowering, close digest precision, and enforce AST/information-flow
 obligations, and qualify the structural result; `.f` then owns population alpha-renaming, identity, paraphrase,
 and held-out qualification before `.6e`. A reproduced 400-page failure also drove resource-sized bounded
 activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.

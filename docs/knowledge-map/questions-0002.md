@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > can the subject snap fabricate or rewrite a signal name
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > can the trajectory controller mutate canonical semantic artifacts
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > can the trajectory controller use one weighted score
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > can the word when in a statement make its whole section a semantic phase
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > can validating a copied artifact modify the canonical generated artifact
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > could a huge PDF OOM the downstream stages even though ingest is bounded
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > default model for the ollama provider
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > did DOC-INTENT-TAXONOMY.4d.i build a deterministic RISC-V CSR bit-position parser (NO — measured non-viable: bits live in the image, flattened tables garbled/XLEN-symbolic, ~0 correct recovery + fabrication risk; honest residual, no Rust code, no FR)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted then SHIPPED it via ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1/.2, pin d327129b7; FSMGEN-REFRESH-INTEGRATE-4 accepted, -5 shipped)
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
@@ -275,25 +297,3 @@
   > does the ISF adapter consume swd_operations or protocol_states
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does the ISF adapter lower actor-relative direction
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > does the ISF adapter lower generic gate behaviors
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > does the NLI verifier actually catch real extraction errors
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > does the USB4 Inter-Domain adapter still emit a USB4 signal
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > does the administrative classifier name OpenCAPI or a vendor
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > does the agent-identity gate keep Class-B fragments like Subordinate extends
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > does the authority empty repair preserve formal and system contract interfaces
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > does the converge NLI pass measure quality or demote unsupported intent
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > does the current SWD chain come from the tracked ADI PDF
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > does the current SpecForge binary still fabricate AIA TOC timing constraints
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > does the emitted .isf signal direction affect FSMGen downstream correctness

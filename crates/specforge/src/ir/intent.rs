@@ -6,6 +6,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::derivation::{
+    AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
+    PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
+    RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
+    SymbolCapabilityClass, VerifiedProofLedger,
+};
 use crate::ir::evidence::{
     InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField,
     SignalPolarityConflictRecord, SignalPolarityRecord, SignalSemanticConflictRecord,
@@ -27,6 +33,99 @@ use crate::ir::source::{
 use crate::persisted_path::{
     PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
 };
+
+const INTENT_IR_SCHEMA_VERSION: u32 = 2;
+const INTENT_PROOF_CONTEXT_SCHEMA_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct IntentProofContext {
+    schema_version: u32,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    mutations: Vec<IntentMutationEvent>,
+    #[cfg(any(test, feature = "test-support"))]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    test_fixture: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+#[doc(hidden)]
+pub enum IntentMutationKind {
+    ValidationBackannotation,
+    NliDemotion,
+    #[cfg(any(test, feature = "test-support"))]
+    TestFixture,
+}
+
+impl IntentMutationKind {
+    fn allowed_fields(self) -> Vec<&'static str> {
+        match self {
+            Self::ValidationBackannotation => vec!["validation_reports"],
+            Self::NliDemotion => vec!["actor_contracts", "residual_decisions"],
+            #[cfg(any(test, feature = "test-support"))]
+            Self::TestFixture => INTENT_RULE_FIELDS.iter().map(|(field, _)| *field).collect(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct IntentMutationEvent {
+    mutation_id: String,
+    kind: IntentMutationKind,
+    fields: BTreeMap<String, serde_json::Value>,
+}
+
+#[derive(Debug)]
+struct IntentClaimInput {
+    address: ClaimAddress,
+    rule_id: RuleId,
+    conclusion: serde_json::Value,
+}
+
+#[derive(Debug)]
+struct IntentProofPremises {
+    claim_replays: BTreeMap<ClaimAddress, PremiseRef>,
+    carried_upstream: BTreeMap<ClaimAddress, PremiseRef>,
+    mutations: Vec<(IntentMutationKind, PremiseRef)>,
+    allow_test_fixture_projection: bool,
+}
+
+impl IntentProofPremises {
+    fn for_claim(
+        &self,
+        address: &ClaimAddress,
+    ) -> DerivationResult<(Vec<PremiseRef>, ProofConfidence)> {
+        let field = address.surface();
+        let claim_replay = self.claim_replays.get(address).cloned().ok_or_else(|| {
+            DerivationError::new(format!(
+                "IntentIR claim '{}:{}' lacks its registered replay",
+                address.surface(),
+                address.stable_record_key()
+            ))
+        })?;
+        let mut premises = vec![claim_replay];
+        if INTENT_CARRIED_FIELDS.contains(&field) {
+            if let Some(upstream) = self.carried_upstream.get(address).cloned() {
+                premises.push(upstream);
+            } else if !self.allow_test_fixture_projection {
+                return Err(DerivationError::new(format!(
+                    "IntentIR carried claim '{}:{}' lacks a direct SemanticIR claim",
+                    address.surface(),
+                    address.stable_record_key()
+                )));
+            }
+        }
+        premises.extend(
+            self.mutations
+                .iter()
+                .filter(|(kind, _)| kind.allowed_fields().contains(&field))
+                .map(|(_, premise)| premise.clone()),
+        );
+        Ok((premises, ProofConfidence::Deterministic))
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IntentIr {
@@ -153,6 +252,221 @@ pub struct IntentIr {
     pub residual_decisions: Vec<ResidualDecisionPacket>,
     #[serde(default)]
     pub validation_reports: Vec<ValidationReportRecord>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_context: Option<IntentProofContext>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_ledger: Option<ProofLedger>,
+}
+
+const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
+    ("schema_version", "intent.envelope"),
+    ("stage", "intent.envelope"),
+    ("semantic_ir_path", "intent.envelope"),
+    ("artifact_layout", "intent.envelope"),
+    ("document_identity", "intent.envelope"),
+    ("intent_identity", "intent.envelope"),
+    ("actors", "intent.actor_projection"),
+    ("actor_signal_relations", "intent.carried_actor_graph"),
+    ("actor_ports", "intent.carried_actor_graph"),
+    ("signal_connectivity", "intent.carried_actor_graph"),
+    ("infrastructure_signals", "intent.carried_actor_graph"),
+    ("interface_signal_conflicts", "intent.carried_actor_graph"),
+    (
+        "signal_connectivity_conflicts",
+        "intent.carried_actor_graph",
+    ),
+    ("signal_polarities", "intent.carried_actor_graph"),
+    ("signal_polarity_conflicts", "intent.carried_actor_graph"),
+    ("signal_semantic_conflicts", "intent.carried_actor_graph"),
+    ("interfaces", "intent.carried_actor_graph"),
+    ("system_contract", "intent.carried_actor_graph"),
+    ("serial_frame_fields", "intent.carried_semantics"),
+    ("protocol_operations", "intent.carried_semantics"),
+    ("protocol_states", "intent.carried_semantics"),
+    ("interface_edge_timings", "intent.carried_semantics"),
+    ("regular_states", "intent.carried_semantics"),
+    ("state_transitions", "intent.carried_semantics"),
+    ("symbol_definitions", "intent.carried_semantics"),
+    ("control_blocks", "intent.carried_semantics"),
+    ("explicit_modules", "intent.carried_semantics"),
+    ("explicit_tops", "intent.carried_semantics"),
+    ("register_records", "intent.carried_semantics"),
+    ("timing_constraints", "intent.carried_semantics"),
+    ("temporal_rules", "intent.carried_semantics"),
+    ("actor_contracts", "intent.contract_projection"),
+    ("constrained_extraction_stats", "intent.carried_semantics"),
+    ("protocol_graph", "intent.carried_semantics"),
+    ("fidelity_findings", "intent.carried_semantics"),
+    ("temporal_conflicts", "intent.carried_semantics"),
+    ("signal_constraints", "intent.carried_semantics"),
+    ("conditional_rules", "intent.carried_semantics"),
+    ("behaviors", "intent.product_summary"),
+    ("constraints", "intent.product_summary"),
+    ("assumptions", "intent.product_summary"),
+    ("transactions", "intent.behavioral_relations"),
+    ("actor_drive_relations", "intent.behavioral_relations"),
+    ("actor_sample_relations", "intent.behavioral_relations"),
+    ("actor_trigger_relations", "intent.behavioral_relations"),
+    ("actor_temporal_dependencies", "intent.behavioral_relations"),
+    ("temporal_invariants", "intent.behavioral_relations"),
+    ("residual_decisions", "intent.residual"),
+    ("validation_reports", "intent.validation"),
+];
+
+/// Public IntentIR fields whose values are byte-for-byte SemanticIR carries. These fields receive
+/// a direct upstream claim in addition to the complete cumulative SemanticIR dependency prefix.
+const INTENT_CARRIED_FIELDS: &[&str] = &[
+    "actor_signal_relations",
+    "actor_ports",
+    "signal_connectivity",
+    "infrastructure_signals",
+    "interface_signal_conflicts",
+    "signal_connectivity_conflicts",
+    "signal_polarities",
+    "signal_polarity_conflicts",
+    "signal_semantic_conflicts",
+    "interfaces",
+    "system_contract",
+    "serial_frame_fields",
+    "protocol_operations",
+    "protocol_states",
+    "interface_edge_timings",
+    "regular_states",
+    "state_transitions",
+    "symbol_definitions",
+    "control_blocks",
+    "explicit_modules",
+    "explicit_tops",
+    "register_records",
+    "timing_constraints",
+    "temporal_rules",
+    "constrained_extraction_stats",
+    "protocol_graph",
+    "fidelity_findings",
+    "temporal_conflicts",
+    "signal_constraints",
+    "conditional_rules",
+];
+
+fn intent_derivation_error(error: impl std::fmt::Display) -> AppError {
+    AppError::InvalidStageArtifact(format!("IntentIR proof verification failed: {error}"))
+}
+
+fn intent_rule_registry() -> DerivationResult<RuleRegistry> {
+    let implementation_sha256 = Sha256Digest::of_bytes(include_bytes!("intent.rs"));
+    let registrations = INTENT_RULE_FIELDS
+        .iter()
+        .map(|(field, family)| {
+            let (capability, alpha, compatibility) = if INTENT_CARRIED_FIELDS.contains(field) {
+                (
+                    SymbolCapabilityClass::LosslessCarry,
+                    AlphaObligation::LosslessTopologyInvariant,
+                    RuleCompatibility::LosslessCarry,
+                )
+            } else if *family == "intent.residual" {
+                (
+                    SymbolCapabilityClass::Residual,
+                    AlphaObligation::ResidualTopologyInvariant,
+                    RuleCompatibility::CurrentOnly,
+                )
+            } else if matches!(*family, "intent.envelope" | "intent.validation") {
+                (
+                    SymbolCapabilityClass::ExactIdentityOnly,
+                    AlphaObligation::IdentityGraphInvariant,
+                    RuleCompatibility::CurrentOnly,
+                )
+            } else {
+                (
+                    SymbolCapabilityClass::MergeOrConflict,
+                    AlphaObligation::MergeConflictTopologyInvariant,
+                    RuleCompatibility::CurrentOnly,
+                )
+            };
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            let descriptor = RuleDescriptor::new(
+                rule_id,
+                1,
+                "crate::ir::intent",
+                implementation_sha256.clone(),
+                [
+                    PremiseKind::RegisteredDerivation,
+                    PremiseKind::UpstreamClaim,
+                ],
+                IrStage::IntentIr,
+                *field,
+                capability,
+                alpha,
+                compatibility,
+            )?;
+            Ok(RuleRegistration::new(
+                descriptor,
+                verify_intent_rule_relation,
+            ))
+        })
+        .collect::<DerivationResult<Vec<_>>>()?;
+    RuleRegistry::new(registrations, [])
+}
+
+fn verify_intent_rule_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
+    let expected_bytes = context
+        .premise_bytes(0)?
+        .ok_or_else(|| DerivationError::new("IntentIR rule lacks claim replay bytes"))?;
+    if expected_bytes == context.conclusion_json() {
+        Ok(())
+    } else {
+        Err(DerivationError::new(format!(
+            "IntentIR field '{}' is not the current registered replay",
+            context.proof().address().surface()
+        )))
+    }
+}
+
+fn apply_intent_mutations(
+    artifact: &mut IntentIr,
+    mutations: &[IntentMutationEvent],
+) -> DerivationResult<()> {
+    let mut seen = BTreeSet::new();
+    for mutation in mutations {
+        if !seen.insert(mutation.mutation_id.as_str()) {
+            return Err(DerivationError::new(format!(
+                "duplicate IntentIR mutation id '{}'",
+                mutation.mutation_id
+            )));
+        }
+        let allowed = mutation
+            .kind
+            .allowed_fields()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        let present = mutation
+            .fields
+            .keys()
+            .map(String::as_str)
+            .collect::<BTreeSet<_>>();
+        if present != allowed {
+            return Err(DerivationError::new(format!(
+                "IntentIR {:?} mutation field set is not exact",
+                mutation.kind
+            )));
+        }
+        let mut value = serde_json::to_value(&*artifact).map_err(|error| {
+            DerivationError::new(format!("cannot serialize IntentIR mutation base: {error}"))
+        })?;
+        let object = value.as_object_mut().ok_or_else(|| {
+            DerivationError::new("serialized IntentIR mutation base is not an object")
+        })?;
+        for (field, replacement) in &mutation.fields {
+            object.insert(field.clone(), replacement.clone());
+        }
+        object.remove("proof_context");
+        object.remove("proof_ledger");
+        *artifact = serde_json::from_value(value).map_err(|error| {
+            DerivationError::new(format!("invalid typed IntentIR mutation payload: {error}"))
+        })?;
+    }
+    Ok(())
 }
 
 /// In-memory intent projection of a conformance-only semantic overlay.
@@ -174,12 +488,68 @@ impl NonCanonicalIntentOverlay {
 
 impl IntentIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
+        Self::load_with_verified_proof(path).map(|(intent_ir, _)| intent_ir)
+    }
+
+    pub(crate) fn load_with_verified_proof(path: &Path) -> Result<(Self, VerifiedProofLedger)> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
-        let intent_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        let artifact = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let version = artifact
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "IntentIR is missing an integer schema_version".to_string(),
+                )
+            })?;
+        if version != u64::from(INTENT_IR_SCHEMA_VERSION) {
+            let disposition = if version < u64::from(INTENT_IR_SCHEMA_VERSION) {
+                "is legacy/proofless and inspection-only; rebuild it from verified SemanticIR"
+            } else {
+                "is newer than this binary"
+            };
+            return Err(AppError::InvalidStageArtifact(format!(
+                "IntentIR schema version {version} {disposition}"
+            )));
+        }
+        let intent_ir = serde_json::from_value::<Self>(artifact)?;
         if !matches!(intent_ir.stage, IrStage::IntentIr) {
             return Err(AppError::InvalidStageArtifact(
                 "artifact must be an IntentIR document before loading IntentIR".to_string(),
             ));
+        }
+        let runtime = intent_ir.runtime_clone()?;
+        let canonical = runtime.persisted_clone()?;
+        let verified = canonical.verified_canonical_proof()?;
+        Ok((runtime, verified))
+    }
+
+    /// Parse historical IntentIR for diagnostics without granting it canonical or downstream
+    /// authority. Only the current schema with a verified proof may feed adapters.
+    pub fn load_for_inspection(path: &Path) -> Result<Self> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let artifact = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let version = artifact
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "IntentIR is missing an integer schema_version".to_string(),
+                )
+            })?;
+        if version > u64::from(INTENT_IR_SCHEMA_VERSION) {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "IntentIR schema version {version} is newer than this binary"
+            )));
+        }
+        let intent_ir = serde_json::from_value::<Self>(artifact)?;
+        if !matches!(intent_ir.stage, IrStage::IntentIr) {
+            return Err(AppError::InvalidStageArtifact(
+                "artifact must be an IntentIR document before inspection".to_string(),
+            ));
+        }
+        if version == u64::from(INTENT_IR_SCHEMA_VERSION) {
+            intent_ir.verify_canonical_proof()?;
         }
         intent_ir.runtime_clone()
     }
@@ -187,9 +557,15 @@ impl IntentIr {
     pub fn build(semantic_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
         let semantic_ir_path =
             resolve_existing(semantic_ir_path, PersistedPathOrigin::RepositoryOwned)?;
-        let semantic_ir = SemanticIr::load_from_path(&semantic_ir_path)?;
-
-        Self::build_from_semantic_ir(&semantic_ir, semantic_ir_path, artifact_base_root)
+        let (semantic_ir, semantic_proof) =
+            SemanticIr::load_with_verified_proof(&semantic_ir_path)?;
+        let mut intent_ir = Self::build_unproved_from_semantic_ir(
+            &semantic_ir,
+            semantic_ir_path,
+            artifact_base_root,
+        )?;
+        intent_ir.refresh_canonical_proof(&semantic_proof)?;
+        Ok(intent_ir)
     }
 
     #[cfg(any(test, feature = "test-support", feature = "conformance-support"))]
@@ -199,7 +575,7 @@ impl IntentIr {
         artifact_base_root: &Path,
     ) -> Result<NonCanonicalIntentOverlay> {
         let semantic_ir = overlay.artifact();
-        let artifact = Self::build_from_semantic_ir(
+        let artifact = Self::build_unproved_from_semantic_ir(
             semantic_ir,
             semantic_ir.artifact_layout.semantic_ir_path.clone(),
             artifact_base_root,
@@ -207,7 +583,7 @@ impl IntentIr {
         Ok(NonCanonicalIntentOverlay { artifact })
     }
 
-    fn build_from_semantic_ir(
+    fn build_unproved_from_semantic_ir(
         semantic_ir: &SemanticIr,
         semantic_ir_path: PathBuf,
         artifact_base_root: &Path,
@@ -292,7 +668,7 @@ impl IntentIr {
         );
 
         Ok(Self {
-            schema_version: 1,
+            schema_version: INTENT_IR_SCHEMA_VERSION,
             stage: IrStage::IntentIr,
             semantic_ir_path,
             artifact_layout,
@@ -341,11 +717,530 @@ impl IntentIr {
             temporal_invariants,
             residual_decisions,
             validation_reports: Vec::new(),
+            proof_context: None,
+            proof_ledger: None,
         })
     }
 
+    fn public_field_values(&self) -> DerivationResult<BTreeMap<String, serde_json::Value>> {
+        let mut fields = BTreeMap::new();
+        macro_rules! insert_field {
+            ($field:ident) => {
+                fields.insert(
+                    stringify!($field).to_string(),
+                    serde_json::to_value(&self.$field).map_err(|error| {
+                        DerivationError::new(format!(
+                            "cannot serialize IntentIR field '{}': {error}",
+                            stringify!($field)
+                        ))
+                    })?,
+                );
+            };
+        }
+        insert_field!(schema_version);
+        insert_field!(stage);
+        insert_field!(semantic_ir_path);
+        insert_field!(artifact_layout);
+        insert_field!(document_identity);
+        insert_field!(intent_identity);
+        insert_field!(actors);
+        insert_field!(actor_signal_relations);
+        insert_field!(actor_ports);
+        insert_field!(signal_connectivity);
+        insert_field!(infrastructure_signals);
+        insert_field!(interface_signal_conflicts);
+        insert_field!(signal_connectivity_conflicts);
+        insert_field!(signal_polarities);
+        insert_field!(signal_polarity_conflicts);
+        insert_field!(signal_semantic_conflicts);
+        insert_field!(interfaces);
+        insert_field!(system_contract);
+        insert_field!(serial_frame_fields);
+        insert_field!(protocol_operations);
+        insert_field!(protocol_states);
+        insert_field!(interface_edge_timings);
+        insert_field!(regular_states);
+        insert_field!(state_transitions);
+        insert_field!(symbol_definitions);
+        insert_field!(control_blocks);
+        insert_field!(explicit_modules);
+        insert_field!(explicit_tops);
+        insert_field!(register_records);
+        insert_field!(timing_constraints);
+        insert_field!(temporal_rules);
+        insert_field!(actor_contracts);
+        insert_field!(constrained_extraction_stats);
+        insert_field!(protocol_graph);
+        insert_field!(fidelity_findings);
+        insert_field!(temporal_conflicts);
+        insert_field!(signal_constraints);
+        insert_field!(conditional_rules);
+        insert_field!(behaviors);
+        insert_field!(constraints);
+        insert_field!(assumptions);
+        insert_field!(transactions);
+        insert_field!(actor_drive_relations);
+        insert_field!(actor_sample_relations);
+        insert_field!(actor_trigger_relations);
+        insert_field!(actor_temporal_dependencies);
+        insert_field!(temporal_invariants);
+        insert_field!(residual_decisions);
+        insert_field!(validation_reports);
+        if fields.len() != INTENT_RULE_FIELDS.len() {
+            return Err(DerivationError::new(
+                "IntentIR proof field projection is incomplete",
+            ));
+        }
+        Ok(fields)
+    }
+
+    fn claim_inputs(&self) -> DerivationResult<Vec<IntentClaimInput>> {
+        let fields = self.public_field_values()?;
+        let mut claims = Vec::new();
+        for (field, family) in INTENT_RULE_FIELDS {
+            let value = fields.get(*field).cloned().ok_or_else(|| {
+                DerivationError::new(format!("IntentIR claim field '{field}' is absent"))
+            })?;
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            claims.push(IntentClaimInput {
+                address: ClaimAddress::new(IrStage::IntentIr, *field, "root", None)?,
+                rule_id: rule_id.clone(),
+                conclusion: value.clone(),
+            });
+            if let Some(records) = value.as_array() {
+                for (index, record) in records.iter().enumerate() {
+                    claims.push(IntentClaimInput {
+                        address: ClaimAddress::new(
+                            IrStage::IntentIr,
+                            *field,
+                            format!("record-{index:08}"),
+                            Some(format!("[{index}]")),
+                        )?,
+                        rule_id: rule_id.clone(),
+                        conclusion: record.clone(),
+                    });
+                }
+            }
+        }
+        Ok(claims)
+    }
+
+    fn proof_kernel(
+        &self,
+        context: &IntentProofContext,
+        semantic_proof: &VerifiedProofLedger,
+        replay_bytes: &[u8],
+        claims: &[IntentClaimInput],
+    ) -> DerivationResult<(crate::ir::derivation::PromotionKernel, IntentProofPremises)> {
+        if context.schema_version != INTENT_PROOF_CONTEXT_SCHEMA_VERSION {
+            return Err(DerivationError::new(format!(
+                "unsupported IntentIR proof-context schema {}",
+                context.schema_version
+            )));
+        }
+        let semantic_ledger_bytes =
+            serde_json::to_vec(semantic_proof.ledger()).map_err(|error| {
+                DerivationError::new(format!(
+                    "cannot serialize verified SemanticIR ledger: {error}"
+                ))
+            })?;
+        let capture_digest = Sha256Digest::of_serializable(&(
+            context,
+            semantic_proof.ruleset_sha256(),
+            Sha256Digest::of_bytes(&semantic_ledger_bytes),
+        ))?;
+        let registry = intent_rule_registry()?;
+        let mut builder = PromotionKernelBuilder::with_verified_upstream(
+            capture_digest,
+            registry,
+            semantic_proof,
+        )?;
+        let proof_premises = {
+            let mut capture = builder.capture();
+            let semantic_grounding =
+                capture.source_span("intent-verified-semantic-ledger", &semantic_ledger_bytes)?;
+            let mut inputs = semantic_proof
+                .claims()
+                .iter()
+                .map(|proof| PremiseRef::UpstreamClaim {
+                    address: proof.address().clone(),
+                    conclusion_sha256: proof.conclusion_sha256().clone(),
+                })
+                .collect::<Vec<_>>();
+            inputs.push(semantic_grounding.clone());
+            let mut mutation_premises = Vec::new();
+            for mutation in &context.mutations {
+                let payload = serde_json::to_vec(mutation).map_err(|error| {
+                    DerivationError::new(format!(
+                        "cannot serialize registered IntentIR mutation: {error}"
+                    ))
+                })?;
+                let premise = capture.registered_derivation(
+                    mutation.mutation_id.clone(),
+                    &payload,
+                    vec![semantic_grounding.clone()],
+                )?;
+                inputs.push(premise.clone());
+                mutation_premises.push((mutation.kind, premise));
+            }
+            let registered_replay =
+                capture.registered_derivation("intent.current-replay", replay_bytes, inputs)?;
+            let mut claim_replays = BTreeMap::new();
+            let mut carried_upstream = BTreeMap::new();
+            let allow_test_fixture_projection = {
+                #[cfg(any(test, feature = "test-support"))]
+                {
+                    context.test_fixture
+                }
+                #[cfg(not(any(test, feature = "test-support")))]
+                {
+                    false
+                }
+            };
+            for claim in claims {
+                let exact_conclusion = serde_json::to_vec(&claim.conclusion).map_err(|error| {
+                    DerivationError::new(format!("cannot serialize IntentIR claim replay: {error}"))
+                })?;
+                let derivation_id = format!(
+                    "intent.claim.{}.{}",
+                    claim.address.surface(),
+                    claim.address.stable_record_key()
+                );
+                let premise = capture.registered_derivation(
+                    derivation_id,
+                    &exact_conclusion,
+                    vec![registered_replay.clone()],
+                )?;
+                if claim_replays
+                    .insert(claim.address.clone(), premise)
+                    .is_some()
+                {
+                    return Err(DerivationError::new(
+                        "duplicate IntentIR claim replay address",
+                    ));
+                }
+                if INTENT_CARRIED_FIELDS.contains(&claim.address.surface()) {
+                    let conclusion_sha256 = Sha256Digest::of_bytes(&exact_conclusion);
+                    let upstream = semantic_proof.claims().iter().find(|proof| {
+                        proof.address().stage() == IrStage::SemanticIr
+                            && proof.address().surface() == claim.address.surface()
+                            && ((claim.address.stable_record_key() == "root"
+                                && proof.address().stable_record_key() == "root")
+                                || (claim.address.stable_record_key() != "root"
+                                    && proof.conclusion_sha256() == &conclusion_sha256))
+                    });
+                    if let Some(upstream) = upstream {
+                        carried_upstream.insert(
+                            claim.address.clone(),
+                            PremiseRef::UpstreamClaim {
+                                address: upstream.address().clone(),
+                                conclusion_sha256: upstream.conclusion_sha256().clone(),
+                            },
+                        );
+                    } else if !allow_test_fixture_projection {
+                        return Err(DerivationError::new(format!(
+                            "IntentIR carried claim '{}:{}' has no exact SemanticIR antecedent",
+                            claim.address.surface(),
+                            claim.address.stable_record_key()
+                        )));
+                    }
+                }
+            }
+            IntentProofPremises {
+                claim_replays,
+                carried_upstream,
+                mutations: mutation_premises,
+                allow_test_fixture_projection,
+            }
+        };
+        Ok((builder.seal(), proof_premises))
+    }
+
+    fn refresh_canonical_proof(&mut self, semantic_proof: &VerifiedProofLedger) -> Result<()> {
+        let context = IntentProofContext {
+            schema_version: INTENT_PROOF_CONTEXT_SCHEMA_VERSION,
+            mutations: Vec::new(),
+            #[cfg(any(test, feature = "test-support"))]
+            test_fixture: false,
+        };
+        self.refresh_proof_from_context(context, semantic_proof)
+    }
+
+    fn refresh_proof_from_context(
+        &mut self,
+        context: IntentProofContext,
+        semantic_proof: &VerifiedProofLedger,
+    ) -> Result<()> {
+        let mut persisted = self.persisted_clone()?;
+        persisted.proof_context = None;
+        persisted.proof_ledger = None;
+        let replay_bytes = serde_json::to_vec(
+            &persisted
+                .public_field_values()
+                .map_err(intent_derivation_error)?,
+        )?;
+        let claims = persisted.claim_inputs().map_err(intent_derivation_error)?;
+        let (mut kernel, proof_premises) = persisted
+            .proof_kernel(&context, semantic_proof, &replay_bytes, &claims)
+            .map_err(intent_derivation_error)?;
+        for claim in claims {
+            let (premises, confidence) = proof_premises
+                .for_claim(&claim.address)
+                .map_err(intent_derivation_error)?;
+            let proposal = kernel.grammar_capability().propose(
+                claim.address,
+                claim.rule_id,
+                premises,
+                Vec::new(),
+                confidence,
+                claim.conclusion,
+            );
+            kernel.promote(proposal).map_err(intent_derivation_error)?;
+        }
+        let local = kernel.finish().map_err(intent_derivation_error)?;
+        let cumulative =
+            VerifiedProofLedger::compose(semantic_proof, local).map_err(intent_derivation_error)?;
+        self.proof_context = Some(context);
+        self.proof_ledger = Some(cumulative.into_ledger());
+        Ok(())
+    }
+
+    fn validate_nli_demotion(predecessor: &Self, current: &Self) -> Result<()> {
+        let mut current_index = 0;
+        let mut removed_contract_ids = BTreeSet::new();
+        for contract in &predecessor.actor_contracts {
+            if current.actor_contracts.get(current_index) == Some(contract) {
+                current_index += 1;
+            } else {
+                removed_contract_ids.insert(contract.contract_id.clone());
+            }
+        }
+        if current_index != current.actor_contracts.len() {
+            return Err(intent_derivation_error(
+                "NLI demotion added or reordered IntentIR actor contracts",
+            ));
+        }
+        if !current
+            .residual_decisions
+            .starts_with(&predecessor.residual_decisions)
+        {
+            return Err(intent_derivation_error(
+                "NLI demotion changed or removed existing IntentIR residual decisions",
+            ));
+        }
+        let added = &current.residual_decisions[predecessor.residual_decisions.len()..];
+        let added_contract_ids = added
+            .iter()
+            .map(|packet| {
+                packet
+                    .packet_id
+                    .strip_prefix(crate::ir::nli_verify::NLI_RESIDUAL_PREFIX)
+                    .map(str::to_string)
+                    .ok_or_else(|| {
+                        intent_derivation_error(
+                            "NLI demotion appended a residual without the typed NLI id prefix",
+                        )
+                    })
+            })
+            .collect::<Result<BTreeSet<_>>>()?;
+        if added.len() != added_contract_ids.len() || added_contract_ids != removed_contract_ids {
+            return Err(intent_derivation_error(
+                "NLI demotion residuals do not correspond one-to-one with removed contracts",
+            ));
+        }
+        Ok(())
+    }
+
+    /// Authorize one closed-family post-build mutation and rebuild the cumulative proof. The
+    /// independently replayed predecessor must remain exact outside the mutation's fixed fields.
+    #[doc(hidden)]
+    pub fn authorize_mutation(&mut self, kind: IntentMutationKind) -> Result<bool> {
+        let mut context = self.proof_context.clone().ok_or_else(|| {
+            intent_derivation_error("proofless IntentIR cannot authorize a mutation")
+        })?;
+        #[cfg(any(test, feature = "test-support"))]
+        if kind == IntentMutationKind::TestFixture {
+            context.test_fixture = true;
+        }
+        let semantic_runtime_path =
+            resolve_existing(&self.semantic_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let (semantic_ir, semantic_proof) =
+            SemanticIr::load_with_verified_proof(&semantic_runtime_path)?;
+        let runtime_layout = self.artifact_layout.runtime_layout()?;
+        let artifact_base_root = runtime_layout.artifact_root.parent().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "IntentIR artifact root has no repository-owned base".to_string(),
+            )
+        })?;
+        let mut predecessor = Self::build_unproved_from_semantic_ir(
+            &semantic_ir,
+            semantic_runtime_path,
+            artifact_base_root,
+        )?;
+        apply_intent_mutations(&mut predecessor, &context.mutations)
+            .map_err(intent_derivation_error)?;
+        let predecessor_fields = predecessor
+            .public_field_values()
+            .map_err(intent_derivation_error)?;
+        let current_fields = self
+            .public_field_values()
+            .map_err(intent_derivation_error)?;
+        let allowed = kind
+            .allowed_fields()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for (field, predecessor_value) in &predecessor_fields {
+            if !allowed.contains(field.as_str())
+                && current_fields.get(field) != Some(predecessor_value)
+            {
+                return Err(intent_derivation_error(format!(
+                    "{:?} mutation changed unauthorized IntentIR field '{field}'",
+                    kind
+                )));
+            }
+        }
+        if kind
+            .allowed_fields()
+            .iter()
+            .all(|field| current_fields.get(*field) == predecessor_fields.get(*field))
+        {
+            return Ok(false);
+        }
+        if kind == IntentMutationKind::NliDemotion {
+            Self::validate_nli_demotion(&predecessor, self)?;
+        }
+        let fields = kind
+            .allowed_fields()
+            .iter()
+            .map(|field| {
+                current_fields
+                    .get(*field)
+                    .cloned()
+                    .map(|value| ((*field).to_string(), value))
+                    .ok_or_else(|| {
+                        intent_derivation_error(format!(
+                            "IntentIR mutation field '{field}' is absent"
+                        ))
+                    })
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let kind_name = serde_json::to_value(kind)?
+            .as_str()
+            .expect("IntentMutationKind serializes as a string")
+            .to_string();
+        let event = IntentMutationEvent {
+            mutation_id: format!(
+                "intent-mutation-{index:08}-{kind_name}",
+                index = context.mutations.len()
+            ),
+            kind,
+            fields,
+        };
+        apply_intent_mutations(&mut predecessor, std::slice::from_ref(&event))
+            .map_err(intent_derivation_error)?;
+        if predecessor
+            .public_field_values()
+            .map_err(intent_derivation_error)?
+            != current_fields
+        {
+            return Err(intent_derivation_error(
+                "typed IntentIR mutation replay does not reproduce the requested artifact",
+            ));
+        }
+        context.mutations.push(event);
+        self.refresh_proof_from_context(context, &semantic_proof)?;
+        Ok(true)
+    }
+
+    fn verify_canonical_proof(&self) -> Result<()> {
+        self.verified_canonical_proof().map(|_| ())
+    }
+
+    fn verified_canonical_proof(&self) -> Result<VerifiedProofLedger> {
+        if self.schema_version != INTENT_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "IntentIR schema {} cannot receive current canonical authority",
+                self.schema_version
+            )));
+        }
+        let context = self.proof_context.as_ref().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current IntentIR is proofless; rebuild it from verified SemanticIR".to_string(),
+            )
+        })?;
+        let cumulative = self.proof_ledger.clone().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current IntentIR is missing its cumulative proof ledger".to_string(),
+            )
+        })?;
+        let semantic_runtime_path =
+            resolve_existing(&self.semantic_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let (semantic_ir, semantic_proof) =
+            SemanticIr::load_with_verified_proof(&semantic_runtime_path)?;
+        let runtime_layout = self.artifact_layout.runtime_layout()?;
+        let artifact_base_root = runtime_layout.artifact_root.parent().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "IntentIR artifact root has no repository-owned base".to_string(),
+            )
+        })?;
+        let mut expected_runtime = Self::build_unproved_from_semantic_ir(
+            &semantic_ir,
+            semantic_runtime_path,
+            artifact_base_root,
+        )?;
+        apply_intent_mutations(&mut expected_runtime, &context.mutations)
+            .map_err(intent_derivation_error)?;
+        let expected = expected_runtime.persisted_clone()?;
+        let replay_fields = expected
+            .public_field_values()
+            .map_err(intent_derivation_error)?;
+        let replay_bytes = serde_json::to_vec(&replay_fields)?;
+        let actual_fields = self
+            .public_field_values()
+            .map_err(intent_derivation_error)?;
+        let claims = self.claim_inputs().map_err(intent_derivation_error)?;
+        let conclusions = claims
+            .iter()
+            .map(|claim| {
+                serde_json::to_vec(&claim.conclusion)
+                    .map(|bytes| (claim.address.clone(), bytes))
+                    .map_err(AppError::from)
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let (kernel, _) = self
+            .proof_kernel(context, &semantic_proof, &replay_bytes, &claims)
+            .map_err(intent_derivation_error)?;
+        let local_ruleset = intent_rule_registry()
+            .map_err(intent_derivation_error)?
+            .ruleset_sha256()
+            .clone();
+        let local_ledger = cumulative
+            .local_suffix_after(&semantic_proof, &local_ruleset)
+            .map_err(intent_derivation_error)?;
+        let verified_local = kernel
+            .verify_persisted(local_ledger, &conclusions)
+            .map_err(intent_derivation_error)?;
+        let verified = VerifiedProofLedger::compose(&semantic_proof, verified_local)
+            .map_err(intent_derivation_error)?;
+        if verified.ledger() != &cumulative {
+            return Err(intent_derivation_error(
+                "cumulative IntentIR proof differs from verified SemanticIR prefix plus local replay",
+            ));
+        }
+        if actual_fields != replay_fields {
+            return Err(intent_derivation_error(
+                "IntentIR public fields differ from current registered replay",
+            ));
+        }
+        Ok(verified)
+    }
+
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
+        let persisted = self.persisted_clone()?;
+        persisted.verify_canonical_proof()?;
+        Ok(serde_json::to_string_pretty(&persisted)?)
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
@@ -355,6 +1250,16 @@ impl IntentIr {
             ))
         })?;
         let persisted = self.persisted_clone()?;
+        if let Err(_error) = persisted.verify_canonical_proof() {
+            #[cfg(any(test, feature = "test-support"))]
+            {
+                let mut fixture = self.clone();
+                fixture.authorize_mutation(IntentMutationKind::TestFixture)?;
+                return fixture.write_to_disk();
+            }
+            #[cfg(not(any(test, feature = "test-support")))]
+            return Err(_error);
+        }
         let runtime_layout = persisted.artifact_layout.runtime_layout()?;
         fs::create_dir_all(&runtime_layout.artifact_root)?;
         fs::write(
@@ -362,6 +1267,100 @@ impl IntentIr {
             serde_json::to_string_pretty(&persisted)?,
         )?;
         Ok(())
+    }
+
+    /// Persist an explicitly synthetic IntentIR fixture. Production builds do not compile this
+    /// closed mutation kind, so arbitrary fixture state cannot cross the canonical seam.
+    #[cfg(any(test, feature = "test-support"))]
+    #[doc(hidden)]
+    pub fn write_test_fixture_to_disk(&self) -> Result<()> {
+        if self.persisted_clone()?.verify_canonical_proof().is_ok() {
+            return self.write_to_disk();
+        }
+        let mut fixture = self.clone();
+        fixture.authorize_mutation(IntentMutationKind::TestFixture)?;
+        fixture.write_to_disk()
+    }
+
+    /// Current cumulative proof ledger. This is an inspection surface only; callers receive no
+    /// verified authority token without executing the canonical loader.
+    pub fn proof_ledger(&self) -> Option<&ProofLedger> {
+        self.proof_ledger.as_ref()
+    }
+
+    /// Construct a deliberately proofless in-memory value for diagnostic unit tests. The private
+    /// proof fields remain inaccessible outside this module and canonical load/serialize/write
+    /// seams continue to reject this value.
+    #[cfg(any(test, feature = "test-support"))]
+    #[doc(hidden)]
+    #[allow(dead_code)]
+    pub fn diagnostic_test_fixture(
+        document_key: impl Into<String>,
+        display_name: impl Into<String>,
+    ) -> Self {
+        let document_key = document_key.into();
+        Self {
+            schema_version: INTENT_IR_SCHEMA_VERSION,
+            stage: IrStage::IntentIr,
+            semantic_ir_path: PathBuf::from("generated/test-fixtures/semantic_ir.json"),
+            artifact_layout: IntentArtifactLayout {
+                artifact_root: PathBuf::from("generated/test-fixtures"),
+                intent_ir_path: PathBuf::from("generated/test-fixtures/intent_ir.json"),
+            },
+            document_identity: IntentDocumentIdentity {
+                document_key,
+                display_name: display_name.into(),
+            },
+            intent_identity: IntentIdentity {
+                intent_id: "diagnostic-intent".to_string(),
+                summary: "diagnostic fixture".to_string(),
+            },
+            actors: Vec::new(),
+            actor_signal_relations: Vec::new(),
+            actor_ports: Vec::new(),
+            signal_connectivity: Vec::new(),
+            infrastructure_signals: Vec::new(),
+            interface_signal_conflicts: Vec::new(),
+            signal_connectivity_conflicts: Vec::new(),
+            signal_polarities: Vec::new(),
+            signal_polarity_conflicts: Vec::new(),
+            signal_semantic_conflicts: Vec::new(),
+            interfaces: Vec::new(),
+            serial_frame_fields: Vec::new(),
+            protocol_operations: Vec::new(),
+            protocol_states: Vec::new(),
+            interface_edge_timings: Vec::new(),
+            system_contract: None,
+            behaviors: Vec::new(),
+            constraints: Vec::new(),
+            assumptions: Vec::new(),
+            regular_states: Vec::new(),
+            state_transitions: Vec::new(),
+            symbol_definitions: Vec::new(),
+            control_blocks: Vec::new(),
+            explicit_modules: Vec::new(),
+            explicit_tops: Vec::new(),
+            register_records: Vec::new(),
+            timing_constraints: Vec::new(),
+            temporal_rules: Vec::new(),
+            actor_contracts: Vec::new(),
+            constrained_extraction_stats: None,
+            protocol_graph: Default::default(),
+            fidelity_findings: Vec::new(),
+            temporal_conflicts: Vec::new(),
+            signal_constraints: Vec::new(),
+            conditional_rules: Vec::new(),
+            transactions: Vec::new(),
+            actor_drive_relations: Vec::new(),
+            actor_sample_relations: Vec::new(),
+            actor_trigger_relations: Vec::new(),
+            actor_temporal_dependencies: Vec::new(),
+            temporal_invariants: Vec::new(),
+            residual_decisions: Vec::new(),
+            validation_reports: Vec::new(),
+            proof_context: None,
+            proof_ledger: None,
+        }
     }
 
     fn persisted_clone(&self) -> Result<Self> {
@@ -2140,6 +3139,7 @@ fn extract_case_value(
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeSet;
     use std::fs;
 
     use tempfile::tempdir;
@@ -5354,6 +6354,382 @@ mod tests {
             super::classify_invariant_text("WRITE is only valid when READY is HIGH"),
             super::TemporalInvariantKind::OnlyValidWhen
         );
+    }
+
+    fn build_canonical_intent_proof_fixture(
+        markdown: &str,
+    ) -> Result<(tempfile::TempDir, IntentIr)> {
+        let workspace = crate::project_data::tempdir()?;
+        let source = workspace.path().join("intent_proof_fixture.md");
+        let source_artifact_base = workspace.path().join("generated/source_ir");
+        let evidence_artifact_base = workspace.path().join("generated/evidence_ir");
+        let semantic_artifact_base = workspace.path().join("generated/semantic_ir");
+        let intent_artifact_base = workspace.path().join("generated/intent_ir");
+        fs::write(&source, markdown)?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        Ok((workspace, intent_ir))
+    }
+
+    #[test]
+    fn intent_proof_covers_every_field_record_and_exact_semantic_prefix() -> Result<()> {
+        let (_workspace, intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Interface\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.write_to_disk()?;
+        let (intent_ir, intent_proof) =
+            IntentIr::load_with_verified_proof(&intent_ir.artifact_layout.intent_ir_path)?;
+        let (_, semantic_proof) =
+            SemanticIr::load_with_verified_proof(&intent_ir.semantic_ir_path)?;
+
+        let fields = intent_ir
+            .persisted_clone()?
+            .public_field_values()
+            .map_err(super::intent_derivation_error)?;
+        let per_record_claims = fields
+            .values()
+            .filter_map(serde_json::Value::as_array)
+            .map(Vec::len)
+            .sum::<usize>();
+        let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
+        let semantic_claims = semantic_proof.ledger().claims();
+        let cumulative_claims = intent_proof.ledger().claims();
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 49);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 30);
+        assert_eq!(
+            super::INTENT_RULE_FIELDS
+                .iter()
+                .map(|(_, family)| *family)
+                .collect::<BTreeSet<_>>()
+                .len(),
+            9
+        );
+        assert_eq!(
+            cumulative_claims.len(),
+            semantic_claims.len() + expected_local
+        );
+        assert_eq!(
+            &cumulative_claims[..semantic_claims.len()],
+            semantic_claims,
+            "IntentIR must retain the exact verified cumulative SemanticIR ledger as its prefix"
+        );
+        assert!(
+            cumulative_claims[semantic_claims.len()..]
+                .iter()
+                .all(|claim| matches!(
+                    claim.premises().first(),
+                    Some(crate::ir::derivation::PremiseRef::RegisteredDerivation { .. })
+                )),
+            "every IntentIR field and record must depend on its exact registered replay"
+        );
+        assert!(
+            cumulative_claims[semantic_claims.len()..]
+                .iter()
+                .filter(|claim| {
+                    super::INTENT_CARRIED_FIELDS.contains(&claim.address().surface())
+                })
+                .all(|claim| matches!(
+                    claim.premises().get(1),
+                    Some(crate::ir::derivation::PremiseRef::UpstreamClaim { address, .. })
+                        if address.stage() == crate::ir::IrStage::SemanticIr
+                )),
+            "every exact IntentIR carry must cite its direct SemanticIR antecedent"
+        );
+        assert!(
+            cumulative_claims[semantic_claims.len()..]
+                .iter()
+                .filter(|claim| claim.address().surface() == "actors")
+                .all(|claim| claim.premises().len() == 1),
+            "the filtered actor projection must not masquerade as a lossless SemanticIR carry"
+        );
+        let local_ruleset = super::intent_rule_registry()
+            .map_err(super::intent_derivation_error)?
+            .ruleset_sha256()
+            .clone();
+        assert_eq!(
+            intent_proof
+                .ledger()
+                .local_suffix_after(&semantic_proof, &local_ruleset)
+                .map_err(super::intent_derivation_error)?
+                .claims()
+                .len(),
+            expected_local
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn proofless_intent_cannot_load_serialize_or_feed_adapter() -> Result<()> {
+        let (workspace, intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.write_to_disk()?;
+        let intent_path = intent_ir.artifact_layout.intent_ir_path.clone();
+        let mut proofless =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&intent_path)?)?;
+        proofless
+            .as_object_mut()
+            .expect("IntentIR object")
+            .remove("proof_context");
+        proofless
+            .as_object_mut()
+            .expect("IntentIR object")
+            .remove("proof_ledger");
+        fs::write(&intent_path, serde_json::to_string_pretty(&proofless)?)?;
+
+        let error = IntentIr::load_from_path(&intent_path)
+            .expect_err("current-schema proofless IntentIR must not load canonically");
+        assert!(error.to_string().contains("proofless"));
+        let decoded = serde_json::from_value::<IntentIr>(proofless)?;
+        assert!(decoded.to_pretty_json().is_err());
+        assert!(
+            crate::ir::adapters::AdapterArtifact::build(
+                &intent_path,
+                crate::ir::adapters::AdapterTarget::Isf,
+                &workspace.path().join("generated/adapters"),
+            )
+            .is_err()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn hash_consistent_intent_field_edit_fails_executable_replay() -> Result<()> {
+        let (_workspace, intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.write_to_disk()?;
+        let intent_path = intent_ir.artifact_layout.intent_ir_path.clone();
+        let mut forged =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&intent_path)?)?;
+        forged["document_identity"]["display_name"] =
+            serde_json::Value::String("edited identity".to_string());
+        let forged_conclusion = serde_json::to_vec(&forged["document_identity"])?;
+        let forged_digest = crate::ir::derivation::Sha256Digest::of_bytes(&forged_conclusion);
+        let root_claim = forged["proof_ledger"]["claims"]
+            .as_array_mut()
+            .expect("proof claims")
+            .iter_mut()
+            .find(|claim| {
+                claim["address"]["stage"] == serde_json::json!("intent_ir")
+                    && claim["address"]["surface"] == serde_json::json!("document_identity")
+                    && claim["address"]["stable_record_key"] == serde_json::json!("root")
+            })
+            .expect("document identity root claim");
+        root_claim["conclusion_sha256"] = serde_json::to_value(forged_digest)?;
+        fs::write(&intent_path, serde_json::to_string_pretty(&forged)?)?;
+
+        let error = IntentIr::load_from_path(&intent_path)
+            .expect_err("a recomputed digest cannot self-authorize an edited IntentIR field");
+        assert!(
+            error.to_string().contains("current registered replay")
+                || error.to_string().contains("public fields differ")
+                || error.to_string().contains("registered derivation"),
+            "unexpected verification failure: {error}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn intent_mutation_authority_is_closed_and_validation_replays() -> Result<()> {
+        let (_workspace, mut intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.document_identity.display_name.push_str(" edited");
+        let error = intent_ir
+            .authorize_mutation(super::IntentMutationKind::ValidationBackannotation)
+            .expect_err("validation authority must not cover document identity");
+        assert!(error.to_string().contains("unauthorized IntentIR field"));
+
+        let (_workspace, mut intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.validation_reports = vec![crate::ir::source::ValidationReportRecord {
+            report_id: "intent-validation-test".to_string(),
+            validated_stage: crate::ir::IrStage::IntentIr,
+            artifact_fingerprint: "diagnostic-fingerprint".to_string(),
+            summary: "registered validation result".to_string(),
+            overall_score: Some(100),
+            grade: Some("EXCELLENT".to_string()),
+            metrics: Vec::new(),
+            findings: Vec::new(),
+        }];
+        assert!(intent_ir.authorize_mutation(super::IntentMutationKind::ValidationBackannotation)?);
+        assert!(
+            !intent_ir.authorize_mutation(super::IntentMutationKind::ValidationBackannotation)?
+        );
+        intent_ir.to_pretty_json()?;
+
+        let (_workspace, mut intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.residual_decisions.push(ResidualDecisionPacket {
+            packet_id: format!(
+                "{}ghost-contract",
+                crate::ir::nli_verify::NLI_RESIDUAL_PREFIX
+            ),
+            question: "fabricated NLI residual".to_string(),
+            why_unresolved: "no corresponding removed contract".to_string(),
+            automation_confidence: AutomationConfidence::Low,
+            candidate_interpretations: Vec::new(),
+        });
+        let error = intent_ir
+            .authorize_mutation(super::IntentMutationKind::NliDemotion)
+            .expect_err("NLI authority must reject a residual without a removed contract");
+        assert!(error.to_string().contains("one-to-one"));
+        Ok(())
+    }
+
+    #[test]
+    fn typed_nli_demotion_replays_without_granting_additive_contract_authority() -> Result<()> {
+        use crate::ir::contract::{
+            ActorContract, ContractKind, ContractProvenance, EvidenceModality, LoweringDisposition,
+            Obligation, Window,
+        };
+        use crate::ir::semantic::ClockEdge;
+
+        let (_workspace, mut intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.actor_contracts = vec![ActorContract {
+            contract_id: "contract-alpha-stable".to_string(),
+            source_rule_id: Some("rule-alpha-stable".to_string()),
+            actor_name: Some("Controller".to_string()),
+            kind: ContractKind::Guarantee,
+            guard: None,
+            guard_candidates: Vec::new(),
+            obligation: Obligation::Stable {
+                signal: "ALPHA".to_string(),
+                during: Window::SameCycle,
+            },
+            clock_signal: None,
+            edge: ClockEdge::Rising,
+            channel: None,
+            phase: None,
+            provenance: ContractProvenance {
+                supporting_statement_ids: Vec::new(),
+                source_text: "ALPHA remains stable.".to_string(),
+                modality: EvidenceModality::Prose,
+            },
+            lowering: LoweringDisposition::Lowerable,
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+
+        let mut unauthorized = intent_ir.clone();
+        let before_failed_authorization = unauthorized.clone();
+        assert!(
+            crate::ir::nli_verify::apply_nli_gate(&mut unauthorized, |_, _| {
+                crate::ir::nli_verify::NliVerdict::NotEntailed
+            })
+            .is_err(),
+            "a contract invented outside typed authority must not be demotable"
+        );
+        assert_eq!(
+            unauthorized, before_failed_authorization,
+            "failed NLI authorization must leave the caller's IntentIR unchanged"
+        );
+
+        intent_ir.authorize_mutation(super::IntentMutationKind::TestFixture)?;
+
+        let demoted = crate::ir::nli_verify::apply_nli_gate(&mut intent_ir, |_, _| {
+            crate::ir::nli_verify::NliVerdict::NotEntailed
+        })?;
+        assert_eq!(demoted, 1);
+        assert!(intent_ir.actor_contracts.is_empty());
+        assert!(intent_ir.residual_decisions.iter().any(|packet| {
+            packet.packet_id
+                == format!(
+                    "{}contract-alpha-stable",
+                    crate::ir::nli_verify::NLI_RESIDUAL_PREFIX
+                )
+        }));
+        intent_ir.to_pretty_json()?;
+        Ok(())
+    }
+
+    #[test]
+    fn intent_proof_normalizes_repository_owned_paths_before_verification() -> Result<()> {
+        let (_workspace, intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.write_to_disk()?;
+        let intent_path = intent_ir.artifact_layout.intent_ir_path.clone();
+        let mut relocated =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&intent_path)?)?;
+        relocated["semantic_ir_path"] = serde_json::to_value(&intent_ir.semantic_ir_path)?;
+        relocated["artifact_layout"] = serde_json::to_value(&intent_ir.artifact_layout)?;
+        fs::write(&intent_path, serde_json::to_string_pretty(&relocated)?)?;
+
+        let loaded = IntentIr::load_from_path(&intent_path)?;
+        assert_eq!(loaded.document_identity, intent_ir.document_identity);
+        assert!(loaded.semantic_ir_path.is_absolute());
+        loaded.to_pretty_json()?;
+        Ok(())
+    }
+
+    #[test]
+    fn legacy_and_future_intent_schemas_have_no_canonical_authority() -> Result<()> {
+        let (_workspace, intent_ir) = build_canonical_intent_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        intent_ir.write_to_disk()?;
+        let intent_path = intent_ir.artifact_layout.intent_ir_path.clone();
+        let current =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&intent_path)?)?;
+
+        let mut legacy = current.clone();
+        legacy["schema_version"] = serde_json::json!(1);
+        legacy
+            .as_object_mut()
+            .expect("IntentIR object")
+            .remove("proof_context");
+        legacy
+            .as_object_mut()
+            .expect("IntentIR object")
+            .remove("proof_ledger");
+        fs::write(&intent_path, serde_json::to_string_pretty(&legacy)?)?;
+        assert!(IntentIr::load_from_path(&intent_path).is_err());
+        IntentIr::load_for_inspection(&intent_path)?;
+
+        let mut future = current;
+        future["schema_version"] =
+            serde_json::json!(u64::from(super::INTENT_IR_SCHEMA_VERSION) + 1);
+        fs::write(&intent_path, serde_json::to_string_pretty(&future)?)?;
+        assert!(IntentIr::load_from_path(&intent_path).is_err());
+        assert!(IntentIr::load_for_inspection(&intent_path).is_err());
+        Ok(())
     }
 
     #[test]

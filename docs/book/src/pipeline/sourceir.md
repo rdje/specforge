@@ -60,8 +60,9 @@ SemanticIR, IntentIR, and the ISF adapter. EvidenceIR's subsequent proof migrati
 retained chains measurable and makes their extracted fields byte-identical under the new schema-3 authority.
 The other 54 SourceIR and EvidenceIR documents remain legacy proofless, inspection-only inputs until their
 reclaimed bundles return through owned re-ingest. SemanticIR replay from those quarantined EvidenceIR inputs is
-unmeasurable rather than current. The persisted SemanticIRs can still reproduce their later IntentIR and adapter
-outputs stage-locally until those stages are proof-migrated; that is not end-to-end current authority.
+unmeasurable rather than current. SemanticIR and IntentIR now preserve that closed frontier: only the 24 verified
+chains can reach a fresh adapter, while persisted later-stage files for the other 54 remain historical rather
+than acquiring authority from stage-local reproducibility.
 
 ## Executable source authority
 

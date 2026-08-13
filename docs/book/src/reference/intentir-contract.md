@@ -56,7 +56,9 @@ free-form notes or silently choosing a convenient backend interpretation.
 ## Serialization and identity
 
 - JSON is the primary interchange representation for staged IR artifacts.
-- Every artifact carries a schema version and stage identity.
+- Every artifact carries a schema version and stage identity. Current schema-2 IntentIR also carries the exact
+  cumulative verified SemanticIR proof plus registered IntentIR field/record claims; schema shape alone is not
+  authority.
 - Stable machine identifiers matter more than display wording.
 - Repository-owned persisted paths are repository-root-relative; absolute host paths are not part of
   the portable product contract.
@@ -64,6 +66,12 @@ free-form notes or silently choosing a convenient backend interpretation.
   explain or revalidate a promoted fact.
 - Visually rich sources retain their structured page and asset evidence even when normalized
   Markdown is also available.
+
+Canonical load, serialization, write, validation mutation, NLI demotion, and adapter construction all execute
+the proof relation. The verifier rebuilds the artifact from current verified SemanticIR and rejects a proofless,
+stale, forged, unauthorized, legacy, or future artifact. Historical schemas remain available for inspection but
+cannot cross the adapter boundary. Exact carries cite their direct SemanticIR claims; projections and residuals
+remain bound to the complete cumulative upstream graph through registered replay.
 
 The [Generated Artifacts](generated-artifacts.md) chapter documents current layouts and inspection
 paths. It is the operational authority; examples in this contract are intentionally avoided so a

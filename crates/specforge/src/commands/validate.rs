@@ -11,7 +11,7 @@ use crate::ir::evidence::{
     EvidenceIr, EvidenceMutationKind, SignalSemanticConflictRecord, SignalSemanticHintRecord,
     SignalSemanticHintSourceKind, StatementClass, VisualEvidenceRole, VisualObservationKind,
 };
-use crate::ir::intent::{IntentIr, count_nested_steps};
+use crate::ir::intent::{IntentIr, IntentMutationKind, count_nested_steps};
 use crate::ir::prior_memory::{
     CorpusMemory, NegativeKnowledgeKind, PriorScope,
     interface_signal_conflict_negative_knowledge_pattern,
@@ -253,7 +253,10 @@ fn semantic_ir_fingerprint(ir: &SemanticIr) -> Result<String> {
 fn intent_ir_fingerprint(ir: &IntentIr) -> Result<String> {
     let mut clone = ir.clone();
     clone.validation_reports.clear();
-    Ok(stable_fingerprint(&clone.to_pretty_json()?))
+    // Clearing the report deliberately makes a canonical proof stale. This is a diagnostic
+    // fingerprint over canonical and explicitly noncanonical conformance projections, so it must
+    // serialize the in-memory value rather than invoke the proof-enforcing persistence seam.
+    Ok(stable_fingerprint(&serde_json::to_string_pretty(&clone)?))
 }
 
 /// Evaluate a conformance-only in-memory artifact without granting it persistence authority.
@@ -2230,6 +2233,7 @@ fn persist_intent_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut ir.validation_reports, report);
+    ir.authorize_mutation(IntentMutationKind::ValidationBackannotation)?;
     write_backannotated_artifact(artifact_path, ir.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }

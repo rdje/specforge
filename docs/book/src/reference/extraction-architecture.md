@@ -109,18 +109,27 @@ grounded model attestations, validated scoped priors, registered universal axiom
 spelling-free symbol uses, unique claim addresses, and conclusion digests. It returns a non-deserializable
 verification witness; a merely schema-valid persisted ledger still has no canonical authority.
 
-This is still not end-to-end proof-carrying genericity, but the first three stage migrations are now concrete.
+This is still not end-to-end proof-carrying genericity, but the first four stage migrations are now concrete.
 SourceIR schema 3 executes all five source-family derivations. EvidenceIR schema 3 verifies that exact source
 ledger as its ordered prefix, then executes all 11 EvidenceIR families from exact current-document capture,
 optional validated prior, and ordered typed enrichment proposals. Historical claims are never wrapped in a
 synthetic proof. SemanticIR schema 2 verifies that exact cumulative EvidenceIR prefix and executes all 12
-semantic carry, merge, conflict, synthesis, residual, and validation families. IntentIR and adapter migration,
-followed by AST/information-flow gates, per-rule
+semantic carry, merge, conflict, synthesis, residual, and validation families. IntentIR schema 2 verifies the
+cumulative SemanticIR prefix and executes all nine product families: 30 exact carried fields receive direct
+SemanticIR antecedents, while filtered actors, conservatively NLI-filterable contracts, synthesized products,
+relations, identities, residuals, and validation use their registered projection or mutation authority. Adapter
+migration, followed by AST/information-flow gates, per-rule
 alpha execution, structural qualification, and whole-population behavioral qualification, remain mandatory.
 Until those close, SpecForge does not claim production-genericity signoff.
 
-That migration now has an exact checked contract. The 38 claim families expand to 168 current top-level-field
-rules and cover 111 reviewed producer/mutator entrypoints plus 40 canonical seams. One cumulative ledger starts
+The current implementation digests fail closed but are intentionally recorded as provisional: each migrated
+stage hashes its whole Rust source module, so even a test-only or comment-only edit can require proof refresh.
+That causes no false authority, but it is broader than the compiled production relation. The tracked closing work
+must derive each digest from production proof semantics and its dependency closure, while still invalidating any
+real verifier or rule change.
+
+That migration now has an exact checked contract. The 41 claim families expand to 168 current top-level-field
+rules and cover 116 reviewed producer/mutator entrypoints plus 47 canonical seams. One cumulative ledger starts
 from exact SourceIR capture, is verified and retained as an ordered prefix at every downstream stage, and gains
 field-root proofs (including empty fields) plus stable per-record proofs. Canonical load, serialization, write,
 downstream build, and ISF lowering require a complete current ledger; post-build mutation invalidates authority

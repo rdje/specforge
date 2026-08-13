@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > how does SpecForge verify an extracted claim semantically / catch hallucination
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > how does a VLM timing note become a FigureRegion
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how does a deliberate normalized-bundle reclamation get authorized
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > how does a heterogeneous collection declare its legal maximum
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > how does a repair prove its change is isolated if it also rebuilds drifted documents
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how does a section-heading register avoid double-counting an existing register record
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > how does an unknown-kind Continued from previous page table fragment get a kind
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does automatic task ranking keep hard failures ahead of breadth work
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how does collapse_section_header_register_identity decide same-register vs different-register
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -275,25 +297,3 @@
   > how many OpenCAPI Ready Definition paths are repository relative
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how many OpenCAPI Ready page paths are repository relative
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > how many SpecForge mdBook doctests currently fail
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many USB4 Connection Manager page sidecars are repository relative
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how many USB4 Inter-Domain page sidecars are repository relative
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > how many administrative workflow statements were measured
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > how many corpus documents carry markdown-escaped underscores in their statements
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how many corpus refreshes are done and how many remain (52 of 57 done and five remaining as of 2026-08-11; re-run the gate rather than trusting an older count)
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after AArch64 External Debug
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after CoreSight Base System
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after Introducing CoreSight

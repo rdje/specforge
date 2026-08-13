@@ -22,7 +22,7 @@ pub fn run(args: IntentArgs) -> Result<()> {
             .unwrap_or_else(|| crate::ir::nli_verify::DEFAULT_NLI_MODEL.to_string());
         let demoted = crate::ir::nli_verify::apply_nli_gate(&mut intent_ir, |source, claim| {
             crate::ir::nli_verify::verify_entailment(provider, &model, "", source, claim)
-        });
+        })?;
         println!("nli_gate: model={model} demoted_contracts={demoted}");
     }
 

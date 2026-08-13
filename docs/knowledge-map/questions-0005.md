@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > how many SpecForge mdBook doctests currently fail
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how many USB4 Connection Manager page sidecars are repository relative
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > how many USB4 Inter-Domain page sidecars are repository relative
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > how many administrative workflow statements were measured
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > how many corpus documents carry markdown-escaped underscores in their statements
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > how many corpus refreshes are done and how many remain (52 of 57 done and five remaining as of 2026-08-11; re-run the gate rather than trusting an older count)
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after AArch64 External Debug
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after CoreSight Base System
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after Introducing CoreSight
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -275,25 +297,3 @@
   > is the CoreSight Base System Architecture current-binary refresh complete
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > is the CoreSight Base System Architecture fully extracted
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > is the DTI ATST 0B01 constraint a real obligation (no — mis-attribution: the source text 'ATTR_OVR.SHCFG must be 0b01' binds SHCFG's value to ATST, which is a value of the FLOW field; an upstream extraction bug spun out of ISF-VALUE-WIDTH-EMIT)
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > is the EvidenceIR build reproducible / deterministic
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > is the Introducing CoreSight Debug and Trace refresh complete
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > is the LLM-primary promotion a recall improvement
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > is the LLM/VLM provider missing or not wired up
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is the NLP-SHALLOW-PARSE build frontier exhausted
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > is the OpenCAPI 3.0 Certified Definition refresh complete
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete

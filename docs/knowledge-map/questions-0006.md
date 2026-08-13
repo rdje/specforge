@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > is the DTI ATST 0B01 constraint a real obligation (no — mis-attribution: the source text 'ATTR_OVR.SHCFG must be 0b01' binds SHCFG's value to ATST, which is a value of the FLOW field; an upstream extraction bug spun out of ISF-VALUE-WIDTH-EMIT)
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > is the EvidenceIR build reproducible / deterministic
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > is the Introducing CoreSight Debug and Trace refresh complete
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > is the LLM-primary promotion a recall improvement
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > is the LLM/VLM provider missing or not wired up
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is the NLP-SHALLOW-PARSE build frontier exhausted
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > is the OpenCAPI 3.0 Certified Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > is the OpenCAPI 3.0 Ready Definition refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -276,25 +298,3 @@
   > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > what causes actor_signal_relations / extracted_statements to differ run-to-run
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > what changed between stale and current OpenCAPI Certified Definition artifacts
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > what changed between stale and current OpenCAPI Ready Definition artifacts
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > what confidence axis correlates with extracted-constraint correctness
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what debug/diagnostic tools does specforge have (TOOLBOX.md)
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what did KG-ISF-TRANSACTIONS.2l measure / decide
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what did KG-ISF-TRANSACTIONS.2n measure / decide
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6c improve

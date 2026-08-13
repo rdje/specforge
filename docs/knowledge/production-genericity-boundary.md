@@ -41,11 +41,22 @@ answers:
   - "Can recomputing a SemanticIR conclusion hash authorize an edit?"
   - "Can legacy or proofless SemanticIR feed IntentIR?"
   - "How is SemanticIR validation backannotation authorized?"
+  - "How is IntentIR proof-carrying?"
+  - "How many IntentIR fields and rule families are proved?"
+  - "Which IntentIR fields are exact SemanticIR carries?"
+  - "Why are actors and actor contracts IntentIR projections rather than lossless carries?"
+  - "Can recomputing an IntentIR conclusion hash authorize an edit?"
+  - "Can legacy or proofless IntentIR feed an adapter?"
+  - "How is IntentIR validation backannotation authorized?"
+  - "How is NLI contract demotion authorized without permitting contract invention?"
+  - "Does moving the repository invalidate IntentIR proof?"
+  - "Why can a test-only Rust edit currently stale production proof?"
+  - "Which task owns production-semantic implementation digest scoping?"
 date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
 evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
-reverify: cargo test -p specforge-core evidence_proof --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
+reverify: cargo test -p specforge-core intent_proof --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -121,8 +132,8 @@ carry row after executable proof showed that three surfaces are filtered or visu
 Existing later-stage producers remain proofless until the
 exact `.e.iv` migration, so whole-core signoff remains open.
 
-The first `.e.iv` child froze the exact reviewed migration graph before a stage schema changed. Its current 39 rows
-expand to 168 field-root rules and resolve 112 producer/mutator entrypoints, 41 canonical seams, and four
+The first `.e.iv` child froze the exact reviewed migration graph before a stage schema changed. Its current 41 rows
+expand to 168 field-root rules and resolve 116 producer/mutator entrypoints, 47 canonical seams, and four
 conformance-only mutation bypasses. The target is one cumulative ledger: each stage verifies and preserves the
 exact upstream proof prefix, then appends its own field-root and per-record claims. Canonical load, serialization,
 write, downstream build, and ISF lowering all require a current complete ledger; an unregistered mutation makes
@@ -163,8 +174,8 @@ Exactly 24 retained documents have both verifiable SourceIR capture and current 
 extracted fields and SemanticIR replay are unchanged by this migration. The other 54 remain behind a deliberate
 legacy/proofless frontier until owned source recapture is available. `CHAIN-CURRENCY` reports only that closed
 condition as unmeasurable. It still fails any stale current proof, so the distinction neither claims the historical
-EvidenceIR-to-SemanticIR edge is current nor creates a bypass. IntentIR and adapters remain 78/78 stage-locally
-reproducible from persisted SemanticIR, but that is not end-to-end proof authority.
+EvidenceIR-to-SemanticIR edge is current nor creates a bypass. The later SemanticIR and IntentIR proof migrations
+preserve the same 24-current / 54-unmeasurable frontier; historical later-stage bytes do not restore authority.
 
 SemanticIR schema 2 is the third completed stage migration. It retains the verified cumulative EvidenceIR ledger
 as an exact prefix and appends root plus per-record claims for 49 fields across 12 semantic families. Every
@@ -183,6 +194,38 @@ load, serialize, persist, or feed IntentIR; schemas older than 2 are inspection-
 
 Exactly 24 retained chains could migrate because they have current EvidenceIR. Their semantic fields are
 unchanged; only schema/proof metadata is added. The other 54 remain explicitly proof-unmeasurable. Currency is
-24 current / 54 unmeasurable through EvidenceIR, SemanticIR, and IntentIR, while all 78 adapter/ISF results remain
-stage-locally current. IntentIR and adapter proof migrations remain open.
+24 current / 54 unmeasurable through EvidenceIR, SemanticIR, and IntentIR. The IntentIR proof migration below
+supersedes the old later-stage-local result; adapter proof migration remains open.
+
+IntentIR schema 2 is the fourth completed stage migration. It retains the complete verified cumulative SemanticIR
+ledger as an exact ordered prefix, then appends root and per-record claims for all 49 public fields across nine
+capability-homogeneous families. Every claim depends on exact registered replay over the complete upstream graph.
+Thirty fields are true byte-for-byte SemanticIR carries: eleven actor/interface graph fields and nineteen typed
+semantic collections. Their roots and records additionally cite direct SemanticIR claims from the immediately
+upstream stage. The filtered `actors` surface has its own projection family, preventing removal of unsupported
+phantoms from masquerading as lossless carry.
+
+`actor_contracts` is also a projection family even though ordinary construction begins as an exact clone. The
+optional NLI gate may conservatively remove a contract, so a post-gate collection root is no longer byte-identical
+to SemanticIR. Its closed mutation is demotion-only: kept contracts preserve order, existing residuals remain an
+exact prefix, and each removed contract produces exactly one residual with the typed NLI id. Addition, reorder,
+unmatched residuals, or changes to any other field reject. Validation independently owns only
+`validation_reports`. Both mutations rebuild their predecessor and extend the cumulative proof before canonical
+serialization or writing.
+
+Canonical verification independently rebuilds IntentIR from current verified SemanticIR, normalizes
+repository-owned paths before comparison, and executes every registered relation. A recomputed JSON digest cannot
+self-authorize an edit. Current proofless, stale, or unauthorized artifacts reject; schemas older than 2 are
+inspection-only and cannot feed adapters; future schemas reject. Exactly 24 reachable IntentIRs migrated with
+zero pre-existing public-field change. The other 54 remain explicitly proof-unmeasurable behind legacy
+SemanticIR, and only the 24 verified product artifacts may build fresh adapters.
+
+Current implementation digests have a safe but over-broad boundary: each migrated stage hashes its whole Rust
+module. A change confined to `#[cfg(test)]` code in `intent.rs` therefore staled all 24 current IntentIR proofs;
+canonical adapter loading rejected every artifact, proving fail-closure. Exact regeneration from verified
+SemanticIR changed zero non-validation IntentIR public fields and zero non-validation adapter fields. Leaf
+`.6d.ii.e.iv.vii` owns the stronger target: derive digests from compiled production proof semantics and their
+dependency closure, so tests/comments do not create false staleness while a production relation change still
+invalidates proof.
+
 AST-aware information-flow and population qualification also remain open work.

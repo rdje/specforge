@@ -1,3 +1,31 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v — make IntentIR proof-carrying
+
+- Advanced IntentIR to schema 2 and registered all 49 public fields across nine capability-homogeneous
+  families. Every field receives a root claim, every populated collection receives stable record claims, and the
+  complete cumulative SemanticIR ledger remains an exact ordered prefix.
+- Bound the 30 true byte-for-byte carries directly to immediate SemanticIR claims. Split the filtered `actors`
+  surface and conservatively NLI-filterable `actor_contracts` surface into projection families so neither can
+  masquerade as lossless carry merely because ordinary construction starts from SemanticIR.
+- Made canonical load, serialization, write, validation, NLI demotion, prior learning, and adapter construction
+  execute the registered proof. Proofless, stale, forged, unauthorized, legacy, and future IntentIR cannot feed
+  production downstream work; repository-relative authority survives repository relocation.
+- Closed post-build mutation. Validation owns only `validation_reports`; NLI may only preserve order while
+  removing contracts and appending one typed matching residual per removal. It cannot add/reorder contracts,
+  rewrite old residuals, or alter an unrelated field; failed authorization leaves the caller's artifact unchanged.
+- Kept synthetic fixture projection out of production authority. A separately compiled `TestFixture` mutation
+  may replace an ordinarily lossless field in test/test-support builds, but production builds still require the
+  exact direct SemanticIR antecedent and cannot enable that exception through artifact data.
+- Migrated exactly the 24 IntentIRs reachable from verified SemanticIR with zero pre-existing public-field change,
+  validated them, and rebuilt/validated their 24 adapters. The other 54 remain explicitly proof-unmeasurable;
+  the exact 11,032-KiB migration comparison scratch was removed with residue absent.
+- Updated chain currency so validation reports and the proof bytes derived from that post-build mutation share one
+  excluded content-identity class, while canonical downstream loaders still execute the current proof. Its
+  fail-closed self-test is 20/20 and rejects inconsistent currency arithmetic before a negative current count can
+  be reported.
+- Passed the complete repository gate: all eight doctrines and 24-current/54-unmeasurable chain replay,
+  formatting, warnings-denied Clippy/rustdoc, 1,943 Rust tests passed with six intentional ignores and zero
+  failures, five compile-fail doctests, 156/156 KG fixtures, mdBook test/build, and final locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv — make SemanticIR proof-carrying
 
 - Advanced SemanticIR to schema 2 and registered all 12 semantic families. Every one of its 49 public fields

@@ -17,19 +17,21 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` is complete pending its commit under `.e.iv`.
-  `.6d.ii.e.iv.iii`, `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.i`, `.6d.ii.e.iii`, `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` is complete, fully qualified, and pending commit.
+  `.6d.ii.e.iv.iv`, `.6d.ii.e.iv.iii`, `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.i`, `.6d.ii.e.iii`,
+  `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
   `.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and
   `.6d.i` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`
   and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: SemanticIR schema 2 proves all 49 fields / 12 families, preserves the exact cumulative EvidenceIR
-  prefix, directly cites EvidenceIR for every true carried root/record, isolates filtered/extended evidence in a
-  registered projection family, preserves proof across repository relocation, and closes validation mutation. The retained
-  24 have zero semantic field delta; 54 legacy SemanticIRs are inspection-only. Currency is 24 current / 54
-  proof-unmeasurable through IntentIR, with all 78 adapters stage-locally current.
-- Next action: complete the commit workflow for `.e.iv.iv`, verify clean/zero-byte brief, then activate `.e.iv.v`
-  from that clean boundary to migrate the seven IntentIR families.
-- In-flight uncommitted: the fully verified `.e.iv.iv` code, schema, docs, Knowledge Map fact, and task evidence;
-  exact corpus regeneration, the 1,936-pass full repository gate, and scheduled cleanup are complete. Commit
-  workflow remains. No background job.
+- Current state: SourceIR, EvidenceIR, SemanticIR, and IntentIR have executable cumulative authority. IntentIR
+  schema 2 proves 49 public fields across nine homogeneous families, directly binds 30 exact carries to immediate
+  SemanticIR, separates filtered actors and NLI-filterable contracts into projection authority, and closes
+  validation plus one-to-one order-preserving NLI demotion. Exactly 24 reachable IntentIRs migrated with zero
+  pre-existing public-field delta; 54 remain proof-unmeasurable behind legacy SemanticIR. Final chain replay is
+  24 current / zero stale at every proof-bearing stage; full CI and 156/156 KG fixtures pass. `.e.iv.vii` owns
+  whole-module digest over-invalidation.
+- Next action: commit `.e.iv.v` with its required subject, verify a clean boundary and zero-byte commit brief,
+  then activate adapter proof leaf `.e.iv.vi`.
+- In-flight uncommitted: the fully implemented and qualified IntentIR proof slice, exact migration/adapter
+  rebuild, enforcement adjustments, public/live/book/retrieval alignment, and task evidence. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

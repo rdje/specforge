@@ -24,8 +24,12 @@
 #
 # Content identity excludes `validation_reports`: `specforge validate` back-annotates that section
 # AFTER the stage has run, and the product's own `*_ir_fingerprint` helpers
-# (crates/specforge/src/commands/validate.rs) clear the same field before hashing. This check adopts
-# the code's identity rule rather than inventing one.
+# (crates/specforge/src/commands/validate.rs) clear the same field before hashing. A proved stage's
+# `proof_context` and `proof_ledger` also attest that post-build validation mutation, so they are
+# excluded from the byte comparison with the report. Proof authority is still executed rather than
+# trusted: every downstream replay enters through the upstream stage's canonical verified loader;
+# a stale or forged current proof therefore fails the replay before comparison, while a legacy
+# proof receives only the explicit UNMEASURABLE disposition below.
 #
 # Measurability is STATED, never implied (ADR 0025): the evidence replay needs the document's
 # normalized markdown bundle, so a document whose bundle was reclaimed is UNMEASURABLE at that stage
@@ -83,6 +87,15 @@ replay_is_legacy_proof_blocked() {
   grep -Eq 'schema version [0-9]+ is legacy/proofless and inspection-only; rebuild it from verified ' "$1"
 }
 
+# current_from_counts <compared> <compared-stale> — content-current artifacts cannot be negative.
+# Replay failures are stale but never increment `compared`, so callers must not subtract them here.
+current_from_counts() {
+  case "$1" in ''|*[!0-9]*) return 1 ;; esac
+  case "$2" in ''|*[!0-9]*) return 1 ;; esac
+  [ "$2" -le "$1" ] || return 1
+  printf '%s\n' "$(( $1 - $2 ))"
+}
+
 # ── The comparison core ─────────────────────────────────────────────────────
 # compare_stage_artifact <persisted.json> <replay.json>
 # Exit 0 when both carry the same content identity. On a difference, print the differing top-level
@@ -105,7 +118,7 @@ sub load_artifact {
     die "$path is not a JSON object\n" if ref $value ne 'HASH';
     # Back-annotated by `specforge validate` after the stage ran; the product's *_ir_fingerprint
     # helpers clear the same field before hashing, so it is not part of content identity.
-    delete $value->{validation_reports};
+    delete @{$value}{qw(validation_reports proof_context proof_ledger)};
     return $value;
 }
 
@@ -378,8 +391,8 @@ run_self_test() {
   local work passed=0 output status
   work="$(mktemp -d)" || { fail_note 'cannot create a repository-local self-test workspace'; return 1; }
 
-  printf '%s' '{"stage":"evidence_ir","timing_constraints":[1,2],"actors":{"a":1},"validation_reports":[]}' > "$work/base.json"
-  printf '%s' '{"stage":"evidence_ir","timing_constraints":[1,2],"actors":{"a":1},"validation_reports":[{"report_id":"r"}]}' > "$work/reported.json"
+  printf '%s' '{"stage":"evidence_ir","timing_constraints":[1,2],"actors":{"a":1},"validation_reports":[],"proof_context":{"mutations":[]},"proof_ledger":{"digest":"base"}}' > "$work/base.json"
+  printf '%s' '{"stage":"evidence_ir","timing_constraints":[1,2],"actors":{"a":1},"validation_reports":[{"report_id":"r"}],"proof_context":{"mutations":["validation"]},"proof_ledger":{"digest":"validated"}}' > "$work/reported.json"
   printf '%s' '{"stage":"evidence_ir","timing_constraints":[1],"actors":{"a":1},"validation_reports":[]}' > "$work/shrunk.json"
   printf '%s' '{"stage":"evidence_ir","actors":{"a":1},"validation_reports":[]}' > "$work/missing.json"
   printf '%s' '{"actors":{"a":1},"stage":"evidence_ir","validation_reports":[],"timing_constraints":[1,2]}' > "$work/reordered.json"
@@ -388,7 +401,7 @@ run_self_test() {
   if compare_stage_artifact "$work/base.json" "$work/base.json" >/dev/null; then passed=$((passed + 1))
   else fail_note 'self-test 1: an artifact did not match itself'; fi
 
-  # 2) A `validation_reports` difference alone is NOT staleness (the documented exclusion).
+  # 2) A validation report and its derived proof metadata are NOT stage-content staleness.
   if compare_stage_artifact "$work/reported.json" "$work/base.json" >/dev/null; then passed=$((passed + 1))
   else fail_note 'self-test 2: a validation_reports-only difference was reported as staleness'; fi
 
@@ -450,13 +463,20 @@ run_self_test() {
     fail_note 'self-test 12: a stale current proof was incorrectly downgraded to unmeasurable'
   else passed=$((passed + 1)); fi
 
-  # 13-18) The retention leg: exact declared-versus-measured agreement over a schema-closed file.
+  # 13-14) Currency arithmetic: replay failures cannot produce a negative current population.
+  if [ "$(current_from_counts 0 0)" = '0' ]; then passed=$((passed + 1))
+  else fail_note 'self-test 13: an empty replay population did not report zero current'; fi
+  if current_from_counts 0 24 >/dev/null 2>&1; then
+    fail_note 'self-test 14: stale replay failures were allowed to produce a negative current count'
+  else passed=$((passed + 1)); fi
+
+  # 15-20) The retention leg: exact declared-versus-measured agreement over a schema-closed file.
   printf '%s\n' alpha beta gamma > "$work/corpus.txt"
   printf '%s\n' alpha beta       > "$work/retained.txt"
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[{"document_key":"gamma","owning_leaf":"T.2","date":"2026-08-10","reason":"r"}]}' > "$work/retention.json"
 
   if compare_retention "$work/retention.json" "$work/retained.txt" "$work/corpus.txt" >/dev/null; then passed=$((passed + 1))
-  else fail_note 'self-test 13: an exactly-declared retained set was reported as a breach'; fi
+  else fail_note 'self-test 15: an exactly-declared retained set was reported as a breach'; fi
 
   printf '%s\n' alpha > "$work/retained-shrunk.txt"
   output="$(compare_retention "$work/retention.json" "$work/retained-shrunk.txt" "$work/corpus.txt")"; status=$?
@@ -465,7 +485,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 14: a reclaimed declared bundle was not caught (got '$output')"; fi
+  else fail_note "self-test 16: a reclaimed declared bundle was not caught (got '$output')"; fi
 
   printf '%s\n' alpha beta gamma > "$work/retained-extra.txt"
   output="$(compare_retention "$work/retention.json" "$work/retained-extra.txt" "$work/corpus.txt")"; status=$?
@@ -474,7 +494,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 15: an undeclared retained bundle was not caught (got '$output')"; fi
+  else fail_note "self-test 17: an undeclared retained bundle was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[],"note":"free-form"}' > "$work/retention-unknown.json"
   output="$(compare_retention "$work/retention-unknown.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -483,7 +503,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 16: an unknown declaration field was not caught (got '$output')"; fi
+  else fail_note "self-test 18: an unknown declaration field was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["beta","alpha"],"reclamations":[]}' > "$work/retention-unsorted.json"
   output="$(compare_retention "$work/retention-unsorted.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -492,7 +512,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 17: an unsorted retained list was not caught (got '$output')"; fi
+  else fail_note "self-test 19: an unsorted retained list was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[{"document_key":"beta","owning_leaf":"T.2","date":"2026-08-10","reason":"r"}]}' > "$work/retention-contradictory.json"
   output="$(compare_retention "$work/retention-contradictory.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -501,14 +521,14 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 18: a key declared both retained and reclaimed was not caught (got '$output')"; fi
+  else fail_note "self-test 20: a key declared both retained and reclaimed was not caught (got '$output')"; fi
 
   rm -rf "$work"
-  if [ "$passed" -ne 18 ]; then
-    fail_note "self-test $passed/18 passed"
+  if [ "$passed" -ne 20 ]; then
+    fail_note "self-test $passed/20 passed"
     return 1
   fi
-  note 'self-test 18/18 passed.'
+  note 'self-test 20/20 passed.'
   return 0
 }
 
@@ -555,6 +575,7 @@ for stage in evidence semantic intent isf-adapter; do
   proof_blocked=0
   orphaned=0
   stale=0
+  compared_stale=0
   emitted_compared=0
 
   for source_ir in "$GENERATED_ROOT"/source_ir/*/source_ir.json; do
@@ -632,6 +653,7 @@ for stage in evidence semantic intent isf-adapter; do
     if ! differing="$(compare_stage_artifact "$persisted" "$replay")"; then
       fail_note "$key $stage — the persisted artifact is NOT what the current binary produces: $differing"
       stale=$((stale + 1))
+      compared_stale=$((compared_stale + 1))
       fail=1
       continue
     fi
@@ -641,6 +663,7 @@ for stage in evidence semantic intent isf-adapter; do
       if ! breach="$(compare_emitted_isf "$replay" "$GENERATED_ROOT/adapters/isf/$key")"; then
         fail_note "$key isf-emit — $breach"
         stale=$((stale + 1))
+        compared_stale=$((compared_stale + 1))
         fail=1
       fi
     fi
@@ -648,7 +671,13 @@ for stage in evidence semantic intent isf-adapter; do
 
   # `compared` counts every replay that reached a comparison, so the CURRENT population is what is
   # left after the stale ones are subtracted. Never let a compared-count read as a current-count.
-  current=$((compared - stale))
+  # Replay failures are stale but never entered `compared`; content/render mismatches did. Subtract
+  # only stale artifacts that reached comparison, so the current count cannot become negative.
+  if ! current="$(current_from_counts "$compared" "$compared_stale")"; then
+    fail_note "$stage — internal currency counts are inconsistent: $compared compared / $compared_stale comparison-stale"
+    current=0
+    fail=1
+  fi
   summary="$stage: $compared replayed, $current current, $stale stale, $not_persisted not persisted"
   if [ "$stage" = 'evidence' ]; then
     summary="$summary, $unmeasurable UNMEASURABLE (normalized bundle reclaimed — needs re-ingest)"
