@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > does specforge adapt remove an old actor isf when actor selection changes
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > does specforge handle coordinated drive/read objects (X drives A and B)
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > does specforge handle passive voice for actor-signal relations (X is driven by Y)
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does specforge validate modify the artifact passed on the command line
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -292,9 +298,3 @@
   > how does SpecForge handle one transaction and one rule writing the same named-drive target
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does SpecForge measure source-to-IntentIR stage loss
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > how does SpecForge prevent analog dB limits from becoming digital timing intent
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type

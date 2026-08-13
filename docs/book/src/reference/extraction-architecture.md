@@ -121,8 +121,17 @@ relations, identities, residuals, and validation use their registered projection
 schema 2 preserves that complete IntentIR ledger and proves four local families covering all 12 fields, every
 populated array record, every nonblank rendered ISF line, and every blocking reason. Canonical build, load,
 serialization, write, emitted-file reconciliation, and closed validation mutation execute current replay.
-AST/information-flow gates, per-rule
-alpha execution, structural qualification, and whole-population behavioral qualification, remain mandatory.
+The compiled-production graph substrate is also shipped. A standalone enforcement crate starts from Cargo's four
+product library/binary targets, parses all 77 inventoried Rust files, and derives 77 target-qualified modules plus
+their items, imports/re-exports, aliases, calls, local macros, external/builtin macros, and attributes. Seventy-six
+files are production-reachable; the remaining file is explicitly classified test support. Unknown configuration,
+missing inventory, absent or ambiguous modules, duplicate items or aliases, parse failure, and opaque verbatim
+syntax reject. Exact syntactic calls are separated from conservative compiler-resolved method, associated,
+binding, and callable-expression edges; Cargo compilation remains the type/privacy oracle.
+
+Raw-evidence/identity information-flow enforcement over that graph, proof-only promotion checks, doctrine
+registration, per-rule alpha execution, structural qualification, and whole-population behavioral qualification
+remain mandatory.
 Until those close, SpecForge does not claim production-genericity signoff.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
@@ -131,8 +140,9 @@ referenced stage-local production items, exact import bindings, and the complete
 removing comments, docs, formatting, and test/conformance branches. Controlled mutants prove inert edits preserve
 identity and referenced production edits change it; missing or ambiguous roots fail compilation. The exact
 proof-only migration changes no non-proof/non-validation content across 120 artifacts and leaves the measurable
-chain current. Current-binary replay remains the behavioral guard outside that registry-rooted relation, while
-the pending AST doctrine owns the broader helper/raw-text/identity-flow boundary.
+chain current. Current-binary replay remains the behavioral guard outside that registry-rooted relation. The
+derived graph now closes syntax/module/currentness discovery; the pending information-flow child still owns the
+broader helper/raw-text/identity/promotion boundary.
 
 That migration now has an exact checked contract. The 41 claim families expand to 168 current top-level-field
 rules and cover 116 reviewed producer/mutator entrypoints plus 53 canonical seams. One cumulative ledger starts

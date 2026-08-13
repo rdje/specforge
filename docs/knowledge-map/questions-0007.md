@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what are the final GIC Overview Guide reproducibility hashes
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > what are the final OpenCAPI Discovery artifact hashes
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > what are the first ranked trajectory gaps
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -292,9 +298,3 @@
   > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry

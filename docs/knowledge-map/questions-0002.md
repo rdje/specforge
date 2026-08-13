@@ -3,6 +3,12 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > can learned priors remain useful without knowing a specification family
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > can legal boilerplate become a SemanticIR gate
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > can low confidence statement tokens create an interface without a formal signal declaration
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
   > can prior memory select extraction by filename or protocol family
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can provenance load after source normalized cleanup removes its leaf
@@ -291,9 +297,3 @@
   > does sanitizing the module name break initiator port matching (no — from_intent_ir re-derives the initiator raw; actor_name is only the label)
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does select_initiator_actor choose the first or last equal maximum
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > does specforge adapt remove an old actor isf when actor selection changes
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > does specforge handle coordinated drive/read objects (X drives A and B)
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > does specforge handle passive voice for actor-signal relations (X is driven by Y)

@@ -1,3 +1,22 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii — derive the compiled production graph
+
+- Added the standalone `specforge-production-graph` workspace package and kept it dependency-disconnected from
+  all three product packages in both directions. It derives its root from the repository, reads locked/offline
+  Cargo metadata and compiler configuration, and never imports product implementation as checker authority.
+- Derived all four default production targets across the exact 77-file inventory: 76 production-reachable files,
+  one explicit test-support-only file, 77 target-module identities, 3,180 items, 1,192 imports/re-exports/aliases,
+  25,347 call sites, five local macro definitions, and 9,610 macro invocations.
+- Made module discovery, configuration, parsing, imports/aliases, duplicate identity, and supported syntax fail
+  closed. Exact syntax-proven calls and macros link locally; type-dependent method/associated/external/prelude/
+  callable dispatch remains explicitly classified for Cargo compilation to decide.
+- Added byte-determinism/root-relativity coverage plus eight controlled faults for missing inventory membership,
+  duplicate inventory path, parse failure, undeclared feature configuration, ambiguous alias, duplicate item,
+  missing module, and ambiguous module source. The information-flow policy and doctrine registration remain the
+  separately owned `.e.v.iii` and `.e.v.iv` slices; this graph alone is not genericity signoff.
+- Passed full qualification: all eight doctrines including exact chain currency, warnings-denied Clippy/rustdoc,
+  1,950 Rust tests passed / six ignored / zero failed, five compile-fail doctests, mdBook test/build, and final
+  project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii — scope proof digests to production semantics
 
 - Replaced the five whole-module `include_bytes!` implementation hashes with schema-versioned digests generated

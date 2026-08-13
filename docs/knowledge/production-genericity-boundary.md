@@ -58,11 +58,14 @@ answers:
   - "Can a test-only Rust edit stale production proof?"
   - "How are production implementation digests derived?"
   - "What changes a production implementation digest?"
+  - "How is the compiled production Rust graph derived?"
+  - "How does the genericity graph distinguish exact calls from compiler-resolved dispatch?"
+  - "What syntax uncertainty makes the production genericity graph fail closed?"
 date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
-reverify: cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; tools/production-genericity-graph/src/analyzer.rs; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
+reverify: scripts/check_production_genericity_graph.sh && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -253,3 +256,13 @@ chain replay remains 24 current / zero stale / 54 proof-unmeasurable.
 This closes registered proof-relation identity, not whole-core genericity. Current-binary reconstruction still
 observes builder/lowering dependencies outside the registry-rooted digest. AST-aware information-flow,
 adversarial structural qualification, and population behavior remain open work.
+
+The next structural child now derives the complete production syntax substrate. Cargo exposes four library/binary
+targets; their module graph reaches 76 of the 77 inventoried files, with the remaining application test-support
+file classified explicitly. The resulting 77 modules contain deterministic item, import/alias, call, local-macro,
+external/builtin-macro, and attribute-macro nodes. Exact calls are separated from conservative compiler-resolved
+method/associated/binding dispatch, so the AST does not impersonate Rust type resolution. Missing inventory,
+unknown configuration, absent or ambiguous modules, duplicate items or aliases, parse failure, opaque verbatim
+syntax, and non-relative output fail closed. The graph tool remains dependency-disconnected from all three
+product crates. Information-flow source/sink/declassifier enforcement and doctrine registration remain the next
+two bounded children; whole-core genericity signoff is therefore still open.

@@ -4,6 +4,28 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-13 — deterministic production syntax graph; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`)
+
+- The workspace now contains a standalone `specforge-production-graph` enforcement package. The dependency
+  checker forbids edges between that tool and every product package in both directions, so the code under
+  examination cannot provide the checker's semantic answer or acquire conformance authority from it.
+- Cargo metadata, default production feature closure, and `rustc --print cfg` select four production targets.
+  Starting from those roots, the analyzer parses all 77 inventoried files and proves 76 are production-reachable
+  while the remaining file is explicitly test-support-only; inline modules produce 77 target-module identities.
+- The deterministic graph contains 3,180 items, 1,192 imports/re-exports/aliases, 25,347 call sites, five local
+  macro definitions, and 9,610 macro invocations. Exact local calls and macro bindings are linked; method,
+  associated, external, prelude/binding, callable-expression, and other compiler-owned dispatch stay explicitly
+  classified rather than being falsely resolved by syntax alone.
+- Missing inventory membership, duplicate paths, parse failure, undeclared feature configuration, ambiguous
+  aliases, duplicate item identities, missing modules, ambiguous module sources, and unsupported/verbatim syntax
+  fail closed. The live graph is generated twice byte-identically and contains no absolute repository path.
+- Cargo compilation remains the independent type/privacy oracle. `.e.v.iii` still must apply closed raw/identity
+  information-flow and proof-only-promotion policy to this graph; `.e.v.iv` must register the composed doctrine,
+  so this slice makes no production-genericity signoff claim.
+- Complete qualification is green: all eight doctrines, warnings-denied Clippy/rustdoc, application 470 +
+  conformance 139 + core 1,339 + graph 2 = 1,950 Rust tests passed / six ignored / zero failed, five compile-fail
+  doctests, mdBook test/build, and final project-data locality.
+
 ## Session update (2026-08-13 — production-semantic proof identity; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii`)
 
 - `specforge-core` now owns a build-time Rust AST derivation that emits five schema-versioned implementation

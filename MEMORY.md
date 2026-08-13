@@ -17,15 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` is complete; `.e.v` is active and split into four bounded
-  children. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` is complete and awaiting its clean commit. `.e.v.i` is
+  committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
+  `TASK-PART-SEAL-REACHABILITY.0`.
 - Current state: all five proof-bearing stages use compiler-derived production-semantic implementation identity,
-  and the exact live denominator is 77 production modules / 41 claim families / 168 artifact fields. The existing
-  dependency, inventory, and rule checks pass, but no registered whole-core AST information-flow doctrine exists
-  yet. The accepted composition keeps compiler privacy/types and proof-carrying promotion primary, adds a
-  fail-closed derived module/item/call graph, then enforces raw/identity noninterference and proof-only promotion.
-- Next action: from a clean handoff, implement `.e.v.ii`, the deterministic compiled production graph with closed
-  alias/configuration/macro/parse handling.
-- In-flight uncommitted: this commit records the completed `.e.v.i` contract and continuity alignment. No
-  production code or background job.
+  and the exact live denominator is 77 production modules / 41 claim families / 168 artifact fields. The new
+  dependency-disconnected analyzer accounts for all 77 inventoried files, derives four targets / 77 target
+  modules / 3,180 items / 1,192 imports / 25,347 calls / five macro definitions / 9,610 invocations, and fails
+  closed on unresolved structure. No registered whole-core AST information-flow doctrine exists yet.
+- Next action: after this clean commit, activate `.6d.ii.e.v.iii` and enforce raw/identity noninterference plus
+  proof-only canonical promotion over the derived graph.
+- In-flight uncommitted: completed `.e.v.ii` code/docs awaiting the current commit workflow. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

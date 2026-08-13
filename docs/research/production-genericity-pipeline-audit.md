@@ -1,9 +1,9 @@
 # Production-genericity pipeline audit
 
-Status: **discovery, dependency boundary, trusted kernel, rule census, and SourceIR→ISF-adapter proof migration complete; digest precision, AST information-flow enforcement, and behavioral qualification remain**
+Status: **discovery, dependency boundary, trusted kernel, rule census, SourceIR→ISF-adapter proof migration, digest precision, and compiled syntax-graph derivation complete; AST information-flow enforcement and behavioral qualification remain**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
-Latest proof-migration update: 2026-08-13 (`.6d.ii.e.iv.vi`)
+Latest structural update: 2026-08-13 (`.6d.ii.e.v.ii`)
 Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
 Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
 
@@ -104,10 +104,27 @@ artifacts cannot emit or preserve authoritative ISF. Exactly 24 reachable adapte
 delta outside schema/proof/validation; all 24 are currently blocked and reconcile to zero emitted files. Fifty-four
 historical chains remain upstream-proof-unmeasurable rather than receiving synthetic authority.
 
-Whole-module implementation digests safely fail closed but over-invalidate: one test-only edit staled all 24
-IntentIR proofs without changing product fields. `.e.iv.vii` therefore scopes digests to compiled production
-verifier/rule semantics and dependencies, preserving currency for test/comment edits while invalidating real
-relation changes. `.e.v` then derives helper-level AST/information-flow closure.
+Whole-module implementation digests safely failed closed but over-invalidated: one test-only edit staled all 24
+IntentIR proofs without changing product fields. `.e.iv.vii` replaced them with compiler-derived production
+registry/verifier/item/import/kernel closures, preserving currency for inert edits while invalidating real
+relation changes.
+
+## Compiled production syntax graph (`.6d.ii.e.v.ii`)
+
+A fourth workspace package, `specforge-production-graph`, derives the structural denominator without depending
+on any product package and without allowing any product package to depend on it. It reads Cargo metadata under
+the default production feature closure, evaluates compiler and Cargo configuration, starts from all four live
+library/binary targets, and parses the complete 77-file inventory. The current result is 76 reachable production
+files plus one explicit test-support-only file, 77 target-module identities, 3,180 items, 1,192 imports,
+25,347 call sites, five local macro definitions, and 9,610 macro invocations.
+
+The analyzer resolves ordinary and `#[path]` modules, inline modules, imports, re-exports, globs, and aliases;
+rejects absent, duplicate, ambiguous, unparsed, disabled-but-misclassified, or unsupported syntax; and emits
+deterministic repository-relative JSON. It links exact local calls and macro definitions where syntax proves the
+binding, while classifying method calls, associated calls, external/prelude bindings, callable expressions, and
+other type-dependent dispatch honestly for the compiler oracle. Unit controls run the live graph twice for
+byte identity and seed eight independent fail-closed faults. This is the exact substrate for `.e.v.iii`; it does
+not yet prove raw/identity noninterference or proof-only promotion, and it is not yet the registered doctrine.
 
 ## Audit denominator and method
 

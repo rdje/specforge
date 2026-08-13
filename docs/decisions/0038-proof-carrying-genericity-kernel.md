@@ -4,8 +4,8 @@ title: Production genericity is enforced by opaque capabilities and a proof-carr
 date: 2026-08-12
 status: accepted
 scope: genericity, architecture, information-flow, proof-ledger, rule-registry, doctrine-enforcement
-evidence: doctrine/production_genericity/module_inventory.tsv; doctrine/production_genericity/claim_family_inventory.tsv; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; docs/research/production-genericity-pipeline-audit.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_rules.pl
-reverify: perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_dependencies.pl && perl scripts/check_production_genericity_rules.pl && perl scripts/check_production_genericity_rules.pl --self-test
+evidence: doctrine/production_genericity/; docs/research/production-genericity-pipeline-audit.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; tools/production-genericity-graph/; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_rules.pl
+reverify: perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_dependencies.pl && scripts/check_production_genericity_graph.sh && perl scripts/check_production_genericity_rules.pl
 answers:
   - "What replaces a forbidden vocabulary list as the proof of production genericity?"
   - "What is SpecForge's trusted promotion kernel?"
@@ -356,6 +356,30 @@ silently imports NLP state that lacks a replay event. Productive NLP, condition,
 register-recovery, NLI-gauge, and validation-backannotation paths now extend the proof through an explicit closed
 mutation kind before persistence. Test-only fixtures use a schema member that is absent from production builds;
 noncanonical conformance overlays remain unserializable as production authority.
+
+### Compiled production graph (`.6d.ii.e.v.ii`)
+
+The structural doctrine now has a compiler-independent syntax substrate rather than a filename scan. The
+standalone `specforge-production-graph` workspace tool asks Cargo for the three product packages' library and
+binary targets, evaluates their default production feature closure and the host `rustc` configuration, follows
+ordinary and `#[path]` modules, and joins every reached file to `module_inventory.tsv`. It parses all 77
+inventoried Rust files even when one is explicitly test-support-only; the current production graph reaches 76
+files through four targets and 77 module identities.
+
+Each target receives deterministic module, item, import/alias, call, macro-definition, macro-invocation, and
+attribute-macro nodes. Exact local paths are distinguished from external/re-exported paths, while method,
+associated, callable-expression, prelude, and binding dispatch remain explicitly compiler-resolved with a
+conservative local candidate set. The AST therefore never claims type resolution that belongs to Cargo. Unknown
+Cargo features or configuration syntax, missing or ambiguous modules, uninventoried target files, duplicate item
+or alias identities, parse errors, and opaque `syn::Verbatim` nodes fail closed. Local declarative macros are
+linked exactly; all other macro kinds stay classified for the following information-flow slice.
+
+The enforcement tool is a fourth workspace member but has no dependency edge in either direction with a product
+crate. Seven dependency controls preserve that separation. Its fixture graph adds one positive and eight
+fail-closed currentness/configuration/module/item/alias/parse cases, and a double derivation of the live graph
+proves byte-deterministic JSON with repository-relative paths only. This slice derives the graph; `.e.v.iii`
+still owns taint, declassifier, semantic-sink, and proof-promotion policy, and `.e.v.iv` alone registers the
+composed doctrine.
 
 ## Consequences
 

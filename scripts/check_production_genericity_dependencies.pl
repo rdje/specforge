@@ -65,7 +65,12 @@ sub inspect_boundary {
     my ($project_root) = @_;
     my @problems;
 
-    my @expected_members = qw(crates/specforge crates/specforge-core crates/specforge-conformance);
+    my @expected_members = qw(
+        crates/specforge
+        crates/specforge-core
+        crates/specforge-conformance
+        tools/production-genericity-graph
+    );
     my @members = workspace_members(File::Spec->catfile($project_root, 'Cargo.toml'));
     push @problems, exact_set_problems('workspace', \@members, \@expected_members);
 
@@ -77,6 +82,11 @@ sub inspect_boundary {
         my @names = dependency_names($manifest);
         $deps{$package} = { map { $_ => 1 } @names };
     }
+    my $graph_manifest = File::Spec->catfile(
+        $project_root, qw(tools production-genericity-graph Cargo.toml)
+    );
+    my @graph_names = dependency_names($graph_manifest);
+    $deps{'specforge-production-graph'} = { map { $_ => 1 } @graph_names };
 
     push @problems, 'specforge-core must not depend on specforge-conformance'
         if $deps{'specforge-core'}{'specforge-conformance'};
@@ -92,6 +102,12 @@ sub inspect_boundary {
         if !$deps{'specforge'}{'specforge-core'};
     push @problems, 'specforge application must depend on specforge-conformance'
         if !$deps{'specforge'}{'specforge-conformance'};
+    for my $product (qw(specforge specforge-core specforge-conformance)) {
+        push @problems, "$product must not depend on the enforcement graph tool"
+            if $deps{$product}{'specforge-production-graph'};
+        push @problems, "the enforcement graph tool must not depend on $product"
+            if $deps{'specforge-production-graph'}{$product};
+    }
 
     my $core_root = slurp(
         File::Spec->catfile($project_root, qw(crates specforge-core src lib.rs))
@@ -114,7 +130,7 @@ sub write_fixture {
     my ($fixture) = @_;
     write_text(
         File::Spec->catfile($fixture, 'Cargo.toml'),
-        "[workspace]\nmembers = [\"crates/specforge\", \"crates/specforge-core\", \"crates/specforge-conformance\"]\n",
+        "[workspace]\nmembers = [\"crates/specforge\", \"crates/specforge-core\", \"crates/specforge-conformance\", \"tools/production-genericity-graph\"]\n",
     );
     write_text(
         File::Spec->catfile($fixture, qw(crates specforge Cargo.toml)),
@@ -127,6 +143,10 @@ sub write_fixture {
     write_text(
         File::Spec->catfile($fixture, qw(crates specforge-conformance Cargo.toml)),
         "[package]\nname = \"specforge-conformance\"\n[dependencies]\nspecforge-core = { path = \"../specforge-core\" }\n",
+    );
+    write_text(
+        File::Spec->catfile($fixture, qw(tools production-genericity-graph Cargo.toml)),
+        "[package]\nname = \"specforge-production-graph\"\n",
     );
     write_text(
         File::Spec->catfile($fixture, qw(crates specforge-core src lib.rs)),
@@ -192,12 +212,35 @@ sub run_self_tests {
         my ($oracle_in_core) = inspect_boundary($fixture);
         die "self-test did not reject a conformance module in the core registry\n"
             if !grep { /core IR registry declares/ } @{$oracle_in_core};
+        write_fixture($fixture);
+
+        write_text(
+            $core_manifest,
+            slurp($core_manifest)
+                . "specforge-production-graph = { path = \"../../../tools/production-genericity-graph\" }\n",
+        );
+        my ($product_uses_tool) = inspect_boundary($fixture);
+        die "self-test did not reject a product dependency on the enforcement tool\n"
+            if !grep { /must not depend on the enforcement graph tool/ } @{$product_uses_tool};
+        write_fixture($fixture);
+
+        my $graph_manifest = File::Spec->catfile(
+            $fixture, qw(tools production-genericity-graph Cargo.toml)
+        );
+        write_text(
+            $graph_manifest,
+            slurp($graph_manifest)
+                . "[dependencies]\nspecforge-core = { path = \"../../crates/specforge-core\" }\n",
+        );
+        my ($tool_uses_product) = inspect_boundary($fixture);
+        die "self-test did not reject an enforcement-tool dependency on a product crate\n"
+            if !grep { /enforcement graph tool must not depend on specforge-core/ } @{$tool_uses_product};
     };
     $failure = $@;
     remove_tree($fixture) if -e $fixture;
     die "self-test residue remains at $fixture\n" if -e $fixture;
     die $failure if $failure;
-    print "production-genericity-dependencies self-test: 5/5 pass\n";
+    print "production-genericity-dependencies self-test: 7/7 pass\n";
 }
 
 $root //= abs_path(File::Spec->catdir($Bin, '..'));
@@ -214,4 +257,5 @@ if (@{$problems}) {
     exit 1;
 }
 print "production-genericity-dependencies: core -> conformance absent; "
-    . "conformance -> core and application -> {core, conformance} present\n";
+    . "conformance -> core and application -> {core, conformance} present; "
+    . "enforcement graph tool disconnected from all product packages\n";

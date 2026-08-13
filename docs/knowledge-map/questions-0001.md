@@ -87,6 +87,8 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the corpus knowledge base group fixtures without protocol-family names?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How does the genericity graph distinguish exact calls from compiler-resolved dispatch?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the proof ledger continue from SourceIR through ISF lowering?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is EvidenceIR proof-carrying?
@@ -106,6 +108,8 @@
   > How is SourceIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is adapter validation backannotation authorized?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is the compiled production Rust graph derived?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How many IntentIR fields and rule families are proved?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -142,6 +146,8 @@
   > What replaced swd_operations and swdio_direction?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > What replaces a forbidden vocabulary list as the proof of production genericity?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > What syntax uncertainty makes the production genericity graph fail closed?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Where is the whole extraction-pipeline genericity audit?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -291,9 +297,3 @@
   > can certification administration become a SemanticIR phase or gate
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > can identical values in separate timing cells remain valid
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > can learned priors remain useful without knowing a specification family
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > can legal boilerplate become a SemanticIR gate
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > can low confidence statement tokens create an interface without a formal signal declaration

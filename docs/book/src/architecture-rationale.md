@@ -150,8 +150,10 @@ spelling, ISF clock/reset lowering fails closed without a typed system contract,
 digital-design structure with current-document symbols, and corpus pages group fixtures only by populated typed
 schema capabilities. SourceIR, EvidenceIR, SemanticIR, IntentIR, and the ISF adapter now require executable
 cumulative derivations at every canonical seam. Adapter authority includes every rendered nonblank ISF line and
-every honest blocking reason; proofless or stale input cannot emit or preserve output. The structural
-information-flow gate and full behavioral qualification remain release-blocking work, not accepted shortcuts.
+every honest blocking reason; proofless or stale input cannot emit or preserve output. A separate enforcement
+tool now derives the complete Cargo-rooted production syntax graph and fails closed on missing, ambiguous,
+unparsed, or unsupported structure. The information-flow policy over that graph and full behavioral
+qualification remain release-blocking work, not accepted shortcuts.
 
 The bounded identity-remediation parent remains jointly qualified over the exact three-commit range
 `89d8dee7..9c38b569`. The later proof migration exposes a stricter current frontier: exactly 24 documents retain
@@ -197,8 +199,13 @@ comparisons—and left every measurable chain current.
 This result is deliberately bounded. It proves the identity of the registered production proof relation and
 removes false staleness from tests/comments. Canonical verification also reconstructs each stage with the current
 binary, so builder or lowering changes still cannot silently authorize a mismatching old conclusion. The next
-AST-aware doctrine must make the broader raw-text, opaque-identity, helper, macro, module, and unregistered-rule
-boundary mechanically unmergeable; behavioral renaming/paraphrase/held-out qualification still follows that.
+structural child supplies the missing deterministic substrate: all four production targets, 76 reachable
+production files plus one explicit test-support-only file, and 77 target-module identities are parsed into
+module, item, import/re-export/alias, call-candidate, macro-definition, macro-invocation, and attribute nodes.
+Exact local calls are distinguished from method, associated, external, prelude/binding, and unresolved compiler
+dispatch rather than pretending that an AST alone is a type checker. The following information-flow doctrine
+must still make the raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically
+unmergeable; behavioral renaming/paraphrase/held-out qualification still follows that.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

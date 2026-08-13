@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > how does SpecForge prevent analog dB limits from becoming digital timing intent
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > how does SpecForge recover a subject the model misspelled
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -291,9 +297,3 @@
   > how is the required free disk for an ingest estimated
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is the terminal task source archive boundary verified
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > how is transaction membership kept boundary-precise across read vs write (bar #3)
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > how many AArch64 External Debug page sidecars are repository relative

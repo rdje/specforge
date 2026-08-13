@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -291,9 +297,3 @@
   > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > what is the size-immunity binding constraint for source_ir.json at extreme page counts
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what is the source-to-IntentIR completeness contract
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is the standing per-doc quality report wired into converge/CI
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is the table-kind precision estimate and the flagged-mismatch list

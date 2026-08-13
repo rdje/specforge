@@ -390,11 +390,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i — freeze structural doctrine contract`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`
-  Status: `pending`
+  Status: `done`
   Goal: `derive the exact compiled production module and syntax graph with fail-closed name, alias, configuration, and macro resolution`
   Acceptance: `a repository-root-derived analyzer parses every inventoried production Rust module, derives the reachable module/item/call graph under the production Cargo target, resolves imports and aliases needed by the trust boundary, classifies macro definitions/invocations, rejects missing/duplicate/ambiguous/unparsed nodes, and emits only deterministic diagnostics; Cargo compilation remains the independent type/privacy oracle`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `standalone dependency-disconnected graph package derives four default production targets from locked/offline Cargo metadata and rustc cfg across the exact 77-file inventory: 76 production-reachable files, one explicit test-support-only file, 77 target modules, 3,180 items, 1,192 imports/re-exports/aliases, 25,347 calls, five macro definitions, and 9,610 macro invocations; live JSON generated twice is byte-identical and root-relative; eight seeded currentness/resolution failures plus unsupported/verbatim syntax fail closed; dependency checker self-test is 7/7 and exact tool/product disconnection passes; workspace Cargo check, focused formatting/test/Clippy, all eight doctrines, 1,950 Rust tests / six ignores / zero failures, five compile-fail doctests, warning-deny Rustdoc, mdBook test/build, Knowledge Map, containment, and final locality pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii — derive compiled production graph`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii`
   Status: `pending`
@@ -498,7 +498,7 @@ expressiveness as the bottleneck.
 | 33 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `done` | all four adapter families, rendered lines, blocked output, and exact filesystem reconciliation are proof-gated |
 | 34 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `done` | compiler-derived production registry/verifier/item/import/kernel closures exclude test/comment churn and bind all five proof rulesets |
 | 35 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` | `done` | compiler/type proof composition, exact trust planes, taint/declassifier/sink classes, and four bounded children are fixed |
-| 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `pending` | derive the complete production module/item/call graph and fail closed on unresolved syntax |
+| 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `done` | all 77 inventoried files are deterministically accounted for; the complete production syntax graph and fail-closed resolution controls pass |
 | 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `pending` | enforce raw/identity noninterference and proof-only promotion over the derived graph |
 | 38 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | `pending` | register the composed doctrine and qualify the current production baseline |
 | 39 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
@@ -1541,6 +1541,28 @@ the reviewed replay can name its production revision.
 - [x] **LOCKSTEP** — code, ADR 0038, task tree, roadmap, research audit, Knowledge Map, live docs, mdBook, retained
   proof population, archive rollover, and resume pointer state the same exact boundary and remaining AST work.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`
+
+- [x] **REPRODUCE / MEASURE** — `scripts/check_production_genericity_graph.sh` derives 77 inventoried files,
+  76 production-reachable files, one test-support-only file, four targets, 77 target modules, 3,180 items,
+  1,192 imports, 25,347 calls, five macro definitions, and 9,610 macro invocations; live JSON is byte-identical
+  across two derivations and contains no absolute repository path.
+- [x] **ROOT CAUSE (WHY + WHERE)** — a source-file inventory, dependency manifest, finite vocabulary census, or
+  compiler success cannot by itself expose the complete module/item/import/alias/call/macro substrate required
+  for whole-core information-flow proof; syntax alone also cannot honestly resolve type-dependent Rust dispatch.
+- [x] **ADDRESSED (verified)** — the standalone analyzer derives the production Cargo roots/configuration and
+  complete syntax graph, resolves every syntax-proven local binding, classifies compiler-owned dispatch, and
+  rejects missing, duplicate, ambiguous, unparsed, unsupported, or stale structural input.
+- [x] **NO REGRESSION** — `cargo check --workspace --all-targets --offline`, focused `cargo test` and
+  warnings-denied `cargo clippy`, eight controlled graph faults, dependency self-test 7/7, all eight doctrines,
+  1,950 Rust tests / six ignores / zero failures, five compile-fail doctests, Rustdoc, mdBook, and locality pass.
+- [x] **GENERICITY (ADR 0006)** — discovery uses Cargo/Rust structure and the current input program, never a
+  specification, PDF, vendor, protocol, symbol, threshold, or corpus vocabulary; test-specific names remain
+  ordinary data outside the production-reachable graph.
+- [x] **LOCKSTEP** — code, dependency boundary, ADR 0038, research audit, roadmap, task tree, Knowledge Map,
+  live docs, mdBook, containment authority, and resume pointer publish the same exact graph and leave flow policy
+  and doctrine registration explicitly owned by `.e.v.iii` and `.e.v.iv`.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1581,10 +1603,22 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi — prove ISF lowering authority` | Adapter schema-2 cumulative proof for four families / 12 fields plus every array record/rendered line/blocking reason, closed validation, exact 24 retained migrations, and emitted-versus-blocked reconciliation |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii — scope proof digests to production semantics` | compiler-derived registry/verifier/item/import/kernel closures, inert/sensitive mutations, exact proof-only 120-artifact migration, and complete chain qualification |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i — freeze structural doctrine contract` | exact compiler-plus-AST proof composition, trust planes, closed flow boundaries, fail-closed syntax policy, data-plane ownership, and bounded `.e.v.ii`–`.iv` implementation frontier |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii — derive compiled production graph` | four Cargo-rooted production targets, exact 77-file accounting, deterministic module/item/import/call/macro graph, honest compiler-owned dispatch, and eight fail-closed controls |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
 
+- `2026-08-13`: Completed `.6d.ii.e.v.ii`. The standalone graph package is disconnected from all product crates,
+  derives four production targets across the exact 77-file inventory, accounts for 76 reachable plus one
+  test-support-only file and 77 target-module identities, and emits the deterministic 3,180-item / 1,192-import /
+  25,347-call / five-macro-definition / 9,610-macro-invocation graph. Exact syntax bindings resolve; compiler-owned
+  dispatch remains honestly classified. Eight controlled faults, focused gates, all eight doctrines, 1,950/6/0
+  Rust tests, five compile-fail doctests, Rustdoc, mdBook, containment, and locality pass. `.e.v.iii` remains the
+  next leaf and exclusively owns the information-flow and promotion policy over this graph.
+- `2026-08-13`: Activated `.6d.ii.e.v.ii` only after `.e.v.i` committed at `c18fa99c`, the post-commit tree was
+  clean, and the commit brief was zero bytes. This child owns the deterministic production module/item/import/
+  alias/call/macro graph and all fail-closed parse/currentness controls; it does not yet classify taint flows or
+  register the final doctrine. Cargo compilation remains the independent type/privacy oracle.
 - `2026-08-13`: Activated and completed `.6d.ii.e.v.i` from clean commit `61aa47f0`. The original `.e.v` mixed
   compiler/privacy proof, exact module and syntax closure, interprocedural raw/identity flow, canonical-promotion
   enforcement, and doctrine registration, so it is now the active container for four bounded children. The frozen
