@@ -409,8 +409,9 @@ duplicate registry identity.
 
 This remains a composition, not an AST-only proof: Cargo compilation and Rust privacy are the type/capability
 oracle, executable ledger replay is canonical authority, and the AST supplies closed whole-surface flow and
-topology coverage. The standalone check is shipped but `.e.v.iv` alone registers it unconditionally with the
-other structural checks; `.e.vi` still owns the broader mutation matrix and executable alpha obligations.
+topology coverage. `.e.v.iv` registers the dependency, inventory, rule, and graph/flow checks as one
+unconditional `PRODUCTION-GENERICITY` doctrine. `.e.vi` still owns the broader mutation matrix and executable
+alpha obligations.
 
 ## Consequences
 

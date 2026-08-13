@@ -137,9 +137,10 @@ dependence through 2,169 functions and 11,295 helper edges, then check 10,419 br
 sensitive macro input, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
-Unconditional doctrine registration, executable per-rule alpha qualification, broader adversarial structural
-qualification, and whole-population behavioral qualification remain mandatory.
-Until those close, SpecForge does not claim production-genericity signoff.
+The dependency, inventory, rule, compiled-graph, and information-flow checks now run together as the
+unconditional `PRODUCTION-GENERICITY` doctrine. Executable per-rule alpha qualification, broader adversarial
+structural qualification, and whole-population behavioral qualification remain mandatory. Until those close,
+SpecForge does not claim production-genericity signoff.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively

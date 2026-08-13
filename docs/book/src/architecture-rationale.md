@@ -210,8 +210,9 @@ raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary
 140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
 2,169 functions, 11,295 helper edges, 10,419 decision sites, and sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
-type oracle and executable replay remains the semantic oracle; unconditional doctrine registration and
-behavioral renaming/paraphrase/held-out qualification still follow.
+type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
+checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`; adversarial alpha and behavioral
+renaming/paraphrase/held-out qualification still follow.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

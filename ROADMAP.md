@@ -95,10 +95,11 @@ blocked/no-file, while 54 legacy chains are unmeasurable. `.e.iv.vii` binds proo
 production registry/verifier/item/import/kernel closures. `.e.v.ii` derives the exact Cargo-rooted production
 module/item/import/call/macro graph with fail-closed syntax and configuration handling. `.e.v.iii` now joins a
 closed typed boundary registry to that graph and enforces fixed-point raw/identity noninterference, protected
-authority, and proof-only canonical promotion across the complete production surface. `.e.v.iv` next composes
-that analyzer and the existing structural checks into the unconditional doctrine driver.
-A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.v.iv`–`.e.vii` still must register and qualify the AST/information-flow obligations and
-qualify the structural result; `.f` then owns population alpha-renaming, identity, paraphrase,
+authority, and proof-only canonical promotion across the complete production surface. `.e.v.iv` now composes
+that analyzer with the dependency, inventory, and rule checks as the unconditional `PRODUCTION-GENERICITY`
+doctrine.
+A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.vi`–`.e.vii` still must adversarially and
+alpha-qualify the registered structural result; `.f` then owns population alpha-renaming, identity, paraphrase,
 and held-out qualification before `.6e`. A reproduced 400-page failure also drove resource-sized bounded
 activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.
 

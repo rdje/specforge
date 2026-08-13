@@ -291,6 +291,7 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `README-POLICY` | structural | gate | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
 | `LIVE-DOC-SIZE` | structural | gate | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once; each declared current-state field has an explicit derive-on-read, verified-copy, authored-intent, or immutable-evidence contract; and all lifecycle-specific locality, pressure, route, currency, authority, capture, and history rules pass |
 | `PROJECT-DATA-LOCALITY` | structural | gate | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
+| `PRODUCTION-GENERICITY` | structural | gate | `scripts/check_production_genericity.sh` | the product package direction and checker disconnection hold; the complete module/claim/rule/bypass inventories resolve; and the compiled production graph rejects raw/identity-driven semantic control, unregistered canonical mutation, protected-authority forgery, and proofless persistence |
 | `CORPUS-FRONTIER` | derive-and-diff | gate | `scripts/check_corpus_frontier.sh` | the SourceIR-derived corpus cohort is partitioned exactly by explicit root-neutral refreshed/remaining sets, retained bundles agree with that lifecycle declaration, and the counts agree with the root task file — moving a source library cannot silently change refresh status |
 | `CHAIN-CURRENCY` | oracle | ci | `scripts/check_chain_currency.sh` | every persisted corpus artifact is exactly what the current binary reproduces from its persisted input — the evidence, semantic, intent, and `.isf`-adapter stages replayed `--dry-run`, plus each emitted `.isf` against the adapter's rendered `source_text` — and the retained normalized bundles that make a document replayable are exactly the set declared in `doctrine/chain_currency/retained_bundles.json` (ADR 0025 decisions 2 and 3) |
 
@@ -364,6 +365,18 @@ production temp/subprocess seams use the Rust locality helper, Python environmen
 authority, and any present venv resolves and launches through this repository. Missing roots and
 off-root cache symlinks fail; `~/.rustup` and `~/.cargo` remain explicit shared inputs.
 
+`PRODUCTION-GENERICITY` is the single unconditional composition point for ADR 0006 and ADR 0038. Its
+wrapper runs four independent checks without stopping at the first failure: compiler-visible package
+direction and checker disconnection; exact production-module and claim-family inventory; exact rule,
+field, producer/mutator, seam, and conformance-bypass joins; and the compiled graph's fixed-point raw/
+identity information-flow plus proof-only canonical-authority analysis. The registry and analysis use
+typed Rust paths and structural classes, never a finite document/vendor/protocol/signal vocabulary.
+The proof is deliberately compositional: Cargo compilation and Rust privacy remain the type/capability
+oracle, executable current-binary proof replay remains semantic authority, and the AST layer supplies
+closed production flow/topology coverage. This clean-tree doctrine does not claim the adversarial
+mutation breadth or executable per-rule alpha obligations owned by
+`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`, nor the population behavioral qualification owned by `.f`.
+
 `CHAIN-CURRENCY` is the registry's first `ci`-tier doctrine. It re-executes the pipeline rather than
 reading a claim: each stage is replayed `--dry-run` from the **persisted** upstream artifact, and the
 result must equal the persisted downstream artifact. Content identity excludes `validation_reports`,
@@ -389,11 +402,9 @@ Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench`
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,
 `cargo fmt`/`clippy`/`test`/`doc`) are the strongest leg — they re-execute the real tools, so cited
 numbers are independently re-verified. They are heavy, so they stay on the CI path, not pre-commit
-(§4.7). SpecForge's genericity doctrine (ADR 0006 — no chip/vendor/protocol-name lists) is enforced
-today by the `kg-bench` negative fixtures and the per-slice golds; a dedicated structural
-`check_adr0006.sh` (flagging NEW hardcoded chip/signal-name literals in extraction code) is a tracked
-future candidate (`DOCTRINE-ENFORCEMENT-ADOPT` Open Questions), deferred until it can ship without
-false-blocking legitimate test fixtures.
+(§4.7). The registered structural genericity doctrine is the fast tree-wide boundary; the later alpha,
+mutation, held-out, and population oracles complement it rather than reducing the invariant to a
+literal-name scanner.
 
 To add a doctrine here: write `scripts/check_<id>.sh` (§4 contract), add one line to the driver's
 `DOCTRINES` array, and add a row above. The driver's meta-check fails if the script is missing.

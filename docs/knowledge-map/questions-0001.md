@@ -163,6 +163,8 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which premise kinds can the trusted promotion kernel accept?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Which registered doctrine enforces the complete clean production-genericity boundary?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why are actors and actor contracts IntentIR projections rather than lossless carries?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why can downstream chain currency be unmeasurable rather than stale?
@@ -295,5 +297,3 @@
   > can an estimated point claim a trend without paired uncertainty history
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > can automatic steering mutate canonical IntentIR without review

@@ -1,4 +1,36 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv (`2026-08-13`) — one structural proof, four independent witnesses
+
+The production-genericity boundary is now an unconditional doctrine rather than a set of individually callable
+checks. `scripts/check_production_genericity.sh` is a repository-root-derived, read-only composition that runs
+all four components and collects every verdict: compiler-visible package direction and enforcement-tool
+disconnection; the exact production module/claim inventory; the exact rule, field, producer/mutator, seam, and
+conformance-bypass joins; and the compiled graph's fixed-point raw/identity information flow plus proof-only
+canonical-authority topology. A failure in one component does not hide failures in the others.
+
+The wrapper is registered at the fast `gate` tier as `PRODUCTION-GENERICITY`, so both the pre-commit hook and
+`scripts/run_ci.sh` invoke it through the single doctrine driver. The checked surface remains exactly 77 modules,
+41 claim families, 168 fields, 117 producer/mutator entrypoints, 53 canonical seams, four conformance bypasses,
+and a 140-row flow registry over 2,169 functions / 11,295 helper edges / 10,419 decisions / 19 protected
+constructions / 28 protected calls / 1,371 sensitive macros.
+
+This registration does not silently expand the theorem. Cargo compilation and Rust privacy still prove types and
+sealed capabilities; executable current-binary proof replay proves canonical semantic authority; the AST layer
+proves closed flow and topology. This leaf qualifies the clean current surface only. The broader adversarial
+mutation matrix and executable per-rule alpha obligations remain exclusively `.e.vi`, while `.f` retains
+population renaming, identity, paraphrase, and held-out qualification.
+
+The new architecture entry crossed the Rust-analysis ledger's mandatory line rollover. A source-locked dry run
+then the root-last transactional writer sealed exactly eight oldest opening-boundary records as
+`rust-codebase-analysis-0006` (163 lines / 14,679 bytes); the two newest opening records, this in-flight entry,
+and the exact migration suffix remain in a 1,066-line warning-safe root. No architecture record was edited or
+dropped.
+
+Complete qualification passes all nine doctrines including exact chain currency, formatting, warnings-denied
+Clippy and rustdoc, 1,952 Rust tests with six intentional ignores and zero failures, five compile-fail doctests,
+156/156 KG fixtures, mdBook test/build, containment, and final locality. Cleanup removed the 73-file / 8,912-KiB
+disposable HTML book and empty incremental directory; the requested `.bin`/`.log` residue census is zero.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii (`2026-08-13`) — neutrality is a typed flow boundary
 
 The structural analyzer now answers the question a vocabulary list cannot: whether input identity or raw evidence

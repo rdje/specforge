@@ -1,3 +1,25 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv — register the production-genericity doctrine
+
+- Added one repository-root-derived `scripts/check_production_genericity.sh` composition that runs all four
+  clean structural components and reports every result: package dependency/checker disconnection, exact module
+  and claim inventory, exact rule/field/producer/seam/bypass joins, and compiled graph information flow plus
+  proof-only canonical authority.
+- Registered `PRODUCTION-GENERICITY` unconditionally in the gate tier of `scripts/check_doctrines.sh`. The
+  pre-commit hook and full CI therefore execute the same composed structural proof on every change.
+- Qualified the clean baseline at 77 modules / 41 families / 168 fields / 117 producer-mutator entrypoints /
+  53 seams / four bypasses, with a 140-row flow boundary covering 2,169 functions / 11,295 helper edges / 10,419
+  decisions / 19 protected constructions / 28 protected calls / 1,371 sensitive macros.
+- Published the exact proof boundary and honest limits across the roadmap, ADR, Knowledge Map, audit, codebase
+  analysis, toolbox, live status, and mdBook. Broader mutation breadth and executable per-rule alpha obligations
+  remain exclusively `.e.vi`; population behavioral qualification remains `.f`.
+- Performed the mandatory lossless `RUST_CODEBASE_ANALYSIS.md` rollover triggered by this slice. The exact eight
+  oldest opening-boundary records are sealed as `rust-codebase-analysis-0006` (163 lines / 14,679 bytes), while
+  the two newest opening records and current doctrine-registration entry remain in a 1,066-line warning-safe root.
+- Passed complete repository qualification: all nine doctrines including exact chain currency, formatting,
+  warnings-denied Clippy/rustdoc, 1,952 Rust tests passed / six ignored / zero failed, five compile-fail doctests,
+  156/156 KG fixtures, mdBook test/build, containment, and final project-data locality. Removed the 73-file /
+  8,912-KiB disposable HTML book plus the empty incremental directory; requested `.bin`/`.log` residue is zero.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii — enforce production information flow
 
 - Added a closed typed information-flow registry that resolves every declared raw/identity source, registered

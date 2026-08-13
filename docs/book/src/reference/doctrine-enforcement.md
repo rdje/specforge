@@ -62,6 +62,7 @@ other re-derivable trace.
 | `README-POLICY` | structural | the project landing page stays within its locally derived line and byte ceilings, and every reader or author-overflow route closes at a registered, controlled terminal |
 | `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once, and every declared current-state field satisfies its explicit class, marker, authority, accessor/capture, and executed-verifier contract alongside the lifecycle/pressure/route rules |
 | `PROJECT-DATA-LOCALITY` | structural | Cargo, shell, production temporary-workspace, subprocess, and Python runtime seams keep owned data below the current repository and reject stale or escaping roots |
+| `PRODUCTION-GENERICITY` | structural | package direction, exact production inventories and rule joins, compiled raw/identity information flow, protected authority, and proof-only persistence all hold without a named-specification exception |
 | `CORPUS-FRONTIER` | derive-and-diff | the SourceIR-derived corpus cohort is partitioned exactly into explicit refreshed and remaining sets, retained bundles agree, and the task file states the same counts — source-library relocation cannot impersonate a refresh |
 | `CHAIN-CURRENCY` | oracle | every proof-current artifact under `generated/` is exactly what today's binary reproduces from verified upstream authority; a legacy/proofless compatibility refusal is reported as an explicit unmeasurable frontier, while a stale current proof still fails — and retained normalized bundles match their declaration exactly |
 
@@ -115,6 +116,16 @@ The project-data gate also runs three focused shell cases. It checks the tracked
 the common shell initializer, Rust production temp/subprocess boundaries, exact Python environment
 locks, and any present venv's interpreter/launcher roots. A caller does not need to remember a
 `TMPDIR`; the gate rejects missing roots and cache symlinks that escape the repository.
+
+The production-genericity gate is one unconditional composition, not a forbidden-word scan. It runs
+the package dependency/disconnection check, the exact module and claim inventory, the exact rule/field/
+producer/seam/bypass joins, and the compiled graph's fixed-point information-flow and canonical-authority
+analysis. The graph follows the complete production Cargo surface and rejects raw or identity-dependent
+semantic control outside registered universal grammar/declassification, unregistered canonical mutation,
+protected capability or proof forgery, and proofless persistence. Its registry contains typed Rust paths and
+data classes, not document, vendor, protocol, or signal names. Cargo/Rust privacy remains the type oracle and
+executable replay remains semantic authority. The clean-tree pass does not replace the broader adversarial
+mutation, per-rule alpha, held-out, or population behavioral qualifications, which remain separate signoff work.
 
 It also runs the roadmap current/history contract. The structural check authenticates the exact
 1,487-line source capsule, five exhaustive source regions, all 23 workstream ids and owning task
@@ -233,6 +244,9 @@ bash scripts/check_doctrines.sh --all
 # ask the chain-currency oracle directly, or prove it is fail-closed first:
 bash scripts/check_chain_currency.sh
 bash scripts/check_chain_currency.sh --self-test
+
+# run the complete clean-tree structural genericity proof directly:
+bash scripts/check_production_genericity.sh
 
 # run the book's Rust examples and then build the complete HTML book:
 bash scripts/run_docs_ci.sh

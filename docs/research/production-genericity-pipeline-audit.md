@@ -1,9 +1,9 @@
 # Production-genericity pipeline audit
 
-Status: **discovery, dependency boundary, trusted kernel, rule census, SourceIR→ISF-adapter proof migration, digest precision, compiled syntax graph, and AST information-flow enforcement complete; doctrine integration and behavioral qualification remain**
+Status: **discovery, dependency boundary, trusted kernel, rule census, SourceIR→ISF-adapter proof migration, digest precision, compiled syntax graph, AST information-flow enforcement, and unconditional doctrine integration complete; adversarial/alpha and behavioral qualification remain**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
-Latest structural update: 2026-08-13 (`.6d.ii.e.v.iii`)
+Latest structural update: 2026-08-13 (`.6d.ii.e.v.iv`)
 Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
 Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
 
@@ -154,8 +154,9 @@ row.
 The implementation contains no named-spec vocabulary rule. It is deliberately stronger than a vocabulary
 census and deliberately not presented as AST-alone proof: Cargo/Rust privacy owns types and sealed capabilities,
 the AST owns closed flow/topology coverage, and executable current-binary replay owns semantic authority. The
-standalone gate passes the current production surface. `.e.v.iv` still must compose it unconditionally into the
-registered doctrine; `.e.vi` and `.f` retain broader adversarial/alpha and population-behavior qualification.
+registered `PRODUCTION-GENERICITY` doctrine now composes the dependency, exact inventory, rule-join, and graph/
+flow checks unconditionally over the current production surface. `.e.vi` and `.f` retain broader adversarial/
+alpha and population-behavior qualification.
 
 ## Audit denominator and method
 

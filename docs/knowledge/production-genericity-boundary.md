@@ -64,11 +64,12 @@ answers:
   - "How is raw and identity information flow enforced across production helpers?"
   - "What closed registry defines the production information-flow boundary?"
   - "How does the structural analyzer enforce proof-only canonical promotion?"
+  - "Which registered doctrine enforces the complete clean production-genericity boundary?"
 date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; doctrine/production_genericity/information_flow_boundary.tsv; tools/production-genericity-graph/src/analyzer.rs; tools/production-genericity-graph/src/flow.rs; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
-reverify: scripts/check_production_genericity_graph.sh && scripts/check_production_genericity_flow.sh && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; doctrine/production_genericity/information_flow_boundary.tsv; tools/production-genericity-graph/src/analyzer.rs; tools/production-genericity-graph/src/flow.rs; scripts/check_production_genericity.sh; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_doctrines.sh; scripts/check_chain_currency.sh
+reverify: scripts/check_production_genericity.sh && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -280,6 +281,7 @@ proofless persistence, and registry duplication fail closed.
 
 The registry names data classes and Rust structure, never a document/vendor/protocol vocabulary. Cargo and Rust
 privacy remain the type/capability oracle; executable replay remains semantic authority; the AST proves closed
-whole-surface flow/topology. The standalone gate is clean but doctrine registration remains `.e.v.iv`, broader
-adversarial and alpha qualification remains `.e.vi`, and population behavior remains `.f`; whole-core genericity
-signoff is therefore still open.
+whole-surface flow/topology. `scripts/check_production_genericity.sh` composes the dependency, inventory, rule,
+and graph/flow checks under the unconditional `PRODUCTION-GENERICITY` doctrine. Broader adversarial and alpha
+qualification remains `.e.vi`, and population behavior remains `.f`; whole-core genericity signoff is therefore
+still open.

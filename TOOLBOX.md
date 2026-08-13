@@ -320,6 +320,16 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   (`perl scripts/check_corpus_frontier_census.pl --report` for the JSON census;
   `--self-test` for its ten fail-closed cases)
 
+### 7.2c `scripts/check_production_genericity.sh` — the PRODUCTION-GENERICITY structural gate
+- **WHAT:** composes the compiler-visible package-direction check, exact production module/claim inventory,
+  exact rule/field/producer/seam/bypass joins, and the compiled graph's fixed-point raw/identity flow plus
+  proof-only canonical-authority analysis. All four components run and report even when one fails.
+- **WHEN:** before any production extraction, proof, persistence, or package-boundary change; it also runs
+  unconditionally through the doctrine driver and pre-commit hook.
+- **HOW:** `bash scripts/check_production_genericity.sh`
+- **LIMIT:** this proves the clean current structural surface. The broader mutation matrix and executable
+  per-rule alpha obligations are separate qualification oracles, not hidden inside this baseline check.
+
 ### 7.3 `scripts/check_task_tree_archive.pl`
 - **WHAT:** validates the contract-driven terminal task lifecycle. `source_locked` pins the still-live source and
   rejects premature archive paths; `migrated` verifies the exact capsule, bounded closed root/index, manifest,

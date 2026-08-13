@@ -4,6 +4,28 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-13 — unconditional structural genericity doctrine; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv`)
+
+- `scripts/check_production_genericity.sh` is now the single clean-tree composition point for the production
+  genericity invariant. It runs the package dependency/disconnection, exact module/claim inventory, exact rule/
+  field/producer/seam/bypass joins, and compiled graph information-flow checks without stopping after the first
+  failed component.
+- `scripts/check_doctrines.sh` registers that composition as the gate-tier `PRODUCTION-GENERICITY` doctrine, so
+  the local pre-commit hook and full CI invoke it unconditionally on every change. The enforcement tool remains
+  dependency-disconnected from all product packages and every path is derived from the repository root.
+- The clean production proof covers 77 modules, 41 claim families, 168 artifact fields, 117 producer/mutator
+  entrypoints, 53 canonical seams, four conformance bypasses, and the 140-row flow boundary over 2,169 functions,
+  11,295 helper edges, 10,419 semantic decisions, 19 protected constructions, 28 protected calls, and 1,371
+  sensitive macros.
+- The claim remains deliberately bounded. Cargo and Rust privacy own type/capability correctness, executable
+  current-binary proof replay owns semantic authority, and the AST analyzer owns closed flow/topology coverage.
+  `.e.vi` still owns broader adversarial mutations plus executable per-rule alpha obligations; `.f` owns
+  population behavioral qualification. The registered clean baseline is not whole-core genericity signoff.
+- Complete qualification is green: all nine doctrines including exact chain currency, warnings-denied Clippy/
+  rustdoc, 1,952 Rust tests / six ignores / zero failures, five compile-fail doctests, 156/156 KG fixtures, mdBook,
+  containment, locality, and cleanup pass. The mandatory ledger rollover preserved this record in a warning-safe
+  live root and sealed eight older whole records without loss.
+
 ## Session update (2026-08-13 — deterministic production syntax graph; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`)
 
 - The workspace now contains a standalone `specforge-production-graph` enforcement package. The dependency
@@ -50,170 +72,6 @@
 - Complete qualification is green: all eight doctrines, warnings-denied Clippy/rustdoc, application 470 +
   conformance 139 + core 1,339 = 1,948 Rust tests passed / six ignored / zero failed, five compile-fail doctests,
   156/156 KG fixtures, mdBook test/build, exact chain replay, and final locality.
-
-## Session update (2026-08-13 — proof-carrying ISF adapter; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi`)
-
-- Adapter schema 2 owns all 12 public fields across four capability-homogeneous families. Its ledger retains the
-  complete verified IntentIR ledger as an exact ordered prefix, then appends field roots, per-array-record claims,
-  per-nonblank-rendered-line claims, and per-blocking-reason claims.
-- `AdapterArtifact::build` requires current verified IntentIR and deterministically reconstructs identity,
-  layout, typed `IsfIr`, rendered text, renderability, residuals, and counts. Canonical load, pretty serialization,
-  manifest persistence, and emitted-target reconciliation execute that relation again; compatible JSON shape or
-  recomputed hashes cannot self-authorize output.
-- Validation is the only production mutation kind and can replace only `validation_reports`. Synthetic adapter
-  projection compiles only for tests/test-support and still records a typed proof extension. Schema 1 is
-  inspection-only; current proofless/stale/forged/unauthorized and future artifacts reject.
-- The exact 24 reachable adapter manifests migrate with zero pre-existing public-field delta after removing
-  schema/proof/validation. Their current proved state is blocked/no-file, so canonical reconciliation checks zero
-  emitted ISF files; a renderable synthetic control exercises the positive emission path. Fifty-four historical
-  chains remain upstream-proof-unmeasurable.
-- Chain currency now distinguishes checked adapter states from emitted files. The previous counter performed the
-  right state/file comparison but mislabeled 24 blocked states as 24 emitted files; the checked result is 24
-  states, zero emitted files, 24 blocked/no-file states.
-- The production graph resolves 41 families / 168 field rules / 116 producer-mutator entrypoints / 53 canonical
-  seams / four conformance-only bypass obligations. Whole-module implementation-digest precision remains the
-  bounded `.e.iv.vii` risk; helper-level structural and population-level behavioral signoff are still open.
-
-## Session update (2026-08-13 — proof-carrying IntentIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v`)
-
-- IntentIR schema 2 owns all 49 public fields across nine capability-homogeneous families. Its cumulative ledger
-  retains the exact verified SemanticIR ledger as an ordered prefix, then appends roots and stable per-record
-  claims under registered executable replay.
-- Thirty exact carries cite direct immediate-SemanticIR antecedents at root and record granularity. The filtered
-  `actors` surface and NLI-filterable `actor_contracts` surface are projection families rather than misleading
-  lossless carries; identities, product summaries, behavioral relations, and residuals likewise use their
-  registered derivation capabilities.
-- Canonical verification reloads current SemanticIR, rebuilds the complete product, replays its closed mutation
-  sequence, verifies the local suffix, and composes it with the exact upstream prefix. Load, serialization,
-  persistence, prior learning, validation, NLI demotion, and adapter construction therefore reject proofless,
-  stale, forged, unauthorized, legacy, and future authority.
-- Production mutation is closed to validation backannotation and conservative NLI demotion. NLI must retain an
-  ordered contract subsequence, preserve existing residuals as an exact prefix, and append one typed residual per
-  removed contract. It authorizes on a cloned candidate and commits only after proof refresh, so failure is
-  transactional even for an in-memory caller.
-- Repository-owned lineage is resolved then normalized before verification, preserving proof across repository
-  relocation without accepting ambiguous or external paths. Exactly 24 reachable IntentIRs migrate with zero
-  pre-existing public-field delta; 54 remain inspection-only behind legacy SemanticIR. Adapter proof authority
-  remains `.e.iv.vi` work.
-
-## Session update (2026-08-13 — proof-carrying SemanticIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv`)
-
-- SemanticIR schema 2 owns 49 public fields across 12 registered families. The cumulative proof preserves the
-  complete verified EvidenceIR ledger as an exact prefix, then appends field-root and per-record claims under
-  stable semantic addresses.
-- `semantic.current-replay` is a registered digest-bound dependency over every upstream claim. Each semantic
-  claim binds its exact current reconstruction to that node, so synthesis/conflict/residual topology is complete
-  without storing the full upstream list on every record.
-- Lossless carry adds direct edges: each genuinely carried collection root cites its EvidenceIR root, while each carried
-  record finds an EvidenceIR claim with the same exact conclusion digest. This remains correct when semantic
-  record ordering differs. Timing constraints, signal constraints, and conditional rules are a separate
-  deterministic projection family because SemanticIR may filter or visually extend them; they cannot present
-  derived records as exact carries.
-- SemanticIR path fields are rebased and normalized before conclusion verification, so the content-addressed
-  proof survives a repository move without relaxing ambiguous/external-path rejection.
-- Canonical verification reloads current EvidenceIR, reconstructs optional `GlobalIdentityIndependent` prior
-  guidance from the captured payload, rebuilds the whole stage, replays its closed mutation sequence, verifies
-  the local ledger, and composes it with the exact upstream prefix. Hash-consistent edits still fail.
-- `SemanticMutationKind` exposes only validation backannotation in production, limited to
-  `validation_reports`; the arbitrary fixture variant is compiled only for test support. Load, serialization,
-  write, and IntentIR build all require current verified authority. Schemas below 2 are inspection-only.
-- The 24 verifiable chains migrate with zero semantic field delta. Currency is 24 current / 54 proof-unmeasurable
-  through IntentIR, and all 78 adapter/ISF results are still stage-locally current. IntentIR and adapter proof
-  migration remain `.e.iv.v`–`.e.iv.vi` work.
-
-## Session update (2026-08-12 — proof-carrying SourceIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii`)
-
-- SourceIR schema 3 owns 19 public fields across five registered families. `SourceProofContext` stores the exact
-  neutral capture projection and exact grounded proposal payloads; `ProofLedger` covers every field root and each
-  populated record under stable addresses.
-- `RuleRegistration` now pairs every descriptor with executable Rust verification. The closed ruleset digest
-  includes each implementation digest; canonical verification checks exact premise/conclusion bytes, allowed
-  premise kinds, current ruleset, implementation, topology, and relation replay rather than trusting JSON hashes.
-- Source records use real typed capture paths: table records include exact cells as `TableCell` premises,
-  visual/page records include exact `VisualRegion` premises, and grounded proposals bind to the typed target.
-  Deterministic section/table/visual classifications replay from `unknown` captures on load.
-- Source mutation entrypoints for VLM observations, grid repair, table classification, and validation refresh and
-  immediately verify the ledger. Source canonical load/write and EvidenceIR construction reject proofless,
-  stale, malformed, and future authority.
-- Conformance-only typed overlays replace four fixture-patching bypasses across SourceIR through IntentIR. They
-  cannot call canonical writers; each production writer reloads the canonical upstream artifact before writing.
-- The maintenance-only retained-capture migration admitted exactly 24 eligible schema-1 SourceIR bundles after
-  backing checks. Capture comparison found zero unintended mutations; all 24 chains rebuilt, and exact currency
-  is 24/24 measurable EvidenceIR plus 78/78 SemanticIR, IntentIR, and adapters with zero stale artifacts. The 54
-  reclaimed-bundle SourceIRs remain inspection-only.
-- Current verification baseline: 1,930 Rust tests pass / six ignored, 156/156 KG fixtures pass, warning-deny
-  Clippy/rustdoc pass, mdBook test/build pass, and all eight doctrines including complete chain currency pass.
-  EvidenceIR and later proof migration remains `.e.iv.iii`–`.e.iv.vi` work.
-
-## Session update (2026-08-12 — exact rule-migration graph; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i`)
-
-- `rule_family_inventory.tsv` joins all 38 claim families to 168 deterministic field-root rule ids, 113 current
-  producer/mutator entrypoints, and 39 canonical insertion/write seams. Each row fixes allowed premise kinds,
-  symbol capability, alpha obligation, compatibility, target module, schema owner, and one stage migration leaf.
-- The census includes post-build authority paths that a builder-only review misses: EvidenceIR prior carry and
-  dedup/reclassification, provider/condition/contract/register/signal mutation, validation backannotation, and
-  SourceIR visual/table enrichment.
-- `conformance_bypass_inventory.tsv` separately freezes four temporary patch/rebase paths. They must become typed
-  noncanonical overlays unable to call canonical writers, downstream builders, or lowering; a temporary path does
-  not confer trust.
-- The integration contract is one cumulative ledger: downstream stages verify and retain the ordered upstream
-  proof prefix, then append field-root and per-record conclusions. Canonical load/serialize/write/build/lower
-  verifies completeness and digests, so direct mutation becomes stale. Proofless history is inspect/rebuild/
-  residual input only.
-- The portable checker resolves every declared function/path, requires every stage writer plus the raw validation
-  writer, and rejects family drift, duplicate rules, premise/capability/alpha mismatch, unsafe compatibility, and
-  unsafe conformance disposition. Six controlled mutations pass. No Rust behavior or artifact schema changes in
-  this inventory/design child; SourceIR through adapter migration remains `.e.iv.ii`–`.e.iv.vi`.
-
-## Session update (2026-08-12 — sealed derivation kernel; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`)
-
-- `ir::derivation` adds source-order `OpaqueSymbol`/`OpaqueDocumentIdentity` atoms. Their public surface is
-  spelling-free identity and exact comparison; private spelling is reachable only through sealed grammar,
-  persistence, presentation, or lowering tokens. They deliberately lack `Display`, string conversion, spelling-
-  based `Ord`, and Serde implementations.
-- A closed, deterministically SHA-256-hashed registry describes premise kinds, conclusion stage/surface, symbol
-  capability, compatibility, and a mandatory alpha-obligation class. The schema-1 artifact ledger binds each
-  unique claim address to the rule, typed premises, spelling-free symbol uses, confidence, and conclusion digest.
-- `PromotionKernel` checks current document scope and captured source/table/visual bytes; independently grounded
-  model proposals; validated, scope-declared priors; registered universal axioms; ordered upstream proof topology;
-  allowed symbol operations; address uniqueness; and exact conclusion serialization. Deserialized ledgers remain
-  untrusted until the kernel returns a non-deserializable `VerifiedProofLedger` witness.
-- Compatibility is fail-closed: proofless/old/stale input is inspection plus rebuild-or-residualize only, while
-  malformed or future input rejects. The live denominator is 77 Rust modules / 38 claim families / 168 fields.
-  Current artifacts remain schema/byte-identical; `.e.iv` owns producer migration and removal of the kernel's
-  temporary pre-integration dead-code allowance.
-
-## Session update (2026-08-12 — compiler-visible core/conformance split; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii`)
-
-- The workspace now has three packages. `specforge-core` compiles the production IR/extraction/lowering closure
-  with no SpecForge-internal dependency. `specforge-conformance` depends on core and owns evaluation,
-  completeness/category characterization, replay, trajectory, and named reviewed snapshot support. `specforge`
-  composes both as the CLI and compatibility facade.
-- Shared `VlmProviderArg`, text-provider transport, project-data locality, errors, and persisted-path resolution
-  now live below the application boundary. Cross-package consumers use explicit public APIs; the previous
-  `specforge::eval` and `specforge::ir::*` paths remain available through facade re-exports.
-- The live Rust inventory is 76 modules versus ADR 0038's frozen 71-file pre-migration denominator; the claim
-  denominator remains 38 families / 168 top-level fields. Five dependency self-tests reject direct/aliased
-  reverse edges, a conformance-to-application edge, and conformance-module reinsertion into core.
-- Named documentation disappears from the non-test expanded core while exact named material remains downstream in
-  conformance tests. This is supplementary evidence; package direction is the enforcement. Direct constructors,
-  opaque-capability sealing, promotion proofs, rule registration, and AST/taint enforcement remain open.
-
-## Session update (2026-08-12 — proof-carrying genericity architecture; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i`)
-
-- The compiled-crate denominator is now exact: 71 Rust modules, each assigned once to its current plane, target
-  plane, primary `.e.ii`/`.e.iii`/`.e.iv` migration lane, and disposition. Mixed `eval`, `completeness`, and
-  `validate` code plus replay, trajectory, corpus, and test-support modules are explicitly targeted for the
-  one-way core/conformance split rather than implicitly treated as production-neutral.
-- The canonical data denominator is 168 top-level fields classified once across 38 families: 5 SourceIR, 11
-  EvidenceIR, 11 SemanticIR, 7 IntentIR, and 4 adapter families. A portable checker derives both live sets and
-  fails on new, omitted, duplicate, malformed, or stale coverage; controlled module/field drift is rejected.
-- ADR 0038 selects a compiler-visible core boundary, sealed opaque-spelling capabilities, registered grounded
-  proposals, a ruleset-bound artifact proof ledger, and one promotion kernel returning proved claims. The existing
-  25 `Extractor` implementations are useful registry substrate, but their count manifest is not per-claim proof.
-- No production Rust behavior changes in this leaf. Public strings, direct record construction, heterogeneous
-  provenance, and the mixed module graph remain present until `.e.ii`–`.e.iv`; AST and mutation enforcement remain
-  `.e.v`/`.e.vi`, exact structural qualification remains `.e.vii`, and population behavior remains `.f`.
 
 ## Session update (2026-06-24 ramp-up currency correction — size + command + IR-module + test inventory; `AUDIT-DOC-RECONCILE.3`)
 
