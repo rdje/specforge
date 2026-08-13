@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how does collapse_section_header_register_identity decide same-register vs different-register
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > how does converge report integrated scheduled and omitted production capabilities
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > how does converge report per-document extraction quality after stabilization
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > how does de-fragmentation enable the recover-register-bits gate (b)
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > how does derive_register_block_name parse a block out of a register-descriptions section heading
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
@@ -287,13 +297,3 @@
   > how many corpus refreshes remain after CoreSight Base System
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after Introducing CoreSight
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Certified Definition
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Discovery
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Ready Definition
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Connection Manager

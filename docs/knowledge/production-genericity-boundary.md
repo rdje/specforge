@@ -36,6 +36,11 @@ answers:
   - "Why was EvidenceIR carry-forward removed?"
   - "Can legacy EvidenceIR feed SemanticIR?"
   - "Why can downstream chain currency be unmeasurable rather than stale?"
+  - "How is SemanticIR proof-carrying?"
+  - "Does every carried SemanticIR record cite EvidenceIR directly?"
+  - "Can recomputing a SemanticIR conclusion hash authorize an edit?"
+  - "Can legacy or proofless SemanticIR feed IntentIR?"
+  - "How is SemanticIR validation backannotation authorized?"
 date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
@@ -111,11 +116,13 @@ and schema-1 claim ledger describe typed capture/model/prior/upstream/axiom prem
 uses, and exact conclusion bytes. The kernel is the only proposal-to-proof transition and returns an unforgeable
 in-memory verification witness. A deserialized ledger—even at the current schema and ruleset—still requires the
 current evidence/conclusion check; old/stale input rebuilds or residualizes, while malformed/future input rejects.
-The live inventory is now 77 modules / 38 families / 168 fields. Existing producers remain proofless until the
+The live inventory is now 77 modules / 39 families / 168 fields. The SemanticIR migration split the original
+carry row after executable proof showed that three surfaces are filtered or visually extended projections.
+Existing later-stage producers remain proofless until the
 exact `.e.iv` migration, so whole-core signoff remains open.
 
-The first `.e.iv` child freezes the exact reviewed migration graph before a stage schema changes. Its 38 rows
-expand to 168 field-root rules and resolve 111 current producer/mutator entrypoints, 39 canonical seams, and four
+The first `.e.iv` child froze the exact reviewed migration graph before a stage schema changed. Its current 39 rows
+expand to 168 field-root rules and resolve 112 producer/mutator entrypoints, 41 canonical seams, and four
 conformance-only mutation bypasses. The target is one cumulative ledger: each stage verifies and preserves the
 exact upstream proof prefix, then appends its own field-root and per-record claims. Canonical load, serialization,
 write, downstream build, and ISF lowering all require a current complete ledger; an unregistered mutation makes
@@ -157,5 +164,25 @@ extracted fields and SemanticIR replay are unchanged by this migration. The othe
 legacy/proofless frontier until owned source recapture is available. `CHAIN-CURRENCY` reports only that closed
 condition as unmeasurable. It still fails any stale current proof, so the distinction neither claims the historical
 EvidenceIR-to-SemanticIR edge is current nor creates a bypass. IntentIR and adapters remain 78/78 stage-locally
-reproducible from persisted SemanticIR, but that is not end-to-end proof authority. SemanticIR, IntentIR, adapter,
-AST-aware information-flow, and population qualification remain open work.
+reproducible from persisted SemanticIR, but that is not end-to-end proof authority.
+
+SemanticIR schema 2 is the third completed stage migration. It retains the verified cumulative EvidenceIR ledger
+as an exact prefix and appends root plus per-record claims for 49 fields across 12 semantic families. Every
+semantic conclusion depends on an exact registered replay whose stage-level dependency node includes every
+upstream claim. Carried collection roots additionally cite the corresponding EvidenceIR root, and every carried
+record cites an EvidenceIR conclusion with identical bytes. Timing constraints, signal constraints, and
+conditional rules instead use a registered projection family because SemanticIR can filter or visually extend
+those collections; they cannot claim lossless-carry authority. This preserves direct lossless-carry evidence while
+keeping synthesis/conflict/residual contributor topology linear rather than quadratic.
+
+Canonical verification independently rebuilds SemanticIR from current verified EvidenceIR and the exact captured
+identity-independent prior, if one was consulted. Editing a field and recomputing its stored conclusion hash does
+not change the registered replay and is rejected. Validation may mutate only `validation_reports` through a
+closed typed mutation that replays the predecessor and extends proof. Current proofless or stale artifacts cannot
+load, serialize, persist, or feed IntentIR; schemas older than 2 are inspection-only.
+
+Exactly 24 retained chains could migrate because they have current EvidenceIR. Their semantic fields are
+unchanged; only schema/proof metadata is added. The other 54 remain explicitly proof-unmeasurable. Currency is
+24 current / 54 unmeasurable through EvidenceIR, SemanticIR, and IntentIR, while all 78 adapter/ISF results remain
+stage-locally current. IntentIR and adapter proof migrations remain open.
+AST-aware information-flow and population qualification also remain open work.

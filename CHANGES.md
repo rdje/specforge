@@ -1,3 +1,28 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv — make SemanticIR proof-carrying
+
+- Advanced SemanticIR to schema 2 and registered all 12 semantic families. Every one of its 49 public fields
+  receives a root claim, every populated collection receives stable record claims, and the complete verified
+  cumulative EvidenceIR ledger remains an exact ordered prefix.
+- Made semantic authority executable. Canonical load, serialization, write, IntentIR construction, and validation
+  backannotation independently rebuild the stage from current verified EvidenceIR, an exact identity-independent
+  prior when consulted, and a closed typed mutation context; edited conclusions and recomputed hashes cannot
+  authorize themselves.
+- Bound every true lossless carry directly to its EvidenceIR antecedent and every projection, merge, conflict,
+  synthesis, and residual to a registered exact replay over the complete upstream claim graph. The broad gate
+  caught that timing, signal-constraint, and conditional-rule collections can be filtered or visually extended;
+  they now have a distinct `semantic.evidence_projection` family and cannot claim lossless-carry authority.
+  The compressed replay node keeps verification linear without losing transitive contributor topology.
+- Canonicalized repository-owned SemanticIR lineage paths before proof verification, preserving content-addressed
+  authority across a repository move while ambiguous or external rebasing still fails closed.
+- Migrated exactly the 24 proof-verifiable SemanticIR chains without semantic field change. The other 54 legacy
+  SemanticIRs remain inspection-only because their EvidenceIR inputs are deliberately proofless. Chain currency
+  is EvidenceIR, SemanticIR, and IntentIR 24 current / 54 unmeasurable, plus all 78 adapters and emitted ISF files
+  current at their still-stage-local boundary.
+- Passed all eight doctrines, formatting, warning-deny Clippy/rustdoc, 1,936 Rust tests with six intentional
+  ignores and zero failures, five compile-fail doctests, mdBook test/build, and final locality. Removed the exact
+  5,325,300-KiB rebuildable Cargo incremental cache; the requested generated/release/debug-deps `.bin`/`.log`
+  census is zero.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii — make EvidenceIR proof-carrying
 
 - Advanced EvidenceIR to schema 3 and registered all 11 EvidenceIR families. Every one of its 39 public fields

@@ -6,6 +6,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::derivation::{
+    AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
+    PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
+    RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
+    SymbolCapabilityClass, ValidatedPriorScope, VerifiedProofLedger,
+};
 use crate::ir::evidence::{
     EvidenceIr, InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
     SerialFrameField, SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord,
@@ -23,6 +29,122 @@ use crate::ir::source::{
 use crate::persisted_path::{
     PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
 };
+
+const SEMANTIC_IR_SCHEMA_VERSION: u32 = 2;
+const SEMANTIC_PROOF_CONTEXT_SCHEMA_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct SemanticProofContext {
+    schema_version: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    prior_memory: Option<CorpusMemory>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    mutations: Vec<SemanticMutationEvent>,
+    #[cfg(any(test, feature = "test-support"))]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    test_fixture: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+#[doc(hidden)]
+pub enum SemanticMutationKind {
+    ValidationBackannotation,
+    #[cfg(any(test, feature = "test-support"))]
+    TestFixture,
+}
+
+impl SemanticMutationKind {
+    fn allowed_fields(self) -> Vec<&'static str> {
+        match self {
+            Self::ValidationBackannotation => vec!["validation_reports"],
+            #[cfg(any(test, feature = "test-support"))]
+            Self::TestFixture => SEMANTIC_RULE_FIELDS
+                .iter()
+                .map(|(field, _)| *field)
+                .collect(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct SemanticMutationEvent {
+    mutation_id: String,
+    kind: SemanticMutationKind,
+    fields: BTreeMap<String, serde_json::Value>,
+}
+
+#[derive(Debug)]
+struct SemanticClaimInput {
+    address: ClaimAddress,
+    rule_id: RuleId,
+    conclusion: serde_json::Value,
+}
+
+#[derive(Debug)]
+struct SemanticProofPremises {
+    claim_replays: BTreeMap<ClaimAddress, PremiseRef>,
+    carried_upstream: BTreeMap<ClaimAddress, PremiseRef>,
+    validated_prior: Option<PremiseRef>,
+    mutations: Vec<(SemanticMutationKind, PremiseRef)>,
+}
+
+impl SemanticProofPremises {
+    fn for_claim(
+        &self,
+        address: &ClaimAddress,
+    ) -> DerivationResult<(Vec<PremiseRef>, ProofConfidence)> {
+        let field = address.surface();
+        let claim_replay = self.claim_replays.get(address).cloned().ok_or_else(|| {
+            DerivationError::new(format!(
+                "SemanticIR claim '{}:{}' lacks its registered replay",
+                address.surface(),
+                address.stable_record_key()
+            ))
+        })?;
+        let mut premises = vec![claim_replay];
+        let family = SEMANTIC_RULE_FIELDS
+            .iter()
+            .find(|(candidate, _)| *candidate == field)
+            .map(|(_, family)| *family)
+            .ok_or_else(|| {
+                DerivationError::new(format!(
+                    "SemanticIR claim field '{field}' has no registered family"
+                ))
+            })?;
+        if family == "semantic.carried_evidence" {
+            premises.push(self.carried_upstream.get(address).cloned().ok_or_else(|| {
+                DerivationError::new(format!(
+                    "SemanticIR carried claim '{}:{}' lacks a direct EvidenceIR claim",
+                    address.surface(),
+                    address.stable_record_key()
+                ))
+            })?);
+        }
+        let uses_prior = matches!(
+            family,
+            "semantic.actor_graph" | "semantic.interface_system" | "semantic.temporal_contract"
+        );
+        if uses_prior && let Some(prior) = &self.validated_prior {
+            premises.push(prior.clone());
+        }
+        let relevant_mutations = self
+            .mutations
+            .iter()
+            .filter(|(kind, _)| kind.allowed_fields().contains(&field))
+            .map(|(_, premise)| premise.clone())
+            .collect::<Vec<_>>();
+        premises.extend(relevant_mutations.iter().cloned());
+        let confidence = if uses_prior && self.validated_prior.is_some() {
+            ProofConfidence::ValidatedPrior
+        } else {
+            ProofConfidence::Deterministic
+        };
+        Ok((premises, confidence))
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SemanticIr {
@@ -176,6 +298,10 @@ pub struct SemanticIr {
     pub residual_decisions: Vec<ResidualDecisionPacket>,
     #[serde(default)]
     pub validation_reports: Vec<ValidationReportRecord>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_context: Option<SemanticProofContext>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_ledger: Option<ProofLedger>,
 }
 
 /// In-memory semantic projection of conformance-only evidence.
@@ -199,14 +325,253 @@ impl NonCanonicalSemanticOverlay {
     }
 }
 
+const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
+    ("schema_version", "semantic.envelope"),
+    ("stage", "semantic.envelope"),
+    ("evidence_ir_path", "semantic.envelope"),
+    ("artifact_layout", "semantic.envelope"),
+    ("document_identity", "semantic.envelope"),
+    ("actors", "semantic.actor_graph"),
+    ("actor_signal_relations", "semantic.actor_graph"),
+    ("actor_ports", "semantic.actor_graph"),
+    ("signal_connectivity", "semantic.actor_graph"),
+    ("signal_connectivity_conflicts", "semantic.actor_graph"),
+    ("infrastructure_signals", "semantic.interface_system"),
+    ("interface_signal_conflicts", "semantic.interface_system"),
+    ("interfaces", "semantic.interface_system"),
+    ("system_contract", "semantic.interface_system"),
+    ("signal_polarities", "semantic.signal_arbitration"),
+    ("signal_polarity_conflicts", "semantic.signal_arbitration"),
+    ("signal_semantic_conflicts", "semantic.signal_arbitration"),
+    ("phases", "semantic.statement_lift"),
+    ("invariants", "semantic.statement_lift"),
+    ("contracts", "semantic.statement_lift"),
+    ("gates", "semantic.statement_lift"),
+    ("assertions", "semantic.statement_lift"),
+    ("abstractions", "semantic.statement_lift"),
+    ("decomposition_candidates", "semantic.statement_lift"),
+    ("regular_states", "semantic.state_control"),
+    ("state_transitions", "semantic.state_control"),
+    ("symbol_definitions", "semantic.state_control"),
+    ("control_blocks", "semantic.state_control"),
+    ("explicit_modules", "semantic.state_control"),
+    ("explicit_tops", "semantic.state_control"),
+    ("transaction_anchors", "semantic.transactions"),
+    ("transaction_phases", "semantic.transactions"),
+    ("signal_channel_memberships", "semantic.transactions"),
+    ("serial_frame_fields", "semantic.carried_evidence"),
+    ("protocol_operations", "semantic.carried_evidence"),
+    ("protocol_states", "semantic.carried_evidence"),
+    ("interface_edge_timings", "semantic.carried_evidence"),
+    ("register_records", "semantic.carried_evidence"),
+    // These three collections are projections, not lossless carries: SemanticIR filters
+    // ungrounded EvidenceIR records and may add records derived from typed visual evidence.
+    // Keeping them in a distinct family prevents a derived record from masquerading as an
+    // exact EvidenceIR antecedent merely because it lives on a similarly named surface.
+    ("timing_constraints", "semantic.evidence_projection"),
+    ("signal_constraints", "semantic.evidence_projection"),
+    ("conditional_rules", "semantic.evidence_projection"),
+    ("temporal_rules", "semantic.temporal_contract"),
+    ("actor_contracts", "semantic.temporal_contract"),
+    ("constrained_extraction_stats", "semantic.temporal_contract"),
+    ("protocol_graph", "semantic.temporal_contract"),
+    ("fidelity_findings", "semantic.temporal_contract"),
+    ("temporal_conflicts", "semantic.temporal_contract"),
+    ("residual_decisions", "semantic.residual"),
+    ("validation_reports", "semantic.validation"),
+];
+
+fn semantic_derivation_error(error: impl std::fmt::Display) -> AppError {
+    AppError::InvalidStageArtifact(format!("SemanticIR proof verification failed: {error}"))
+}
+
+fn semantic_rule_registry() -> DerivationResult<RuleRegistry> {
+    let implementation_sha256 = Sha256Digest::of_bytes(include_bytes!("semantic.rs"));
+    let registrations = SEMANTIC_RULE_FIELDS
+        .iter()
+        .map(|(field, family)| {
+            let (capability, alpha, compatibility) = match *family {
+                "semantic.envelope" | "semantic.validation" => (
+                    SymbolCapabilityClass::ExactIdentityOnly,
+                    AlphaObligation::IdentityGraphInvariant,
+                    RuleCompatibility::CurrentOnly,
+                ),
+                "semantic.carried_evidence" => (
+                    SymbolCapabilityClass::LosslessCarry,
+                    AlphaObligation::LosslessTopologyInvariant,
+                    RuleCompatibility::LosslessCarry,
+                ),
+                "semantic.residual" => (
+                    SymbolCapabilityClass::Residual,
+                    AlphaObligation::ResidualTopologyInvariant,
+                    RuleCompatibility::CurrentOnly,
+                ),
+                _ => (
+                    SymbolCapabilityClass::MergeOrConflict,
+                    AlphaObligation::MergeConflictTopologyInvariant,
+                    RuleCompatibility::CurrentOnly,
+                ),
+            };
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            let descriptor = RuleDescriptor::new(
+                rule_id,
+                1,
+                "crate::ir::semantic",
+                implementation_sha256.clone(),
+                [
+                    PremiseKind::RegisteredDerivation,
+                    PremiseKind::UpstreamClaim,
+                    PremiseKind::ValidatedPrior,
+                ],
+                IrStage::SemanticIr,
+                *field,
+                capability,
+                alpha,
+                compatibility,
+            )?;
+            Ok(RuleRegistration::new(
+                descriptor,
+                verify_semantic_rule_relation,
+            ))
+        })
+        .collect::<DerivationResult<Vec<_>>>()?;
+    RuleRegistry::new(registrations, [])
+}
+
+fn verify_semantic_rule_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
+    let expected_bytes = context
+        .premise_bytes(0)?
+        .ok_or_else(|| DerivationError::new("SemanticIR rule lacks claim replay bytes"))?;
+    if expected_bytes == context.conclusion_json() {
+        Ok(())
+    } else {
+        Err(DerivationError::new(format!(
+            "SemanticIR field '{}' is not the current registered replay",
+            context.proof().address().surface()
+        )))
+    }
+}
+
+fn apply_semantic_mutations(
+    artifact: &mut SemanticIr,
+    mutations: &[SemanticMutationEvent],
+) -> DerivationResult<()> {
+    let mut seen = BTreeSet::new();
+    for mutation in mutations {
+        if !seen.insert(mutation.mutation_id.as_str()) {
+            return Err(DerivationError::new(format!(
+                "duplicate SemanticIR mutation id '{}'",
+                mutation.mutation_id
+            )));
+        }
+        let allowed = mutation
+            .kind
+            .allowed_fields()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        let present = mutation
+            .fields
+            .keys()
+            .map(String::as_str)
+            .collect::<BTreeSet<_>>();
+        if present != allowed {
+            return Err(DerivationError::new(format!(
+                "SemanticIR {:?} mutation field set is not exact",
+                mutation.kind
+            )));
+        }
+        let mut value = serde_json::to_value(&*artifact).map_err(|error| {
+            DerivationError::new(format!(
+                "cannot serialize SemanticIR mutation base: {error}"
+            ))
+        })?;
+        let object = value.as_object_mut().ok_or_else(|| {
+            DerivationError::new("serialized SemanticIR mutation base is not an object")
+        })?;
+        for (field, replacement) in &mutation.fields {
+            object.insert(field.clone(), replacement.clone());
+        }
+        object.remove("proof_context");
+        object.remove("proof_ledger");
+        *artifact = serde_json::from_value(value).map_err(|error| {
+            DerivationError::new(format!(
+                "invalid typed SemanticIR mutation payload: {error}"
+            ))
+        })?;
+    }
+    Ok(())
+}
+
 impl SemanticIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
+        Self::load_with_verified_proof(path).map(|(semantic_ir, _)| semantic_ir)
+    }
+
+    pub(crate) fn load_with_verified_proof(path: &Path) -> Result<(Self, VerifiedProofLedger)> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
-        let semantic_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        let artifact = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let version = artifact
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "SemanticIR is missing an integer schema_version".to_string(),
+                )
+            })?;
+        if version != u64::from(SEMANTIC_IR_SCHEMA_VERSION) {
+            let disposition = if version < u64::from(SEMANTIC_IR_SCHEMA_VERSION) {
+                "is legacy/proofless and inspection-only; rebuild it from verified EvidenceIR"
+            } else {
+                "is newer than this binary"
+            };
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SemanticIR schema version {version} {disposition}"
+            )));
+        }
+        let semantic_ir = serde_json::from_value::<Self>(artifact)?;
         if !matches!(semantic_ir.stage, IrStage::SemanticIr) {
             return Err(AppError::InvalidStageArtifact(
                 "artifact must be a SemanticIR document before loading SemanticIR".to_string(),
             ));
+        }
+        // Proof conclusions cover canonical repository-relative storage, not the retired absolute
+        // root at which an otherwise byte-identical artifact happened to be written. Resolve and
+        // re-normalize repository-owned paths first so a repository move cannot invalidate
+        // semantic authority; ambiguous or external rebasing still fails closed in runtime_clone.
+        let runtime = semantic_ir.runtime_clone()?;
+        let canonical = runtime.persisted_clone()?;
+        let verified = canonical.verified_canonical_proof()?;
+        Ok((runtime, verified))
+    }
+
+    /// Parse historical SemanticIR for diagnostics without granting it canonical or downstream
+    /// authority. Only the current schema with a verified proof may feed IntentIR.
+    pub fn load_for_inspection(path: &Path) -> Result<Self> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let artifact = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let version = artifact
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "SemanticIR is missing an integer schema_version".to_string(),
+                )
+            })?;
+        if version > u64::from(SEMANTIC_IR_SCHEMA_VERSION) {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SemanticIR schema version {version} is newer than this binary"
+            )));
+        }
+        let semantic_ir = serde_json::from_value::<Self>(artifact)?;
+        if !matches!(semantic_ir.stage, IrStage::SemanticIr) {
+            return Err(AppError::InvalidStageArtifact(
+                "artifact must be a SemanticIR document before inspection".to_string(),
+            ));
+        }
+        if version == u64::from(SEMANTIC_IR_SCHEMA_VERSION) {
+            semantic_ir.verify_canonical_proof()?;
         }
         semantic_ir.runtime_clone()
     }
@@ -214,9 +579,18 @@ impl SemanticIr {
     pub fn build(evidence_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
         let evidence_ir_path =
             resolve_existing(evidence_ir_path, PersistedPathOrigin::RepositoryOwned)?;
-        let evidence_ir = EvidenceIr::load_from_path(&evidence_ir_path)?;
-
-        Self::build_from_evidence_ir(&evidence_ir, evidence_ir_path, artifact_base_root)
+        let (evidence_ir, evidence_proof) =
+            EvidenceIr::load_with_verified_proof(&evidence_ir_path)?;
+        let prior_guidance =
+            load_semantic_prior_guidance(evidence_ir.prior_memory_path.as_deref())?;
+        let mut semantic_ir = Self::build_unproved_from_evidence_ir(
+            &evidence_ir,
+            evidence_ir_path,
+            artifact_base_root,
+            prior_guidance.as_ref(),
+        )?;
+        semantic_ir.refresh_canonical_proof(&evidence_proof, prior_guidance.as_ref())?;
+        Ok(semantic_ir)
     }
 
     #[cfg(any(test, feature = "test-support", feature = "conformance-support"))]
@@ -226,18 +600,22 @@ impl SemanticIr {
         artifact_base_root: &Path,
     ) -> Result<NonCanonicalSemanticOverlay> {
         let evidence_ir = overlay.artifact();
-        let artifact = Self::build_from_evidence_ir(
+        let prior_guidance =
+            load_semantic_prior_guidance(evidence_ir.prior_memory_path.as_deref())?;
+        let artifact = Self::build_unproved_from_evidence_ir(
             evidence_ir,
             evidence_ir.artifact_layout.evidence_ir_path.clone(),
             artifact_base_root,
+            prior_guidance.as_ref(),
         )?;
         Ok(NonCanonicalSemanticOverlay { artifact })
     }
 
-    fn build_from_evidence_ir(
+    fn build_unproved_from_evidence_ir(
         evidence_ir: &EvidenceIr,
         evidence_ir_path: PathBuf,
         artifact_base_root: &Path,
+        prior_guidance: Option<&SemanticPriorGuidance>,
     ) -> Result<Self> {
         if !matches!(evidence_ir.stage, IrStage::EvidenceIr) {
             return Err(AppError::InvalidStageArtifact(format!(
@@ -258,13 +636,11 @@ impl SemanticIr {
             display_name: evidence_ir.document_identity.display_name.clone(),
         };
 
-        let prior_guidance =
-            load_semantic_prior_guidance(evidence_ir.prior_memory_path.as_deref())?;
         let context = SemanticContext::from_evidence_ir(evidence_ir);
         let system_contract = build_system_contract(&context);
         let (interfaces, interface_signal_conflicts) = build_interfaces(
             &context,
-            prior_guidance.as_ref(),
+            prior_guidance,
             evidence_ir.signal_polarities.as_slice(),
             system_contract.as_ref(),
         );
@@ -376,7 +752,7 @@ impl SemanticIr {
             conditional_rules.as_slice(),
             executable_timing_constraints.as_slice(),
             &known_actor_names,
-            prior_guidance.as_ref(),
+            prior_guidance,
         );
         // R16-CONTRACT-IR.3: project the typed ContractIR alongside
         // `temporal_rules` (lossless 1:1; `.isf` lowering consumes this).
@@ -472,7 +848,7 @@ impl SemanticIr {
         let transaction_phases = build_transaction_phases(&context, &declared_signal_names);
 
         Ok(Self {
-            schema_version: 1,
+            schema_version: SEMANTIC_IR_SCHEMA_VERSION,
             stage: IrStage::SemanticIr,
             evidence_ir_path,
             artifact_layout,
@@ -524,11 +900,561 @@ impl SemanticIr {
             conditional_rules,
             residual_decisions,
             validation_reports: Vec::new(),
+            proof_context: None,
+            proof_ledger: None,
         })
     }
 
+    fn public_field_values(&self) -> DerivationResult<BTreeMap<String, serde_json::Value>> {
+        let mut fields = BTreeMap::new();
+        macro_rules! insert_field {
+            ($field:ident) => {
+                fields.insert(
+                    stringify!($field).to_string(),
+                    serde_json::to_value(&self.$field).map_err(|error| {
+                        DerivationError::new(format!(
+                            "cannot serialize SemanticIR field '{}': {error}",
+                            stringify!($field)
+                        ))
+                    })?,
+                );
+            };
+        }
+        insert_field!(schema_version);
+        insert_field!(stage);
+        insert_field!(evidence_ir_path);
+        insert_field!(artifact_layout);
+        insert_field!(document_identity);
+        insert_field!(actors);
+        insert_field!(actor_signal_relations);
+        insert_field!(actor_ports);
+        insert_field!(signal_connectivity);
+        insert_field!(signal_connectivity_conflicts);
+        insert_field!(infrastructure_signals);
+        insert_field!(interface_signal_conflicts);
+        insert_field!(interfaces);
+        insert_field!(system_contract);
+        insert_field!(signal_polarities);
+        insert_field!(signal_polarity_conflicts);
+        insert_field!(signal_semantic_conflicts);
+        insert_field!(phases);
+        insert_field!(invariants);
+        insert_field!(contracts);
+        insert_field!(gates);
+        insert_field!(assertions);
+        insert_field!(abstractions);
+        insert_field!(decomposition_candidates);
+        insert_field!(regular_states);
+        insert_field!(state_transitions);
+        insert_field!(symbol_definitions);
+        insert_field!(control_blocks);
+        insert_field!(explicit_modules);
+        insert_field!(explicit_tops);
+        insert_field!(transaction_anchors);
+        insert_field!(transaction_phases);
+        insert_field!(signal_channel_memberships);
+        insert_field!(serial_frame_fields);
+        insert_field!(protocol_operations);
+        insert_field!(protocol_states);
+        insert_field!(interface_edge_timings);
+        insert_field!(register_records);
+        insert_field!(timing_constraints);
+        insert_field!(signal_constraints);
+        insert_field!(conditional_rules);
+        insert_field!(temporal_rules);
+        insert_field!(actor_contracts);
+        insert_field!(constrained_extraction_stats);
+        insert_field!(protocol_graph);
+        insert_field!(fidelity_findings);
+        insert_field!(temporal_conflicts);
+        insert_field!(residual_decisions);
+        insert_field!(validation_reports);
+        if fields.len() != SEMANTIC_RULE_FIELDS.len() {
+            return Err(DerivationError::new(
+                "SemanticIR proof field projection is incomplete",
+            ));
+        }
+        Ok(fields)
+    }
+
+    fn claim_inputs(&self) -> DerivationResult<Vec<SemanticClaimInput>> {
+        let fields = self.public_field_values()?;
+        let mut claims = Vec::new();
+        for (field, family) in SEMANTIC_RULE_FIELDS {
+            let value = fields.get(*field).cloned().ok_or_else(|| {
+                DerivationError::new(format!("SemanticIR claim field '{field}' is absent"))
+            })?;
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            claims.push(SemanticClaimInput {
+                address: ClaimAddress::new(IrStage::SemanticIr, *field, "root", None)?,
+                rule_id: rule_id.clone(),
+                conclusion: value.clone(),
+            });
+            if let Some(records) = value.as_array() {
+                for (index, record) in records.iter().enumerate() {
+                    claims.push(SemanticClaimInput {
+                        address: ClaimAddress::new(
+                            IrStage::SemanticIr,
+                            *field,
+                            format!("record-{index:08}"),
+                            Some(format!("[{index}]")),
+                        )?,
+                        rule_id: rule_id.clone(),
+                        conclusion: record.clone(),
+                    });
+                }
+            }
+        }
+        Ok(claims)
+    }
+
+    fn proof_kernel(
+        &self,
+        context: &SemanticProofContext,
+        evidence_proof: &VerifiedProofLedger,
+        prior_guidance: Option<&SemanticPriorGuidance>,
+        replay_bytes: &[u8],
+        claims: &[SemanticClaimInput],
+    ) -> DerivationResult<(
+        crate::ir::derivation::PromotionKernel,
+        SemanticProofPremises,
+    )> {
+        if context.schema_version != SEMANTIC_PROOF_CONTEXT_SCHEMA_VERSION {
+            return Err(DerivationError::new(format!(
+                "unsupported SemanticIR proof-context schema {}",
+                context.schema_version
+            )));
+        }
+        let evidence_ledger_bytes =
+            serde_json::to_vec(evidence_proof.ledger()).map_err(|error| {
+                DerivationError::new(format!(
+                    "cannot serialize verified EvidenceIR ledger: {error}"
+                ))
+            })?;
+        let prior_bytes = prior_guidance
+            .map(|guidance| Sha256Digest::of_serializable(&guidance.corpus_memory))
+            .transpose()?;
+        let capture_digest = Sha256Digest::of_serializable(&(
+            context,
+            evidence_proof.ruleset_sha256(),
+            Sha256Digest::of_bytes(&evidence_ledger_bytes),
+            prior_bytes,
+        ))?;
+        let registry = semantic_rule_registry()?;
+        let mut builder = PromotionKernelBuilder::with_verified_upstream(
+            capture_digest,
+            registry,
+            evidence_proof,
+        )?;
+        let proof_premises = {
+            let mut capture = builder.capture();
+            // The cumulative EvidenceIR ledger is an exact, verified current-document anchor.
+            // It gives a validated prior direct grounding without granting that prior authority
+            // over document identity or bypassing the upstream claim graph.
+            let evidence_grounding =
+                capture.source_span("semantic-verified-evidence-ledger", &evidence_ledger_bytes)?;
+            let mut inputs = evidence_proof
+                .claims()
+                .iter()
+                .map(|proof| PremiseRef::UpstreamClaim {
+                    address: proof.address().clone(),
+                    conclusion_sha256: proof.conclusion_sha256().clone(),
+                })
+                .collect::<Vec<_>>();
+            inputs.push(evidence_grounding.clone());
+            let validated_prior = if let Some(guidance) = prior_guidance {
+                let payload = serde_json::to_vec(&guidance.corpus_memory).map_err(|error| {
+                    DerivationError::new(format!("cannot serialize SemanticIR prior: {error}"))
+                })?;
+                let validation = serde_json::to_vec(&(
+                    guidance.prior_scope,
+                    guidance.corpus_memory.schema_version,
+                ))
+                .map_err(|error| {
+                    DerivationError::new(format!("cannot serialize prior validation: {error}"))
+                })?;
+                let prior = capture.validated_prior(
+                    "semantic-global-prior",
+                    &payload,
+                    &validation,
+                    ValidatedPriorScope::GlobalIdentityIndependent,
+                    vec![evidence_grounding.clone()],
+                )?;
+                inputs.push(prior.clone());
+                Some(prior)
+            } else {
+                None
+            };
+            let mut mutation_premises = Vec::new();
+            for mutation in &context.mutations {
+                let payload = serde_json::to_vec(mutation).map_err(|error| {
+                    DerivationError::new(format!(
+                        "cannot serialize registered SemanticIR mutation: {error}"
+                    ))
+                })?;
+                let premise = capture.registered_derivation(
+                    mutation.mutation_id.clone(),
+                    &payload,
+                    vec![evidence_grounding.clone()],
+                )?;
+                inputs.push(premise.clone());
+                mutation_premises.push((mutation.kind, premise));
+            }
+            // This registered replay is a Merkle-compressed dependency node over every
+            // cumulative EvidenceIR claim. Each field/record replay below depends on it, so the
+            // persisted proof remains linear in corpus size while retaining the complete
+            // transitive contributor topology.
+            let registered_replay =
+                capture.registered_derivation("semantic.current-replay", replay_bytes, inputs)?;
+            let mut claim_replays = BTreeMap::new();
+            let mut carried_upstream = BTreeMap::new();
+            for claim in claims {
+                let exact_conclusion = serde_json::to_vec(&claim.conclusion).map_err(|error| {
+                    DerivationError::new(format!(
+                        "cannot serialize SemanticIR claim replay: {error}"
+                    ))
+                })?;
+                let derivation_id = format!(
+                    "semantic.claim.{}.{}",
+                    claim.address.surface(),
+                    claim.address.stable_record_key()
+                );
+                let premise = capture.registered_derivation(
+                    derivation_id,
+                    &exact_conclusion,
+                    vec![registered_replay.clone()],
+                )?;
+                if claim_replays
+                    .insert(claim.address.clone(), premise)
+                    .is_some()
+                {
+                    return Err(DerivationError::new(
+                        "duplicate SemanticIR claim replay address",
+                    ));
+                }
+                let is_carried = SEMANTIC_RULE_FIELDS
+                    .iter()
+                    .find(|(field, _)| *field == claim.address.surface())
+                    .is_some_and(|(_, family)| *family == "semantic.carried_evidence");
+                if is_carried {
+                    let conclusion_sha256 = Sha256Digest::of_bytes(&exact_conclusion);
+                    let upstream = evidence_proof
+                        .claims()
+                        .iter()
+                        .find(|proof| {
+                            proof.address().surface() == claim.address.surface()
+                                && ((claim.address.stable_record_key() == "root"
+                                    && proof.address().stable_record_key() == "root")
+                                    || (claim.address.stable_record_key() != "root"
+                                        && proof.conclusion_sha256() == &conclusion_sha256))
+                        })
+                        .ok_or_else(|| {
+                            DerivationError::new(format!(
+                                "SemanticIR carried claim '{}:{}' has no exact EvidenceIR antecedent",
+                                claim.address.surface(),
+                                claim.address.stable_record_key()
+                            ))
+                        })?;
+                    carried_upstream.insert(
+                        claim.address.clone(),
+                        PremiseRef::UpstreamClaim {
+                            address: upstream.address().clone(),
+                            conclusion_sha256: upstream.conclusion_sha256().clone(),
+                        },
+                    );
+                }
+            }
+            SemanticProofPremises {
+                claim_replays,
+                carried_upstream,
+                validated_prior,
+                mutations: mutation_premises,
+            }
+        };
+        Ok((builder.seal(), proof_premises))
+    }
+
+    fn refresh_canonical_proof(
+        &mut self,
+        evidence_proof: &VerifiedProofLedger,
+        prior_guidance: Option<&SemanticPriorGuidance>,
+    ) -> Result<()> {
+        let context = SemanticProofContext {
+            schema_version: SEMANTIC_PROOF_CONTEXT_SCHEMA_VERSION,
+            prior_memory: prior_guidance.map(|guidance| guidance.corpus_memory.clone()),
+            mutations: Vec::new(),
+            #[cfg(any(test, feature = "test-support"))]
+            test_fixture: false,
+        };
+        self.refresh_proof_from_context(context, evidence_proof, prior_guidance)
+    }
+
+    fn refresh_proof_from_context(
+        &mut self,
+        context: SemanticProofContext,
+        evidence_proof: &VerifiedProofLedger,
+        prior_guidance: Option<&SemanticPriorGuidance>,
+    ) -> Result<()> {
+        let mut persisted = self.persisted_clone()?;
+        persisted.proof_context = None;
+        persisted.proof_ledger = None;
+        let replay_bytes = serde_json::to_vec(
+            &persisted
+                .public_field_values()
+                .map_err(semantic_derivation_error)?,
+        )?;
+        let claims = persisted
+            .claim_inputs()
+            .map_err(semantic_derivation_error)?;
+        let (mut kernel, proof_premises) = persisted
+            .proof_kernel(
+                &context,
+                evidence_proof,
+                prior_guidance,
+                &replay_bytes,
+                &claims,
+            )
+            .map_err(semantic_derivation_error)?;
+        for claim in claims {
+            let (premises, confidence) = proof_premises
+                .for_claim(&claim.address)
+                .map_err(semantic_derivation_error)?;
+            let proposal = kernel.grammar_capability().propose(
+                claim.address,
+                claim.rule_id,
+                premises,
+                Vec::new(),
+                confidence,
+                claim.conclusion,
+            );
+            kernel
+                .promote(proposal)
+                .map_err(semantic_derivation_error)?;
+        }
+        let local = kernel.finish().map_err(semantic_derivation_error)?;
+        let cumulative = VerifiedProofLedger::compose(evidence_proof, local)
+            .map_err(semantic_derivation_error)?;
+        self.proof_context = Some(context);
+        self.proof_ledger = Some(cumulative.into_ledger());
+        Ok(())
+    }
+
+    fn captured_prior_guidance(
+        evidence_ir: &EvidenceIr,
+        context: &SemanticProofContext,
+    ) -> Result<Option<SemanticPriorGuidance>> {
+        match (
+            evidence_ir.prior_memory_path.as_ref(),
+            context.prior_memory.as_ref(),
+        ) {
+            (_, None) => Ok(None),
+            (Some(_), Some(corpus_memory)) => Ok(Some(SemanticPriorGuidance {
+                corpus_memory: corpus_memory.clone(),
+                prior_scope: PriorScope::Global,
+            })),
+            (None, Some(_)) => Err(semantic_derivation_error(
+                "SemanticIR captured a validated prior without an EvidenceIR prior path",
+            )),
+        }
+    }
+
+    /// Authorize one closed-family post-build mutation and rebuild the cumulative proof. The
+    /// independently replayed predecessor must remain exact outside the mutation's fixed fields.
+    #[doc(hidden)]
+    pub fn authorize_mutation(&mut self, kind: SemanticMutationKind) -> Result<bool> {
+        let mut context = self.proof_context.clone().ok_or_else(|| {
+            semantic_derivation_error("proofless SemanticIR cannot authorize a mutation")
+        })?;
+        #[cfg(any(test, feature = "test-support"))]
+        if kind == SemanticMutationKind::TestFixture {
+            context.test_fixture = true;
+        }
+        let evidence_runtime_path =
+            resolve_existing(&self.evidence_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let (evidence_ir, evidence_proof) =
+            EvidenceIr::load_with_verified_proof(&evidence_runtime_path)?;
+        let prior_guidance = Self::captured_prior_guidance(&evidence_ir, &context)?;
+        let runtime_layout = self.artifact_layout.runtime_layout()?;
+        let artifact_base_root = runtime_layout.artifact_root.parent().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "SemanticIR artifact root has no repository-owned base".to_string(),
+            )
+        })?;
+        let mut predecessor = Self::build_unproved_from_evidence_ir(
+            &evidence_ir,
+            evidence_runtime_path,
+            artifact_base_root,
+            prior_guidance.as_ref(),
+        )?;
+        apply_semantic_mutations(&mut predecessor, &context.mutations)
+            .map_err(semantic_derivation_error)?;
+        let predecessor_fields = predecessor
+            .public_field_values()
+            .map_err(semantic_derivation_error)?;
+        let current_fields = self
+            .public_field_values()
+            .map_err(semantic_derivation_error)?;
+        let allowed = kind
+            .allowed_fields()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for (field, predecessor_value) in &predecessor_fields {
+            if !allowed.contains(field.as_str())
+                && current_fields.get(field) != Some(predecessor_value)
+            {
+                return Err(semantic_derivation_error(format!(
+                    "{:?} mutation changed unauthorized SemanticIR field '{field}'",
+                    kind
+                )));
+            }
+        }
+        if kind
+            .allowed_fields()
+            .iter()
+            .all(|field| current_fields.get(*field) == predecessor_fields.get(*field))
+        {
+            return Ok(false);
+        }
+        let fields = kind
+            .allowed_fields()
+            .iter()
+            .map(|field| {
+                current_fields
+                    .get(*field)
+                    .cloned()
+                    .map(|value| ((*field).to_string(), value))
+                    .ok_or_else(|| {
+                        semantic_derivation_error(format!(
+                            "SemanticIR mutation field '{field}' is absent"
+                        ))
+                    })
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let kind_name = serde_json::to_value(kind)?
+            .as_str()
+            .expect("SemanticMutationKind serializes as a string")
+            .to_string();
+        let event = SemanticMutationEvent {
+            mutation_id: format!(
+                "semantic-mutation-{index:08}-{kind_name}",
+                index = context.mutations.len()
+            ),
+            kind,
+            fields,
+        };
+        apply_semantic_mutations(&mut predecessor, std::slice::from_ref(&event))
+            .map_err(semantic_derivation_error)?;
+        if predecessor
+            .public_field_values()
+            .map_err(semantic_derivation_error)?
+            != current_fields
+        {
+            return Err(semantic_derivation_error(
+                "typed SemanticIR mutation replay does not reproduce the requested artifact",
+            ));
+        }
+        context.mutations.push(event);
+        self.refresh_proof_from_context(context, &evidence_proof, prior_guidance.as_ref())?;
+        Ok(true)
+    }
+
+    fn verify_canonical_proof(&self) -> Result<()> {
+        self.verified_canonical_proof().map(|_| ())
+    }
+
+    fn verified_canonical_proof(&self) -> Result<VerifiedProofLedger> {
+        if self.schema_version != SEMANTIC_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SemanticIR schema {} cannot receive current canonical authority",
+                self.schema_version
+            )));
+        }
+        let context = self.proof_context.as_ref().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current SemanticIR is proofless; rebuild it from verified EvidenceIR".to_string(),
+            )
+        })?;
+        let cumulative = self.proof_ledger.clone().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current SemanticIR is missing its cumulative proof ledger".to_string(),
+            )
+        })?;
+        let evidence_runtime_path =
+            resolve_existing(&self.evidence_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let (evidence_ir, evidence_proof) =
+            EvidenceIr::load_with_verified_proof(&evidence_runtime_path)?;
+        let prior_guidance = Self::captured_prior_guidance(&evidence_ir, context)?;
+        let runtime_layout = self.artifact_layout.runtime_layout()?;
+        let artifact_base_root = runtime_layout.artifact_root.parent().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "SemanticIR artifact root has no repository-owned base".to_string(),
+            )
+        })?;
+        let mut expected_runtime = Self::build_unproved_from_evidence_ir(
+            &evidence_ir,
+            evidence_runtime_path,
+            artifact_base_root,
+            prior_guidance.as_ref(),
+        )?;
+        apply_semantic_mutations(&mut expected_runtime, &context.mutations)
+            .map_err(semantic_derivation_error)?;
+        let expected = expected_runtime.persisted_clone()?;
+        let replay_fields = expected
+            .public_field_values()
+            .map_err(semantic_derivation_error)?;
+        let replay_bytes = serde_json::to_vec(&replay_fields)?;
+        let actual_fields = self
+            .public_field_values()
+            .map_err(semantic_derivation_error)?;
+        let claims = self.claim_inputs().map_err(semantic_derivation_error)?;
+        let conclusions = claims
+            .iter()
+            .map(|claim| {
+                serde_json::to_vec(&claim.conclusion)
+                    .map(|bytes| (claim.address.clone(), bytes))
+                    .map_err(AppError::from)
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let (kernel, _) = self
+            .proof_kernel(
+                context,
+                &evidence_proof,
+                prior_guidance.as_ref(),
+                &replay_bytes,
+                &claims,
+            )
+            .map_err(semantic_derivation_error)?;
+        let local_ruleset = semantic_rule_registry()
+            .map_err(semantic_derivation_error)?
+            .ruleset_sha256()
+            .clone();
+        let local_ledger = cumulative
+            .local_suffix_after(&evidence_proof, &local_ruleset)
+            .map_err(semantic_derivation_error)?;
+        let verified_local = kernel
+            .verify_persisted(local_ledger, &conclusions)
+            .map_err(semantic_derivation_error)?;
+        let verified = VerifiedProofLedger::compose(&evidence_proof, verified_local)
+            .map_err(semantic_derivation_error)?;
+        if verified.ledger() != &cumulative {
+            return Err(semantic_derivation_error(
+                "cumulative SemanticIR proof differs from verified EvidenceIR prefix plus local replay",
+            ));
+        }
+        if actual_fields != replay_fields {
+            return Err(semantic_derivation_error(
+                "SemanticIR public fields differ from current registered replay",
+            ));
+        }
+        Ok(verified)
+    }
+
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
+        let persisted = self.persisted_clone()?;
+        persisted.verify_canonical_proof()?;
+        Ok(serde_json::to_string_pretty(&persisted)?)
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
@@ -538,6 +1464,16 @@ impl SemanticIr {
             ))
         })?;
         let persisted = self.persisted_clone()?;
+        if let Err(_error) = persisted.verify_canonical_proof() {
+            #[cfg(any(test, feature = "test-support"))]
+            {
+                let mut fixture = self.clone();
+                fixture.authorize_mutation(SemanticMutationKind::TestFixture)?;
+                return fixture.write_to_disk();
+            }
+            #[cfg(not(any(test, feature = "test-support")))]
+            return Err(_error);
+        }
         let runtime_layout = persisted.artifact_layout.runtime_layout()?;
         fs::create_dir_all(&runtime_layout.artifact_root)?;
         fs::write(
@@ -545,6 +1481,25 @@ impl SemanticIr {
             serde_json::to_string_pretty(&persisted)?,
         )?;
         Ok(())
+    }
+
+    /// Persist an explicitly synthetic SemanticIR fixture. Production builds do not compile this
+    /// closed mutation kind, so arbitrary fixture state cannot cross the canonical seam.
+    #[cfg(any(test, feature = "test-support"))]
+    #[doc(hidden)]
+    pub fn write_test_fixture_to_disk(&self) -> Result<()> {
+        if self.persisted_clone()?.verify_canonical_proof().is_ok() {
+            return self.write_to_disk();
+        }
+        let mut fixture = self.clone();
+        fixture.authorize_mutation(SemanticMutationKind::TestFixture)?;
+        fixture.write_to_disk()
+    }
+
+    /// Current cumulative proof ledger. This is an inspection surface only; callers receive no
+    /// verified authority token without executing the canonical loader.
+    pub fn proof_ledger(&self) -> Option<&ProofLedger> {
+        self.proof_ledger.as_ref()
     }
 
     fn persisted_clone(&self) -> Result<Self> {
@@ -23746,6 +24701,244 @@ mod tests {
             )
         }));
 
+        Ok(())
+    }
+
+    fn build_canonical_semantic_proof_fixture(
+        markdown: &str,
+    ) -> Result<(tempfile::TempDir, SemanticIr)> {
+        let workspace = crate::project_data::tempdir()?;
+        let source = workspace.path().join("semantic_proof_fixture.md");
+        let source_artifact_base = workspace.path().join("generated/source_ir");
+        let evidence_artifact_base = workspace.path().join("generated/evidence_ir");
+        let semantic_artifact_base = workspace.path().join("generated/semantic_ir");
+        fs::write(&source, markdown)?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        Ok((workspace, semantic_ir))
+    }
+
+    #[test]
+    fn semantic_proof_covers_every_field_record_and_exact_evidence_prefix() -> Result<()> {
+        let (_workspace, semantic_ir) = build_canonical_semantic_proof_fixture(concat!(
+            "# Interface\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        semantic_ir.write_to_disk()?;
+        let (semantic_ir, semantic_proof) =
+            SemanticIr::load_with_verified_proof(&semantic_ir.artifact_layout.semantic_ir_path)?;
+        let (_, evidence_proof) =
+            EvidenceIr::load_with_verified_proof(&semantic_ir.evidence_ir_path)?;
+
+        let fields = semantic_ir
+            .persisted_clone()?
+            .public_field_values()
+            .map_err(super::semantic_derivation_error)?;
+        let per_record_claims = fields
+            .values()
+            .filter_map(serde_json::Value::as_array)
+            .map(Vec::len)
+            .sum::<usize>();
+        let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
+        let evidence_claims = evidence_proof.ledger().claims();
+        let cumulative_claims = semantic_proof.ledger().claims();
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 49);
+        assert_eq!(
+            super::SEMANTIC_RULE_FIELDS
+                .iter()
+                .map(|(_, family)| *family)
+                .collect::<BTreeSet<_>>()
+                .len(),
+            12
+        );
+        assert_eq!(
+            cumulative_claims.len(),
+            evidence_claims.len() + expected_local
+        );
+        assert_eq!(
+            &cumulative_claims[..evidence_claims.len()],
+            evidence_claims,
+            "SemanticIR must retain the exact verified cumulative EvidenceIR ledger as its prefix"
+        );
+        assert!(
+            cumulative_claims[evidence_claims.len()..]
+                .iter()
+                .all(|claim| matches!(
+                    claim.premises().first(),
+                    Some(crate::ir::derivation::PremiseRef::RegisteredDerivation { .. })
+                )),
+            "every SemanticIR field and record must depend on its exact registered replay"
+        );
+        assert!(
+            cumulative_claims[evidence_claims.len()..]
+                .iter()
+                .filter(|claim| {
+                    super::SEMANTIC_RULE_FIELDS
+                        .iter()
+                        .find(|(field, _)| *field == claim.address().surface())
+                        .is_some_and(|(_, family)| *family == "semantic.carried_evidence")
+                })
+                .all(|claim| matches!(
+                    claim.premises().get(1),
+                    Some(crate::ir::derivation::PremiseRef::UpstreamClaim { .. })
+                )),
+            "every carried SemanticIR root and record must cite its direct EvidenceIR antecedent"
+        );
+        assert!(
+            cumulative_claims[evidence_claims.len()..]
+                .iter()
+                .filter(|claim| matches!(
+                    claim.address().surface(),
+                    "timing_constraints" | "signal_constraints" | "conditional_rules"
+                ))
+                .all(|claim| claim
+                    .rule_id()
+                    .as_str()
+                    .starts_with("semantic.evidence_projection.")),
+            "filtered or visually extended evidence surfaces must never claim lossless-carry authority"
+        );
+        let local_ruleset = super::semantic_rule_registry()
+            .map_err(super::semantic_derivation_error)?
+            .ruleset_sha256()
+            .clone();
+        assert_eq!(
+            semantic_proof
+                .ledger()
+                .local_suffix_after(&evidence_proof, &local_ruleset)
+                .map_err(super::semantic_derivation_error)?
+                .claims()
+                .len(),
+            expected_local
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn current_semantic_without_proof_cannot_load_serialize_or_feed_downstream() -> Result<()> {
+        let (workspace, semantic_ir) = build_canonical_semantic_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        semantic_ir.write_to_disk()?;
+        let semantic_path = semantic_ir.artifact_layout.semantic_ir_path.clone();
+        let mut proofless =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&semantic_path)?)?;
+        proofless
+            .as_object_mut()
+            .expect("SemanticIR object")
+            .remove("proof_context");
+        proofless
+            .as_object_mut()
+            .expect("SemanticIR object")
+            .remove("proof_ledger");
+        fs::write(&semantic_path, serde_json::to_string_pretty(&proofless)?)?;
+
+        let error = SemanticIr::load_from_path(&semantic_path)
+            .expect_err("current-schema proofless SemanticIR must not load canonically");
+        assert!(error.to_string().contains("proofless"));
+        let decoded = serde_json::from_value::<SemanticIr>(proofless)?;
+        assert!(decoded.to_pretty_json().is_err());
+        assert!(
+            IntentIr::build(
+                &semantic_path,
+                &workspace.path().join("generated/intent_ir"),
+            )
+            .is_err()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn hash_consistent_semantic_field_edit_fails_executable_replay() -> Result<()> {
+        let (_workspace, semantic_ir) = build_canonical_semantic_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        semantic_ir.write_to_disk()?;
+        let semantic_path = semantic_ir.artifact_layout.semantic_ir_path.clone();
+        let mut forged =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&semantic_path)?)?;
+        forged["document_identity"]["display_name"] =
+            serde_json::Value::String("edited identity".to_string());
+        let forged_conclusion = serde_json::to_vec(&forged["document_identity"])?;
+        let forged_digest = crate::ir::derivation::Sha256Digest::of_bytes(&forged_conclusion);
+        let root_claim = forged["proof_ledger"]["claims"]
+            .as_array_mut()
+            .expect("proof claims")
+            .iter_mut()
+            .find(|claim| {
+                claim["address"]["stage"] == serde_json::json!("semantic_ir")
+                    && claim["address"]["surface"] == serde_json::json!("document_identity")
+                    && claim["address"]["stable_record_key"] == serde_json::json!("root")
+            })
+            .expect("document identity root claim");
+        root_claim["conclusion_sha256"] = serde_json::to_value(forged_digest)?;
+        fs::write(&semantic_path, serde_json::to_string_pretty(&forged)?)?;
+
+        let error = SemanticIr::load_from_path(&semantic_path)
+            .expect_err("a recomputed digest cannot self-authorize an edited SemanticIR field");
+        assert!(
+            error.to_string().contains("current registered replay")
+                || error.to_string().contains("public fields differ")
+                || error.to_string().contains("registered derivation"),
+            "unexpected verification failure: {error}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn semantic_mutation_authority_is_closed_and_validation_replays() -> Result<()> {
+        let (_workspace, mut semantic_ir) = build_canonical_semantic_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        semantic_ir
+            .document_identity
+            .display_name
+            .push_str(" edited");
+        let error = semantic_ir
+            .authorize_mutation(super::SemanticMutationKind::ValidationBackannotation)
+            .expect_err("validation authority must not cover document identity");
+        assert!(error.to_string().contains("unauthorized SemanticIR field"));
+
+        let (_workspace, mut semantic_ir) = build_canonical_semantic_proof_fixture(concat!(
+            "# Rules\n",
+            "Signal ALPHA is input width 1.\n",
+            "ALPHA must remain asserted.\n",
+        ))?;
+        let report = crate::ir::source::ValidationReportRecord {
+            report_id: "semantic-validation-test".to_string(),
+            validated_stage: crate::ir::IrStage::SemanticIr,
+            artifact_fingerprint: "diagnostic-fingerprint".to_string(),
+            summary: "registered validation result".to_string(),
+            overall_score: Some(100),
+            grade: Some("EXCELLENT".to_string()),
+            metrics: Vec::new(),
+            findings: Vec::new(),
+        };
+        semantic_ir.validation_reports = vec![report];
+        assert!(
+            semantic_ir
+                .authorize_mutation(super::SemanticMutationKind::ValidationBackannotation,)?
+        );
+        assert!(
+            !semantic_ir
+                .authorize_mutation(super::SemanticMutationKind::ValidationBackannotation,)?
+        );
+        semantic_ir.to_pretty_json()?;
         Ok(())
     }
 }

@@ -4,6 +4,31 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-13 — proof-carrying SemanticIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv`)
+
+- SemanticIR schema 2 owns 49 public fields across 12 registered families. The cumulative proof preserves the
+  complete verified EvidenceIR ledger as an exact prefix, then appends field-root and per-record claims under
+  stable semantic addresses.
+- `semantic.current-replay` is a registered digest-bound dependency over every upstream claim. Each semantic
+  claim binds its exact current reconstruction to that node, so synthesis/conflict/residual topology is complete
+  without storing the full upstream list on every record.
+- Lossless carry adds direct edges: each genuinely carried collection root cites its EvidenceIR root, while each carried
+  record finds an EvidenceIR claim with the same exact conclusion digest. This remains correct when semantic
+  record ordering differs. Timing constraints, signal constraints, and conditional rules are a separate
+  deterministic projection family because SemanticIR may filter or visually extend them; they cannot present
+  derived records as exact carries.
+- SemanticIR path fields are rebased and normalized before conclusion verification, so the content-addressed
+  proof survives a repository move without relaxing ambiguous/external-path rejection.
+- Canonical verification reloads current EvidenceIR, reconstructs optional `GlobalIdentityIndependent` prior
+  guidance from the captured payload, rebuilds the whole stage, replays its closed mutation sequence, verifies
+  the local ledger, and composes it with the exact upstream prefix. Hash-consistent edits still fail.
+- `SemanticMutationKind` exposes only validation backannotation in production, limited to
+  `validation_reports`; the arbitrary fixture variant is compiled only for test support. Load, serialization,
+  write, and IntentIR build all require current verified authority. Schemas below 2 are inspection-only.
+- The 24 verifiable chains migrate with zero semantic field delta. Currency is 24 current / 54 proof-unmeasurable
+  through IntentIR, and all 78 adapter/ISF results are still stage-locally current. IntentIR and adapter proof
+  migration remain `.e.iv.v`–`.e.iv.vi` work.
+
 ## Session update (2026-08-12 — proof-carrying SourceIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii`)
 
 - SourceIR schema 3 owns 19 public fields across five registered families. `SourceProofContext` stores the exact

@@ -24,8 +24,8 @@ use crate::ir::prior_memory::{
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ClockEdge, InfrastructureSignalDistributionStatus,
     InfrastructureSignalKind, InfrastructureSignalRecord, InfrastructureSignalSourceStatus,
-    InfrastructureTopologyKind, InterfaceSignalConflictRecord, SemanticIr, SignalConnectivityClass,
-    SignalConnectivityConflictRecord, TemporalConflictRecord,
+    InfrastructureTopologyKind, InterfaceSignalConflictRecord, SemanticIr, SemanticMutationKind,
+    SignalConnectivityClass, SignalConnectivityConflictRecord, TemporalConflictRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, DiagramKind, ResidualDecisionPacket, SourceIr,
@@ -243,7 +243,11 @@ fn evidence_ir_fingerprint(ir: &EvidenceIr) -> Result<String> {
 fn semantic_ir_fingerprint(ir: &SemanticIr) -> Result<String> {
     let mut clone = ir.clone();
     clone.validation_reports.clear();
-    Ok(stable_fingerprint(&clone.to_pretty_json()?))
+    // Validation evaluates canonical artifacts and explicitly noncanonical conformance overlays.
+    // Clearing the report deliberately makes a canonical proof stale, so this diagnostic
+    // fingerprint must serialize the in-memory projection directly rather than invoke the
+    // persistence authority seam.
+    Ok(stable_fingerprint(&serde_json::to_string_pretty(&clone)?))
 }
 
 fn intent_ir_fingerprint(ir: &IntentIr) -> Result<String> {
@@ -2215,6 +2219,7 @@ fn persist_semantic_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut ir.validation_reports, report);
+    ir.authorize_mutation(SemanticMutationKind::ValidationBackannotation)?;
     write_backannotated_artifact(artifact_path, ir.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }

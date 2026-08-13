@@ -1,4 +1,40 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv (`2026-08-13`) — semantic conclusions require replay, not vocabulary trust
+
+SemanticIR schema 2 is the third canonical stage to become proof-carrying. It verifies the complete cumulative
+EvidenceIR ledger, retains that ledger byte-for-byte as its prefix, and appends root plus per-record claims for
+all 49 public fields across 12 semantic families. Each claim first cites an exact registered field/record replay;
+the stage replay is a digest-bound dependency node over every upstream claim, so merges, conflicts, syntheses,
+and residuals retain the complete transitive contributor topology without copying a quadratic premise list into
+every record.
+
+Lossless carry has a stronger local contract. Every genuinely carried root cites the corresponding EvidenceIR collection,
+and every carried record cites an EvidenceIR record with the same exact conclusion digest. Digest matching is
+necessary because source and destination record indices are not an authority contract. Timing constraints,
+signal constraints, and conditional rules are deliberately excluded from that family: SemanticIR can filter
+ungrounded records and can derive additional timing/signal records from typed visual evidence, so those three
+surfaces use `semantic.evidence_projection` and exact registered replay rather than falsely claiming byte-for-byte
+collection carry. The verifier independently rebuilds the expected SemanticIR from current verified EvidenceIR and rejects
+any actual/replay difference; editing a field and recomputing its conclusion hash therefore supplies no missing
+derivation.
+
+Canonical loading resolves and re-normalizes repository-owned lineage paths before checking conclusion digests.
+That makes the proof invariant to a repository move, while the existing ambiguity and external-path guards still
+reject paths that cannot be uniquely rebased inside the current repository.
+
+Optional corpus memory is captured as `GlobalIdentityIndependent` validated prior and is admitted only on the
+semantic families that can consult it. Its direct grounding is the exact verified current-document EvidenceIR
+ledger, never a filename, vendor, family, or identifier spelling. Validation backannotation is the sole
+production post-build mutation family: it may replace only `validation_reports`, must reproduce the independently
+rebuilt predecessor plus its exact typed patch, and must extend proof before the ordinary writer accepts it.
+Test-only fixture mutation is compiled only for test support and cannot create production authority.
+
+Exactly 24 retained chains have current EvidenceIR and could be migrated. Their semantic public fields are
+unchanged; only schema/proof metadata changes. The other 54 SemanticIRs remain inspection-only rather than being
+wrapped in synthetic authority. Exact currency is 24 current / 54 proof-unmeasurable through EvidenceIR,
+SemanticIR, and IntentIR, while all 78 adapters and emitted ISF files remain stage-locally current. IntentIR is
+next: downstream reproducibility is not yet represented as end-to-end proof.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii (`2026-08-13`) — replayable proposals, not semantic self-attestation
 
 EvidenceIR is the first stage where deterministic extraction, current-document text, scoped priors, and bounded

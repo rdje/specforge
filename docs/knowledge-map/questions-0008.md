@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is continuation_inherited_table_heads and what grounds the join
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 47 and why is its adapter honestly blocked
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 49
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is declared_signal_complete_gold_precision
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > what is dedup_constraints / its canonical key
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
@@ -288,13 +298,3 @@
   > VA_40/NUM_2_0_A); and 12 RESERVED-only enums carrying no intent. It is byte-changing on the AXI wire gold ihi0022_l (a new AWATOP enum) so it needs the full before/after WIRE-BASED-100 protocol)
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what must SpecForge derive to fully capture SWD; what are the gaps
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > what must be rebuilt after moving the SpecForge repository
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > what must happen before the USB4 inter-domain corpus refresh can run
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what owns containment of the live document adoption task history
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > what owns live-document size limits and transition debt
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > what owns the SWD EvidenceIR to IntentIR projection gap

@@ -17,17 +17,19 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` is complete pending its commit under `.e.iv`.
-  `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.i`, `.6d.ii.e.iii`, `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` is complete pending its commit under `.e.iv`.
+  `.6d.ii.e.iv.iii`, `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.i`, `.6d.ii.e.iii`, `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
   `.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and
   `.6d.i` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`
   and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.e.iv.iii` implementation, corpus migration, full CI, and cleanup are complete pending commit.
-  EvidenceIR schema 3 proves all 39 fields / 11 families, preserves exact SourceIR proof, and closes all productive
-  mutation paths. The retained 24 have zero field delta; 54 legacy EvidenceIRs are inspection-only. Currency is
-  EvidenceIR 24 current, SemanticIR 24 current / 54 proof-unmeasurable, and later stages 78/78 stage-local.
-- Next action: commit `.e.iv.iii`, verify clean/zero-byte brief, then activate `.e.iv.iv` from that clean boundary.
-- In-flight uncommitted: the owned `.e.iv.iii` code, schemas, corpus proof metadata, ADRs, live docs, mdBook,
-  Knowledge Map projection, and task evidence. Exact rollback/comparison scratch and rebuildable incremental cache
-  are removed; no background job.
+- Current state: SemanticIR schema 2 proves all 49 fields / 12 families, preserves the exact cumulative EvidenceIR
+  prefix, directly cites EvidenceIR for every true carried root/record, isolates filtered/extended evidence in a
+  registered projection family, preserves proof across repository relocation, and closes validation mutation. The retained
+  24 have zero semantic field delta; 54 legacy SemanticIRs are inspection-only. Currency is 24 current / 54
+  proof-unmeasurable through IntentIR, with all 78 adapters stage-locally current.
+- Next action: complete the commit workflow for `.e.iv.iv`, verify clean/zero-byte brief, then activate `.e.iv.v`
+  from that clean boundary to migrate the seven IntentIR families.
+- In-flight uncommitted: the fully verified `.e.iv.iv` code, schema, docs, Knowledge Map fact, and task evidence;
+  exact corpus regeneration, the 1,936-pass full repository gate, and scheduled cleanup are complete. Commit
+  workflow remains. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

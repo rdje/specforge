@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > is the OpenCAPI 3.0 Ready Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > is the OpenCAPI AFU Address Space Usage refresh complete
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > is the PDF-VARIANT-DIGESTION current frontier internally consistent
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
@@ -288,13 +298,3 @@
   > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > what did refresh 50 change in the OpenCAPI data link chain
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > what did running nli-verify on a real spec find
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what did statement 0114 say in the stale OpenCAPI Ready evidence
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)

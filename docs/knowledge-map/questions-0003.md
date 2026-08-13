@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > does the extractor cut identifiers at the underscore character
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > does the legal statement classifier use a vendor or document denylist
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the move portability repair change PathBuf JSON fields
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -288,13 +298,3 @@
   > how does automatic task ranking keep hard failures ahead of breadth work
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how does collapse_section_header_register_identity decide same-register vs different-register
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > how does converge report integrated scheduled and omitted production capabilities
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how does converge report per-document extraction quality after stabilization
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > how does de-fragmentation enable the recover-register-bits gate (b)
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)

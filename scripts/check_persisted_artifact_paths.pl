@@ -147,7 +147,9 @@ sub validate_producer_contract {
             'resolve_reference(&path, PersistedPathOrigin::RepositoryOwned)',
         ],
         'crates/specforge/src/ir/semantic.rs' => [
-            'to_string_pretty(&self.persisted_clone()?)',
+            'let persisted = self.persisted_clone()?;',
+            'persisted.verify_canonical_proof()?;',
+            'to_string_pretty(&persisted)?',
             'semantic_ir.runtime_clone()',
             'persisted.artifact_layout.normalize_for_storage()?;',
         ],

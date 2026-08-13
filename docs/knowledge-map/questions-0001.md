@@ -20,10 +20,14 @@
   > Can legacy EvidenceIR feed SemanticIR?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > Can legacy named-family priors steer current extraction?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can legacy or proofless SemanticIR feed IntentIR?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > Can old proofless IR artifacts still steer extraction or lower to ISF?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can recomputing SourceIR JSON hashes self-attest an edited claim?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can recomputing a SemanticIR conclusion hash authorize an edit?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can specforge-core depend on named fixtures or reviewed evaluation?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -32,6 +36,8 @@
   > Did identity-independent prior learning converge?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Does SemanticIR and IntentIR preserve generic protocol records?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Does every carried SemanticIR record cite EvidenceIR directly?
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > EXTRACTION-QUALITY-GAUGE.3f what is the alphabetic-value word-boundary gate
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
@@ -68,6 +74,10 @@
   > How does the proof ledger continue from SourceIR through ISF lowering?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is EvidenceIR proof-carrying?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is SemanticIR proof-carrying?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is SemanticIR validation backannotation authorized?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is SourceIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -287,13 +297,3 @@
   > default model for the ollama provider
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > did DOC-INTENT-TAXONOMY.4d.i build a deterministic RISC-V CSR bit-position parser (NO — measured non-viable: bits live in the image, flattened tables garbled/XLEN-symbolic, ~0 correct recovery + fabrication risk; honest residual, no Rust code, no FR)
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted then SHIPPED it via ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1/.2, pin d327129b7; FSMGEN-REFRESH-INTEGRATE-4 accepted, -5 shipped)
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > did IntentIR or SemanticIR ever contain rule transaction priority authority (no — the ISF emitter fabricated the Cartesian product)
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > did SB USB and USB4 survive as USB4 Connection Manager interface signals
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > did a clean clone prove corpus task continuation after migration

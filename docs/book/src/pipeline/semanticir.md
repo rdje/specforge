@@ -20,6 +20,43 @@
 
 This is the stage where the pipeline begins to act like a protocol compiler rather than a document extractor.
 
+## Canonical authority and proof
+
+Current SemanticIR is schema 2. A JSON object matching that schema is not authoritative by itself. Canonical
+load, serialization, persistence, and IntentIR construction first verify the complete cumulative EvidenceIR
+ledger, rebuild SemanticIR with the current registered implementation, and compare every public field exactly.
+
+The proof covers all 49 public fields across 12 families. Every field has a root claim, including absent optional
+values and empty collections; every populated collection also has stable per-record claims. The upstream
+EvidenceIR ledger is retained as an exact ordered prefix. A registered stage-replay node depends on every
+upstream claim, and every SemanticIR claim depends on its exact field or record replay. This represents the full
+contributor graph without repeating every upstream premise on every output.
+
+Genuinely carried evidence is checked more directly. A carried collection cites the corresponding EvidenceIR root, and a
+carried record cites an EvidenceIR record with the same exact bytes. Semantic filtering may change array indices,
+so record matching uses the conclusion digest rather than assuming that source and destination indices remain
+equal.
+
+The distinction is structural, not nominal. `timing_constraints`, `signal_constraints`, and `conditional_rules`
+are evidence projections because SemanticIR may filter ungrounded records and may add records derived from typed
+visual evidence. They therefore use the registered `semantic.evidence_projection` family and cannot claim
+lossless-carry authority. Serial-frame fields, protocol operations/states, interface-edge timings, and register
+records remain the exact-carry family.
+
+Optional corpus memory remains advice, not document truth. When used, its exact payload is recorded as an
+identity-independent validated prior grounded in the current verified EvidenceIR. It can contribute only to the
+registered semantic families that consult prior guidance; it cannot decide document identity or bypass replay.
+The only production post-build mutation is validation backannotation, whose closed authority covers
+`validation_reports` and no semantic field.
+
+Schemas older than 2 are available only through the inspection API. They cannot feed IntentIR and are never
+wrapped in synthetic proof. A current-schema artifact missing proof, carrying a stale ruleset, or differing from
+the registered replay fails closed. Repository-owned lineage paths are resolved and normalized before proof
+comparison, so moving the repository does not invalidate otherwise identical authority; ambiguous or external
+rebasing still rejects. In the retained population, 24 chains currently have verifiable EvidenceIR
+and SemanticIR; 54 historical chains remain explicitly unmeasurable until their upstream capture can be
+re-ingested.
+
 ## Why this stage exists
 
 `EvidenceIR` can tell you what the document said and where it came from.

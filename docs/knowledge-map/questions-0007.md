@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > what did refresh 50 change in the OpenCAPI data link chain
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > what did running nli-verify on a real spec find
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what did statement 0114 say in the stale OpenCAPI Ready evidence
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > what did the OpenCAPI AFU address note prove about legal boilerplate
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -288,13 +298,3 @@
   > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what is content-based name-column detection / rotation offset remapping
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is continuation_inherited_table_heads and what grounds the join
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 47 and why is its adapter honestly blocked
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 49
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is declared_signal_complete_gold_precision
