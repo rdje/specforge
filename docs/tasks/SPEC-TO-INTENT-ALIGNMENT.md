@@ -397,11 +397,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii — derive compiled production graph`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii`
-  Status: `pending`
+  Status: `done`
   Goal: `enforce raw-evidence and identity noninterference plus proof-only canonical promotion over the derived graph`
   Acceptance: `closed data registries name raw/identity sources, registered grammar or sealed-capability declassifiers, semantic branch/selection sinks, canonical constructors/writers/lowerers, and rule-entry roots; the analyzer derives interprocedural helper closure and rejects undeclared raw/identity control flow, proofless promotion, unregistered inference, capability construction or laundering, and unresolved semantic macro expansion without document/vendor/protocol vocabulary rules`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `closed schema-1 boundary registry resolves 140 rows into 22 source types, 13 source fields, three exact legacy-string parameter classes, two provider returns, 119 rule roots, 64 grammar/declassifier roots, 12 canonical seams, 25 proof gates, 11 trusted regions, five non-authoritative regions, and 15 protected types; fixed-point AST analysis covers 2,169 functions / 11,295 helper edges / 10,419 semantic decision sites / 19 protected constructions / 28 protected calls / 1,371 sensitive macro invocations; current production passes; deterministic/root-local live coverage and eleven controlled identity/raw/declassifier/direct-or-aliased-inference/capability/helper/macro/proof-stage/registry mutations pass; rule inventory resolves 117 producer/mutator entrypoints; all eight doctrines, formatting, warning-deny Clippy/rustdoc, 1,952 Rust tests / six ignores / zero failures, five compile-fail doctests, mdBook, containment, locality, and artifact cleanup pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii — enforce production information flow`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv`
   Status: `pending`
@@ -499,7 +499,7 @@ expressiveness as the bottleneck.
 | 34 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `done` | compiler-derived production registry/verifier/item/import/kernel closures exclude test/comment churn and bind all five proof rulesets |
 | 35 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` | `done` | compiler/type proof composition, exact trust planes, taint/declassifier/sink classes, and four bounded children are fixed |
 | 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `done` | all 77 inventoried files are deterministically accounted for; the complete production syntax graph and fail-closed resolution controls pass |
-| 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `pending` | enforce raw/identity noninterference and proof-only promotion over the derived graph |
+| 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `done` | closed registry and fixed-point AST flow enforce raw/identity control and proof-only promotion |
 | 38 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | `pending` | register the composed doctrine and qualify the current production baseline |
 | 39 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
 | 40 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
@@ -860,6 +860,8 @@ The doctrine proves a composition, not a single source scan:
 | `2026-08-13` | `.6d.ii.e.iv.vii` exact proof-only corpus migration | final frozen digest rebuild; 24 SourceIR + 24 EvidenceIR + 24 SemanticIR + 24 IntentIR + 24 adapter comparisons excluding `.proof_context`, `.proof_ledger`, and `.validation_reports`; same-volume rollback lifecycle | PASS: all 120 non-proof/non-validation comparisons are exact; the signoff snapshot was exactly 120 files / 964,137,330 bytes and is removed with path residue absent |
 | `2026-08-13` | `.6d.ii.e.iv.vii` complete proof-chain replay | `bash scripts/check_chain_currency.sh --check`; adapter state/file reconciliation; retained-bundle census | PASS: EvidenceIR, SemanticIR, IntentIR, and adapter are each 24 replayed/current / zero stale / 54 explicit proof-unmeasurable; 24 adapter states reconcile to zero emitted files and 24 blocked/no-file states; retention remains exactly 24 bundles |
 | `2026-08-13` | `.6d.ii.e.v.i` structural doctrine contract | startup and intervening-commit review; Cargo metadata/toolchain inspection; production inventory, dependency, and rule checks; task-tree/roadmap/memory/live-size checks; `bash scripts/check_doctrines.sh` | PASS: exact current denominator is 77 modules / 41 families / 168 fields / 116 producer-mutators / 53 seams / four bypasses; compiler/privacy, syntax graph, information-flow, proof-promotion, and registration layers are non-overlapping; all seven gate-tier doctrines pass with chain currency explicitly deferred; no code, generated artifact, or user-visible contract changed |
+| `2026-08-13` | `.6d.ii.e.v.iii` typed information-flow and promotion boundary | closed 140-row registry; deterministic fixed-point AST graph; exact inventory/rule/dependency/compiled-graph checks; eleven controlled boundary mutations | PASS: 2,169 functions / 11,295 helper edges / 10,419 decision sites / 19 protected constructions / 28 protected calls / 1,371 sensitive macros pass raw/identity noninterference, protected authority, and proof-only stage-matched promotion; rule inventory resolves 117 entrypoints / 53 seams / four bypasses; no vocabulary rule participates |
+| `2026-08-13` | `.6d.ii.e.v.iii` complete repository qualification and cleanup | focused formatting/test/Clippy; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; mdBook authority reconciliation; exact artifact census and removal | PASS: all eight doctrines including exact chain currency, application 470/0/0 + conformance 139/1/0 + core 1,339/5/0 + graph 4/0/0 = 1,952 Rust tests passed / six ignored / zero failed, five compile-fail doctests, warning-deny Rustdoc, mdBook test/build, containment, and final locality; removed 12,885 files / 9,138,704 KiB of incremental cache plus disposable HTML; zero requested `.bin`/`.log` residue |
 | `2026-08-13` | scheduled artifact cleanup | exact `.bin`/`.log` census under generated and Cargo release/debug trees; rebuildable incremental-cache removal; residue census | PASS: removed 5,085 files / 5,325,300 KiB from `target/debug/incremental`; the directory is absent and zero `.bin`/`.log` files remain in generated/release/debug-deps |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
@@ -1563,6 +1565,34 @@ the reviewed replay can name its production revision.
   live docs, mdBook, containment authority, and resume pointer publish the same exact graph and leave flow policy
   and doctrine registration explicitly owned by `.e.v.iii` and `.e.v.iv`.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii`
+
+- [x] **REPRODUCE / MEASURE** — `scripts/check_production_genericity_flow.sh` joins the exact inventories to a
+  closed 140-row boundary registry and analyzes 2,169 production functions, 11,295 helper edges, 10,419 semantic
+  decision sites, 19 protected constructions, 28 protected calls, and 1,371 sensitive macro invocations; the
+  live report is deterministic and contains no absolute repository path.
+- [x] **ROOT CAUSE (WHY + WHERE)** — vocabulary enumeration cannot cover aliases or encoded selectors, a flat
+  AST pattern cannot see helper laundering, and syntax cannot replace compiler privacy/type resolution. The
+  enforceable boundary composes sealed Rust capabilities, the compiled syntax graph, a closed typed
+  source/declassifier/sink registry, interprocedural fixed-point flow, and executable proof replay.
+- [x] **ADDRESSED (verified)** — raw and identity sources propagate through parameters, fields, returns, calls,
+  methods, expressions, closures, and semantic macros; branch/selection sinks reject them outside registered
+  grammar/declassifier/trusted regions. Canonical field mutation, protected construction/calls, proof-value
+  serialization, and every canonical seam require their registered rule, kernel, or proof-gate topology.
+- [x] **NO REGRESSION** — the clean production surface and closed fixture pass; eleven mutations reject an identity
+  selector, raw literal decision, cross-class declassifier, direct or aliased unregistered canonical mutation, capability forgery,
+  helper laundering, macro laundering, proofless or wrong-stage canonical seam, and duplicate registry row.
+  Focused formatting, tool tests, warning-deny
+  Clippy, graph/dependency/inventory/rule checks, doctrines, full CI, mdBook, containment, and locality pass.
+- [x] **GENERICITY (ADR 0006)** — policy is expressed only as data classes, typed Rust paths, structural roles,
+  call topology, and proof authority. It contains no document, PDF, vendor, protocol, signal, corpus, or finite
+  forbidden-vocabulary exception; registered universal grammar is an auditable authority boundary, not a word
+  allowlist.
+- [x] **LOCKSTEP** — implementation, boundary registry, ADR 0038, research audit, roadmap, task tree, Knowledge
+  Map, live docs, and mdBook publish the same exact result and leave only unconditional doctrine composition to
+  `.e.v.iv`, adversarial breadth/per-rule alpha execution to `.e.vi`, and structural/population qualification to
+  `.e.vii`/`.f`.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1604,10 +1634,28 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii — scope proof digests to production semantics` | compiler-derived registry/verifier/item/import/kernel closures, inert/sensitive mutations, exact proof-only 120-artifact migration, and complete chain qualification |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i — freeze structural doctrine contract` | exact compiler-plus-AST proof composition, trust planes, closed flow boundaries, fail-closed syntax policy, data-plane ownership, and bounded `.e.v.ii`–`.iv` implementation frontier |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii — derive compiled production graph` | four Cargo-rooted production targets, exact 77-file accounting, deterministic module/item/import/call/macro graph, honest compiler-owned dispatch, and eight fail-closed controls |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii — enforce production information flow` | closed typed flow registry, fixed-point helper/macro propagation, raw/identity noninterference, protected authority, and proof-only canonical seams |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
 
+- `2026-08-13`: Completed `.6d.ii.e.v.iii`. A closed 140-row registry joins the rule, claim, and bypass
+  inventories to exact raw/identity sources, universal grammar and narrow identity declassifiers, proof gates,
+  trusted/non-authoritative regions, protected authority types, and canonical seams. The fixed-point AST analyzer
+  covers 2,169 functions, 11,295 helper edges, 10,419 semantic decision sites, 19 protected constructions, 28
+  protected calls, and 1,371 sensitive macro invocations; production is clean and eleven boundary mutations fail.
+  No vocabulary list or named-spec exception participates. The standalone flow gate is ready for `.e.v.iv` to
+  compose unconditionally into the doctrine driver; broader adversarial and alpha qualification remains `.e.vi`.
+  The mandatory development-notes rollover seals ten exact records as segment 0006 and leaves the 61-record /
+  1,420-line root warning-safe without moving the current entry.
+  Full qualification passes all eight doctrines, 1,952/6/0 Rust tests, five compile-fail doctests, warning-deny
+  Rustdoc, mdBook, containment, and locality; exact cleanup removes 12,885 incremental files / 9,138,704 KiB plus
+  disposable HTML and leaves the requested `.bin`/`.log` residue absent.
+- `2026-08-13`: Activated `.6d.ii.e.v.iii` from clean commit `da14101a`. This child owns one closed,
+  data-only registry for raw/identity sources, registered declassifiers, semantic control sinks, canonical
+  constructors/writers/lowerers, and rule roots plus the interprocedural graph analysis that joins them. It may
+  not register the final doctrine, claim the `.e.vi` mutation matrix or alpha obligations, or use document,
+  vendor, protocol, signal, or finite-vocabulary exceptions as proof.
 - `2026-08-13`: Completed `.6d.ii.e.v.ii`. The standalone graph package is disconnected from all product crates,
   derives four production targets across the exact 77-file inventory, accounts for 76 reachable plus one
   test-support-only file and 77 target-module identities, and emits the deterministic 3,180-item / 1,192-import /

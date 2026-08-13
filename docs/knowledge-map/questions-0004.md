@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > how does SpecForge handle Docling clones of a table cell with col_span greater than one
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > how does SpecForge handle one transaction and one rule writing the same named-drive target
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how does SpecForge measure source-to-IntentIR stage loss
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > how does SpecForge prevent analog dB limits from becoming digital timing intent
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -291,9 +297,3 @@
   > how is the protocol initiator actor identified structurally without a name list
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how is the purpose category different from document_class (richer 6-way semantic taxonomy vs coarse 4-way structural proxy; consumes document_class as one input, never replaces it)
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how is the required free disk for an ingest estimated
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)

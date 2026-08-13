@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -291,9 +297,3 @@
   > what is the registers.section_header_field strategy
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > what is the rolling ledger archive protocol
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > what is the semantic_ungrounded_records_not_promoted residual packet
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > what is the size-immunity binding constraint for source_ir.json at extreme page counts

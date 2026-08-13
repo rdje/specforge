@@ -88,14 +88,16 @@ metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400
 `.6e`; however, the owner-mandated whole-production genericity audit made structural neutrality a release blocker.
 SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are complete, and ADR 0038 freezes the proof-carrying migration. The workspace enforces the core/conformance boundary, and the sealed opaque-identity,
 ruleset, proof-ledger, compatibility, and promotion-kernel substrate is installed. A deserialized proof envelope
-cannot self-authorize. The current checked 41-family / 168-field graph resolves 116 producer/mutator entrypoints,
+cannot self-authorize. The current checked 41-family / 168-field graph resolves 117 producer/mutator entrypoints,
 53 canonical seams, four conformance-only bypasses, and the one cumulative-ledger compatibility contract.
 All four IR stages and the ISF adapter carry cumulative proof; 24 reachable adapters are current but honestly
 blocked/no-file, while 54 legacy chains are unmeasurable. `.e.iv.vii` binds proof identity to compiler-derived
-production registry/verifier/item/import/kernel closures. `.e.v.ii` now derives the exact Cargo-rooted production
-module/item/import/call/macro graph with fail-closed syntax and configuration handling. `.e.v.iii` next applies
-whole-core information-flow and proof-promotion policy over that graph.
-A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.v`–`.e.vii` still must enforce AST/information-flow obligations and
+production registry/verifier/item/import/kernel closures. `.e.v.ii` derives the exact Cargo-rooted production
+module/item/import/call/macro graph with fail-closed syntax and configuration handling. `.e.v.iii` now joins a
+closed typed boundary registry to that graph and enforces fixed-point raw/identity noninterference, protected
+authority, and proof-only canonical promotion across the complete production surface. `.e.v.iv` next composes
+that analyzer and the existing structural checks into the unconditional doctrine driver.
+A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.v.iv`–`.e.vii` still must register and qualify the AST/information-flow obligations and
 qualify the structural result; `.f` then owns population alpha-renaming, identity, paraphrase,
 and held-out qualification before `.6e`. A reproduced 400-page failure also drove resource-sized bounded
 activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.

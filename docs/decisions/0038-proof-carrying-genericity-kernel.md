@@ -4,8 +4,8 @@ title: Production genericity is enforced by opaque capabilities and a proof-carr
 date: 2026-08-12
 status: accepted
 scope: genericity, architecture, information-flow, proof-ledger, rule-registry, doctrine-enforcement
-evidence: doctrine/production_genericity/; docs/research/production-genericity-pipeline-audit.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; tools/production-genericity-graph/; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_rules.pl
-reverify: perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_dependencies.pl && scripts/check_production_genericity_graph.sh && perl scripts/check_production_genericity_rules.pl
+evidence: doctrine/production_genericity/; docs/research/production-genericity-pipeline-audit.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; tools/production-genericity-graph/; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_rules.pl
+reverify: perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_dependencies.pl && scripts/check_production_genericity_graph.sh && scripts/check_production_genericity_flow.sh && perl scripts/check_production_genericity_rules.pl
 answers:
   - "What replaces a forbidden vocabulary list as the proof of production genericity?"
   - "What is SpecForge's trusted promotion kernel?"
@@ -377,9 +377,40 @@ linked exactly; all other macro kinds stay classified for the following informat
 The enforcement tool is a fourth workspace member but has no dependency edge in either direction with a product
 crate. Seven dependency controls preserve that separation. Its fixture graph adds one positive and eight
 fail-closed currentness/configuration/module/item/alias/parse cases, and a double derivation of the live graph
-proves byte-deterministic JSON with repository-relative paths only. This slice derives the graph; `.e.v.iii`
-still owns taint, declassifier, semantic-sink, and proof-promotion policy, and `.e.v.iv` alone registers the
-composed doctrine.
+proves byte-deterministic JSON with repository-relative paths only. That slice derives the graph; the following
+`.e.v.iii` flow layer owns taint, declassifier, semantic-sink, and proof-promotion policy, while `.e.v.iv` alone
+registers the composed doctrine.
+
+### Closed information-flow boundary (`.6d.ii.e.v.iii`)
+
+The graph tool now loads a closed, schema-checked boundary registry whose rows name data classes and exact Rust
+paths rather than forbidden spellings. It joins every rule producer/mutator and canonical seam from the rule
+inventory, every canonical field from the claim inventory, and every conformance bypass. Explicit rows add typed
+raw/identity aggregates and fields, provider returns, universal grammar roots, narrow exact-identity
+declassifiers, proof gates and proof-value serializers/sinks, trusted/non-authoritative regions, and protected
+kernel/canonical types. Missing, duplicate, malformed, or unresolved rows fail before analysis.
+
+Each of the 2,169 production functions receives a symbolic dependency summary. A deterministic fixed point over
+11,295 local/helper edges propagates raw/identity dependence through parameters, returns, calls, typed local
+method candidates, fields, closures, expressions, and macro tokens. Comparisons, selection, conditions, matches,
+iteration, decision methods, and decision macros are sinks; raw/identity control is rejected outside the
+registered grammar/declassifier/trusted boundary. Sensitive input to an unclassified macro rejects. Conservative
+plain string parameters prevent a newly introduced laundering helper from becoming untainted merely because
+legacy APIs have not all acquired newtypes.
+
+Authority is a separate topology check. Canonical field mutation is confined to rule/kernel/conformance-overlay
+closure; protected proof and capability construction/calls obey their type contract; every canonical seam must
+reach its artifact stage's registered proof gate; non-authoritative and identity-declassifier closure cannot
+reach a seam; and verified persistence sinks require a value returned by a registered proof serializer. The live
+report also accounts for 10,419 semantic decisions, 19 protected constructions, 28 protected calls, and 1,371
+sensitive macros. Eleven fixture mutations reject identity/raw decisions, cross-class declassification,
+direct or aliased unregistered mutation, capability forgery, helper/macro laundering, proofless/wrong-stage persistence, and
+duplicate registry identity.
+
+This remains a composition, not an AST-only proof: Cargo compilation and Rust privacy are the type/capability
+oracle, executable ledger replay is canonical authority, and the AST supplies closed whole-surface flow and
+topology coverage. The standalone check is shipped but `.e.v.iv` alone registers it unconditionally with the
+other structural checks; `.e.vi` still owns the broader mutation matrix and executable alpha obligations.
 
 ## Consequences
 

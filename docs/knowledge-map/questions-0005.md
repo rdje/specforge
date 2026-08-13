@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how is the required free disk for an ingest estimated
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is the terminal task source archive boundary verified
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -292,9 +298,3 @@
   > is relation-completeness the right bar dimension for register / command / coherency protocols
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > is signal direction faithful to the document now or still defaulted to output
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > is source_ir.json bounded in size for very large PDFs

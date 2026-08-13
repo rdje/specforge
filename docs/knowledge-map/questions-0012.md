@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why does the ADI spec produce so few signals and so much garbage
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the AMBA DTI specification declare no signals
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the Bosch CAN specification declare no signals
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > why does the Claude Read tool refuse some PDFs / report password-protected
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -292,9 +298,3 @@
   > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > why was a signal not extracted from a signal table (e.g. AHB HREADY)
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why was corpus task maximum line width corrected from 4747 to 4746

@@ -1,9 +1,9 @@
 # Production-genericity pipeline audit
 
-Status: **discovery, dependency boundary, trusted kernel, rule census, SourceIR→ISF-adapter proof migration, digest precision, and compiled syntax-graph derivation complete; AST information-flow enforcement and behavioral qualification remain**
+Status: **discovery, dependency boundary, trusted kernel, rule census, SourceIR→ISF-adapter proof migration, digest precision, compiled syntax graph, and AST information-flow enforcement complete; doctrine integration and behavioral qualification remain**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
-Latest structural update: 2026-08-13 (`.6d.ii.e.v.ii`)
+Latest structural update: 2026-08-13 (`.6d.ii.e.v.iii`)
 Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
 Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
 
@@ -88,7 +88,7 @@ properties. ADR 0038 and the production-genericity Knowledge Map card retain the
 
 ## Exact rule and canonical-seam census (`.6d.ii.e.iv.i`)
 
-The checked graph joins 41 families to 168 field rules, 116 producer/post-build-mutator entrypoints, 53 canonical
+The checked graph joins 41 families to 168 field rules, 117 producer/post-build-mutator entrypoints, 53 canonical
 seams, and four conformance-only bypass obligations. It includes constructor-independent reclassification,
 enrichment, validation, and persistence paths; temporary fixture location grants no authority. SourceIR proves
 capture, each downstream stage retains the verified ledger as an exact prefix, and every field plus populated
@@ -125,6 +125,37 @@ binding, while classifying method calls, associated calls, external/prelude bind
 other type-dependent dispatch honestly for the compiler oracle. Unit controls run the live graph twice for
 byte identity and seed eight independent fail-closed faults. This is the exact substrate for `.e.v.iii`; it does
 not yet prove raw/identity noninterference or proof-only promotion, and it is not yet the registered doctrine.
+
+## Whole-production information-flow result (`.6d.ii.e.v.iii`)
+
+The structural tool now joins the compiled graph to `information_flow_boundary.tsv`, a closed registry of typed
+source, grammar, declassifier, proof, authority, and sink roles. Its 140 rows resolve to 22 source aggregate
+types, 13 source fields, three exact legacy-string parameter classes, two provider returns, 119 rule roots, 64
+grammar/declassifier roots, 12 canonical seams, 25 proof gates, 11 trusted regions, five non-authoritative
+regions, and 15 protected types. Rule roots, canonical
+seams, canonical fields, and conformance bypasses are derived directly from their existing inventories rather
+than being copied into a second reviewed list. A malformed, duplicate, or unresolved registry row fails closed.
+
+Symbolic dependencies propagate to a deterministic fixed point across 2,169 production functions and 11,295
+helper edges. Parameters, typed fields, provider returns, local and conservatively resolved method calls,
+closures, expression results, and macro tokens retain raw/identity dependence. The check rejects that dependence
+at 10,419 branch/selection/decision sites unless the call topology proves membership in a registered universal
+grammar, narrow exact-identity declassifier, trusted proof boundary, or non-authoritative inspection surface.
+Sensitive input entering an unclassified semantic macro fails instead of being ignored.
+
+Canonical authority is checked separately: canonical field assignment/mutation, 19 protected constructions, and
+28 protected calls are confined to their registered rule/kernel regions; all 12 seams must reach stage-matched
+proof gates; non-authoritative and identity-declassifier closure must remain disjoint from seams; and persistence
+sinks accept only values produced by registered verified serializers. Eleven controlled mutations reject an
+identity selector, raw literal decision, cross-class declassification, direct or aliased unregistered canonical mutation,
+capability forgery, helper laundering, macro laundering, a proofless or wrong-stage seam, and duplicate registry
+row.
+
+The implementation contains no named-spec vocabulary rule. It is deliberately stronger than a vocabulary
+census and deliberately not presented as AST-alone proof: Cargo/Rust privacy owns types and sealed capabilities,
+the AST owns closed flow/topology coverage, and executable current-binary replay owns semantic authority. The
+standalone gate passes the current production surface. `.e.v.iv` still must compose it unconditionally into the
+registered doctrine; `.e.vi` and `.f` retain broader adversarial/alpha and population-behavior qualification.
 
 ## Audit denominator and method
 

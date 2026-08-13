@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > does retiring gates remove conditional rules or temporal rules
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > does sanitizing the module name break initiator port matching (no — from_intent_ir re-derives the initiator raw; actor_name is only the label)
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does select_initiator_actor choose the first or last equal maximum
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does specforge adapt remove an old actor isf when actor selection changes
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
@@ -292,9 +298,3 @@
   > how does SpecForge flag vague or ambiguous spec language
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does SpecForge group a transaction's signals by channel
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how does SpecForge handle Docling clones of a table cell with col_span greater than one
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > how does SpecForge handle one transaction and one rule writing the same named-drive target
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how does SpecForge measure source-to-IntentIR stage loss

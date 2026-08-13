@@ -91,6 +91,8 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the proof ledger continue from SourceIR through ISF lowering?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How does the structural analyzer enforce proof-only canonical promotion?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is EvidenceIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is ISF adapter lowering proof-carrying?
@@ -109,6 +111,8 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is adapter validation backannotation authorized?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is raw and identity information flow enforced across production helpers?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is the compiled production Rust graph derived?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How many IntentIR fields and rule families are proved?
@@ -124,6 +128,8 @@
   > Were downstream artifacts reconciled after SourceIR schema 2?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What changes a production implementation digest?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > What closed registry defines the production information-flow boundary?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > What current priors are learned without protocol families?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -291,9 +297,3 @@
   > can an external absolute input be rebased into the repository
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > can automatic steering mutate canonical IntentIR without review
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > can before after once or while authorize SemanticIR phases
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > can certification administration become a SemanticIR phase or gate
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > can identical values in separate timing cells remain valid

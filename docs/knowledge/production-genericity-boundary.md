@@ -61,11 +61,14 @@ answers:
   - "How is the compiled production Rust graph derived?"
   - "How does the genericity graph distinguish exact calls from compiler-resolved dispatch?"
   - "What syntax uncertainty makes the production genericity graph fail closed?"
+  - "How is raw and identity information flow enforced across production helpers?"
+  - "What closed registry defines the production information-flow boundary?"
+  - "How does the structural analyzer enforce proof-only canonical promotion?"
 date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; tools/production-genericity-graph/src/analyzer.rs; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
-reverify: scripts/check_production_genericity_graph.sh && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; doctrine/production_genericity/information_flow_boundary.tsv; tools/production-genericity-graph/src/analyzer.rs; tools/production-genericity-graph/src/flow.rs; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
+reverify: scripts/check_production_genericity_graph.sh && scripts/check_production_genericity_flow.sh && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -142,7 +145,7 @@ Existing later-stage producers remain proofless until the
 exact `.e.iv` migration, so whole-core signoff remains open.
 
 The first `.e.iv` child froze the exact reviewed migration graph before a stage schema changed. Its current 41 rows
-expand to 168 field-root rules and resolve 116 producer/mutator entrypoints, 53 canonical seams, and four
+expand to 168 field-root rules and resolve 117 producer/mutator entrypoints, 53 canonical seams, and four
 conformance-only mutation bypasses. The target is one cumulative ledger: each stage verifies and preserves the
 exact upstream proof prefix, then appends its own field-root and per-record claims. Canonical load, serialization,
 write, downstream build, and ISF lowering all require a current complete ledger; an unregistered mutation makes
@@ -257,12 +260,26 @@ This closes registered proof-relation identity, not whole-core genericity. Curre
 observes builder/lowering dependencies outside the registry-rooted digest. AST-aware information-flow,
 adversarial structural qualification, and population behavior remain open work.
 
-The next structural child now derives the complete production syntax substrate. Cargo exposes four library/binary
+The production syntax substrate derives the complete current graph. Cargo exposes four library/binary
 targets; their module graph reaches 76 of the 77 inventoried files, with the remaining application test-support
 file classified explicitly. The resulting 77 modules contain deterministic item, import/alias, call, local-macro,
 external/builtin-macro, and attribute-macro nodes. Exact calls are separated from conservative compiler-resolved
 method/associated/binding dispatch, so the AST does not impersonate Rust type resolution. Missing inventory,
 unknown configuration, absent or ambiguous modules, duplicate items or aliases, parse failure, opaque verbatim
 syntax, and non-relative output fail closed. The graph tool remains dependency-disconnected from all three
-product crates. Information-flow source/sink/declassifier enforcement and doctrine registration remain the next
-two bounded children; whole-core genericity signoff is therefore still open.
+product crates.
+
+The following flow layer joins a closed 140-row typed registry to that graph. It derives rule roots, canonical
+fields/seams, and conformance bypasses from existing inventories, then resolves explicit raw/identity aggregate,
+field, and provider-return sources; universal grammar and exact-identity declassifiers; proof gates and values;
+trusted/non-authoritative regions; and protected types. A deterministic fixed point propagates dependencies
+through 2,169 functions and 11,295 helper edges, checking 10,419 semantic decision sites plus macro, mutation,
+construction, capability-call, proof-value, and canonical-seam topology. Sensitive unresolved macros reject.
+Eight fixture mutations prove identity/raw control, unregistered inference, authority forgery/laundering,
+proofless persistence, and registry duplication fail closed.
+
+The registry names data classes and Rust structure, never a document/vendor/protocol vocabulary. Cargo and Rust
+privacy remain the type/capability oracle; executable replay remains semantic authority; the AST proves closed
+whole-surface flow/topology. The standalone gate is clean but doctrine registration remains `.e.v.iv`, broader
+adversarial and alpha qualification remains `.e.vi`, and population behavior remains `.f`; whole-core genericity
+signoff is therefore still open.

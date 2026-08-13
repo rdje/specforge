@@ -129,9 +129,16 @@ missing inventory, absent or ambiguous modules, duplicate items or aliases, pars
 syntax reject. Exact syntactic calls are separated from conservative compiler-resolved method, associated,
 binding, and callable-expression edges; Cargo compilation remains the type/privacy oracle.
 
-Raw-evidence/identity information-flow enforcement over that graph, proof-only promotion checks, doctrine
-registration, per-rule alpha execution, structural qualification, and whole-population behavioral qualification
-remain mandatory.
+The information-flow layer over that graph is now shipped. A closed 140-row registry resolves typed aggregate,
+field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
+rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
+non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
+dependence through 2,169 functions and 11,295 helper edges, then check 10,419 branch/selection/decision sites,
+sensitive macro input, canonical mutations, protected construction/calls, proof serialization, and proof-only
+seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
+
+Unconditional doctrine registration, executable per-rule alpha qualification, broader adversarial structural
+qualification, and whole-population behavioral qualification remain mandatory.
 Until those close, SpecForge does not claim production-genericity signoff.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
@@ -141,11 +148,12 @@ removing comments, docs, formatting, and test/conformance branches. Controlled m
 identity and referenced production edits change it; missing or ambiguous roots fail compilation. The exact
 proof-only migration changes no non-proof/non-validation content across 120 artifacts and leaves the measurable
 chain current. Current-binary replay remains the behavioral guard outside that registry-rooted relation. The
-derived graph now closes syntax/module/currentness discovery; the pending information-flow child still owns the
-broader helper/raw-text/identity/promotion boundary.
+derived graph closes syntax/module/currentness discovery, and the flow layer closes the broader
+helper/raw-text/identity/promotion boundary. Cargo compilation/privacy and executable proof replay remain the
+independent type and semantic-authority layers; this is intentionally not an AST-only claim.
 
 That migration now has an exact checked contract. The 41 claim families expand to 168 current top-level-field
-rules and cover 116 reviewed producer/mutator entrypoints plus 53 canonical seams. One cumulative ledger starts
+rules and cover 117 reviewed producer/mutator entrypoints plus 53 canonical seams. One cumulative ledger starts
 from exact SourceIR capture, is verified and retained as an ordered prefix at every downstream stage, and gains
 field-root proofs (including empty fields) plus stable per-record proofs. Canonical load, serialization, write,
 downstream build, and ISF lowering require a complete current ledger; post-build mutation invalidates authority

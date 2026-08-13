@@ -1,3 +1,29 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii — enforce production information flow
+
+- Added a closed typed information-flow registry that resolves every declared raw/identity source, registered
+  grammar and narrow declassifier, proof gate, trusted or non-authoritative region, protected authority type, and
+  canonical seam against the compiled production graph. The registry joins the existing rule, claim-family, and
+  conformance-bypass inventories; it contains no document/vendor/protocol vocabulary exception.
+- Added fixed-point symbolic flow across parameters, fields, source returns, local/helper/method calls, closures,
+  expressions, selection/branch constructs, and macro token streams. Sensitive semantic control rejects outside
+  registered regions, unresolved sensitive macros fail closed, and canonical mutations plus protected
+  construction/capability calls require registered rule or kernel topology.
+- Enforced proof-only promotion structurally: every canonical seam has a graph path to the stage's registered
+  proof gate, non-authoritative/declassifier closure cannot reach a canonical seam, and verified JSON sinks must
+  consume a value returned by a registered proof serializer.
+- The current denominator passes at 140 boundary rows, 2,169 functions, 11,295 helper edges, 10,419 decision
+  sites, 19 protected constructions, 28 protected calls, and 1,371 sensitive macros. Eleven controlled mutations
+  reject identity/raw decisions, cross-class declassification, unregistered mutation, forged capability,
+  canonical-field alias laundering, helper/macro laundering, a proofless or wrong-stage seam, and duplicate registry identity. Final doctrine
+  registration remains the separate `.e.v.iv` slice.
+- Performed the mandatory lossless `DEVELOPMENT_NOTES.md` rollover triggered by this slice: the exact ten oldest
+  opening-boundary post-migration records became sealed segment `development-notes-0006` (294 lines / 24,928
+  bytes), while the in-flight information-flow record remains live in a 61-record / 1,420-line warning-safe root.
+- Passed complete repository qualification: all eight doctrines including exact chain currency, formatting,
+  warnings-denied Clippy/rustdoc, 1,952 Rust tests passed / six ignored / zero failed, five compile-fail doctests,
+  mdBook test/build, and final project-data locality. Removed the exact 12,885-file / 9,138,704-KiB rebuildable
+  Cargo incremental cache and disposable HTML book; the requested `.bin`/`.log` residue census is zero.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii — derive the compiled production graph
 
 - Added the standalone `specforge-production-graph` workspace package and kept it dependency-disconnected from

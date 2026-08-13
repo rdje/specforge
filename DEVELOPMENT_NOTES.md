@@ -1,4 +1,42 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii (`2026-08-13`) — neutrality is a typed flow boundary
+
+The structural analyzer now answers the question a vocabulary list cannot: whether input identity or raw evidence
+can influence semantic control or canonical authority through an arbitrary helper path. A closed schema-1 TSV
+names data classes and exact Rust paths—not words—to declare source aggregate/field/provider-return boundaries,
+registered universal grammar, narrow exact-identity declassification, trusted kernel/proof regions,
+non-authoritative inspection, protected types, proof values, and explicit joins to the rule/claim/bypass
+inventories. Every path and role resolves against the current compiled graph or the check stops.
+
+Analysis is interprocedural and conservative. Each production function receives a symbolic dependency summary;
+call/helper closure iterates to a fixed point, including exact syntax calls, conservative unique/typed local
+method candidates, closure bodies, field access, source construction/returns, ordinary expressions, and macro
+token dependencies. Comparisons, matching, conditions, indexing, iteration, decision methods, and decision
+macros are semantic sinks. Raw or identity dependence at those sinks is legal only in the registered grammar,
+declassifier, trusted proof, or explicitly non-authoritative plane appropriate to that operation. An unresolved
+macro receiving sensitive data fails instead of disappearing from the proof.
+
+Canonical authority is checked independently of taint. All claim-inventory fields reject assignment or
+collection mutation outside rule/kernel/conformance-overlay closure. Sealed proof/capability construction and
+calls are restricted by protected-type contracts. Every canonical seam must reach the proof gate registered for
+its artifact stage, while non-authoritative and exact-identity declassifier closure must be disjoint from those
+seams. Persisted JSON proof sinks accept only values produced by a registered verified serializer.
+
+The clean live report covers 140 boundary rows, 22 source types, 13 field sources, three legacy-string parameter
+classifications, two provider returns, 119 rule roots, 64 grammar/declassifier roots, 12 seams, 25 proof gates,
+11 trusted regions, five non-authoritative regions, 15 protected types, 2,169 functions, 11,295 helper edges,
+10,419 semantic decisions, 19 protected constructions, 28 protected calls, and 1,371 sensitive macros. Fixture
+mutations reject identity and raw selection, cross-class declassification, direct and aliased unregistered
+canonical mutation, capability forgery, helper and macro laundering, proofless/wrong-stage persistence, and a duplicate registry row.
+The standalone wrapper is intentionally not yet in `check_doctrines.sh`; `.e.v.iv` owns
+that integration, and `.e.vi` still owns the broader mutation matrix plus executable per-rule alpha obligations.
+
+Final qualification passes all eight doctrines including exact chain currency, formatting, warnings-denied
+Clippy and rustdoc, 1,952 Rust tests with six intentional ignores and zero failures, five compile-fail doctests,
+mdBook test/build, and final project-data locality. The scheduled cleanup removed the exact 12,885-file /
+9,138,704-KiB rebuildable Cargo incremental cache and disposable HTML book; `target/debug/incremental` is absent,
+and the requested generated/release/debug-deps `.bin`/`.log` residue census is zero.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii (`2026-08-13`) — proof identity follows production semantics
 
 The five proof-bearing stages no longer use their complete Rust source modules as implementation identity.
@@ -331,301 +369,6 @@ source spelling; a registered rule turns typed evidence into a grounded proposal
 proof and returns a proved claim. The AST scan planned for `.e.v` is defense in depth around those compiler/type
 boundaries. ADR 0038 owns the full architecture and makes explicit that linguistic completeness remains a
 qualification problem rather than something a proof ledger can pretend to solve.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv (`2026-08-12`) — qualification is compositional
-
-The three identity-remediation children change different authority boundaries, so their closure cannot be inferred
-from a token census or from any one unit test. The bounded qualification composes four properties: document identity
-cannot select prior memory; symbol spelling cannot select semantics or lowering; provider policy can use current-
-document symbols only as opaque grounded data; and corpus organization derives only typed structural facets.
-Current-binary chain currency proves those policies describe the persisted product, while focused alpha, identity,
-prompt, spelling, name-only, and fail-closed proposal controls exercise the cross-path invariants.
-
-The expected recall loss is evidence, not failure: 37 stale prior-created timings, 53 evidence constraints, 2,891
-invariants, 42 transactions, and 27 formerly renderable adapters depended on authority the source did not justify.
-None is restored through a named exception; source statements and explicit residuals preserve the recovery frontier.
-This closes `.d`, not the complete neutrality program. `.e` must make the rule structurally unrepresentable to violate,
-and `.f` must qualify the complete population under renaming, identity perturbation, paraphrase, and held-out inputs.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii (`2026-08-12`) — executable policy is structural
-
-Prompts are production policy even when their outputs are independently validated. The model-facing surfaces
-now describe typed digital-hardware relations, constraints, diagrams, tables, registers, and entailment while
-treating every document-owned symbol as opaque. Text prompts receive only current-document evidence and closed
-declaration catalogs; visual prompts admit only visible labels and structure. The complete constructor census
-found that entity typing still exposed the raw identifier and invoked model world knowledge. It now replaces that
-identifier in context and helper transport with `<OPAQUE_IDENTIFIER>`, leaving typed evidence and grammar only.
-Contract signals outside the independent catalog become residuals, and the LLM-primary constraint proposal cannot
-validate its own subject. Catalog order follows declaration/provenance order rather than spelling, because sorting
-opaque names would make prompt order change under alpha-renaming. No real vendor/protocol example remains.
-
-The corpus-KB command had a stronger identity leak: fixture-name substrings selected a protocol-family page and
-classified candidate evidence as gold or negative. `KgBenchFixtureStructureProfile` now derives capabilities
-solely from populated typed fixture fields, ignoring every string value. The ten managed Markdown outputs group
-the same 156 tracked conformance fixtures into seven structural capability pages; the named AMBA page is gone.
-Manifest schema 2 separately reports typed-prior presence and typed control surfaces, which may overlap. Exact
-fixture names remain provenance/display data and cannot decide membership or readiness.
-
-This is one bounded repair, not whole-core signoff. `.d.iv` qualifies the combined identity work; `.e` still
-owns the proof-carrying production/conformance module boundary and `.f` owns behavioral metamorphic replay.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii (`2026-08-12`) — neutrality requires positive authority
-
-Deleting a word denylist or uppercase check is not sufficient. During retained-corpus replay, two prose readers
-started treating the first word of an aside as a signal, and a descriptive invariant reader started treating
-ordinary “state”/“timing” prose as canonical. Those were latent grammar defects previously hidden by case-based
-rejection. The repair is positive and structural: a parenthetical name must fill the parentheses, a pin
-appositive must be bounded, a parenthesis cannot rename an already marked signal, and descriptive behavior must
-mention an exactly declared signal. No replacement vocabulary list was introduced.
-
-The same principle holds downstream. A model proposal cannot author the declaration that later validates it;
-roles cannot be reconstructed from fragments; and a target grammar's mandatory clock/reset fields cannot justify
-inventing design intent. Diagnostic placeholders make the absence inspectable while renderability stays blocked.
-This explains the deliberate 44→17 renderability change and is the architectural reason alpha-renaming is a
-semantic obligation rather than a token-census metric.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i (`2026-08-12`) — prior identity is provenance, never policy
-
-The prior path violated the neutral-core boundary at its selector. `ProtocolFamily::infer` inspected a document
-key and display name, then scoped seven EvidenceIR/SemanticIR prior families. This was stronger than an unfortunate
-identifier: renaming an identical input could change the lookup set.
-
-Schema 7 removes that selector. `PriorScope` has only `Global`; loaders receive only the persisted prior path,
-learning groups normalized evidence and typed/structural keys globally, and document identity remains provenance.
-The current deserializer rejects any other scope. Legacy schemas are not harmlessly compatible: their family
-partition is semantic authority, so schemas 1–6 clear the seven scoped prior arrays before typed load. The
-identity-independent structural-profile array may survive. This prevents a migration from converting old
-family-conditioned knowledge into apparently neutral global truth.
-
-The compatibility work exposed a separate feedback-integrity defect. The old schema-6 store declared 14 accepted
-IntentIR sources, one already deleted. Its 13 remaining current sources had no embedded persisted validation, so
-the store could not be rebuilt under its own `requires_validated_intent_ir` policy. The correct disposition was
-not to preserve the 1.49-MiB authority. The current sources were validated, the store relearned, every affected
-chain replayed, and the changed learning inputs validated again.
-
-The loop converged in two iterations: the first neutral replay removed one masked residual, changing the learned
-negative set from 12 to 11; the next learn and a third confirmation were byte-identical at SHA-256
-`a416cc8b7b6bd84947e4b6780d5253b13c2985c57ca4e8f1c02d6daf56239633`. The final store contains 29 actor, 83
-semantic, four modality, 443 temporal, zero table, 1,251 visual, 11 negative, and two profile priors. A global
-`manager` role contradiction is surfaced as contested rather than hidden by family partitions.
-
-ADR 0025 replay is exact at 24/24 measurable EvidenceIR and 78/78 downstream. Compared with the original
-family-scoped state, the neutral validated store increases globally applicable prior metadata only where current
-normalized evidence matches. One source chain loses 37 timing constraints that existed solely through the stale
-table prior; its 37 statements remain available for later grounded recovery. This leaf does not claim whole-core
-neutrality: signal spelling and prompt/corpus paths remain owned by the next children.
-
-## FSMGEN-REFRESH-INTEGRATE-8.1 (`2026-08-12`) — pin-only upstream compatibility
-
-The exact FSMGen fast-forward is four commits, from `a51dcdad0a7e752e638abfe3ab414f7f3911889d` to
-`c0d8b668db2527108d1c23c20d184400c51efea6`. The changed-path audit covers 15 files: hosted mdBook workflow
-repair, two AHB regression-corpus count restorations, terminal-failure inventory closure, and the upstream
-memory/task/knowledge projections that record those changes.
-
-No path in FSMGen's public ISF specification, downstream integration specification, parser, IR, lowering,
-SpecForge response, or release-contract surfaces changes. This makes the correct downstream integration a pin
-refresh, not a speculative compatibility edit. The seven SpecForge real-binary strict canaries pass at the new
-detached, clean pin. Current pin copies move with the gitlink; historical hashes remain evidence of their own
-review boundaries.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.b (`2026-08-12`) — SourceIR fails closed before semantics
-
-The first genericity remediation seam is SourceIR because every downstream extractor consumes its visual,
-table, and section labels. The old embedded Python mixed useful document grammar with reviewed-corpus cues:
-operation/burst captions could become timing diagrams, participant/interface phrases could name diagram and
-section kinds, binary/field-reference contents could become encodings without a declared mapping role, and a
-named packet-layout denylist attempted to patch register overclassification. Substring matching also let a
-generic fragment inside an unrelated word create authority.
-
-The replacement is deliberately narrower. Caption classification recognizes only explicitly named generic
-visual forms. Section grammar matches whole normalized phrases. Table classification requires typed role
-conjunctions: signal identity plus direction (or explicit signal identity plus width), value plus meaning,
-register identity plus access plus address/range, scalar timing roles plus context, or feature plus support.
-Operation, participant, filename, vendor/protocol, and arbitrary symbol spelling never participate. Ambiguous
-forms remain `unknown`; no negative vocabulary is needed to enumerate what a table is not.
-
-Changing only the writer would have left a bypass: 78 retained schema-1 SourceIR files already contain the old
-semantic labels. SourceIR schema 2 therefore treats those files as lossless source capture but not current type
-authority. Load neutralizes every legacy diagram/table/section label to `unknown`/`normative`, records why, and
-requires re-ingest to regain typed labels; a future schema is rejected.
-
-A read-only application of the new writer policy to all 78 retained SourceIRs measured the tradeoff before the
-blanket legacy downgrade: 2,293 diagram labels, 2,123 section labels, and 3,484 table labels would change. The
-largest removals are 1,918 register-bitfield and 317 timing-diagram guesses, 1,954 encoding guesses, 218 feature
-guesses, and 136 timing guesses. Conversely, 754 unknown tables acquire complete structural register-map
-authority because column order no longer controls recognition. This is a large, intentional recall reset—not
-evidence against feasibility. The source structure was always present; universal or grounded recovery can be
-rebuilt without preserving corpus-specific shortcuts.
-
-The first all-tier currency gate then made the compatibility effect concrete: ten of 24 EvidenceIR chains with
-retained normalized inputs differed, while all 78 later stages were still current against their old inputs.
-ADR 0025 therefore required same-leaf reconciliation. A repository-volume backup captured the exact 80 old
-files (39,847,014 bytes; aggregate SHA-256 `d5a59914b9c6b56f266f5959b1d396024decf3ce9919bd37ff547474da1e3a5f`),
-then each affected chain was rebuilt as EvidenceIR → SemanticIR → IntentIR → ISF adapter and all 30 typed IR
-artifacts were validated. The two renderable ISFs pass the pinned FSMGen strict checker with zero diagnostics.
-
-The attributed changes are deliberately not hidden behind aggregate currency. Four chains change only visual
-roles. Four documents lose 194 old table-derived timing records (55 + 60 + 5 + 74) because their tables do not
-satisfy the new timing-role conjunction. The debug-architecture chain loses weak table-derived actor/register
-authority (21→5 actor relations, 45→33 registers, 195→125 contracts) while adding four grounded section-register
-records. One discovery/configuration chain replaces one weak register guess with 16 structurally complete
-field-layout registers; one USB chain loses six weak register guesses; another gains one message-field record
-while losing one weak register guess and eleven figure-label-derived invariants. These are exact temporary
-recall/precision consequences, not a claim that the missing intent is absent. `.6d.ii.c` and `.6d.ii.d` own
-generic EvidenceIR recovery and identity-routing removal; restoring any result through a document-specific cue
-would violate the north star.
-
-After rebuild, exact replay currency is 24/24 measurable EvidenceIR and 78/78 SemanticIR, IntentIR, and ISF
-adapter chains. The 54 EvidenceIR chains whose normalized bundles were reclaimed remain explicitly
-unmeasurable until their owned re-ingest; no stale measurable artifact remains.
-
-Signoff is complete for this seam: all eight doctrines, formatting, warning-deny Clippy, 1,873 tests with six
-ignored and zero failures, warning-deny rustdoc, mdBook test/build, and final project-data locality pass. The
-exact rollback root and temporary comparison script are removed and absent. This closes SourceIR only; it does
-not weaken or pre-approve the protocol-specific EvidenceIR surfaces owned by `.6d.ii.c`.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.a (`2026-08-12`) — replay truth exposes the production-genericity breach
-
-The clean replay starts only after `.6d.i` commits, so all 12 sources and 48 stages bind production revision
-`b977a51f`. Four source authorities are repository-relative; eight read-only authorities are hash-equal, reside
-on the repository's SSD filesystem, and enter only through an untracked runtime map. Durable evidence retains
-portable ids, digests, byte counts, and repository-relative scratch paths—never a host path.
-
-Fresh root/revision metadata changes stage identities, but the complete 14-cell reviewed projection localizes
-semantic causality exactly. Only the two OpenCAPI analog cells change. `IL(f)|21 dB`,
-`ILD(f)|0.45 dB_RMS`, and `IL(f)|30 dB` disappear from all three canonical projections and reappear unchanged
-as source-linked residual keys at SemanticIR and IntentIR. Each residual carries non-empty reason, boundary, and
-replay data, so both reviewed cells are actionable and accounted. The four UI digital-skew facts, every other
-reviewed cell, all 24 prior true positives, and 29/29 canonical provenance remain exact.
-
-TP/FP/FN become 24/2/16. The evaluator counts residual actionability per required cell/stage observation, hence
-the two repaired cells contribute four met observations (4/24), not three key-level observations. Source
-disposition becomes 6/14 and required-modality document accounting 4/12; conservation remains 72/88 and the 16
-unexplained canonical drops are unchanged. Physical-link is now `supported`; the other five categories remain
-`incomplete` for their own measured defects.
-
-Controller v6 therefore cannot jump to `.7`. Its replay and provenance hard gates are clear, but the zero-
-fabrication gate retains two unrelated violations: one AMD IOMMU packed-layout key and one GIC-400 summary-
-caption key. The hard-first owner is new pending `.6e`, followed by `.7`'s 16 source losses, `.8`'s 20 remaining
-inactionable residual observations, and `.9`'s five omitted capability islands. The promoted manifest, result,
-input, and report hashes are `81f1758b…2c855`, `78e27515…5075`, `274311e6…0c04`, and `ccb8a112…b5d8`.
-After promotion, the exact 3,913-file / 1,090,948-KiB replay root and runtime source map were removed and proved
-absent.
-
-The owner review of the exact OpenCAPI assertions triggered a complete production-pipeline audit rather than a
-local vocabulary cleanup. The denominator is all 71 Rust sources, including embedded Docling Python, optional
-VLM/text/NLI paths, prior learning/use, validation/evaluation, corpus commands, trajectory composition, and both
-adapters. The audit confirms that the generic stage architecture is reusable, but the compiled production
-surface is not neutral: document identity selects named prior families; EvidenceIR exposes and produces a named
-serial protocol schema; signal spellings infer semantic roles; PDF classifiers contain corpus-calibrated
-phrases; prompts narrow the input domain; and production comments/public names normalize specific examples.
-
-A finite token denylist cannot close that class of failure: it misses unseen aliases, hashes, thresholds,
-translated fragments, schema coupling, and neutral-looking copied phrases. Signoff therefore requires a one-way
-production-core/conformance boundary, opaque input identities and symbols, audited grammar APIs for raw text,
-source-grounded promotion/residuals, AST/dependency mutation tests, and behavioral invariance under symbol
-renaming, identity perturbation, paraphrase, and held-out documents. The reviewed snapshot composer is the first
-boundary correction: it now exists only in `#[cfg(test)]` support, while the generic evaluator/controller stays
-in production.
-
-The audit does not imply that neutral extraction is theoretically impossible. Universal digital-intent types
-and document grammar are legitimate priors; document identity, named signals, and corpus phrases are not.
-Perfect recovery from absent, contradictory, or unreadable source is impossible, so the signoff contract is one
-identity-independent engine that promotes justified intent and makes every unsupported or undecidable item an
-explicit residual. Remediation may reduce benchmark recall temporarily; keeping a named shortcut is not an
-acceptable way to preserve it.
-
-## SPEC-TO-INTENT-ALIGNMENT.6c.ii (`2026-08-12`) — provenance closure exposes the next honesty family
-
-The clean replay was intentionally run only after `.6c.i` committed. Its production revision is therefore the
-exact `74a658b3` boundary, not a dirty-tree approximation. All 12 reviewed source hashes match their prior
-authority, including the eight caller-authorized read-only inputs on the repository's SSD volume; the runner
-copies those inputs into repository-local scratch before use and persists no host path.
-
-Every stage artifact has a new identity because the isolated JSON carries the fresh replay root and the current
-production revision. The reviewed projection provides the causal comparison: only five cells change. I2S moves
-from 0/5/5/5 to 5/0/0/0 true-positive/false-positive/false-negative/unprovenanced counts because the five exact
-values now retain `ns` and `table_0004`. Four correct OpenCAPI digital-skew records and three incorrect analog
-channel-loss records gain table provenance only. No other reviewed cell changes, and all 19 prior true positives
-survive.
-
-The new aggregate is 24/5/16 TP/FP/FN, 29/29 provenance, 72/88 conservation, 4/14 source disposition, and 2/12
-required-modality document accounting. The result is important structurally: provenance is no longer mixed into
-the next decision. The controller still fails the zero-fabrication hard gate on five exact records and selects a
-new owned `.6d` leaf. Its largest bounded family is three OpenCAPI analog channel-loss records; AMD IOMMU and
-GIC-400 account for one remaining fabricated register key each. Recall recovery under `.7` stays second.
-
-The replay orchestrator and projection now require caller-provided portable replay, owner, and dataset identities,
-so a later qualification cannot silently publish stale `.6b.ii.b` names. After portable evidence and the result
-were promoted, the exact 3,913-file / 1,090,908-KiB root and runtime source map were removed and proved absent.
-
-## SPEC-TO-INTENT-ALIGNMENT.6c.i (`2026-08-12`) — the unit existed before the carrier
-
-I2S `table_0004` was already recognized as timing and its five scalar rows were already exact. The missing value
-was table-wide metadata: SourceIR retained `all values in ns` in the caption, but
-`synthesize_timing_constraints` read only a dedicated unit column. The same producer initialized statement
-support empty even though each record came directly from a structured table, and `TimingConstraintRecord` had
-no separate home for that authority. SemanticIR and IntentIR then correctly cloned the incomplete record.
-
-The repair is structural and closed. `timing_caption_unit` accepts only the complete `all value(s) in <unit>` cue
-and a bounded timing-unit vocabulary. It preserves source spelling, refuses unrelated unit mentions, and is used
-only when the row has no explicit unit. Every table-derived timing row now records its table in
-`supporting_table_ids`, distinct from `supporting_statement_ids`. The field is default-empty and omitted while
-absent, so pre-carrier artifacts and timing observations from other modalities remain compatible.
-
-The fixed-input retained-corpus replay identified exactly five stale EvidenceIR artifacts: OpenCAPI 25G,
-OpenCAPI 32G, I2C, I2S, and USB 3.2. Their 55/60/37/5/74 timing cardinalities do not change. All 231 rows gain
-one existing SourceIR table id; only the five I2S rows also change unit from absent to `ns`. The exact 41-file /
-25,308-KiB pre-change cascades were copied within the repository volume before replacement. After rebuild and
-validation, all 15 EvidenceIR/SemanticIR/IntentIR artifacts equal those backups after neutralizing only the new
-carrier and the five intended units. All five adapter JSON files and the sole emitted `.isf` are byte-identical.
-Whole-chain replay is current at EvidenceIR 24/24 plus SemanticIR/IntentIR/adapters 78/78.
-
-The dirty-tree real-source probe and the retained SourceIR reconciliation answer different questions. The probe
-proved current ingest bytes can carry all five facts through the stages; rebuilding from the retained SourceIR
-kept ADR 0025 isolation sharp and avoided importing unrelated current-ingest classifier changes. Clean committed-
-revision replay of all 12 reviewed sources and publication of the exact quality/controller delta remain owned
-only by `.6c.ii`.
-
-After hash-verifying all 41 rollback files, the complete 89-file / 89,012-KiB reconciliation workspace and the
-64-file / 11,532-KiB real-source probe were removed. Both exact roots and the standalone initial-currency log are
-absent; no background result remains to consume.
-
-Signoff passes all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866 Rust
-tests with five ignored and zero failures, warning-deny rustdoc, mdBook, and final project-data locality.
-
-## SPEC-TO-INTENT-ALIGNMENT.6b.iii (`2026-08-12`) — activation is a resource decision
-
-The 400-page failure did not come from page-range conversion or the autonomous RAM guard. Rust already adapted
-the size of an active batch from total RAM, but bounded *activation* remained a separate embedded-Python default:
-512 pages. Worse, failure of the cheap `pypdfium2` page count silently selected the same single-pass path. When
-the backend was killed by the operating system, Rust collapsed the missing exit code into an ordinary external
-command error. The safety mechanisms existed, but the selection and error seams did not compose them.
-
-The repaired default observes total physical RAM once and uses it for both decisions. Activation budgets 40% of
-that fixed capacity against the measured 64-page / roughly 4.8-GiB Docling working set—75 MB per page—and clamps
-the result to 1..399 pages. This is deliberately conservative: unnecessary batching costs time, while an unsafe
-single pass loses the process. The known 400-page risk remains capped even on a larger host; the current 24-GiB
-host resolves 131 pages and the existing adaptive ladder resolves 64 pages per batch. Fixed total RAM, rather
-than momentary free RAM, keeps the choice deterministic. Explicit nonnegative threshold overrides remain exact;
-bad or absent values return to policy rather than disabling it.
-
-The embedded helper now refuses conversion when it cannot count pages, receives both resolved values explicitly,
-and records threshold, batch size, and batched state in its metadata. On Unix, signal termination becomes typed
-`IngestTerminatedBySignal`; its diagnostic says truthfully that a signal may reflect external resource
-enforcement but does not prove OOM. The existing in-process guard remains the only path that can assert measured
-memory breach through `IngestAbortedForMemory`. Both failure paths discard staging and retain the last good bundle.
-
-The live proof used no threshold override. Arm Debug selected 131/64 and reproduced 400 pages, 210 tables, 176
-figures, 6,784 elements, and 1,321 sections. Profile, structured tables, content elements, and sections are
-byte-identical to the retained SourceIR; page artifacts and visual assets are identical after neutralizing their
-root path. EvidenceIR, SemanticIR, and IntentIR are likewise byte-identical after path normalization and removal
-of validation backannotations. The exact 795-file / 184,164-KiB replay root is removed and absent.
-
-Focused policy, helper-contract, process-status, environment-propagation, and staged-swap tests pass. Full CI
-passes all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,866 Rust tests with five
-ignored and zero failures, warning-deny rustdoc, mdBook, and final project-data locality. The leaf is ready for
-its closure commit; `.6c` remains the next semantic work.
 
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 (`2026-08-08`) — measured adoption decision
 

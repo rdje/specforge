@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > what is the semantic_ungrounded_records_not_promoted residual packet
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > what is the size-immunity binding constraint for source_ir.json at extreme page counts
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what is the source-to-IntentIR completeness contract
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -291,9 +297,3 @@
   > where is the canonical SpecForge user guide
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > where is the complete live document containment adoption task history
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > where is the declared-signal gate applied (pattern + dynamic constraint paths)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > where is the default-flip decision packet / should promote-constraints-llm become the default

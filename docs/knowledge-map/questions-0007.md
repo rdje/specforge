@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what are the exact source-to-IntentIR precision recall and stage-loss totals
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what are the extraction_quality_* validate metrics and when do they read n/a
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what are the final Cortex-A76 SourceIR normalized and downstream reproducibility hashes
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > what are the final GIC Overview Guide reproducibility hashes
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
@@ -292,9 +298,3 @@
   > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever

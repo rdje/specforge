@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > where is the complete live document containment adoption task history
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > where is the declared-signal gate applied (pattern + dynamic constraint paths)
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > where is the default-flip decision packet / should promote-constraints-llm become the default
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -291,9 +297,3 @@
   > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > why did Arm Debug register access disappear before EvidenceIR
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > why did DL disappear from the OpenCAPI Certified Definition
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why did FSMGen pin a51dcdad0 reject SpecForge manager.isf with isf_ambiguous_rule_transaction_drive_priority on AWSNOOP

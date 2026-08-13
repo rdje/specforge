@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 pub const GRAPH_SCHEMA_VERSION: u32 = 1;
+pub const FLOW_SCHEMA_VERSION: u32 = 1;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ProductionGraph {
@@ -105,6 +106,55 @@ impl ProductionGraph {
             self.calls.len(),
             definitions,
             invocations,
+        )
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct InformationFlowReport {
+    pub schema_version: u32,
+    pub boundary_rows: usize,
+    pub source_types: usize,
+    pub source_fields: usize,
+    pub source_parameters: usize,
+    pub source_returns: usize,
+    pub rule_roots: usize,
+    pub grammar_declassifiers: usize,
+    pub canonical_seams: usize,
+    pub proof_gates: usize,
+    pub trusted_regions: usize,
+    pub non_authoritative_regions: usize,
+    pub protected_types: usize,
+    pub analyzed_functions: usize,
+    pub helper_edges: usize,
+    pub decision_sites: usize,
+    pub protected_constructions: usize,
+    pub protected_calls: usize,
+    pub semantic_macros: usize,
+}
+
+impl InformationFlowReport {
+    pub fn summary(&self) -> String {
+        format!(
+            "production-genericity-flow: {} boundary rows; {} source types; {} source fields; {} source parameters; {} source returns; {} rule roots; {} grammar declassifiers; {} canonical seams; {} proof gates; {} trusted regions; {} non-authoritative regions; {} protected types; {} functions; {} helper edges; {} decision sites; {} protected constructions; {} protected calls; {} semantic macros",
+            self.boundary_rows,
+            self.source_types,
+            self.source_fields,
+            self.source_parameters,
+            self.source_returns,
+            self.rule_roots,
+            self.grammar_declassifiers,
+            self.canonical_seams,
+            self.proof_gates,
+            self.trusted_regions,
+            self.non_authoritative_regions,
+            self.protected_types,
+            self.analyzed_functions,
+            self.helper_edges,
+            self.decision_sites,
+            self.protected_constructions,
+            self.protected_calls,
+            self.semantic_macros,
         )
     }
 }

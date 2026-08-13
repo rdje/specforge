@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > is signal direction faithful to the document now or still defaulted to output
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > is source_ir.json bounded in size for very large PDFs
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -291,9 +297,3 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what are the deeper enum member-quality residual classes after .5.ii / what did the .5.iii measurement find (measured 2026-06-24 read-only, reproducer scripts/measure_enum_width_leak.py: of the 5 deferred classes — glossary SEE…, front-matter/ToC, section-caption B2_3_1_…, _WIDTH parameter leaks, value-restart-of-clean — most are SUBSUMED by .5.i (47/54 _WIDTH members
   > and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > what are the exact source-to-IntentIR precision recall and stage-loss totals
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what are the extraction_quality_* validate metrics and when do they read n/a
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what are the final Cortex-A76 SourceIR normalized and downstream reproducibility hashes

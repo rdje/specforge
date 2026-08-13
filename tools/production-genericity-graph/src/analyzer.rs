@@ -17,15 +17,20 @@ use crate::model::{
 };
 
 #[derive(Clone)]
-struct ModuleUnit {
-    id: String,
-    target: String,
-    module_path: Vec<String>,
-    source_path: String,
+pub(crate) struct ModuleUnit {
+    pub(crate) id: String,
+    pub(crate) target: String,
+    pub(crate) module_path: Vec<String>,
+    pub(crate) source_path: String,
     module_dir: String,
     attribute_dir: String,
-    inline: bool,
-    items: Vec<Item>,
+    pub(crate) inline: bool,
+    pub(crate) items: Vec<Item>,
+}
+
+pub(crate) struct AnalyzedProgram {
+    pub(crate) graph: ProductionGraph,
+    pub(crate) modules: BTreeMap<String, ModuleUnit>,
 }
 
 #[derive(Debug, Clone)]
@@ -79,6 +84,10 @@ struct UseLeaf {
 }
 
 pub(crate) fn analyze(root: &Path) -> Result<ProductionGraph, String> {
+    Ok(analyze_program(root)?.graph)
+}
+
+pub(crate) fn analyze_program(root: &Path) -> Result<AnalyzedProgram, String> {
     let root = root
         .canonicalize()
         .map_err(|error| format!("cannot resolve repository root: {error}"))?;
@@ -191,7 +200,7 @@ pub(crate) fn analyze(root: &Path) -> Result<ProductionGraph, String> {
             enabled_features: context.features.iter().cloned().collect(),
         })
         .collect();
-    Ok(ProductionGraph {
+    let graph = ProductionGraph {
         schema_version: GRAPH_SCHEMA_VERSION,
         inventory_files: inventory.values().map(InventoryFile::from).collect(),
         reachable_files: reachable_files.into_iter().collect(),
@@ -202,7 +211,8 @@ pub(crate) fn analyze(root: &Path) -> Result<ProductionGraph, String> {
         imports,
         calls,
         macros,
-    })
+    };
+    Ok(AnalyzedProgram { graph, modules })
 }
 
 fn parse_inventory_files(
@@ -956,11 +966,11 @@ fn owner_name(self_ty: &syn::Type) -> String {
     normalized_tokens(self_ty)
 }
 
-fn normalized_tokens(value: &impl ToTokens) -> String {
+pub(crate) fn normalized_tokens(value: &impl ToTokens) -> String {
     value.to_token_stream().to_string()
 }
 
-fn short_hash(value: &str) -> String {
+pub(crate) fn short_hash(value: &str) -> String {
     let digest = Sha256::digest(value.as_bytes());
     format!("{digest:x}")[..16].to_owned()
 }

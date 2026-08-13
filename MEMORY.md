@@ -17,15 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` is complete and awaiting its clean commit. `.e.v.i` is
-  committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` is complete in the handoff commit; `.e.v.iv` is the
+  next leaf only after the director resumes from this clean state. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
 - Current state: all five proof-bearing stages use compiler-derived production-semantic implementation identity,
   and the exact live denominator is 77 production modules / 41 claim families / 168 artifact fields. The new
-  dependency-disconnected analyzer accounts for all 77 inventoried files, derives four targets / 77 target
-  modules / 3,180 items / 1,192 imports / 25,347 calls / five macro definitions / 9,610 invocations, and fails
-  closed on unresolved structure. No registered whole-core AST information-flow doctrine exists yet.
-- Next action: after this clean commit, activate `.6d.ii.e.v.iii` and enforce raw/identity noninterference plus
-  proof-only canonical promotion over the derived graph.
-- In-flight uncommitted: completed `.e.v.ii` code/docs awaiting the current commit workflow. No background job.
+  dependency-disconnected analyzer now also joins a closed 140-row boundary registry and checks 2,169 functions /
+  11,295 helper edges / 10,419 semantic decisions for raw/identity noninterference, protected authority, and
+  proof-only canonical promotion. All eight doctrines, 1,952/6/0 Rust tests, mdBook, containment, locality, and
+  cleanup pass. The standalone flow gate is deliberately not registered yet.
+- Next action: on director resume, activate `.e.v.iv` from the clean tree and compose the existing dependency,
+  inventory, rule, graph, and flow checks into one unconditional doctrine.
+- In-flight uncommitted: none after the handoff commit. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.
