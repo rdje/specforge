@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > is collect_known_signal_names UTF-8 safe
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > is converge the complete production capability path
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -290,11 +298,3 @@
   > what are the SWD packet phases and per-phase SWDIO direction
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > what are the canonical SWD protocol surface counts
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > what are the current AArch64 External Debug artifact hashes
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what are the current CoreSight Base System artifact hashes
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what are the current Introducing CoreSight artifact hashes

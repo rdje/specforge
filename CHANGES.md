@@ -1,3 +1,20 @@
+### SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3 — materialize bounded alignment task evidence
+
+- Ran the accepted same-volume root-last writer against the clean `38b79395` source boundary. The stable task
+  path is now a 127-line / 5,725-byte current root with all 58 exact executable owners and no eligible product
+  frontier; an 86-line / 5,925-byte index routes seven exact legacy parts and one reserved behavioral part.
+- Preserved all 2,049 source lines / 278,178 bytes independently in the archive capsule at SHA-256
+  `e70892a5…a26c`, and again as 21 byte-identical marked payloads. Eight parts total 2,144 lines / 282,030 bytes;
+  the largest is 502 lines / 65,125 bytes.
+- Registered exact index, part, and archive surfaces. Extended `aggregate_composition` with closed per-band role
+  counts when health and ceiling file cardinalities differ, so ADR 0039's 16/24-file profile remains exact
+  without raising any bound; the focused lifecycle/control-plane suite is now 84 cases.
+- Synchronized the live-size doctrine, enforcement guide, mdBook, fact catalog, Knowledge Map, task evidence,
+  and resume pointer. The reserved `.6d.ii.f` part remains unrouted and behaviorally inactive until `.4` audit.
+- Passed all nine doctrines and genericity components, formatting, warning-denied Clippy, 1,954 Rust tests with
+  five ignored and zero failed, five doctests, Rust docs, mdBook, and final locality. Removed 73 HTML-book files
+  (8,952 KiB) and 315 incremental files (88,416 KiB); requested `.bin`/`.log` residue is absent.
+
 ### SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 — close the exact migration inputs
 
 - Pinned the final clean alignment source boundary at `38b79395` without changing its `66ae9b6c…3632` blob,

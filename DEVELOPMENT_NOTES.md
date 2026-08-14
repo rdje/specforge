@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3 (`2026-08-14`) — current truth, semantic history, and exact provenance separate cleanly
+
+The migration began only after the source-locked contract revalidated at clean boundary `38b79395`. The accepted
+writer preflighted the reviewed 127-line root template, wrote the capsule, eight semantic parts, index, manifest,
+and migrated contract on the repository volume, then replaced the stable root last and validated the complete
+result. Its temporary template was removed immediately after the byte-identical root comparison.
+
+The stable root is 5,725 bytes and retains all 58 exact declarations read by trajectory ownership validation.
+It normalizes `.0`–`.5` as complete, `.6`/`.6d`/`.6d.ii` as in progress, `.f` as pending behind containment,
+and `.6e`/`.7`/`.8`/`.9` as pending. It exposes one detail route and deliberately names no eligible product
+frontier until `.4`. The 86-line / 5,925-byte index supplies all 58 primary routes. Seven immutable legacy parts
+plus one 4-line reserved active part total 2,144 lines / 282,030 bytes; their largest member is 502 lines /
+65,125 bytes. All 21 marker payloads reproduce the locked source, while the independent archive capsule remains
+exactly 2,049 lines / 278,178 bytes at SHA-256 `e70892a5…a26c`.
+
+Live-surface integration caught a generic representational defect before commit. ADR 0039's part profile has 16
+health files and 24 ceiling files with tighter heterogeneous totals, but `aggregate_composition` previously gave
+each role one shared count. Such a declaration can reproduce only profiles whose two file bands are equal.
+The schema now accepts either the existing scalar count or a closed `health`/`ceiling` count object and sums the
+selected band independently. Missing and unknown bands fail closed. The alignment record proves exact sums with
+eight semantic plus 8/16 continuation slots; no health target, rollover point, or ceiling changes. The focused
+suite grows from 81 to 84 cases, and the staged live census classifies 821 Markdown files across 55 surfaces.
+
+Complete signoff passes all nine doctrines including exact chain currency, all nine production-genericity
+components, formatting, warning-denied Clippy and rustdoc, 1,954 Rust tests with five ignored and zero failed,
+five compile-fail doctests, mdBook test/build, and final project-data locality. Cleanup removes the generated
+73-file / 8,952-KiB HTML book and 315-file / 88,416-KiB incremental cache; the requested `.bin`/`.log` residue
+outside the removed incremental tree is absent.
+
 ## SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 (`2026-08-14`) — complete means every owner is routed
 
 The final source-locked boundary is clean commit `38b79395`; Git boundary, stage-zero index, and working bytes

@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is the repaired USB 3.2 ISF adapter blocked
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why is the snap trigger absence-from-sentence and not typing failure
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > why is the stage-staleness check zero-versus-some and not a count comparison
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > why is there no fields-without-positions completeness gap
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why must a collection aggregate be at least files times per-file
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > why must read-only census commands avoid /tmp and /private/tmp
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > why must source-library paths not determine whether a corpus document was refreshed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)

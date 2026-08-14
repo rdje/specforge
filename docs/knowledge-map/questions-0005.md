@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how is the NLI gate tested without Ollama
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWDIO sampling and drive-change edge scored
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -60,6 +66,8 @@
   > how many USB4 Inter-Domain page sidecars are repository relative
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how many administrative workflow statements were measured
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > how many alignment task owners and routes survive migration
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -290,11 +298,3 @@
   > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > is any corpus document ingested at fewer pages than its source PDF
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > is collect_known_signal_names UTF-8 safe
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > is converge the complete production capability path

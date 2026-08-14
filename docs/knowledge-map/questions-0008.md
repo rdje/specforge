@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what is ADR 0024
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > what is ADR 0025
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > what is ADR 0026
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > what is ADR 0027
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > what is ADR 0029
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what is ADR 0030
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > what is ADR 0031
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -285,15 +297,3 @@
   > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is the live-document coverage authority
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is the message_field_catalog_dump measurement harness
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > what is the message_fields.section_header_field strategy
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is the model-misspelled-subject / phantom-subject defect class
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the must_be_value + VALID typed convention
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > what is the next big PDF-variant digestion lever after the serial class
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)

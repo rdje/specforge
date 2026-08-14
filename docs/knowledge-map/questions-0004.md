@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > how does SpecForge combine confidence across modalities or sources
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how does SpecForge decide signal direction (input/output) in the emitted .isf
 - [contested-priors](../knowledge/contested-priors.md)
@@ -291,9 +297,3 @@
   > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how is the FSMGen feedback channel kept bounded without losing old requests and responses
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how is the NLI gate tested without Ollama
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWDIO sampling and drive-change edge scored

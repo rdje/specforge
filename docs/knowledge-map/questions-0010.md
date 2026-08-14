@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > where is legal administrative prose filtered
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > where is normalized staging removed from Docling metadata
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > where is parenthetical single-wire authority enforced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > where is register level access stored in RegisterRecord
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
@@ -38,6 +50,8 @@
   > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > where is the exact historical SpecForge roadmap after containment
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > where is the exact pre-migration alignment task source
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where is the extraction architecture contract
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -283,17 +297,3 @@
   > why are two containment records at the bottom of CHANGES
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why can CORPUS-COVERAGE not accept refresh 49 yet
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > why can SWD protocol records not be lowered directly to ISF
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > why can SWD score 100 percent while its protocol is absent downstream
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > why can a shipped standalone extractor fail to improve the default end-to-end result
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why can an active task legacy route use a shorthand source literal
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > why can the fact-card maximum not simply be raised from 198
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > why can the roadmap not be split safely at Markdown headings

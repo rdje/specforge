@@ -21,6 +21,7 @@
 | [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md) | 2026-06-16 | `current` | The .1b.i consolidation strips a TRAILING universal verb/discourse-adverb off a relation-subject ("Subordinat… |
 | [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md) | 2026-06-23 | `current` | The .1c.i consolidation extends the .1b.i trailing strip to a closed class of trailing PREPOSITIONS + AUXILIA… |
 | [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md) | 2026-06-08 | `current` | A second agnostic FSM grammar — quoted operational modes of an actor (CAN error states) vs SWD's "<State> s… |
+| [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md) | 2026-08-14 | `current` | Alignment task evidence is a bounded active root over exact semantic and provenance authorities |
 | [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md) | 2026-06-04 | `current` | validate flags vague spec prose via the weak-phrase detector (ir/ambiguity.rs) |
 | [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md) | 2026-06-06 | `current` | APB signal catalog is fully extracted (35/35); tables 0016/0017/0018 are duplicate views, not misses |
 | [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |
@@ -60,4 +61,3 @@
 | [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md) | 2026-08-10 | `current` | The active corpus task requires a bounded root, seven semantic parts, and exact provenance before refresh 49 |
 | [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md) | 2026-08-10 | `current` | The corpus-wide rebuild collapsed 14 documents' false interfaces, taking emitted ISFs from 57 to 44 |
 | [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The Cortex-A76 optimization guide is constraint evidence, not a 537-output instruction interface |
-| [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |

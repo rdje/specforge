@@ -337,7 +337,8 @@ sub validate_surface_schema {
 # every file is legal is refused by a total no single file can see — a state ordinary compliant writing
 # reaches and no compliant action leaves (ADR 0029, ADR 0032). The single exemption is a heterogeneous
 # collection that declares its exact member partition, which must sum to the declared bounds rather than
-# merely assert that it does.
+# merely assert that it does. A role may use one scalar count for equal file bands or exact per-band counts
+# when health and ceiling intentionally admit different collection cardinalities.
 sub validate_aggregate_reachability {
     my ($surface, $id) = @_;
     return if ($surface->{locator} // '') ne 'collection';
@@ -364,9 +365,13 @@ sub validate_aggregate_reachability {
         for my $member (@$members) {
             my $bounds = $member->{$band_key};
             next if ref($bounds) ne 'HASH';
-            $count += $member->{count};
-            $lines += $member->{count} * $bounds->{lines};
-            $bytes += $member->{count} * $bounds->{bytes};
+            my $member_count = ref($member->{count}) eq 'HASH'
+                ? $member->{count}{$band_key}
+                : $member->{count};
+            next if !defined $member_count;
+            $count += $member_count;
+            $lines += $member_count * $bounds->{lines};
+            $bytes += $member_count * $bounds->{bytes};
             $max_line = $bounds->{lines} if $bounds->{lines} > $max_line;
             $max_byte = $bounds->{bytes} if $bounds->{bytes} > $max_byte;
         }
@@ -416,7 +421,20 @@ sub validate_aggregate_composition_schema {
             $valid = 0;
         }
         $role //= '<unknown>';
-        if (!defined($member->{count}) || ref($member->{count}) || $member->{count} !~ /^\d+$/ || $member->{count} < 1) {
+        my $count = $member->{count};
+        if (ref($count) eq 'HASH') {
+            reject_unknown_fields(
+                $count,
+                "surface '$id' aggregate_composition member '$role' count",
+                qw(health ceiling),
+            );
+            for my $band (qw(health ceiling)) {
+                next if defined($count->{$band}) && !ref($count->{$band})
+                    && $count->{$band} =~ /^\d+$/ && $count->{$band} >= 1;
+                problem("surface '$id' aggregate_composition member '$role' count lacks a positive '$band'");
+                $valid = 0;
+            }
+        } elsif (!defined($count) || ref($count) || $count !~ /^\d+$/ || $count < 1) {
             problem("surface '$id' aggregate_composition member '$role' lacks a positive count");
             $valid = 0;
         }

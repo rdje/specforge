@@ -99,9 +99,11 @@
   ADR 0032 then closes the class the roadmap was one instance of. Enumerating all 20 multi-file surfaces found
   eleven whose aggregate was below their own `files × per-file` legal maximum; ten are re-derived under exact
   consumed authorities, and the rule is now mechanical for every `collection` surface on both bands. Its one
-  exemption, `aggregate_composition`, must sum to the declared bounds rather than assert them; `fact_index` is
-  its sole user, because a 96-line landing plus 32 × 384-line shards is 12,384, not 33 × 384. Pressure lines
-  also name the absolute distance to the enforcement ceiling, while report ordering stays by surface id.
+  exemption, `aggregate_composition`, must sum to the declared bounds rather than assert them. A role uses one
+  scalar count when both bands admit the same cardinality, or exact `health`/`ceiling` counts when those file
+  bounds differ. `fact_index` uses the equal-count form; alignment task parts use the per-band form for their
+  accepted 16/24-file profile. Pressure lines also name the absolute distance to the enforcement ceiling, while
+  report ordering stays by surface id.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

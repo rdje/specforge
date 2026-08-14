@@ -215,13 +215,20 @@ contract may use the short `--check` command; every other contract must name its
 `--contract` path. This prevents a corpus or alignment reader from accidentally validating the default PDF
 authority while believing its own task evidence was checked.
 
-The alignment contract is now `source_locked/complete` at clean boundary `38b79395`, while its source remains
-blob `66ae9b6c…3632` and byte-identical to target-changing commit `112bc333`. All 21 contiguous regions carry exact
-digests and metrics, all 58 primary routes name one source-backed semantic owner (40 commit-backed `legacy`, 18
-`structural`), and the eight declared destinations remain absent. A declared root-owner registry and complete
-route set must now be equal, closing the structural-owner omission that commit history alone cannot detect. The
-44-case neutral suite and all three unconditional contract invocations leave the monolith unchanged and give
-the root-last migration a complete input set.
+The alignment contract is now `migrated/complete` from clean source boundary `38b79395`. The stable path is a
+127-line / 5,725-byte current root with all 58 exact owner declarations and no eligible product frontier until
+the closing audit. Its 86-line / 5,925-byte index routes seven immutable legacy parts plus one reserved active
+behavioral part. The eight parts total 2,144 lines / 282,030 bytes; the largest is 502 lines / 65,125 bytes. All
+21 marked payloads reconstruct the source, and the independent 2,049-line / 278,178-byte capsule remains exact
+at SHA-256 `e70892a5…a26c` and Git blob `66ae9b6c…3632`.
+
+Three dedicated live surfaces classify the index, parts, and capsule without changing any ADR 0039 bound. That
+integration exposed a generic schema gap: one scalar `aggregate_composition` count cannot represent a 16-file
+health band and 24-file ceiling band. A role may now retain the scalar form when counts are equal or declare a
+closed `{health, ceiling}` count object; both bands must still reproduce their file, line, byte, and per-member
+maxima exactly. The 84-case live-size suite proves the new positive profile, a missing band, and an unknown band.
+Containment `.4` still owns independent reconstruction and future-write qualification before `.6d.ii.f` is
+released.
 
 #### Corpus task migration landed losslessly
 

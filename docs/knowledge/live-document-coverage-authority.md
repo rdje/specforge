@@ -30,6 +30,8 @@ answers:
   - "can the active-task evidence checker support the alignment task through data"
   - "why did the corpus task-evidence index verify the PDF contract"
   - "how does each active task-evidence index invoke its own contract"
+  - "has SPEC-TO-INTENT-ALIGNMENT task evidence migrated"
+  - "what are the migrated alignment root index part and capsule metrics"
 date: 2026-08-14
 status: current
 tags: [documentation, containment, git, submodule]
@@ -133,11 +135,12 @@ expected command a function of the checked contract path: the default keeps its 
 non-default contract must publish its exact repository-relative `--contract … --check` invocation. Positive and
 mismatched non-default fixtures gate the rule, and the corpus index/manifest now self-route correctly.
 
-The alignment contract is the third unconditional invocation. `.2.2` advances it to `source_locked/complete`
-at boundary `38b79395` while the target stays at blob `66ae9b6c…3632`: all 21 regions have exact digests and
-metrics, and 58 primary routes close as 40 commit-backed `legacy` owners plus 18 `structural` owners. The checker
-now equates any declared bounded-root owner registry with the complete route set, so a pending/container owner
-cannot disappear simply because it has no completion subject. All eight destination paths remain absent.
+The alignment contract is the third unconditional invocation. `.3` advances it to `migrated/complete` from
+boundary `38b79395` and blob `66ae9b6c…3632`. The stable root is 127 lines / 5,725 bytes, its index is 86 lines /
+5,925 bytes, and eight parts total 2,144 lines / 282,030 bytes with a 502-line / 65,125-byte largest member. All
+21 marked regions reconstruct the source; all 58 routes equal the compact root-owner registry; and the exact
+2,049-line / 278,178-byte capsule retains SHA-256 `e70892a5…a26c`. The reserved behavioral part stays unrouted
+and `.f` remains blocked until `.4` independently audits the transaction.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

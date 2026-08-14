@@ -96,12 +96,12 @@ remains directly browsable and exactly recoverable.
   Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 — complete alignment migration inputs`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3`
-  Status: `pending`
+  Status: `done`
   Goal: atomically migrate the active target under the accepted topology
   Acceptance: bounded current and semantic authorities plus exact provenance materialize root-last; every source
   byte, task route, current status, frontier, limit, rollback, doctrine, and same-volume invariant passes
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `same-volume root-last writer; root 127 lines / 5,725 bytes / 58 exact owners; index 86 lines / 5,925 bytes / 58 routes; eight parts 2,144 lines / 282,030 bytes, largest 502 lines / 65,125 bytes; exact capsule 2,049 lines / 278,178 bytes / SHA-256 e70892a5…a26c; 21 byte-identical regions; three exact live surfaces; band-specific aggregate composition with no bound raise; 84/84 live-size and 44/44 active-task cases; positive/negative trajectory owner lookup; all nine doctrines and genericity components, fmt, clippy, 1,954 tests with five ignored and zero failed, five doctests, Rust docs, mdBook, and final locality pass; 73 book / 315 incremental files removed and requested residue absent`
+  Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3 — materialize bounded alignment task evidence`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4`
   Status: `pending`
@@ -120,8 +120,9 @@ remains directly browsable and exactly recoverable.
 | 3 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` | `done` | ADR 0039 fixes the target-specific architecture and transaction |
 | 4 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` | `done` | accepted source-locked topology is executable and fault-tested |
 | 5 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2` | `done` | final clean boundary, exact regions, and all 58 primary routes are closed |
-| 6 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3` | `pending` | atomically materialize the complete contract through the root-last writer |
-| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
+| 6 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3` | `done` | bounded current, semantic, and exact provenance authorities materialized root-last |
+| 7 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4` | `pending` | independently audit reconstruction, navigation, and one legal future write |
+| 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after `.4` releases the prepared route |
 
 ## Decisions
 
@@ -142,15 +143,18 @@ remains directly browsable and exactly recoverable.
 - `2026-08-14`: completion-subject history can prove all 40 completed alignment owners but cannot prove the 18
   structural/container/pending owners. When a contract declares a bounded-root owner registry, require exact
   equality with complete routes and fault-test both omission and surplus before migration.
+- `2026-08-14`: live-surface integration exposes a legal profile the existing registry cannot express: ADR 0039
+  fixes 16 health files / 24 ceiling files and tighter heterogeneous aggregate totals, while
+  `aggregate_composition` applies one count to both bands. Permit a role to declare exact `health` and `ceiling`
+  counts, retain scalar counts for equal-band profiles, and keep every alignment bound unchanged.
 
 ## Open Questions
 
-- None for `.2.2`; ADR 0039 fixes the authorities, partitions, reader compatibility, state precedence, bounds,
-  rotation, migration stages, and rollback rule, and `.2.1` makes that contract executable.
+- None for `.3`; `.4` owns the deliberately independent fresh-reader and future-write audit.
 
 ## Blockers
 
-- `.6d.ii.f` is temporarily blocked only by this bounded-evidence prerequisite; product direction is unambiguous.
+- `.6d.ii.f` is temporarily blocked only by containment `.4`; product direction is unambiguous.
 
 ### Acceptance Checklist (enforced) — `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1`
 
@@ -189,6 +193,26 @@ remains directly browsable and exactly recoverable.
 - [x] **LOCKSTEP** — contract, checker, doctrine counts, change and engineering ledgers, canonical method docs,
   mdBook, retrieval fact/map, owning tree, book aggregate authority, and resume pointer state the same boundary.
 
+### Acceptance Checklist (enforced) — `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3`
+
+- [x] **REPRODUCE / MEASURE** — the migrated contract reports a 127-line / 5,725-byte root, 86-line /
+  5,925-byte index, eight parts totaling 2,144 lines / 282,030 bytes, a 502-line / 65,125-byte largest part,
+  and the exact 2,049-line / 278,178-byte capsule at the locked SHA-256.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the direct active root had only 350 bytes of headroom; integration also
+  proved that one scalar aggregate role count cannot express ADR 0039's different 16/24 health/ceiling file
+  cardinalities without hiding or widening its tighter totals.
+- [x] **ADDRESSED (verified)** — the accepted writer materialized root last, all 21 region payloads and 58 routes
+  validate, trajectory owner lookup succeeds, and closed per-band composition counts reproduce both aggregate
+  profiles exactly while missing/unknown bands fail.
+- [x] **NO REGRESSION** — all nine doctrines and genericity components, formatting, warning-denied Clippy,
+  1,954 Rust tests with five ignored and zero failed, five doctests, Rust docs, mdBook test/build, and final
+  locality pass; cleanup removes 73 book and 315 incremental files with requested residue absent.
+- [x] **GENERICITY** — the writer still consumes only contract data; the live-size schema admits scalar or exact
+  per-band counts without naming alignment or relaxing arithmetic, and its focused suite is 84/84.
+- [x] **LOCKSTEP** — root, index, manifest, parts, capsule, contract, three surface records, doctrine docs,
+  mdBook, fact catalog, Knowledge Map, change/engineering ledgers, owning tree, and resume pointer agree; `.f`
+  stays blocked and unrouted until `.4`.
+
 ## Verification Log
 
 | Date | Leaf | Checks | Result |
@@ -198,6 +222,7 @@ remains directly browsable and exactly recoverable.
 | `2026-08-14` | `.1.2` decision | ADR 0039; catalogs/KM/facts/live-size/book; persisted controller test; mdBook test/build; target diffs; doctrines; cleanup | 191-line accepted design; 234 facts / 1,801 keys; 808 files / 52 surfaces; one controller test; target unchanged; 73 generated files / 8,940 KiB removed |
 | `2026-08-14` | `.2.1` source-locked enforcement | checker self-tests; three exact contracts; full doctrine/CI suite; target identity; cleanup | 42/42; 21 regions / eight parts / 58 owner literals; 1,953 passed / six ignored / zero failed plus five doctests; target unchanged; 73 generated files / 8,948 KiB removed |
 | `2026-08-14` | `.2.2` complete inputs | clean Git/index/worktree boundary; 21 region hashes; 58 owner/route equality; three contracts; full CI; cleanup | `38b79395`; 40 legacy + 18 structural routes; 44/44; all nine doctrines; 1,953 passed / six ignored / zero failed plus five doctests; target unchanged; 73 generated files / 8,948 KiB removed |
+| `2026-08-14` | `.3` migration | root-last writer; capsule/region reconstruction; root/index/route/owner metrics; band-specific aggregate faults; trajectory owner lookup; full CI; cleanup | migrated/complete; 84/84 + 44/44; all nine doctrines; 1,954 passed / five ignored / zero failed plus five doctests; 73 book / 315 incremental files removed |
 
 ## Commit Log
 
@@ -208,6 +233,7 @@ remains directly browsable and exactly recoverable.
 | `.1.2` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2 — decide bounded alignment task architecture` | accepted topology, limits, reader compatibility, migration, restoration, book, and retrieval truth |
 | `.2.1` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce alignment source lock` | source-locked target contract, exact self-routing, doctrine composition, fault tests, and synchronized public truth |
 | `.2.2` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 — complete alignment migration inputs` | final boundary, exact regions, all-owner routes, source-locked writer inputs, and full qualification |
+| `.3` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3 — materialize bounded alignment task evidence` | root-last migration, exact live surfaces, band-specific aggregate representation, and complete qualification |
 
 ## Changelog
 
@@ -221,3 +247,5 @@ remains directly browsable and exactly recoverable.
   composes the third contract through doctrine, and leaves the target unchanged; `.2.2` is next.
 - `2026-08-14`: `.2.2` pins clean boundary `38b79395`, closes 21 exact region identities and all 58 routes,
   proves owner/route equality generically, and leaves every destination absent; `.3` is next.
+- `2026-08-14`: `.3` migrates current, semantic, and provenance authorities root-last, closes the live-surface
+  aggregate representation without changing bounds, and leaves `.4` as the sole audit before `.f` release.

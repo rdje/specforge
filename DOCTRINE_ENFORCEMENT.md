@@ -299,11 +299,13 @@ Every `collection` surface must also declare an aggregate at least as large as i
 per-file bound, on both the health and ceiling bands (ADR 0032) — otherwise a corpus whose every file is
 legal is refused by a total no single file can see. The sole exemption is a declared `aggregate_composition`
 whose member counts sum to the file bound, whose products sum exactly to each total, and whose largest member
-equals the per-file bound, so a heterogeneous collection proves its legal maximum instead of asserting it.
+equals the per-file bound, so a heterogeneous collection proves its legal maximum instead of asserting it. A
+role may use one scalar count for equal health/ceiling cardinalities or a closed `{health, ceiling}` count object
+when the two bands deliberately admit different file counts; both sums are checked independently.
 Every warning and rollover line additionally names the absolute distance to the enforcement ceiling, because
 a surface past its health target reports a percentage of a bound it already blew.
 
-Among its focused suites, `LIVE-DOC-SIZE` runs 81 positive and fail-closed lifecycle/control-plane
+Among its focused suites, `LIVE-DOC-SIZE` runs 84 positive and fail-closed lifecycle/control-plane
 cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
 15 neutral terminal-task source/route/identity/boundary cases, and 44 neutral active-task
 source/topology/route/payload/bound/writer cases, plus 58 fact-catalog source/plan/route/residue/bound cases. Test

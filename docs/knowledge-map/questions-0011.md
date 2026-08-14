@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD protocol records not be lowered directly to ISF
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD score 100 percent while its protocol is absent downstream
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > why can a shipped standalone extractor fail to improve the default end-to-end result
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why can an active task legacy route use a shorthand source literal
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > why can the fact-card maximum not simply be raised from 198
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > why can the roadmap not be split safely at Markdown headings
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
@@ -280,21 +294,7 @@
   > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why does adding an extractor change every doc's extraction manifest
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > why does aggregate_composition support different health and ceiling counts
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > why does an .isf enum get dropped / held out of the emitted .isf
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does an alphabetic constraint value require a word boundary but a numeric value does not
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why does an evidence/converge build OOM on a doc with many multi-word actor names
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why does an incidental 'can' in a source block not drop its other constraints
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > why does condition_text matter for the NLI claim

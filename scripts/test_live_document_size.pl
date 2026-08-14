@@ -741,6 +741,56 @@ expect_case('an exact aggregate composition permits a heterogeneous collection',
         };
         save_registry($fixture);
     });
+expect_case('an exact aggregate composition permits different health and ceiling counts', 1, undef, sub {
+        my ($fixture) = @_;
+        my $canonical = surface($fixture, 'canonical');
+        @{ $canonical->{health_targets} }{qw(files lines_each bytes_each lines_total bytes_total)} =
+            (16, 640, 86_016, 6_400, 786_432);
+        @{ $canonical->{enforcement_ceilings} }{qw(files lines_each bytes_each lines_total bytes_total)} =
+            (24, 896, 98_304, 9_600, 1_179_648);
+        $canonical->{aggregate_composition} = {
+            rationale => 'eight initial semantic parts plus a larger ceiling continuation pool',
+            members => [
+                { role => 'semantic', count => { health => 8, ceiling => 8 },
+                  health => { lines => 640, bytes => 86_016 },
+                  ceiling => { lines => 896, bytes => 98_304 } },
+                { role => 'continuation', count => { health => 8, ceiling => 16 },
+                  health => { lines => 160, bytes => 12_288 },
+                  ceiling => { lines => 152, bytes => 24_576 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('a band-specific aggregate composition requires both counts',
+    0, qr/aggregate_composition member 'continuation' count lacks a positive 'ceiling'/, sub {
+        my ($fixture) = @_;
+        my $canonical = surface($fixture, 'canonical');
+        $canonical->{aggregate_composition} = {
+            rationale => 'a partial band count cannot prove either aggregate',
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'continuation', count => { health => 15 },
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('a band-specific aggregate composition rejects an unknown count band',
+    0, qr/aggregate_composition member 'continuation' count has unknown field 'future'/, sub {
+        my ($fixture) = @_;
+        my $canonical = surface($fixture, 'canonical');
+        $canonical->{aggregate_composition} = {
+            rationale => 'count bands are a closed schema',
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'continuation', count => { health => 15, ceiling => 15, future => 15 },
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
 expect_case('an aggregate composition that does not sum to the declared total is rejected',
     0, qr/aggregate_composition ceiling lines sum to 1510, not lines_total 1509/, sub {
         my ($fixture) = @_;

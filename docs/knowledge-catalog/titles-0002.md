@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
 | [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md) | 2026-08-12 | `current` | Decibel-domain timing rows remain source evidence but are non-applicable to executable digital intent |
 | [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md) | 2026-08-11 | `current` | Converge emits a guarded per-run ledger for every production command and every capability island |
 | [definitional-signal-capture](../knowledge/definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
@@ -60,4 +61,3 @@
 | [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic whole-statement gates are schema-compatible audit data only |
 | [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic section phases are schema-compatible audit data only |
 | [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md) | 2026-08-09 | `current` | Legal and administrative prose is retained as evidence but cannot establish semantic intent |
-| [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md) | 2026-08-08 | `current` | Live-document lifecycle and control-plane proofs run on the repository volume |

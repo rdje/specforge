@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is the message_field_catalog_dump measurement harness
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > what is the message_fields.section_header_field strategy
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is the model-misspelled-subject / phantom-subject defect class
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the must_be_value + VALID typed convention
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > what is the next big PDF-variant digestion lever after the serial class
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -285,15 +297,3 @@
   > where is coordinated-object actor-signal relation extraction implemented
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > where is current binary replay evidence stored
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > where is legal administrative prose filtered
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > where is normalized staging removed from Docling metadata
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > where is parenthetical single-wire authority enforced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > where is register level access stored in RegisterRecord

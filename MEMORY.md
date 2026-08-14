@@ -17,14 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2` is committed at `1a2f3705`; `.3` is the next
-  containment leaf. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
+- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3` is complete and verified; `.4` is next.
+  Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: the alignment contract is `source_locked/complete` at `38b79395`; all 21 exact regions and 58
-  primary routes (40 legacy / 18 structural) reproduce, root-owner equality is enforced, every destination is
-  absent, full CI passes, generated artifacts are removed, and the source remains byte-identical to `112bc333`.
-- Next action: commit the live-pressure ownership boundary, then execute containment `.3` through the accepted
-  repository-local root-last migration writer.
-- In-flight uncommitted: tracking-only live-pressure tree/catalog/resume update after clean `.2.2`; no background job.
-- Blockers: `.6d.ii.f` waits only for bounded task-evidence migration; product direction is unambiguous. The
+- Current state: the alignment contract is `migrated/complete`; a 127-line root retains all 58 executable owners,
+  the 86-line index routes eight bounded parts, all 21 regions reconstruct, and the exact source capsule remains
+  at SHA-256 `e70892a5…a26c`. Full CI passes and disposable artifacts are absent.
+- Next action: commit `.3`, then independently audit the migrated result and one legal future write in `.4`.
+- In-flight uncommitted: none after the required `.3` commit; no background job.
+- Blockers: `.6d.ii.f` waits only for containment `.4`; product direction is unambiguous. The
   user-owned `.claude/settings.json` is untouched.

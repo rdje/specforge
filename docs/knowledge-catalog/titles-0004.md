@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md) | 2026-06-07 | `current` | Misaligned signal tables (name column rotated to last) are extracted by content-based column detection |
 | [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md) | 2026-06-17 | `current` | DTI-class message fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not tables — read them into mes… |
 | [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md) | 2026-06-24 | `current` | A genuinely-different register reused under one mnemonic (MEM-AP CSW vs JTAG-AP CSW) is recovered by BLOCK-QU… |
 | [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md) | 2026-06-17 | `current` | GIC/SMMU/CoreSight/ACC/ARM-Debug register fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not table… |

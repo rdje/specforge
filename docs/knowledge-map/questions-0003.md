@@ -110,6 +110,10 @@
   > does validate report message_field_records
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > has the corpus task evidence migration landed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -146,6 +150,8 @@
   > how are caption-less page fragments of a split table stitched together
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > how are different health and ceiling file counts declared
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how are doctrines enforced in specforge
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
@@ -292,9 +298,3 @@
   > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how does SpecForge combine confidence across modalities or sources
