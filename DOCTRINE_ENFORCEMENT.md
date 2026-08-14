@@ -305,7 +305,7 @@ a surface past its health target reports a percentage of a bound it already blew
 
 Among its focused suites, `LIVE-DOC-SIZE` runs 81 positive and fail-closed lifecycle/control-plane
 cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
-15 neutral terminal-task source/route/identity/boundary cases, and 42 neutral active-task
+15 neutral terminal-task source/route/identity/boundary cases, and 44 neutral active-task
 source/topology/route/payload/bound/writer cases, plus 58 fact-catalog source/plan/route/residue/bound cases. Test
 workspaces are disposable and always created below
 repository-local `generated/`.
@@ -345,7 +345,9 @@ capsule and verify the bounded current channel, closed register, open records, m
 The active-task evidence checker separately binds a source-locked task to its boundary commit, Git object/index,
 file digest/metrics, exhaustive semantic regions, planned-part pressure, fixed portable caps, and complete
 destination absence. Its complete/migrated states add exact legacy route membership, capsule and marker payload
-identity, bounded active root/index/parts, manifest/frontier integrity, and Git-backed sealing. The live-document
+identity, bounded active root/index/parts, manifest/frontier integrity, and Git-backed sealing. When a contract
+declares an executable owner registry in its bounded root, complete routes must equal that registry exactly;
+structural or pending owners cannot disappear merely because they have no completion commit. The live-document
 driver invokes the PDF, corpus, and alignment contracts independently. Each contract's published verifier must
 resolve back to that exact repository-relative contract path; a non-default index cannot silently check the
 default PDF authority.

@@ -215,11 +215,13 @@ contract may use the short `--check` command; every other contract must name its
 `--contract` path. This prevents a corpus or alignment reader from accidentally validating the default PDF
 authority while believing its own task evidence was checked.
 
-The alignment contract is now executable in `source_locked/topology_declared` state. It authenticates commit
-`112bc333`, blob `66ae9b6c…3632`, exact SHA/metrics, 21 contiguous regions, all 58 source and future-root owner
-literals, eight declared parts, target-local limits, and complete destination absence. The third unconditional
-driver invocation and 42-case neutral suite leave the monolith unchanged; exact region digests and routes remain
-the separately committed `.2.2` boundary.
+The alignment contract is now `source_locked/complete` at clean boundary `38b79395`, while its source remains
+blob `66ae9b6c…3632` and byte-identical to target-changing commit `112bc333`. All 21 contiguous regions carry exact
+digests and metrics, all 58 primary routes name one source-backed semantic owner (40 commit-backed `legacy`, 18
+`structural`), and the eight declared destinations remain absent. A declared root-owner registry and complete
+route set must now be equal, closing the structural-owner omission that commit history alone cannot detect. The
+44-case neutral suite and all three unconditional contract invocations leave the monolith unchanged and give
+the root-last migration a complete input set.
 
 #### Corpus task migration landed losslessly
 

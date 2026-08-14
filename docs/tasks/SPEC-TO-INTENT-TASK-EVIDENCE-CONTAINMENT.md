@@ -75,7 +75,7 @@ remains directly browsable and exactly recoverable.
   Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2 — decide bounded alignment task architecture`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2`
-  Status: `in_progress`
+  Status: `done`
   Goal: implement neutral enforcement and close the committed migration boundary
   Children: `.2.1`, `.2.2`
 
@@ -88,12 +88,12 @@ remains directly browsable and exactly recoverable.
   Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce alignment source lock`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2`
-  Status: `pending`
+  Status: `done`
   Goal: commit the final source boundary and complete migration inputs
   Acceptance: one clean commit pins the exact target/blob, every region and route, destination absence, and all
   migration inputs so the following atomic move is reproducible
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `clean boundary 38b79395; source blob 66ae9b6c…3632 / SHA-256 e70892a5…a26c / 2,049 lines / 278,178 bytes; 21 exact region digests and metrics; 58 primary routes equal 58 declared root owners exactly (40 legacy, 18 structural); seven planned payloads reproduce without warning and all eight destinations remain absent; 44/44 focused cases; all nine doctrines including chain currency, nine genericity components, fmt, clippy, 1,953 tests with six ignored and zero failed, five doctests, Rust docs, mdBook test/build, and final locality pass; target remains byte-identical; 73 generated book files / 8,948 KiB and empty incremental root removed with residue absent`
+  Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 — complete alignment migration inputs`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3`
   Status: `pending`
@@ -119,8 +119,9 @@ remains directly browsable and exactly recoverable.
 | 2 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1` | `done` | exact target roles, constraints, and candidate groups are measured |
 | 3 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` | `done` | ADR 0039 fixes the target-specific architecture and transaction |
 | 4 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` | `done` | accepted source-locked topology is executable and fault-tested |
-| 5 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2` | `pending` | pin the final clean migration boundary and complete every migration input |
-| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
+| 5 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2` | `done` | final clean boundary, exact regions, and all 58 primary routes are closed |
+| 6 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3` | `pending` | atomically materialize the complete contract through the root-last writer |
+| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
 
 ## Decisions
 
@@ -138,6 +139,9 @@ remains directly browsable and exactly recoverable.
 - `2026-08-14`: `.2.1` finds that non-default contracts could be checked explicitly but were forced to publish
   the default PDF verifier command. Derive the one accepted command from the actual contract path, correct the
   corpus index/manifest, and gate both positive and mismatched non-default cases before adding the third target.
+- `2026-08-14`: completion-subject history can prove all 40 completed alignment owners but cannot prove the 18
+  structural/container/pending owners. When a contract declares a bounded-root owner registry, require exact
+  equality with complete routes and fault-test both omission and surplus before migration.
 
 ## Open Questions
 
@@ -166,6 +170,25 @@ remains directly browsable and exactly recoverable.
 - [x] **LOCKSTEP** — the three contracts and their indexes/manifests, doctrine driver, canonical method docs,
   mdBook, retrieval fact, owning tree, generated Knowledge Map, live-size registry, and resume pointer agree.
 
+### Acceptance Checklist (enforced) — `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2`
+
+- [x] **REPRODUCE / MEASURE** — clean boundary `38b79395`, Git boundary blob, stage-zero index, and working source
+  all resolve to blob `66ae9b6c…3632`, SHA-256 `e70892a5…a26c`, and 2,049 lines / 278,178 bytes; 21 region
+  hashes/metrics and seven planned payload totals reproduce exactly.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `boundary_route_ids` derives only IDs present in completion subjects, so it
+  proves 40 completed owners but cannot detect omission of any of the 18 containers or pending owners that have
+  no completion commit by construction.
+- [x] **ADDRESSED (verified)** — all 58 routes are source-backed and equal the 58 declared bounded-root owner IDs;
+  generic set equality rejects an omitted owner and an undeclared structural route, while the positive future
+  continuation updates its root owner and primary route atomically. The focused suite is 44/44.
+- [x] **NO REGRESSION** — all nine doctrines including exact chain currency, nine production-genericity
+  components, formatting, warning-denied Clippy, 1,953 tests with six ignored and zero failed, five doctests,
+  Rust docs, mdBook test/build, final locality, target identity, destination absence, and residue checks pass.
+- [x] **GENERICITY** — the checker compares only a contract-declared owner registry with contract routes; it has
+  no alignment ID, phase, document, product, or route-count special case, and the PDF/corpus contracts still pass.
+- [x] **LOCKSTEP** — contract, checker, doctrine counts, change and engineering ledgers, canonical method docs,
+  mdBook, retrieval fact/map, owning tree, book aggregate authority, and resume pointer state the same boundary.
+
 ## Verification Log
 
 | Date | Leaf | Checks | Result |
@@ -174,6 +197,7 @@ remains directly browsable and exactly recoverable.
 | `2026-08-14` | `.1.1` census | exact closure; path/id/readers/writers; trajectory currentness; catalogs/retrieval/live-size/doctrine; cleanup | 21 regions / 58 ids / 31 path and 92 id consumers; seven groups; target byte-identical; 2,901 files / 2,050,216 KiB removed |
 | `2026-08-14` | `.1.2` decision | ADR 0039; catalogs/KM/facts/live-size/book; persisted controller test; mdBook test/build; target diffs; doctrines; cleanup | 191-line accepted design; 234 facts / 1,801 keys; 808 files / 52 surfaces; one controller test; target unchanged; 73 generated files / 8,940 KiB removed |
 | `2026-08-14` | `.2.1` source-locked enforcement | checker self-tests; three exact contracts; full doctrine/CI suite; target identity; cleanup | 42/42; 21 regions / eight parts / 58 owner literals; 1,953 passed / six ignored / zero failed plus five doctests; target unchanged; 73 generated files / 8,948 KiB removed |
+| `2026-08-14` | `.2.2` complete inputs | clean Git/index/worktree boundary; 21 region hashes; 58 owner/route equality; three contracts; full CI; cleanup | `38b79395`; 40 legacy + 18 structural routes; 44/44; all nine doctrines; 1,953 passed / six ignored / zero failed plus five doctests; target unchanged; 73 generated files / 8,948 KiB removed |
 
 ## Commit Log
 
@@ -183,6 +207,7 @@ remains directly browsable and exactly recoverable.
 | `.1.1` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1 — census alignment task evidence` | complete read-only target-specific architecture input |
 | `.1.2` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2 — decide bounded alignment task architecture` | accepted topology, limits, reader compatibility, migration, restoration, book, and retrieval truth |
 | `.2.1` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce alignment source lock` | source-locked target contract, exact self-routing, doctrine composition, fault tests, and synchronized public truth |
+| `.2.2` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 — complete alignment migration inputs` | final boundary, exact regions, all-owner routes, source-locked writer inputs, and full qualification |
 
 ## Changelog
 
@@ -194,3 +219,5 @@ remains directly browsable and exactly recoverable.
   unchanged; `.2.1` is the next eligible containment leaf.
 - `2026-08-14`: `.2.1` makes the accepted source lock executable, corrects non-default verifier self-routing,
   composes the third contract through doctrine, and leaves the target unchanged; `.2.2` is next.
+- `2026-08-14`: `.2.2` pins clean boundary `38b79395`, closes 21 exact region identities and all 58 routes,
+  proves owner/route equality generically, and leaves every destination absent; `.3` is next.

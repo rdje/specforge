@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 (`2026-08-14`) — complete means every owner is routed
+
+The final source-locked boundary is clean commit `38b79395`; Git boundary, stage-zero index, and working bytes
+all resolve to blob `66ae9b6c…3632`, SHA-256 `e70892a5…a26c`, and 2,049 lines / 278,178 bytes. Each of the 21
+contiguous regions now carries its own exact digest and three-axis metrics. The seven legacy payloads reproduce
+42,814 / 29,722 / 23,360 / 61,529 / 9,818 / 64,899 / 46,036 bytes with no warning.
+
+Commit-subject history proves 40 completed owners, but it cannot prove the 18 structural/container/pending
+owners by construction. The completed contract therefore supplies all 58 primary routes, and the neutral checker
+now requires exact set equality whenever a bounded root declares an executable owner registry. The positive
+continuation fixture adds its new owner declaration atomically with its new route; omission and surplus faults
+fail closed. This keeps the rule data-driven and preserves the PDF and corpus authorities unchanged.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii (`2026-08-14`) — the structural proof closes on exact migration truth
 
 The final structural leaf adds no new enforcement mechanism. It reconciles the clean 15-commit range from the

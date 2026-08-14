@@ -133,10 +133,11 @@ expected command a function of the checked contract path: the default keeps its 
 non-default contract must publish its exact repository-relative `--contract … --check` invocation. Positive and
 mismatched non-default fixtures gate the rule, and the corpus index/manifest now self-route correctly.
 
-The alignment contract is the third unconditional invocation. In `source_locked/topology_declared` it binds
-commit `112bc333`, blob `66ae9b6c…3632`, the exact source SHA/metrics, 21 contiguous regions, eight planned parts,
-58 source/future-root owner literals, fixed local bounds, and absent collection/archive destinations. Exact
-region digests and all primary routes deliberately remain for `.2.2`; `.2.1` does not pretend they are closed.
+The alignment contract is the third unconditional invocation. `.2.2` advances it to `source_locked/complete`
+at boundary `38b79395` while the target stays at blob `66ae9b6c…3632`: all 21 regions have exact digests and
+metrics, and 58 primary routes close as 40 commit-backed `legacy` owners plus 18 `structural` owners. The checker
+now equates any declared bounded-root owner registry with the complete route set, so a pending/container owner
+cannot disappear simply because it has no completion subject. All eight destination paths remain absent.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

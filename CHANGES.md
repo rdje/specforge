@@ -1,3 +1,11 @@
+### SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 — close the exact migration inputs
+
+- Pinned the final clean alignment source boundary at `38b79395` without changing its `66ae9b6c…3632` blob,
+  then closed exact hashes/metrics for all 21 semantic regions and one primary route for all 58 formal owners.
+- Strengthened the neutral active-task checker so a contract-declared bounded-root owner registry must equal the
+  complete route set. Two new faults reject both an omitted structural owner and an undeclared structural route;
+  the focused suite is now 44/44.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii — qualify the complete structural boundary
 
 - Reconciled the exact 15-commit `.e` range (`f7da4ab8..07b1f874`): 146 tracked files, 26,093 insertions, and

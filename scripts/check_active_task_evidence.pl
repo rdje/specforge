@@ -789,6 +789,21 @@ sub validate_contract_schema {
     scalar_array($migrated->{root_required_literals}, 'contract root_required_literals', $errors, 0);
     scalar_array($migrated->{root_forbidden_literals}, 'contract root_forbidden_literals', $errors, 1);
     scalar_array($migrated->{index_required_literals}, 'contract index_required_literals', $errors, 0);
+    my %root_owner_ids;
+    for my $literal (@{$migrated->{root_required_literals} // []}) {
+        next if ref($literal) || $literal !~ /\A- ID: `([^`]+)`\z/;
+        my $owner_id = $1;
+        push @$errors, "contract root owner '$owner_id' is outside tree '$identity->{tree_id}'"
+            if $owner_id ne ($identity->{tree_id} // '')
+            && index($owner_id, ($identity->{tree_id} // '') . '.') != 0;
+        $root_owner_ids{$owner_id} = 1;
+    }
+    if (($input_state // '') eq 'complete' && keys %root_owner_ids) {
+        push @$errors, "complete leaf routes omit declared root owner '$_'"
+            for grep { !$route_ids{$_} } sort keys %root_owner_ids;
+        push @$errors, "complete leaf route '$_' is absent from the declared root owner registry"
+            for grep { !$root_owner_ids{$_} } sort keys %route_ids;
+    }
 }
 
 sub validate_source_and_inputs {
@@ -1622,15 +1637,17 @@ sub append_fixture_activity {
     };
     $contract->{current_frontier} = {
         mode => 'eligible',
-        literal => 'PROGRAM.2',
+        literal => 'Eligible frontier: PROGRAM.2.',
         leaf_id => 'PROGRAM.2',
         part_id => $part->{part_id},
     };
     for my $literal (@{$contract->{migrated_requirements}{root_required_literals}}) {
-        $literal = 'PROGRAM.2' if $literal eq 'No eligible frontier.';
+        $literal = 'Eligible frontier: PROGRAM.2.' if $literal eq 'No eligible frontier.';
     }
+    push @{$contract->{migrated_requirements}{root_required_literals}}, '- ID: `PROGRAM.2`';
     my $root_raw = fixture_root();
-    $root_raw =~ s/No eligible frontier\./PROGRAM.2/;
+    $root_raw =~ s/- ID: `PROGRAM\.1`\n/- ID: `PROGRAM.1`\n- ID: `PROGRAM.2`\n/;
+    $root_raw =~ s/No eligible frontier\./Eligible frontier: PROGRAM.2./;
     write_raw($base, $contract->{current_path}, $root_raw);
     write_raw($base, $part->{path}, $part_raw);
     write_raw($base, $contract->{destinations}{index}, render_migration_index($contract));
@@ -1764,6 +1781,8 @@ sub run_self_test {
         ['complete route source literal missing', 'source_locked', 'complete', sub { delete $_[1]{leaf_routes}[0]{source_literal} }, qr/lacks non-empty scalar 'source_literal'/],
         ['complete route source literal invalid', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{source_literal} = 'PROGRAM' }, qr/not its full or tree-relative id/],
         ['complete route source literal absent', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{source_literal} = 'PROGRAM.1' }, qr/source literal 'PROGRAM\.1' is absent/],
+        ['complete structural owner route omitted', 'source_locked', 'complete', sub { pop @{$_[1]{leaf_routes}} }, qr/omit declared root owner 'PROGRAM'/],
+        ['complete undeclared structural route', 'source_locked', 'complete', sub { push @{$_[1]{leaf_routes}}, {leaf_id => 'PROGRAM.9', part_id => 'foundation', origin => 'structural', source_literal => 'PROGRAM'} }, qr/leaf route 'PROGRAM\.9' is absent from the declared root owner registry/],
         ['structural route source literal missing', 'source_locked', 'complete', sub { delete $_[1]{leaf_routes}[1]{source_literal} }, qr/structural contract leaf route lacks non-empty scalar 'source_literal'/],
         ['structural route source literal absent', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[1]{leaf_id} = 'PROGRAM.9'; $_[1]{leaf_routes}[1]{source_literal} = '.9' }, qr/structural leaf route 'PROGRAM\.9' source literal '\.9' is absent/],
         ['premature post-migration route', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{origin} = 'post_migration' }, qr/cannot declare post-migration/],
