@@ -226,12 +226,38 @@ Two calibration executions pass:
 These calibrations establish the harness mechanics and comparator sensitivity. They are not held-out population
 results and do not widen the Markdown plane to page, image, table, or geometry claims.
 
+## Semantic-negative and sensitivity checkpoint (`.f.ii.c`)
+
+The third implementation child promotes the rejected “must be at least” timing candidate into an explicitly
+meaning-changing calibration rather than weakening the reviewed-equivalence comparator. The manifest and recipe
+pin the same UM11732 source/hash, the one exact sentence span, seven carried text conclusions, one required
+SemanticIR assertion removal, and the dependent cumulative proof claim at SemanticIR, IntentIR, and adapter.
+
+The transformed run has zero assertions where baseline has one. The removed assertion cites `statement_0090`;
+the three absent cumulative claims use `semantic.statement_lift.assertions.v1` at the same stable address. A
+negative run succeeds only if the ordinary invariant comparator first fails, all four declared occurrences are
+observed, and the specialized comparison removes exactly those declarations before requiring the complete
+five-stage complement to match. A focused fault that adds an extra undeclared delta still fails.
+
+`doctrine/production_genericity/semantic_negative_matrix.json` independently exercises the gate over complete
+synthetic five-stage artifacts. It contains exactly one omission, contradiction, relation reversal, value
+change, timing change, undeclared-symbol substitution, misleading familiar name, proof-rule corruption, and
+disabled-stage control. Each control records the expected state/failure class, must mutate the declared value,
+must make the invariant comparator reject, and must restore byte-equivalent artifact values afterward. This
+separates gate sensitivity from the one real parser calibration.
+
+Attempt evidence now carries a closed disposition instead of requiring a caller to parse an undifferentiated
+error. Missing authority/provider and vacuous behavior are `unmeasurable`; stale contract/population,
+ambiguous/nonbijective transformation, and partial/escaped execution are `invalid`. Source and source-hash
+preflight occurs before creating the output root, so unavailable or stale attempts leave no misleading partial
+evidence directory. The contract checker validates the recipe and matrix schemas, and its eight pre-existing
+mutation cases remain green.
+
 ## Implementation handoff
 
 `.f.ii.a` supplies deterministic full-PDF identity and text-projection symbol-alpha pairs plus the shared
 five-stage comparator. `.f.ii.b` supplies the approved paraphrase/layout recipe boundary and passing reviewed
-calibrations. `.f.ii.c` extends sensitivity with
-the complete semantic and authority-negative matrix and closes the `.f.ii` parent, including stale and
-unmeasurable attempt handling. `.f.iii` consumes the frozen 17-document prospective split without using its
+calibrations. `.f.ii.c` supplies the real semantic/proof negative, complete nine-class sensitivity matrix, and
+typed stale/unmeasurable attempt handling, closing the `.f.ii` parent. `.f.iii` consumes the frozen 17-document prospective split without using its
 labels to steer production. `.f.iv` reconciles every measurable and unmeasurable row; `.f.v` alone may make the
 final behavioral genericity decision.

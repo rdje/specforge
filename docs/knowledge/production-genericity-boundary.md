@@ -277,7 +277,7 @@ The following flow layer joins a closed 140-row typed registry to that graph. It
 fields/seams, and conformance bypasses from existing inventories, then resolves explicit raw/identity aggregate,
 field, and provider-return sources; universal grammar and exact-identity declassifiers; proof gates and values;
 trusted/non-authoritative regions; and protected types. A deterministic fixed point propagates dependencies
-through 2,230 functions and 11,577 helper edges, checking 10,868 semantic decision sites plus macro, mutation,
+through 2,248 functions and 11,652 helper edges, checking 11,037 semantic decision sites plus macro, mutation,
 construction, capability-call, proof-value, and canonical-seam topology. Sensitive unresolved macros reject.
 Thirteen flow mutations independently reject identity selection, raw literal equality, substring and regex
 decisions, cross-class declassification, direct/aliased unregistered inference, authority forgery, helper/macro
@@ -291,9 +291,9 @@ and graph/flow checks under the unconditional `PRODUCTION-GENERICITY` doctrine. 
 27 controlled dependency, inventory/schema, rule/alpha/bypass, and flow/authority mutations. Every
 test-only `RuleDescriptor` qualification executes each capability/premise/compatibility-shaped alpha condition;
 the independent oracle expands the two TSV inventories and exactly joins all 168 runtime rule ids, stages,
-surfaces, premise kinds, capabilities, obligations, compatibilities, and implementation owners. Population
-renaming, paraphrase, negative-control, and held-out behavior remains `.f`, so whole-core genericity signoff is
-still open.
+surfaces, premise kinds, capabilities, obligations, compatibilities, and implementation owners. The conformance
+harness now closes identity, alpha, reviewed paraphrase/layout, and semantic-negative sensitivity. Held-out and
+whole-population behavior remains `.f`, so whole-core genericity signoff is still open.
 
 Final qualification covers `f7da4ab8..07b1f874`: 24 keys are current and 54 remain unmeasurable. One ruleset
 covers 168 rules / 148,708 claims; all 120 public comparisons and 0/3/8/62 residual-object deltas are exact, while

@@ -12,7 +12,7 @@ answers:
 date: 2026-08-14
 status: current
 tags: [genericity, metamorphic-testing, paraphrase, layout, conformance, proof-ledger]
-evidence: doctrine/production_genericity/reviewed_recipe_manifest.json; doctrine/production_genericity/reviewed_recipes/um11732_structure_preserving_paraphrase.json; doctrine/production_genericity/reviewed_recipes/um11732_harmless_layout.json; crates/specforge-conformance/src/behavioral_genericity.rs; docs/research/behavioral-genericity-qualification-design.md
+evidence: doctrine/production_genericity/reviewed_recipe_manifest.json; doctrine/production_genericity/reviewed_recipes/um11732_structure_preserving_paraphrase.json; doctrine/production_genericity/reviewed_recipes/um11732_harmless_layout.json; doctrine/production_genericity/reviewed_recipes/um11732_semantic_negative_timing.json; crates/specforge-conformance/src/behavioral_genericity.rs; docs/research/behavioral-genericity-qualification-design.md
 reverify: "python3 -B scripts/check_behavioral_genericity_contract.py && cargo test --offline -p specforge-conformance behavioral_genericity::tests -- --nocapture"
 ---
 
@@ -33,7 +33,8 @@ Inverse text mapping is per changed span and per declared field; permissions are
 approved exact alphanumeric projection maps only source-derived ids containing that span. All unlisted leaves,
 collection topology, proof addresses/rules/premises/confidence, residuals, validation, and lowering stay exact.
 
-Human semantic equivalence alone is insufficient. Calibration rejected “at least” because it entered a different
-timing-rule path and changed downstream proof topology. It rejected an added blank line because every subsequent
+Human semantic equivalence alone is insufficient. Calibration classified “at least” as a semantic negative
+because it entered a different timing-rule path and changed downstream proof topology. It rejected an added blank line because every subsequent
 evidence coordinate shifted, and rejected a reworded numbered heading because section-derived records changed.
-The harness fails those candidates instead of broadening normalization.
+The harness fails those candidates instead of broadening normalization. The timing candidate is now retained as
+its own digest-pinned negative recipe; [[behavioral-semantic-negative-sensitivity]] owns its exact delta contract.

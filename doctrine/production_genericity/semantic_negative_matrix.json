@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c",
+  "unaffected_complement": "all_unlisted_leaf_values_and_all_proof_topology_exact",
+  "controls": [
+    {
+      "control_id": "canonical-fact-omission",
+      "kind": "omission",
+      "stage": "semantic_ir",
+      "operation": "remove",
+      "path": "/canonical_fact/obligation",
+      "baseline_value": "drive",
+      "transformed_value": null,
+      "expected_state": "fail",
+      "expected_failure_id": "undeclared_semantic_delta"
+    },
+    {
+      "control_id": "canonical-fact-contradiction",
+      "kind": "contradiction",
+      "stage": "semantic_ir",
+      "operation": "replace",
+      "path": "/canonical_fact/polarity",
+      "baseline_value": "required",
+      "transformed_value": "forbidden",
+      "expected_state": "fail",
+      "expected_failure_id": "undeclared_semantic_delta"
+    },
+    {
+      "control_id": "canonical-relation-reversal",
+      "kind": "relation_reversal",
+      "stage": "semantic_ir",
+      "operation": "replace",
+      "path": "/canonical_fact/relation",
+      "baseline_value": "producer_to_consumer",
+      "transformed_value": "consumer_to_producer",
+      "expected_state": "fail",
+      "expected_failure_id": "undeclared_semantic_delta"
+    },
+    {
+      "control_id": "canonical-value-change",
+      "kind": "value_change",
+      "stage": "semantic_ir",
+      "operation": "replace",
+      "path": "/canonical_fact/value",
+      "baseline_value": 1,
+      "transformed_value": 0,
+      "expected_state": "fail",
+      "expected_failure_id": "undeclared_semantic_delta"
+    },
+    {
+      "control_id": "canonical-timing-change",
+      "kind": "timing_change",
+      "stage": "semantic_ir",
+      "operation": "replace",
+      "path": "/canonical_fact/timing_cycles",
+      "baseline_value": 2,
+      "transformed_value": 3,
+      "expected_state": "fail",
+      "expected_failure_id": "undeclared_semantic_delta"
+    },
+    {
+      "control_id": "undeclared-symbol-substitution",
+      "kind": "undeclared_symbol",
+      "stage": "semantic_ir",
+      "operation": "replace",
+      "path": "/canonical_fact/symbol",
+      "baseline_value": "declared_signal",
+      "transformed_value": "undeclared_signal",
+      "expected_state": "fail",
+      "expected_failure_id": "undeclared_semantic_delta"
+    },
+    {
+      "control_id": "misleading-familiar-name",
+      "kind": "misleading_name",
+      "stage": "semantic_ir",
+      "operation": "replace",
+      "path": "/canonical_fact/actor_name",
+      "baseline_value": "neutral_endpoint",
+      "transformed_value": "ready",
+      "expected_state": "fail",
+      "expected_failure_id": "undeclared_semantic_delta"
+    },
+    {
+      "control_id": "proof-rule-corruption",
+      "kind": "proof_corruption",
+      "stage": "semantic_ir",
+      "operation": "replace",
+      "path": "/proof_ledger/claims/0/rule_id",
+      "baseline_value": "negative.matrix.canonical_fact.v1",
+      "transformed_value": "negative.matrix.corrupted.v1",
+      "expected_state": "fail",
+      "expected_failure_id": "undeclared_semantic_delta"
+    },
+    {
+      "control_id": "intent-stage-disabled",
+      "kind": "disabled_stage",
+      "stage": "intent_ir",
+      "operation": "disable_stage",
+      "path": null,
+      "baseline_value": null,
+      "transformed_value": null,
+      "expected_state": "invalid",
+      "expected_failure_id": "partial_or_escaped_run"
+    }
+  ],
+  "attempt_dispositions": {
+    "ambiguous_or_nonbijective_transform": "invalid",
+    "authority_unavailable": "unmeasurable",
+    "partial_or_escaped_run": "invalid",
+    "provider_unavailable": "unmeasurable",
+    "stale_contract_or_population": "invalid",
+    "vacuous_baseline": "unmeasurable"
+  }
+}

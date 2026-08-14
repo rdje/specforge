@@ -8,6 +8,8 @@
   > can a VLM-invented waveform lane become canonical intent
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > can a correct refreshed count hide a missing corpus document
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > can a declared semantic delta hide another undeclared change
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -295,5 +297,3 @@
   > does encryption block the VLM from reading tables (no)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > does enrich / audit-extraction / recover-register-bits read full-page images or region images
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > does eval-extraction rebuild evidence or load the persisted file

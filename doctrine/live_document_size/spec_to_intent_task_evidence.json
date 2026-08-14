@@ -2,7 +2,7 @@
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
       "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`.",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`.",
       "mode" : "eligible",
       "part_id" : "behavioral-qualification"
    },
@@ -100,13 +100,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
             "metrics" : {
-               "bytes" : 18180,
+               "bytes" : 22685,
                "line_bytes" : 359,
-               "lines" : 224
+               "lines" : 260
             },
             "part_id" : "behavioral-qualification",
             "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-            "sha256" : "cf9de32e7b1ff6b8acc1937194e10d8251c0b5df93c63f1ae928ac3bae60266f",
+            "sha256" : "8d0888edc7ccdb342e2e418473e51aad0dee9b20908455db8f7457c69e058d80",
             "state" : "active"
          }
       ],
@@ -594,7 +594,7 @@
          "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
          "- Status: `active`",
          "## Current Frontier",
-         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`.",
+         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log",

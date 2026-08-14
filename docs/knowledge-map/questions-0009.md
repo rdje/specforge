@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > what is the difference between phases and transaction_phases
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > what is the difference between validate persistence and stage write_to_disk
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the exact CORPUS-COVERAGE task evidence boundary
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is the exact active PDF task evidence baseline
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -289,11 +297,3 @@
   > where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > where does retired roadmap direction go
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > where does specforge validate write validation_report.json
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)

@@ -30,6 +30,7 @@
 | [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md) | 2026-08-14 | `current` | Behavioral genericity qualification uses bounded relational oracles in conformance |
 | [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md) | 2026-08-14 | `current` | Conformance owns closed five-stage identity and alpha qualification |
 | [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md) | 2026-08-14 | `current` | Reviewed text equivalence is digest-pinned and parser-boundary demonstrated |
+| [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md) | 2026-08-14 | `current` | Semantic negatives require a detected delta and an exact unaffected complement |
 | [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md) | 2026-08-14 | `current` | Behavioral genericity separates rich-PDF identity proof from normalized-text metamorphics |
 | [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md) | 2026-06-10 | `current` | Three-column bits\|name\|function tables split by CAPTION evidence — register-captioned chains become capti… |
 | [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md) | 2026-06-10 | `current` | Bit-location register tables fuse the field name into the description cell — read it as a gated leading ide… |
@@ -60,4 +61,3 @@
 | [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md) | 2026-08-09 | `current` | Corpus current-binary refresh completion is independent of normalized-cache retention |
 | [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md) | 2026-08-11 | `current` | The corpus refresh frontier derives the cohort and gates an exact root-neutral lifecycle partition |
 | [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
-| [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md) | 2026-06-15 | `current` | The CORPUS-PATTERN-REUSE activate-only consume mechanism has no valid first opt-in extractor in the current c… |

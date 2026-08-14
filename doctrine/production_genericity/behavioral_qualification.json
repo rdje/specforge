@@ -8,6 +8,7 @@
     "retained_population": "doctrine/chain_currency/retained_bundles.json",
     "reviewed_population": "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
     "reviewed_recipe_manifest": "doctrine/production_genericity/reviewed_recipe_manifest.json",
+    "semantic_negative_matrix": "doctrine/production_genericity/semantic_negative_matrix.json",
     "claim_family_inventory": "doctrine/production_genericity/claim_family_inventory.tsv",
     "rule_family_inventory": "doctrine/production_genericity/rule_family_inventory.tsv"
   },

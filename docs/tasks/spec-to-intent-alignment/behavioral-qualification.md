@@ -30,12 +30,14 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii`
-  State: `in_progress`
+  State: `done`
   Goal: implement deterministic whole-document metamorphic generation and comparison
   Acceptance: a conformance-owned repository-local harness generates reproducible variants, runs the current
   production pipeline without granting named knowledge to core, normalizes only declared transform effects,
   emits machine-readable evidence, and rejects partial, escaped, stale, or ambiguous runs
-  Verification: `pending`
+  Verification: `all three bounded children pass: deterministic identity/alpha, reviewed paraphrase/layout,
+  and semantic-negative/sensitivity qualification execute in conformance across the closed five-stage boundary;
+  missing, stale, ambiguous, partial, vacuous, and provider-unavailable attempts retain typed fail-closed states`
   Commit: `completed by .f.ii.a through .f.ii.c child commits`
   Children: `.f.ii.a`, `.f.ii.b`, `.f.ii.c`
 
@@ -71,13 +73,19 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`
-  State: `pending`
+  State: `done`
   Goal: qualify semantic negative controls and the behavioral gate's own sensitivity
   Acceptance: controlled omissions, contradictions, relation reversals, value/timing changes, undeclared symbols,
   misleading names, proof corruption, and disabled-stage faults produce the required changed fact or residual and
   make an invariant-only or incomplete comparison fail
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `one digest-pinned real timing-grammar negative removes exactly one SemanticIR assertion and its
+  three cumulative proof claims while preserving every other five-stage value/proof relation; the ordinary
+  invariant comparator rejects it and the exact declared complement passes; nine synthetic omission,
+  contradiction, reversal, value/timing, undeclared-symbol, misleading-name, proof-corruption, and disabled-stage
+  controls reject; 16 focused tests pass / two provider tests intentionally ignored; 8/8 contract mutations and
+  all 11 production-genericity components pass; full CI passes nine doctrines, 1,969 Rust tests / eight ignored /
+  zero failed, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`
   State: `pending`
@@ -148,6 +156,28 @@
 - [x] **LOCKSTEP** — behavioral contract, task frontier, research rationale, current module/flow census, mdBook,
   Knowledge Map, live ledgers, and resume pointer publish `.f.ii.c` as the next negative-sensitivity leaf.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`
+
+- [x] **REPRODUCE / MEASURE** — the rejected UM11732 “at least” candidate runs as a digest-pinned real
+  semantic-negative pair through SourceIR, EvidenceIR, SemanticIR, IntentIR, and ISF adapter. It removes one
+  assertion record, from 1 to 0, and exactly one cumulative proof claim at each of three downstream stages.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the wording enters a different production timing grammar: its source text
+  continues through seven pinned evidence/semantic/intent conclusions, but `semantic.statement_lift.assertions.v1`
+  no longer admits the assertion. This is a measured semantic/proof delta, not a harmless wording variant.
+- [x] **ADDRESSED (verified)** — schema-v3 evidence requires the exact declared record/proof delta, first proves
+  the ordinary invariant comparator rejects, then strips only that declaration and demands an exact complement.
+  Nine additional controls cover every accepted fault class; 16 provider-free focused tests pass, with two
+  provider-backed PDF tests intentionally ignored and independently unchanged.
+- [x] **NO REGRESSION** — the behavioral checker and 8/8 mutations pass; all 11 production-genericity components
+  pass; the refreshed independent graph snapshot matches 2,248 functions / 11,652 helper edges / 11,037 decision
+  sites / 1,427 semantic macros. Full CI passes 1,969 Rust tests / eight ignored / zero failed, five compile-fail
+  doctests, all nine doctrines, warning-denied Clippy/Rustdoc, mdBook test/build, and final locality.
+- [x] **GENERICITY (ADR 0006)** — production still receives only ordinary baseline/transformed source. Negative
+  recipes, declared deltas, attempt dispositions, matrix labels, and expected failures stay in conformance; no
+  document, vendor, protocol, symbol spelling, or expected result enters core authority.
+- [x] **LOCKSTEP** — the machine contract, task frontier, research rationale, mdBook, Knowledge Map, current flow
+  metrics, live-document contracts, and resume pointer publish `.f.iii` as the held-out qualification frontier.
+
 ## Current Frontier
 
 | Order | Leaf | State | Why next |
@@ -155,8 +185,8 @@
 | 1 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i` | `done` | oracle, population, relations, held-out split, and evidence states are frozen |
 | 2 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a` | `done` | deterministic alpha and full-PDF adversarial identity pairs pass the closed five-stage comparator |
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `done` | reviewed paraphrase and four harmless layout boundaries pass the complete five-stage comparator |
-| 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `pending` | next: prove the gate detects meaning and authority changes |
-| 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `pending` | measure identity-disjoint held-out generalization honestly |
+| 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `done` | real and synthetic negative controls prove semantic and authority sensitivity |
+| 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `pending` | next: measure identity-disjoint held-out generalization honestly |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `pending` | reconcile the complete reviewed population and all variants |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
 
@@ -186,15 +216,18 @@
   admission; an added line changed downstream coordinates; a reworded heading changed section-derived records.
   Those candidates remain calibration failures, while “not be lower than,” trailing heading whitespace,
   table alignment, blank-line spaces, and emphasis preserve the declared complement.
+- `2026-08-14`: a semantic negative passes only when the ordinary invariant comparator first rejects, every
+  declared fact/proof delta is observed, and a second comparison succeeds after removing exactly those deltas.
+  Missing source/provider/vacuity is unmeasurable; stale, ambiguous, escaped, or partial execution is invalid.
 
 ## Open Questions
 
-- `.f.ii.c` must add meaning- and authority-changing controls without repurposing the accepted equivalence
-  recipes or teaching production about expected outcomes.
+- `.f.iii` must execute the frozen 17-document prospective split without using held-out identity, strata, labels,
+  expected outcomes, or aggregate results to steer production.
 
 ## Blockers
 
-- None for `.f.ii.c`. Missing retained source or provider-free transform support becomes explicit unmeasurable
+- None for `.f.iii`. Missing retained source or provider-free transform support becomes explicit unmeasurable
   evidence, not permission to weaken the oracle.
 
 ## Verification Log
@@ -208,6 +241,8 @@
 | `2026-08-14` | `.f.ii.a` full repository gate | all 9 doctrines and 11 production-genericity components pass; Rust 1,961 passed / 8 ignored / 0 failed plus 5 compile-fail doctests; Clippy, Rustdoc, mdBook, and final locality pass |
 | `2026-08-14` | `.f.ii.b` reviewed transform calibration | one sentence and four layout spans pass all five stages with 8/8 and 2/2 pinned conclusions; 11 provider-free focused tests pass / 2 provider tests intentionally ignored; rejected parser-boundary candidates remain visible |
 | `2026-08-14` | `.f.ii.b` full repository gate | all doctrines and production-genericity components, exact 2,230 / 11,577 / 10,868 / 1,411 graph snapshot, Rust/compile-fail tests, warning-denied Clippy/Rustdoc, mdBook test/build, cleanup, and final locality pass |
+| `2026-08-14` | `.f.ii.c` semantic-negative calibration | one real required assertion removal and three-stage cumulative proof removal pass only after ordinary invariance rejects; nine synthetic fault classes reject; 16 focused tests pass / two PDF tests intentionally ignored; 8/8 contract mutations and all 11 production-genericity components pass |
+| `2026-08-14` | `.f.ii.c` full repository gate | all nine doctrines including chain currency, 11 production-genericity components, 1,969 Rust tests / eight ignored / zero failed, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook test/build, and final locality pass |
 
 ## Commit Log
 
@@ -217,6 +252,7 @@
 | `.f.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract` | freeze source planes, current and held-out denominators, six relations, five-stage comparison, and closed evidence states |
 | `.f.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification` | add deterministic source-bound alpha and byte-identical PDF identity generation, five-stage replay, closed comparison, evidence, and sensitivity controls |
 | `.f.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout` | add approved exact-span recipes, field-scoped inverse projection, preserved-conclusion evidence, complete-complement comparison, and fail-closed controls |
+| `.f.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity` | add a real declared semantic/proof negative, exact-complement comparison, nine-class sensitivity matrix, and typed stale/unmeasurable attempt outcomes |
 
 ## Activation protocol
 

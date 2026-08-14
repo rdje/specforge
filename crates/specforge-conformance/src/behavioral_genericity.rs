@@ -18,13 +18,15 @@ use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::EvidenceIr;
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
-use crate::ir::source::SourceIr;
+use crate::ir::source::{SourceIr, inspect_docling_runtime};
 
-const BEHAVIORAL_SCHEMA_VERSION: u32 = 2;
+const BEHAVIORAL_SCHEMA_VERSION: u32 = 3;
 const CONTRACT_PATH: &str = "doctrine/production_genericity/behavioral_qualification.json";
 const REVIEW_RECIPE_MANIFEST_PATH: &str =
     "doctrine/production_genericity/reviewed_recipe_manifest.json";
 const REVIEW_RECIPE_ROOT: &str = "doctrine/production_genericity/reviewed_recipes";
+const NEGATIVE_SENSITIVITY_MATRIX_PATH: &str =
+    "doctrine/production_genericity/semantic_negative_matrix.json";
 const TEMP_ROOT: &str = ".project-data/tmp";
 const EVIDENCE_FILE: &str = "behavioral_evidence.json";
 const GROUPED_INTERFACE_PREFIX: &str = "semantic channel inferred from grouped interface signals: ";
@@ -136,6 +138,7 @@ pub enum BehavioralRelation {
     SymbolAlpha,
     StructurePreservingParaphrase,
     HarmlessLayout,
+    SemanticNegative,
 }
 
 impl BehavioralRelation {
@@ -146,6 +149,7 @@ impl BehavioralRelation {
             Self::SymbolAlpha => "symbol_alpha",
             Self::StructurePreservingParaphrase => "structure_preserving_paraphrase",
             Self::HarmlessLayout => "harmless_layout",
+            Self::SemanticNegative => "semantic_negative",
         }
     }
 
@@ -153,14 +157,16 @@ impl BehavioralRelation {
         match self {
             Self::UnchangedSource | Self::AdversarialIdentity => "pdf_full_capture",
             Self::SymbolAlpha => "normalized_text_projection",
-            Self::StructurePreservingParaphrase | Self::HarmlessLayout => "reviewed_variant",
+            Self::StructurePreservingParaphrase | Self::HarmlessLayout | Self::SemanticNegative => {
+                "reviewed_variant"
+            }
         }
     }
 
     fn is_reviewed(self) -> bool {
         matches!(
             self,
-            Self::StructurePreservingParaphrase | Self::HarmlessLayout
+            Self::StructurePreservingParaphrase | Self::HarmlessLayout | Self::SemanticNegative
         )
     }
 }
@@ -225,6 +231,21 @@ pub enum ReviewedChangeKind {
     TableLayout,
     WhitespaceLayout,
     FormattingLayout,
+    SemanticTimingChange,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SemanticNegativeKind {
+    TimingGrammarAdmission,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RequiredDeltaKind {
+    Added,
+    Changed,
+    Removed,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -254,6 +275,27 @@ pub struct ReviewedRecipeEvidence {
     pub preserved_conclusions: usize,
     pub unaffected_complement: String,
     pub unmeasurable_source_surfaces: Vec<String>,
+    pub semantic_negative: Option<SemanticNegativeEvidence>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RequiredDeltaEvidence {
+    pub delta_id: String,
+    pub stage: BehavioralStage,
+    pub kind: RequiredDeltaKind,
+    pub baseline_pointer: Option<String>,
+    pub transformed_pointer: Option<String>,
+    pub observed: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SemanticNegativeEvidence {
+    pub kind: SemanticNegativeKind,
+    pub required_deltas: Vec<RequiredDeltaEvidence>,
+    pub dependent_proof_deltas: usize,
+    pub invariant_comparison_rejected: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -291,6 +333,9 @@ pub struct StageComparison {
     pub transformed_proof_claims: usize,
     pub compared_leaf_values: usize,
     pub normalized_delta_paths: Vec<String>,
+    pub declared_delta_paths: Vec<String>,
+    pub baseline_declared_proof_deltas: usize,
+    pub transformed_declared_proof_deltas: usize,
     pub undeclared_delta_paths: Vec<String>,
     pub passed: bool,
 }
@@ -310,6 +355,8 @@ pub struct BehavioralCoverage {
     pub expected_reviewed_span_deltas: usize,
     pub observed_reviewed_span_deltas: usize,
     pub preserved_conclusions: usize,
+    pub expected_semantic_deltas: usize,
+    pub observed_semantic_deltas: usize,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -325,6 +372,56 @@ pub struct BehavioralQualificationReport {
     pub stages: Vec<StageComparison>,
     pub coverage: BehavioralCoverage,
     pub failures: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BehavioralQualificationAttempt {
+    pub schema_version: u32,
+    pub relation: BehavioralRelation,
+    pub input_plane: String,
+    pub state: BehavioralRunState,
+    pub failure_id: Option<String>,
+    pub detail: Option<String>,
+    pub report: Option<BehavioralQualificationReport>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum NegativeControlKind {
+    Omission,
+    Contradiction,
+    RelationReversal,
+    ValueChange,
+    TimingChange,
+    UndeclaredSymbol,
+    MisleadingName,
+    ProofCorruption,
+    DisabledStage,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NegativeControlResult {
+    pub control_id: String,
+    pub kind: NegativeControlKind,
+    pub expected_state: BehavioralRunState,
+    pub observed_state: BehavioralRunState,
+    pub required_delta_observed: bool,
+    pub invariant_comparison_rejected: bool,
+    pub unaffected_complement_preserved: bool,
+    pub passed: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NegativeSensitivityReport {
+    pub schema_version: u32,
+    pub matrix_path: String,
+    pub matrix_sha256: String,
+    pub controls: Vec<NegativeControlResult>,
+    pub attempt_dispositions: BTreeMap<String, BehavioralRunState>,
+    pub passed: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -371,7 +468,14 @@ struct ReviewedTransformRecipe {
     source_sha256: String,
     review_status: String,
     changed_spans: Vec<ReviewedSpanChange>,
+    #[serde(default)]
     preserved_conclusions: Vec<ReviewedConclusion>,
+    #[serde(default)]
+    semantic_negative_kind: Option<SemanticNegativeKind>,
+    #[serde(default)]
+    required_deltas: Vec<ReviewedRequiredDelta>,
+    #[serde(default)]
+    dependent_proof_deltas: Vec<ReviewedProofDelta>,
     unaffected_complement: String,
     unmeasurable_source_surfaces: Vec<String>,
 }
@@ -397,6 +501,36 @@ struct ReviewedConclusion {
     transformed_pointer: String,
     baseline_value: String,
     transformed_value: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewedRequiredDelta {
+    delta_id: String,
+    stage: BehavioralStage,
+    kind: RequiredDeltaKind,
+    baseline_pointer: Option<String>,
+    transformed_pointer: Option<String>,
+    baseline_value: Option<Value>,
+    transformed_value: Option<Value>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewedProofAddress {
+    stage: String,
+    surface: String,
+    stable_record_key: String,
+    field_path: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewedProofDelta {
+    delta_id: String,
+    stages: Vec<BehavioralStage>,
+    rule_id: String,
+    address: ReviewedProofAddress,
 }
 
 #[derive(Debug, Clone)]
@@ -428,23 +562,403 @@ struct NormalizationSpec {
     reviewed_text_by_field: BTreeMap<String, BTreeMap<String, String>>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum NegativeMutationOperation {
+    Remove,
+    Replace,
+    DisableStage,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NegativeSensitivityMatrix {
+    schema_version: u32,
+    owner: String,
+    unaffected_complement: String,
+    controls: Vec<NegativeControlDeclaration>,
+    attempt_dispositions: BTreeMap<String, BehavioralRunState>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NegativeControlDeclaration {
+    control_id: String,
+    kind: NegativeControlKind,
+    stage: BehavioralStage,
+    operation: NegativeMutationOperation,
+    path: Option<String>,
+    baseline_value: Option<Value>,
+    transformed_value: Option<Value>,
+    expected_state: BehavioralRunState,
+    expected_failure_id: String,
+}
+
+/// Execute a qualification attempt while preserving the contract's fail/invalid/unmeasurable
+/// disposition instead of forcing callers to infer it from an error string.
+pub fn attempt_behavioral_relation(
+    request: &BehavioralQualificationRequest,
+) -> BehavioralQualificationAttempt {
+    match qualify_behavioral_relation(request) {
+        Ok(report) => {
+            let failure_id = report
+                .failures
+                .first()
+                .and_then(|failure| failure.split(':').next())
+                .map(str::to_string);
+            BehavioralQualificationAttempt {
+                schema_version: BEHAVIORAL_SCHEMA_VERSION,
+                relation: request.relation,
+                input_plane: request.relation.input_plane().to_string(),
+                state: report.state,
+                failure_id,
+                detail: None,
+                report: Some(report),
+            }
+        }
+        Err(error) => {
+            let detail = error.to_string();
+            let (state, failure_id) = classify_attempt_error(&detail);
+            BehavioralQualificationAttempt {
+                schema_version: BEHAVIORAL_SCHEMA_VERSION,
+                relation: request.relation,
+                input_plane: request.relation.input_plane().to_string(),
+                state,
+                failure_id: Some(failure_id.to_string()),
+                detail: Some(detail),
+                report: None,
+            }
+        }
+    }
+}
+
+fn classify_attempt_error(detail: &str) -> (BehavioralRunState, &'static str) {
+    for (failure_id, state) in [
+        ("authority_unavailable", BehavioralRunState::Unmeasurable),
+        ("provider_unavailable", BehavioralRunState::Unmeasurable),
+        ("vacuous_baseline", BehavioralRunState::Unmeasurable),
+        (
+            "ambiguous_or_nonbijective_transform",
+            BehavioralRunState::Invalid,
+        ),
+        ("partial_or_escaped_run", BehavioralRunState::Invalid),
+        ("stale_contract_or_population", BehavioralRunState::Invalid),
+    ] {
+        if detail.contains(failure_id) {
+            return (state, failure_id);
+        }
+    }
+    (BehavioralRunState::Invalid, "stale_contract_or_population")
+}
+
+/// Execute the closed comparator-sensitivity matrix declared by conformance authority.
+pub fn qualify_negative_sensitivity_matrix() -> Result<NegativeSensitivityReport> {
+    let repository = crate::project_data::repository_root()?;
+    let matrix_path = resolve_repository_file(
+        &repository,
+        Path::new(NEGATIVE_SENSITIVITY_MATRIX_PATH),
+        "semantic-negative sensitivity matrix",
+    )?;
+    let matrix_bytes = fs::read(&matrix_path)?;
+    let matrix: NegativeSensitivityMatrix = serde_json::from_slice(&matrix_bytes)?;
+    validate_negative_sensitivity_matrix(&matrix)?;
+
+    let baseline = synthetic_negative_stage_map();
+    let normalization = NormalizationSpec {
+        relation: BehavioralRelation::SemanticNegative,
+        baseline_run_root: ".project-data/tmp/negative-matrix".to_string(),
+        transformed_run_root: ".project-data/tmp/negative-matrix".to_string(),
+        baseline_source: "negative-matrix.md".to_string(),
+        transformed_source: "negative-matrix.md".to_string(),
+        exact_transformed_to_baseline: BTreeMap::new(),
+        identifier_transformed_to_baseline: BTreeMap::new(),
+        reviewed_text_by_field: BTreeMap::new(),
+    };
+    let mut controls = Vec::new();
+    for declaration in &matrix.controls {
+        controls.push(execute_negative_control(
+            declaration,
+            &baseline,
+            &normalization,
+        )?);
+    }
+    let passed = controls.iter().all(|control| control.passed);
+    Ok(NegativeSensitivityReport {
+        schema_version: matrix.schema_version,
+        matrix_path: NEGATIVE_SENSITIVITY_MATRIX_PATH.to_string(),
+        matrix_sha256: sha256_bytes(&matrix_bytes),
+        controls,
+        attempt_dispositions: matrix.attempt_dispositions,
+        passed,
+    })
+}
+
+fn validate_negative_sensitivity_matrix(matrix: &NegativeSensitivityMatrix) -> Result<()> {
+    let expected_kinds = [
+        NegativeControlKind::Omission,
+        NegativeControlKind::Contradiction,
+        NegativeControlKind::RelationReversal,
+        NegativeControlKind::ValueChange,
+        NegativeControlKind::TimingChange,
+        NegativeControlKind::UndeclaredSymbol,
+        NegativeControlKind::MisleadingName,
+        NegativeControlKind::ProofCorruption,
+        NegativeControlKind::DisabledStage,
+    ];
+    let kinds = matrix
+        .controls
+        .iter()
+        .map(|control| control.kind)
+        .collect::<Vec<_>>();
+    let mut ids = BTreeSet::new();
+    if matrix.schema_version != 1
+        || matrix.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c"
+        || matrix.unaffected_complement != REVIEWED_COMPLEMENT
+        || kinds.len() != expected_kinds.len()
+        || !expected_kinds.iter().all(|kind| kinds.contains(kind))
+        || matrix
+            .controls
+            .iter()
+            .any(|control| control.control_id.is_empty() || !ids.insert(&control.control_id))
+    {
+        return Err(invalid(
+            "stale_contract_or_population: semantic-negative matrix identity or coverage differs",
+        ));
+    }
+    let expected_dispositions = BTreeMap::from([
+        (
+            "ambiguous_or_nonbijective_transform".to_string(),
+            BehavioralRunState::Invalid,
+        ),
+        (
+            "authority_unavailable".to_string(),
+            BehavioralRunState::Unmeasurable,
+        ),
+        (
+            "partial_or_escaped_run".to_string(),
+            BehavioralRunState::Invalid,
+        ),
+        (
+            "provider_unavailable".to_string(),
+            BehavioralRunState::Unmeasurable,
+        ),
+        (
+            "stale_contract_or_population".to_string(),
+            BehavioralRunState::Invalid,
+        ),
+        (
+            "vacuous_baseline".to_string(),
+            BehavioralRunState::Unmeasurable,
+        ),
+    ]);
+    if matrix.attempt_dispositions != expected_dispositions {
+        return Err(invalid(
+            "stale_contract_or_population: semantic-negative attempt dispositions differ",
+        ));
+    }
+    for control in &matrix.controls {
+        let disabled = control.kind == NegativeControlKind::DisabledStage;
+        if disabled != matches!(control.operation, NegativeMutationOperation::DisableStage)
+            || disabled != (control.expected_state == BehavioralRunState::Invalid)
+            || disabled != (control.expected_failure_id == "partial_or_escaped_run")
+            || (!disabled
+                && (control
+                    .path
+                    .as_deref()
+                    .is_none_or(|path| !path.starts_with('/'))
+                    || control.baseline_value.is_none()
+                    || (matches!(control.operation, NegativeMutationOperation::Remove)
+                        && control.transformed_value.is_some())
+                    || (matches!(control.operation, NegativeMutationOperation::Replace)
+                        && control.transformed_value.is_none())
+                    || control.expected_state != BehavioralRunState::Fail
+                    || control.expected_failure_id != "undeclared_semantic_delta"))
+        {
+            return Err(invalid(format!(
+                "stale_contract_or_population: semantic-negative control schema differs: {}",
+                control.control_id
+            )));
+        }
+    }
+    Ok(())
+}
+
+fn synthetic_negative_stage_map() -> BTreeMap<BehavioralStage, StageArtifact> {
+    BehavioralStage::ALL
+        .into_iter()
+        .map(|stage| {
+            let value = serde_json::json!({
+                "stage": stage.as_str(),
+                "document_identity": {"document_key": "negative_matrix"},
+                "artifact_layout": {"artifact_root": ".project-data/tmp/negative-matrix"},
+                "canonical_fact": {
+                    "obligation": "drive",
+                    "polarity": "required",
+                    "relation": "producer_to_consumer",
+                    "value": 1,
+                    "timing_cycles": 2,
+                    "symbol": "declared_signal",
+                    "actor_name": "neutral_endpoint"
+                },
+                "residual_decisions": [],
+                "proof_ledger": {
+                    "schema_version": 1,
+                    "ruleset_sha256": "1".repeat(64),
+                    "claims": [{
+                        "address": {
+                            "stage": stage.as_str(),
+                            "surface": "canonical_fact",
+                            "stable_record_key": "record-00000000"
+                        },
+                        "conclusion_sha256": "2".repeat(64),
+                        "rule_id": "negative.matrix.canonical_fact.v1",
+                        "premises": [],
+                        "symbol_uses": [],
+                        "confidence": "deterministic"
+                    }]
+                }
+            });
+            (
+                stage,
+                StageArtifact {
+                    identity: ArtifactIdentity {
+                        path: format!(".project-data/tmp/negative-matrix/{}.json", stage.as_str()),
+                        sha256: "0".repeat(64),
+                        byte_count: 1,
+                    },
+                    value,
+                },
+            )
+        })
+        .collect()
+}
+
+fn execute_negative_control(
+    declaration: &NegativeControlDeclaration,
+    baseline: &BTreeMap<BehavioralStage, StageArtifact>,
+    normalization: &NormalizationSpec,
+) -> Result<NegativeControlResult> {
+    let mut transformed = baseline.clone();
+    let required_delta_observed = match declaration.operation {
+        NegativeMutationOperation::DisableStage => transformed.remove(&declaration.stage).is_some(),
+        NegativeMutationOperation::Remove => {
+            let stage = transformed
+                .get_mut(&declaration.stage)
+                .ok_or_else(|| invalid("negative-matrix mutation stage is absent"))?;
+            let pointer = declaration.path.as_deref().expect("validated remove path");
+            stage.value.pointer(pointer) == declaration.baseline_value.as_ref()
+                && remove_json_pointer(&mut stage.value, pointer).is_some()
+                && stage.value.pointer(pointer).is_none()
+        }
+        NegativeMutationOperation::Replace => {
+            let stage = transformed
+                .get_mut(&declaration.stage)
+                .ok_or_else(|| invalid("negative-matrix mutation stage is absent"))?;
+            let pointer = declaration.path.as_deref().expect("validated replace path");
+            let baseline_matches =
+                stage.value.pointer(pointer) == declaration.baseline_value.as_ref();
+            let replaced = set_json_pointer(
+                &mut stage.value,
+                pointer,
+                declaration
+                    .transformed_value
+                    .clone()
+                    .expect("validated replacement value"),
+            );
+            baseline_matches
+                && replaced
+                && stage.value.pointer(pointer) == declaration.transformed_value.as_ref()
+        }
+    };
+
+    let (observed_state, _, failures) = compare_artifact_maps(
+        baseline,
+        &transformed,
+        "negative_matrix",
+        "negative_matrix",
+        normalization,
+        None,
+    )?;
+    let invariant_comparison_rejected = observed_state != BehavioralRunState::Pass
+        && failures
+            .iter()
+            .any(|failure| failure.starts_with(&declaration.expected_failure_id));
+
+    let mut restored = transformed;
+    match declaration.operation {
+        NegativeMutationOperation::DisableStage => {
+            restored.insert(
+                declaration.stage,
+                baseline
+                    .get(&declaration.stage)
+                    .expect("baseline has every stage")
+                    .clone(),
+            );
+        }
+        NegativeMutationOperation::Remove | NegativeMutationOperation::Replace => {
+            let stage = restored
+                .get_mut(&declaration.stage)
+                .expect("mutation retained its stage");
+            set_json_pointer(
+                &mut stage.value,
+                declaration
+                    .path
+                    .as_deref()
+                    .expect("validated mutation path"),
+                declaration
+                    .baseline_value
+                    .clone()
+                    .expect("validated baseline value"),
+            );
+        }
+    }
+    let unaffected_complement_preserved = stage_maps_equal(baseline, &restored);
+    let passed = required_delta_observed
+        && invariant_comparison_rejected
+        && unaffected_complement_preserved
+        && observed_state == declaration.expected_state;
+    Ok(NegativeControlResult {
+        control_id: declaration.control_id.clone(),
+        kind: declaration.kind,
+        expected_state: declaration.expected_state,
+        observed_state,
+        required_delta_observed,
+        invariant_comparison_rejected,
+        unaffected_complement_preserved,
+        passed,
+    })
+}
+
+fn stage_maps_equal(
+    left: &BTreeMap<BehavioralStage, StageArtifact>,
+    right: &BTreeMap<BehavioralStage, StageArtifact>,
+) -> bool {
+    left.len() == right.len()
+        && left.iter().all(|(stage, artifact)| {
+            right
+                .get(stage)
+                .is_some_and(|other| artifact.value == other.value)
+        })
+}
+
 /// Execute one complete frozen relation and write machine-readable evidence below `output_root`.
 pub fn qualify_behavioral_relation(
     request: &BehavioralQualificationRequest,
 ) -> Result<BehavioralQualificationReport> {
     validate_request(request)?;
     let repository = crate::project_data::repository_root()?;
-    let output_root = prepare_output_root(&repository, &request.output_root)?;
     let source_authority = resolve_source_authority(&repository, &request.source_authority)?;
     let source_bytes = fs::read(&source_authority)?;
     let source_sha256 = sha256_bytes(&source_bytes);
     if source_sha256 != request.expected_source_sha256 {
         return Err(invalid(format!(
-            "behavioral source SHA-256 differs: {source_sha256} != {}",
+            "stale_contract_or_population: behavioral source SHA-256 differs: {source_sha256} != {}",
             request.expected_source_sha256
         )));
     }
     ensure_same_filesystem(&repository, &source_authority)?;
+    ensure_relation_provider(request)?;
+    let output_root = prepare_output_root(&repository, &request.output_root)?;
     let prior_memory = resolve_repository_file(&repository, &request.prior_memory, "prior memory")?;
     let prior_memory_sha256 = sha256_file(&prior_memory)?;
     let contract_sha256 = sha256_file(&repository.join(CONTRACT_PATH))?;
@@ -497,7 +1011,7 @@ pub fn qualify_behavioral_relation(
             )?;
             if symbols.is_empty() {
                 return Err(invalid(
-                    "symbol-alpha baseline has no unambiguous source-bound identifier",
+                    "vacuous_baseline: symbol-alpha baseline has no unambiguous source-bound identifier",
                 ));
             }
             let (transformed, renames) =
@@ -506,7 +1020,9 @@ pub fn qualify_behavioral_relation(
             write_new(&path, transformed.as_bytes())?;
             (path, renames, Vec::new())
         }
-        BehavioralRelation::StructurePreservingParaphrase | BehavioralRelation::HarmlessLayout => {
+        BehavioralRelation::StructurePreservingParaphrase
+        | BehavioralRelation::HarmlessLayout
+        | BehavioralRelation::SemanticNegative => {
             let source_text = String::from_utf8(source_bytes.clone()).map_err(|_| {
                 invalid("reviewed transform input must be UTF-8 normalized Markdown")
             })?;
@@ -632,8 +1148,39 @@ pub fn qualify_behavioral_relation(
         identifier_transformed_to_baseline,
         reviewed_text_by_field,
     };
+    let mut required_delta_evidence = Vec::new();
+    let mut observed_dependent_proof_deltas = 0usize;
+    let mut invariant_comparison_rejected = false;
     let (mut state, stages, mut failures) =
-        compare_pipelines(&baseline, &transformed, &normalization)?;
+        if request.relation == BehavioralRelation::SemanticNegative {
+            let loaded = reviewed_recipe
+                .as_ref()
+                .ok_or_else(|| invalid("semantic-negative relation has no loaded recipe"))?;
+            let (invariant_state, _, _) =
+                compare_pipelines(&baseline, &transformed, &normalization, None)?;
+            invariant_comparison_rejected = invariant_state == BehavioralRunState::Fail;
+            let (observed, proof_deltas, observation_failures) =
+                observe_required_negative_deltas(&loaded.recipe, &baseline, &transformed)?;
+            required_delta_evidence = observed;
+            observed_dependent_proof_deltas = proof_deltas;
+            let all_required_observed = observation_failures.is_empty();
+            let (_, stages, mut failures) = compare_pipelines(
+                &baseline,
+                &transformed,
+                &normalization,
+                all_required_observed.then_some(&loaded.recipe),
+            )?;
+            failures.extend(observation_failures);
+            if !invariant_comparison_rejected {
+                failures.push(
+                    "missing_expected_delta: invariant comparator accepted semantic negative"
+                        .to_string(),
+                );
+            }
+            (run_state(&failures), stages, failures)
+        } else {
+            compare_pipelines(&baseline, &transformed, &normalization, None)?
+        };
     if let Some(loaded) = &reviewed_recipe {
         failures.extend(validate_preserved_conclusions(
             &loaded.recipe,
@@ -658,6 +1205,14 @@ pub fn qualify_behavioral_relation(
             preserved_conclusions: loaded.recipe.preserved_conclusions.len(),
             unaffected_complement: loaded.recipe.unaffected_complement.clone(),
             unmeasurable_source_surfaces: loaded.recipe.unmeasurable_source_surfaces.clone(),
+            semantic_negative: loaded.recipe.semantic_negative_kind.map(|kind| {
+                SemanticNegativeEvidence {
+                    kind,
+                    required_deltas: required_delta_evidence.clone(),
+                    dependent_proof_deltas: observed_dependent_proof_deltas,
+                    invariant_comparison_rejected,
+                }
+            }),
         });
     let transform = TransformEvidence {
         relation: request.relation,
@@ -715,6 +1270,13 @@ pub fn qualify_behavioral_relation(
         preserved_conclusions: reviewed_recipe
             .as_ref()
             .map_or(0, |loaded| loaded.recipe.preserved_conclusions.len()),
+        expected_semantic_deltas: reviewed_recipe
+            .as_ref()
+            .map_or(0, |loaded| loaded.recipe.required_deltas.len()),
+        observed_semantic_deltas: required_delta_evidence
+            .iter()
+            .filter(|delta| delta.observed)
+            .count(),
     };
     let report = BehavioralQualificationReport {
         schema_version: BEHAVIORAL_SCHEMA_VERSION,
@@ -804,6 +1366,7 @@ fn validate_request(request: &BehavioralQualificationRequest) -> Result<()> {
         BehavioralRelation::SymbolAlpha
         | BehavioralRelation::StructurePreservingParaphrase
         | BehavioralRelation::HarmlessLayout
+        | BehavioralRelation::SemanticNegative
             if !matches!(extension.as_str(), "md" | "markdown") =>
         {
             Err(invalid(
@@ -812,6 +1375,19 @@ fn validate_request(request: &BehavioralQualificationRequest) -> Result<()> {
         }
         _ => Ok(()),
     }
+}
+
+fn ensure_relation_provider(request: &BehavioralQualificationRequest) -> Result<()> {
+    if matches!(
+        request.relation,
+        BehavioralRelation::UnchangedSource | BehavioralRelation::AdversarialIdentity
+    ) && !inspect_docling_runtime()?.is_ready()
+    {
+        return Err(invalid(
+            "provider_unavailable: repository-local Docling runtime is unavailable",
+        ));
+    }
+    Ok(())
 }
 
 fn load_reviewed_recipe(
@@ -831,7 +1407,7 @@ fn load_reviewed_recipe(
     let manifest_bytes = fs::read(&manifest_path)?;
     let manifest: ReviewedRecipeManifest = serde_json::from_slice(&manifest_bytes)?;
     if manifest.schema_version != REVIEWED_RECIPE_SCHEMA_VERSION
-        || manifest.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b"
+        || manifest.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii"
     {
         return Err(invalid("reviewed recipe manifest identity is stale"));
     }
@@ -990,6 +1566,9 @@ fn validate_reviewed_recipe(
         ]
         .into_iter()
         .collect::<BTreeSet<_>>(),
+        BehavioralRelation::SemanticNegative => [ReviewedChangeKind::SemanticTimingChange]
+            .into_iter()
+            .collect::<BTreeSet<_>>(),
         _ => {
             return Err(invalid(
                 "non-reviewed relation entered reviewed recipe validator",
@@ -1037,7 +1616,123 @@ fn validate_reviewed_recipe(
             declaration.recipe_id
         )));
     }
+    if recipe.relation == BehavioralRelation::SemanticNegative {
+        if recipe.semantic_negative_kind.is_none()
+            || recipe.required_deltas.is_empty()
+            || recipe.dependent_proof_deltas.is_empty()
+        {
+            return Err(invalid(format!(
+                "semantic-negative recipe lacks kind, required delta, or dependent proof: {}",
+                declaration.recipe_id
+            )));
+        }
+        validate_required_delta_declarations(recipe)?;
+    } else if recipe.semantic_negative_kind.is_some()
+        || !recipe.required_deltas.is_empty()
+        || !recipe.dependent_proof_deltas.is_empty()
+    {
+        return Err(invalid(format!(
+            "equivalence recipe carries semantic-negative authority: {}",
+            declaration.recipe_id
+        )));
+    }
     Ok(())
+}
+
+fn validate_required_delta_declarations(recipe: &ReviewedTransformRecipe) -> Result<()> {
+    let mut delta_ids = BTreeSet::new();
+    for delta in &recipe.required_deltas {
+        let pointers_are_valid = delta
+            .baseline_pointer
+            .as_deref()
+            .into_iter()
+            .chain(delta.transformed_pointer.as_deref())
+            .all(|pointer| pointer.starts_with('/'));
+        let shape_is_valid = match delta.kind {
+            RequiredDeltaKind::Added => {
+                delta.baseline_pointer.is_none()
+                    && delta.baseline_value.is_none()
+                    && delta.transformed_pointer.is_some()
+                    && delta.transformed_value.is_some()
+            }
+            RequiredDeltaKind::Changed => {
+                delta.baseline_pointer.is_some()
+                    && delta.baseline_value.is_some()
+                    && delta.transformed_pointer.is_some()
+                    && delta.transformed_value.is_some()
+                    && delta.baseline_value != delta.transformed_value
+            }
+            RequiredDeltaKind::Removed => {
+                delta.baseline_pointer.is_some()
+                    && delta.baseline_value.is_some()
+                    && delta.transformed_pointer.is_none()
+                    && delta.transformed_value.is_none()
+            }
+        };
+        if delta.delta_id.is_empty()
+            || !delta_ids.insert(delta.delta_id.as_str())
+            || !matches!(
+                delta.stage,
+                BehavioralStage::SemanticIr | BehavioralStage::IntentIr
+            )
+            || !pointers_are_valid
+            || !shape_is_valid
+        {
+            return Err(invalid(format!(
+                "semantic-negative required delta is incomplete: {}",
+                delta.delta_id
+            )));
+        }
+    }
+
+    let mut proof_ids = BTreeSet::new();
+    for proof in &recipe.dependent_proof_deltas {
+        let stages = proof.stages.iter().copied().collect::<BTreeSet<_>>();
+        let expected_stages = proof_propagation_stages(&proof.address.stage)?;
+        if proof.delta_id.is_empty()
+            || !proof_ids.insert(proof.delta_id.as_str())
+            || proof.rule_id.is_empty()
+            || proof.address.surface.is_empty()
+            || proof.address.stable_record_key.is_empty()
+            || stages.len() != proof.stages.len()
+            || stages != expected_stages
+        {
+            return Err(invalid(format!(
+                "semantic-negative dependent proof declaration is incomplete: {}",
+                proof.delta_id
+            )));
+        }
+    }
+    Ok(())
+}
+
+fn proof_propagation_stages(address_stage: &str) -> Result<BTreeSet<BehavioralStage>> {
+    let stages = match address_stage {
+        "evidence_ir" => [
+            BehavioralStage::EvidenceIr,
+            BehavioralStage::SemanticIr,
+            BehavioralStage::IntentIr,
+            BehavioralStage::IsfAdapter,
+        ]
+        .into_iter()
+        .collect(),
+        "semantic_ir" => [
+            BehavioralStage::SemanticIr,
+            BehavioralStage::IntentIr,
+            BehavioralStage::IsfAdapter,
+        ]
+        .into_iter()
+        .collect(),
+        "intent_ir" => [BehavioralStage::IntentIr, BehavioralStage::IsfAdapter]
+            .into_iter()
+            .collect(),
+        other => {
+            return Err(invalid(format!(
+                "semantic-negative proof address stage cannot propagate: {other}"
+            )));
+        }
+    };
+    Ok(stages)
 }
 
 fn apply_reviewed_recipe(
@@ -1152,6 +1847,288 @@ fn validate_preserved_conclusions(
     Ok(failures)
 }
 
+fn observe_required_negative_deltas(
+    recipe: &ReviewedTransformRecipe,
+    baseline: &PipelineArtifacts,
+    transformed: &PipelineArtifacts,
+) -> Result<(Vec<RequiredDeltaEvidence>, usize, Vec<String>)> {
+    let mut evidence = Vec::new();
+    let mut failures = Vec::new();
+    for delta in &recipe.required_deltas {
+        let baseline_stage = baseline
+            .stages
+            .get(&delta.stage)
+            .ok_or_else(|| invalid("semantic-negative baseline stage is missing"))?;
+        let transformed_stage = transformed
+            .stages
+            .get(&delta.stage)
+            .ok_or_else(|| invalid("semantic-negative transformed stage is missing"))?;
+        let observed = match delta.kind {
+            RequiredDeltaKind::Added => {
+                let pointer = delta
+                    .transformed_pointer
+                    .as_deref()
+                    .expect("validated added pointer");
+                baseline_stage.value.pointer(pointer).is_none()
+                    && transformed_stage.value.pointer(pointer) == delta.transformed_value.as_ref()
+            }
+            RequiredDeltaKind::Changed => {
+                baseline_stage.value.pointer(
+                    delta
+                        .baseline_pointer
+                        .as_deref()
+                        .expect("validated changed baseline pointer"),
+                ) == delta.baseline_value.as_ref()
+                    && transformed_stage.value.pointer(
+                        delta
+                            .transformed_pointer
+                            .as_deref()
+                            .expect("validated changed transformed pointer"),
+                    ) == delta.transformed_value.as_ref()
+            }
+            RequiredDeltaKind::Removed => {
+                let pointer = delta
+                    .baseline_pointer
+                    .as_deref()
+                    .expect("validated removed pointer");
+                baseline_stage.value.pointer(pointer) == delta.baseline_value.as_ref()
+                    && transformed_stage.value.pointer(pointer).is_none()
+            }
+        };
+        if !observed {
+            failures.push(format!(
+                "missing_expected_delta: semantic-negative delta was not observed: {}",
+                delta.delta_id
+            ));
+        }
+        evidence.push(RequiredDeltaEvidence {
+            delta_id: delta.delta_id.clone(),
+            stage: delta.stage,
+            kind: delta.kind,
+            baseline_pointer: delta.baseline_pointer.clone(),
+            transformed_pointer: delta.transformed_pointer.clone(),
+            observed,
+        });
+    }
+
+    let mut observed_proof_deltas = 0usize;
+    for proof in &recipe.dependent_proof_deltas {
+        for stage in &proof.stages {
+            let baseline_stage = baseline
+                .stages
+                .get(stage)
+                .ok_or_else(|| invalid("semantic-negative proof baseline stage is missing"))?;
+            let transformed_stage = transformed
+                .stages
+                .get(stage)
+                .ok_or_else(|| invalid("semantic-negative proof transformed stage is missing"))?;
+            let baseline_matches = matching_proof_claims(&baseline_stage.value, proof)?;
+            let transformed_matches = matching_proof_claims(&transformed_stage.value, proof)?;
+            if baseline_matches == 1 && transformed_matches == 0 {
+                observed_proof_deltas += 1;
+            } else {
+                failures.push(format!(
+                    "missing_expected_delta: dependent proof delta differs at {}: {}",
+                    stage.as_str(),
+                    proof.delta_id
+                ));
+            }
+        }
+    }
+    Ok((evidence, observed_proof_deltas, failures))
+}
+
+fn strip_declared_negative_deltas(
+    stage: BehavioralStage,
+    baseline: &mut Value,
+    transformed: &mut Value,
+    recipe: &ReviewedTransformRecipe,
+) -> Result<(Vec<String>, usize, usize)> {
+    let mut paths = Vec::new();
+    for delta in recipe
+        .required_deltas
+        .iter()
+        .filter(|delta| delta.stage == stage)
+    {
+        match delta.kind {
+            RequiredDeltaKind::Added => {
+                let pointer = delta
+                    .transformed_pointer
+                    .as_deref()
+                    .expect("validated added pointer");
+                remove_json_pointer(transformed, pointer).ok_or_else(|| {
+                    invalid(format!(
+                        "semantic-negative declared added delta disappeared: {}",
+                        delta.delta_id
+                    ))
+                })?;
+                paths.push(format!("transformed:{pointer}"));
+            }
+            RequiredDeltaKind::Changed => {
+                let baseline_pointer = delta
+                    .baseline_pointer
+                    .as_deref()
+                    .expect("validated changed baseline pointer");
+                let transformed_pointer = delta
+                    .transformed_pointer
+                    .as_deref()
+                    .expect("validated changed transformed pointer");
+                remove_json_pointer(baseline, baseline_pointer).ok_or_else(|| {
+                    invalid(format!(
+                        "semantic-negative declared baseline delta disappeared: {}",
+                        delta.delta_id
+                    ))
+                })?;
+                remove_json_pointer(transformed, transformed_pointer).ok_or_else(|| {
+                    invalid(format!(
+                        "semantic-negative declared transformed delta disappeared: {}",
+                        delta.delta_id
+                    ))
+                })?;
+                paths.push(format!("baseline:{baseline_pointer}"));
+                paths.push(format!("transformed:{transformed_pointer}"));
+            }
+            RequiredDeltaKind::Removed => {
+                let pointer = delta
+                    .baseline_pointer
+                    .as_deref()
+                    .expect("validated removed pointer");
+                remove_json_pointer(baseline, pointer).ok_or_else(|| {
+                    invalid(format!(
+                        "semantic-negative declared removed delta disappeared: {}",
+                        delta.delta_id
+                    ))
+                })?;
+                paths.push(format!("baseline:{pointer}"));
+            }
+        }
+    }
+
+    let mut baseline_proof_deltas = 0usize;
+    let mut transformed_proof_deltas = 0usize;
+    for proof in recipe
+        .dependent_proof_deltas
+        .iter()
+        .filter(|proof| proof.stages.contains(&stage))
+    {
+        baseline_proof_deltas += remove_matching_proof_claims(baseline, proof)?;
+        transformed_proof_deltas += remove_matching_proof_claims(transformed, proof)?;
+    }
+    Ok((paths, baseline_proof_deltas, transformed_proof_deltas))
+}
+
+fn matching_proof_claims(value: &Value, expected: &ReviewedProofDelta) -> Result<usize> {
+    value
+        .pointer("/proof_ledger/claims")
+        .and_then(Value::as_array)
+        .map(|claims| {
+            claims
+                .iter()
+                .filter(|claim| proof_claim_matches(claim, expected))
+                .count()
+        })
+        .ok_or_else(|| invalid("semantic-negative stage lacks proof claims"))
+}
+
+fn remove_matching_proof_claims(value: &mut Value, expected: &ReviewedProofDelta) -> Result<usize> {
+    let claims = value
+        .pointer_mut("/proof_ledger/claims")
+        .and_then(Value::as_array_mut)
+        .ok_or_else(|| invalid("semantic-negative stage lacks mutable proof claims"))?;
+    let before = claims.len();
+    claims.retain(|claim| !proof_claim_matches(claim, expected));
+    Ok(before - claims.len())
+}
+
+fn proof_claim_matches(claim: &Value, expected: &ReviewedProofDelta) -> bool {
+    claim.get("rule_id").and_then(Value::as_str) == Some(expected.rule_id.as_str())
+        && claim.pointer("/address/stage").and_then(Value::as_str)
+            == Some(expected.address.stage.as_str())
+        && claim.pointer("/address/surface").and_then(Value::as_str)
+            == Some(expected.address.surface.as_str())
+        && claim
+            .pointer("/address/stable_record_key")
+            .and_then(Value::as_str)
+            == Some(expected.address.stable_record_key.as_str())
+        && claim.pointer("/address/field_path").and_then(Value::as_str)
+            == expected.address.field_path.as_deref()
+}
+
+fn remove_json_pointer(value: &mut Value, pointer: &str) -> Option<Value> {
+    let mut tokens = pointer
+        .strip_prefix('/')?
+        .split('/')
+        .map(|token| token.replace("~1", "/").replace("~0", "~"))
+        .collect::<Vec<_>>();
+    let final_token = tokens.pop()?;
+    let mut parent = value;
+    for token in tokens {
+        parent = match parent {
+            Value::Object(object) => object.get_mut(&token)?,
+            Value::Array(values) => values.get_mut(token.parse::<usize>().ok()?)?,
+            _ => return None,
+        };
+    }
+    match parent {
+        Value::Object(object) => object.remove(&final_token),
+        Value::Array(values) => {
+            let index = final_token.parse::<usize>().ok()?;
+            (index < values.len()).then(|| values.remove(index))
+        }
+        _ => None,
+    }
+}
+
+fn set_json_pointer(value: &mut Value, pointer: &str, replacement: Value) -> bool {
+    let Some(stripped) = pointer.strip_prefix('/') else {
+        return false;
+    };
+    let mut tokens = stripped
+        .split('/')
+        .map(|token| token.replace("~1", "/").replace("~0", "~"))
+        .collect::<Vec<_>>();
+    let Some(final_token) = tokens.pop() else {
+        return false;
+    };
+    let mut parent = value;
+    for token in tokens {
+        parent = match parent {
+            Value::Object(object) => match object.get_mut(&token) {
+                Some(child) => child,
+                None => return false,
+            },
+            Value::Array(values) => {
+                let Some(index) = token.parse::<usize>().ok() else {
+                    return false;
+                };
+                let Some(child) = values.get_mut(index) else {
+                    return false;
+                };
+                child
+            }
+            _ => return false,
+        };
+    }
+    match parent {
+        Value::Object(object) => {
+            object.insert(final_token, replacement);
+            true
+        }
+        Value::Array(values) => {
+            let Some(index) = final_token.parse::<usize>().ok() else {
+                return false;
+            };
+            if let Some(slot) = values.get_mut(index) {
+                *slot = replacement;
+                true
+            } else {
+                false
+            }
+        }
+        _ => false,
+    }
+}
+
 fn run_pipeline(
     source: &Path,
     run_root: &Path,
@@ -1238,10 +2215,29 @@ fn compare_pipelines(
     baseline: &PipelineArtifacts,
     transformed: &PipelineArtifacts,
     normalization: &NormalizationSpec,
+    semantic_negative: Option<&ReviewedTransformRecipe>,
+) -> Result<(BehavioralRunState, Vec<StageComparison>, Vec<String>)> {
+    compare_artifact_maps(
+        &baseline.stages,
+        &transformed.stages,
+        &baseline.document_key,
+        &transformed.document_key,
+        normalization,
+        semantic_negative,
+    )
+}
+
+fn compare_artifact_maps(
+    baseline: &BTreeMap<BehavioralStage, StageArtifact>,
+    transformed: &BTreeMap<BehavioralStage, StageArtifact>,
+    baseline_document_key: &str,
+    transformed_document_key: &str,
+    normalization: &NormalizationSpec,
+    semantic_negative: Option<&ReviewedTransformRecipe>,
 ) -> Result<(BehavioralRunState, Vec<StageComparison>, Vec<String>)> {
     let expected = BehavioralStage::ALL.into_iter().collect::<BTreeSet<_>>();
-    let baseline_stages = baseline.stages.keys().copied().collect::<BTreeSet<_>>();
-    let transformed_stages = transformed.stages.keys().copied().collect::<BTreeSet<_>>();
+    let baseline_stages = baseline.keys().copied().collect::<BTreeSet<_>>();
+    let transformed_stages = transformed.keys().copied().collect::<BTreeSet<_>>();
     if !is_complete_stage_set(&baseline_stages, &expected)
         || !is_complete_stage_set(&transformed_stages, &expected)
     {
@@ -1256,14 +2252,12 @@ fn compare_pipelines(
     let mut failures = Vec::new();
     for stage in BehavioralStage::ALL {
         let left = baseline
-            .stages
             .get(&stage)
             .ok_or_else(|| invalid("baseline stage disappeared during comparison"))?;
         let right = transformed
-            .stages
             .get(&stage)
             .ok_or_else(|| invalid("transformed stage disappeared during comparison"))?;
-        let comparison = compare_stage(stage, left, right, normalization)?;
+        let comparison = compare_stage(stage, left, right, normalization, semantic_negative)?;
         if comparison.baseline_proof_claims == 0 || comparison.transformed_proof_claims == 0 {
             failures.push(format!(
                 "partial_or_escaped_run: {} lacks proof claims",
@@ -1281,7 +2275,7 @@ fn compare_pipelines(
     }
 
     if normalization.relation == BehavioralRelation::AdversarialIdentity
-        && baseline.document_key == transformed.document_key
+        && baseline_document_key == transformed_document_key
     {
         failures.push("missing_expected_delta: document identity did not change".to_string());
     }
@@ -1314,6 +2308,7 @@ fn compare_stage(
     baseline: &StageArtifact,
     transformed: &StageArtifact,
     normalization: &NormalizationSpec,
+    semantic_negative: Option<&ReviewedTransformRecipe>,
 ) -> Result<StageComparison> {
     let baseline_top_level_fields = object_len(&baseline.value)?;
     let transformed_top_level_fields = object_len(&transformed.value)?;
@@ -1321,8 +2316,18 @@ fn compare_stage(
     let transformed_proof_claims = proof_claim_count(&transformed.value)?;
     let normalized_delta_paths = difference_paths(&baseline.value, &transformed.value);
 
-    let mut left = basic_normalize(&baseline.value, normalization, false);
-    let mut right = basic_normalize(&transformed.value, normalization, true);
+    let mut declared_left = baseline.value.clone();
+    let mut declared_right = transformed.value.clone();
+    let (declared_delta_paths, baseline_declared_proof_deltas, transformed_declared_proof_deltas) =
+        if let Some(recipe) = semantic_negative {
+            strip_declared_negative_deltas(stage, &mut declared_left, &mut declared_right, recipe)?
+        } else {
+            (Vec::new(), 0, 0)
+        };
+    let adjusted_baseline_top_level_fields = object_len(&declared_left)?;
+    let adjusted_transformed_top_level_fields = object_len(&declared_right)?;
+    let mut left = basic_normalize(&declared_left, normalization, false);
+    let mut right = basic_normalize(&declared_right, normalization, true);
     normalize_isf_interface_order(&mut left);
     normalize_isf_interface_order(&mut right);
     normalize_unordered_symbol_groups(&mut left);
@@ -1353,9 +2358,13 @@ fn compare_stage(
         transformed_proof_claims,
         compared_leaf_values,
         normalized_delta_paths,
+        declared_delta_paths,
+        baseline_declared_proof_deltas,
+        transformed_declared_proof_deltas,
         passed: undeclared_delta_paths.is_empty()
-            && baseline_top_level_fields == transformed_top_level_fields
-            && baseline_proof_claims == transformed_proof_claims,
+            && adjusted_baseline_top_level_fields == adjusted_transformed_top_level_fields
+            && baseline_proof_claims.saturating_sub(baseline_declared_proof_deltas)
+                == transformed_proof_claims.saturating_sub(transformed_declared_proof_deltas),
         undeclared_delta_paths,
     })
 }
@@ -1909,6 +2918,7 @@ fn normalize_relation_bound_scalars(
         BehavioralRelation::SymbolAlpha
             | BehavioralRelation::StructurePreservingParaphrase
             | BehavioralRelation::HarmlessLayout
+            | BehavioralRelation::SemanticNegative
     ) && field == Some("size_bytes")
         && left.is_number()
         && right.is_number()
@@ -2080,13 +3090,13 @@ fn resolve_source_authority(repository: &Path, source: &Path) -> Result<PathBuf>
     };
     let canonical = candidate.canonicalize().map_err(|error| {
         invalid(format!(
-            "behavioral source authority is unavailable: {} ({error})",
+            "authority_unavailable: behavioral source authority is unavailable: {} ({error})",
             source.display()
         ))
     })?;
     if !canonical.is_file() {
         return Err(invalid(format!(
-            "behavioral source authority is not a file: {}",
+            "authority_unavailable: behavioral source authority is not a file: {}",
             source.display()
         )));
     }
@@ -2234,6 +3244,7 @@ mod tests {
         "250339a784e657ac2c87a9762dfddbffc6a4bd42ed27da7e666c2f2db419753f";
     const PARAPHRASE_RECIPE_ID: &str = "um11732-v3-equivalent-minimum-timing-phrase-v1";
     const LAYOUT_RECIPE_ID: &str = "um11732-v3-heading-table-whitespace-formatting-v1";
+    const NEGATIVE_RECIPE_ID: &str = "um11732-v3-at-least-timing-grammar-negative-v1";
 
     fn synthetic_stage(value: Value, name: &str) -> StageArtifact {
         StageArtifact {
@@ -2265,6 +3276,35 @@ mod tests {
                 }]
             }
         })
+    }
+
+    fn synthetic_negative_recipe() -> ReviewedTransformRecipe {
+        ReviewedTransformRecipe {
+            schema_version: 1,
+            recipe_id: "synthetic-negative".to_string(),
+            relation: BehavioralRelation::SemanticNegative,
+            source_authority: "synthetic.md".to_string(),
+            source_sha256: "0".repeat(64),
+            review_status: "approved".to_string(),
+            changed_spans: Vec::new(),
+            preserved_conclusions: Vec::new(),
+            semantic_negative_kind: Some(SemanticNegativeKind::TimingGrammarAdmission),
+            required_deltas: vec![ReviewedRequiredDelta {
+                delta_id: "declared-role-change".to_string(),
+                stage: BehavioralStage::SemanticIr,
+                kind: RequiredDeltaKind::Changed,
+                baseline_pointer: Some("/canonical_fact/role".to_string()),
+                transformed_pointer: Some("/canonical_fact/role".to_string()),
+                baseline_value: Some(Value::String("producer".to_string())),
+                transformed_value: Some(Value::String("consumer".to_string())),
+            }],
+            dependent_proof_deltas: Vec::new(),
+            unaffected_complement: REVIEWED_COMPLEMENT.to_string(),
+            unmeasurable_source_surfaces: RICH_CAPTURE_EXCLUSIONS
+                .iter()
+                .map(|surface| (*surface).to_string())
+                .collect(),
+        }
     }
 
     fn minimal_pdf_bytes() -> Vec<u8> {
@@ -2377,6 +3417,7 @@ mod tests {
             &baseline,
             &transformed,
             &normalization,
+            None,
         )?;
         assert!(!result.passed);
         assert!(
@@ -2409,8 +3450,48 @@ mod tests {
             &baseline,
             &transformed,
             &normalization,
+            None,
         )?;
         assert!(result.passed, "{:?}", result.undeclared_delta_paths);
+        Ok(())
+    }
+
+    #[test]
+    fn semantic_negative_allowance_rejects_an_extra_undeclared_delta() -> Result<()> {
+        let baseline = synthetic_stage(synthetic_value("original", "producer"), "left");
+        let mut transformed_value = synthetic_value("original", "consumer");
+        transformed_value
+            .pointer_mut("/canonical_fact")
+            .and_then(Value::as_object_mut)
+            .expect("synthetic canonical fact")
+            .insert(
+                "unexpected".to_string(),
+                Value::String("must-fail".to_string()),
+            );
+        let transformed = synthetic_stage(transformed_value, "right");
+        let normalization = NormalizationSpec {
+            relation: BehavioralRelation::SemanticNegative,
+            baseline_run_root: ".project-data/tmp/run".to_string(),
+            transformed_run_root: ".project-data/tmp/run".to_string(),
+            baseline_source: "synthetic.md".to_string(),
+            transformed_source: "synthetic.md".to_string(),
+            exact_transformed_to_baseline: BTreeMap::new(),
+            identifier_transformed_to_baseline: BTreeMap::new(),
+            reviewed_text_by_field: BTreeMap::new(),
+        };
+        let recipe = synthetic_negative_recipe();
+        let result = compare_stage(
+            BehavioralStage::SemanticIr,
+            &baseline,
+            &transformed,
+            &normalization,
+            Some(&recipe),
+        )?;
+        assert!(!result.passed);
+        assert_eq!(
+            result.undeclared_delta_paths,
+            vec!["/canonical_fact/unexpected".to_string()]
+        );
         Ok(())
     }
 
@@ -2500,7 +3581,7 @@ mod tests {
                 .map(|stage| (&stage.stage, &stage.undeclared_delta_paths))
                 .collect::<Vec<_>>()
         );
-        assert_eq!(report.schema_version, 2);
+        assert_eq!(report.schema_version, 3);
         assert_eq!(report.stages.len(), 5);
         assert_eq!(report.coverage.expected_reviewed_span_deltas, 1);
         assert_eq!(report.coverage.observed_reviewed_span_deltas, 1);
@@ -2570,6 +3651,156 @@ mod tests {
             .into_iter()
             .collect()
         );
+        Ok(())
+    }
+
+    #[test]
+    fn full_semantic_negative_run_requires_declared_delta_and_rejects_invariance() -> Result<()> {
+        let repository = crate::project_data::repository_root()?;
+        let temporary = crate::project_data::tempdir()?;
+        let request = reviewed_request(
+            &repository,
+            temporary.path(),
+            BehavioralRelation::SemanticNegative,
+            NEGATIVE_RECIPE_ID,
+            "semantic-negative",
+        )?;
+        let report = qualify_behavioral_relation(&request)?;
+        assert_eq!(
+            report.state,
+            BehavioralRunState::Pass,
+            "failures={:#?}\nstages={:#?}",
+            report.failures,
+            report
+                .stages
+                .iter()
+                .map(|stage| {
+                    (
+                        &stage.stage,
+                        &stage.declared_delta_paths,
+                        &stage.undeclared_delta_paths,
+                    )
+                })
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(report.stages.len(), 5);
+        assert_eq!(report.coverage.expected_semantic_deltas, 1);
+        assert_eq!(report.coverage.observed_semantic_deltas, 1);
+        let negative = report
+            .transform
+            .reviewed_recipe
+            .as_ref()
+            .and_then(|recipe| recipe.semantic_negative.as_ref())
+            .ok_or_else(|| invalid("semantic-negative evidence is missing"))?;
+        assert_eq!(negative.kind, SemanticNegativeKind::TimingGrammarAdmission);
+        assert!(negative.invariant_comparison_rejected);
+        assert_eq!(negative.dependent_proof_deltas, 3);
+        assert!(negative.required_deltas.iter().all(|delta| delta.observed));
+        assert_eq!(
+            report
+                .stages
+                .iter()
+                .map(|stage| stage.baseline_declared_proof_deltas)
+                .sum::<usize>(),
+            3
+        );
+        assert!(report.stages.iter().all(|stage| stage.passed));
+        Ok(())
+    }
+
+    #[test]
+    fn semantic_negative_matrix_rejects_all_nine_control_classes() -> Result<()> {
+        let report = qualify_negative_sensitivity_matrix()?;
+        assert!(report.passed, "{report:#?}");
+        assert_eq!(report.controls.len(), 9);
+        assert!(report.controls.iter().all(|control| control.passed));
+        assert_eq!(
+            report
+                .controls
+                .iter()
+                .map(|control| control.kind)
+                .collect::<BTreeSet<_>>()
+                .len(),
+            9
+        );
+        assert_eq!(report.attempt_dispositions.len(), 6);
+        Ok(())
+    }
+
+    #[test]
+    fn attempt_disposition_classifier_is_closed() {
+        for failure_id in [
+            "authority_unavailable",
+            "provider_unavailable",
+            "vacuous_baseline",
+        ] {
+            assert_eq!(
+                classify_attempt_error(&format!("{failure_id}: controlled")),
+                (BehavioralRunState::Unmeasurable, failure_id)
+            );
+        }
+        for failure_id in [
+            "stale_contract_or_population",
+            "ambiguous_or_nonbijective_transform",
+            "partial_or_escaped_run",
+        ] {
+            assert_eq!(
+                classify_attempt_error(&format!("{failure_id}: controlled")),
+                (BehavioralRunState::Invalid, failure_id)
+            );
+        }
+        assert_eq!(
+            classify_attempt_error("unknown closed error"),
+            (BehavioralRunState::Invalid, "stale_contract_or_population")
+        );
+    }
+
+    #[test]
+    fn missing_source_attempt_is_unmeasurable_without_creating_output() -> Result<()> {
+        let repository = crate::project_data::repository_root()?;
+        let temporary = crate::project_data::tempdir()?;
+        let output = temporary.path().join("missing-source-attempt");
+        let request = BehavioralQualificationRequest {
+            relation: BehavioralRelation::SymbolAlpha,
+            source_authority: PathBuf::from("does/not/exist.md"),
+            expected_source_sha256: "0".repeat(64),
+            output_root: output
+                .strip_prefix(&repository)
+                .map_err(|_| invalid("attempt test output escaped repository"))?
+                .to_path_buf(),
+            prior_memory: PathBuf::from(PRIOR_MEMORY),
+            production_revision: "0".repeat(40),
+            transform_seed: 1,
+            review_recipe_id: None,
+        };
+        let attempt = attempt_behavioral_relation(&request);
+        assert_eq!(attempt.state, BehavioralRunState::Unmeasurable);
+        assert_eq!(attempt.failure_id.as_deref(), Some("authority_unavailable"));
+        assert!(attempt.report.is_none());
+        assert!(!output.exists());
+
+        let stale_output = temporary.path().join("stale-source-attempt");
+        let stale_request = BehavioralQualificationRequest {
+            relation: BehavioralRelation::SemanticNegative,
+            source_authority: PathBuf::from(REVIEWED_SOURCE),
+            expected_source_sha256: "0".repeat(64),
+            output_root: stale_output
+                .strip_prefix(&repository)
+                .map_err(|_| invalid("attempt test output escaped repository"))?
+                .to_path_buf(),
+            prior_memory: PathBuf::from(PRIOR_MEMORY),
+            production_revision: "0".repeat(40),
+            transform_seed: 1,
+            review_recipe_id: Some(NEGATIVE_RECIPE_ID.to_string()),
+        };
+        let stale_attempt = attempt_behavioral_relation(&stale_request);
+        assert_eq!(stale_attempt.state, BehavioralRunState::Invalid);
+        assert_eq!(
+            stale_attempt.failure_id.as_deref(),
+            Some("stale_contract_or_population")
+        );
+        assert!(stale_attempt.report.is_none());
+        assert!(!stale_output.exists());
         Ok(())
     }
 

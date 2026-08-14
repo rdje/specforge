@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii",
   "recipes": [
     {
       "recipe_id": "um11732-v3-equivalent-minimum-timing-phrase-v1",
@@ -16,6 +16,15 @@
       "relation": "harmless_layout",
       "path": "doctrine/production_genericity/reviewed_recipes/um11732_harmless_layout.json",
       "sha256": "da7447ed14b0fbfdb5d5abefb196bc57271c8936a483d7d6fd6c8b7fddf1e57f",
+      "source_authority": "generated/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/normalized/um11732_v3_2022_02_17_i2s_bus_specification.md",
+      "source_sha256": "250339a784e657ac2c87a9762dfddbffc6a4bd42ed27da7e666c2f2db419753f",
+      "review_role": "reviewed_calibration"
+    },
+    {
+      "recipe_id": "um11732-v3-at-least-timing-grammar-negative-v1",
+      "relation": "semantic_negative",
+      "path": "doctrine/production_genericity/reviewed_recipes/um11732_semantic_negative_timing.json",
+      "sha256": "a88b7b3b96c64d7643735d6f059492705e96ea7c1da60a262be4866418c114c8",
       "source_authority": "generated/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/normalized/um11732_v3_2022_02_17_i2s_bus_specification.md",
       "source_sha256": "250339a784e657ac2c87a9762dfddbffc6a4bd42ed27da7e666c2f2db419753f",
       "review_role": "reviewed_calibration"

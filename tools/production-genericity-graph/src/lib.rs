@@ -84,12 +84,12 @@ mod tests {
         assert_eq!(first.trusted_regions, 11);
         assert_eq!(first.non_authoritative_regions, 5);
         assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_230);
-        assert_eq!(first.helper_edges, 11_577);
-        assert_eq!(first.decision_sites, 10_868);
+        assert_eq!(first.analyzed_functions, 2_248);
+        assert_eq!(first.helper_edges, 11_652);
+        assert_eq!(first.decision_sites, 11_037);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
-        assert_eq!(first.semantic_macros, 1_411);
+        assert_eq!(first.semantic_macros, 1_427);
         assert_eq!(
             serde_json::to_vec(&first).expect("serialize first flow report"),
             serde_json::to_vec(&second).expect("serialize repeated flow report")

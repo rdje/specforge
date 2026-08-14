@@ -24,19 +24,20 @@ expressiveness as the bottleneck.
 - `.6a`, `.6b`, and `.6c` are complete with all of their declared descendants.
 - `.6d` and `.6d.ii` are in progress; `.6d.i` and `.6d.ii.a` through `.6d.ii.e` are complete.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
-- `.6d.ii.f` is in progress; `.f.i`, `.f.ii.a`, and `.f.ii.b` are complete, and the remaining bounded children own
-  negative sensitivity, held-out qualification, whole-population replay, and final signoff.
+- `.6d.ii.f` is in progress; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
+  remaining bounded children own held-out qualification, whole-population replay, and final signoff.
 - `.6e`, `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
 `.f.ii.a` implements deterministic PDF identity and normalized-text alpha evidence. `.f.ii.b` adds digest-pinned
 review authority plus one sentence and four harmless layout variants without widening the rich-capture
-exclusions. `.f.ii.c` next proves negative semantic and authority sensitivity.
+exclusions. `.f.ii.c` proves one real semantic/proof delta plus all nine sensitivity classes and closes typed
+invalid/unmeasurable attempt handling. `.f.iii` next qualifies the frozen prospective holdout.
 
 ## Detailed task evidence
 
@@ -124,6 +125,7 @@ detail-routing authority.
 | `2026-08-14` | `.6d.ii.f.i` oracle freeze | exact 24-row source/capture population, six relations, five proof-bearing stages, 17-row prospective holdout, and 8/8 contract mutations pass |
 | `2026-08-14` | `.6d.ii.f.ii.a` identity/alpha harness | deterministic normalized-text alpha and provider-backed full-PDF adversarial identity calibrations pass all five stages; semantic-role and partial-stage controls reject |
 | `2026-08-14` | `.6d.ii.f.ii.b` reviewed paraphrase/layout | one equivalent sentence and heading/table/whitespace/formatting variants pass all five stages under exact recipes; unsupported and ambiguous transforms reject |
+| `2026-08-14` | `.6d.ii.f.ii.c` semantic-negative sensitivity | one real assertion/proof negative and all nine synthetic fault classes reject ordinary invariance while the exact declared complement passes |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 
@@ -136,6 +138,7 @@ detail-routing authority.
 | `.6d.ii.f.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract` | freeze exact input planes, population/held-out denominators, relations, comparison, and failure/evidence semantics |
 | `.6d.ii.f.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification` | implement source-bound alpha and byte-identical PDF identity transforms, five-stage replay/comparison, evidence, and controls |
 | `.6d.ii.f.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout` | implement digest-pinned reviewed recipes, field-scoped normalization, preserved-conclusion evidence, and complete-complement comparison |
+| `.6d.ii.f.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity` | require exact semantic/proof deltas, exercise nine negative classes, and classify invalid/unmeasurable attempts |
 | `.6d.ii.e.vi` | `07b1f874` | qualify generated production structure and controlled failure cases |
 | `.6d.ii.e.v.iv` | `9f37989f` | register the compiled production-genericity doctrine and clean baseline |
 

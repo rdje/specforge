@@ -20,6 +20,9 @@ POPULATION_PATH = Path("doctrine/production_genericity/behavioral_population.tsv
 RECIPE_MANIFEST_PATH = Path(
     "doctrine/production_genericity/reviewed_recipe_manifest.json"
 )
+NEGATIVE_MATRIX_PATH = Path(
+    "doctrine/production_genericity/semantic_negative_matrix.json"
+)
 
 POPULATION_FIELDS = [
     "document_key",
@@ -123,6 +126,7 @@ EXPECTED_FAILURES = {
 EXPECTED_REVIEWED_RECIPE_RELATIONS = {
     "structure_preserving_paraphrase",
     "harmless_layout",
+    "semantic_negative",
 }
 
 EXPECTED_REVIEWED_CHANGE_KINDS = {
@@ -133,6 +137,28 @@ EXPECTED_REVIEWED_CHANGE_KINDS = {
         "whitespace_layout",
         "formatting_layout",
     },
+    "semantic_negative": {"semantic_timing_change"},
+}
+
+EXPECTED_NEGATIVE_CONTROL_KINDS = {
+    "omission",
+    "contradiction",
+    "relation_reversal",
+    "value_change",
+    "timing_change",
+    "undeclared_symbol",
+    "misleading_name",
+    "proof_corruption",
+    "disabled_stage",
+}
+
+EXPECTED_ATTEMPT_DISPOSITIONS = {
+    "authority_unavailable": "unmeasurable",
+    "provider_unavailable": "unmeasurable",
+    "vacuous_baseline": "unmeasurable",
+    "stale_contract_or_population": "invalid",
+    "ambiguous_or_nonbijective_transform": "invalid",
+    "partial_or_escaped_run": "invalid",
 }
 
 SAFE_REVIEWED_PROVENANCE_FIELDS = {
@@ -264,8 +290,8 @@ def validate_reviewed_recipes(
         return
     if manifest.get("schema_version") != 1:
         problems.append("reviewed recipe manifest schema_version must be 1")
-    if manifest.get("owner") != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b":
-        problems.append("reviewed recipe manifest owner differs from .f.ii.b")
+    if manifest.get("owner") != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii":
+        problems.append("reviewed recipe manifest owner differs from .f.ii parent")
     recipes = manifest.get("recipes")
     recipe_ids = unique_ids(recipes, "recipe_id", "reviewed recipes", problems)
     if not recipe_ids:
@@ -278,7 +304,7 @@ def validate_reviewed_recipes(
         if isinstance(row, dict) and isinstance(row.get("relation"), str)
     }
     if relations != EXPECTED_REVIEWED_RECIPE_RELATIONS:
-        problems.append("reviewed recipe relations differ from the released .f.ii.b set")
+        problems.append("reviewed recipe relations differ from the released .f.ii set")
     population_by_markdown = {
         row.get("normalized_markdown_path"): row for row in rows
     }
@@ -319,6 +345,12 @@ def validate_reviewed_recipes(
             "unaffected_complement",
             "unmeasurable_source_surfaces",
         }
+        if recipe.get("relation") == "semantic_negative":
+            expected_keys |= {
+                "semantic_negative_kind",
+                "required_deltas",
+                "dependent_proof_deltas",
+            }
         if set(recipe) != expected_keys:
             problems.append(f"reviewed recipe {recipe_id} has an open or incomplete schema")
         for field in (
@@ -424,6 +456,8 @@ def validate_reviewed_recipes(
                     problems.append(
                         f"recipe {recipe_id} conclusion {conclusion_index} stage is invalid"
                     )
+        if recipe.get("relation") == "semantic_negative":
+            validate_semantic_negative_recipe(recipe_id, recipe, problems)
         if recipe.get("unaffected_complement") != REVIEWED_COMPLEMENT:
             problems.append(f"reviewed recipe {recipe_id} complement is not closed")
         exclusions = recipe.get("unmeasurable_source_surfaces")
@@ -433,6 +467,211 @@ def validate_reviewed_recipes(
             or len(exclusions) != len(set(exclusions))
         ):
             problems.append(f"reviewed recipe {recipe_id} rich-capture exclusions differ")
+
+
+def validate_semantic_negative_recipe(
+    recipe_id: str, recipe: dict[str, Any], problems: list[str]
+) -> None:
+    if recipe.get("semantic_negative_kind") != "timing_grammar_admission":
+        problems.append(f"semantic-negative recipe {recipe_id} kind differs")
+    deltas = recipe.get("required_deltas")
+    delta_ids = unique_ids(
+        deltas, "delta_id", f"semantic-negative recipe {recipe_id} deltas", problems
+    )
+    if not delta_ids or not isinstance(deltas, list):
+        problems.append(f"semantic-negative recipe {recipe_id} has no required delta")
+    else:
+        for index, delta in enumerate(deltas):
+            if not isinstance(delta, dict) or set(delta) != {
+                "delta_id",
+                "stage",
+                "kind",
+                "baseline_pointer",
+                "transformed_pointer",
+                "baseline_value",
+                "transformed_value",
+            }:
+                problems.append(
+                    f"semantic-negative recipe {recipe_id} delta {index} schema is open"
+                )
+                continue
+            baseline_pointer = delta.get("baseline_pointer")
+            transformed_pointer = delta.get("transformed_pointer")
+            pointers = [
+                pointer
+                for pointer in (baseline_pointer, transformed_pointer)
+                if pointer is not None
+            ]
+            if delta.get("stage") not in {"semantic_ir", "intent_ir"} or any(
+                not isinstance(pointer, str) or not pointer.startswith("/")
+                for pointer in pointers
+            ):
+                problems.append(
+                    f"semantic-negative recipe {recipe_id} delta {index} path/stage differs"
+                )
+            kind = delta.get("kind")
+            if kind == "added":
+                valid_shape = (
+                    baseline_pointer is None
+                    and delta.get("baseline_value") is None
+                    and isinstance(transformed_pointer, str)
+                    and delta.get("transformed_value") is not None
+                )
+            elif kind == "changed":
+                valid_shape = (
+                    isinstance(baseline_pointer, str)
+                    and delta.get("baseline_value") is not None
+                    and isinstance(transformed_pointer, str)
+                    and delta.get("transformed_value") is not None
+                    and delta.get("baseline_value") != delta.get("transformed_value")
+                )
+            elif kind == "removed":
+                valid_shape = (
+                    isinstance(baseline_pointer, str)
+                    and delta.get("baseline_value") is not None
+                    and transformed_pointer is None
+                    and delta.get("transformed_value") is None
+                )
+            else:
+                valid_shape = False
+            if not valid_shape:
+                problems.append(
+                    f"semantic-negative recipe {recipe_id} delta {index} shape differs"
+                )
+
+    proof_deltas = recipe.get("dependent_proof_deltas")
+    proof_ids = unique_ids(
+        proof_deltas,
+        "delta_id",
+        f"semantic-negative recipe {recipe_id} proof deltas",
+        problems,
+    )
+    if not proof_ids or not isinstance(proof_deltas, list):
+        problems.append(f"semantic-negative recipe {recipe_id} has no proof delta")
+        return
+    expected_propagation = {
+        "evidence_ir": {"evidence_ir", "semantic_ir", "intent_ir", "isf_adapter"},
+        "semantic_ir": {"semantic_ir", "intent_ir", "isf_adapter"},
+        "intent_ir": {"intent_ir", "isf_adapter"},
+    }
+    for index, proof in enumerate(proof_deltas):
+        if not isinstance(proof, dict) or set(proof) != {
+            "delta_id",
+            "stages",
+            "rule_id",
+            "address",
+        }:
+            problems.append(
+                f"semantic-negative recipe {recipe_id} proof delta {index} schema is open"
+            )
+            continue
+        address = proof.get("address")
+        if not isinstance(address, dict) or set(address) != {
+            "stage",
+            "surface",
+            "stable_record_key",
+            "field_path",
+        }:
+            problems.append(
+                f"semantic-negative recipe {recipe_id} proof delta {index} address differs"
+            )
+            continue
+        stages = proof.get("stages")
+        expected_stages = expected_propagation.get(address.get("stage"))
+        if (
+            not isinstance(stages, list)
+            or expected_stages is None
+            or set(stages) != expected_stages
+            or len(stages) != len(set(stages))
+            or not isinstance(proof.get("rule_id"), str)
+            or not proof["rule_id"]
+            or not isinstance(address.get("surface"), str)
+            or not address["surface"]
+            or not isinstance(address.get("stable_record_key"), str)
+            or not address["stable_record_key"]
+        ):
+            problems.append(
+                f"semantic-negative recipe {recipe_id} proof delta {index} is incomplete"
+            )
+
+
+def validate_negative_sensitivity_matrix(problems: list[str]) -> None:
+    try:
+        matrix = read_json(ROOT / NEGATIVE_MATRIX_PATH)
+    except (OSError, json.JSONDecodeError) as error:
+        problems.append(f"semantic-negative matrix is unavailable: {error}")
+        return
+    if not isinstance(matrix, dict) or set(matrix) != {
+        "schema_version",
+        "owner",
+        "unaffected_complement",
+        "controls",
+        "attempt_dispositions",
+    }:
+        problems.append("semantic-negative matrix schema is open or incomplete")
+        return
+    if (
+        matrix.get("schema_version") != 1
+        or matrix.get("owner") != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c"
+        or matrix.get("unaffected_complement") != REVIEWED_COMPLEMENT
+    ):
+        problems.append("semantic-negative matrix identity or complement differs")
+    controls = matrix.get("controls")
+    control_ids = unique_ids(controls, "control_id", "semantic-negative controls", problems)
+    if not control_ids or not isinstance(controls, list):
+        problems.append("semantic-negative matrix has no controls")
+        return
+    kinds = {
+        control.get("kind")
+        for control in controls
+        if isinstance(control, dict) and isinstance(control.get("kind"), str)
+    }
+    if kinds != EXPECTED_NEGATIVE_CONTROL_KINDS:
+        problems.append("semantic-negative matrix control-kind coverage differs")
+    for index, control in enumerate(controls):
+        if not isinstance(control, dict) or set(control) != {
+            "control_id",
+            "kind",
+            "stage",
+            "operation",
+            "path",
+            "baseline_value",
+            "transformed_value",
+            "expected_state",
+            "expected_failure_id",
+        }:
+            problems.append(f"semantic-negative control {index} schema is open")
+            continue
+        disabled = control.get("kind") == "disabled_stage"
+        if control.get("stage") not in EXPECTED_STAGES:
+            problems.append(f"semantic-negative control {index} stage differs")
+        if disabled:
+            valid = (
+                control.get("operation") == "disable_stage"
+                and control.get("path") is None
+                and control.get("baseline_value") is None
+                and control.get("transformed_value") is None
+                and control.get("expected_state") == "invalid"
+                and control.get("expected_failure_id") == "partial_or_escaped_run"
+            )
+        else:
+            operation = control.get("operation")
+            valid = (
+                operation in {"remove", "replace"}
+                and isinstance(control.get("path"), str)
+                and control["path"].startswith("/")
+                and control.get("baseline_value") is not None
+                and (
+                    (operation == "remove" and control.get("transformed_value") is None)
+                    or (operation == "replace" and control.get("transformed_value") is not None)
+                )
+                and control.get("expected_state") == "fail"
+                and control.get("expected_failure_id") == "undeclared_semantic_delta"
+            )
+        if not valid:
+            problems.append(f"semantic-negative control {index} disposition differs")
+    if matrix.get("attempt_dispositions") != EXPECTED_ATTEMPT_DISPOSITIONS:
+        problems.append("semantic-negative attempt dispositions differ")
 
 
 def validate(
@@ -463,6 +702,7 @@ def validate(
             "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json"
         ),
         "reviewed_recipe_manifest": RECIPE_MANIFEST_PATH.as_posix(),
+        "semantic_negative_matrix": NEGATIVE_MATRIX_PATH.as_posix(),
         "claim_family_inventory": (
             "doctrine/production_genericity/claim_family_inventory.tsv"
         ),
@@ -479,6 +719,7 @@ def validate(
             problems.append(f"declared {label} is missing or unsafe: {relative_text}")
 
     validate_reviewed_recipes(rows, problems)
+    validate_negative_sensitivity_matrix(problems)
 
     relation_ids = unique_ids(contract.get("relations"), "relation_id", "relations", problems)
     if relation_ids != EXPECTED_RELATIONS:

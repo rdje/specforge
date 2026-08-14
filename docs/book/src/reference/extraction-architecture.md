@@ -133,8 +133,8 @@ The information-flow layer over that graph is now shipped. A closed 140-row regi
 field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
 rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
 non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
-dependence through 2,230 functions and 11,577 helper edges, then check 10,868 branch/selection/decision sites,
-1,411 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
+dependence through 2,248 functions and 11,652 helper edges, then check 11,037 branch/selection/decision sites,
+1,427 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
 The dependency, inventory, rule, compiled-graph, information-flow, and frozen behavioral-contract checks now run
@@ -143,16 +143,20 @@ full-PDF versus normalized-text input planes, six transform relations, five proo
 7-row calibration/17-row prospective holdout split, and pass/fail/unmeasurable/invalid evidence states. CI adds
 27 structural controls, eight contract mutations, legal display/provenance/test controls, and an exact
 inventory-to-runtime join that executes the structural alpha obligation of all 168 rules. The contract does not
-pretend the future runs already pass: whole-population renaming, paraphrase, negative-control, and held-out
-qualification remain mandatory before SpecForge can claim production-genericity signoff. The first executable
-behavioral slices are now present in conformance: deterministic normalized-text alpha, unchanged-PDF,
-byte-identical adversarial PDF identity, and reviewed paraphrase/layout pairs execute SourceIR through ISF
+pretend the future runs already pass: held-out and whole-population qualification remain mandatory before
+SpecForge can claim production-genericity signoff. The executable behavioral slices now present in conformance
+are deterministic normalized-text alpha, unchanged-PDF, byte-identical adversarial PDF identity, reviewed
+paraphrase/layout, and semantic-negative pairs; they execute SourceIR through ISF
 adapter, compare every serialized field and proof claim after only declared normalization, and emit machine JSON
 evidence. Reviewed recipes are digest-pinned to calibration source, exact spans, per-span source fields,
 source-bound id projections, preserved conclusions, and a complete unaffected complement. One equivalent
 sentence and four heading/table/whitespace/emphasis variants pass; superficially equivalent candidates that
-change timing admission, line coordinates, or section identity reject. Negative sensitivity, held-out, and
-complete-population results remain open.
+change timing admission, line coordinates, or section identity reject. The timing-admission candidate is retained
+as a real semantic negative: ordinary invariance rejects its one assertion/three-stage cumulative-proof removal,
+then the exact declared complement passes. A separate nine-class synthetic matrix rejects omission,
+contradiction, relation reversal, value/timing, undeclared-symbol, misleading-name, proof-corruption, and
+disabled-stage faults. Missing/provider/vacuous attempts are unmeasurable; stale/ambiguous/partial attempts are
+invalid. Held-out and complete-population results remain open.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively
@@ -216,8 +220,8 @@ cannot feed canonical authority. The [structural qualification report](../../../
 publishes the per-chain ledger and residual counts.
 
 This closes structural qualification only. The behavioral oracle and exact denominator are frozen, and the
-identity/alpha harness and reviewed paraphrase/layout relations are implemented and calibrated. Negative
-controls, held-out families, and complete-population replay remain the behavioral gate before the project can
+identity/alpha harness, reviewed paraphrase/layout relations, and negative sensitivity are implemented and
+calibrated. Held-out families and complete-population replay remain the behavioral gate before the project can
 claim production genericity as a whole.
 
 ## Completion order

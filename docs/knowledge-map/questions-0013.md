@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is plural-rejection unsafe for phase names (access ends in ss)
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > why is section-title boilerplate filtering insufficient
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why is signal direction hard to lower faithfully to a single .isf module
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why is statement_0223 still a normative statement
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
@@ -73,6 +83,8 @@
   > why must terminal task tree containment use two commits
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > why must the invariant comparator reject a semantic negative first
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > why not CTL for temporal behavior
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)

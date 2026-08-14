@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > does eval-extraction rebuild evidence or load the persisted file
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does every SWD protocol record receive an ISF adapter disposition
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
@@ -189,6 +191,8 @@
   > how are message fields written as section headings extracted
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how are message-field tables distinguished from register-field tables
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > how are missing stale vacuous ambiguous or partial behavioral attempts classified
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > how are model proposed signal names grounded
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -293,7 +297,3 @@
   > how do continuation tables (Table B2.2 Continued) merge into one container
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how do dword-relative page fragments chain
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > how do packet/flit protocols (CHI-class) declare message fields vs signals
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > how do you audit registers/signals against the table image with the VLM

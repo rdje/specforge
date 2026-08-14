@@ -1,3 +1,27 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity
+
+- Added a digest-pinned real semantic-negative recipe for the rejected UM11732 “must be at least” timing
+  candidate. The ordinary invariant comparator must reject its exact one-assertion and three-stage cumulative-
+  proof removal before a declared-delta comparison can pass the complete unaffected complement.
+- Added a closed nine-class sensitivity matrix covering omission, contradiction, relation reversal, value and
+  timing change, undeclared symbol, misleading familiar name, proof-rule corruption, and disabled stage. Every
+  control must mutate its declared target, produce its expected fail/invalid state, and restore the exact input.
+- Added schema-v3 machine evidence for declared field/proof deltas and typed attempt outcomes. Missing source or
+  provider and vacuous baselines are unmeasurable; stale, ambiguous, escaped, or partial attempts are invalid;
+  source/hash preflight leaves no partial output directory.
+- Extended the behavioral contract checker with exact negative-recipe/matrix coverage and retained all 8/8
+  mutation self-tests. Sixteen provider-free conformance tests pass; two PDF-provider tests remain intentionally
+  ignored; all 11 production-genericity components pass.
+- Refreshed the exact compiled-flow snapshot to 2,248 functions, 11,652 helper edges, 11,037 decision sites, and
+  1,427 semantic macros, then synchronized task evidence, research, Knowledge Map, mdBook, live-document
+  authority, and the `.f.iii` held-out frontier.
+- Applied the exact warning-safe `DEVELOPMENT_NOTES.md` rollover against clean boundary `392e21b2`: 11 oldest
+  opening records moved byte-for-byte to segment `development-notes-0007`, leaving the current rationale and ten
+  newest opening records live with 1,364 lines / 181,812 bytes and a complete reciprocal archive chain.
+- Passed full CI: all nine doctrines including exact chain currency, all 11 production-genericity components,
+  1,969 Rust tests / eight intentional ignores / zero failures, five compile-fail doctests, warning-denied
+  Clippy/Rustdoc, mdBook test/build, and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout
 
 - Added a closed reviewed-recipe manifest and two source/recipe-digest-pinned UM11732 calibrations: one

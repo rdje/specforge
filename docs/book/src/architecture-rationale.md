@@ -208,7 +208,7 @@ Exact local calls are distinguished from method, associated, external, prelude/b
 dispatch rather than pretending that an AST alone is a type checker. The information-flow layer now makes the
 raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically checked. Its
 140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
-2,230 functions, 11,577 helper edges, 10,868 decision sites, and 1,411 sensitive macros. Canonical mutation/protected
+2,248 functions, 11,652 helper edges, 11,037 decision sites, and 1,427 sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
@@ -231,8 +231,9 @@ PDF conversion, visual/table capture, or geometry. Six relations classify every 
 SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter lowering. Missing authority/provider or vacuity is
 `unmeasurable`; stale/ambiguous/partial evidence is `invalid`; missing expected or undeclared semantic/proof/
 provenance/validation/lowering deltas fail. The contract and eight mutations now run inside the production-
-genericity wrapper without claiming that the complete population evidence already passes. `.f.ii.a` now owns
-and implements deterministic PDF identity, normalized-text alpha, and reviewed paraphrase/layout comparison. It
+genericity wrapper without claiming that the complete population evidence already passes. `.f.ii` now owns
+and implements deterministic PDF identity, normalized-text alpha, reviewed paraphrase/layout, and semantic-
+negative comparison. It
 copies hash-pinned sources into repository-local scratch, executes fresh five-stage pairs, reloads every persisted
 proof-bearing artifact, and emits digest-pinned JSON evidence. Source-bound aliases are bijective, complete,
 familiar-looking, and deliberately reverse lexical order. Reviewed transforms require a checked-in manifest and
@@ -240,8 +241,12 @@ digest-pinned recipe naming every exact span, per-span provenance field, derived
 conclusion, complete unaffected complement, and rich-capture exclusion. The released calibration passes one
 equivalent sentence plus heading, table, whitespace, and emphasis variants across all five stages. Candidate
 “at least,” added-line, and heading-rewording variants crossed real parser boundaries and were rejected rather
-than excused. The comparator still exposes identity-coupled semantic-role faults. These are harness
-calibrations, not held-out population results. `.f.ii.c` next owns semantic and authority negative controls.
+than excused. The “at least” candidate now acts as a digest-pinned semantic negative: it removes exactly one
+SemanticIR assertion plus its cumulative claim at three stages, ordinary invariance must reject it, and the
+comparison passes only after stripping those exact deltas. Nine synthetic controls cover omission,
+contradiction, reversal, value/timing, undeclared-symbol, misleading-name, proof-corruption, and disabled-stage
+faults. Unavailable or vacuous attempts are unmeasurable; stale, ambiguous, escaped, or partial attempts are
+invalid. These are harness calibrations, not held-out population results. `.f.iii` next owns held-out qualification.
 Transformation recipes, expected
 relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
 current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)

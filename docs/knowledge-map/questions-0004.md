@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > how do packet/flit protocols (CHI-class) declare message fields vs signals
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does .10g differ from .10f (register vs message routing)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -190,6 +194,8 @@
   > how does the adversarial PDF identity test preserve source bytes
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > how does the behavioral genericity gate prove negative-control sensitivity
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does the controller prove a proposed task is task-tree owned
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -292,9 +298,3 @@
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how is an unless/except exception clause handled in a temporal condition
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > how is copied artifact validation path containment tested
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > how is corpus SOURCE_PDF_REGISTRY currentness checked
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > how is corpus_kb currentness checked

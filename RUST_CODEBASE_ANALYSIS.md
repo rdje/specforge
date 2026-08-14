@@ -4,6 +4,24 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-14 — behavioral semantic-negative sensitivity; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`)
+
+- The downstream `specforge-conformance::behavioral_genericity` harness now supports all six frozen relations.
+  Reviewed semantic negatives carry typed required field deltas plus dependent cumulative-proof deltas; the
+  executor first requires ordinary invariance to fail, then removes only the exact declarations from cloned
+  stage values and requires the complete five-stage complement and adjusted proof counts to match.
+- The real UM11732 negative removes one assertion and one `semantic.statement_lift.assertions.v1` claim from each
+  of SemanticIR, IntentIR, and adapter. Seven text conclusions remain pinned. An extra undeclared delta still
+  fails, so the allowance cannot become a general semantic/proof-topology escape hatch.
+- A data-owned synthetic matrix mutates complete proof-bearing stage maps across nine fault classes and restores
+  each exact baseline after measurement. Attempt execution exposes the frozen fail/unmeasurable/invalid taxonomy;
+  source/hash/provider preflight precedes output creation, so unavailable or stale attempts leave no partial
+  evidence root.
+- The conformance-only implementation grows the live compiled-flow census to 2,248 functions, 11,652 helper
+  edges, 11,037 decision sites, and 1,427 sensitive macros without changing the 78-module / 41-family / 168-field
+  product boundary or introducing a core dependency. `.f.iii` now owns held-out execution; whole-core genericity
+  signoff remains open.
+
 ## Session update (2026-08-14 — final structural qualification; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`)
 
 - The complete structural implementation range is `f7da4ab8..07b1f874`: 15 commits, 146 tracked files,

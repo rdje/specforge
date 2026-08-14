@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "recipe_id": "um11732-v3-at-least-timing-grammar-negative-v1",
+  "relation": "semantic_negative",
+  "source_authority": "generated/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/normalized/um11732_v3_2022_02_17_i2s_bus_specification.md",
+  "source_sha256": "250339a784e657ac2c87a9762dfddbffc6a4bd42ed27da7e666c2f2db419753f",
+  "review_status": "approved",
+  "changed_spans": [
+    {
+      "change_id": "at-least-timing-grammar-admission",
+      "kind": "semantic_timing_change",
+      "exact_before": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "exact_after": "- [6] The data set-up and hold time must be at least the specified receiver set-up and hold time.",
+      "expected_occurrences": 1,
+      "allowed_provenance_fields": [
+        "conclusion",
+        "normalized_markdown",
+        "responsibilities",
+        "source_text",
+        "statement",
+        "text"
+      ],
+      "allow_source_bound_identifier_projection": true
+    }
+  ],
+  "preserved_conclusions": [
+    {
+      "conclusion_id": "negative-evidence-timing-statement-carried",
+      "stage": "evidence_ir",
+      "baseline_pointer": "/extracted_statements/89/text",
+      "transformed_pointer": "/extracted_statements/89/text",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must be at least the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "negative-semantic-timing-invariant-carried",
+      "stage": "semantic_ir",
+      "baseline_pointer": "/invariants/6/statement",
+      "transformed_pointer": "/invariants/6/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must be at least the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "negative-semantic-timing-contract-carried",
+      "stage": "semantic_ir",
+      "baseline_pointer": "/contracts/7/statement",
+      "transformed_pointer": "/contracts/7/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must be at least the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "negative-intent-timing-constraint-carried",
+      "stage": "intent_ir",
+      "baseline_pointer": "/constraints/6/statement",
+      "transformed_pointer": "/constraints/6/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must be at least the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "negative-intent-timing-responsibility-carried",
+      "stage": "intent_ir",
+      "baseline_pointer": "/actors/4/responsibilities/1",
+      "transformed_pointer": "/actors/4/responsibilities/1",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must be at least the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "negative-intent-timing-behavior-carried",
+      "stage": "intent_ir",
+      "baseline_pointer": "/behaviors/7/statement",
+      "transformed_pointer": "/behaviors/7/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must be at least the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "negative-intent-timing-invariant-carried",
+      "stage": "intent_ir",
+      "baseline_pointer": "/temporal_invariants/6/source_text",
+      "transformed_pointer": "/temporal_invariants/6/source_text",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must be at least the specified receiver set-up and hold time."
+    }
+  ],
+  "semantic_negative_kind": "timing_grammar_admission",
+  "required_deltas": [
+    {
+      "delta_id": "semantic-assertion-record-removed",
+      "stage": "semantic_ir",
+      "kind": "removed",
+      "baseline_pointer": "/assertions/0",
+      "transformed_pointer": null,
+      "baseline_value": {
+        "assertion_id": "assertion_6_the_data_set_up_and_hold_time_must_not_be_less_than_the_specified_receiver_set_up_and_hold_time",
+        "statement": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+        "supporting_statement_ids": [
+          "statement_0090"
+        ]
+      },
+      "transformed_value": null
+    }
+  ],
+  "dependent_proof_deltas": [
+    {
+      "delta_id": "semantic-assertion-proof-removed",
+      "stages": [
+        "semantic_ir",
+        "intent_ir",
+        "isf_adapter"
+      ],
+      "rule_id": "semantic.statement_lift.assertions.v1",
+      "address": {
+        "stage": "semantic_ir",
+        "surface": "assertions",
+        "stable_record_key": "record-00000000",
+        "field_path": "[0]"
+      }
+    }
+  ],
+  "unaffected_complement": "all_unlisted_leaf_values_and_all_proof_topology_exact",
+  "unmeasurable_source_surfaces": [
+    "content_elements",
+    "document_sections",
+    "page_artifacts",
+    "structured_tables",
+    "visual_assets"
+  ]
+}
