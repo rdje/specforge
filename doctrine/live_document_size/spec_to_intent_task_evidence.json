@@ -2,7 +2,7 @@
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
       "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
-      "literal" : "Eligible product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`.",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i`.",
       "mode" : "eligible",
       "part_id" : "behavioral-qualification"
    },
@@ -100,13 +100,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
             "metrics" : {
-               "bytes" : 974,
-               "line_bytes" : 114,
-               "lines" : 22
+               "bytes" : 7910,
+               "line_bytes" : 359,
+               "lines" : 137
             },
             "part_id" : "behavioral-qualification",
             "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-            "sha256" : "ec02c8016f515b1439bbe98ef63ff087f2a077d768a524c2aba37679baaf8025",
+            "sha256" : "bccdc3bd9daaf50a44a0e21343ad6eb9d0e71b69210dd29035c3d16928976011",
             "state" : "active"
          }
       ],
@@ -443,6 +443,46 @@
          "part_id" : "behavioral-qualification"
       },
       {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6e",
          "origin" : "structural",
          "part_id" : "current-and-future",
@@ -554,7 +594,7 @@
          "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
          "- Status: `active`",
          "## Current Frontier",
-         "Eligible product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`.",
+         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i`.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log",
@@ -612,6 +652,14 @@
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6e`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.7`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.8`",

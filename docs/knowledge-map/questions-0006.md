@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > is a better VLM needed to read register bit-layout diagrams
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > is a greater than 500 page threshold sufficient for bounded PDF ingestion
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -288,13 +298,3 @@
   > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > what are examples of false prose relations in Introducing CoreSight
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what are the 3 gaps G1 G2 G3 in specforge transaction capture
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what are the 6 chip-spec document intent categories / purpose taxonomy
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what are the AXI B1.x channel-signal tables and how do channels map to phases

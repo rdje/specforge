@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what are the 3 gaps G1 G2 G3 in specforge transaction capture
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what are the 6 chip-spec document intent categories / purpose taxonomy
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what are the AXI B1.x channel-signal tables and how do channels map to phases
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what are the SWD packet phases and per-phase SWDIO direction
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -287,13 +297,3 @@
   > what happens when a roadmap section grows too long
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > what happens when a timing observation has no explicit tick-addressed samples
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what happens when document intent category is unresolved
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what happens when ingest cannot count PDF pages
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what happens when old identity-scoped prior memory is loaded
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what happens when the NLI provider is down
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what identifies the canonical inputs to generated Knowledge Map shards

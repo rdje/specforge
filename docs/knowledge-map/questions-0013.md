@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why is the extraction-profile prior family not scoped by ProtocolFamily
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > why is the fact-card catalog about to run out of capacity
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > why is the first trajectory snapshot diverging with insufficient history
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > why is the in-repo corpus tree outside the host-library refresh cohort
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)

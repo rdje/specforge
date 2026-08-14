@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > how does FSMGen decide a value literal's width (by notation digit count — 0x7D=8 bits, 0b00=2 bits — NOT by value; it requires an exact width-cast W'… match, no implicit truncation/extension; a bare decimal is unsized and fits any width)
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > how does FSMGen decide two rule data-writes conflict (same target, different value, NOT compatible/disjoint/priority/resource resolved) and when is a guard proven disjoint (_condition_terms_prove_disjoint: shared eq: signal with different values; an absent/empty condition is NEVER proven disjoint)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how does SemanticIR preserve VALID READY without formal signal declarations
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -288,12 +298,3 @@
   > how is prose signal over-capture prevented (no garbage)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > how is register-field extraction quality measured / scored
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
-  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > how is the CorpusMemory feedback loop made reproducible
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > how is the EvidenceIR extractor path / extraction layer structured and wired
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > how is the FSMGen feedback channel kept bounded without losing old requests and responses

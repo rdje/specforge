@@ -2,6 +2,15 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
+  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > how is the CorpusMemory feedback loop made reproducible
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > how is the EvidenceIR extractor path / extraction layer structured and wired
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > how is the FSMGen feedback channel kept bounded without losing old requests and responses
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how is the NLI gate tested without Ollama
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -288,13 +297,3 @@
   > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > is a better VLM needed to read register bit-layout diagrams
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > is a greater than 500 page threshold sufficient for bounded PDF ingestion
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)

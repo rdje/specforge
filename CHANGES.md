@@ -1,3 +1,18 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification
+
+- Activated the released behavioral-genericity parent and decomposed it into bounded oracle-design,
+  transformation, held-out, population-replay, and final-signoff children. `.f.ii` further separates
+  symbol/identity, paraphrase/layout, and negative-sensitivity qualification.
+- Routed eight new child owners through the active behavioral part. The stable root now names `.f.i` as its
+  precise frontier; the index, manifest, and enforcement contract carry 66 complete owner routes while all seven
+  legacy parts and the exact source capsule remain byte-identical.
+- Fixed the conformance/core authority boundary for the program: conformance owns transforms, expected relations,
+  held-out labels, and comparison evidence; production receives only transformed current-document input.
+- Synchronized current status, engineering rationale, mdBook method, retrieval truth, and the resume pointer.
+  The 44/44 active-task and 84/84 live-size suites, trajectory owner lookup, 220-card catalog, 236-fact /
+  1,817-key Knowledge Map, mdBook test/build, and residue checks pass; 73 generated book files / 8,956 KiB and
+  the empty incremental root are removed.
+
 ### SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4 — independently audit and release the behavioral route
 
 - Reproduced clean migration commit `10ee4a49` in a disposable same-volume clone made without local hardlinks.

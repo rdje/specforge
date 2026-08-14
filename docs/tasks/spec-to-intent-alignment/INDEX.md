@@ -72,6 +72,14 @@
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | [Structural proof](structural-proof.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | [Structural proof](structural-proof.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | [Behavioral qualification](behavioral-qualification.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i` | [Behavioral qualification](behavioral-qualification.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii` | [Behavioral qualification](behavioral-qualification.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a` | [Behavioral qualification](behavioral-qualification.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | [Behavioral qualification](behavioral-qualification.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | [Behavioral qualification](behavioral-qualification.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | [Behavioral qualification](behavioral-qualification.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | [Behavioral qualification](behavioral-qualification.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.7` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.8` | [Current and future](current-and-future.md) |

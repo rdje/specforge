@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what happens when document intent category is unresolved
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what happens when ingest cannot count PDF pages
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what happens when old identity-scoped prior memory is loaded
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what happens when the NLI provider is down
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what identifies the canonical inputs to generated Knowledge Map shards
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > what inputs define corpus KB managed block currentness
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -287,13 +297,3 @@
   > what is the first reviewed source-to-IntentIR evaluation result
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what is the ingest disk pre-flight check
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > what is the inter-annotator agreement of the eval gold

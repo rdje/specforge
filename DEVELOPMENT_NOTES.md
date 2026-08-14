@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f (`2026-08-14`) — behavior needs relational oracles, not one equality check
+
+Whole-document genericity qualification has several distinct semantic relations. Alpha renaming and harmless
+identity perturbation should preserve normalized decisions and proof topology while consistently renaming copied
+symbols. A reviewed structure-preserving paraphrase may preserve facts without preserving source spans or raw
+proof bytes. A negative control must change a fact or residual, so treating all variant output as invariant would
+make the gate blind. Held-out generalization adds population and uncertainty questions that no single transformed
+fixture can answer. These are separate failure modes and now have separate task children.
+
+The authority boundary is equally important: transformation recipes, expected relations, held-out membership,
+and comparison results are conformance data. They may drive tests and reports but cannot enter the production
+core or canonical proof. Production sees each variant only as its current input. `.f.i` therefore freezes the
+population, transform taxonomy, normalized stage projections, proof-topology comparison, explicit unmeasurable
+conditions, and evidence schema before a harness is implemented.
+
+The root-plus-part activation adds eight child owner declarations and routes without changing any legacy payload
+or capsule byte. The active part remains well below its target; `.f.i` is the sole current frontier.
+
 ## SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4 (`2026-08-14`) — qualification is independent of migration machinery
 
 The closing audit started from a clean `git clone --no-local --no-hardlinks` of migration commit `10ee4a49` in

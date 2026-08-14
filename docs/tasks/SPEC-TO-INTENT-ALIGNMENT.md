@@ -24,15 +24,17 @@ expressiveness as the bottleneck.
 - `.6a`, `.6b`, and `.6c` are complete with all of their declared descendants.
 - `.6d` and `.6d.ii` are in progress; `.6d.i` and `.6d.ii.a` through `.6d.ii.e` are complete.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
-- `.6d.ii.f` is pending and eligible for activation by its owned product slice.
+- `.6d.ii.f` is in progress; its bounded children `.f.i` through `.f.v` own oracle design, transformations,
+  held-out qualification, whole-population replay, and final signoff.
 - `.6e`, `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-Eligible product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i`.
 
-The behavioral qualification contract is prepared in its owning active part. The leaf remains pending; its own
-product slice may activate it through the root-plus-part protocol after this containment audit commits.
+The behavioral qualification parent is active in its owning part. `.f.i` first freezes the population,
+transform relations, normalized comparison oracle, failure taxonomy, and evidence format before any harness or
+population mutation is implemented.
 
 ## Detailed task evidence
 
@@ -98,6 +100,14 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6e`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8`
@@ -108,6 +118,7 @@ detail-routing authority.
 | Date | Unit | Result |
 | --- | --- | --- |
 | `2026-08-14` | task-evidence containment input closure | 21 exact regions and 58 exact routes reproduce from the locked source; full CI passes |
+| `2026-08-14` | `.6d.ii.f` activation | bounded behavioral children and `.f.i` design frontier are routed through the active part; target contract and doctrines pass |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 
@@ -116,6 +127,7 @@ detail-routing authority.
 | Unit | Commit | Outcome |
 | --- | --- | --- |
 | `.6d.ii.e.vii` | `112bc333` | close roadmap, implementation, doctrine, public-state, and mdBook alignment |
+| `.6d.ii.f` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification` | activate and decompose the population behavioral signoff program |
 | `.6d.ii.e.vi` | `07b1f874` | qualify generated production structure and controlled failure cases |
 | `.6d.ii.e.v.iv` | `9f37989f` | register the compiled production-genericity doctrine and clean baseline |
 

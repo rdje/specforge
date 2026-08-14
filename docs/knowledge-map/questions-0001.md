@@ -104,6 +104,8 @@
   > How is IntentIR validation backannotation authorized?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is NLI contract demotion authorized without permitting contract invention?
+- [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
+  > How is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f decomposed?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is SemanticIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -150,6 +152,8 @@
   > What is SpecForge's trusted promotion kernel?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > What is the canonical claim-family migration denominator?
+- [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
+  > What is the current behavioral genericity frontier?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > What is the production genericity module denominator?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
@@ -178,6 +182,8 @@
   > Which registered doctrine enforces the complete clean production-genericity boundary?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > Which three authorities govern the bounded alignment task migration?
+- [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
+  > Who may own behavioral transforms and held-out labels?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why are actors and actor contracts IntentIR projections rather than lossless carries?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
@@ -192,6 +198,8 @@
   > Why is a forbidden vocabulary list insufficient?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > Why is an AST scan not sufficient by itself?
+- [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
+  > Why is behavioral genericity not one byte equality test?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > Why is the exact alignment source kept in both a capsule and marked semantic payloads?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -290,11 +298,3 @@
   > can SpecForge lower a transaction's signal-set membership into the ISF transaction BODY
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
   > can SpecForge use FSMGen's (stable …) sampled-value predicate
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > can a VLM-invented waveform lane become canonical intent
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > can a correct refreshed count hide a missing corpus document
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > can a dense-prose phantom actor reach emitted ISF

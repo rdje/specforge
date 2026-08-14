@@ -216,7 +216,15 @@ dependency/schema/rule/flow faults and joins every one of the 168 runtime descri
 inventoried structural alpha contract. Final structural qualification covers 15 committed slices and 120
 proof-bearing artifacts: the 24 current chain ledgers contain all 168 rule ids and 148,708 cumulative claims,
 while exact comparison finds zero non-proof/non-validation or residual delta. The other 54 chains remain
-explicitly proof-unmeasurable. Population renaming/paraphrase/held-out qualification still follows.
+explicitly proof-unmeasurable.
+
+Population behavioral qualification is now active under `.6d.ii.f` and is deliberately relational rather than
+one byte-equality gate. `.f.i` first freezes the measurable population, transform taxonomy, normalized semantic
+and proof-topology projections, failure taxonomy, and evidence schema. Later bounded children separately own
+symbol/document alpha and adversarial identity changes, reviewed meaning-preserving paraphrase/layout changes,
+meaning-changing negative controls, identity-disjoint held-out strata, complete-population reconciliation, and
+final signoff. Transformation recipes, expected relations, held-out labels, and comparison evidence remain in
+the conformance plane; the production core receives each transformed document only as current input.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and
