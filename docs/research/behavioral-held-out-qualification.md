@@ -68,3 +68,33 @@ The checker reconstructs split identity, novelty, attempt coverage, execution pr
 stratum denominators, dispositions, detail records, and Wilson limits. Its 17/17 mutation suite passes. Final
 production-genericity signoff remains deferred: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` owns remediation of the
 measured I2C symbol-alpha coupling before whole-population replay.
+
+## Remediation diagnostic
+
+The failure was not one heuristic. Four independently alpha-sensitive mechanisms composed:
+
+1. EvidenceIR split grammar words on underscores. The transformed `USDA` alias therefore occupied several words
+   inside a bounded drive-to-logic-value window, and the later `HIGH` no longer bound to the signal. Treating a
+   complete underscore identifier as one grammar token restores the exact ninth signal constraint.
+2. Actor-signal relation records were generated from a lexically sorted declaration catalog. The transform
+   deliberately reverses lexical rank, so sequential relation ids attached to different normalized signals.
+   Exact-first/unique-case-folded resolution is retained, but emission follows first source occurrence.
+3. The decomposition-title grammar saw the familiar component `reset_n` inside a complete declared alias and
+   minted a section candidate. Removing complete declared signal tokens before universal topic grammar preserves
+   real independent `reset control` headings while making alias spelling inert.
+4. Transaction signal sets, connectivity-conflict ordering/ordinals, and residual overlap presentation inherited
+   raw `String` ordering. A shared source-occurrence order now governs these source-owned identities.
+
+Focused positive and negative controls pass for all four boundaries. A worktree replay of the exact retained
+pair now preserves equal stage record counts and all 11,170 baseline/transformed proof claims across 266,194
+compared leaves. SourceIR and EvidenceIR compare cleanly. The remaining five SemanticIR paths, 78 IntentIR paths,
+and one ISF path are all comparator-owned representation: lowercased source-derived id references, set-valued
+responsibilities, and the unordered top-level named-drive declaration block. They will be normalized and replayed
+against the clean production-remediation commit; no clean-revision success or whole-population signoff is claimed
+by this diagnostic section.
+
+The production change moves exactly two retained current chains under fixed-input ADR 0025 replay. Arm Debug
+Interface v6 reassigns six actor-signal ordinals across `SWCLK`/`SWDIO` and `TDI`/`TDO`; I2C reassigns two across
+`SCL`/`SDA`. Matching provenance rows and downstream source-order/conflict/residual presentations follow those
+corrected assignments. Every stage record count and proof-claim count remains exact, both adapters retain the same
+blocked/no-file outcome, and the exhaustive gate reports 24/24 current with zero stale at all four replayed stages.

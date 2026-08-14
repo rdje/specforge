@@ -25,8 +25,8 @@ expressiveness as the bottleneck.
 - `.6d` and `.6d.ii` are in progress; `.6d.i` and `.6d.ii.a` through `.6d.ii.e` are complete.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
 - `.6d.ii.f` is in progress; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
-  corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` next owns the resulting production
-  symbol-alpha coupling before whole-population replay and final signoff.
+  corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has localized and removed the resulting
+  production symbol-alpha coupling; clean-revision comparator replay remains before whole-population replay.
 - `.6e`, `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
@@ -41,8 +41,11 @@ exclusions. `.f.ii.c` proves one real semantic/proof delta plus all nine sensiti
 invalid/unmeasurable attempt handling. `.f.iii` qualifies the frozen prospective holdout.
 Its initial 51-attempt execution exposed two conformance-oracle defects and remains in Git history. The corrected
 matrix is 34 pass / one fail / 16 unmeasurable / zero invalid: both PDF relations pass 17/17, while the sole
-eligible I2C alpha pair fails below SourceIR after a valid six-signal rename. `.f.iii.a` owns that measured
-production spelling/ordering dependence before `.f.iv`.
+eligible I2C alpha pair originally failed below SourceIR after a valid six-signal rename. `.f.iii.a` now keeps
+opaque underscore identifiers atomic, uses source occurrence rather than symbol spelling for generated order,
+and excludes declared aliases from section-topic grammar. The production-only diagnostic preserves all 11,170
+claims. Exact ADR 0025 reconciliation leaves all 24 measurable chains current and zero stale through the adapter;
+a clean-revision comparator replay remains before `.f.iv`.
 
 ## Detailed task evidence
 
@@ -134,6 +137,7 @@ detail-routing authority.
 | `2026-08-14` | `.6d.ii.f.ii.c` semantic-negative sensitivity | one real assertion/proof negative and all nine synthetic fault classes reject ordinary invariance while the exact declared complement passes |
 | `2026-08-14` | `.6d.ii.f.iii` initial prospective execution | 51/51 attempts execute; unchanged replay passes 17/17, while 32 fail / one invalid expose two conformance-oracle defects and one vacuous row remains unmeasurable; no signoff claimed |
 | `2026-08-14` | `.6d.ii.f.iii` corrected qualification | 34 pass / one fail / 16 unmeasurable / zero invalid; both PDF relations pass 17/17; the sole measurable six-signal I2C alpha pair fails below SourceIR and routes `.f.iii.a` |
+| `2026-08-15` | `.6d.ii.f.iii.a` production ordering | four alpha-sensitive production mechanisms are removed; exact retained-chain reconciliation, all doctrines, all production-genericity components, 1,976 Rust tests / eight ignored / zero failed, mdBook, and final locality pass |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 

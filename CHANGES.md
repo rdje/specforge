@@ -1,3 +1,26 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering
+
+- Kept opaque underscore identifiers atomic in EvidenceIR logic-level grammar, restoring the ninth I2C signal
+  constraint and its two missing proof claims without admitting logic words embedded inside identifiers.
+- Replaced lexical signal spelling as generated-order authority with first source occurrence for actor-signal
+  relations, transaction/phase sets, connectivity-conflict ordinals, and overlap residual presentation.
+- Excluded complete declared signal aliases from SemanticIR section-topic grammar while retaining independently
+  present structural topics such as `reset control`.
+- Added focused alpha-invariance and negative controls. The exact six-signal/352-occurrence diagnostic now keeps
+  equal stage record counts and 11,170/11,170 proof claims; clean-revision comparator replay remains in the same
+  task leaf before whole-population reconciliation.
+- Reconciled the two retained chains that fixed-input replay proved moved: Arm Debug Interface v6 changes six
+  actor-signal ordinal assignments and I2C changes two, with matching provenance/source-order projections but no
+  record-count, proof-claim-count, renderability, or blocking-policy change. Chain currency is again 24/24
+  current and zero stale through EvidenceIR, SemanticIR, IntentIR, and the adapter.
+- Refreshed the independently derived production-flow snapshot to 2,270 functions / 11,902 helper edges / 11,355
+  decision sites / 1,443 semantic macros and synchronized roadmap, task, status, research, retrieval, and mdBook
+  truth without adding a document, protocol, vendor, filename, alias, or expected-result branch.
+- Passed full CI: all nine doctrines including exact 24/24 current chain currency, all 11 production-genericity
+  components, 1,976 Rust tests / eight intentional ignores / zero failures, five compile-fail doctests,
+  warning-denied Clippy/Rustdoc, mdBook test/build, and final project-data locality. Removed the verified exact
+  chain backup and five worktree diagnostic roots after the gate consumed them.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior
 
 - Repaired the held-out conformance oracle without adding production exceptions: adversarial identity now

@@ -4604,11 +4604,12 @@ fn extract_actor_signal_relations(
     let mut seen: std::collections::HashSet<(String, String, u8)> =
         std::collections::HashSet::new();
 
-    // EVIDENCE-DETERMINISM.2 — keep the declaration catalog in deterministic order. A statement is
-    // then matched only against the exact-first, unique-only identities it actually mentions; lowering
-    // every declaration before matching would let one spelling mint relations for a case-fold sibling.
-    let mut sorted_signals: Vec<&String> = known_signals.iter().collect();
-    sorted_signals.sort_unstable();
+    // Keep the lookup catalog deterministic, but never let that spelling order decide relation order or
+    // generated ids. Each statement's referenced signals are emitted in source occurrence order below.
+    // Exact-first, unique-only resolution still prevents one spelling from minting relations for a
+    // case-fold sibling.
+    let mut signal_catalog: Vec<&String> = known_signals.iter().collect();
+    signal_catalog.sort_unstable();
 
     for stmt in statements {
         // Skip synthesized declarations and table rows
@@ -4622,7 +4623,7 @@ fn extract_actor_signal_relations(
 
         let text = &stmt.text;
         let lowered = text.to_ascii_lowercase();
-        let referenced_signals = known_signals_referenced_in_text(text, &sorted_signals);
+        let referenced_signals = known_signals_referenced_in_text_order(text, &signal_catalog);
 
         for signal in &referenced_signals {
             let sig_lower = signal.to_ascii_lowercase();
@@ -6185,6 +6186,36 @@ fn known_signals_referenced_in_text(text: &str, ordered_signals: &[&String]) -> 
         .collect()
 }
 
+/// Resolve the same exact-first, unique-only signal catalog as
+/// [`known_signals_referenced_in_text`], but retain first occurrence order from `text`. Product
+/// surfaces whose generated record ids depend on emission order must use source structure—not the
+/// lexical order of opaque signal spellings—as their stable ordering authority.
+fn known_signals_referenced_in_text_order(text: &str, signal_catalog: &[&String]) -> Vec<String> {
+    let mut referenced = Vec::new();
+    for token in text
+        .split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+        .filter(|token| !token.is_empty())
+    {
+        let resolved = signal_catalog
+            .iter()
+            .find(|signal| signal.as_str() == token)
+            .map(|signal| (**signal).clone())
+            .or_else(|| {
+                let mut folded = signal_catalog
+                    .iter()
+                    .filter(|signal| signal.eq_ignore_ascii_case(token));
+                let unique = folded.next()?;
+                folded.next().is_none().then(|| (**unique).clone())
+            });
+        if let Some(signal) = resolved
+            && !referenced.contains(&signal)
+        {
+            referenced.push(signal);
+        }
+    }
+    referenced
+}
+
 fn collective_polarity_subject_signals(
     text: &str,
     text_lower: &str,
@@ -6412,7 +6443,10 @@ fn logic_level_binding_kind_from_text(lowered: &str) -> Option<SignalConstraintK
     // verb, not a distant condition clause ("… driven correctly every cycle in which X is True").
     const MAX_GAP: usize = 6;
     let words: Vec<&str> = lowered
-        .split(|c: char| !c.is_ascii_alphanumeric())
+        // Keep an opaque identifier as one grammar unit. Splitting on `_` makes the bounded
+        // verb→value window depend on a source-owned symbol's spelling (and can also expose a
+        // `high`/`low` component inside an identifier as if it were the bound logic value).
+        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
         .filter(|w| !w.is_empty())
         .collect();
     // Whole-word bind verb (so "set" does NOT match the substring in "reset").
@@ -28000,6 +28034,58 @@ mod wire_based_100_5i {
                 .is_empty()
         );
     }
+
+    #[test]
+    fn dynamic_logic_level_binding_is_alpha_invariant_for_opaque_identifier() {
+        const BASELINE: &str = "USDA";
+        const OPAQUE_ALIAS: &str = "signal_alias_000001_ready_000000006d11fd13";
+
+        for signal in [BASELINE, OPAQUE_ALIAS] {
+            let statements = vec![
+                stmt(
+                    "declaration",
+                    StatementClass::SourceFact,
+                    &format!("Signal {signal} is width 1."),
+                ),
+                stmt(
+                    "constraint",
+                    StatementClass::TimingConstraint,
+                    &format!(
+                        "Every byte put on the {signal} line must be eight bits long. The number of bytes that can be transmitted per transfer is unrestricted. The controller drives the {signal} HIGH after each byte during the Acknowledge cycle."
+                    ),
+                ),
+            ];
+            let mut counter = 0usize;
+            let records =
+                extract_dynamic_signal_constraints(&statements, &mut counter, &HashSet::new());
+            assert!(
+                records.iter().any(|record| {
+                    record.subject_signal == signal
+                        && matches!(record.constraint_kind, SignalConstraintKind::MustBeHigh)
+                }),
+                "opaque signal spelling must not change the extracted logic-level binding; signal={signal}, records={records:?}"
+            );
+        }
+
+        let statements = vec![
+            stmt(
+                "declaration",
+                StatementClass::SourceFact,
+                "Signal FLAG is width 1.",
+            ),
+            stmt(
+                "constraint",
+                StatementClass::NormativeStatement,
+                "The controller must drive FLAG status_high_mode.",
+            ),
+        ];
+        let mut counter = 0usize;
+        assert!(
+            extract_dynamic_signal_constraints(&statements, &mut counter, &HashSet::new())
+                .is_empty(),
+            "an identifier component must not become the bound logic-level value"
+        );
+    }
 }
 
 #[cfg(test)]
@@ -29547,6 +29633,41 @@ mod evidence_determinism {
             a.iter().any(|r| r.signal_name == "PWUSER"),
             "got {:?}",
             proj(&a)
+        );
+    }
+
+    #[test]
+    fn actor_signal_relation_order_is_alpha_invariant() {
+        let baseline_statements = vec![stmt("s1", "The wiring patterns drive SCL and SDA.")];
+        let transformed_statements = vec![stmt(
+            "s1",
+            "The wiring patterns drive zz_signal and aa_signal.",
+        )];
+        let baseline_signals = ["SCL".to_string(), "SDA".to_string()].into_iter().collect();
+        let transformed_signals = ["zz_signal".to_string(), "aa_signal".to_string()]
+            .into_iter()
+            .collect();
+
+        let baseline = extract_actor_signal_relations(&baseline_statements, &baseline_signals);
+        let transformed =
+            extract_actor_signal_relations(&transformed_statements, &transformed_signals);
+        let normalize = |relations: &[ActorSignalRelation], transformed: bool| {
+            relations
+                .iter()
+                .map(|relation| {
+                    let signal = match (transformed, relation.signal_name.as_str()) {
+                        (true, "zz_signal") => "SCL",
+                        (true, "aa_signal") => "SDA",
+                        _ => relation.signal_name.as_str(),
+                    };
+                    (relation.relation_id.clone(), signal.to_string())
+                })
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            normalize(&baseline, false),
+            normalize(&transformed, true),
+            "opaque renaming must not reorder relations or their generated ids"
         );
     }
 }

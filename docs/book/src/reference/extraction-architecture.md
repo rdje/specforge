@@ -133,8 +133,8 @@ The information-flow layer over that graph is now shipped. A closed 140-row regi
 field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
 rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
 non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
-dependence through 2,268 functions and 11,811 helper edges, then check 11,339 branch/selection/decision sites,
-1,442 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
+dependence through 2,270 functions and 11,902 helper edges, then check 11,355 branch/selection/decision sites,
+1,443 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
 The dependency, inventory, rule, compiled-graph, information-flow, and frozen behavioral-contract checks now run
@@ -161,9 +161,12 @@ overbroad alpha catalog; that diagnostic remains in Git history. The corrected 1
 90-stratum aggregate has 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged PDF replay and
 adversarial identity each pass 17/17. Fifteen rows have no typed opaque alpha declaration and one is vacuous.
 The sole measurable I2C alpha pair bijectively renames six signals across 352 occurrences, passes SourceIR, but
-loses two EvidenceIR proof claims and propagates undeclared deltas through SemanticIR, IntentIR, and ISF. That is
-a real production symbol-spelling/ordering failure, routed to `.f.iii.a`; complete-population results and final
-production-genericity signoff remain open.
+originally lost two EvidenceIR proof claims and propagated undeclared deltas through SemanticIR, IntentIR, and
+ISF. `.f.iii.a` localized four generic causes: underscore-splitting of opaque grammar tokens, lexical relation
+and conflict ordinals, spelling-sorted semantic signal sets, and declared-alias leakage into section-topic
+grammar. The production repair uses atomic identifiers and first source occurrence, preserves genuine topic
+words, and now retains all 11,170 claims in the exact diagnostic. Clean-revision conformance replay,
+complete-population results, and final production-genericity signoff remain open.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively
@@ -225,6 +228,11 @@ delta. The current residual surfaces contain 0 SourceIR, 3 SemanticIR, 8 IntentI
 adapters are honestly blocked with zero current emitted files. The 54 legacy chains remain inspectable but
 cannot feed canonical authority. The [structural qualification report](../../../research/production-genericity-structural-qualification.md)
 publishes the per-chain ledger and residual counts.
+
+When a retained chain is reconstructed, each stage must be built and validated before the next stage is built.
+Validation backannotation is verified artifact state and is retained in the downstream cumulative proof prefix;
+validating an upstream artifact after building its consumer therefore makes that consumer stale by design. The
+currency gate replays from persisted inputs and rejects any such sequencing error.
 
 This closes structural qualification only. The behavioral oracle and exact denominator are frozen, and the
 identity/alpha harness, reviewed paraphrase/layout relations, and negative sensitivity are implemented and

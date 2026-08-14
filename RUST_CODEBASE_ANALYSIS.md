@@ -4,6 +4,24 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-14 — alpha-sensitive production ordering remediation; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`)
+
+- `ir::evidence` now tokenizes underscore identifiers atomically for bounded logic-level binding and emits
+  actor-signal relations in exact-first/unique-case-folded source occurrence order instead of catalog order.
+- `ir::semantic` centralizes source occurrence ordering for transaction/phase signal sets, multi-producer
+  conflict ordinals, and overlap residuals. Its decomposition-title grammar removes complete declared signals
+  before interpreting universal topic words. No named specification or familiar alias enters production.
+- Focused controls cover long opaque aliases, logic-word components inside aliases, reversed lexical rank,
+  independent structural title words, source-ordered transactions, conflicts, and overlaps. The retained I2C
+  diagnostic preserves all 11,170 proof claims and equal stage record counts.
+- ADR 0025 fixed-input replay moved exactly two retained chains. Arm changes six relation-to-signal ordinal
+  assignments and I2C changes two; downstream source-order/conflict/residual presentation follows those corrected
+  assignments. All record and proof-claim counts, adapter blocking states, and emitted-target absence are stable;
+  chain currency is 24/24 current and zero stale through every replayed stage.
+- The compiled production graph remains 78 inventoried files / 140 boundary rows and now measures 2,270 functions,
+  11,902 helper edges, 11,355 decision sites, and 1,443 semantic macros. The conformance comparator remains
+  downstream; its field-aware reference/set/declaration normalization is the next same-leaf commit.
+
 ## Session update (2026-08-14 — initial behavioral holdout diagnostic; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`)
 
 - `specforge-conformance::behavioral_genericity` now executes the frozen 17-document prospective split and

@@ -21,15 +21,19 @@
   symbol-spelling/ordering coupling. Tracking-
   only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, `DECISION-RECORD-CAPACITY-HEADROOM.1`, and
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: corrected 51-attempt evidence is 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged
-  PDF and adversarial identity pass 17/17. Fifteen alpha rows lack typed opaque declarations, one is vacuous, and
-  the valid six-signal I2C alpha pair fails below SourceIR with 11,170→11,111 cumulative claims and 12,441
-  undeclared downstream paths. Aggregate SHA is `fbc8331bac463bc400c079873406e5ffe9388a73c513a4811a6499edab5a4e06`;
-  17/17 checker mutations and 19 focused tests pass / two provider tests intentionally ignored. Full CI passes
-  all nine doctrines, all 11 production-genericity components, 1,972 Rust tests / eight ignored / zero failed,
-  five compile-fail doctests, Clippy/Rustdoc, mdBook, and final locality.
-- Next action: compare the retained I2C baseline/transformed EvidenceIR and derivation ledgers to identify the
-  earliest alpha-sensitive production decision before changing code.
-- In-flight uncommitted: none at handoff. The recursive repo-local held-out evidence chain is intentionally
-  retained in `.project-data/tmp`; no background job.
+- Current state: four structural production causes are repaired and the production slice's full repository gate
+  passes: opaque underscore identifiers remain one grammar
+  token; actor-signal and semantic signal collections/ordinals follow first source occurrence; and declared aliases
+  cannot grant section-topic semantics. The exact six-signal/352-occurrence diagnostic now preserves equal stage
+  record counts and 11,170/11,170 proof claims over 266,194 leaves. Five SemanticIR reference ids, 78 downstream
+  set/reference values, and one unordered ISF declaration block remain comparator-owned. Focused controls pass;
+  the current compiled-flow census is 2,270 functions / 11,902 edges / 11,355 decisions / 1,443 macros. ADR 0025
+  reconciliation rebuilt the exact two affected retained chains; currency is 24/24 current and zero stale through
+  EvidenceIR, SemanticIR, IntentIR, and adapters, with unchanged proof counts and blocked/no-file outcomes. All nine
+  doctrines, all 11 production-genericity components, 1,976 Rust tests / eight ignored / zero failed, five
+  compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook, and final locality pass.
+- Next action: commit the verified production remediation, then fulfill the director's new `MEMORY.md` 32,768-byte
+  cap directive under its own task-tree leaf before resuming clean-revision comparator replay/publication.
+- In-flight uncommitted: the verified production code, graph snapshot, exact retained-chain refresh, and synchronized
+  task/live/book/retrieval evidence await the first `.f.iii.a` commit. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

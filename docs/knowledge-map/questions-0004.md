@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how do byte-granular page fragments chain (offset plus size adjacency)
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > how do canonical register records retain source table provenance
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how do continuation tables (Table B2.2 Continued) merge into one container
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how do dword-relative page fragments chain
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -292,9 +298,3 @@
   > how is a valid post-migration active task continuation verified
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is an active task evidence migration written atomically
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is an active task source locked before migration
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > how is an external PDF labeled in Docling metadata
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)

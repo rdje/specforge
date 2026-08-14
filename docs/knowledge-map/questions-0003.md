@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > does encryption block the VLM from reading tables (no)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > does enrich / audit-extraction / recover-register-bits read full-page images or region images
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
@@ -291,9 +297,3 @@
   > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I waive or range-scope the task-acceptance check
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how do byte-granular page fragments chain (offset plus size adjacency)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > how do canonical register records retain source table provenance
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how do continuation tables (Table B2.2 Continued) merge into one container

@@ -1,4 +1,37 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a (`2026-08-14`) — opaque spelling cannot be grammar or order authority
+
+The I2C failure began with a small tokenizer assumption: the bounded logic-level binder split on every
+non-alphanumeric character. That is suitable for prose punctuation but not for a declared hardware identifier.
+The long transformed alias therefore occupied several word positions between `drives` and `HIGH`, while `HIGH`
+inside an alias could conversely look like a value. Treating underscores as part of the identifier makes the
+grammar alpha-equivariant and strengthens its negative boundary at the same time.
+
+Three ordering sites exposed the same deeper rule. A sorted declaration catalog is deterministic, but it is not
+alpha-invariant when the keys are opaque source-owned names. Actor-signal ordinals, transaction/phase membership,
+connectivity-conflict ordinals, and residual overlap text now derive order from first occurrence in source prose.
+Exact-first and unique-case-folded identity resolution remain; only the ordering authority changes. A fail-closed
+assertion prevents a candidate signal with no source occurrence from silently receiving an arbitrary fallback.
+
+The familiar `reset_n` component found one semantic leak of a different shape. Universal title grammar may
+interpret `reset control`, but it must not inspect a complete declared signal token for topic words. Removing
+declared tokens before the title grammar runs preserves independent topic words while keeping identifier spelling
+opaque. This is structural subtraction of current-document declarations, not a forbidden-name list.
+
+After these repairs the exact retained pair has equal stage record counts and 11,170/11,170 claims. Its remaining
+five SemanticIR, 78 IntentIR, and one ISF differences are representation-level comparator gaps: generated ids use
+lowercase source projections, responsibilities are set-valued, and top-level named drives are declarations. The
+held-out evidence pins the comparator source digest, so production lands first; conformance normalization and the
+successful report then replay against that clean revision. This ordering prevents a worktree binary from being
+misrepresented as a committed production authority.
+
+The all-tier gate identified exactly two retained chains affected by the shared extractor change. At the first
+causal stage, Arm Debug Interface v6 reassigns six relation ordinals across `SWCLK`/`SWDIO` and `TDI`/`TDO`; I2C
+reassigns two across `SCL`/`SDA`. Matching fact-provenance rows move in the same order. Rebuilding and validating
+each stage before constructing its downstream consumer preserves every proof-claim count and is required because
+validation backannotation becomes part of the cumulative upstream proof prefix. The final currency replay is
+24/24 current and zero stale at all four replayed stages; all 24 adapters remain honestly blocked with no ISF.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii (`2026-08-14`) — a valid alpha failure must remain a failure
 
 The corrected held-out result separates three kinds of negative evidence. A filename-derived

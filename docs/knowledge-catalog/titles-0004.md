@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |
 | [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md) | 2026-08-08 | `current` | Repository-local temp exposes a Docling test root-discovery and mutex-poison cascade |
 | [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |
 | [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
@@ -60,4 +61,3 @@
 | [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md) | 2026-08-09 | `current` | USB4 Inter-Domain refresh is path-portable and authority-empty |
 | [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md) | 2026-08-09 | `current` | Validate backannotation is contained to the explicit artifact path |
 | [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md) | 2026-08-08 | `current` | VALIDATION_SNAPSHOT is the last reviewed projection, not ambient local artifact state |
-| [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md) | 2026-06-15 | `current` | The deterministic value binder matches an alphabetic enum value as a whole word (no substring fabrication) |

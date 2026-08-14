@@ -277,7 +277,7 @@ The following flow layer joins a closed 140-row typed registry to that graph. It
 fields/seams, and conformance bypasses from existing inventories, then resolves explicit raw/identity aggregate,
 field, and provider-return sources; universal grammar and exact-identity declassifiers; proof gates and values;
 trusted/non-authoritative regions; and protected types. A deterministic fixed point propagates dependencies
-through 2,268 functions and 11,811 helper edges, checking 11,339 semantic decision sites plus macro, mutation,
+through 2,270 functions and 11,902 helper edges, checking 11,355 semantic decision sites plus macro, mutation,
 construction, capability-call, proof-value, and canonical-seam topology. Sensitive unresolved macros reject.
 Thirteen flow mutations independently reject identity selection, raw literal equality, substring and regex
 decisions, cross-class declassification, direct/aliased unregistered inference, authority forgery, helper/macro

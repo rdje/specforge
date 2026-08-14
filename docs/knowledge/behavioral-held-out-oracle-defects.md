@@ -9,6 +9,10 @@ answers:
   - "what were the initial 17-document held-out relation outcomes"
   - "what are the corrected 17-document behavioral held-out outcomes"
   - "does I2C extraction remain invariant under opaque signal renaming"
+  - "what caused the I2C symbol alpha production failure"
+  - "why must opaque identifiers remain one grammar token"
+  - "what stable order may production use for opaque signal collections"
+  - "why do source derived ids need field aware alpha normalization"
   - "why is an ambiguous derived id pairing a fail rather than an invalid alpha transform"
 date: 2026-08-14
 status: current
@@ -44,6 +48,23 @@ but EvidenceIR loses two proof claims and has 292 undeclared paths; the differen
 IntentIR, and ISF. An initially ambiguous derived-id pairing is not transform invalidity: only the source rename
 recipe determines transform bijection. The comparator now retains only unambiguous derived-id pairs and exposes
 the remaining structure as an ordinary semantic fail.
+
+The remediation localized four alpha-sensitive mechanisms. EvidenceIR's bounded verb/value grammar split on
+underscores, so a long opaque alias became many grammar words and moved `HIGH` outside the accepted gap; keeping
+underscore identifiers atomic restores the missing constraint and its claims. Actor-signal relations assigned
+sequential ids after lexical signal sorting, so alpha renaming swapped otherwise identical edges; first source
+occurrence now governs emission. SemanticIR's section-topic grammar interpreted `reset_n` inside a complete
+declared alias as an independent `reset` topic; declared signal tokens are now removed before universal title
+grammar runs. Transaction signal sets, connectivity-conflict ordinals, and residual overlap presentation also
+used raw lexical spelling and now use first source occurrence.
+
+After those production repairs, the exact pair has equal stage record counts and 11,170/11,170 cumulative proof
+claims. The remaining diagnostic differences are conformance-normalization concerns: five source-derived
+SemanticIR reference ids, 78 propagated id/set values, and one unordered top-level ISF named-drive block.
+Generated ids use lowercase source projections, while ordinary prose and signal declarations preserve source
+case; the comparator therefore needs field-aware projection. Set-valued responsibilities and declaration blocks
+may be canonicalized only after symbol normalization. The existing many-to-one derived-id control remains the
+fail-closed boundary: ambiguous structure must stay visible rather than receive positional pairing.
 
 Initial machine evidence stays in Git history. Outcomes and thresholds never enter production.
 `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` owns the measured production symbol-spelling coupling before complete

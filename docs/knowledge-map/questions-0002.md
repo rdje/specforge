@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > can SpecForge category-3 signal_connectivity lower to current FSMGen actor networks now (not yet proven; actor types, typed endpoints, widths, ownership, transactions, and multi-actor emission remain missing or unmeasured)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > can SpecForge lower a transaction's signal-set membership into the ISF transaction BODY
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > can SpecForge use FSMGen's (stable …) sampled-value predicate
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -291,9 +297,3 @@
   > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
   > does corpus prior memory only accrete
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > does encryption block the VLM from reading tables (no)

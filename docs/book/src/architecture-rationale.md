@@ -208,7 +208,7 @@ Exact local calls are distinguished from method, associated, external, prelude/b
 dispatch rather than pretending that an AST alone is a type checker. The information-flow layer now makes the
 raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically checked. Its
 140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
-2,268 functions, 11,811 helper edges, 11,339 decision sites, and 1,442 sensitive macros. Canonical mutation/protected
+2,270 functions, 11,902 helper edges, 11,355 decision sites, and 1,443 sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
@@ -250,9 +250,16 @@ invalid. Those remain harness calibrations. The first `.f.iii` prospective execu
 filename-derived stem allowance and an overbroad alpha catalog; its exact diagnostic remains in Git history. The
 corrected 51-attempt aggregate is 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged PDF and
 adversarial identity pass 17/17. Fifteen rows have no typed opaque alpha surface and one is vacuous. The I2C row
-alone has a measurable six-signal catalog; its bijective 352-occurrence rename passes SourceIR, then loses two
-EvidenceIR claims and propagates thousands of undeclared paths through SemanticIR, IntentIR, and ISF. This is a
-real production symbol-spelling/ordering coupling, owned next by `.f.iii.a`. Transformation recipes, expected
+alone has a measurable six-signal catalog; its bijective 352-occurrence rename exposed four generic coupling
+mechanisms. Opaque underscore identifiers had been split into grammar words; relation/conflict ordinals and
+signal collections followed lexical spelling; and a familiar word inside a declared alias could influence
+section-topic grammar. `.f.iii.a` keeps opaque identifiers atomic, orders source-owned signal collections by
+first occurrence, and removes complete declared aliases before interpreting title topics. The production-only
+diagnostic now preserves equal stage record counts and all 11,170 proof claims; only field-aware derived-id,
+set-valued responsibility, and unordered named-drive normalization remains before clean-revision replay. The
+shared-extractor movement is reconciled exactly: all 24 measurable persisted chains are current and zero stale
+through EvidenceIR, SemanticIR, IntentIR, and adapter; all 24 adapters remain blocked with no emitted ISF.
+Transformation recipes, expected
 relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
 current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)
 publishes the exact boundary; the [initial-run report](../../research/behavioral-held-out-initial-run.md)

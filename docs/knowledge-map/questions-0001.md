@@ -124,10 +124,14 @@
   > How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How will SpecForge enforce that identifiers are opaque?
+- [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md)
+  > In what order must a current proof-bearing chain be rebuilt and validated?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Is SpecForge production-genericity signoff complete after identity remediation?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Is the generic production core physically separated from conformance code?
+- [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md)
+  > Is validation backannotation part of the cumulative proof prefix?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Were downstream artifacts reconciled after SourceIR schema 2?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
@@ -194,6 +198,8 @@
   > Why can legacy SourceIR not feed EvidenceIR?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Why can neutral extraction lose recall after removing shortcuts?
+- [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md)
+  > Why does validating EvidenceIR after building SemanticIR make SemanticIR stale?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why is a forbidden vocabulary list insufficient?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
@@ -292,9 +298,3 @@
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > can ISF model an explicit state machine / FSM (proven)
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > can SpecForge category-3 signal_connectivity lower to current FSMGen actor networks now (not yet proven; actor types, typed endpoints, widths, ownership, transactions, and multi-actor emission remain missing or unmeasured)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > can SpecForge lower a transaction's signal-set membership into the ISF transaction BODY
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > can SpecForge use FSMGen's (stable …) sampled-value predicate

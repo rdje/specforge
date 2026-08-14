@@ -94,10 +94,12 @@ A finite forbidden-vocabulary list remains diagnostic, not proof. `.f.i` freezes
 population, PDF/text input planes, six relations, five-stage comparison, and 7-calibration/17-prospective split;
 23 text projections are non-vacuous and one is unmeasurable. `.f.ii` now closes deterministic PDF identity,
 text alpha, reviewed paraphrase/layout, semantic-negative sensitivity, and typed attempt handling. `.f.iii` has
-executed the frozen identity-disjoint holdout once: unchanged replay passes, while real filenames expose one
-identity-comparator omission and real prose exposes an overbroad alpha authority. The initial evidence is a
-retained fail-closed diagnostic; `.f.iii` still owns oracle repair and corrected qualification before complete
-replay, final signoff, and then `.6e`. Resource-sized bounded
+qualified the frozen identity-disjoint holdout after correcting its oracle: unchanged and adversarial-identity
+replay pass 17/17, 16 alpha rows are honestly unmeasurable, and the sole measurable I2C alpha pair exposed real
+production spelling/order coupling. `.f.iii.a` has localized and removed that production coupling; the exact
+pair now preserves all 11,170 proof claims in a production-only diagnostic, and ADR 0025 reconciliation restores
+24/24 current with zero stale at every replayed persisted stage. Clean-revision comparator replay,
+complete population reconciliation, final signoff, and then `.6e` remain. Resource-sized bounded
 activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
 
 Five active program groups support that north star:

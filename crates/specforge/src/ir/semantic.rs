@@ -656,7 +656,7 @@ impl SemanticIr {
         let infrastructure_signals =
             build_infrastructure_signals(&context, &signal_connectivity, system_contract.as_ref());
         let signal_connectivity_conflicts =
-            build_signal_connectivity_conflicts(signal_connectivity.as_slice());
+            build_signal_connectivity_conflicts(&context, signal_connectivity.as_slice());
         let signal_polarities = evidence_ir.signal_polarities.clone();
         let signal_polarity_conflicts = evidence_ir.signal_polarity_conflicts.clone();
         let signal_semantic_conflicts = evidence_ir.signal_semantic_conflicts.clone();
@@ -3469,22 +3469,21 @@ fn build_transaction_anchors(
             }
         }
         // The transaction's grounded signal set: the DECLARED signals referenced by
-        // the statements in its (descendant-expanded) section scope (deduped +
-        // sorted). Intersecting with `declared_signals` is essential — the raw
+        // the statements in its (descendant-expanded) section scope (deduped in
+        // first source-occurrence order). Intersecting with `declared_signals` is essential — the raw
         // statement tokens over-capture enum VALUES (`IDLE`, `INCR4`) and prose
         // abbreviations (`MPMC`, `AHB5`) that are not interface signals; keeping only
         // declared signals makes the set faithful (a signal is a member iff the
         // transaction's section subtree references it AND the document declares it as
         // a signal — bar #3/#4). No name list (ADR 0006) — `declared_signals` is the
         // document's own inventory.
-        let signal_set: Vec<String> = supporting_statement_ids
+        let signal_members = supporting_statement_ids
             .iter()
             .filter_map(|id| signals_by_statement.get(id.as_str()))
             .flat_map(|sigs| sigs.iter().cloned())
             .filter(|sig| declared_signals.contains(sig))
-            .collect::<BTreeSet<String>>()
-            .into_iter()
-            .collect();
+            .collect::<HashSet<String>>();
+        let signal_set = source_ordered_signal_subset(context, &signal_members);
         records.push(TransactionAnchorRecord {
             transaction_anchor_id: format!("txnanchor_{}", name),
             transaction_name: name,
@@ -4024,19 +4023,18 @@ fn build_transaction_phases(
                 .map(|ids| ids.iter().cloned().collect())
                 .unwrap_or_default();
             // KG-ISF-TRANSACTIONS.2i: the phase's grounded signal set — the DECLARED
-            // signals referenced by the statements that name this phase, deduped +
-            // sorted. Intersecting with `declared_signals` is essential for the same
+            // signals referenced by the statements that name this phase, deduped in
+            // first source-occurrence order. Intersecting with `declared_signals` is essential for the same
             // reason as the anchor signal_set (`.2c`): the raw statement tokens
             // over-capture enum values / abbreviations that are not signals. No name
             // list (ADR 0006) — `declared_signals` is the document's own inventory.
-            let signal_set: Vec<String> = supporting_statement_ids
+            let signal_members = supporting_statement_ids
                 .iter()
                 .filter_map(|id| signals_by_statement.get(id.as_str()))
                 .flat_map(|sigs| sigs.iter().cloned())
                 .filter(|sig| declared_signals.contains(sig))
-                .collect::<BTreeSet<String>>()
-                .into_iter()
-                .collect();
+                .collect::<HashSet<String>>();
+            let signal_set = source_ordered_signal_subset(context, &signal_members);
             TransactionPhaseRecord {
                 transaction_phase_id: format!("txnphase_{name}"),
                 phase_name: name,
@@ -5783,15 +5781,32 @@ fn classify_signal_connectivity(
 }
 
 fn build_signal_connectivity_conflicts(
+    context: &SemanticContext,
     signal_connectivity: &[SignalConnectivityRecord],
 ) -> Vec<SignalConnectivityConflictRecord> {
     let mut conflicts = Vec::new();
+    let conflicting_signals = signal_connectivity
+        .iter()
+        .filter(|record| record.producer_actor_ids.len() > 1)
+        .map(|record| record.signal_name.clone())
+        .collect::<HashSet<_>>();
+    let source_order = source_ordered_signal_subset(context, &conflicting_signals);
+    let source_rank = source_order
+        .iter()
+        .enumerate()
+        .map(|(index, signal)| (signal.as_str(), index))
+        .collect::<HashMap<_, _>>();
+    let mut ordered_records = signal_connectivity
+        .iter()
+        .filter(|record| record.producer_actor_ids.len() > 1)
+        .collect::<Vec<_>>();
+    ordered_records.sort_by_key(|record| {
+        *source_rank
+            .get(record.signal_name.as_str())
+            .expect("connectivity-conflict signal must have source order")
+    });
 
-    for record in signal_connectivity {
-        if record.producer_actor_ids.len() <= 1 {
-            continue;
-        }
-
+    for record in ordered_records {
         let mut conflicting_actor_ids = record.producer_actor_ids.clone();
         conflicting_actor_ids.sort();
         conflicting_actor_ids.dedup();
@@ -5944,11 +5959,13 @@ fn build_abstractions(context: &SemanticContext) -> Vec<AbstractionRecord> {
 }
 
 fn build_decomposition_candidates(context: &SemanticContext) -> Vec<DecompositionCandidate> {
+    let declared_signals = known_explicit_signal_names(context);
     context
         .section_anchors
         .iter()
         .filter(|section| {
-            section.supporting_statement_ids.len() >= 2 || decomposition_like_title(&section.title)
+            section.supporting_statement_ids.len() >= 2
+                || decomposition_like_title(&section.title, &declared_signals)
         })
         .map(|section| DecompositionCandidate {
             candidate_id: format!("candidate_{}", document_key(&section.title)),
@@ -6211,7 +6228,7 @@ fn build_residual_decisions(
         });
     }
 
-    let overlapping_signals = overlapping_interface_signals(interfaces);
+    let overlapping_signals = overlapping_interface_signals(context, interfaces);
     if !overlapping_signals.is_empty() {
         packets.push(ResidualDecisionPacket {
             packet_id: "semantic_interface_grouping".to_string(),
@@ -8096,6 +8113,43 @@ fn extract_signal_tokens(text: &str) -> Vec<String> {
     signals.into_iter().collect()
 }
 
+/// Order a set of source-owned signal identities by their first exact or unique-case-folded
+/// occurrence in the current document. Canonical record order, generated ordinals, and residual
+/// presentation must not depend on the symbols' private lexical spellings.
+fn source_ordered_signal_subset(
+    context: &SemanticContext,
+    candidates: &HashSet<String>,
+) -> Vec<String> {
+    let mut ordered = Vec::new();
+    let mut seen = HashSet::new();
+    for statement in &context.statements {
+        for token in statement
+            .text
+            .split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+            .filter(|token| !token.is_empty())
+        {
+            let resolved = candidates.get(token).cloned().or_else(|| {
+                let mut folded = candidates
+                    .iter()
+                    .filter(|candidate| candidate.eq_ignore_ascii_case(token));
+                let unique = folded.next()?;
+                folded.next().is_none().then(|| unique.clone())
+            });
+            if let Some(signal) = resolved
+                && seen.insert(signal.clone())
+            {
+                ordered.push(signal);
+            }
+        }
+    }
+    assert_eq!(
+        ordered.len(),
+        candidates.len(),
+        "canonical signal collection contains an identity with no source occurrence"
+    );
+    ordered
+}
+
 fn maybe_add_signal_token(signals: &mut BTreeSet<String>, token: &str) {
     if !looks_like_signal_token(token) {
         return;
@@ -8159,9 +8213,24 @@ fn related_interface_ids(
     related_ids.into_iter().collect()
 }
 
-fn decomposition_like_title(title: &str) -> bool {
+fn decomposition_like_title(title: &str, declared_signals: &BTreeSet<String>) -> bool {
+    // Section topics are universal grammar, but declared signals embedded in a heading remain opaque
+    // identifiers. Remove those complete tokens before interpreting words such as `reset`, `control`,
+    // or `data`; otherwise a harmless alpha rename can mint a decomposition candidate solely because
+    // a familiar semantic word appears inside the new symbol spelling.
+    let structural_title = title
+        .split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+        .filter(|token| {
+            !token.is_empty()
+                && !declared_signals
+                    .iter()
+                    .any(|signal| signal.eq_ignore_ascii_case(token))
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+        .to_ascii_lowercase();
     contains_any_phrase(
-        &title.to_ascii_lowercase(),
+        &structural_title,
         &[
             "channel",
             "interface",
@@ -8262,7 +8331,10 @@ fn actor_ids_for_text(
         .collect()
 }
 
-fn overlapping_interface_signals(interfaces: &[InterfaceRecord]) -> Vec<String> {
+fn overlapping_interface_signals(
+    context: &SemanticContext,
+    interfaces: &[InterfaceRecord],
+) -> Vec<String> {
     let explicit_signal_sets: Vec<BTreeSet<String>> = interfaces
         .iter()
         .filter(|interface| interface.interface_id.starts_with("interface_explicit_"))
@@ -8287,12 +8359,11 @@ fn overlapping_interface_signals(interfaces: &[InterfaceRecord]) -> Vec<String> 
         }
     }
 
-    counts
+    let overlapping = counts
         .into_iter()
         .filter_map(|(signal, count)| (count > 1).then_some(signal))
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .collect()
+        .collect::<HashSet<_>>();
+    source_ordered_signal_subset(context, &overlapping)
 }
 
 fn statement_ids_to_section_ids(
@@ -19872,7 +19943,9 @@ mod tests {
             },
         ];
 
-        assert!(super::overlapping_interface_signals(&interfaces).is_empty());
+        assert!(
+            super::overlapping_interface_signals(&make_semantic_context(), &interfaces).is_empty()
+        );
     }
 
     #[test]
@@ -19892,10 +19965,54 @@ mod tests {
             },
         ];
 
+        let context = make_semantic_context_with_statements(vec![make_statement_context(
+            super::StatementClass::SourceFact,
+            "XA participates in both candidate interfaces.",
+            vec!["XA".to_string()],
+        )]);
         assert_eq!(
-            super::overlapping_interface_signals(&interfaces),
+            super::overlapping_interface_signals(&context, &interfaces),
             vec!["XA".to_string()]
         );
+    }
+
+    #[test]
+    fn source_ordered_signal_subset_is_alpha_invariant() {
+        let baseline_candidates = ["SCL".to_string(), "SDA".to_string()].into_iter().collect();
+        let baseline = make_semantic_context_with_statements(vec![make_statement_context(
+            super::StatementClass::SourceFact,
+            "SCL and SDA define the wiring pattern.",
+            vec!["SCL".to_string(), "SDA".to_string()],
+        )]);
+        assert_eq!(
+            super::source_ordered_signal_subset(&baseline, &baseline_candidates),
+            vec!["SCL".to_string(), "SDA".to_string()]
+        );
+
+        // The aliases reverse lexical order while preserving source occurrence order.
+        let transformed_candidates = [
+            "signal_alias_zz_scl".to_string(),
+            "signal_alias_aa_sda".to_string(),
+        ]
+        .into_iter()
+        .collect();
+        let transformed = make_semantic_context_with_statements(vec![make_statement_context(
+            super::StatementClass::SourceFact,
+            "signal_alias_zz_scl and signal_alias_aa_sda define the wiring pattern.",
+            vec![
+                "signal_alias_zz_scl".to_string(),
+                "signal_alias_aa_sda".to_string(),
+            ],
+        )]);
+        let normalized = super::source_ordered_signal_subset(&transformed, &transformed_candidates)
+            .into_iter()
+            .map(|signal| match signal.as_str() {
+                "signal_alias_zz_scl" => "SCL".to_string(),
+                "signal_alias_aa_sda" => "SDA".to_string(),
+                unexpected => panic!("unexpected transformed signal {unexpected}"),
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(normalized, vec!["SCL".to_string(), "SDA".to_string()]);
     }
 
     #[test]
@@ -23109,6 +23226,22 @@ mod tests {
         );
     }
 
+    #[test]
+    fn decomposition_title_grammar_ignores_declared_signal_spelling() {
+        let declared = ["signal_alias_reset_n".to_string()].into_iter().collect();
+        assert!(
+            !super::decomposition_like_title("3.1 signal_alias_reset_n logic levels", &declared),
+            "a declared opaque identifier must not grant reset-section semantics"
+        );
+        assert!(
+            super::decomposition_like_title(
+                "3.1 signal_alias_reset_n reset control behavior",
+                &declared
+            ),
+            "independent structural title words must retain decomposition authority"
+        );
+    }
+
     // -- is_invariant_like high-value mutants --
 
     fn make_statement_context(
@@ -24099,14 +24232,17 @@ mod tests {
     fn build_transaction_anchors_dedups_and_records_provenance() {
         // .2c: stmt_1 (in the Write-transfers section) references PADDR/PWRITE;
         // stmt_3 (Read transfers) references PRDATA → grounded signal-set membership.
-        let mk_stmt = |id: &str, signals: Vec<&str>| super::StatementContext {
-            statement_id: id.to_string(),
-            class: super::StatementClass::SourceFact,
-            text: String::new(),
-            related_visual_evidence_ids: vec![],
-            section_ids: vec![],
-            signals: signals.into_iter().map(str::to_string).collect(),
-            supporting_table_ids: vec![],
+        let mk_stmt = |id: &str, signals: Vec<&str>| {
+            let text = signals.join(" ");
+            super::StatementContext {
+                statement_id: id.to_string(),
+                class: super::StatementClass::SourceFact,
+                text,
+                related_visual_evidence_ids: vec![],
+                section_ids: vec![],
+                signals: signals.into_iter().map(str::to_string).collect(),
+                supporting_table_ids: vec![],
+            }
         };
         let context = SemanticContext {
             statements: vec![
@@ -24164,10 +24300,10 @@ mod tests {
         assert_eq!(write.source_title, "3.1 Write transfers"); // first-wins provenance
         assert_eq!(write.section_id, "s1");
         assert_eq!(write.supporting_statement_ids, vec!["stmt_1".to_string()]);
-        // .2c: signal-set membership = the section's own statement signals, sorted+deduped.
+        // .2c: signal-set membership = the section's own statement signals in source order.
         assert_eq!(
             write.signal_set,
-            vec!["PADDR".to_string(), "PWRITE".to_string()]
+            vec!["PWRITE".to_string(), "PADDR".to_string()]
         );
         assert_eq!(anchors[1].signal_set, vec!["PRDATA".to_string()]);
     }
@@ -24178,14 +24314,17 @@ mod tests {
         // absorbs the signal-rich prose its PDF files under the wait-state
         // subsections (`3.1.1`/`3.1.2`), while a sibling read transaction
         // (`3.3` + `3.3.1`) stays boundary-disjoint (bar #3 — no cross-leak).
-        let mk_stmt = |id: &str, signals: Vec<&str>| super::StatementContext {
-            statement_id: id.to_string(),
-            class: super::StatementClass::SourceFact,
-            text: String::new(),
-            related_visual_evidence_ids: vec![],
-            section_ids: vec![],
-            signals: signals.into_iter().map(str::to_string).collect(),
-            supporting_table_ids: vec![],
+        let mk_stmt = |id: &str, signals: Vec<&str>| {
+            let text = signals.join(" ");
+            super::StatementContext {
+                statement_id: id.to_string(),
+                class: super::StatementClass::SourceFact,
+                text,
+                related_visual_evidence_ids: vec![],
+                section_ids: vec![],
+                signals: signals.into_iter().map(str::to_string).collect(),
+                supporting_table_ids: vec![],
+            }
         };
         let mk_sec = |section_id: &str, title: &str, stmts: Vec<&str>| SemanticSectionContext {
             section_id: section_id.to_string(),
@@ -24227,10 +24366,10 @@ mod tests {
         assert_eq!(
             write.signal_set,
             vec![
-                "PADDR".to_string(),
                 "PCLK".to_string(),
-                "PENABLE".to_string(),
                 "PSEL".to_string(),
+                "PADDR".to_string(),
+                "PENABLE".to_string(),
                 "PWRITE".to_string(),
             ]
         );
@@ -24479,11 +24618,11 @@ mod tests {
             data.supporting_statement_ids,
             vec!["stmt_2".to_string(), "stmt_3".to_string()]
         );
-        // Signal set is the union over both `data phase` statements, sorted, with the
-        // undeclared `FOO` filtered out (the `.2c` intersection technique).
+        // Signal set is the union over both `data phase` statements in source order, with
+        // the undeclared `FOO` filtered out (the `.2c` intersection technique).
         assert_eq!(
             data.signal_set,
-            vec!["HREADY".to_string(), "HWDATA".to_string()]
+            vec!["HWDATA".to_string(), "HREADY".to_string()]
         );
     }
 
@@ -24529,7 +24668,7 @@ mod tests {
             ),
             mk_stmt(
                 "setup_authority",
-                "The Setup phase of the transfer occurs at T1.",
+                "The Setup phase of the transfer occurs when PSEL is asserted at T1.",
                 &["PSEL"],
             ),
             mk_stmt(

@@ -118,8 +118,12 @@
   proof claim without a document, protocol, vendor, filename, expected-result, or familiar-alias branch; the
   original failing attempt remains durable evidence; focused controls prove genuine semantic symbol changes and
   ambiguous derived-id structure still reject
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `production diagnostic now preserves all 11,170 proof claims and every semantic record; only
+  five source-derived SemanticIR references, 78 downstream set/reference values, and one unordered ISF
+  declaration block remain for the conformance comparator; focused producer and negative controls pass; exact
+  two-chain ADR 0025 reconciliation restores 24/24 current and zero stale at every replayed stage`
+  Commits: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering`;
+  `closure replay pending`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`
   State: `pending`
@@ -232,18 +236,28 @@
 - [x] **REPRODUCE / MEASURE** — the corrected held-out run already supplies one valid six-signal,
   352-occurrence I2C alpha pair: SourceIR is invariant, while EvidenceIR first changes by 292 undeclared paths
   and loses two claims before the delta propagates through SemanticIR, IntentIR, and ISF.
-- [ ] **ROOT CAUSE (WHY + WHERE)** — compare the retained baseline/transformed EvidenceIR and derivation ledgers,
-  identify the earliest production decision whose result changes under opaque spelling/order alone, and record
-  the universal causal mechanism rather than merely cataloguing downstream diffs.
-- [ ] **ADDRESSED (verified)** — remove that mechanism without weakening the comparator; the original pair must
-  preserve every normalized SourceIR→ISF value and proof claim, while real semantic symbol changes and ambiguous
-  derived-id structure continue to reject.
-- [ ] **NO REGRESSION** — pass focused producer, behavioral, checker-mutation, production-genericity, full CI,
-  mdBook, and repository-locality gates with deterministic current counts.
-- [ ] **GENERICITY (ADR 0006)** — the repair must be structural and alpha-equivariant: no I2C, document, vendor,
-  filename, expected-result, familiar-alias, or source-symbol spelling branch may enter production authority.
-- [ ] **LOCKSTEP** — reconcile machine evidence, task frontier, research, mdBook, Knowledge Map, live documents,
-  and resume pointer; retain the original failure and publish a successful replay before `.f.iv` becomes eligible.
+- [x] **ROOT CAUSE (WHY + WHERE)** — four universal mechanisms caused the valid pair to diverge: EvidenceIR
+  split opaque underscore identifiers into grammar words and exceeded a bounded verb/value gap; actor-signal
+  relation ordinals followed lexical symbol order; SemanticIR let a declared alias component such as `reset_n`
+  grant section-topic semantics; and transaction/conflict/residual collections plus generated conflict ordinals
+  followed raw `String` order instead of first source occurrence.
+- [x] **ADDRESSED (verified)** — remove each production mechanism without weakening the comparator. The
+  production-only diagnostic preserves all 11,170 claims and equal record counts, narrows every remaining delta
+  to five source-projected SemanticIR ids, 78 downstream set/reference values, and one unordered ISF declaration
+  block, and retains rejection of real semantic symbol changes and ambiguous derived-id structure.
+- [x] **NO REGRESSION** — focused producer, behavioral, checker-mutation, production-genericity, full CI,
+  mdBook, and repository-locality gates pass with deterministic current counts. This shared-extractor leaf owns
+  ADR 0025 reconciliation of every retained chain that the fixed-input current-binary replay proves changed,
+  with exact same-volume pre-rebuild bytes and first-causal-stage attribution retained until verification passed,
+  then removed after a zero-residue census.
+- [x] **GENERICITY (ADR 0006)** — the repair is structural and alpha-equivariant: no I2C, document, vendor,
+  filename, expected-result, familiar-alias, or source-symbol spelling branch enters production authority.
+- [x] **LOCKSTEP** — machine evidence, task frontier, research, mdBook, Knowledge Map, live documents, and resume
+  pointer describe the verified production state and retain the original failure.
+
+Leaf closure remains pending after this accepted production commit: normalize only the three measured
+representation-level comparator surfaces, replay the exact pair against the clean production revision, publish
+the successful held-out evidence, and then close `.f.iii.a` before `.f.iv` whole-population reconciliation.
 
 ## Current Frontier
 
@@ -254,7 +268,7 @@
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `done` | reviewed paraphrase and four harmless layout boundaries pass the complete five-stage comparator |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `done` | real and synthetic negative controls prove semantic and authority sensitivity |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `done` | corrected held-out qualification is measured; child `.f.iii.a` owns the real I2C alpha coupling |
-| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `in_progress` | active: localize and remove measured production symbol-spelling/ordering coupling without a named exception |
+| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `in_progress` | production coupling is removed; commit it, then replay the exact pair with context-correct conformance normalization against that clean revision |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `pending` | reconcile the complete reviewed population and all variants after the measured coupling is fixed |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
 
@@ -293,11 +307,16 @@
 - `2026-08-14`: corrected held-out qualification is allowed to fail honestly. The I2C failure opens
   `.f.iii.a`; it does not authorize weakening the comparator or continuing to whole-population replay as if the
   production core were symbol-neutral.
+- `2026-08-14`: opaque identifiers remain one grammar token even when they contain underscores. Whenever a
+  product collection is semantically unordered but stable output needs an order, first source occurrence—not
+  lexical spelling—governs emission and generated ordinals.
+- `2026-08-14`: land production remediation before conformance normalization. The held-out aggregate pins the
+  comparator source digest, so a clean production commit is the truthful revision authority for the final replay.
 
 ## Open Questions
 
-- `.f.iii.a` must remove the measured six-signal I2C spelling/ordering dependence without using held-out
-  identity, relation outcome, alias spellings, or aggregate thresholds to steer production.
+- `.f.iii.a` must publish the clean-production-revision replay after the comparator normalizes source-projected
+  reference ids and semantically unordered responsibility/ISF declaration sets without admitting ambiguity.
 
 ## Blockers
 
@@ -320,6 +339,10 @@
 | `2026-08-14` | `.f.iii` initial diagnostic | 51/51 attempts exposed the identity-stem and overbroad-alpha oracle defects; initial aggregate SHA `4a05ec3dd7112897679088f9220af785c70caf354441c3342369c6cdc17c6d68` remains in commit `32f044d82bff35e546b16cc0ff78c4fc07915816` |
 | `2026-08-14` | `.f.iii` corrected qualification | 34 pass / one fail / 16 unmeasurable / zero invalid; 17/17 unchanged and identity pass; one I2C alpha fail over 266,194 leaves and 11,170→11,111 cumulative claims; aggregate SHA `fbc8331bac463bc400c079873406e5ffe9388a73c513a4811a6499edab5a4e06`; 17/17 checker mutations and 19 focused tests pass / two PDF tests intentionally ignored |
 | `2026-08-14` | `.f.iii` full repository gate | all nine doctrines and 11 production-genericity components; exact 2,268 / 11,811 / 11,339 / 1,442 flow snapshot; 1,972 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final locality |
+| `2026-08-14` | `.f.iii.a` production diagnostic | the exact six-signal / 352-occurrence pair preserves 11,170/11,170 proof claims and equal stage record counts after four structural repairs; SourceIR and EvidenceIR compare cleanly, while five SemanticIR source-derived ids, 78 downstream reference/set values, and one unordered ISF drive block remain comparator-owned |
+| `2026-08-14` | `.f.iii.a` first all-tier gate | correctly blocks on chain currency only: fixed-input replay identifies EvidenceIR drift in Arm Debug Interface v6 and I2C, with their downstream current-schema proofs consequently stale; this leaf owns exact ADR 0025 backup, delta attribution, rebuild, and replay before its production commit |
+| `2026-08-14` | `.f.iii.a` chain reconciliation | exact 16-file same-volume backup verified; Arm changes six relation-to-signal ordinal assignments and I2C changes two plus matching provenance/source-order projections; every stage record/proof count and both blocked adapter outcomes remain stable; EvidenceIR/SemanticIR/IntentIR/adapters each replay 24/24 current, zero stale, 54 explicitly unmeasurable, with 24 retained bundles exact |
+| `2026-08-15` | `.f.iii.a` production full repository gate | all nine doctrines and 11 production-genericity components; exact 2,270 / 11,902 / 11,355 / 1,443 flow snapshot; 1,976 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final locality; verified backup and five worktree diagnostic roots removed with no residue |
 
 ## Commit Log
 
@@ -332,6 +355,7 @@
 | `.f.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity` | add a real declared semantic/proof negative, exact-complement comparison, nine-class sensitivity matrix, and typed stale/unmeasurable attempt outcomes |
 | `.f.iii` diagnostic | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects` | preserve the initial fail-closed 51-attempt result, repair fact-card reachability, and own narrow oracle correction without laundering outcomes |
 | `.f.iii` qualification | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior` | close corrected identity/alpha authority and provenance, publish 34/1/16/0 outcomes, and route the measured I2C production coupling to `.f.iii.a` |
+| `.f.iii.a` production | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering` | keep opaque identifiers atomic, order generated relations and semantic signal collections by source occurrence, and exclude declared aliases from section-topic grammar |
 
 ## Activation protocol
 
