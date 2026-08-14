@@ -136,11 +136,12 @@ non-default contract must publish its exact repository-relative `--contract … 
 mismatched non-default fixtures gate the rule, and the corpus index/manifest now self-route correctly.
 
 The alignment contract is the third unconditional invocation. `.3` advances it to `migrated/complete` from
-boundary `38b79395` and blob `66ae9b6c…3632`. The stable root is 127 lines / 5,725 bytes, its index is 86 lines /
-5,925 bytes, and eight parts total 2,144 lines / 282,030 bytes with a 502-line / 65,125-byte largest member. All
-21 marked regions reconstruct the source; all 58 routes equal the compact root-owner registry; and the exact
-2,049-line / 278,178-byte capsule retains SHA-256 `e70892a5…a26c`. The reserved behavioral part stays unrouted
-and `.f` remains blocked until `.4` independently audits the transaction.
+boundary `38b79395` and blob `66ae9b6c…3632`; `.4` independently audits clean migration commit `10ee4a49` and
+installs the proven product-release transaction. The stable root is 127 lines / 5,707 bytes, its index is 86
+lines / 5,937 bytes, and eight parts total 2,162 lines / 282,891 bytes with a 502-line / 65,125-byte largest
+member. All 21 marked regions independently reconstruct the source; all 58 routes equal the compact root-owner
+registry; and the exact 2,049-line / 278,178-byte capsule retains SHA-256 `e70892a5…a26c`. The 22-line /
+974-byte behavioral part now owns the `post_migration` `.f` route, and `.f` is pending and eligible.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

@@ -17,13 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3` is complete and verified; `.4` is next.
-  Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
+- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4` is complete and verified from clean migration commit
+  `10ee4a49`. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: the alignment contract is `migrated/complete`; a 127-line root retains all 58 executable owners,
-  the 86-line index routes eight bounded parts, all 21 regions reconstruct, and the exact source capsule remains
-  at SHA-256 `e70892a5…a26c`. Full CI passes and disposable artifacts are absent.
-- Next action: commit `.3`, then independently audit the migrated result and one legal future write in `.4`.
-- In-flight uncommitted: none after the required `.3` commit; no background job.
-- Blockers: `.6d.ii.f` waits only for containment `.4`; product direction is unambiguous. The
-  user-owned `.claude/settings.json` is untouched.
+- Current state: an independent no-hardlink same-volume clone of `10ee4a49` passed strict fsck, 21-region exact
+  reconstruction, 58-owner/58-route navigation, and a clone-only future transaction. The proven five-file route
+  release is installed: root 127/5,707, index 86/5,937, behavior 22/974, eight parts 2,162/282,891; capsule
+  SHA-256 `e70892a5…a26c` is unchanged. Full CI and cleanup pass; `.6d.ii.f` is pending and eligible.
+- Next action: activate `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` through the bounded root-plus-behavioral-part
+  transaction and execute population behavioral qualification.
+- In-flight uncommitted: none after the `.4` closure commit; no background job.
+- Blockers: none. Product direction is unambiguous. The user-owned `.claude/settings.json` is untouched.

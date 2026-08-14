@@ -3,10 +3,11 @@
 ## Metadata
 
 - Tree ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: process / continuity prerequisite to `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`
 - Created: `2026-08-14`
 - Last updated: `2026-08-14`
+- Closed: `2026-08-14`
 - Owner: repo-local workflow
 
 ## Goal
@@ -41,7 +42,7 @@ remains directly browsable and exactly recoverable.
 ## Task Tree
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT`
-  Status: `active`
+  Status: `done`
   Goal: keep the active alignment task evidence bounded, complete, and directly resumable
   Children: `.0`, `.1`, `.2`, `.3`, `.4`
 
@@ -104,25 +105,17 @@ remains directly browsable and exactly recoverable.
   Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3 — materialize bounded alignment task evidence`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4`
-  Status: `pending`
+  Status: `done`
   Goal: independently audit the migrated result and release `.6d.ii.f`
   Acceptance: a fresh-reader/fresh-clone-equivalent audit proves exact reconstruction, direct navigation,
   current-state truth, compliant future append/rotation, complete gates, and a clean `.6d.ii.f` resume path
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `clean no-hardlink clone of 10ee4a49 passes strict fsck; same-device capsule inodes differ with nlink 1; independent 21-region stream reconstructs 278,178 bytes at e70892a5…a26c; 58 root owners / 58 routes / 42 markers close; clone-only five-file future transaction leaves seven legacy parts and capsule unchanged, makes .f post_migration, and passes 822-file / 55-surface enforcement; installed state root 127/5,707, index 86/5,937, behavior 22/974, parts 2,162/282,891; focused 44/44 and 84/84 suites pass; all nine doctrines/genericity components, fmt, clippy, 1,954/5/0 Rust tests, five doctests, rustdoc, mdBook, and locality pass; 1,358-file / 144,824-KiB clone and 73-file / 8,952-KiB book removed; empty incremental and requested residue absent`
+  Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4 — audit and close alignment containment`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
-| --- | --- | --- | --- |
-| 1 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0` | `done` | clean untouched target is pinned exactly |
-| 2 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1` | `done` | exact target roles, constraints, and candidate groups are measured |
-| 3 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` | `done` | ADR 0039 fixes the target-specific architecture and transaction |
-| 4 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` | `done` | accepted source-locked topology is executable and fault-tested |
-| 5 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2` | `done` | final clean boundary, exact regions, and all 58 primary routes are closed |
-| 6 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3` | `done` | bounded current, semantic, and exact provenance authorities materialized root-last |
-| 7 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4` | `pending` | independently audit reconstruction, navigation, and one legal future write |
-| 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after `.4` releases the prepared route |
+No active containment frontier remains. All leaves are done, and `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` is the
+pending, eligible product frontier through the stable alignment root and behavioral part.
 
 ## Decisions
 
@@ -147,14 +140,17 @@ remains directly browsable and exactly recoverable.
   fixes 16 health files / 24 ceiling files and tighter heterogeneous aggregate totals, while
   `aggregate_composition` applies one count to both bands. Permit a role to declare exact `health` and `ceiling`
   counts, retain scalar counts for equal-band profiles, and keep every alignment bound unchanged.
+- `2026-08-14`: audit the committed migration from a no-hardlink same-volume clone, reconstruct source bytes
+  independently of the writer, prove a complete future transaction there, then install exactly that five-file
+  route release. `.f` becomes eligible without modifying any legacy payload or provenance byte.
 
 ## Open Questions
 
-- None for `.3`; `.4` owns the deliberately independent fresh-reader and future-write audit.
+- None. The containment program is closed.
 
 ## Blockers
 
-- `.6d.ii.f` is temporarily blocked only by containment `.4`; product direction is unambiguous.
+- None. `.6d.ii.f` is pending and eligible.
 
 ### Acceptance Checklist (enforced) — `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1`
 
@@ -213,6 +209,24 @@ remains directly browsable and exactly recoverable.
   mdBook, fact catalog, Knowledge Map, change/engineering ledgers, owning tree, and resume pointer agree; `.f`
   stays blocked and unrouted until `.4`.
 
+### Acceptance Checklist (enforced) — `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4`
+
+- [x] **REPRODUCE / MEASURE** — a clean no-hardlink same-volume clone of `10ee4a49` passes strict fsck; its
+  capsule has a different inode and link count one, and an independently streamed 21-region reconstruction
+  reproduces all 278,178 source bytes at SHA-256 `e70892a5…a26c`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — migration correctness alone could not prove that a fresh reader can navigate
+  the committed topology or that the next real root-plus-part write is reachable without modifying legacy data.
+- [x] **ADDRESSED (verified)** — independent 58-owner, 58-route, and 42-marker closure passes; a clone-only trial
+  changes exactly root, index, behavioral part, manifest, and contract, leaves all seven legacy parts and the
+  capsule unchanged, and produces the same installed `post_migration` `.f` route.
+- [x] **NO REGRESSION** — 44/44 active-task and 84/84 live-size cases, canonical catalogs/retrieval/current truth,
+  both trajectory controls, all nine doctrines and genericity components, formatting, warning-denied Clippy,
+  complete Rust/doctest/rustdoc qualification, mdBook test/build, final locality, and residue checks pass.
+- [x] **GENERICITY** — the audit consumes only contract routes, ordered markers, declared owners, exact digests,
+  and Git/filesystem identities; the future transaction uses the already accepted root-plus-part protocol.
+- [x] **LOCKSTEP** — installed root, index, behavioral part, manifest, contract, live surfaces, public ledgers,
+  mdBook, facts/map/catalogs, closed owning tree, alignment tree, and resume pointer all release the same `.f` leaf.
+
 ## Verification Log
 
 | Date | Leaf | Checks | Result |
@@ -223,6 +237,7 @@ remains directly browsable and exactly recoverable.
 | `2026-08-14` | `.2.1` source-locked enforcement | checker self-tests; three exact contracts; full doctrine/CI suite; target identity; cleanup | 42/42; 21 regions / eight parts / 58 owner literals; 1,953 passed / six ignored / zero failed plus five doctests; target unchanged; 73 generated files / 8,948 KiB removed |
 | `2026-08-14` | `.2.2` complete inputs | clean Git/index/worktree boundary; 21 region hashes; 58 owner/route equality; three contracts; full CI; cleanup | `38b79395`; 40 legacy + 18 structural routes; 44/44; all nine doctrines; 1,953 passed / six ignored / zero failed plus five doctests; target unchanged; 73 generated files / 8,948 KiB removed |
 | `2026-08-14` | `.3` migration | root-last writer; capsule/region reconstruction; root/index/route/owner metrics; band-specific aggregate faults; trajectory owner lookup; full CI; cleanup | migrated/complete; 84/84 + 44/44; all nine doctrines; 1,954 passed / five ignored / zero failed plus five doctests; 73 book / 315 incremental files removed |
+| `2026-08-14` | `.4` independent close | no-hardlink clean clone/fsck/inodes; independent streaming reconstruction and navigation census; clone-only future transaction; installed exact route; focused and full gates; cleanup | exact e70892a5…a26c reconstruction; 58 owners/routes and 42 markers; exactly five future-write files; `.f` post-migration and eligible; 44/44 + 84/84; nine doctrines/components; 1,954/5/0 plus five doctests; 1,358-file clone and 73-file book removed |
 
 ## Commit Log
 
@@ -234,6 +249,7 @@ remains directly browsable and exactly recoverable.
 | `.2.1` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce alignment source lock` | source-locked target contract, exact self-routing, doctrine composition, fault tests, and synchronized public truth |
 | `.2.2` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2 — complete alignment migration inputs` | final boundary, exact regions, all-owner routes, source-locked writer inputs, and full qualification |
 | `.3` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3 — materialize bounded alignment task evidence` | root-last migration, exact live surfaces, band-specific aggregate representation, and complete qualification |
+| `.4` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4 — audit and close alignment containment` | independent reconstruction/navigation, future-write proof, exact route release, and clean product handoff |
 
 ## Changelog
 
@@ -249,3 +265,5 @@ remains directly browsable and exactly recoverable.
   proves owner/route equality generically, and leaves every destination absent; `.3` is next.
 - `2026-08-14`: `.3` migrates current, semantic, and provenance authorities root-last, closes the live-surface
   aggregate representation without changing bounds, and leaves `.4` as the sole audit before `.f` release.
+- `2026-08-14`: `.4` independently reconstructs and navigates the committed migration, proves and installs one
+  exact future transaction, removes its disposable clone, closes containment, and releases `.f` as eligible.

@@ -1,3 +1,18 @@
+### SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4 — independently audit and release the behavioral route
+
+- Reproduced clean migration commit `10ee4a49` in a disposable same-volume clone made without local hardlinks.
+  Strict fsck, exact source/capsule identity, independent 21-region streaming reconstruction, 58-owner/58-route
+  closure, and 42-marker census all pass at SHA-256 `e70892a5…a26c`.
+- Proved the complete future transaction in the clone: exactly root, index, behavioral part, manifest, and
+  contract change; seven legacy parts and the capsule remain byte-identical; `.f` becomes a `post_migration`
+  route; active-task evidence and all 55 live-size surfaces pass.
+- Installed that five-file transaction. The bounded root is 127 lines / 5,707 bytes, index 86 / 5,937, eight
+  parts 2,162 / 282,891, and the 22-line / 974-byte behavioral part now makes `.6d.ii.f` pending and eligible.
+- Passed all nine doctrines and all nine genericity components, formatting, warning-denied Clippy, 1,954 Rust
+  tests with five ignored and zero failed, five doctests, Rust docs, mdBook, and final locality.
+- Removed the exact 1,358-file / 144,824-KiB disposable clone and the generated 73-file / 8,952-KiB HTML book;
+  the empty incremental root and requested `.bin`/`.log` residue are absent.
+
 ### SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3 — materialize bounded alignment task evidence
 
 - Ran the accepted same-volume root-last writer against the clean `38b79395` source boundary. The stable task

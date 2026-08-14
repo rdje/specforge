@@ -71,7 +71,7 @@
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | [Structural proof](structural-proof.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | [Structural proof](structural-proof.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | [Structural proof](structural-proof.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | [Current and future](current-and-future.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.7` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.8` | [Current and future](current-and-future.md) |

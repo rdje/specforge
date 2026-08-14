@@ -24,15 +24,15 @@ expressiveness as the bottleneck.
 - `.6a`, `.6b`, and `.6c` are complete with all of their declared descendants.
 - `.6d` and `.6d.ii` are in progress; `.6d.i` and `.6d.ii.a` through `.6d.ii.e` are complete.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
-- `.6d.ii.f` is pending and blocked only by the closing containment audit.
+- `.6d.ii.f` is pending and eligible for activation by its owned product slice.
 - `.6e`, `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-No eligible product frontier until `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4` closes.
+Eligible product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`.
 
-The containment program is the only blocker. Its closing audit must prove exact reconstruction, direct route
-navigation, bounded future writes, and full repository verification before `.6d.ii.f` becomes eligible.
+The behavioral qualification contract is prepared in its owning active part. The leaf remains pending; its own
+product slice may activate it through the root-plus-part protocol after this containment audit commits.
 
 ## Detailed task evidence
 

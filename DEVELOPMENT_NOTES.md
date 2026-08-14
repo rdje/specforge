@@ -1,4 +1,28 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4 (`2026-08-14`) — qualification is independent of migration machinery
+
+The closing audit started from a clean `git clone --no-local --no-hardlinks` of migration commit `10ee4a49` in
+a repository-local same-volume workspace. Strict fsck and a clean status passed. Main and clone capsules were on
+the same device but had different inodes with link count one, so the second authority was not accidentally a
+hardlink to the first. Git blob, clone capsule, and source capsule all resolved to SHA-256 `e70892a5…a26c`.
+
+The audit reconstructed the legacy source independently rather than invoking the migration writer: it streamed
+the 21 contract-ordered marker payloads from all seven immutable parts and reproduced all 278,178 bytes exactly.
+Independent counts closed 42 markers, 58 compact root owners, and 58 primary routes. The committed target checker,
+task catalog, fact catalog, Knowledge Map, book current-truth gate, and 822-file / 55-surface live census passed.
+
+A clone-only future-write trial then changed exactly five files: root, index, behavioral part, manifest, and
+contract. It made `.f` a `post_migration` route, left the seven legacy parts and exact capsule byte-identical,
+and passed active-task evidence plus the complete live-size gate. The same transaction is installed in the main
+worktree: root 127 lines / 5,707 bytes, index 86 / 5,937, behavior part 22 / 974, and eight parts totaling 2,162
+lines / 282,891 bytes. `.f` remains pending but is now eligible for its own product slice.
+
+Complete signoff passes all nine doctrines including chain currency, all nine production-genericity components,
+formatting, warning-denied Clippy/rustdoc, 1,954 Rust tests with five ignored and zero failed, five compile-fail
+doctests, mdBook test/build, and final locality. The disposable audit clone measured 1,358 files / 144,824 KiB
+before removal; its exact path is absent afterward. Final cleanup also removes the generated 73-file / 8,952-KiB
+HTML book and the empty incremental root; requested `.bin`/`.log` residue is absent.
+
 ## SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.3 (`2026-08-14`) — current truth, semantic history, and exact provenance separate cleanly
 
 The migration began only after the source-locked contract revalidated at clean boundary `38b79395`. The accepted

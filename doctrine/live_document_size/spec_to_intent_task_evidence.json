@@ -1,8 +1,10 @@
 {
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
-      "literal" : "No eligible product frontier until `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4` closes.",
-      "mode" : "none"
+      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
+      "literal" : "Eligible product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`.",
+      "mode" : "eligible",
+      "part_id" : "behavioral-qualification"
    },
    "current_path" : "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md",
    "destinations" : {
@@ -98,13 +100,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
             "metrics" : {
-               "bytes" : 113,
-               "line_bytes" : 55,
-               "lines" : 4
+               "bytes" : 974,
+               "line_bytes" : 114,
+               "lines" : 22
             },
             "part_id" : "behavioral-qualification",
             "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-            "sha256" : "597c23cbe256a23496f6d2a0ebfa792e38d6801ffb5fa1043162241865509786",
+            "sha256" : "ec02c8016f515b1439bbe98ef63ff087f2a077d768a524c2aba37679baaf8025",
             "state" : "active"
          }
       ],
@@ -437,9 +439,8 @@
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
-         "origin" : "structural",
-         "part_id" : "current-and-future",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f"
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6e",
@@ -553,7 +554,7 @@
          "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
          "- Status: `active`",
          "## Current Frontier",
-         "No eligible product frontier until `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4` closes.",
+         "Eligible product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log",

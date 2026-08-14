@@ -200,9 +200,9 @@ Moving those declarations only to a nested route index would break existing owne
 
 [ADR 0039](../../../decisions/0039-bounded-spec-to-intent-task-evidence.md) therefore keeps all 58 compact owner
 declarations and normalized current state in the bounded stable root. A bounded index and seven immutable legacy
-payload parts provide semantic navigation, an exact capsule preserves literal provenance, and a reserved eighth
-active part prepares the `.6d.ii.f` behavioral lane without activating it. The closing audit alone moves `.f`'s
-primary route to that current part and makes it eligible.
+payload parts provide semantic navigation, an exact capsule preserves literal provenance, and an eighth active
+part owns the `.6d.ii.f` behavioral lane. The closing audit moved `.f`'s primary route to that current part and
+made the still-pending product leaf eligible.
 
 Every later task slice updates root plus exactly one owning active part in one commit. Index and manifest change
 only with routes, membership, state, or measured metrics. Migration writes the capsule, parts, index, manifest,
@@ -216,19 +216,27 @@ contract may use the short `--check` command; every other contract must name its
 authority while believing its own task evidence was checked.
 
 The alignment contract is now `migrated/complete` from clean source boundary `38b79395`. The stable path is a
-127-line / 5,725-byte current root with all 58 exact owner declarations and no eligible product frontier until
-the closing audit. Its 86-line / 5,925-byte index routes seven immutable legacy parts plus one reserved active
-behavioral part. The eight parts total 2,144 lines / 282,030 bytes; the largest is 502 lines / 65,125 bytes. All
-21 marked payloads reconstruct the source, and the independent 2,049-line / 278,178-byte capsule remains exact
-at SHA-256 `e70892a5…a26c` and Git blob `66ae9b6c…3632`.
+127-line / 5,707-byte current root with all 58 exact owner declarations and `.f` as its one eligible product
+frontier. Its 86-line / 5,937-byte index routes seven immutable legacy parts plus the active 22-line / 974-byte
+behavioral part. The eight parts total 2,162 lines / 282,891 bytes; the largest is 502 lines / 65,125 bytes. All
+21 marked legacy payloads reconstruct the source, and the independent 2,049-line / 278,178-byte capsule remains
+exact at SHA-256 `e70892a5…a26c` and Git blob `66ae9b6c…3632`.
+
+The closing audit used a clean, disposable, same-volume clone of migration commit `10ee4a49`, explicitly
+disabling local hardlinks. Git strict fsck passed; the clone and source capsules had different inodes and link
+count one. Independent streaming reconstruction joined the 21 contract-ordered payloads to the exact capsule
+hash, and separate censuses closed 58 root owners, 58 primary routes, and 42 markers. A future-write trial then
+changed exactly five authorities—root, index, behavioral part, manifest, and contract—while every legacy part
+and the capsule stayed byte-identical. The trial's `post_migration` route and all 55 live-size surfaces passed;
+the same transaction now releases `.f`, and the disposable clone was removed after its file/byte census.
 
 Three dedicated live surfaces classify the index, parts, and capsule without changing any ADR 0039 bound. That
 integration exposed a generic schema gap: one scalar `aggregate_composition` count cannot represent a 16-file
 health band and 24-file ceiling band. A role may now retain the scalar form when counts are equal or declare a
 closed `{health, ceiling}` count object; both bands must still reproduce their file, line, byte, and per-member
 maxima exactly. The 84-case live-size suite proves the new positive profile, a missing band, and an unknown band.
-Containment `.4` still owns independent reconstruction and future-write qualification before `.6d.ii.f` is
-released.
+Containment `.4` has closed independent reconstruction and future-write qualification. `.6d.ii.f` is pending
+and eligible; its implementation must use the root-plus-behavioral-part transaction above.
 
 #### Corpus task migration landed losslessly
 
