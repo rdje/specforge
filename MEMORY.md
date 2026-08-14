@@ -17,15 +17,17 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` is the next eligible behavioral-qualification leaf after
-  the completed `.f.ii` implementation/calibration parent. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
-  `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: conformance owns the five invariant calibrations plus one semantic negative. The “at least” pair
-  must remove exactly one SemanticIR assertion and its three propagated proof claims, ordinary invariance must
-  reject, and the exact declared complement must pass. Nine synthetic fault classes reject; unavailable/vacuous
-  attempts are unmeasurable and stale/ambiguous/partial attempts invalid. The frozen 24-row/23-text-measurable
-  population and rich-PDF exclusions are unchanged.
-- Next action: execute `.f.iii`: run the frozen 17-row prospective holdout across declared relations and publish
-  identity-disjoint strata, exact denominators, uncertainty, and explicit unavailable/vacuous outcomes.
-- In-flight uncommitted: none after the `.f.ii.c` commit; no background job.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` is in progress; no task-tree pivot is permitted. Tracking-
+  only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, `DECISION-RECORD-CAPACITY-HEADROOM.1`, and
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
+- Current state: all 51 frozen prospective attempts completed. Unchanged PDF replay passes 17/17. Adversarial
+  identity is 0/17 only because the comparator omitted identity-derived `stable_artifact_stem`; alpha is 0/15
+  with one unmeasurable/one invalid because its transform admitted meaning-bearing role words. The I2C row alone
+  has six typed signal declarations. Exact 17-document/90-stratum evidence and 14/14 mutations pass; no signoff.
+- Next action: commit the diagnostic checkpoint, then normalize only the declared stem, restrict alpha authority
+  to typed opaque declarations, add `eligible_symbol_surface_absent`, and requalify using retained raw pairs when
+  their execution identity remains valid.
+- In-flight uncommitted: diagnostic executor/evidence/checker and synchronized docs. Repo-local heldout scratch
+  is intentionally retained under `.project-data/tmp/spec-to-intent-f-iii-heldout` for the owned repair; no
+  background job.
 - Blockers: none. Product direction is unambiguous. The user-owned `.claude/settings.json` is untouched.

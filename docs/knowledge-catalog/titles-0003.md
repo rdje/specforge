@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md) | 2026-06-21 | `current` | FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract,… |
 | [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md) | 2026-08-08 | `current` | Knowledge-map architecture lives inside the knowledge-map bundle |
 | [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md) | 2026-08-08 | `current` | The Knowledge Map shard migration is locked by a bounded executable contract |
 | [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic whole-statement gates are schema-compatible audit data only |
@@ -60,4 +61,3 @@
 | [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md) | 2026-08-12 | `current` | Register records preserve register-level access and direct structured-table provenance |
 | [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md) | 2026-06-16 | `current` | SpecForge now lowers register-field reset_value to ISF (storage (var … (reset V))) at the true register wid… |
 | [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |
-| [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md) | 2026-08-08 | `current` | Repository-local temp exposes a Docling test root-discovery and mutex-poison cascade |

@@ -38,6 +38,9 @@ reviewed calibration rows, and 17 prospective holdouts under six relations and a
 review authority plus one sentence and four harmless layout variants without widening the rich-capture
 exclusions. `.f.ii.c` proves one real semantic/proof delta plus all nine sensitivity classes and closes typed
 invalid/unmeasurable attempt handling. `.f.iii` next qualifies the frozen prospective holdout.
+Its initial 51-attempt execution is now a fail-closed diagnostic rather than a signoff: unchanged PDF replay is
+17/17, but real filenames expose one missing identity-bound normalization and the alpha catalog incorrectly
+renames semantic role prose. The active leaf owns those oracle repairs and a clean rerun before `.f.iv`.
 
 ## Detailed task evidence
 
@@ -126,6 +129,7 @@ detail-routing authority.
 | `2026-08-14` | `.6d.ii.f.ii.a` identity/alpha harness | deterministic normalized-text alpha and provider-backed full-PDF adversarial identity calibrations pass all five stages; semantic-role and partial-stage controls reject |
 | `2026-08-14` | `.6d.ii.f.ii.b` reviewed paraphrase/layout | one equivalent sentence and heading/table/whitespace/formatting variants pass all five stages under exact recipes; unsupported and ambiguous transforms reject |
 | `2026-08-14` | `.6d.ii.f.ii.c` semantic-negative sensitivity | one real assertion/proof negative and all nine synthetic fault classes reject ordinary invariance while the exact declared complement passes |
+| `2026-08-14` | `.6d.ii.f.iii` initial prospective execution | 51/51 attempts execute; unchanged replay passes 17/17, while 32 fail / one invalid expose two conformance-oracle defects and one vacuous row remains unmeasurable; no signoff claimed |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 
@@ -139,6 +143,7 @@ detail-routing authority.
 | `.6d.ii.f.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification` | implement source-bound alpha and byte-identical PDF identity transforms, five-stage replay/comparison, evidence, and controls |
 | `.6d.ii.f.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout` | implement digest-pinned reviewed recipes, field-scoped normalization, preserved-conclusion evidence, and complete-complement comparison |
 | `.6d.ii.f.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity` | require exact semantic/proof deltas, exercise nine negative classes, and classify invalid/unmeasurable attempts |
+| `.6d.ii.f.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects` | retain the first 51-attempt diagnostic and own fail-closed oracle repair before qualification |
 | `.6d.ii.e.vi` | `07b1f874` | qualify generated production structure and controlled failure cases |
 | `.6d.ii.e.v.iv` | `9f37989f` | register the compiled production-genericity doctrine and clean baseline |
 

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why does DTI (ihi0088) have zero message_field_records
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > why does Docling re-ingest fail on Apple Silicon
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > why does EvidenceIR schema 2 clear old protocol records
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why does I2S SD remain a signal
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > why does Instruction group not count as an ns unit and why does SMIN not count as min
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -288,13 +298,3 @@
   > why is conformal calibration still blocked at CHI scale
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > why is corpus coverage refresh 34 blocked before ingest
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > why is current binary replay coverage 1 of 12
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why is page_image_path null / None for a large document

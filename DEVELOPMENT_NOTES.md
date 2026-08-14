@@ -1,4 +1,38 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii (`2026-08-14`) — a relation can fail because its oracle is invalid
+
+The first real holdout is valuable because it separates three questions that a small calibration can collapse:
+did production change, was the relation genuinely meaning-preserving, and did the comparator normalize exactly
+the relation's permitted identity surface? All 51 attempts completed, but the raw pass count cannot answer those
+questions by itself.
+
+Adversarial identity exposed a narrow comparator omission. The transformed filename correctly changes document
+key, source filename, and `stable_artifact_stem`; only the first two were normalized. All 17 failures therefore
+contain the same two leaves: the stem and its proof-context premise. Because the stem is derived from filename,
+normalizing it is not a post-result exception; it completes the identity allowance frozen before execution. A
+semantic-mutation control must continue to reject after that repair.
+
+Alpha exposed an earlier authority error. The transform combined explicit signal declarations with values from
+schema roles such as actors, states, transitions, members, bases, and modules, then replaced all matching source
+tokens. On real documents, words such as `device`, `controller`, `source`, `target`, `receiver`, and `host` are
+meaning-bearing prose, not opaque identifiers. Renaming them changes the input's intent. Production then loses
+actors honestly, but that loss cannot diagnose production name coupling. The I2C row has a defensible typed
+catalog of six declared bus signals; the remaining heldout rows lack an independently evidenced opaque surface
+and must be unmeasurable for this relation.
+
+The evidence remains immutable as a diagnostic checkpoint. Repair stays inside the active `.f.iii` leaf, and a
+later corrected aggregate may replace the working report only after this initial result is committed. This is
+why held-out outcomes never become transform authority or production thresholds: discovery can refine the
+conformance oracle, but it cannot teach the extractor how to pass the observed documents.
+
+The required retrieval card also became the 225th canonical card (241st Knowledge Map fact including decisions)
+and correctly rendered the fifth 56-card title
+part. That uncovered a separate reachability defect: ADR 0029, the JSON contract, capacity renderer, aggregate
+ceilings, and self-test all permit six title parts, but `validate_planned_schema` retained the migration-era
+literal “one to five output records.” Because `planned_outputs` includes the landing, it rejected the fifth part
+at only 71.7% of the declared card capacity. The repair derives that schema bound as `max_parts + 1`; it changes
+no limit and restores the already-decided capacity law.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c (`2026-08-14`) — a negative pass is two proofs, not one exception
 
 The “at least” calibration is useful precisely because a human-equivalent phrase follows a different production

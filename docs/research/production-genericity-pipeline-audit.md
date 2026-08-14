@@ -137,10 +137,10 @@ regions, and 15 protected types. Rule roots, canonical
 seams, canonical fields, and conformance bypasses are derived directly from their existing inventories rather
 than being copied into a second reviewed list. A malformed, duplicate, or unresolved registry row fails closed.
 
-Symbolic dependencies propagate to a deterministic fixed point across 2,248 production functions and 11,652
+Symbolic dependencies propagate to a deterministic fixed point across 2,259 production functions and 11,737
 helper edges. Parameters, typed fields, provider returns, local and conservatively resolved method calls,
 closures, expression results, and macro tokens retain raw/identity dependence. The check rejects that dependence
-at 11,037 branch/selection/decision sites unless the call topology proves membership in a registered universal
+at 11,153 branch/selection/decision sites unless the call topology proves membership in a registered universal
 grammar, narrow exact-identity declassifier, trusted proof boundary, or non-authoritative inspection surface.
 Sensitive input entering an unclassified semantic macro fails instead of being ignored.
 
@@ -584,6 +584,21 @@ The detailed per-chain ledger/residual attribution and reproducible commands liv
 [`production-genericity-structural-qualification.md`](production-genericity-structural-qualification.md).
 Structural qualification is therefore complete. Population alpha-renaming, identity perturbation, paraphrase,
 negative controls, held-out families, and full behavioral replay remain exclusively `.f`.
+
+## Initial held-out behavioral diagnostic
+
+Leaf `.6d.ii.f.iii` has executed all three eligible recipe-free relations across the frozen 17-document
+prospective partition: 51 attempts and 90 relation/stratum rows. Unchanged PDF replay passes 17/17. Adversarial
+identity is 0/17 at exactly the filename-derived `stable_artifact_stem` and its proof premise, exposing an
+omitted comparator normalization inside the already-declared document-identity allowance. Symbol alpha is
+0 pass / 15 fail / one unmeasurable / one invalid because the conformance transform admitted schema actor,
+state, and similar meaning-bearing prose values as if they were opaque symbols. The I2C row alone has an
+independently declared six-signal catalog; the other prospective rows cannot honestly supply this relation.
+
+The initial artifact remains failed evidence. Its checker reconstructs the split, all attempts, aggregates,
+dispositions, denominators, strata, and descriptive Wilson intervals, and 14/14 controlled mutations reject.
+No held-out labels, outcomes, intervals, or thresholds entered production. The active leaf owns narrow oracle
+repair and corrected qualification before the full-population replay or final genericity decision can proceed.
 
 ## Historical correction
 

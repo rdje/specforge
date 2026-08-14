@@ -208,7 +208,7 @@ Exact local calls are distinguished from method, associated, external, prelude/b
 dispatch rather than pretending that an AST alone is a type checker. The information-flow layer now makes the
 raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically checked. Its
 140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
-2,248 functions, 11,652 helper edges, 11,037 decision sites, and 1,427 sensitive macros. Canonical mutation/protected
+2,259 functions, 11,737 helper edges, 11,153 decision sites, and 1,439 sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
@@ -246,11 +246,16 @@ SemanticIR assertion plus its cumulative claim at three stages, ordinary invaria
 comparison passes only after stripping those exact deltas. Nine synthetic controls cover omission,
 contradiction, reversal, value/timing, undeclared-symbol, misleading-name, proof-corruption, and disabled-stage
 faults. Unavailable or vacuous attempts are unmeasurable; stale, ambiguous, escaped, or partial attempts are
-invalid. These are harness calibrations, not held-out population results. `.f.iii` next owns held-out qualification.
-Transformation recipes, expected
+invalid. Those remain harness calibrations. The first `.f.iii` prospective execution has now completed all 51
+attempts: unchanged PDF replay passes 17/17; adversarial identity is 0/17 only because the comparator omitted the
+filename-derived stable artifact stem; alpha is 0 pass / 15 fail / one unmeasurable / one invalid because the
+conformance transform admitted meaning-bearing actor/state-like prose as symbol authority. The I2C row alone has
+an independently declared six-signal alpha catalog. This is retained fail-closed diagnostic evidence, not a
+held-out qualification result; `.f.iii` owns the narrow oracle repair and corrected run. Transformation recipes, expected
 relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
 current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)
-publishes the exact boundary, implementation checkpoint, and denominators.
+publishes the exact boundary, implementation checkpoint, denominators, and initial root cause; the
+[initial-run report](../../research/behavioral-held-out-initial-run.md) preserves the complete diagnostic.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

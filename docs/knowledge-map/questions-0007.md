@@ -121,6 +121,8 @@
   > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what did real filenames expose in adversarial identity comparison
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > what did refresh 50 change in the OpenCAPI data link chain
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -295,5 +297,3 @@
   > what happened to the USB4 Inter-Domain channel.isf
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > what happened to the four signal two enum Introducing CoreSight adapter
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > what happened to the original Introducing CoreSight rollback

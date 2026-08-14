@@ -8,6 +8,7 @@ import copy
 import csv
 import hashlib
 import json
+import math
 from pathlib import Path
 import re
 import sys
@@ -22,6 +23,12 @@ RECIPE_MANIFEST_PATH = Path(
 )
 NEGATIVE_MATRIX_PATH = Path(
     "doctrine/production_genericity/semantic_negative_matrix.json"
+)
+HELD_OUT_EVIDENCE_PATH = Path(
+    "doctrine/production_genericity/behavioral_holdout_evidence.json"
+)
+BEHAVIORAL_TOOL_PATH = Path(
+    "crates/specforge-conformance/src/behavioral_genericity.rs"
 )
 
 POPULATION_FIELDS = [
@@ -674,11 +681,477 @@ def validate_negative_sensitivity_matrix(problems: list[str]) -> None:
         problems.append("semantic-negative attempt dispositions differ")
 
 
+def wilson_parts_per_million(passes: int, completed: int) -> tuple[int, int, int] | None:
+    if completed == 0:
+        return None
+    proportion = passes / completed
+    z_value = 1.959963984540054
+    z_squared = z_value * z_value
+    denominator = 1.0 + z_squared / completed
+    center = (proportion + z_squared / (2.0 * completed)) / denominator
+    margin = (
+        z_value
+        * math.sqrt(
+            proportion * (1.0 - proportion) / completed
+            + z_squared / (4.0 * completed * completed)
+        )
+        / denominator
+    )
+    scaled = lambda value: round(max(0.0, min(1.0, value)) * 1_000_000)
+    return scaled(proportion), scaled(center - margin), scaled(center + margin)
+
+
+def validate_held_out_evidence(
+    contract: dict[str, Any],
+    rows: list[dict[str, str]],
+    problems: list[str],
+    report_override: object | None = None,
+) -> None:
+    if report_override is None:
+        try:
+            report = read_json(ROOT / HELD_OUT_EVIDENCE_PATH)
+        except (OSError, json.JSONDecodeError) as error:
+            problems.append(f"held-out evidence is unreadable: {error}")
+            return
+    else:
+        report = report_override
+    if not isinstance(report, dict):
+        problems.append("held-out evidence must be an object")
+        return
+    expected_relations = ["unchanged_source", "adversarial_identity", "symbol_alpha"]
+    expected_relation_set = set(expected_relations)
+    if report.get("schema_version") != 1:
+        problems.append("held-out evidence schema_version must be 1")
+    if report.get("owner") != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii":
+        problems.append("held-out evidence owner differs")
+    expected_identity = {
+        "contract_path": CONTRACT_PATH.as_posix(),
+        "contract_sha256": sha256(ROOT / CONTRACT_PATH),
+        "population_path": POPULATION_PATH.as_posix(),
+        "population_sha256": sha256(ROOT / POPULATION_PATH),
+        "prior_memory_sha256": contract.get("frozen_census", {})
+        .get("prior_memory", {})
+        .get("sha256"),
+        "tool_sha256": sha256(ROOT / BEHAVIORAL_TOOL_PATH),
+    }
+    for field, expected in expected_identity.items():
+        if report.get(field) != expected:
+            problems.append(
+                f"held-out evidence {field} differs: {report.get(field)!r} != {expected!r}"
+            )
+    if not isinstance(report.get("production_revision"), str) or not re.fullmatch(
+        r"[0-9a-f]{40}", report["production_revision"]
+    ):
+        problems.append("held-out production revision is not a full Git id")
+    if report.get("leakage_boundary") != contract.get("held_out_policy", {}).get(
+        "leakage_rule"
+    ):
+        problems.append("held-out evidence leakage boundary differs")
+    if report.get("eligible_relations") != expected_relations:
+        problems.append("held-out evidence eligible relations differ")
+    if report.get("final_signoff_deferred") is not True:
+        problems.append("held-out evidence prematurely claims final signoff")
+
+    calibration = [row for row in rows if row.get("review_role") == "reviewed_calibration"]
+    prospective = [row for row in rows if row.get("review_role") == "prospective_holdout"]
+    calibration_keys = sorted(row["document_key"] for row in calibration)
+    prospective_keys = sorted(row["document_key"] for row in prospective)
+    split = report.get("split")
+    if not isinstance(split, dict):
+        problems.append("held-out evidence split must be an object")
+    else:
+        split_checks = {
+            "selection_boundary_commit": contract.get("selection_boundary_commit"),
+            "calibration_document_keys": calibration_keys,
+            "prospective_document_keys": prospective_keys,
+            "overlapping_document_keys": [],
+            "overlapping_source_sha256": [],
+            "overlapping_normalized_markdown_sha256": [],
+            "identity_disjoint": True,
+        }
+        for field, expected in split_checks.items():
+            if split.get(field) != expected:
+                problems.append(f"held-out split {field} differs")
+
+    calibration_vendors = {row["vendor"] for row in calibration}
+    calibration_families = {row["family"] for row in calibration}
+    prospective_by_key = {row["document_key"]: row for row in prospective}
+    documents = report.get("documents")
+    document_by_key: dict[str, dict[str, Any]] = {}
+    if not isinstance(documents, list):
+        problems.append("held-out documents must be an array")
+        documents = []
+    for document in documents:
+        if not isinstance(document, dict) or not isinstance(document.get("document_key"), str):
+            problems.append("held-out document row is malformed")
+            continue
+        key = document["document_key"]
+        if key in document_by_key:
+            problems.append(f"held-out document is duplicated: {key}")
+        document_by_key[key] = document
+        population = prospective_by_key.get(key)
+        if population is None:
+            problems.append(f"held-out evidence includes a non-prospective document: {key}")
+            continue
+        direct_fields = (
+            "source_origin",
+            "source_locator",
+            "source_sha256",
+            "normalized_markdown_path",
+            "normalized_markdown_sha256",
+            "vendor",
+            "family",
+            "category",
+            "layout",
+        )
+        for field in direct_fields:
+            if document.get(field) != population.get(field):
+                problems.append(f"{key}: held-out document {field} differs")
+        integer_checks = {
+            "text_semantic_records": int(population["text_semantic_records"]),
+            "text_intent_records": int(population["text_intent_records"]),
+        }
+        for field, expected in integer_checks.items():
+            if document.get(field) != expected:
+                problems.append(f"{key}: held-out document {field} differs")
+        if document.get("vendor_novel") != (population["vendor"] not in calibration_vendors):
+            problems.append(f"{key}: held-out vendor novelty differs")
+        if document.get("family_novel") != (population["family"] not in calibration_families):
+            problems.append(f"{key}: held-out family novelty differs")
+    if sorted(document_by_key) != prospective_keys:
+        problems.append("held-out evidence document set differs from prospective population")
+
+    attempts = report.get("attempts")
+    attempt_by_pair: dict[tuple[str, str], dict[str, Any]] = {}
+    if not isinstance(attempts, list):
+        problems.append("held-out attempts must be an array")
+        attempts = []
+    for attempt in attempts:
+        if not isinstance(attempt, dict):
+            problems.append("held-out attempt row is malformed")
+            continue
+        key = attempt.get("document_key")
+        relation = attempt.get("relation")
+        pair = (key, relation)
+        if key not in prospective_by_key or relation not in expected_relation_set:
+            problems.append(f"held-out attempt identity is outside the matrix: {pair!r}")
+            continue
+        if pair in attempt_by_pair:
+            problems.append(f"held-out attempt is duplicated: {pair!r}")
+        attempt_by_pair[pair] = attempt
+        expected_plane = (
+            "normalized_text_projection" if relation == "symbol_alpha" else "pdf_full_capture"
+        )
+        if attempt.get("input_plane") != expected_plane:
+            problems.append(f"held-out attempt input plane differs: {pair!r}")
+        state = attempt.get("state")
+        if state not in {"pass", "fail", "unmeasurable", "invalid"}:
+            problems.append(f"held-out attempt state is invalid: {pair!r}")
+        identity = attempt.get("identity")
+        coverage = attempt.get("coverage")
+        report_digest = attempt.get("attempt_report_sha256")
+        if state in {"pass", "fail"}:
+            if not isinstance(identity, dict) or not isinstance(coverage, dict):
+                problems.append(f"completed held-out attempt lacks identity/coverage: {pair!r}")
+            else:
+                source_field = (
+                    "normalized_markdown_sha256"
+                    if relation == "symbol_alpha"
+                    else "source_sha256"
+                )
+                identity_checks = {
+                    "contract_sha256": report.get("contract_sha256"),
+                    "production_revision": report.get("production_revision"),
+                    "source_sha256": prospective_by_key[key][source_field],
+                    "prior_memory_sha256": report.get("prior_memory_sha256"),
+                    "tool_sha256": report.get("tool_sha256"),
+                }
+                for field, expected in identity_checks.items():
+                    if identity.get(field) != expected:
+                        problems.append(f"held-out attempt {pair!r} identity {field} differs")
+            if not isinstance(report_digest, str) or not re.fullmatch(
+                r"[0-9a-f]{64}", report_digest
+            ):
+                problems.append(f"completed held-out attempt lacks report digest: {pair!r}")
+            if attempt.get("completed_stages") != 5:
+                problems.append(f"completed held-out attempt lacks five stages: {pair!r}")
+        else:
+            if identity is not None or coverage is not None or report_digest is not None:
+                problems.append(f"non-completed held-out attempt carries a report: {pair!r}")
+            if attempt.get("completed_stages") != 0:
+                problems.append(f"non-completed held-out attempt claims completed stages: {pair!r}")
+        if state == "pass" and attempt.get("failure_id") is not None:
+            problems.append(f"passing held-out attempt carries a failure id: {pair!r}")
+        if state != "pass" and not isinstance(attempt.get("failure_id"), str):
+            problems.append(f"non-passing held-out attempt lacks a failure id: {pair!r}")
+        if attempt.get("all_completed_stages_passed") != (state == "pass"):
+            problems.append(f"held-out all-stage disposition differs: {pair!r}")
+    expected_pairs = {
+        (key, relation) for key in prospective_keys for relation in expected_relations
+    }
+    if set(attempt_by_pair) != expected_pairs:
+        problems.append("held-out evidence attempt matrix is incomplete")
+
+    coverage = report.get("coverage")
+    if not isinstance(coverage, dict):
+        problems.append("held-out aggregate coverage must be an object")
+    else:
+        state_counts = {
+            state: sum(attempt.get("state") == state for attempt in attempts)
+            for state in ("pass", "fail", "unmeasurable", "invalid")
+        }
+        coverage_checks = {
+            "declared_documents": prospective_keys,
+            "attempted_documents": prospective_keys,
+            "declared_attempts": len(expected_pairs),
+            "pass_attempts": state_counts["pass"],
+            "fail_attempts": state_counts["fail"],
+            "unmeasurable_attempts": state_counts["unmeasurable"],
+            "invalid_attempts": state_counts["invalid"],
+        }
+        for field, expected in coverage_checks.items():
+            if coverage.get(field) != expected:
+                problems.append(f"held-out aggregate coverage {field} differs")
+        completed_by_key = {
+            key: sum(
+                attempt_by_pair.get((key, relation), {}).get("state") in {"pass", "fail"}
+                for relation in expected_relations
+            )
+            for key in prospective_keys
+        }
+        set_checks = {
+            "fully_completed_documents": sorted(
+                key for key, count in completed_by_key.items() if count == len(expected_relations)
+            ),
+            "partially_completed_documents": sorted(
+                key for key, count in completed_by_key.items() if 0 < count < len(expected_relations)
+            ),
+            "unmeasurable_documents": sorted(
+                key
+                for key in prospective_keys
+                if any(
+                    attempt_by_pair.get((key, relation), {}).get("state") == "unmeasurable"
+                    for relation in expected_relations
+                )
+            ),
+            "invalid_documents": sorted(
+                key
+                for key in prospective_keys
+                if any(
+                    attempt_by_pair.get((key, relation), {}).get("state") == "invalid"
+                    for relation in expected_relations
+                )
+            ),
+        }
+        for field, expected in set_checks.items():
+            if coverage.get(field) != expected:
+                problems.append(f"held-out aggregate coverage {field} differs")
+        coverage_fields = (
+            "baseline_top_level_fields",
+            "transformed_top_level_fields",
+            "baseline_proof_claims",
+            "transformed_proof_claims",
+            "compared_leaf_values",
+        )
+        for field in coverage_fields:
+            expected = sum(
+                attempt.get("coverage", {}).get(field, 0)
+                for attempt in attempts
+                if isinstance(attempt.get("coverage"), dict)
+            )
+            if coverage.get(field) != expected:
+                problems.append(f"held-out aggregate coverage {field} differs")
+        expected_deltas = sum(
+            sum(
+                attempt.get("coverage", {}).get(field, 0)
+                for field in (
+                    "expected_symbol_deltas",
+                    "expected_reviewed_span_deltas",
+                    "expected_semantic_deltas",
+                )
+            )
+            for attempt in attempts
+            if isinstance(attempt.get("coverage"), dict)
+        )
+        observed_deltas = sum(
+            sum(
+                attempt.get("coverage", {}).get(field, 0)
+                for field in (
+                    "observed_symbol_deltas",
+                    "observed_reviewed_span_deltas",
+                    "observed_semantic_deltas",
+                )
+            )
+            for attempt in attempts
+            if isinstance(attempt.get("coverage"), dict)
+        )
+        if coverage.get("expected_deltas") != expected_deltas:
+            problems.append("held-out aggregate expected-delta coverage differs")
+        if coverage.get("observed_deltas") != observed_deltas:
+            problems.append("held-out aggregate observed-delta coverage differs")
+
+    strata = report.get("strata")
+    expected_values = {
+        "overall": {"all"},
+        "vendor": {row["vendor"] for row in prospective},
+        "vendor_novelty": {"seen_in_calibration", "novel"},
+        "family": {row["family"] for row in prospective},
+        "family_novelty": {"seen_in_calibration", "novel"},
+        "category": {
+            "cpu-isa",
+            "methodology-guide",
+            "physical-link",
+            "platform-system-ip",
+            "register-ip",
+            "wire-protocol",
+        },
+        "layout": {"compact", "medium", "long"},
+    }
+    expected_strata = {
+        (relation, dimension, value)
+        for relation in expected_relations
+        for dimension, values in expected_values.items()
+        for value in values
+    }
+    stratum_by_key: dict[tuple[str, str, str], dict[str, Any]] = {}
+    if not isinstance(strata, list):
+        problems.append("held-out strata must be an array")
+        strata = []
+    for stratum in strata:
+        if not isinstance(stratum, dict):
+            problems.append("held-out stratum row is malformed")
+            continue
+        identity = (stratum.get("relation"), stratum.get("dimension"), stratum.get("value"))
+        if identity in stratum_by_key:
+            problems.append(f"held-out stratum is duplicated: {identity!r}")
+        stratum_by_key[identity] = stratum
+        relation, dimension, value = identity
+        if identity not in expected_strata:
+            problems.append(f"held-out stratum is outside the closed matrix: {identity!r}")
+            continue
+        selected_keys = []
+        for key, document in document_by_key.items():
+            included = {
+                "overall": value == "all",
+                "vendor": document.get("vendor") == value,
+                "family": document.get("family") == value,
+                "category": document.get("category") == value,
+                "layout": document.get("layout") == value,
+                "vendor_novelty": document.get("vendor_novel") == (value == "novel"),
+                "family_novelty": document.get("family_novel") == (value == "novel"),
+            }[dimension]
+            if included:
+                selected_keys.append(key)
+        selected_keys.sort()
+        selected_attempts = [
+            attempt_by_pair[(key, relation)]
+            for key in selected_keys
+            if (key, relation) in attempt_by_pair
+        ]
+        counts = {
+            state: sum(attempt.get("state") == state for attempt in selected_attempts)
+            for state in ("pass", "fail", "unmeasurable", "invalid")
+        }
+        expected_state = (
+            "invalid"
+            if counts["invalid"]
+            else "fail"
+            if counts["fail"]
+            else "unmeasurable"
+            if not selected_keys or counts["unmeasurable"]
+            else "pass"
+        )
+        stratum_checks = {
+            "document_keys": selected_keys,
+            "declared_documents": len(selected_keys),
+            "passes": counts["pass"],
+            "failures": counts["fail"],
+            "unmeasurable": counts["unmeasurable"],
+            "invalid": counts["invalid"],
+            "state": expected_state,
+        }
+        for field, expected in stratum_checks.items():
+            if stratum.get(field) != expected:
+                problems.append(f"held-out stratum {identity!r} {field} differs")
+        expected_limitation = (
+            "no_prospective_denominator"
+            if not selected_keys
+            else "invalid_attempts_present"
+            if counts["invalid"]
+            else "unmeasurable_attempts_excluded_from_interval"
+            if counts["unmeasurable"]
+            else None
+        )
+        if stratum.get("limitation") != expected_limitation:
+            problems.append(f"held-out stratum {identity!r} limitation differs")
+        uncertainty = stratum.get("uncertainty")
+        completed = counts["pass"] + counts["fail"]
+        interval = wilson_parts_per_million(counts["pass"], completed)
+        if not isinstance(uncertainty, dict):
+            problems.append(f"held-out stratum {identity!r} uncertainty is absent")
+        elif interval is None:
+            if (
+                uncertainty.get("method") != "unavailable_no_completed_denominator"
+                or uncertainty.get("sample_size") != 0
+                or uncertainty.get("confidence_basis_points") is not None
+                or any(
+                    uncertainty.get(field) is not None
+                    for field in (
+                        "point_estimate_parts_per_million",
+                        "lower_parts_per_million",
+                        "upper_parts_per_million",
+                    )
+                )
+            ):
+                problems.append(f"held-out stratum {identity!r} unavailable interval differs")
+        else:
+            point, lower, upper = interval
+            uncertainty_checks = {
+                "method": "wilson_score_95_percent",
+                "confidence_basis_points": 9500,
+                "sample_size": completed,
+                "pass_numerator": counts["pass"],
+                "point_estimate_parts_per_million": point,
+                "lower_parts_per_million": lower,
+                "upper_parts_per_million": upper,
+            }
+            for field, expected in uncertainty_checks.items():
+                if uncertainty.get(field) != expected:
+                    problems.append(
+                        f"held-out stratum {identity!r} uncertainty {field} differs"
+                    )
+        if not isinstance(uncertainty, dict) or "frozen population" not in str(
+            uncertainty.get("scope_limit", "")
+        ):
+            problems.append(f"held-out stratum {identity!r} lacks scope limitation")
+    if set(stratum_by_key) != expected_strata:
+        problems.append("held-out evidence stratum matrix is incomplete")
+
+    def find_absolute(value: object, path: str = "") -> list[str]:
+        found: list[str] = []
+        if isinstance(value, dict):
+            for field, child in value.items():
+                found.extend(find_absolute(child, f"{path}/{field}"))
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                found.extend(find_absolute(child, f"{path}/{index}"))
+        elif isinstance(value, str) and (value.startswith("/") or "/Volumes/" in value):
+            found.append(path)
+        return found
+
+    absolute_paths = find_absolute(report)
+    if absolute_paths:
+        problems.append(
+            f"held-out evidence persists absolute paths: {absolute_paths[:5]}"
+        )
+
+
 def validate(
     contract: dict[str, Any],
     rows: list[dict[str, str]],
     *,
     verify_artifacts: bool = True,
+    verify_held_out_evidence: bool = True,
 ) -> tuple[list[str], dict[str, int]]:
     problems: list[str] = []
     metrics: dict[str, int] = {}
@@ -701,6 +1174,7 @@ def validate(
         "reviewed_population": (
             "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json"
         ),
+        "held_out_evidence": HELD_OUT_EVIDENCE_PATH.as_posix(),
         "reviewed_recipe_manifest": RECIPE_MANIFEST_PATH.as_posix(),
         "semantic_negative_matrix": NEGATIVE_MATRIX_PATH.as_posix(),
         "claim_family_inventory": (
@@ -1134,11 +1608,45 @@ def validate(
         if "Production core cannot read" not in policy.get("leakage_rule", ""):
             problems.append("held-out calibration authority is not isolated from core")
 
+    execution = contract.get("held_out_execution")
+    expected_execution = {
+        "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+        "eligible_relations": [
+            "unchanged_source",
+            "adversarial_identity",
+            "symbol_alpha",
+        ],
+        "declared_attempts": 51,
+        "stratum_dimensions": [
+            "overall",
+            "vendor",
+            "vendor_novelty",
+            "family",
+            "family_novelty",
+            "category",
+            "layout",
+        ],
+        "uncertainty_method": "wilson_score_95_percent_over_completed_documents",
+        "uncertainty_scope": "Descriptive for the frozen non-random prospective population only; unavailable or invalid attempts are excluded from the interval but remain explicit in its denominator record.",
+        "zero_denominator_disposition": "unmeasurable",
+        "final_signoff": "deferred_to_SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v",
+    }
+    if execution != expected_execution:
+        problems.append("held-out execution contract differs from the closed matrix")
+
+    if verify_held_out_evidence:
+        validate_held_out_evidence(contract, rows, problems)
+
     return problems, metrics
 
 
 def run_self_test(contract: dict[str, Any], rows: list[dict[str, str]]) -> int:
-    baseline, _ = validate(contract, rows, verify_artifacts=False)
+    baseline, _ = validate(
+        contract,
+        rows,
+        verify_artifacts=False,
+        verify_held_out_evidence=False,
+    )
     if baseline:
         print("behavioral-genericity-contract self-test baseline failed:", file=sys.stderr)
         for problem in baseline:
@@ -1192,7 +1700,10 @@ def run_self_test(contract: dict[str, Any], rows: list[dict[str, str]]) -> int:
     failures = 0
     for label, mutant_contract, mutant_rows in mutants:
         mutant_problems, _ = validate(
-            mutant_contract, mutant_rows, verify_artifacts=False
+            mutant_contract,
+            mutant_rows,
+            verify_artifacts=False,
+            verify_held_out_evidence=False,
         )
         if mutant_problems:
             failures += 1
@@ -1201,7 +1712,61 @@ def run_self_test(contract: dict[str, Any], rows: list[dict[str, str]]) -> int:
 
     if failures != len(mutants):
         return 1
-    print(f"behavioral-genericity-contract self-test: {failures}/{len(mutants)} pass")
+    report = read_json(ROOT / HELD_OUT_EVIDENCE_PATH)
+    evidence_mutants: list[tuple[str, dict[str, Any]]] = []
+
+    missing_attempt = copy.deepcopy(report)
+    missing_attempt["attempts"].pop()
+    evidence_mutants.append(("held-out attempt omission", missing_attempt))
+
+    overlapping_split = copy.deepcopy(report)
+    overlapping_split["split"]["overlapping_document_keys"] = [
+        overlapping_split["split"]["prospective_document_keys"][0]
+    ]
+    overlapping_split["split"]["identity_disjoint"] = False
+    evidence_mutants.append(("held-out identity overlap", overlapping_split))
+
+    laundered_state = copy.deepcopy(report)
+    nonpass = next(
+        attempt for attempt in laundered_state["attempts"] if attempt["state"] != "pass"
+    )
+    nonpass["state"] = "pass"
+    nonpass["failure_id"] = None
+    evidence_mutants.append(("held-out state laundering", laundered_state))
+
+    bad_interval = copy.deepcopy(report)
+    measured = next(
+        stratum
+        for stratum in bad_interval["strata"]
+        if stratum["uncertainty"]["sample_size"] > 0
+    )
+    measured["uncertainty"]["lower_parts_per_million"] = 1_000_000
+    evidence_mutants.append(("held-out uncertainty drift", bad_interval))
+
+    absolute_path = copy.deepcopy(report)
+    absolute_path["documents"][0]["source_locator"] = "/off-volume/source.pdf"
+    evidence_mutants.append(("held-out absolute path", absolute_path))
+
+    bad_tool = copy.deepcopy(report)
+    bad_tool["tool_sha256"] = "0" * 64
+    evidence_mutants.append(("held-out tool drift", bad_tool))
+
+    evidence_failures = 0
+    for label, mutant in evidence_mutants:
+        mutant_problems: list[str] = []
+        validate_held_out_evidence(contract, rows, mutant_problems, mutant)
+        if mutant_problems:
+            evidence_failures += 1
+        else:
+            print(
+                f"behavioral-genericity-contract self-test missed {label}",
+                file=sys.stderr,
+            )
+    if evidence_failures != len(evidence_mutants):
+        return 1
+    total = failures + evidence_failures
+    expected_total = len(mutants) + len(evidence_mutants)
+    print(f"behavioral-genericity-contract self-test: {total}/{expected_total} pass")
     return 0
 
 

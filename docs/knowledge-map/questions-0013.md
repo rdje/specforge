@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > why is corpus coverage refresh 34 blocked before ingest
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why is current binary replay coverage 1 of 12
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why is page_image_path null / None for a large document
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is plural-rejection unsafe for phase names (access ends in ss)
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)

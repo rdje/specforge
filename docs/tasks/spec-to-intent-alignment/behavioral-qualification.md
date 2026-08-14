@@ -88,13 +88,29 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`
-  State: `pending`
+  State: `in_progress`
   Goal: qualify held-out vendors, layouts, categories, and protocol families without calibration leakage
   Acceptance: the frozen split is identity-disjoint and category-representative where evidence permits; results
   publish denominators and uncertainty; absence of adequate retained source is unmeasurable rather than passed;
   no held-out label, threshold, or result can steer canonical extraction
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `initial 51-attempt prospective execution completed without leakage: unchanged PDF replay
+  passes 17/17, while adversarial identity is 0/17 because the comparator omitted the identity-bound
+  stable_artifact_stem field; symbol alpha is 0 pass / 15 fail / one unmeasurable / one invalid because the
+  catalog incorrectly admitted role-bearing prose names and then found an ambiguous derived-id map on I2C;
+  exact 17-document, 90-stratum, Wilson-interval evidence and 14/14 checker mutations pass; remediation remains
+  owned here and no held-out signoff is claimed; the refreshed independent graph snapshot is 2,259 functions /
+  11,737 helper edges / 11,153 decision sites / 1,439 semantic macros and all 11 genericity components pass;
+  full CI passes nine doctrines, 1,970 Rust tests / eight ignored / zero failed, five compile-fail doctests,
+  warning-denied Clippy/Rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects`
+  Tracked remediation: classify the two oracle defects before changing outcomes; normalize the declared
+  identity-bound stem, restrict alpha authority to explicitly declared opaque symbols, add an explicit
+  no-eligible-symbol unmeasurable disposition, recompare/rerun affected attempts without reusing labels in
+  production, and retain the initial failed evidence in Git history. This checkpoint also owns the incidental
+  fact-catalog verifier repair exposed by its required Knowledge Map card: the declared six-title-part capacity
+  rendered a fifth part correctly, but a stale hard-coded five-total-output schema bound rejected the landing
+  plus five parts. Replace that literal with the existing derived `max_parts + 1` authority and prove both the
+  fifth-part positive path and the one-over-limit rejection; no capacity changes.
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`
   State: `pending`

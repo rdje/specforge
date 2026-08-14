@@ -133,8 +133,9 @@ keeps full-PDF capture separate from the lossy text projection. Missing source/p
 unmeasurable rather than passed. Its checker contains no document/vendor/protocol labels; those remain data.
 
 CI adds `--self-test`: 27 controlled dependency/schema/rule/flow faults, legal display/provenance/test-only uses,
-the exact 168-rule structural alpha join, and eight behavioral-contract faults covering population omission,
-unsafe authority, hash drift, reviewed-label leakage, vacuity laundering, and partial relation/stage assertions.
+the exact 168-rule structural alpha join, and 14 behavioral-contract/evidence faults covering population or
+attempt omission, unsafe authority, hash/tool drift, reviewed-label leakage, split overlap, state laundering,
+interval drift, absolute paths, vacuity laundering, and partial relation/stage assertions.
 This gates the behavioral oracle's currency. The conformance harness now implements and calibrates full-PDF
 unchanged/adversarial identity plus normalized-text alpha, reviewed paraphrase/layout, and semantic-negative pairs across all five
 stages. The contract checker also verifies the recipe manifest, source/recipe hashes, review ownership, exact
@@ -142,7 +143,9 @@ single-occurrence spans, relation-specific change kinds, safe per-span fields, i
 conclusions, complete complement, semantic/proof delta declarations, nine-class sensitivity matrix, typed attempt
 dispositions, and rich-capture exclusions. A negative passes only when ordinary invariance rejects, its exact
 declared delta is present, and the remaining five-stage complement is exact. These focused executions are not the
-governed population result. Held-out and complete-population runs remain separate signoff work.
+governed population result. The first held-out execution is retained as a diagnostic because it exposed a
+filename-derived comparator omission and an overbroad alpha authority; corrected held-out and complete-
+population runs remain separate signoff work.
 
 It also runs the roadmap current/history contract. The structural check authenticates the exact
 1,487-line source capsule, five exhaustive source regions, all 23 workstream ids and owning task

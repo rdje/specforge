@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > why are 58 corpus documents not currency-measurable
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -16,6 +22,8 @@
   > why are determiners (All Managers) NOT rejected by the .1a agent gate
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why are extracted signal names truncated at the underscore
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why are held-out alpha failures not yet production name-coupling evidence
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
@@ -197,6 +205,8 @@
   > why did the emitted ISF count drop from 57 to 44
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did the host actor disappear from AArch64 External Debug
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why did the initial prospective behavioral held-out run fail
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > why did the moved Python virtual environments still access the old repository
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -287,13 +297,3 @@
   > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why does DTI (ihi0088) have zero message_field_records
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > why does Docling re-ingest fail on Apple Silicon
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > why does EvidenceIR schema 2 clear old protocol records
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why does I2S SD remain a signal

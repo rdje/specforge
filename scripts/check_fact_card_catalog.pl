@@ -126,6 +126,10 @@ sub fixed_limits {
     };
 }
 
+sub planned_output_limit {
+    return fixed_limits()->{max_parts} + 1;
+}
+
 sub raw_scalar {
     my ($value) = @_;
     return '' if !defined $value;
@@ -309,8 +313,9 @@ sub validate_metrics_object {
 
 sub validate_planned_schema {
     my ($records, $errors) = @_;
-    if (ref($records) ne 'ARRAY' || !@$records || @$records > 5) {
-        push @$errors, 'planned_outputs must contain one to five output records';
+    my $limit = planned_output_limit();
+    if (ref($records) ne 'ARRAY' || !@$records || @$records > $limit) {
+        push @$errors, "planned_outputs must contain one to $limit output records";
         return;
     }
     my %seen;
@@ -1445,7 +1450,7 @@ sub run_self_test {
     my $landing_ceiling = $limits->{landing}{enforcement_ceilings};
     my $part_ceiling = $limits->{title_parts}{enforcement_ceilings};
     die "fact-card-catalog parser self-test: projection ceiling does not cover landing plus parts\n"
-        if $projection_ceiling->{files} != $limits->{max_parts} + 1
+        if $projection_ceiling->{files} != planned_output_limit()
         || $projection_ceiling->{lines} != $landing_ceiling->{lines} + $part_ceiling->{lines_total}
         || $projection_ceiling->{bytes} != $landing_ceiling->{bytes} + $part_ceiling->{bytes_total};
 
@@ -1592,6 +1597,7 @@ sub run_self_test {
         ['premature title directory', 'legacy_locked', sub { make_path(absolute($_[0], $_[1]{paths}{part_directory})) }, qr/premature title-part directory/],
         ['planned hash drift', 'legacy_locked', sub { $_[1]{planned_outputs}[0]{sha256} = 'f' x 64 }, qr/planned_outputs membership/],
         ['planned duplicate path', 'legacy_locked', sub { $_[1]{planned_outputs}[1]{path} = $_[1]{planned_outputs}[0]{path} }, qr/duplicate path|membership\/order/],
+        ['planned output above derived limit', 'legacy_locked', sub { my $records = $_[1]{planned_outputs}; push @$records, {%{$records->[0]}} while @$records <= planned_output_limit() }, qr/planned_outputs must contain one to 7 output records/],
         ['migrated positive', 'migrated', undef, undef],
         ['missing migrated title surface', 'migrated', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(338, 'migrated')) . "\n") }, qr/must contain title-part surface/],
         ['migrated title surface drift', 'migrated', sub { my $part = fixture_part_surface(); $part->{health_targets}{lines_each}++; write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(338, 'migrated')) . "\n" . JSON::PP->new->canonical(1)->encode($part) . "\n") }, qr/title-part surface health targets differ/],

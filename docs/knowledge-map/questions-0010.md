@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > where does retired roadmap direction go
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -230,6 +234,8 @@
   > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > which header signatures are unrecovered register tables
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > which held-out document has an eligible opaque alpha catalog
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > which limit binds first when adding a fact card
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
@@ -292,9 +298,3 @@
   > who reads or writes the active PDF task tree
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > why a parallel field-constraint surface instead of a subject-kind discriminator
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why are 58 corpus documents not currency-measurable

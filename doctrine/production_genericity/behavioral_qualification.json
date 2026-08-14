@@ -7,6 +7,7 @@
     "current_population": "doctrine/production_genericity/behavioral_population.tsv",
     "retained_population": "doctrine/chain_currency/retained_bundles.json",
     "reviewed_population": "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
+    "held_out_evidence": "doctrine/production_genericity/behavioral_holdout_evidence.json",
     "reviewed_recipe_manifest": "doctrine/production_genericity/reviewed_recipe_manifest.json",
     "semantic_negative_matrix": "doctrine/production_genericity/semantic_negative_matrix.json",
     "claim_family_inventory": "doctrine/production_genericity/claim_family_inventory.tsv",
@@ -279,6 +280,28 @@
     },
     "category_limit": "The prospective population covers four categories. Missing prospective register-ip and cpu-isa denominators are unmeasurable, not passed.",
     "leakage_rule": "Production core cannot read this contract, transform recipes, held-out membership, expected relations, thresholds, or outcomes."
+  },
+  "held_out_execution": {
+    "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+    "eligible_relations": [
+      "unchanged_source",
+      "adversarial_identity",
+      "symbol_alpha"
+    ],
+    "declared_attempts": 51,
+    "stratum_dimensions": [
+      "overall",
+      "vendor",
+      "vendor_novelty",
+      "family",
+      "family_novelty",
+      "category",
+      "layout"
+    ],
+    "uncertainty_method": "wilson_score_95_percent_over_completed_documents",
+    "uncertainty_scope": "Descriptive for the frozen non-random prospective population only; unavailable or invalid attempts are excluded from the interval but remain explicit in its denominator record.",
+    "zero_denominator_disposition": "unmeasurable",
+    "final_signoff": "deferred_to_SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v"
   },
   "evidence_contract": {
     "required_run_states": [

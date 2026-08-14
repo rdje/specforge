@@ -93,8 +93,11 @@ chains remain explicitly unmeasurable. The task tree and structural report own t
 A finite forbidden-vocabulary list remains diagnostic, not proof. `.f.i` freezes the 24-row behavioral
 population, PDF/text input planes, six relations, five-stage comparison, and 7-calibration/17-prospective split;
 23 text projections are non-vacuous and one is unmeasurable. `.f.ii` now closes deterministic PDF identity,
-text alpha, reviewed paraphrase/layout, semantic-negative sensitivity, and typed attempt handling. `.f.iii` next
-owns the frozen identity-disjoint holdout before complete replay, final signoff, and then `.6e`. Resource-sized bounded
+text alpha, reviewed paraphrase/layout, semantic-negative sensitivity, and typed attempt handling. `.f.iii` has
+executed the frozen identity-disjoint holdout once: unchanged replay passes, while real filenames expose one
+identity-comparator omission and real prose exposes an overbroad alpha authority. The initial evidence is a
+retained fail-closed diagnostic; `.f.iii` still owns oracle repair and corrected qualification before complete
+replay, final signoff, and then `.6e`. Resource-sized bounded
 activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
 
 Five active program groups support that north star:

@@ -261,3 +261,33 @@ calibrations. `.f.ii.c` supplies the real semantic/proof negative, complete nine
 typed stale/unmeasurable attempt handling, closing the `.f.ii` parent. `.f.iii` consumes the frozen 17-document prospective split without using its
 labels to steer production. `.f.iv` reconciles every measurable and unmeasurable row; `.f.v` alone may make the
 final behavioral genericity decision.
+
+## Initial prospective execution checkpoint (`.f.iii`, diagnostic)
+
+The first frozen execution completed all 51 declared attempts across the 17 prospectively held-out documents.
+It is intentionally retained as failed evidence, not relabeled after seeing the outcomes. Unchanged PDF replay
+passes 17/17. Adversarial identity fails 17/17 at exactly two SourceIR leaves:
+`source.stable_artifact_stem` and its proof-context premise. That stem is derived from the input filename and is
+therefore within the already-declared document/artifact identity allowance; the focused one-page calibration did
+not expose it because its baseline stem already equaled its normalized document key.
+
+The alpha result is 0 pass / 15 fail / one unmeasurable / one invalid. The common cause is earlier than
+production comparison: `derive_source_symbol_catalog` unions explicitly declared signal identities with every
+schema `actor_name`, `state_name`, and similar value, then globally replaces every matching source token. On the
+real holdout that changes role-bearing English such as `device`, `controller`, `source`, `target`, `receiver`,
+and `host`. Those words carry meaning in the source and are not opaque document symbols. The resulting actor
+loss is real, but the transformation is not intent-preserving, so it cannot diagnose name coupling. The I2C row
+also reaches the comparator with this polluted catalog and triggers a non-bijective derived-id mapping. Its six
+explicitly declared bus signals (`SCL`, `SDA`, `USCL`, `USDA`, `SCLH`, `SDAH`) are the honest alpha authority;
+the generic actor-role words are not.
+
+The diagnostic aggregate publishes 17 documents, 51 attempts, 90 relation/stratum rows, 999,551 baseline and
+993,116 transformed proof claims, 23,825,688 compared leaf values, and descriptive 95% Wilson intervals. Missing
+prospective `cpu-isa` and `register-ip` categories remain zero-denominator unmeasurable. A 14/14 mutation suite
+rejects attempt omission, identity overlap, state laundering, interval drift, absolute paths, tool drift, and
+the original eight contract faults. No held-out label, outcome, interval, or threshold entered production.
+
+The active leaf now owns a fail-closed oracle repair: normalize only the declared identity-bound stem; derive
+alpha exclusively from typed opaque declarations; give an absent eligible catalog its own unmeasurable
+disposition; and rerun/recompare before making any held-out claim. The initial machine evidence stays durable in
+Git history so the repair cannot erase the discovery.

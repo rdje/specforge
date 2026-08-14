@@ -14,6 +14,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/agent-surface-fidelity-measurement.md](../../docs/research/agent-surface-fidelity-measurement.md) | Agent-surface fidelity — measured baseline and design (`KG-ISF-COMPLETENESS.1`) |
 | [docs/research/behavior-temporal-lowering-completeness-78doc.md](../../docs/research/behavior-temporal-lowering-completeness-78doc.md) | Behavior/temporal lowering completeness — re-assessment on the broader 78-doc corpus |
 | [docs/research/behavioral-genericity-qualification-design.md](../../docs/research/behavioral-genericity-qualification-design.md) | Behavioral-genericity qualification design |
+| [docs/research/behavioral-held-out-initial-run.md](../../docs/research/behavioral-held-out-initial-run.md) | Behavioral held-out initial run — fail-closed diagnostic |
 | [docs/research/cat3-topology-capture-recall-measurement.md](../../docs/research/cat3-topology-capture-recall-measurement.md) | Cat-3 topology-capture recall measurement — `DOC-INTENT-TAXONOMY.4c.i` |
 | [docs/research/cat3-topology-isf-lowering-decision.md](../../docs/research/cat3-topology-isf-lowering-decision.md) | Cat-3 (platform / system-IP topology & integration) ISF-lowering decision packet — `DOC-INTENT-TAXONOMY.4c` |
 | [docs/research/cat4-csr-bit-position-recovery-measurement.md](../../docs/research/cat4-csr-bit-position-recovery-measurement.md) | Cat-4 RISC-V CSR bit-position recovery — feasibility measurement (`DOC-INTENT-TAXONOMY.4d.i`) |

@@ -21,7 +21,9 @@ use crate::ir::semantic::SemanticIr;
 use crate::ir::source::{SourceIr, inspect_docling_runtime};
 
 const BEHAVIORAL_SCHEMA_VERSION: u32 = 3;
+const HELD_OUT_SCHEMA_VERSION: u32 = 1;
 const CONTRACT_PATH: &str = "doctrine/production_genericity/behavioral_qualification.json";
+const POPULATION_PATH: &str = "doctrine/production_genericity/behavioral_population.tsv";
 const REVIEW_RECIPE_MANIFEST_PATH: &str =
     "doctrine/production_genericity/reviewed_recipe_manifest.json";
 const REVIEW_RECIPE_ROOT: &str = "doctrine/production_genericity/reviewed_recipes";
@@ -29,6 +31,7 @@ const NEGATIVE_SENSITIVITY_MATRIX_PATH: &str =
     "doctrine/production_genericity/semantic_negative_matrix.json";
 const TEMP_ROOT: &str = ".project-data/tmp";
 const EVIDENCE_FILE: &str = "behavioral_evidence.json";
+pub const HELD_OUT_EVIDENCE_FILE: &str = "behavioral_holdout_evidence.json";
 const GROUPED_INTERFACE_PREFIX: &str = "semantic channel inferred from grouped interface signals: ";
 const REVIEWED_RECIPE_SCHEMA_VERSION: u32 = 1;
 const REVIEWED_COMPLEMENT: &str = "all_unlisted_leaf_values_and_all_proof_topology_exact";
@@ -130,7 +133,7 @@ impl BehavioralStage {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum BehavioralRelation {
     UnchangedSource,
@@ -386,6 +389,137 @@ pub struct BehavioralQualificationAttempt {
     pub report: Option<BehavioralQualificationReport>,
 }
 
+/// One deterministic execution request for the frozen prospective held-out population.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct HeldOutQualificationRequest {
+    pub output_root: PathBuf,
+    pub prior_memory: PathBuf,
+    pub production_revision: String,
+    pub transform_seed: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HeldOutSplitEvidence {
+    pub selection_boundary_commit: String,
+    pub calibration_document_keys: Vec<String>,
+    pub prospective_document_keys: Vec<String>,
+    pub overlapping_document_keys: Vec<String>,
+    pub overlapping_source_sha256: Vec<String>,
+    pub overlapping_normalized_markdown_sha256: Vec<String>,
+    pub identity_disjoint: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HeldOutDocumentEvidence {
+    pub document_key: String,
+    pub source_origin: String,
+    pub source_locator: String,
+    pub source_sha256: String,
+    pub normalized_markdown_path: String,
+    pub normalized_markdown_sha256: String,
+    pub vendor: String,
+    pub family: String,
+    pub category: String,
+    pub layout: String,
+    pub vendor_novel: bool,
+    pub family_novel: bool,
+    pub text_semantic_records: usize,
+    pub text_intent_records: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HeldOutAttemptEvidence {
+    pub document_key: String,
+    pub relation: BehavioralRelation,
+    pub input_plane: String,
+    pub transform_seed: u64,
+    pub state: BehavioralRunState,
+    pub failure_id: Option<String>,
+    pub identity: Option<EvidenceIdentity>,
+    pub coverage: Option<BehavioralCoverage>,
+    pub completed_stages: usize,
+    pub all_completed_stages_passed: bool,
+    pub attempt_report_sha256: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HeldOutUncertainty {
+    pub method: String,
+    pub confidence_basis_points: Option<u32>,
+    pub sample_size: usize,
+    pub pass_numerator: usize,
+    pub point_estimate_parts_per_million: Option<u32>,
+    pub lower_parts_per_million: Option<u32>,
+    pub upper_parts_per_million: Option<u32>,
+    pub scope_limit: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HeldOutStratumOutcome {
+    pub relation: BehavioralRelation,
+    pub dimension: String,
+    pub value: String,
+    pub document_keys: Vec<String>,
+    pub declared_documents: usize,
+    pub passes: usize,
+    pub failures: usize,
+    pub unmeasurable: usize,
+    pub invalid: usize,
+    pub state: BehavioralRunState,
+    pub limitation: Option<String>,
+    pub uncertainty: HeldOutUncertainty,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HeldOutAggregateCoverage {
+    pub declared_documents: Vec<String>,
+    pub attempted_documents: Vec<String>,
+    pub fully_completed_documents: Vec<String>,
+    pub partially_completed_documents: Vec<String>,
+    pub unmeasurable_documents: Vec<String>,
+    pub invalid_documents: Vec<String>,
+    pub declared_attempts: usize,
+    pub pass_attempts: usize,
+    pub fail_attempts: usize,
+    pub unmeasurable_attempts: usize,
+    pub invalid_attempts: usize,
+    pub baseline_top_level_fields: usize,
+    pub transformed_top_level_fields: usize,
+    pub baseline_proof_claims: usize,
+    pub transformed_proof_claims: usize,
+    pub compared_leaf_values: usize,
+    pub expected_deltas: usize,
+    pub observed_deltas: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HeldOutQualificationReport {
+    pub schema_version: u32,
+    pub owner: String,
+    pub contract_path: String,
+    pub contract_sha256: String,
+    pub population_path: String,
+    pub population_sha256: String,
+    pub production_revision: String,
+    pub prior_memory_sha256: String,
+    pub tool_sha256: String,
+    pub leakage_boundary: String,
+    pub eligible_relations: Vec<BehavioralRelation>,
+    pub split: HeldOutSplitEvidence,
+    pub documents: Vec<HeldOutDocumentEvidence>,
+    pub attempts: Vec<HeldOutAttemptEvidence>,
+    pub strata: Vec<HeldOutStratumOutcome>,
+    pub coverage: HeldOutAggregateCoverage,
+    pub final_signoff_deferred: bool,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum NegativeControlKind {
@@ -436,6 +570,51 @@ struct PipelineArtifacts {
     evidence_ir: EvidenceIr,
     semantic_ir: SemanticIr,
     document_key: String,
+}
+
+#[derive(Debug, Clone)]
+struct BehavioralPopulationRow {
+    document_key: String,
+    source_origin: String,
+    source_locator: String,
+    source_sha256: String,
+    normalized_markdown_path: String,
+    normalized_markdown_sha256: String,
+    vendor: String,
+    family: String,
+    category: String,
+    layout: String,
+    review_role: String,
+    text_semantic_records: usize,
+    text_intent_records: usize,
+}
+
+#[derive(Debug, Deserialize)]
+struct HeldOutContractAuthority {
+    schema_version: u32,
+    owner: String,
+    selection_boundary_commit: String,
+    declarations: BTreeMap<String, String>,
+    population_assertions: BTreeMap<String, usize>,
+    frozen_census: HeldOutFrozenCensus,
+    relations: Vec<HeldOutRelationAuthority>,
+    held_out_policy: BTreeMap<String, Value>,
+}
+
+#[derive(Debug, Deserialize)]
+struct HeldOutFrozenCensus {
+    prior_memory: HeldOutFileIdentity,
+}
+
+#[derive(Debug, Deserialize)]
+struct HeldOutFileIdentity {
+    path: String,
+    sha256: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct HeldOutRelationAuthority {
+    relation_id: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -649,6 +828,795 @@ fn classify_attempt_error(detail: &str) -> (BehavioralRunState, &'static str) {
         }
     }
     (BehavioralRunState::Invalid, "stale_contract_or_population")
+}
+
+/// Execute every recipe-free relation over the frozen prospective population and emit one
+/// aggregate whose labels and outcomes remain downstream of the production core.
+pub fn qualify_held_out_population(
+    request: &HeldOutQualificationRequest,
+) -> Result<HeldOutQualificationReport> {
+    validate_held_out_request(request)?;
+    let repository = crate::project_data::repository_root()?;
+    let contract_path = repository.join(CONTRACT_PATH);
+    let population_path = repository.join(POPULATION_PATH);
+    let contract_bytes = fs::read(&contract_path)?;
+    let population_bytes = fs::read(&population_path)?;
+    let contract: HeldOutContractAuthority = serde_json::from_slice(&contract_bytes)?;
+    validate_held_out_contract(&contract)?;
+    let rows = parse_behavioral_population(&population_bytes)?;
+    validate_behavioral_population(&rows, &contract)?;
+
+    let calibration = rows
+        .iter()
+        .filter(|row| row.review_role == "reviewed_calibration")
+        .collect::<Vec<_>>();
+    let prospective = rows
+        .iter()
+        .filter(|row| row.review_role == "prospective_holdout")
+        .collect::<Vec<_>>();
+    let calibration_vendors = calibration
+        .iter()
+        .map(|row| row.vendor.as_str())
+        .collect::<BTreeSet<_>>();
+    let calibration_families = calibration
+        .iter()
+        .map(|row| row.family.as_str())
+        .collect::<BTreeSet<_>>();
+
+    let split = held_out_split_evidence(
+        &contract.selection_boundary_commit,
+        &calibration,
+        &prospective,
+    );
+    if !split.identity_disjoint {
+        return Err(invalid(
+            "stale_contract_or_population: calibration and prospective identities overlap",
+        ));
+    }
+
+    let documents = prospective
+        .iter()
+        .map(|row| HeldOutDocumentEvidence {
+            document_key: row.document_key.clone(),
+            source_origin: row.source_origin.clone(),
+            source_locator: row.source_locator.clone(),
+            source_sha256: row.source_sha256.clone(),
+            normalized_markdown_path: row.normalized_markdown_path.clone(),
+            normalized_markdown_sha256: row.normalized_markdown_sha256.clone(),
+            vendor: row.vendor.clone(),
+            family: row.family.clone(),
+            category: row.category.clone(),
+            layout: row.layout.clone(),
+            vendor_novel: !calibration_vendors.contains(row.vendor.as_str()),
+            family_novel: !calibration_families.contains(row.family.as_str()),
+            text_semantic_records: row.text_semantic_records,
+            text_intent_records: row.text_intent_records,
+        })
+        .collect::<Vec<_>>();
+
+    let prior_memory =
+        resolve_repository_file(&repository, &request.prior_memory, "held-out prior memory")?;
+    if request.prior_memory != Path::new(&contract.frozen_census.prior_memory.path) {
+        return Err(invalid(
+            "stale_contract_or_population: held-out prior-memory path differs from contract",
+        ));
+    }
+    let prior_memory_sha256 = sha256_file(&prior_memory)?;
+    if prior_memory_sha256 != contract.frozen_census.prior_memory.sha256 {
+        return Err(invalid(
+            "stale_contract_or_population: held-out prior-memory digest differs from contract",
+        ));
+    }
+
+    let relations = vec![
+        BehavioralRelation::UnchangedSource,
+        BehavioralRelation::AdversarialIdentity,
+        BehavioralRelation::SymbolAlpha,
+    ];
+    let mut attempts = Vec::with_capacity(prospective.len() * relations.len());
+    for (document_ordinal, row) in prospective.iter().enumerate() {
+        for (relation_ordinal, relation) in relations.iter().copied().enumerate() {
+            let transform_seed = request
+                .transform_seed
+                .wrapping_add((document_ordinal as u64) << 8)
+                .wrapping_add(relation_ordinal as u64);
+            let source_authority = held_out_source_authority(&repository, row, relation)?;
+            let expected_source_sha256 = match relation {
+                BehavioralRelation::SymbolAlpha => row.normalized_markdown_sha256.clone(),
+                _ => row.source_sha256.clone(),
+            };
+            let attempt_root = request
+                .output_root
+                .join("attempts")
+                .join(relation.as_str())
+                .join(&row.document_key);
+            eprintln!(
+                "behavioral holdout: {}/{} {} {}",
+                attempts.len() + 1,
+                prospective.len() * relations.len(),
+                row.document_key,
+                relation.as_str()
+            );
+            let attempt = attempt_behavioral_relation(&BehavioralQualificationRequest {
+                relation,
+                source_authority,
+                expected_source_sha256,
+                output_root: attempt_root.clone(),
+                prior_memory: request.prior_memory.clone(),
+                production_revision: request.production_revision.clone(),
+                transform_seed,
+                review_recipe_id: None,
+            });
+            let attempt_report_sha256 = if attempt.report.is_some() {
+                let evidence_path = repository.join(&attempt_root).join(EVIDENCE_FILE);
+                Some(sha256_file(&evidence_path).map_err(|error| {
+                    invalid(format!(
+                        "partial_or_escaped_run: completed held-out attempt has no readable evidence: {error}"
+                    ))
+                })?)
+            } else {
+                None
+            };
+            let identity = attempt
+                .report
+                .as_ref()
+                .map(|report| report.identity.clone());
+            let coverage = attempt
+                .report
+                .as_ref()
+                .map(|report| report.coverage.clone());
+            let completed_stages = attempt
+                .report
+                .as_ref()
+                .map_or(0, |report| report.stages.len());
+            let all_completed_stages_passed = attempt.report.as_ref().is_some_and(|report| {
+                report.stages.len() == BehavioralStage::ALL.len()
+                    && report.stages.iter().all(|stage| stage.passed)
+            });
+            attempts.push(HeldOutAttemptEvidence {
+                document_key: row.document_key.clone(),
+                relation,
+                input_plane: relation.input_plane().to_string(),
+                transform_seed,
+                state: attempt.state,
+                failure_id: attempt.failure_id,
+                identity,
+                coverage,
+                completed_stages,
+                all_completed_stages_passed,
+                attempt_report_sha256,
+            });
+        }
+    }
+
+    if attempts.len() != prospective.len() * relations.len() {
+        return Err(invalid(
+            "partial_or_escaped_run: held-out attempt matrix is incomplete",
+        ));
+    }
+    let strata = held_out_strata(&documents, &attempts, &relations);
+    let coverage = aggregate_held_out_coverage(&documents, &attempts, relations.len());
+    let tool_sha256 = sha256_file(&repository.join(file!()))?;
+    let leakage_boundary = contract
+        .held_out_policy
+        .get("leakage_rule")
+        .and_then(Value::as_str)
+        .ok_or_else(|| invalid("stale_contract_or_population: held-out leakage rule is absent"))?
+        .to_string();
+    let report = HeldOutQualificationReport {
+        schema_version: HELD_OUT_SCHEMA_VERSION,
+        owner: "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii".to_string(),
+        contract_path: CONTRACT_PATH.to_string(),
+        contract_sha256: sha256_bytes(&contract_bytes),
+        population_path: POPULATION_PATH.to_string(),
+        population_sha256: sha256_bytes(&population_bytes),
+        production_revision: request.production_revision.clone(),
+        prior_memory_sha256,
+        tool_sha256,
+        leakage_boundary,
+        eligible_relations: relations,
+        split,
+        documents,
+        attempts,
+        strata,
+        coverage,
+        final_signoff_deferred: true,
+    };
+    let mut evidence_bytes = serde_json::to_vec_pretty(&report)?;
+    evidence_bytes.push(b'\n');
+    write_new(
+        &repository
+            .join(&request.output_root)
+            .join(HELD_OUT_EVIDENCE_FILE),
+        &evidence_bytes,
+    )?;
+    Ok(report)
+}
+
+fn validate_held_out_request(request: &HeldOutQualificationRequest) -> Result<()> {
+    validate_relative_path(&request.output_root, "held-out output root")?;
+    if !request.output_root.starts_with(TEMP_ROOT) || request.output_root == Path::new(TEMP_ROOT) {
+        return Err(invalid(format!(
+            "held-out output root must be a child of {TEMP_ROOT}: {}",
+            request.output_root.display()
+        )));
+    }
+    validate_relative_path(&request.prior_memory, "held-out prior memory")?;
+    if !is_lower_hex(&request.production_revision, 40) {
+        return Err(invalid(
+            "held-out production revision must be a full Git id",
+        ));
+    }
+    let repository = crate::project_data::repository_root()?;
+    if repository.join(&request.output_root).exists() {
+        return Err(invalid(format!(
+            "held-out output root already exists: {}",
+            request.output_root.display()
+        )));
+    }
+    Ok(())
+}
+
+fn validate_held_out_contract(contract: &HeldOutContractAuthority) -> Result<()> {
+    if contract.schema_version != 1
+        || contract.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f"
+        || !is_lower_hex(&contract.selection_boundary_commit, 40)
+        || contract
+            .declarations
+            .get("current_population")
+            .map(String::as_str)
+            != Some(POPULATION_PATH)
+        || contract
+            .population_assertions
+            .get("prospective_holdout_documents")
+            .copied()
+            != Some(17)
+    {
+        return Err(invalid(
+            "stale_contract_or_population: held-out contract identity or denominator differs",
+        ));
+    }
+    let relation_ids = contract
+        .relations
+        .iter()
+        .map(|relation| relation.relation_id.as_str())
+        .collect::<BTreeSet<_>>();
+    for expected in ["unchanged_source", "adversarial_identity", "symbol_alpha"] {
+        if !relation_ids.contains(expected) {
+            return Err(invalid(format!(
+                "stale_contract_or_population: held-out relation is absent: {expected}"
+            )));
+        }
+    }
+    if !contract
+        .held_out_policy
+        .get("leakage_rule")
+        .and_then(Value::as_str)
+        .is_some_and(|rule| rule.contains("Production core cannot read"))
+    {
+        return Err(invalid(
+            "stale_contract_or_population: held-out leakage boundary differs",
+        ));
+    }
+    Ok(())
+}
+
+fn parse_behavioral_population(bytes: &[u8]) -> Result<Vec<BehavioralPopulationRow>> {
+    const HEADER: &str = "document_key\tsource_origin\tsource_locator\tsource_sha256\tsource_bytes\tnormalized_markdown_path\tnormalized_markdown_sha256\tpages\tvisual_assets\tstructured_tables\tcontent_elements\tsections\tvendor\tfamily\tcategory\tlayout\treview_role\ttext_semantic_records\ttext_intent_records";
+    let text = std::str::from_utf8(bytes)
+        .map_err(|_| invalid("stale_contract_or_population: population TSV is not UTF-8"))?;
+    let mut lines = text.lines();
+    if lines.next() != Some(HEADER) {
+        return Err(invalid(
+            "stale_contract_or_population: population TSV header differs",
+        ));
+    }
+    let mut rows = Vec::new();
+    for (ordinal, line) in lines.enumerate() {
+        if line.is_empty() {
+            return Err(invalid(format!(
+                "stale_contract_or_population: population TSV has an empty row at {}",
+                ordinal + 2
+            )));
+        }
+        let fields = line.split('\t').collect::<Vec<_>>();
+        if fields.len() != 19 || fields.iter().any(|field| field.is_empty()) {
+            return Err(invalid(format!(
+                "stale_contract_or_population: population row {} has incomplete fields",
+                ordinal + 2
+            )));
+        }
+        let parse_count = |index: usize, label: &str| -> Result<usize> {
+            fields[index].parse::<usize>().map_err(|_| {
+                invalid(format!(
+                    "stale_contract_or_population: population row {} has invalid {label}",
+                    ordinal + 2
+                ))
+            })
+        };
+        rows.push(BehavioralPopulationRow {
+            document_key: fields[0].to_string(),
+            source_origin: fields[1].to_string(),
+            source_locator: fields[2].to_string(),
+            source_sha256: fields[3].to_string(),
+            normalized_markdown_path: fields[5].to_string(),
+            normalized_markdown_sha256: fields[6].to_string(),
+            vendor: fields[12].to_string(),
+            family: fields[13].to_string(),
+            category: fields[14].to_string(),
+            layout: fields[15].to_string(),
+            review_role: fields[16].to_string(),
+            text_semantic_records: parse_count(17, "SemanticIR count")?,
+            text_intent_records: parse_count(18, "IntentIR count")?,
+        });
+    }
+    Ok(rows)
+}
+
+fn validate_behavioral_population(
+    rows: &[BehavioralPopulationRow],
+    contract: &HeldOutContractAuthority,
+) -> Result<()> {
+    let keys = rows
+        .iter()
+        .map(|row| row.document_key.as_str())
+        .collect::<Vec<_>>();
+    let unique = keys.iter().copied().collect::<BTreeSet<_>>();
+    let prospective = rows
+        .iter()
+        .filter(|row| row.review_role == "prospective_holdout")
+        .count();
+    let calibration = rows
+        .iter()
+        .filter(|row| row.review_role == "reviewed_calibration")
+        .count();
+    if rows.len() != 24
+        || unique.len() != rows.len()
+        || !keys.windows(2).all(|window| window[0] < window[1])
+        || prospective != 17
+        || calibration != 7
+        || rows.iter().any(|row| {
+            !matches!(
+                row.review_role.as_str(),
+                "reviewed_calibration" | "prospective_holdout"
+            )
+        })
+        || contract
+            .population_assertions
+            .get("current_documents")
+            .copied()
+            != Some(rows.len())
+        || contract
+            .population_assertions
+            .get("reviewed_current_overlap")
+            .copied()
+            != Some(calibration)
+    {
+        return Err(invalid(
+            "stale_contract_or_population: held-out population identity or split differs",
+        ));
+    }
+    for row in rows {
+        if !is_lower_hex(&row.source_sha256, 64)
+            || !is_lower_hex(&row.normalized_markdown_sha256, 64)
+            || !row
+                .document_key
+                .bytes()
+                .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
+        {
+            return Err(invalid(format!(
+                "stale_contract_or_population: population identity is invalid for {}",
+                row.document_key
+            )));
+        }
+    }
+    Ok(())
+}
+
+fn held_out_split_evidence(
+    selection_boundary_commit: &str,
+    calibration: &[&BehavioralPopulationRow],
+    prospective: &[&BehavioralPopulationRow],
+) -> HeldOutSplitEvidence {
+    let calibration_keys = calibration
+        .iter()
+        .map(|row| row.document_key.clone())
+        .collect::<BTreeSet<_>>();
+    let prospective_keys = prospective
+        .iter()
+        .map(|row| row.document_key.clone())
+        .collect::<BTreeSet<_>>();
+    let calibration_sources = calibration
+        .iter()
+        .map(|row| row.source_sha256.clone())
+        .collect::<BTreeSet<_>>();
+    let prospective_sources = prospective
+        .iter()
+        .map(|row| row.source_sha256.clone())
+        .collect::<BTreeSet<_>>();
+    let calibration_markdown = calibration
+        .iter()
+        .map(|row| row.normalized_markdown_sha256.clone())
+        .collect::<BTreeSet<_>>();
+    let prospective_markdown = prospective
+        .iter()
+        .map(|row| row.normalized_markdown_sha256.clone())
+        .collect::<BTreeSet<_>>();
+    let overlapping_document_keys = calibration_keys
+        .intersection(&prospective_keys)
+        .cloned()
+        .collect::<Vec<_>>();
+    let overlapping_source_sha256 = calibration_sources
+        .intersection(&prospective_sources)
+        .cloned()
+        .collect::<Vec<_>>();
+    let overlapping_normalized_markdown_sha256 = calibration_markdown
+        .intersection(&prospective_markdown)
+        .cloned()
+        .collect::<Vec<_>>();
+    HeldOutSplitEvidence {
+        selection_boundary_commit: selection_boundary_commit.to_string(),
+        calibration_document_keys: calibration_keys.into_iter().collect(),
+        prospective_document_keys: prospective_keys.into_iter().collect(),
+        identity_disjoint: overlapping_document_keys.is_empty()
+            && overlapping_source_sha256.is_empty()
+            && overlapping_normalized_markdown_sha256.is_empty(),
+        overlapping_document_keys,
+        overlapping_source_sha256,
+        overlapping_normalized_markdown_sha256,
+    }
+}
+
+fn held_out_source_authority(
+    repository: &Path,
+    row: &BehavioralPopulationRow,
+    relation: BehavioralRelation,
+) -> Result<PathBuf> {
+    if relation == BehavioralRelation::SymbolAlpha {
+        return Ok(PathBuf::from(&row.normalized_markdown_path));
+    }
+    if row.source_origin == "repository_owned" {
+        return Ok(PathBuf::from(&row.source_locator));
+    }
+    if row.source_origin != "external_input" {
+        return Err(invalid(format!(
+            "stale_contract_or_population: unsupported held-out source origin for {}",
+            row.document_key
+        )));
+    }
+    let source_ir_path = repository
+        .join("generated/source_ir")
+        .join(&row.document_key)
+        .join("source_ir.json");
+    let source_ir: Value = serde_json::from_slice(&fs::read(&source_ir_path).map_err(|error| {
+        invalid(format!(
+            "stale_contract_or_population: held-out SourceIR authority is unavailable for {}: {error}",
+            row.document_key
+        ))
+    })?)?;
+    let canonical = source_ir
+        .pointer("/source/canonical_path")
+        .and_then(Value::as_str)
+        .ok_or_else(|| {
+            invalid(format!(
+                "stale_contract_or_population: held-out SourceIR has no canonical source for {}",
+                row.document_key
+            ))
+        })?;
+    if Path::new(canonical)
+        .file_name()
+        .and_then(|value| value.to_str())
+        != Some(row.source_locator.as_str())
+    {
+        return Err(invalid(format!(
+            "stale_contract_or_population: held-out portable source authority differs for {}",
+            row.document_key
+        )));
+    }
+    Ok(PathBuf::from(canonical))
+}
+
+fn held_out_strata(
+    documents: &[HeldOutDocumentEvidence],
+    attempts: &[HeldOutAttemptEvidence],
+    relations: &[BehavioralRelation],
+) -> Vec<HeldOutStratumOutcome> {
+    let mut dimensions = BTreeMap::<String, BTreeSet<String>>::new();
+    dimensions
+        .entry("overall".to_string())
+        .or_default()
+        .insert("all".to_string());
+    for document in documents {
+        dimensions
+            .entry("vendor".to_string())
+            .or_default()
+            .insert(document.vendor.clone());
+        dimensions
+            .entry("family".to_string())
+            .or_default()
+            .insert(document.family.clone());
+    }
+    dimensions.insert(
+        "vendor_novelty".to_string(),
+        ["seen_in_calibration", "novel"]
+            .into_iter()
+            .map(str::to_string)
+            .collect(),
+    );
+    dimensions.insert(
+        "family_novelty".to_string(),
+        ["seen_in_calibration", "novel"]
+            .into_iter()
+            .map(str::to_string)
+            .collect(),
+    );
+    dimensions.insert(
+        "category".to_string(),
+        [
+            "cpu-isa",
+            "methodology-guide",
+            "physical-link",
+            "platform-system-ip",
+            "register-ip",
+            "wire-protocol",
+        ]
+        .into_iter()
+        .map(str::to_string)
+        .collect(),
+    );
+    dimensions.insert(
+        "layout".to_string(),
+        ["compact", "medium", "long"]
+            .into_iter()
+            .map(str::to_string)
+            .collect(),
+    );
+
+    let mut outcomes = Vec::new();
+    for relation in relations {
+        for (dimension, values) in &dimensions {
+            for value in values {
+                let document_keys = documents
+                    .iter()
+                    .filter(|document| held_out_document_in_stratum(document, dimension, value))
+                    .map(|document| document.document_key.clone())
+                    .collect::<Vec<_>>();
+                let selected = attempts
+                    .iter()
+                    .filter(|attempt| {
+                        attempt.relation == *relation
+                            && document_keys.contains(&attempt.document_key)
+                    })
+                    .collect::<Vec<_>>();
+                let passes = selected
+                    .iter()
+                    .filter(|attempt| attempt.state == BehavioralRunState::Pass)
+                    .count();
+                let failures = selected
+                    .iter()
+                    .filter(|attempt| attempt.state == BehavioralRunState::Fail)
+                    .count();
+                let unmeasurable = selected
+                    .iter()
+                    .filter(|attempt| attempt.state == BehavioralRunState::Unmeasurable)
+                    .count();
+                let invalid_count = selected
+                    .iter()
+                    .filter(|attempt| attempt.state == BehavioralRunState::Invalid)
+                    .count();
+                let state = if invalid_count > 0 {
+                    BehavioralRunState::Invalid
+                } else if failures > 0 {
+                    BehavioralRunState::Fail
+                } else if document_keys.is_empty() || unmeasurable > 0 {
+                    BehavioralRunState::Unmeasurable
+                } else {
+                    BehavioralRunState::Pass
+                };
+                let limitation = if document_keys.is_empty() {
+                    Some("no_prospective_denominator".to_string())
+                } else if invalid_count > 0 {
+                    Some("invalid_attempts_present".to_string())
+                } else if unmeasurable > 0 {
+                    Some("unmeasurable_attempts_excluded_from_interval".to_string())
+                } else {
+                    None
+                };
+                outcomes.push(HeldOutStratumOutcome {
+                    relation: *relation,
+                    dimension: dimension.clone(),
+                    value: value.clone(),
+                    document_keys,
+                    declared_documents: selected.len(),
+                    passes,
+                    failures,
+                    unmeasurable,
+                    invalid: invalid_count,
+                    state,
+                    limitation,
+                    uncertainty: held_out_uncertainty(passes, passes + failures),
+                });
+            }
+        }
+    }
+    outcomes
+}
+
+fn held_out_document_in_stratum(
+    document: &HeldOutDocumentEvidence,
+    dimension: &str,
+    value: &str,
+) -> bool {
+    match dimension {
+        "overall" => value == "all",
+        "vendor" => document.vendor == value,
+        "family" => document.family == value,
+        "category" => document.category == value,
+        "layout" => document.layout == value,
+        "vendor_novelty" => {
+            document.vendor_novel == (value == "novel")
+                && matches!(value, "novel" | "seen_in_calibration")
+        }
+        "family_novelty" => {
+            document.family_novel == (value == "novel")
+                && matches!(value, "novel" | "seen_in_calibration")
+        }
+        _ => false,
+    }
+}
+
+fn held_out_uncertainty(passes: usize, completed: usize) -> HeldOutUncertainty {
+    const SCOPE: &str = "Descriptive interval over completed documents in this frozen, non-random prospective stratum; it is not a claim about specifications outside the frozen population.";
+    if completed == 0 {
+        return HeldOutUncertainty {
+            method: "unavailable_no_completed_denominator".to_string(),
+            confidence_basis_points: None,
+            sample_size: 0,
+            pass_numerator: passes,
+            point_estimate_parts_per_million: None,
+            lower_parts_per_million: None,
+            upper_parts_per_million: None,
+            scope_limit: SCOPE.to_string(),
+        };
+    }
+    let n = completed as f64;
+    let proportion = passes as f64 / n;
+    let z = 1.959_963_984_540_054_f64;
+    let z_squared = z * z;
+    let denominator = 1.0 + z_squared / n;
+    let center = (proportion + z_squared / (2.0 * n)) / denominator;
+    let margin = z * ((proportion * (1.0 - proportion) / n + z_squared / (4.0 * n * n)).sqrt())
+        / denominator;
+    let to_parts_per_million =
+        |value: f64| -> u32 { (value.clamp(0.0, 1.0) * 1_000_000.0).round() as u32 };
+    HeldOutUncertainty {
+        method: "wilson_score_95_percent".to_string(),
+        confidence_basis_points: Some(9_500),
+        sample_size: completed,
+        pass_numerator: passes,
+        point_estimate_parts_per_million: Some(to_parts_per_million(proportion)),
+        lower_parts_per_million: Some(to_parts_per_million(center - margin)),
+        upper_parts_per_million: Some(to_parts_per_million(center + margin)),
+        scope_limit: SCOPE.to_string(),
+    }
+}
+
+fn aggregate_held_out_coverage(
+    documents: &[HeldOutDocumentEvidence],
+    attempts: &[HeldOutAttemptEvidence],
+    relation_count: usize,
+) -> HeldOutAggregateCoverage {
+    let declared_documents = documents
+        .iter()
+        .map(|document| document.document_key.clone())
+        .collect::<Vec<_>>();
+    let attempted_documents = attempts
+        .iter()
+        .map(|attempt| attempt.document_key.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect::<Vec<_>>();
+    let mut fully_completed_documents = Vec::new();
+    let mut partially_completed_documents = Vec::new();
+    let mut unmeasurable_documents = Vec::new();
+    let mut invalid_documents = Vec::new();
+    for document in documents {
+        let document_attempts = attempts
+            .iter()
+            .filter(|attempt| attempt.document_key == document.document_key)
+            .collect::<Vec<_>>();
+        let completed = document_attempts
+            .iter()
+            .filter(|attempt| {
+                matches!(
+                    attempt.state,
+                    BehavioralRunState::Pass | BehavioralRunState::Fail
+                )
+            })
+            .count();
+        if completed == relation_count {
+            fully_completed_documents.push(document.document_key.clone());
+        } else if completed > 0 {
+            partially_completed_documents.push(document.document_key.clone());
+        }
+        if document_attempts
+            .iter()
+            .any(|attempt| attempt.state == BehavioralRunState::Unmeasurable)
+        {
+            unmeasurable_documents.push(document.document_key.clone());
+        }
+        if document_attempts
+            .iter()
+            .any(|attempt| attempt.state == BehavioralRunState::Invalid)
+        {
+            invalid_documents.push(document.document_key.clone());
+        }
+    }
+    let coverages = attempts
+        .iter()
+        .filter_map(|attempt| attempt.coverage.as_ref())
+        .collect::<Vec<_>>();
+    HeldOutAggregateCoverage {
+        declared_documents,
+        attempted_documents,
+        fully_completed_documents,
+        partially_completed_documents,
+        unmeasurable_documents,
+        invalid_documents,
+        declared_attempts: documents.len() * relation_count,
+        pass_attempts: attempts
+            .iter()
+            .filter(|attempt| attempt.state == BehavioralRunState::Pass)
+            .count(),
+        fail_attempts: attempts
+            .iter()
+            .filter(|attempt| attempt.state == BehavioralRunState::Fail)
+            .count(),
+        unmeasurable_attempts: attempts
+            .iter()
+            .filter(|attempt| attempt.state == BehavioralRunState::Unmeasurable)
+            .count(),
+        invalid_attempts: attempts
+            .iter()
+            .filter(|attempt| attempt.state == BehavioralRunState::Invalid)
+            .count(),
+        baseline_top_level_fields: coverages
+            .iter()
+            .map(|coverage| coverage.baseline_top_level_fields)
+            .sum(),
+        transformed_top_level_fields: coverages
+            .iter()
+            .map(|coverage| coverage.transformed_top_level_fields)
+            .sum(),
+        baseline_proof_claims: coverages
+            .iter()
+            .map(|coverage| coverage.baseline_proof_claims)
+            .sum(),
+        transformed_proof_claims: coverages
+            .iter()
+            .map(|coverage| coverage.transformed_proof_claims)
+            .sum(),
+        compared_leaf_values: coverages
+            .iter()
+            .map(|coverage| coverage.compared_leaf_values)
+            .sum(),
+        expected_deltas: coverages
+            .iter()
+            .map(|coverage| {
+                coverage.expected_symbol_deltas
+                    + coverage.expected_reviewed_span_deltas
+                    + coverage.expected_semantic_deltas
+            })
+            .sum(),
+        observed_deltas: coverages
+            .iter()
+            .map(|coverage| {
+                coverage.observed_symbol_deltas
+                    + coverage.observed_reviewed_span_deltas
+                    + coverage.observed_semantic_deltas
+            })
+            .sum(),
+    }
 }
 
 /// Execute the closed comparator-sensitivity matrix declared by conformance authority.
@@ -3753,6 +4721,128 @@ mod tests {
             classify_attempt_error("unknown closed error"),
             (BehavioralRunState::Invalid, "stale_contract_or_population")
         );
+    }
+
+    #[test]
+    fn held_out_population_split_strata_and_uncertainty_are_closed() -> Result<()> {
+        let repository = crate::project_data::repository_root()?;
+        let contract: HeldOutContractAuthority =
+            serde_json::from_slice(&fs::read(repository.join(CONTRACT_PATH))?)?;
+        validate_held_out_contract(&contract)?;
+        let rows = parse_behavioral_population(&fs::read(repository.join(POPULATION_PATH))?)?;
+        validate_behavioral_population(&rows, &contract)?;
+        let calibration = rows
+            .iter()
+            .filter(|row| row.review_role == "reviewed_calibration")
+            .collect::<Vec<_>>();
+        let prospective = rows
+            .iter()
+            .filter(|row| row.review_role == "prospective_holdout")
+            .collect::<Vec<_>>();
+        let split = held_out_split_evidence(
+            &contract.selection_boundary_commit,
+            &calibration,
+            &prospective,
+        );
+        assert!(split.identity_disjoint);
+        assert_eq!(split.calibration_document_keys.len(), 7);
+        assert_eq!(split.prospective_document_keys.len(), 17);
+        assert!(split.overlapping_document_keys.is_empty());
+        assert!(split.overlapping_source_sha256.is_empty());
+        assert!(split.overlapping_normalized_markdown_sha256.is_empty());
+
+        let calibration_vendors = calibration
+            .iter()
+            .map(|row| row.vendor.as_str())
+            .collect::<BTreeSet<_>>();
+        let calibration_families = calibration
+            .iter()
+            .map(|row| row.family.as_str())
+            .collect::<BTreeSet<_>>();
+        let documents = prospective
+            .iter()
+            .map(|row| HeldOutDocumentEvidence {
+                document_key: row.document_key.clone(),
+                source_origin: row.source_origin.clone(),
+                source_locator: row.source_locator.clone(),
+                source_sha256: row.source_sha256.clone(),
+                normalized_markdown_path: row.normalized_markdown_path.clone(),
+                normalized_markdown_sha256: row.normalized_markdown_sha256.clone(),
+                vendor: row.vendor.clone(),
+                family: row.family.clone(),
+                category: row.category.clone(),
+                layout: row.layout.clone(),
+                vendor_novel: !calibration_vendors.contains(row.vendor.as_str()),
+                family_novel: !calibration_families.contains(row.family.as_str()),
+                text_semantic_records: row.text_semantic_records,
+                text_intent_records: row.text_intent_records,
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(documents.iter().filter(|row| row.vendor_novel).count(), 4);
+        assert_eq!(documents.iter().filter(|row| row.family_novel).count(), 13);
+
+        let relations = vec![
+            BehavioralRelation::UnchangedSource,
+            BehavioralRelation::AdversarialIdentity,
+            BehavioralRelation::SymbolAlpha,
+        ];
+        let attempts = documents
+            .iter()
+            .flat_map(|document| {
+                relations
+                    .iter()
+                    .copied()
+                    .map(move |relation| HeldOutAttemptEvidence {
+                        document_key: document.document_key.clone(),
+                        relation,
+                        input_plane: relation.input_plane().to_string(),
+                        transform_seed: 0,
+                        state: if relation == BehavioralRelation::SymbolAlpha
+                            && document.text_semantic_records == 0
+                        {
+                            BehavioralRunState::Unmeasurable
+                        } else {
+                            BehavioralRunState::Pass
+                        },
+                        failure_id: None,
+                        identity: None,
+                        coverage: None,
+                        completed_stages: 0,
+                        all_completed_stages_passed: false,
+                        attempt_report_sha256: None,
+                    })
+            })
+            .collect::<Vec<_>>();
+        let strata = held_out_strata(&documents, &attempts, &relations);
+        assert_eq!(strata.len(), 90);
+        assert_eq!(
+            strata
+                .iter()
+                .filter(|stratum| {
+                    stratum.dimension == "category"
+                        && matches!(stratum.value.as_str(), "cpu-isa" | "register-ip")
+                })
+                .count(),
+            6
+        );
+        assert!(
+            strata
+                .iter()
+                .filter(|stratum| {
+                    stratum.dimension == "category"
+                        && matches!(stratum.value.as_str(), "cpu-isa" | "register-ip")
+                })
+                .all(|stratum| {
+                    stratum.state == BehavioralRunState::Unmeasurable
+                        && stratum.limitation.as_deref() == Some("no_prospective_denominator")
+                        && stratum.uncertainty.sample_size == 0
+                })
+        );
+        let interval = held_out_uncertainty(16, 16);
+        assert_eq!(interval.point_estimate_parts_per_million, Some(1_000_000));
+        assert_eq!(interval.lower_parts_per_million, Some(806_392));
+        assert_eq!(interval.upper_parts_per_million, Some(1_000_000));
+        Ok(())
     }
 
     #[test]

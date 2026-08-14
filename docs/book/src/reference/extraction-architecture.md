@@ -133,8 +133,8 @@ The information-flow layer over that graph is now shipped. A closed 140-row regi
 field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
 rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
 non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
-dependence through 2,248 functions and 11,652 helper edges, then check 11,037 branch/selection/decision sites,
-1,427 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
+dependence through 2,259 functions and 11,737 helper edges, then check 11,153 branch/selection/decision sites,
+1,439 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
 The dependency, inventory, rule, compiled-graph, information-flow, and frozen behavioral-contract checks now run
@@ -156,7 +156,12 @@ as a real semantic negative: ordinary invariance rejects its one assertion/three
 then the exact declared complement passes. A separate nine-class synthetic matrix rejects omission,
 contradiction, relation reversal, value/timing, undeclared-symbol, misleading-name, proof-corruption, and
 disabled-stage faults. Missing/provider/vacuous attempts are unmeasurable; stale/ambiguous/partial attempts are
-invalid. Held-out and complete-population results remain open.
+invalid. The first frozen held-out execution completed 51/51 attempts and publishes 17 documents, 90 strata,
+and descriptive Wilson intervals. Unchanged PDF replay passes 17/17. Adversarial identity fails 17/17 only at an
+omitted filename-derived stem normalization; alpha is 0 pass / 15 fail / one unmeasurable / one invalid because
+the transform incorrectly treated meaningful schema-role prose as opaque symbols. These are conformance-oracle
+defects, retained as a diagnostic checkpoint. Narrow repair and corrected held-out qualification remain open,
+as do complete-population results and production-genericity signoff.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively

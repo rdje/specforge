@@ -4,6 +4,25 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-14 — initial behavioral holdout diagnostic; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`)
+
+- `specforge-conformance::behavioral_genericity` now executes the frozen 17-document prospective split and
+  emits exact document, attempt, coverage, split, novelty, proof, delta, and stratum evidence. The initial run
+  completed 51/51 attempts and 90 strata with descriptive integer-ppm Wilson intervals.
+- Unchanged PDF replay passes 17/17. Adversarial identity fails 17/17 only at the filename-derived
+  `stable_artifact_stem` and its proof premise, exposing an omitted declared-identity normalization in the
+  comparator rather than a production semantic delta.
+- Symbol alpha is 0 pass / 15 fail / one unmeasurable / one invalid because the conformance transform admits
+  schema actor/state-like prose values and globally renames meaningful roles. The I2C row has six independently
+  declared signal identities; other non-vacuous rows have no demonstrated opaque catalog and cannot form this
+  relation honestly.
+- The Python evidence checker independently rebuilds every denominator, count, disposition, interval, and split
+  invariant; 14/14 controlled mutations reject. `.f.iii` remains active for narrow oracle repair and corrected
+  requalification; this checkpoint changes no production package and establishes no genericity signoff.
+- The added conformance executor and aggregation paths move the independently derived compiled-flow census to
+  2,259 functions, 11,737 helper edges, 11,153 decision sites, and 1,439 sensitive macros. All 11 structural and
+  behavioral-contract components still pass without introducing a core-to-conformance dependency.
+
 ## Session update (2026-08-14 — behavioral semantic-negative sensitivity; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`)
 
 - The downstream `specforge-conformance::behavioral_genericity` harness now supports all six frozen relations.

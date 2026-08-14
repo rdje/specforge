@@ -100,13 +100,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
             "metrics" : {
-               "bytes" : 22685,
+               "bytes" : 24498,
                "line_bytes" : 359,
-               "lines" : 260
+               "lines" : 276
             },
             "part_id" : "behavioral-qualification",
             "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-            "sha256" : "8d0888edc7ccdb342e2e418473e51aad0dee9b20908455db8f7457c69e058d80",
+            "sha256" : "73f0dd6cff3c32c4173a082f2ea06f50e831aeca061259f11bb9a04144483c90",
             "state" : "active"
          }
       ],

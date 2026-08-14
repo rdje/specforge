@@ -1,3 +1,26 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects
+
+- Added the frozen 17-document held-out executor and a complete 51-attempt machine report spanning unchanged
+  PDF replay, adversarial identity, and normalized-text symbol alpha over 90 relation/stratum rows.
+- Published the diagnostic result without laundering it: unchanged replay passes 17/17; adversarial identity is
+  0/17; alpha is 0 pass / 15 fail / one unmeasurable / one invalid; absent prospective `cpu-isa` and
+  `register-ip` categories remain zero-denominator unmeasurable.
+- Root-caused the adversarial failures to one omitted identity normalization (`stable_artifact_stem` plus its
+  proof premise), and the alpha failures to an overbroad conformance transform that renamed semantic role words
+  as if they were opaque symbols. Neither defect is production genericity evidence.
+- Added exact split, attempt, aggregate, disposition, stratum, and descriptive Wilson-interval validation plus
+  six held-out evidence mutations. The complete contract mutation suite passes 14/14; no absolute path or
+  held-out label/result/threshold reaches production.
+- Fixed an incidental fact-catalog verifier contradiction exposed by the required retrieval card. Its schema
+  now derives the permitted output count from the already-authoritative six-part profile plus one landing,
+  instead of rejecting the fifth valid title part at a stale five-output literal; no capacity moved.
+- Refreshed the exact compiled-flow snapshot to 2,259 functions, 11,737 helper edges, 11,153 decision sites,
+  and 1,439 semantic macros; the complete 11-component production-genericity wrapper passes.
+- Passed full CI: all nine doctrines including exact chain currency, 1,970 Rust tests / eight intentional
+  ignores / zero failures, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook, and final locality.
+- Kept `.f.iii` in progress with a task-owned fail-closed remediation. The initial 51-attempt artifact remains
+  durable in Git history; no held-out or whole-population signoff is claimed.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity
 
 - Added a digest-pinned real semantic-negative recipe for the rejected UM11732 “must be at least” timing
