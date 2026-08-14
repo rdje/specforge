@@ -37,7 +37,7 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM`
   Status: `active`
   Goal: restore a durable and reachable capacity remedy for canonical decision records
-  Children: `.0`, `.1`, `.2`
+  Children: `.0`, `.0a`, `.1`, `.2`
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM.0`
   Status: `done`
@@ -46,6 +46,14 @@ unrelated architecture slice consumes the remaining three file slots and is refu
   non-goals, and measurement/design frontier are durable; no capacity authority or decision record changes
   Verification: `at clean 9d2eeb6f, 41 tracked docs/decisions/*.md files consume 93.2% of the 44-file health target and enforcement ceiling fixed by ADR 0029, leaving three slots; existing records and every live-size limit remain unchanged; task catalog, live-size gate, Knowledge Map, and doctrines pass`
   Commit: `DECISION-RECORD-CAPACITY-HEADROOM.0 — track decision-record capacity pressure`
+
+- ID: `DECISION-RECORD-CAPACITY-HEADROOM.0a`
+  Status: `done`
+  Goal: expand the pinned boundary to the independent per-record pressure surfaced by the next full gate
+  Acceptance: the largest decision record and its exact line/byte/width headroom are durable; `.1` distinguishes
+  collection capacity from immutable-member shape and no record or bound changes
+  Verification: `at clean 1a2f3705 the population remains 41/44; accepted ADR 0038 is independently largest at 474/512 lines (92.6%, 38 lines left) and 31,833/32,768 bytes (97.1%, 935 bytes left), with 397/512 maximum line bytes; all 41 decisions, the index, registry limits, product, and book remain unchanged; catalogs, live-size, Knowledge Map, and doctrines pass`
+  Commit: `DECISION-RECORD-CAPACITY-HEADROOM.0a — pin independent decision-record size pressure`
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM.1`
   Status: `pending`
@@ -69,7 +77,8 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `DECISION-RECORD-CAPACITY-HEADROOM.0` | `done` | exact clean pressure boundary and ownership are pinned |
-| 2 | `DECISION-RECORD-CAPACITY-HEADROOM.1` | `pending` | measure and decide before any future record exhausts the remaining three slots |
+| 2 | `DECISION-RECORD-CAPACITY-HEADROOM.0a` | `done` | per-record line/byte pressure is distinguished from collection count |
+| 3 | `DECISION-RECORD-CAPACITY-HEADROOM.1` | `pending` | measure and decide before any future record exhausts the remaining three slots |
 
 ## Decisions
 
@@ -78,6 +87,9 @@ unrelated architecture slice consumes the remaining three file slots and is refu
   buffer, so the signal requires a new measured remedy.
 - `2026-08-14`: make this tree tracking-only until `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT` reaches its next
   clean handoff. The risk must be durable now, but opening it does not justify stranding an active transaction.
+- `2026-08-14`: ADR 0038's per-file pressure is independent of the collection count. `.1` must decide how an
+  accepted, effectively immutable record is classified or losslessly partitioned; a count raise cannot silence
+  or cure a 31,833-byte member, and rewriting accepted rationale in place is not an admissible shortcut.
 
 ## Open Questions
 
@@ -104,19 +116,38 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 - [x] **LOCKSTEP** — ADR 0029, the live-size registry, this tree, derived task catalog, and resume pointer agree on
   the 41-of-44 pressure boundary and the pending census.
 
+### Acceptance Checklist (enforced) — `DECISION-RECORD-CAPACITY-HEADROOM.0a`
+
+- [x] **REPRODUCE / MEASURE** — ADR 0038 is the unique largest decision at 474 lines / 31,833 bytes / 397
+  maximum line bytes, leaving 38 lines and 935 bytes under the unchanged per-file ceilings.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the collection-count derivation and a member's shape are independent axes;
+  adding new-file capacity cannot remedy an accepted record already at 97.1% of its byte bound.
+- [x] **ADDRESSED (verified)** — `.1` now explicitly owns immutable-member lifecycle/partition analysis as well
+  as collection growth before it chooses or changes any authority.
+- [x] **NO REGRESSION** — all decisions, their index, every live-size literal, product code, and mdBook are
+  byte-identical to clean boundary `1a2f3705`; focused catalogs, retrieval, live-size, and doctrines pass.
+- [x] **GENERICITY** — the finding is recorded by lifecycle and independent pressure axis, not by special-casing
+  ADR 0038's subject or treating its present content as permission for a bound raise.
+- [x] **LOCKSTEP** — this tree, `MEMORY.md`, ADR 0029's standing capacity law, and the registered current metrics
+  distinguish the 41-of-44 collection wall from the largest member's 474-line / 31,833-byte shape.
+
 ## Verification Log
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-08-14` | `.0` ownership | exact tracked-file census; ADR 0029; registry; catalogs/retrieval/live-size/doctrine; boundary diffs | 41 / 44 files, 93.2%, three slots; no authority, decision, or product change |
+| `2026-08-14` | `.0a` member pressure | exact per-file metrics; live-size pressure; boundary diffs; catalogs/retrieval/doctrine | ADR 0038 at 474 lines / 31,833 bytes / 397 max-line bytes; 38 lines and 935 bytes remain; no record or authority change |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `DECISION-RECORD-CAPACITY-HEADROOM.0 — track decision-record capacity pressure` | ownership and exact pressure boundary only |
+| `.0a` | `DECISION-RECORD-CAPACITY-HEADROOM.0a — pin independent decision-record size pressure` | distinguish immutable-member shape from collection count before design |
 
 ## Changelog
 
 - `2026-08-14`: created from the alignment source-lock gate's 41-of-44 decision-record pressure finding; no
   decision record, bound, or product state changed, and `.1` owns the measured architecture decision.
+- `2026-08-14`: `.0a` records ADR 0038's separate 474-line / 31,833-byte pressure after the next full gate; no
+  accepted decision or live-size authority changed.

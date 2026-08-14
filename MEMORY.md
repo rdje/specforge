@@ -20,11 +20,12 @@
 - Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2` is complete from clean predecessor `38b79395` and
   awaits its commit; `.3` is the next containment leaf.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, and
-  `DECISION-RECORD-CAPACITY-HEADROOM.1` (41 of 44 decision-file slots used at clean `9d2eeb6f`).
+  `DECISION-RECORD-CAPACITY-HEADROOM.1` (41 of 44 slots; ADR 0038 at 474/512 lines and 31,833/32,768 bytes).
 - Current state: the alignment contract is `source_locked/complete` at `38b79395`; all 21 exact regions and 58
   primary routes (40 legacy / 18 structural) reproduce, root-owner equality is enforced, every destination is
   absent, full CI passes, generated artifacts are removed, and the source remains byte-identical to `112bc333`.
-- Next action: commit `.2.2`, then execute `.3` through the accepted repository-local root-last migration writer.
-- In-flight uncommitted: completed and fully verified `.2.2` changes awaiting commit; no background job.
+- Next action: commit the decision-pressure `.0a` expansion, then execute containment `.3` through the accepted
+  repository-local root-last migration writer.
+- In-flight uncommitted: tracking-only decision-pressure expansion after clean `.2.2`; no background job.
 - Blockers: `.6d.ii.f` waits only for bounded task-evidence migration; product direction is unambiguous. The
   user-owned `.claude/settings.json` is untouched.
