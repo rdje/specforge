@@ -17,8 +17,8 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` corrected qualification is durably complete;
-  the next eligible unit is `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`. Tracking-
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` is in progress, owning the measured I2C production
+  symbol-spelling/ordering coupling. Tracking-
   only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, `DECISION-RECORD-CAPACITY-HEADROOM.1`, and
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
 - Current state: corrected 51-attempt evidence is 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged
@@ -28,8 +28,8 @@
   17/17 checker mutations and 19 focused tests pass / two provider tests intentionally ignored. Full CI passes
   all nine doctrines, all 11 production-genericity components, 1,972 Rust tests / eight ignored / zero failed,
   five compile-fail doctests, Clippy/Rustdoc, mdBook, and final locality.
-- Next action: start the task-owned `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` production symbol-spelling/ordering
-  remediation before `.f.iv` replay.
+- Next action: compare the retained I2C baseline/transformed EvidenceIR and derivation ledgers to identify the
+  earliest alpha-sensitive production decision before changing code.
 - In-flight uncommitted: none at handoff. The recursive repo-local held-out evidence chain is intentionally
   retained in `.project-data/tmp`; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

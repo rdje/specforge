@@ -112,7 +112,7 @@
   proves both the fifth-part positive path and one-over-limit rejection without changing capacity.
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
-  State: `pending`
+  State: `in_progress`
   Goal: eliminate the production symbol-spelling and ordering coupling exposed by the valid I2C alpha relation
   Acceptance: the six-signal, 352-occurrence I2C transform preserves every normalized SourceIR→ISF value and
   proof claim without a document, protocol, vendor, filename, expected-result, or familiar-alias branch; the
@@ -227,6 +227,24 @@
 - [x] **LOCKSTEP** — machine evidence, task frontier, research, mdBook, Knowledge Map, exact graph test, generated
   catalogs, live-document authorities, and resume pointer publish `.f.iii.a` as the next remediation leaf.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
+
+- [x] **REPRODUCE / MEASURE** — the corrected held-out run already supplies one valid six-signal,
+  352-occurrence I2C alpha pair: SourceIR is invariant, while EvidenceIR first changes by 292 undeclared paths
+  and loses two claims before the delta propagates through SemanticIR, IntentIR, and ISF.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — compare the retained baseline/transformed EvidenceIR and derivation ledgers,
+  identify the earliest production decision whose result changes under opaque spelling/order alone, and record
+  the universal causal mechanism rather than merely cataloguing downstream diffs.
+- [ ] **ADDRESSED (verified)** — remove that mechanism without weakening the comparator; the original pair must
+  preserve every normalized SourceIR→ISF value and proof claim, while real semantic symbol changes and ambiguous
+  derived-id structure continue to reject.
+- [ ] **NO REGRESSION** — pass focused producer, behavioral, checker-mutation, production-genericity, full CI,
+  mdBook, and repository-locality gates with deterministic current counts.
+- [ ] **GENERICITY (ADR 0006)** — the repair must be structural and alpha-equivariant: no I2C, document, vendor,
+  filename, expected-result, familiar-alias, or source-symbol spelling branch may enter production authority.
+- [ ] **LOCKSTEP** — reconcile machine evidence, task frontier, research, mdBook, Knowledge Map, live documents,
+  and resume pointer; retain the original failure and publish a successful replay before `.f.iv` becomes eligible.
+
 ## Current Frontier
 
 | Order | Leaf | State | Why next |
@@ -236,7 +254,7 @@
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `done` | reviewed paraphrase and four harmless layout boundaries pass the complete five-stage comparator |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `done` | real and synthetic negative controls prove semantic and authority sensitivity |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `done` | corrected held-out qualification is measured; child `.f.iii.a` owns the real I2C alpha coupling |
-| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `pending` | next: remove measured production symbol-spelling/ordering coupling without a named exception |
+| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `in_progress` | active: localize and remove measured production symbol-spelling/ordering coupling without a named exception |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `pending` | reconcile the complete reviewed population and all variants after the measured coupling is fixed |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
 
