@@ -28,7 +28,7 @@
 | [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md) | 2026-06-07 | `current` | A signal-constraint subject must be a DECLARED signal (drops property/config/doc-meta noise) |
 | [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md) | 2026-06-17 | `current` | Bar #5/#6 (behavior/temporal lowering, no silent drop) HOLDS on the broader 78-doc corpus — the 160 undecla… |
 | [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md) | 2026-08-14 | `current` | Behavioral genericity qualification uses bounded relational oracles in conformance |
-| [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md) | 2026-08-14 | `current` | The initial behavioral holdout exposed two conformance-oracle defects, not production signoff evidence |
+| [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md) | 2026-08-14 | `current` | Corrected behavioral holdout separates oracle defects from real I2C symbol-alpha coupling |
 | [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md) | 2026-08-14 | `current` | Conformance owns closed five-stage identity and alpha qualification |
 | [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md) | 2026-08-14 | `current` | Reviewed text equivalence is digest-pinned and parser-boundary demonstrated |
 | [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md) | 2026-08-14 | `current` | Semantic negatives require a detected delta and an exact unaffected complement |

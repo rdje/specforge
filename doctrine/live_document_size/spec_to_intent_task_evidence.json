@@ -1,8 +1,8 @@
 {
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`.",
+      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`.",
       "mode" : "eligible",
       "part_id" : "behavioral-qualification"
    },
@@ -100,13 +100,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
             "metrics" : {
-               "bytes" : 24498,
-               "line_bytes" : 359,
-               "lines" : 276
+            "bytes" : 29399,
+            "line_bytes" : 389,
+            "lines" : 321
             },
             "part_id" : "behavioral-qualification",
             "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-            "sha256" : "73f0dd6cff3c32c4173a082f2ea06f50e831aeca061259f11bb9a04144483c90",
+         "sha256" : "d4066d405819dd2edf760dd38017a7ea378aa3e10864db3f1623b523e9684e88",
             "state" : "active"
          }
       ],
@@ -473,6 +473,11 @@
          "part_id" : "behavioral-qualification"
       },
       {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv",
          "origin" : "post_migration",
          "part_id" : "behavioral-qualification"
@@ -594,7 +599,7 @@
          "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
          "- Status: `active`",
          "## Current Frontier",
-         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`.",
+         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log",
@@ -658,6 +663,7 @@
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6e`",

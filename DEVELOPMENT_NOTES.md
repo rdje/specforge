@@ -1,4 +1,44 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii (`2026-08-14`) — a valid alpha failure must remain a failure
+
+The corrected held-out result separates three kinds of negative evidence. A filename-derived
+`stable_artifact_stem` is part of the adversarial-identity relation and can be normalized narrowly. Ordinary role
+words never belonged to alpha authority and therefore make the original transform invalid. But six typed I2C
+signals are an independently defensible opaque catalog: renaming all 352 source occurrences bijectively is a
+valid test, and the resulting production differences must not be reclassified away.
+
+The I2C pair also exposed a subtle disposition boundary. Derived record ids are downstream consequences, not
+source-transform authority. When one transformed derived id appeared to pair with multiple baseline ids, the
+old comparator returned `ambiguous_or_nonbijective_transform`. That was wrong: only the six-entry source rename
+map determines transform bijection. The final comparator collects candidate derived-id pairs, retains only pairs
+that are one-to-one in both directions, and leaves ambiguous structures visible to the ordinary complete diff.
+A synthetic control proves a many-to-one derived-id shape returns a semantic failure rather than an invalid run.
+
+The resulting failure begins in EvidenceIR, not SourceIR. SourceIR remains exact after declared normalization
+with 27/27 claims. EvidenceIR has 292 undeclared paths and 2,166→2,164 claims; SemanticIR has 3,152 paths and
+2,628→2,618; IntentIR has 4,599 and 3,121→3,101; ISF has 4,398 and 3,228→3,201. This is evidence of genuine
+symbol-spelling/ordering dependence in production extraction and proof construction. It opens `.f.iii.a`; the
+held-out label, expected failure, and generated aliases remain forbidden production inputs.
+
+Retained execution is now explicit rather than implicit. Initial full-PDF artifact pairs were compared under the
+corrected identity oracle, then their passing reports were carried only after aggregate/report/source digests and
+all referenced SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter artifacts passed current typed proof
+validation. Recursive evidence links close multi-run provenance without copying 7.3 GB of artifacts or treating
+a digest as a typed proof. Alpha eligibility preflight follows the same authority chain to the original retained
+EvidenceIR. Every path remains repository-relative and on the repository filesystem.
+
+The final matrix is 34 pass / one fail / 16 unmeasurable / zero invalid. The 16 excluded alpha rows are honest:
+15 have no typed opaque declaration surface and one is semantically vacuous. Their absence never enlarges the
+denominator. The one completed alpha denominator fails, with a descriptive Wilson upper bound of 0.793451; this
+is deliberately weak, frozen-population evidence and not an extrapolation to unseen specifications.
+
+The final repository gate caught one useful lockstep defect: the production-flow determinism test still pinned
+the pre-change graph counts even though the independent analyzer and documentation had already moved to 2,268
+functions, 11,811 helper edges, 11,339 decision sites, and 1,442 semantic macros. Refreshing that exact test
+snapshot made the focused replay pass, and the subsequent full CI run closed all nine doctrines, all 11
+production-genericity components, 1,972 Rust tests with eight intentional ignores, five compile-fail doctests,
+warning-denied Clippy and Rustdoc, mdBook test/build, and final locality.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii (`2026-08-14`) — a relation can fail because its oracle is invalid
 
 The first real holdout is valuable because it separates three questions that a small calibration can collapse:

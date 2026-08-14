@@ -121,6 +121,7 @@ EXPECTED_FAILURES = {
     "authority_unavailable": "unmeasurable",
     "provider_unavailable": "unmeasurable",
     "vacuous_baseline": "unmeasurable",
+    "eligible_symbol_surface_absent": "unmeasurable",
     "stale_contract_or_population": "invalid",
     "ambiguous_or_nonbijective_transform": "invalid",
     "partial_or_escaped_run": "invalid",
@@ -720,8 +721,8 @@ def validate_held_out_evidence(
         return
     expected_relations = ["unchanged_source", "adversarial_identity", "symbol_alpha"]
     expected_relation_set = set(expected_relations)
-    if report.get("schema_version") != 1:
-        problems.append("held-out evidence schema_version must be 1")
+    if report.get("schema_version") != 2:
+        problems.append("held-out evidence schema_version must be 2")
     if report.get("owner") != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii":
         problems.append("held-out evidence owner differs")
     expected_identity = {
@@ -739,6 +740,25 @@ def validate_held_out_evidence(
             problems.append(
                 f"held-out evidence {field} differs: {report.get(field)!r} != {expected!r}"
             )
+    retained_path = report.get("retained_evidence_path")
+    retained_digest = report.get("retained_evidence_sha256")
+    retained_tool_digest = report.get("retained_tool_sha256")
+    if (
+        not isinstance(retained_path, str)
+        or Path(retained_path).is_absolute()
+        or ".." in Path(retained_path).parts
+        or not retained_path.startswith(".project-data/tmp/")
+        or not retained_path.endswith("/behavioral_holdout_evidence.json")
+    ):
+        problems.append("held-out retained evidence path is not safe and repository-relative")
+    if not isinstance(retained_digest, str) or not re.fullmatch(
+        r"[0-9a-f]{64}", retained_digest
+    ):
+        problems.append("held-out retained evidence digest is invalid")
+    if not isinstance(retained_tool_digest, str) or not re.fullmatch(
+        r"[0-9a-f]{64}", retained_tool_digest
+    ):
+        problems.append("held-out retained tool digest is invalid")
     if not isinstance(report.get("production_revision"), str) or not re.fullmatch(
         r"[0-9a-f]{40}", report["production_revision"]
     ):
@@ -847,6 +867,16 @@ def validate_held_out_evidence(
         state = attempt.get("state")
         if state not in {"pass", "fail", "unmeasurable", "invalid"}:
             problems.append(f"held-out attempt state is invalid: {pair!r}")
+        execution_mode = attempt.get("execution_mode")
+        expected_mode = (
+            "retained_report_revalidated"
+            if relation in {"unchanged_source", "adversarial_identity"}
+            else "fresh_pipeline"
+            if state in {"pass", "fail"}
+            else "eligibility_preflight"
+        )
+        if execution_mode != expected_mode:
+            problems.append(f"held-out attempt execution mode differs: {pair!r}")
         identity = attempt.get("identity")
         coverage = attempt.get("coverage")
         report_digest = attempt.get("attempt_report_sha256")
@@ -864,7 +894,11 @@ def validate_held_out_evidence(
                     "production_revision": report.get("production_revision"),
                     "source_sha256": prospective_by_key[key][source_field],
                     "prior_memory_sha256": report.get("prior_memory_sha256"),
-                    "tool_sha256": report.get("tool_sha256"),
+                    "tool_sha256": (
+                        report.get("retained_tool_sha256")
+                        if execution_mode == "retained_report_revalidated"
+                        else report.get("tool_sha256")
+                    ),
                 }
                 for field, expected in identity_checks.items():
                     if identity.get(field) != expected:
@@ -884,6 +918,12 @@ def validate_held_out_evidence(
             problems.append(f"passing held-out attempt carries a failure id: {pair!r}")
         if state != "pass" and not isinstance(attempt.get("failure_id"), str):
             problems.append(f"non-passing held-out attempt lacks a failure id: {pair!r}")
+        if state in {"unmeasurable", "invalid"} and not isinstance(
+            attempt.get("detail"), str
+        ):
+            problems.append(f"non-completed held-out attempt lacks detail: {pair!r}")
+        if state in {"pass", "fail"} and attempt.get("detail") is not None:
+            problems.append(f"completed held-out attempt carries error detail: {pair!r}")
         if attempt.get("all_completed_stages_passed") != (state == "pass"):
             problems.append(f"held-out all-stage disposition differs: {pair!r}")
     expected_pairs = {
@@ -1750,6 +1790,28 @@ def run_self_test(contract: dict[str, Any], rows: list[dict[str, str]]) -> int:
     bad_tool = copy.deepcopy(report)
     bad_tool["tool_sha256"] = "0" * 64
     evidence_mutants.append(("held-out tool drift", bad_tool))
+
+    bad_execution_mode = copy.deepcopy(report)
+    full_capture = next(
+        attempt
+        for attempt in bad_execution_mode["attempts"]
+        if attempt["relation"] == "unchanged_source"
+    )
+    full_capture["execution_mode"] = "fresh_pipeline"
+    evidence_mutants.append(("held-out execution provenance drift", bad_execution_mode))
+
+    missing_detail = copy.deepcopy(report)
+    noncompleted = next(
+        attempt
+        for attempt in missing_detail["attempts"]
+        if attempt["state"] in {"unmeasurable", "invalid"}
+    )
+    noncompleted.pop("detail")
+    evidence_mutants.append(("held-out disposition detail omission", missing_detail))
+
+    bad_retained_digest = copy.deepcopy(report)
+    bad_retained_digest["retained_evidence_sha256"] = "0" * 63
+    evidence_mutants.append(("held-out retained evidence identity malformed", bad_retained_digest))
 
     evidence_failures = 0
     for label, mutant in evidence_mutants:

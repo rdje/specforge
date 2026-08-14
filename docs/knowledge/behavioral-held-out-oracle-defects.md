@@ -1,16 +1,19 @@
 ---
 id: behavioral-held-out-oracle-defects
-title: The initial behavioral holdout exposed two conformance-oracle defects, not production signoff evidence
+title: Corrected behavioral holdout separates oracle defects from real I2C symbol-alpha coupling
 answers:
   - "why did the initial prospective behavioral held-out run fail"
   - "what did real filenames expose in adversarial identity comparison"
   - "why are held-out alpha failures not yet production name-coupling evidence"
   - "which held-out document has an eligible opaque alpha catalog"
   - "what were the initial 17-document held-out relation outcomes"
+  - "what are the corrected 17-document behavioral held-out outcomes"
+  - "does I2C extraction remain invariant under opaque signal renaming"
+  - "why is an ambiguous derived id pairing a fail rather than an invalid alpha transform"
 date: 2026-08-14
 status: current
 tags: [genericity, held-out, metamorphic-testing, conformance, alpha-renaming]
-evidence: docs/research/behavioral-held-out-initial-run.md; doctrine/production_genericity/behavioral_holdout_evidence.json; docs/tasks/spec-to-intent-alignment/behavioral-qualification.md; crates/specforge-conformance/src/behavioral_genericity.rs; scripts/check_behavioral_genericity_contract.py
+evidence: docs/research/behavioral-held-out-initial-run.md; docs/research/behavioral-held-out-qualification.md; doctrine/production_genericity/behavioral_holdout_evidence.json; docs/tasks/spec-to-intent-alignment/behavioral-qualification.md; crates/specforge-conformance/src/behavioral_genericity.rs; scripts/check_behavioral_genericity_contract.py
 reverify: "python3 -B scripts/check_behavioral_genericity_contract.py --self-test && cargo test --offline -p specforge-conformance behavioral_genericity::tests -- --nocapture"
 ---
 
@@ -31,5 +34,17 @@ production name coupling. The I2C document is the only prospective row with an i
 catalog: `SCL`, `SDA`, `USCL`, `USDA`, `SCLH`, and `SDAH`. Absence of such a catalog elsewhere must be reported
 as unmeasurable, not pass, fail, or inferred authority.
 
-The active `.f.iii` leaf owns narrow oracle repair and requalification. Initial machine evidence stays in Git
-history, and neither held-out outcomes nor thresholds enter production.
+The corrected oracle normalizes the filename-derived stem only for adversarial identity and derives alpha
+authority only from typed signal declarations. The final prospective matrix is 34 pass / one fail / 16
+unmeasurable / zero invalid: unchanged PDF and adversarial identity both pass 17/17; 15 rows have no eligible
+opaque alpha surface, the OpenCAPI AFU row is vacuous, and the sole measurable I2C alpha pair fails.
+
+The I2C transform bijectively renames six declared signals across 352 occurrences. SourceIR remains invariant,
+but EvidenceIR loses two proof claims and has 292 undeclared paths; the difference propagates through SemanticIR,
+IntentIR, and ISF. An initially ambiguous derived-id pairing is not transform invalidity: only the source rename
+recipe determines transform bijection. The comparator now retains only unambiguous derived-id pairs and exposes
+the remaining structure as an ordinary semantic fail.
+
+Initial machine evidence stays in Git history. Outcomes and thresholds never enter production.
+`SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` owns the measured production symbol-spelling coupling before complete
+population replay.

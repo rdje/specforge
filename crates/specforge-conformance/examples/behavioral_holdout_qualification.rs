@@ -10,7 +10,7 @@ fn main() -> Result<()> {
     let mut arguments = env::args().skip(1);
     let output_root = arguments.next().ok_or_else(|| {
         AppError::InvalidStageArtifact(
-            "usage: behavioral_holdout_qualification <repo-relative-output-root> <production-revision> [transform-seed]".to_string(),
+            "usage: behavioral_holdout_qualification <repo-relative-output-root> <production-revision> [transform-seed] [repo-relative-retained-output-root]".to_string(),
         )
     })?;
     let production_revision = arguments.next().ok_or_else(|| {
@@ -29,6 +29,7 @@ fn main() -> Result<()> {
         })
         .transpose()?
         .unwrap_or(0x6d11_f111_u64);
+    let retained_output_root = arguments.next().map(PathBuf::from);
     if arguments.next().is_some() {
         return Err(AppError::InvalidStageArtifact(
             "behavioral held-out qualification received unexpected arguments".to_string(),
@@ -36,6 +37,7 @@ fn main() -> Result<()> {
     }
     let report = qualify_held_out_population(&HeldOutQualificationRequest {
         output_root: PathBuf::from(output_root),
+        retained_output_root,
         prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
         production_revision,
         transform_seed,

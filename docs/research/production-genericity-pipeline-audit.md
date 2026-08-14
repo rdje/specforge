@@ -137,10 +137,10 @@ regions, and 15 protected types. Rule roots, canonical
 seams, canonical fields, and conformance bypasses are derived directly from their existing inventories rather
 than being copied into a second reviewed list. A malformed, duplicate, or unresolved registry row fails closed.
 
-Symbolic dependencies propagate to a deterministic fixed point across 2,259 production functions and 11,737
+Symbolic dependencies propagate to a deterministic fixed point across 2,268 production functions and 11,811
 helper edges. Parameters, typed fields, provider returns, local and conservatively resolved method calls,
 closures, expression results, and macro tokens retain raw/identity dependence. The check rejects that dependence
-at 11,153 branch/selection/decision sites unless the call topology proves membership in a registered universal
+at 11,339 branch/selection/decision sites unless the call topology proves membership in a registered universal
 grammar, narrow exact-identity declassifier, trusted proof boundary, or non-authoritative inspection surface.
 Sensitive input entering an unclassified semantic macro fails instead of being ignored.
 
@@ -595,10 +595,16 @@ omitted comparator normalization inside the already-declared document-identity a
 state, and similar meaning-bearing prose values as if they were opaque symbols. The I2C row alone has an
 independently declared six-signal catalog; the other prospective rows cannot honestly supply this relation.
 
-The initial artifact remains failed evidence. Its checker reconstructs the split, all attempts, aggregates,
-dispositions, denominators, strata, and descriptive Wilson intervals, and 14/14 controlled mutations reject.
-No held-out labels, outcomes, intervals, or thresholds entered production. The active leaf owns narrow oracle
-repair and corrected qualification before the full-population replay or final genericity decision can proceed.
+The initial artifact remains failed evidence in Git history. Its oracle defects were repaired narrowly. The
+corrected result is 34 pass / one fail / 16 unmeasurable / zero invalid: unchanged and identity pass 17/17;
+15 rows lack typed opaque alpha declarations; one is vacuous; and the one measurable I2C alpha pair fails after
+a valid six-signal, 352-occurrence bijection. SourceIR remains invariant, but EvidenceIR loses two proof claims
+and downstream SemanticIR, IntentIR, and ISF expose 12,441 undeclared paths.
+
+The corrected checker reconstructs split, attempts, execution modes, retained-evidence provenance, aggregates,
+dispositions, denominators, strata, and descriptive Wilson intervals; 17/17 controlled mutations reject. No
+held-out label, outcome, interval, alias, or threshold entered production. The real coupling is now owned by
+`.6d.ii.f.iii.a` before whole-population replay or final genericity decision.
 
 ## Historical correction
 

@@ -88,29 +88,38 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`
-  State: `in_progress`
+  State: `done`
   Goal: qualify held-out vendors, layouts, categories, and protocol families without calibration leakage
   Acceptance: the frozen split is identity-disjoint and category-representative where evidence permits; results
   publish denominators and uncertainty; absence of adequate retained source is unmeasurable rather than passed;
   no held-out label, threshold, or result can steer canonical extraction
-  Verification: `initial 51-attempt prospective execution completed without leakage: unchanged PDF replay
-  passes 17/17, while adversarial identity is 0/17 because the comparator omitted the identity-bound
-  stable_artifact_stem field; symbol alpha is 0 pass / 15 fail / one unmeasurable / one invalid because the
-  catalog incorrectly admitted role-bearing prose names and then found an ambiguous derived-id map on I2C;
-  exact 17-document, 90-stratum, Wilson-interval evidence and 14/14 checker mutations pass; remediation remains
-  owned here and no held-out signoff is claimed; the refreshed independent graph snapshot is 2,259 functions /
-  11,737 helper edges / 11,153 decision sites / 1,439 semantic macros and all 11 genericity components pass;
-  full CI passes nine doctrines, 1,970 Rust tests / eight ignored / zero failed, five compile-fail doctests,
-  warning-denied Clippy/Rustdoc, mdBook, and final locality`
-  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects`
-  Tracked remediation: classify the two oracle defects before changing outcomes; normalize the declared
-  identity-bound stem, restrict alpha authority to explicitly declared opaque symbols, add an explicit
-  no-eligible-symbol unmeasurable disposition, recompare/rerun affected attempts without reusing labels in
-  production, and retain the initial failed evidence in Git history. This checkpoint also owns the incidental
-  fact-catalog verifier repair exposed by its required Knowledge Map card: the declared six-title-part capacity
-  rendered a fifth part correctly, but a stale hard-coded five-total-output schema bound rejected the landing
-  plus five parts. Replace that literal with the existing derived `max_parts + 1` authority and prove both the
-  fifth-part positive path and the one-over-limit rejection; no capacity changes.
+  Verification: `corrected 51-attempt prospective execution has 34 pass / one fail / 16 unmeasurable / zero
+  invalid: unchanged PDF and adversarial identity pass 17/17; 15 rows have no typed opaque alpha surface and one
+  is vacuous; the sole measurable six-signal I2C alpha pair completes five stages but loses 59 cumulative proof
+  claims and fails with 12,441 undeclared downstream paths; exact 17-document / 90-stratum evidence, explicit
+  fresh/preflight/revalidated provenance, recursive retained-evidence digests, 19,745,620 compared leaves, six
+  of six observed rename deltas, and 17/17 checker mutations pass; initial failed evidence remains in commit
+  32f044d82bff35e546b16cc0ff78c4fc07915816; the exact compiled-flow snapshot is 2,268 functions / 11,811
+  helper edges / 11,339 decision sites / 1,442 semantic macros; full CI passes all nine doctrines, all 11
+  production-genericity components, 1,972 Rust tests / eight ignored / zero failed, five compile-fail doctests,
+  warning-denied Clippy/Rustdoc, mdBook test/build, and final locality`
+  Commits: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects`;
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior`
+  Children: `.f.iii.a`
+  Historical checkpoint: the initial commit also repaired the fact-catalog verifier exposed by its required
+  Knowledge Map card. The declared six-title-part capacity rendered a fifth part correctly, while a stale
+  five-total-output literal rejected the landing plus five parts. The verifier now derives `max_parts + 1` and
+  proves both the fifth-part positive path and one-over-limit rejection without changing capacity.
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
+  State: `pending`
+  Goal: eliminate the production symbol-spelling and ordering coupling exposed by the valid I2C alpha relation
+  Acceptance: the six-signal, 352-occurrence I2C transform preserves every normalized SourceIR→ISF value and
+  proof claim without a document, protocol, vendor, filename, expected-result, or familiar-alias branch; the
+  original failing attempt remains durable evidence; focused controls prove genuine semantic symbol changes and
+  ambiguous derived-id structure still reject
+  Verification: `pending`
+  Commit: `pending`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`
   State: `pending`
@@ -118,6 +127,7 @@
   Acceptance: every current measurable chain and every explicitly unmeasurable legacy chain is accounted for;
   all metamorphic and negative runs are attributed; exact canonical, residual, proof, validation, and lowering
   deltas are published; no accepted transform loses truthfulness, provenance, or currentness
+  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
   Verification: `pending`
   Commit: `pending`
 
@@ -194,6 +204,29 @@
 - [x] **LOCKSTEP** — the machine contract, task frontier, research rationale, mdBook, Knowledge Map, current flow
   metrics, live-document contracts, and resume pointer publish `.f.iii` as the held-out qualification frontier.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`
+
+- [x] **REPRODUCE / MEASURE** — all 51 frozen prospective relation/document cells close with 17/17 unchanged
+  passes, 17/17 adversarial-identity passes, one completed I2C alpha failure, 16 explicit alpha-unmeasurable rows,
+  zero invalid runs, exact 90-stratum accounting, and descriptive Wilson bounds over completed denominators.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the initial identity failures were an omitted filename-derived stem
+  allowance; the initial alpha transform admitted meaning-bearing schema prose; and the corrected I2C run proves
+  a separate real production coupling because six typed signals rename bijectively while EvidenceIR loses two
+  claims and the delta propagates through SemanticIR, IntentIR, and ISF.
+- [x] **ADDRESSED (verified)** — relation-scoped stem normalization, typed-signal-only alpha authority,
+  `eligible_symbol_surface_absent`, ambiguity-safe derived-id comparison, execution provenance, recursive
+  retained-evidence validation, and detail-bearing dispositions are executable; 19 focused tests pass with two
+  provider tests intentionally ignored, and the checker mutation suite passes 17/17.
+- [x] **NO REGRESSION** — the exact 2,268-function / 11,811-edge / 11,339-decision / 1,442-macro flow snapshot
+  passes its determinism test; full CI passes all nine doctrines, all 11 production-genericity components, 1,972
+  Rust tests / eight ignored / zero failed, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook
+  test/build, and final locality.
+- [x] **GENERICITY (ADR 0006)** — all transforms, labels, outcomes, strata, report provenance, and expected
+  relations remain in conformance. Production receives only ordinary current source, and the measured I2C fail
+  is preserved rather than taught back through a document, protocol, spelling, or expected-result exception.
+- [x] **LOCKSTEP** — machine evidence, task frontier, research, mdBook, Knowledge Map, exact graph test, generated
+  catalogs, live-document authorities, and resume pointer publish `.f.iii.a` as the next remediation leaf.
+
 ## Current Frontier
 
 | Order | Leaf | State | Why next |
@@ -202,9 +235,10 @@
 | 2 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a` | `done` | deterministic alpha and full-PDF adversarial identity pairs pass the closed five-stage comparator |
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `done` | reviewed paraphrase and four harmless layout boundaries pass the complete five-stage comparator |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `done` | real and synthetic negative controls prove semantic and authority sensitivity |
-| 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `pending` | next: measure identity-disjoint held-out generalization honestly |
-| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `pending` | reconcile the complete reviewed population and all variants |
-| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
+| 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `done` | corrected held-out qualification is measured; child `.f.iii.a` owns the real I2C alpha coupling |
+| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `pending` | next: remove measured production symbol-spelling/ordering coupling without a named exception |
+| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `pending` | reconcile the complete reviewed population and all variants after the measured coupling is fixed |
+| 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
 
 ## Decisions
 
@@ -235,16 +269,22 @@
 - `2026-08-14`: a semantic negative passes only when the ordinary invariant comparator first rejects, every
   declared fact/proof delta is observed, and a second comparison succeeds after removing exactly those deltas.
   Missing source/provider/vacuity is unmeasurable; stale, ambiguous, escaped, or partial execution is invalid.
+- `2026-08-14`: alpha eligibility comes only from typed opaque declarations. An absent eligible surface is
+  unmeasurable. Ambiguous downstream derived-id pairing is an ordinary semantic delta, not evidence that an
+  independently bijective source transform is invalid.
+- `2026-08-14`: corrected held-out qualification is allowed to fail honestly. The I2C failure opens
+  `.f.iii.a`; it does not authorize weakening the comparator or continuing to whole-population replay as if the
+  production core were symbol-neutral.
 
 ## Open Questions
 
-- `.f.iii` must execute the frozen 17-document prospective split without using held-out identity, strata, labels,
-  expected outcomes, or aggregate results to steer production.
+- `.f.iii.a` must remove the measured six-signal I2C spelling/ordering dependence without using held-out
+  identity, relation outcome, alias spellings, or aggregate thresholds to steer production.
 
 ## Blockers
 
-- None for `.f.iii`. Missing retained source or provider-free transform support becomes explicit unmeasurable
-  evidence, not permission to weaken the oracle.
+- None for `.f.iii.a`. The failing five-stage pair and exact proof deltas are available in repository-local
+  scratch; failure is evidence to remediate, not permission to weaken the oracle.
 
 ## Verification Log
 
@@ -259,6 +299,9 @@
 | `2026-08-14` | `.f.ii.b` full repository gate | all doctrines and production-genericity components, exact 2,230 / 11,577 / 10,868 / 1,411 graph snapshot, Rust/compile-fail tests, warning-denied Clippy/Rustdoc, mdBook test/build, cleanup, and final locality pass |
 | `2026-08-14` | `.f.ii.c` semantic-negative calibration | one real required assertion removal and three-stage cumulative proof removal pass only after ordinary invariance rejects; nine synthetic fault classes reject; 16 focused tests pass / two PDF tests intentionally ignored; 8/8 contract mutations and all 11 production-genericity components pass |
 | `2026-08-14` | `.f.ii.c` full repository gate | all nine doctrines including chain currency, 11 production-genericity components, 1,969 Rust tests / eight ignored / zero failed, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook test/build, and final locality pass |
+| `2026-08-14` | `.f.iii` initial diagnostic | 51/51 attempts exposed the identity-stem and overbroad-alpha oracle defects; initial aggregate SHA `4a05ec3dd7112897679088f9220af785c70caf354441c3342369c6cdc17c6d68` remains in commit `32f044d82bff35e546b16cc0ff78c4fc07915816` |
+| `2026-08-14` | `.f.iii` corrected qualification | 34 pass / one fail / 16 unmeasurable / zero invalid; 17/17 unchanged and identity pass; one I2C alpha fail over 266,194 leaves and 11,170→11,111 cumulative claims; aggregate SHA `fbc8331bac463bc400c079873406e5ffe9388a73c513a4811a6499edab5a4e06`; 17/17 checker mutations and 19 focused tests pass / two PDF tests intentionally ignored |
+| `2026-08-14` | `.f.iii` full repository gate | all nine doctrines and 11 production-genericity components; exact 2,268 / 11,811 / 11,339 / 1,442 flow snapshot; 1,972 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final locality |
 
 ## Commit Log
 
@@ -269,6 +312,8 @@
 | `.f.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification` | add deterministic source-bound alpha and byte-identical PDF identity generation, five-stage replay, closed comparison, evidence, and sensitivity controls |
 | `.f.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout` | add approved exact-span recipes, field-scoped inverse projection, preserved-conclusion evidence, complete-complement comparison, and fail-closed controls |
 | `.f.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity` | add a real declared semantic/proof negative, exact-complement comparison, nine-class sensitivity matrix, and typed stale/unmeasurable attempt outcomes |
+| `.f.iii` diagnostic | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects` | preserve the initial fail-closed 51-attempt result, repair fact-card reachability, and own narrow oracle correction without laundering outcomes |
+| `.f.iii` qualification | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior` | close corrected identity/alpha authority and provenance, publish 34/1/16/0 outcomes, and route the measured I2C production coupling to `.f.iii.a` |
 
 ## Activation protocol
 

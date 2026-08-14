@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > does enrich / audit-extraction / recover-register-bits read full-page images or region images
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > does eval-extraction rebuild evidence or load the persisted file
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -295,5 +297,3 @@
   > how do canonical register records retain source table provenance
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how do continuation tables (Table B2.2 Continued) merge into one container
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how do dword-relative page fragments chain

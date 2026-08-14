@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how do dword-relative page fragments chain
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -296,5 +298,3 @@
   > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how is an unless/except exception clause handled in a temporal condition

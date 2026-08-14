@@ -348,6 +348,10 @@
       "disposition": "unmeasurable"
     },
     {
+      "failure_id": "eligible_symbol_surface_absent",
+      "disposition": "unmeasurable"
+    },
+    {
       "failure_id": "stale_contract_or_population",
       "disposition": "invalid"
     },

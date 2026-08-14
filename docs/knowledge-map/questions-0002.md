@@ -197,6 +197,8 @@
   > does FigureRegion have a production producer or only synthetic tests
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > does GateRecord remain schema compatible
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > does I2C extraction remain invariant under opaque signal renaming
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does IntentIR preserve SWD protocol provenance and order
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -295,5 +297,3 @@
   > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > does encryption block the VLM from reading tables (no)
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > does enrich / audit-extraction / recover-register-bits read full-page images or region images

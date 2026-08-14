@@ -4,7 +4,9 @@
 - Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`
 - Selection boundary: frozen 17-row prospective partition from the 24-row behavioral population
 - Production revision: `5dd1302a7fbb21519d9b428f177f7a681c9639df`
-- Machine evidence: `doctrine/production_genericity/behavioral_holdout_evidence.json`
+- Initial machine evidence: commit `32f044d82bff35e546b16cc0ff78c4fc07915816`,
+  `doctrine/production_genericity/behavioral_holdout_evidence.json`, SHA-256
+  `4a05ec3dd7112897679088f9220af785c70caf354441c3342369c6cdc17c6d68`
 
 ## Result
 
@@ -64,4 +66,5 @@ The same active leaf owns the repair; there is no task-tree pivot:
 5. regenerate and independently validate the aggregate before any held-out qualification claim.
 
 The initial evidence remains durable in Git history so the repair cannot erase or silently reclassify this
-checkpoint.
+checkpoint. The [corrected qualification](behavioral-held-out-qualification.md) records the subsequent
+34-pass / one-fail / 16-unmeasurable / zero-invalid result and the real I2C production coupling it exposed.

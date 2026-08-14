@@ -208,7 +208,7 @@ Exact local calls are distinguished from method, associated, external, prelude/b
 dispatch rather than pretending that an AST alone is a type checker. The information-flow layer now makes the
 raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically checked. Its
 140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
-2,259 functions, 11,737 helper edges, 11,153 decision sites, and 1,439 sensitive macros. Canonical mutation/protected
+2,268 functions, 11,811 helper edges, 11,339 decision sites, and 1,442 sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
@@ -246,16 +246,18 @@ SemanticIR assertion plus its cumulative claim at three stages, ordinary invaria
 comparison passes only after stripping those exact deltas. Nine synthetic controls cover omission,
 contradiction, reversal, value/timing, undeclared-symbol, misleading-name, proof-corruption, and disabled-stage
 faults. Unavailable or vacuous attempts are unmeasurable; stale, ambiguous, escaped, or partial attempts are
-invalid. Those remain harness calibrations. The first `.f.iii` prospective execution has now completed all 51
-attempts: unchanged PDF replay passes 17/17; adversarial identity is 0/17 only because the comparator omitted the
-filename-derived stable artifact stem; alpha is 0 pass / 15 fail / one unmeasurable / one invalid because the
-conformance transform admitted meaning-bearing actor/state-like prose as symbol authority. The I2C row alone has
-an independently declared six-signal alpha catalog. This is retained fail-closed diagnostic evidence, not a
-held-out qualification result; `.f.iii` owns the narrow oracle repair and corrected run. Transformation recipes, expected
+invalid. Those remain harness calibrations. The first `.f.iii` prospective execution exposed an omitted
+filename-derived stem allowance and an overbroad alpha catalog; its exact diagnostic remains in Git history. The
+corrected 51-attempt aggregate is 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged PDF and
+adversarial identity pass 17/17. Fifteen rows have no typed opaque alpha surface and one is vacuous. The I2C row
+alone has a measurable six-signal catalog; its bijective 352-occurrence rename passes SourceIR, then loses two
+EvidenceIR claims and propagates thousands of undeclared paths through SemanticIR, IntentIR, and ISF. This is a
+real production symbol-spelling/ordering coupling, owned next by `.f.iii.a`. Transformation recipes, expected
 relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
 current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)
-publishes the exact boundary, implementation checkpoint, denominators, and initial root cause; the
-[initial-run report](../../research/behavioral-held-out-initial-run.md) preserves the complete diagnostic.
+publishes the exact boundary; the [initial-run report](../../research/behavioral-held-out-initial-run.md)
+preserves the diagnostic; and the [corrected qualification](../../research/behavioral-held-out-qualification.md)
+publishes denominators, execution provenance, uncertainty, and the measured production failure.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

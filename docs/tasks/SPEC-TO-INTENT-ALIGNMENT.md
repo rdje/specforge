@@ -25,22 +25,24 @@ expressiveness as the bottleneck.
 - `.6d` and `.6d.ii` are in progress; `.6d.i` and `.6d.ii.a` through `.6d.ii.e` are complete.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
 - `.6d.ii.f` is in progress; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
-  remaining bounded children own held-out qualification, whole-population replay, and final signoff.
+  corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` next owns the resulting production
+  symbol-alpha coupling before whole-population replay and final signoff.
 - `.6e`, `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
 `.f.ii.a` implements deterministic PDF identity and normalized-text alpha evidence. `.f.ii.b` adds digest-pinned
 review authority plus one sentence and four harmless layout variants without widening the rich-capture
 exclusions. `.f.ii.c` proves one real semantic/proof delta plus all nine sensitivity classes and closes typed
-invalid/unmeasurable attempt handling. `.f.iii` next qualifies the frozen prospective holdout.
-Its initial 51-attempt execution is now a fail-closed diagnostic rather than a signoff: unchanged PDF replay is
-17/17, but real filenames expose one missing identity-bound normalization and the alpha catalog incorrectly
-renames semantic role prose. The active leaf owns those oracle repairs and a clean rerun before `.f.iv`.
+invalid/unmeasurable attempt handling. `.f.iii` qualifies the frozen prospective holdout.
+Its initial 51-attempt execution exposed two conformance-oracle defects and remains in Git history. The corrected
+matrix is 34 pass / one fail / 16 unmeasurable / zero invalid: both PDF relations pass 17/17, while the sole
+eligible I2C alpha pair fails below SourceIR after a valid six-signal rename. `.f.iii.a` owns that measured
+production spelling/ordering dependence before `.f.iv`.
 
 ## Detailed task evidence
 
@@ -112,6 +114,7 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6e`
@@ -130,6 +133,7 @@ detail-routing authority.
 | `2026-08-14` | `.6d.ii.f.ii.b` reviewed paraphrase/layout | one equivalent sentence and heading/table/whitespace/formatting variants pass all five stages under exact recipes; unsupported and ambiguous transforms reject |
 | `2026-08-14` | `.6d.ii.f.ii.c` semantic-negative sensitivity | one real assertion/proof negative and all nine synthetic fault classes reject ordinary invariance while the exact declared complement passes |
 | `2026-08-14` | `.6d.ii.f.iii` initial prospective execution | 51/51 attempts execute; unchanged replay passes 17/17, while 32 fail / one invalid expose two conformance-oracle defects and one vacuous row remains unmeasurable; no signoff claimed |
+| `2026-08-14` | `.6d.ii.f.iii` corrected qualification | 34 pass / one fail / 16 unmeasurable / zero invalid; both PDF relations pass 17/17; the sole measurable six-signal I2C alpha pair fails below SourceIR and routes `.f.iii.a` |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 
@@ -144,6 +148,7 @@ detail-routing authority.
 | `.6d.ii.f.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout` | implement digest-pinned reviewed recipes, field-scoped normalization, preserved-conclusion evidence, and complete-complement comparison |
 | `.6d.ii.f.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity` | require exact semantic/proof deltas, exercise nine negative classes, and classify invalid/unmeasurable attempts |
 | `.6d.ii.f.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects` | retain the first 51-attempt diagnostic and own fail-closed oracle repair before qualification |
+| `.6d.ii.f.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior` | publish corrected provenance/denominators and route real I2C production coupling to `.f.iii.a` |
 | `.6d.ii.e.vi` | `07b1f874` | qualify generated production structure and controlled failure cases |
 | `.6d.ii.e.v.iv` | `9f37989f` | register the compiled production-genericity doctrine and clean baseline |
 

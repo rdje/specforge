@@ -21,7 +21,7 @@ use crate::ir::semantic::SemanticIr;
 use crate::ir::source::{SourceIr, inspect_docling_runtime};
 
 const BEHAVIORAL_SCHEMA_VERSION: u32 = 3;
-const HELD_OUT_SCHEMA_VERSION: u32 = 1;
+const HELD_OUT_SCHEMA_VERSION: u32 = 2;
 const CONTRACT_PATH: &str = "doctrine/production_genericity/behavioral_qualification.json";
 const POPULATION_PATH: &str = "doctrine/production_genericity/behavioral_population.tsv";
 const REVIEW_RECIPE_MANIFEST_PATH: &str =
@@ -56,22 +56,6 @@ const RICH_CAPTURE_EXCLUSIONS: &[&str] = &[
 const FAMILIAR_IDENTIFIERS: &[&str] = &[
     "clk", "reset_n", "valid", "ready", "req", "ack", "data", "enable", "state", "master", "slave",
     "address",
-];
-
-const SCHEMA_SYMBOL_FIELDS: &[&str] = &[
-    "actor_name",
-    "signal_name",
-    "state_name",
-    "source_state",
-    "target_state",
-    "symbol_name",
-    "member_name",
-    "base_name",
-    "module_name",
-    "top_name",
-    "port_name",
-    "instance_name",
-    "source_module_name",
 ];
 
 const COLLECTION_KEY_FIELDS: &[&str] = &[
@@ -393,9 +377,19 @@ pub struct BehavioralQualificationAttempt {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HeldOutQualificationRequest {
     pub output_root: PathBuf,
+    pub retained_output_root: Option<PathBuf>,
     pub prior_memory: PathBuf,
     pub production_revision: String,
     pub transform_seed: u64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum HeldOutExecutionMode {
+    FreshPipeline,
+    RetainedArtifactsRecompared,
+    RetainedReportRevalidated,
+    EligibilityPreflight,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -436,8 +430,10 @@ pub struct HeldOutAttemptEvidence {
     pub relation: BehavioralRelation,
     pub input_plane: String,
     pub transform_seed: u64,
+    pub execution_mode: HeldOutExecutionMode,
     pub state: BehavioralRunState,
     pub failure_id: Option<String>,
+    pub detail: Option<String>,
     pub identity: Option<EvidenceIdentity>,
     pub coverage: Option<BehavioralCoverage>,
     pub completed_stages: usize,
@@ -510,6 +506,9 @@ pub struct HeldOutQualificationReport {
     pub production_revision: String,
     pub prior_memory_sha256: String,
     pub tool_sha256: String,
+    pub retained_tool_sha256: Option<String>,
+    pub retained_evidence_path: Option<String>,
+    pub retained_evidence_sha256: Option<String>,
     pub leakage_boundary: String,
     pub eligible_relations: Vec<BehavioralRelation>,
     pub split: HeldOutSplitEvidence,
@@ -568,7 +567,6 @@ struct StageArtifact {
 struct PipelineArtifacts {
     stages: BTreeMap<BehavioralStage, StageArtifact>,
     evidence_ir: EvidenceIr,
-    semantic_ir: SemanticIr,
     document_key: String,
 }
 
@@ -817,6 +815,10 @@ fn classify_attempt_error(detail: &str) -> (BehavioralRunState, &'static str) {
         ("provider_unavailable", BehavioralRunState::Unmeasurable),
         ("vacuous_baseline", BehavioralRunState::Unmeasurable),
         (
+            "eligible_symbol_surface_absent",
+            BehavioralRunState::Unmeasurable,
+        ),
+        (
             "ambiguous_or_nonbijective_transform",
             BehavioralRunState::Invalid,
         ),
@@ -828,6 +830,732 @@ fn classify_attempt_error(detail: &str) -> (BehavioralRunState, &'static str) {
         }
     }
     (BehavioralRunState::Invalid, "stale_contract_or_population")
+}
+
+fn classified_attempt_error(
+    relation: BehavioralRelation,
+    detail: &str,
+) -> BehavioralQualificationAttempt {
+    let (state, failure_id) = classify_attempt_error(detail);
+    BehavioralQualificationAttempt {
+        schema_version: BEHAVIORAL_SCHEMA_VERSION,
+        relation,
+        input_plane: relation.input_plane().to_string(),
+        state,
+        failure_id: Some(failure_id.to_string()),
+        detail: Some(detail.to_string()),
+        report: None,
+    }
+}
+
+fn attempt_retained_behavioral_relation(
+    request: &BehavioralQualificationRequest,
+    retained_output_root: &Path,
+    retained_attempt_root: &Path,
+) -> BehavioralQualificationAttempt {
+    match recompare_retained_behavioral_relation(
+        request,
+        retained_output_root,
+        retained_attempt_root,
+    ) {
+        Ok(report) => {
+            let failure_id = report
+                .failures
+                .first()
+                .and_then(|failure| failure.split(':').next())
+                .map(str::to_string);
+            BehavioralQualificationAttempt {
+                schema_version: BEHAVIORAL_SCHEMA_VERSION,
+                relation: request.relation,
+                input_plane: request.relation.input_plane().to_string(),
+                state: report.state,
+                failure_id,
+                detail: None,
+                report: Some(report),
+            }
+        }
+        Err(error) => classified_attempt_error(request.relation, &error.to_string()),
+    }
+}
+
+fn attempt_revalidated_behavioral_report(
+    request: &BehavioralQualificationRequest,
+    retained_output_root: &Path,
+    retained_attempt_root: &Path,
+) -> BehavioralQualificationAttempt {
+    match revalidate_retained_behavioral_report(
+        request,
+        retained_output_root,
+        retained_attempt_root,
+    ) {
+        Ok(report) => BehavioralQualificationAttempt {
+            schema_version: BEHAVIORAL_SCHEMA_VERSION,
+            relation: request.relation,
+            input_plane: request.relation.input_plane().to_string(),
+            state: report.state,
+            failure_id: None,
+            detail: None,
+            report: Some(report),
+        },
+        Err(error) => classified_attempt_error(request.relation, &error.to_string()),
+    }
+}
+
+fn ultimate_retained_artifact_output_root(
+    repository: &Path,
+    retained_output_root: &Path,
+    aggregate: &Value,
+) -> Result<PathBuf> {
+    let mut output_root = retained_output_root.to_path_buf();
+    let mut current = aggregate.clone();
+    let mut visited = BTreeSet::new();
+    for _ in 0..8 {
+        if !visited.insert(output_root.clone()) {
+            return Err(invalid(
+                "stale_contract_or_population: retained evidence chain contains a cycle",
+            ));
+        }
+        let Some(evidence_path) = current
+            .get("retained_evidence_path")
+            .and_then(Value::as_str)
+        else {
+            return Ok(output_root);
+        };
+        let evidence_relative = Path::new(evidence_path);
+        validate_relative_path(evidence_relative, "retained evidence chain link")?;
+        if !evidence_relative.starts_with(TEMP_ROOT)
+            || evidence_relative.file_name().and_then(|name| name.to_str())
+                != Some(HELD_OUT_EVIDENCE_FILE)
+        {
+            return Err(invalid(
+                "partial_or_escaped_run: retained evidence chain left repository scratch",
+            ));
+        }
+        let evidence = resolve_repository_file(
+            repository,
+            evidence_relative,
+            "retained artifact authority evidence",
+        )?;
+        ensure_same_filesystem(repository, &evidence)?;
+        let expected_sha256 = current
+            .get("retained_evidence_sha256")
+            .and_then(Value::as_str)
+            .ok_or_else(|| {
+                invalid(
+                    "stale_contract_or_population: retained artifact authority digest is absent",
+                )
+            })?;
+        let evidence_bytes = fs::read(&evidence)?;
+        if sha256_bytes(&evidence_bytes) != expected_sha256 {
+            return Err(invalid(
+                "stale_contract_or_population: retained artifact authority digest differs",
+            ));
+        }
+        output_root = evidence_relative
+            .parent()
+            .ok_or_else(|| {
+                invalid("stale_contract_or_population: retained evidence path has no root")
+            })?
+            .to_path_buf();
+        current = serde_json::from_slice(&evidence_bytes)?;
+    }
+    Err(invalid(
+        "stale_contract_or_population: retained evidence chain exceeds eight links",
+    ))
+}
+
+fn revalidate_retained_behavioral_report(
+    request: &BehavioralQualificationRequest,
+    retained_output_root: &Path,
+    retained_attempt_root: &Path,
+) -> Result<BehavioralQualificationReport> {
+    if !matches!(
+        request.relation,
+        BehavioralRelation::UnchangedSource | BehavioralRelation::AdversarialIdentity
+    ) {
+        return Err(invalid(
+            "stale_contract_or_population: only full-capture relations may revalidate retained reports",
+        ));
+    }
+    validate_request(request)?;
+    let repository = crate::project_data::repository_root()?;
+    let aggregate_path = resolve_repository_file(
+        &repository,
+        &retained_output_root.join(HELD_OUT_EVIDENCE_FILE),
+        "retained held-out aggregate evidence",
+    )?;
+    let aggregate: Value = serde_json::from_slice(&fs::read(&aggregate_path)?)?;
+    if aggregate.get("schema_version").and_then(Value::as_u64)
+        != Some(HELD_OUT_SCHEMA_VERSION as u64)
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained aggregate is not revalidation-capable",
+        ));
+    }
+    let report_path = resolve_repository_file(
+        &repository,
+        &retained_attempt_root.join(EVIDENCE_FILE),
+        "retained behavioral evidence",
+    )?;
+    let report_bytes = fs::read(&report_path)?;
+    let report_sha256 = sha256_bytes(&report_bytes);
+    let report: BehavioralQualificationReport = serde_json::from_slice(&report_bytes)?;
+    let document_key = &report.transform.baseline_document_key;
+    let aggregate_attempt = aggregate
+        .get("attempts")
+        .and_then(Value::as_array)
+        .and_then(|attempts| {
+            attempts.iter().find(|attempt| {
+                attempt.get("document_key").and_then(Value::as_str) == Some(document_key)
+                    && attempt.get("relation").and_then(Value::as_str)
+                        == Some(request.relation.as_str())
+            })
+        })
+        .ok_or_else(|| {
+            invalid("stale_contract_or_population: retained aggregate attempt is absent")
+        })?;
+    let retained_execution_mode = aggregate_attempt
+        .get("execution_mode")
+        .and_then(Value::as_str);
+    if aggregate_attempt
+        .get("attempt_report_sha256")
+        .and_then(Value::as_str)
+        != Some(&report_sha256)
+        || aggregate_attempt.get("state").and_then(Value::as_str) != Some("pass")
+        || !matches!(
+            retained_execution_mode,
+            Some("retained_artifacts_recompared" | "retained_report_revalidated")
+        )
+        || report.state != BehavioralRunState::Pass
+        || !report.failures.is_empty()
+        || report.stages.len() != BehavioralStage::ALL.len()
+        || report.stages.iter().any(|stage| !stage.passed)
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained passing report disposition differs",
+        ));
+    }
+    let aggregate_contract_sha256 = aggregate
+        .get("contract_sha256")
+        .and_then(Value::as_str)
+        .ok_or_else(|| {
+            invalid("stale_contract_or_population: retained contract identity absent")
+        })?;
+    let aggregate_prior_memory_sha256 = aggregate
+        .get("prior_memory_sha256")
+        .and_then(Value::as_str)
+        .ok_or_else(|| {
+            invalid("stale_contract_or_population: retained prior-memory identity absent")
+        })?;
+    let aggregate_tool_sha256 = aggregate
+        .get(
+            if retained_execution_mode == Some("retained_report_revalidated") {
+                "retained_tool_sha256"
+            } else {
+                "tool_sha256"
+            },
+        )
+        .and_then(Value::as_str)
+        .ok_or_else(|| invalid("stale_contract_or_population: retained tool identity absent"))?;
+    if report.schema_version != BEHAVIORAL_SCHEMA_VERSION
+        || report.relation != request.relation
+        || report.input_plane != request.relation.input_plane()
+        || report.identity.contract_sha256 != aggregate_contract_sha256
+        || report.identity.contract_sha256 != sha256_file(&repository.join(CONTRACT_PATH))?
+        || report.identity.production_revision != request.production_revision
+        || report.identity.source_sha256 != request.expected_source_sha256
+        || report.identity.prior_memory_sha256 != aggregate_prior_memory_sha256
+        || report.identity.tool_sha256 != aggregate_tool_sha256
+        || report.source.sha256 != request.expected_source_sha256
+        || report.transform.relation != request.relation
+        || report.transform.seed != request.transform_seed
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained passing report identity differs",
+        ));
+    }
+    let prior_memory = resolve_repository_file(&repository, &request.prior_memory, "prior memory")?;
+    if sha256_file(&prior_memory)? != report.identity.prior_memory_sha256 {
+        return Err(invalid(
+            "stale_contract_or_population: retained prior-memory bytes differ",
+        ));
+    }
+    let source_authority = resolve_source_authority(&repository, &request.source_authority)?;
+    ensure_same_filesystem(&repository, &source_authority)?;
+    let source_bytes = fs::read(&source_authority)?;
+    if sha256_bytes(&source_bytes) != request.expected_source_sha256
+        || source_bytes.len() as u64 != report.source.byte_count
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained report source authority differs",
+        ));
+    }
+
+    let artifact_output_root =
+        ultimate_retained_artifact_output_root(&repository, retained_output_root, &aggregate)?;
+    let artifact_attempt_root = artifact_output_root
+        .join("attempts")
+        .join(request.relation.as_str())
+        .join(document_key);
+    let baseline_source = retained_source_path(
+        &repository,
+        &artifact_attempt_root,
+        &report.transform.baseline_source,
+        "retained baseline source",
+    )?;
+    let transformed_source = retained_source_path(
+        &repository,
+        &artifact_attempt_root,
+        &report.transform.transformed_source,
+        "retained transformed source",
+    )?;
+    let baseline_source_bytes = fs::read(&baseline_source)?;
+    let transformed_source_bytes = fs::read(&transformed_source)?;
+    if sha256_bytes(&baseline_source_bytes) != request.expected_source_sha256
+        || baseline_source_bytes.len() as u64 != report.source.byte_count
+        || (baseline_source_bytes == transformed_source_bytes)
+            != report.transform.source_bytes_equal
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained report transform source differs",
+        ));
+    }
+    let recipe = TransformRecipe {
+        relation: request.relation,
+        seed: request.transform_seed,
+        baseline_source: &report.transform.baseline_source,
+        transformed_source: &report.transform.transformed_source,
+        symbol_renames: &report.transform.symbol_renames,
+    };
+    if sha256_bytes(&serde_json::to_vec(&recipe)?) != report.identity.transform_recipe_sha256 {
+        return Err(invalid(
+            "stale_contract_or_population: retained report transform recipe differs",
+        ));
+    }
+    let baseline =
+        load_retained_pipeline(&repository, &artifact_attempt_root, &report.stages, false)?;
+    if baseline.document_key != report.transform.baseline_document_key {
+        return Err(invalid(
+            "stale_contract_or_population: retained baseline document identity differs",
+        ));
+    }
+    drop(baseline);
+    let transformed =
+        load_retained_pipeline(&repository, &artifact_attempt_root, &report.stages, true)?;
+    if transformed.document_key != report.transform.transformed_document_key {
+        return Err(invalid(
+            "stale_contract_or_population: retained transformed document identity differs",
+        ));
+    }
+    drop(transformed);
+
+    let output_root = prepare_output_root(&repository, &request.output_root)?;
+    fs::write(output_root.join(EVIDENCE_FILE), &report_bytes)?;
+    Ok(report)
+}
+
+fn retained_alpha_symbol_catalog(
+    repository: &Path,
+    retained_attempt_root: &Path,
+    source_authority: &Path,
+    expected_source_sha256: &str,
+    document_key: &str,
+) -> Result<Option<Vec<String>>> {
+    let source = resolve_source_authority(repository, source_authority)?;
+    ensure_same_filesystem(repository, &source)?;
+    let source_bytes = fs::read(&source)?;
+    let observed_source_sha256 = sha256_bytes(&source_bytes);
+    if observed_source_sha256 != expected_source_sha256 {
+        return Err(invalid(format!(
+            "stale_contract_or_population: symbol-alpha source SHA-256 differs: {observed_source_sha256} != {expected_source_sha256}"
+        )));
+    }
+    let evidence_relative = retained_attempt_root
+        .join("baseline/evidence_ir")
+        .join(document_key)
+        .join("evidence_ir.json");
+    if !evidence_relative.starts_with(retained_attempt_root) {
+        return Err(invalid(
+            "partial_or_escaped_run: retained alpha evidence escaped its attempt root",
+        ));
+    }
+    let report_relative = retained_attempt_root.join(EVIDENCE_FILE);
+    if !repository.join(&report_relative).is_file() {
+        return Ok(None);
+    }
+    let report_path = resolve_repository_file(
+        repository,
+        &report_relative,
+        "retained alpha attempt report",
+    )?;
+    let report: BehavioralQualificationReport = serde_json::from_slice(&fs::read(&report_path)?)?;
+    let baseline_identity = report
+        .stages
+        .iter()
+        .find(|stage| stage.stage == BehavioralStage::EvidenceIr)
+        .map(|stage| &stage.baseline)
+        .ok_or_else(|| {
+            invalid("partial_or_escaped_run: retained alpha report lacks baseline EvidenceIR")
+        })?;
+    if report.relation != BehavioralRelation::SymbolAlpha
+        || report.identity.source_sha256 != expected_source_sha256
+        || report.transform.baseline_document_key != document_key
+        || baseline_identity.path != evidence_relative.to_string_lossy()
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained alpha report identity differs",
+        ));
+    }
+    let evidence_path =
+        resolve_repository_file(repository, &evidence_relative, "retained alpha EvidenceIR")?;
+    ensure_same_filesystem(repository, &evidence_path)?;
+    let evidence_bytes = fs::read(&evidence_path)?;
+    if evidence_bytes.len() as u64 != baseline_identity.byte_count
+        || sha256_bytes(&evidence_bytes) != baseline_identity.sha256
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained alpha EvidenceIR identity differs",
+        ));
+    }
+    let evidence_ir = EvidenceIr::load_from_path(&evidence_path)?;
+    let source_text = String::from_utf8(source_bytes)
+        .map_err(|_| invalid("symbol-alpha input must be UTF-8 normalized Markdown"))?;
+    Ok(Some(derive_source_symbol_catalog(
+        &evidence_ir,
+        &source_text,
+    )))
+}
+
+fn recompare_retained_behavioral_relation(
+    request: &BehavioralQualificationRequest,
+    retained_output_root: &Path,
+    retained_attempt_root: &Path,
+) -> Result<BehavioralQualificationReport> {
+    if !matches!(
+        request.relation,
+        BehavioralRelation::UnchangedSource | BehavioralRelation::AdversarialIdentity
+    ) {
+        return Err(invalid(
+            "stale_contract_or_population: only full-capture relations may reuse retained artifacts",
+        ));
+    }
+    validate_request(request)?;
+    validate_relative_path(retained_attempt_root, "retained behavioral attempt root")?;
+    let repository = crate::project_data::repository_root()?;
+    let retained_evidence_path = resolve_repository_file(
+        &repository,
+        &retained_attempt_root.join(EVIDENCE_FILE),
+        "retained behavioral evidence",
+    )?;
+    ensure_same_filesystem(&repository, &retained_evidence_path)?;
+    let retained: BehavioralQualificationReport =
+        serde_json::from_slice(&fs::read(&retained_evidence_path)?)?;
+    let retained_aggregate: Value = serde_json::from_slice(&fs::read(resolve_repository_file(
+        &repository,
+        &retained_output_root.join(HELD_OUT_EVIDENCE_FILE),
+        "retained held-out aggregate evidence",
+    )?)?)?;
+    let retained_contract_sha256 = retained_aggregate
+        .get("contract_sha256")
+        .and_then(Value::as_str)
+        .ok_or_else(|| {
+            invalid("stale_contract_or_population: retained aggregate lacks contract identity")
+        })?;
+    let retained_prior_memory_sha256 = retained_aggregate
+        .get("prior_memory_sha256")
+        .and_then(Value::as_str)
+        .ok_or_else(|| {
+            invalid("stale_contract_or_population: retained aggregate lacks prior-memory identity")
+        })?;
+    let retained_production_revision = retained_aggregate
+        .get("production_revision")
+        .and_then(Value::as_str)
+        .ok_or_else(|| {
+            invalid("stale_contract_or_population: retained aggregate lacks production identity")
+        })?;
+    if retained.schema_version != BEHAVIORAL_SCHEMA_VERSION
+        || retained.relation != request.relation
+        || retained.input_plane != request.relation.input_plane()
+        || retained.transform.relation != request.relation
+        || retained.transform.seed != request.transform_seed
+        || retained.identity.production_revision != request.production_revision
+        || retained.identity.source_sha256 != request.expected_source_sha256
+        || retained.source.sha256 != request.expected_source_sha256
+        || retained.stages.len() != BehavioralStage::ALL.len()
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained behavioral report identity differs",
+        ));
+    }
+    let source_authority = resolve_source_authority(&repository, &request.source_authority)?;
+    ensure_same_filesystem(&repository, &source_authority)?;
+    let source_bytes = fs::read(&source_authority)?;
+    if sha256_bytes(&source_bytes) != request.expected_source_sha256
+        || source_bytes.len() as u64 != retained.source.byte_count
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained source authority differs",
+        ));
+    }
+    let contract_sha256 = sha256_file(&repository.join(CONTRACT_PATH))?;
+    let prior_memory = resolve_repository_file(&repository, &request.prior_memory, "prior memory")?;
+    let prior_memory_sha256 = sha256_file(&prior_memory)?;
+    if retained.identity.contract_sha256 != retained_contract_sha256
+        || retained.identity.prior_memory_sha256 != retained_prior_memory_sha256
+        || retained.identity.production_revision != retained_production_revision
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained contract or prior-memory identity differs",
+        ));
+    }
+
+    let baseline_source = retained_source_path(
+        &repository,
+        retained_attempt_root,
+        &retained.transform.baseline_source,
+        "retained baseline source",
+    )?;
+    let transformed_source = retained_source_path(
+        &repository,
+        retained_attempt_root,
+        &retained.transform.transformed_source,
+        "retained transformed source",
+    )?;
+    let baseline_source_bytes = fs::read(&baseline_source)?;
+    let transformed_source_bytes = fs::read(&transformed_source)?;
+    if sha256_bytes(&baseline_source_bytes) != request.expected_source_sha256
+        || baseline_source_bytes.len() as u64 != retained.source.byte_count
+        || (baseline_source_bytes == transformed_source_bytes)
+            != retained.transform.source_bytes_equal
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained transform source identity differs",
+        ));
+    }
+
+    let baseline =
+        load_retained_pipeline(&repository, retained_attempt_root, &retained.stages, false)?;
+    let transformed =
+        load_retained_pipeline(&repository, retained_attempt_root, &retained.stages, true)?;
+    if baseline.document_key != retained.transform.baseline_document_key
+        || transformed.document_key != retained.transform.transformed_document_key
+    {
+        return Err(invalid(
+            "stale_contract_or_population: retained pipeline document identity differs",
+        ));
+    }
+
+    let mut exact_transformed_to_baseline = BTreeMap::new();
+    if request.relation == BehavioralRelation::AdversarialIdentity {
+        exact_transformed_to_baseline.insert(
+            transformed.document_key.clone(),
+            baseline.document_key.clone(),
+        );
+        exact_transformed_to_baseline.insert(
+            transformed_source
+                .file_name()
+                .and_then(|value| value.to_str())
+                .unwrap_or_default()
+                .to_string(),
+            baseline_source
+                .file_name()
+                .and_then(|value| value.to_str())
+                .unwrap_or_default()
+                .to_string(),
+        );
+    }
+    let normalization = NormalizationSpec {
+        relation: request.relation,
+        baseline_run_root: retained_attempt_root
+            .join("baseline")
+            .to_string_lossy()
+            .into_owned(),
+        transformed_run_root: retained_attempt_root
+            .join("transformed")
+            .to_string_lossy()
+            .into_owned(),
+        baseline_source: retained.transform.baseline_source.clone(),
+        transformed_source: retained.transform.transformed_source.clone(),
+        exact_transformed_to_baseline,
+        identifier_transformed_to_baseline: BTreeMap::new(),
+        reviewed_text_by_field: BTreeMap::new(),
+    };
+    let (state, stages, failures) =
+        compare_pipelines(&baseline, &transformed, &normalization, None)?;
+    let recipe = TransformRecipe {
+        relation: request.relation,
+        seed: request.transform_seed,
+        baseline_source: &retained.transform.baseline_source,
+        transformed_source: &retained.transform.transformed_source,
+        symbol_renames: &retained.transform.symbol_renames,
+    };
+    let recipe_sha256 = sha256_bytes(&serde_json::to_vec(&recipe)?);
+    if recipe_sha256 != retained.identity.transform_recipe_sha256 {
+        return Err(invalid(
+            "stale_contract_or_population: retained transform recipe identity differs",
+        ));
+    }
+    let coverage = unreviewed_coverage(&stages, &retained.transform.symbol_renames);
+    let report = BehavioralQualificationReport {
+        schema_version: BEHAVIORAL_SCHEMA_VERSION,
+        relation: request.relation,
+        input_plane: request.relation.input_plane().to_string(),
+        state,
+        identity: EvidenceIdentity {
+            contract_sha256,
+            production_revision: request.production_revision.clone(),
+            source_sha256: request.expected_source_sha256.clone(),
+            transform_recipe_sha256: recipe_sha256,
+            prior_memory_sha256,
+            tool_sha256: sha256_bytes(include_bytes!("behavioral_genericity.rs")),
+        },
+        source: retained.source,
+        transform: retained.transform,
+        stages,
+        coverage,
+        failures,
+    };
+    let output_root = prepare_output_root(&repository, &request.output_root)?;
+    fs::write(
+        output_root.join(EVIDENCE_FILE),
+        serde_json::to_vec_pretty(&report)?,
+    )?;
+    Ok(report)
+}
+
+fn retained_source_path(
+    repository: &Path,
+    retained_attempt_root: &Path,
+    path: &str,
+    label: &str,
+) -> Result<PathBuf> {
+    let relative = Path::new(path);
+    if !relative.starts_with(retained_attempt_root.join("inputs")) {
+        return Err(invalid(format!(
+            "partial_or_escaped_run: {label} escaped its retained attempt root"
+        )));
+    }
+    let resolved = resolve_repository_file(repository, relative, label)?;
+    ensure_same_filesystem(repository, &resolved)?;
+    Ok(resolved)
+}
+
+fn load_retained_pipeline(
+    repository: &Path,
+    retained_attempt_root: &Path,
+    comparisons: &[StageComparison],
+    transformed: bool,
+) -> Result<PipelineArtifacts> {
+    let mut stages = BTreeMap::new();
+    let mut evidence_ir = None;
+    let mut document_key = None;
+    for stage in BehavioralStage::ALL {
+        let matching = comparisons
+            .iter()
+            .filter(|comparison| comparison.stage == stage)
+            .collect::<Vec<_>>();
+        if matching.len() != 1 {
+            return Err(invalid(
+                "partial_or_escaped_run: retained stage set is incomplete or duplicated",
+            ));
+        }
+        let identity = if transformed {
+            &matching[0].transformed
+        } else {
+            &matching[0].baseline
+        };
+        let relative = Path::new(&identity.path);
+        if !relative.starts_with(retained_attempt_root) {
+            return Err(invalid(
+                "partial_or_escaped_run: retained stage artifact escaped its attempt root",
+            ));
+        }
+        let path = resolve_repository_file(repository, relative, "retained stage artifact")?;
+        ensure_same_filesystem(repository, &path)?;
+        let bytes = fs::read(&path)?;
+        if bytes.len() as u64 != identity.byte_count || sha256_bytes(&bytes) != identity.sha256 {
+            return Err(invalid(
+                "stale_contract_or_population: retained stage artifact identity differs",
+            ));
+        }
+        let value = serde_json::from_slice::<Value>(&bytes)?;
+        if value.get("stage").and_then(Value::as_str) != Some(stage.as_str()) {
+            return Err(invalid(format!(
+                "partial_or_escaped_run: retained {} artifact names another stage",
+                stage.as_str()
+            )));
+        }
+        match stage {
+            BehavioralStage::SourceIr => {
+                SourceIr::load_from_path(&path)?;
+            }
+            BehavioralStage::EvidenceIr => {
+                evidence_ir = Some(EvidenceIr::load_from_path(&path)?);
+            }
+            BehavioralStage::SemanticIr => {
+                SemanticIr::load_from_path(&path)?;
+            }
+            BehavioralStage::IntentIr => {
+                document_key = Some(
+                    IntentIr::load_from_path(&path)?
+                        .document_identity
+                        .document_key,
+                );
+            }
+            BehavioralStage::IsfAdapter => {
+                AdapterArtifact::load_from_path(&path)?;
+            }
+        }
+        stages.insert(
+            stage,
+            StageArtifact {
+                identity: identity.clone(),
+                value,
+            },
+        );
+    }
+    Ok(PipelineArtifacts {
+        stages,
+        evidence_ir: evidence_ir
+            .ok_or_else(|| invalid("partial_or_escaped_run: retained pipeline lacks EvidenceIR"))?,
+        document_key: document_key.ok_or_else(|| {
+            invalid("partial_or_escaped_run: retained pipeline lacks IntentIR identity")
+        })?,
+    })
+}
+
+fn unreviewed_coverage(
+    stages: &[StageComparison],
+    symbol_renames: &[SymbolRename],
+) -> BehavioralCoverage {
+    BehavioralCoverage {
+        required_stages: BehavioralStage::ALL.len(),
+        completed_stages: stages.len(),
+        baseline_top_level_fields: stages
+            .iter()
+            .map(|stage| stage.baseline_top_level_fields)
+            .sum(),
+        transformed_top_level_fields: stages
+            .iter()
+            .map(|stage| stage.transformed_top_level_fields)
+            .sum(),
+        baseline_proof_claims: stages.iter().map(|stage| stage.baseline_proof_claims).sum(),
+        transformed_proof_claims: stages
+            .iter()
+            .map(|stage| stage.transformed_proof_claims)
+            .sum(),
+        compared_leaf_values: stages.iter().map(|stage| stage.compared_leaf_values).sum(),
+        expected_symbol_deltas: symbol_renames.len(),
+        observed_symbol_deltas: symbol_renames
+            .iter()
+            .filter(|rename| rename.occurrence_count > 0)
+            .count(),
+        expected_reviewed_span_deltas: 0,
+        observed_reviewed_span_deltas: 0,
+        preserved_conclusions: 0,
+        expected_semantic_deltas: 0,
+        observed_semantic_deltas: 0,
+    }
 }
 
 /// Execute every recipe-free relation over the frozen prospective population and emit one
@@ -845,6 +1573,28 @@ pub fn qualify_held_out_population(
     validate_held_out_contract(&contract)?;
     let rows = parse_behavioral_population(&population_bytes)?;
     validate_behavioral_population(&rows, &contract)?;
+    let retained_aggregate = if let Some(root) = &request.retained_output_root {
+        let path = resolve_repository_file(
+            &repository,
+            &root.join(HELD_OUT_EVIDENCE_FILE),
+            "retained held-out aggregate evidence",
+        )?;
+        Some(serde_json::from_slice::<Value>(&fs::read(path)?)?)
+    } else {
+        None
+    };
+    let retained_schema_version = retained_aggregate
+        .as_ref()
+        .and_then(|aggregate| aggregate.get("schema_version"))
+        .and_then(Value::as_u64);
+    let retained_artifact_output_root = match (&request.retained_output_root, &retained_aggregate) {
+        (Some(root), Some(aggregate)) => Some(ultimate_retained_artifact_output_root(
+            &repository,
+            root,
+            aggregate,
+        )?),
+        _ => None,
+    };
 
     let calibration = rows
         .iter()
@@ -937,16 +1687,90 @@ pub fn qualify_held_out_population(
                 row.document_key,
                 relation.as_str()
             );
-            let attempt = attempt_behavioral_relation(&BehavioralQualificationRequest {
+            let qualification_request = BehavioralQualificationRequest {
                 relation,
-                source_authority,
-                expected_source_sha256,
+                source_authority: source_authority.clone(),
+                expected_source_sha256: expected_source_sha256.clone(),
                 output_root: attempt_root.clone(),
                 prior_memory: request.prior_memory.clone(),
                 production_revision: request.production_revision.clone(),
                 transform_seed,
                 review_recipe_id: None,
-            });
+            };
+            let (attempt, execution_mode) = match (&request.retained_output_root, relation) {
+                (Some(retained_root), BehavioralRelation::UnchangedSource)
+                | (Some(retained_root), BehavioralRelation::AdversarialIdentity) => {
+                    let retained_attempt_root = retained_root
+                        .join("attempts")
+                        .join(relation.as_str())
+                        .join(&row.document_key);
+                    if retained_schema_version == Some(HELD_OUT_SCHEMA_VERSION as u64) {
+                        (
+                            attempt_revalidated_behavioral_report(
+                                &qualification_request,
+                                retained_root,
+                                &retained_attempt_root,
+                            ),
+                            HeldOutExecutionMode::RetainedReportRevalidated,
+                        )
+                    } else {
+                        (
+                            attempt_retained_behavioral_relation(
+                                &qualification_request,
+                                retained_root,
+                                &retained_attempt_root,
+                            ),
+                            HeldOutExecutionMode::RetainedArtifactsRecompared,
+                        )
+                    }
+                }
+                (Some(_), BehavioralRelation::SymbolAlpha) => {
+                    if row.text_semantic_records == 0 && row.text_intent_records == 0 {
+                        (
+                            classified_attempt_error(
+                                relation,
+                                "vacuous_baseline: frozen text projection has no semantic or intent records",
+                            ),
+                            HeldOutExecutionMode::EligibilityPreflight,
+                        )
+                    } else {
+                        let retained_attempt_root = retained_artifact_output_root
+                            .as_ref()
+                            .expect("retained request has an artifact authority")
+                            .join("attempts")
+                            .join(relation.as_str())
+                            .join(&row.document_key);
+                        match retained_alpha_symbol_catalog(
+                            &repository,
+                            &retained_attempt_root,
+                            &source_authority,
+                            &expected_source_sha256,
+                            &row.document_key,
+                        ) {
+                            Ok(Some(symbols)) if symbols.is_empty() => (
+                                classified_attempt_error(
+                                    relation,
+                                    "eligible_symbol_surface_absent: symbol-alpha baseline has no typed opaque signal declaration",
+                                ),
+                                HeldOutExecutionMode::EligibilityPreflight,
+                            ),
+                            Ok(Some(_)) | Ok(None) => (
+                                attempt_behavioral_relation(&qualification_request),
+                                HeldOutExecutionMode::FreshPipeline,
+                            ),
+                            Err(error) => (
+                                classified_attempt_error(relation, &error.to_string()),
+                                HeldOutExecutionMode::EligibilityPreflight,
+                            ),
+                        }
+                    }
+                }
+                (None, _) => (
+                    attempt_behavioral_relation(&qualification_request),
+                    HeldOutExecutionMode::FreshPipeline,
+                ),
+                (Some(_), _) => unreachable!("held-out relation list is closed above"),
+            };
             let attempt_report_sha256 = if attempt.report.is_some() {
                 let evidence_path = repository.join(&attempt_root).join(EVIDENCE_FILE);
                 Some(sha256_file(&evidence_path).map_err(|error| {
@@ -978,8 +1802,10 @@ pub fn qualify_held_out_population(
                 relation,
                 input_plane: relation.input_plane().to_string(),
                 transform_seed,
+                execution_mode,
                 state: attempt.state,
                 failure_id: attempt.failure_id,
+                detail: attempt.detail,
                 identity,
                 coverage,
                 completed_stages,
@@ -997,6 +1823,35 @@ pub fn qualify_held_out_population(
     let strata = held_out_strata(&documents, &attempts, &relations);
     let coverage = aggregate_held_out_coverage(&documents, &attempts, relations.len());
     let tool_sha256 = sha256_file(&repository.join(file!()))?;
+    let retained_tool_sha256 = retained_aggregate.as_ref().and_then(|aggregate| {
+        let revalidated = aggregate
+            .get("attempts")
+            .and_then(Value::as_array)
+            .is_some_and(|attempts| {
+                attempts.iter().any(|attempt| {
+                    attempt.get("execution_mode").and_then(Value::as_str)
+                        == Some("retained_report_revalidated")
+                })
+            });
+        aggregate
+            .get(if revalidated {
+                "retained_tool_sha256"
+            } else {
+                "tool_sha256"
+            })
+            .and_then(Value::as_str)
+            .map(str::to_string)
+    });
+    let (retained_evidence_path, retained_evidence_sha256) =
+        if let Some(root) = &request.retained_output_root {
+            let path = root.join(HELD_OUT_EVIDENCE_FILE);
+            (
+                Some(path.to_string_lossy().into_owned()),
+                Some(sha256_file(&repository.join(path))?),
+            )
+        } else {
+            (None, None)
+        };
     let leakage_boundary = contract
         .held_out_policy
         .get("leakage_rule")
@@ -1013,6 +1868,9 @@ pub fn qualify_held_out_population(
         production_revision: request.production_revision.clone(),
         prior_memory_sha256,
         tool_sha256,
+        retained_tool_sha256,
+        retained_evidence_path,
+        retained_evidence_sha256,
         leakage_boundary,
         eligible_relations: relations,
         split,
@@ -1053,6 +1911,40 @@ fn validate_held_out_request(request: &HeldOutQualificationRequest) -> Result<()
             "held-out output root already exists: {}",
             request.output_root.display()
         )));
+    }
+    if let Some(retained_root) = &request.retained_output_root {
+        validate_relative_path(retained_root, "retained held-out output root")?;
+        if !retained_root.starts_with(TEMP_ROOT)
+            || retained_root == Path::new(TEMP_ROOT)
+            || request.output_root.starts_with(retained_root)
+            || retained_root.starts_with(&request.output_root)
+        {
+            return Err(invalid(
+                "retained held-out output root must be a distinct child of repository scratch",
+            ));
+        }
+        let retained = repository.join(retained_root).canonicalize().map_err(|error| {
+            invalid(format!(
+                "authority_unavailable: retained held-out output root is unavailable: {} ({error})",
+                retained_root.display()
+            ))
+        })?;
+        let canonical_repository = repository.canonicalize()?;
+        let canonical_temp = repository.join(TEMP_ROOT).canonicalize()?;
+        if !retained.is_dir()
+            || !retained.starts_with(&canonical_temp)
+            || !canonical_temp.starts_with(&canonical_repository)
+        {
+            return Err(invalid(
+                "partial_or_escaped_run: retained held-out output escaped repository scratch",
+            ));
+        }
+        ensure_same_filesystem(&canonical_repository, &retained)?;
+        resolve_repository_file(
+            &repository,
+            &retained_root.join(HELD_OUT_EVIDENCE_FILE),
+            "retained held-out aggregate evidence",
+        )?;
     }
     Ok(())
 }
@@ -1972,14 +2864,10 @@ pub fn qualify_behavioral_relation(
         BehavioralRelation::SymbolAlpha => {
             let source_text = String::from_utf8(source_bytes.clone())
                 .map_err(|_| invalid("symbol-alpha input must be UTF-8 normalized Markdown"))?;
-            let symbols = derive_source_symbol_catalog(
-                &baseline.evidence_ir,
-                &baseline.semantic_ir,
-                &source_text,
-            )?;
+            let symbols = derive_source_symbol_catalog(&baseline.evidence_ir, &source_text);
             if symbols.is_empty() {
                 return Err(invalid(
-                    "vacuous_baseline: symbol-alpha baseline has no unambiguous source-bound identifier",
+                    "eligible_symbol_surface_absent: symbol-alpha baseline has no typed opaque signal declaration",
                 ));
             }
             let (transformed, renames) =
@@ -3130,7 +4018,7 @@ fn run_pipeline(
     let semantic_ir = SemanticIr::build(&evidence_path, &semantic_root)?;
     semantic_ir.write_to_disk()?;
     let semantic_path = semantic_ir.artifact_layout.semantic_ir_path.clone();
-    let semantic_ir = SemanticIr::load_from_path(&semantic_path)?;
+    SemanticIr::load_from_path(&semantic_path)?;
 
     let intent_ir = IntentIr::build(&semantic_path, &intent_root)?;
     intent_ir.write_to_disk()?;
@@ -3175,7 +4063,6 @@ fn run_pipeline(
         stages,
         document_key: intent_ir.document_identity.document_key.clone(),
         evidence_ir,
-        semantic_ir,
     })
 }
 
@@ -3305,9 +4192,9 @@ fn compare_stage(
     for _ in 0..8 {
         canonicalize_keyed_collections(&mut left);
         canonicalize_keyed_collections(&mut right);
-        let mut derived_ids = BTreeMap::new();
-        let mut reverse_ids = BTreeMap::new();
-        collect_equivalent_id_pairs(&left, &right, "", &mut derived_ids, &mut reverse_ids)?;
+        let mut candidate_ids = Vec::new();
+        collect_equivalent_id_pairs(&left, &right, "", &mut candidate_ids)?;
+        let derived_ids = bijective_id_mapping(&candidate_ids);
         if derived_ids.is_empty() {
             break;
         }
@@ -3337,46 +4224,15 @@ fn compare_stage(
     })
 }
 
-fn derive_source_symbol_catalog(
-    evidence_ir: &EvidenceIr,
-    semantic_ir: &SemanticIr,
-    source: &str,
-) -> Result<Vec<String>> {
+fn derive_source_symbol_catalog(evidence_ir: &EvidenceIr, source: &str) -> Vec<String> {
     let mut candidates = declared_signal_catalog(evidence_ir);
-    let semantic = serde_json::to_value(semantic_ir)?;
-    collect_schema_symbols(&semantic, &mut candidates);
     let mut seen = BTreeSet::new();
     candidates.retain(|candidate| {
         is_identifier(candidate)
             && contains_identifier(source, candidate)
             && seen.insert(candidate.to_ascii_lowercase())
     });
-    Ok(candidates)
-}
-
-fn collect_schema_symbols(value: &Value, output: &mut Vec<String>) {
-    match value {
-        Value::Object(object) => {
-            for (key, child) in object {
-                if SCHEMA_SYMBOL_FIELDS.contains(&key.as_str()) {
-                    if let Some(symbol) = child.as_str() {
-                        output.push(symbol.to_string());
-                    }
-                } else if key == "signals"
-                    && let Some(symbols) = child.as_array()
-                {
-                    output.extend(symbols.iter().filter_map(Value::as_str).map(str::to_string));
-                }
-                collect_schema_symbols(child, output);
-            }
-        }
-        Value::Array(values) => {
-            for child in values {
-                collect_schema_symbols(child, output);
-            }
-        }
-        _ => {}
-    }
+    candidates
 }
 
 fn alpha_transform(
@@ -3740,8 +4596,7 @@ fn collect_equivalent_id_pairs(
     left: &Value,
     right: &Value,
     path: &str,
-    mapping: &mut BTreeMap<String, String>,
-    reverse: &mut BTreeMap<String, String>,
+    candidates: &mut Vec<(String, String)>,
 ) -> Result<()> {
     if path.starts_with("/proof_context") || path.starts_with("/proof_ledger") {
         return Ok(());
@@ -3760,7 +4615,7 @@ fn collect_equivalent_id_pairs(
                             (left_child.as_str(), right_child.as_str())
                         && left_id != right_id
                     {
-                        insert_bijective_mapping(mapping, reverse, right_id, left_id)?;
+                        candidates.push((right_id.to_string(), left_id.to_string()));
                     }
                 }
             }
@@ -3770,8 +4625,7 @@ fn collect_equivalent_id_pairs(
                         left_child,
                         right_child,
                         &format!("{path}/{}", escape_pointer(field)),
-                        mapping,
-                        reverse,
+                        candidates,
                     )?;
                 }
             }
@@ -3782,8 +4636,7 @@ fn collect_equivalent_id_pairs(
                     left_child,
                     right_child,
                     &format!("{path}/{index}"),
-                    mapping,
-                    reverse,
+                    candidates,
                 )?;
             }
         }
@@ -3792,27 +4645,27 @@ fn collect_equivalent_id_pairs(
     Ok(())
 }
 
-fn insert_bijective_mapping(
-    mapping: &mut BTreeMap<String, String>,
-    reverse: &mut BTreeMap<String, String>,
-    transformed: &str,
-    baseline: &str,
-) -> Result<()> {
-    if let Some(existing) = mapping.insert(transformed.to_string(), baseline.to_string())
-        && existing != baseline
-    {
-        return Err(invalid(format!(
-            "ambiguous_or_nonbijective_transform: transformed id {transformed} maps twice"
-        )));
+fn bijective_id_mapping(candidates: &[(String, String)]) -> BTreeMap<String, String> {
+    let mut transformed_to_baseline = BTreeMap::<&str, BTreeSet<&str>>::new();
+    let mut baseline_to_transformed = BTreeMap::<&str, BTreeSet<&str>>::new();
+    for (transformed, baseline) in candidates {
+        transformed_to_baseline
+            .entry(transformed)
+            .or_default()
+            .insert(baseline);
+        baseline_to_transformed
+            .entry(baseline)
+            .or_default()
+            .insert(transformed);
     }
-    if let Some(existing) = reverse.insert(baseline.to_string(), transformed.to_string())
-        && existing != transformed
-    {
-        return Err(invalid(format!(
-            "ambiguous_or_nonbijective_transform: baseline id {baseline} maps twice"
-        )));
-    }
-    Ok(())
+    transformed_to_baseline
+        .into_iter()
+        .filter_map(|(transformed, baselines)| {
+            let baseline = baselines.iter().next().copied()?;
+            (baselines.len() == 1 && baseline_to_transformed[baseline].len() == 1)
+                .then(|| (transformed.to_string(), baseline.to_string()))
+        })
+        .collect()
 }
 
 fn apply_exact_mapping(value: &mut Value, mapping: &BTreeMap<String, String>) {
@@ -3872,6 +4725,16 @@ fn normalize_relation_bound_scalars(
     relation: BehavioralRelation,
     field: Option<&str>,
 ) {
+    if relation == BehavioralRelation::AdversarialIdentity
+        && field == Some("stable_artifact_stem")
+        && left.is_string()
+        && right.is_string()
+        && left != right
+    {
+        *left = Value::String("$DOCUMENT_STEM".to_string());
+        *right = Value::String("$DOCUMENT_STEM".to_string());
+        return;
+    }
     if field == Some("scope")
         && left.as_str().is_some_and(|value| is_lower_hex(value, 64))
         && right.as_str().is_some_and(|value| is_lower_hex(value, 64))
@@ -4226,10 +5089,20 @@ mod tests {
     }
 
     fn synthetic_value(document_key: &str, role: &str) -> Value {
+        let stable_artifact_stem = match document_key {
+            "original" => "Original.Interface.Specification",
+            _ => "clock_reset_handshake_reference",
+        };
         serde_json::json!({
             "stage": "semantic_ir",
             "document_identity": {"document_key": document_key, "display_name": format!("{document_key}.pdf")},
             "artifact_layout": {"artifact_root": format!(".project-data/tmp/run/{document_key}")},
+            "source": {"stable_artifact_stem": stable_artifact_stem},
+            "proof_context": {
+                "field_premises": {
+                    "source": {"stable_artifact_stem": stable_artifact_stem}
+                }
+            },
             "canonical_fact": {"record_id": format!("record_{document_key}"), "role": role},
             "proof_ledger": {
                 "schema_version": 1,
@@ -4364,6 +5237,35 @@ mod tests {
     }
 
     #[test]
+    fn retained_authority_rejects_non_scratch_links_and_missing_alpha_report_runs_fresh()
+    -> Result<()> {
+        let repository = crate::project_data::repository_root()?;
+        let escaped = serde_json::json!({
+            "retained_evidence_path": "doctrine/production_genericity/behavioral_holdout_evidence.json",
+            "retained_evidence_sha256": "0".repeat(64)
+        });
+        assert!(
+            ultimate_retained_artifact_output_root(
+                &repository,
+                Path::new(".project-data/tmp/synthetic-retained-root"),
+                &escaped,
+            )
+            .is_err()
+        );
+        assert_eq!(
+            retained_alpha_symbol_catalog(
+                &repository,
+                Path::new(".project-data/tmp/nonexistent-retained-alpha-attempt"),
+                Path::new(REVIEWED_SOURCE),
+                REVIEWED_SOURCE_SHA256,
+                "synthetic_document",
+            )?,
+            None
+        );
+        Ok(())
+    }
+
+    #[test]
     fn comparator_rejects_identity_coupled_semantic_delta() -> Result<()> {
         let baseline = synthetic_stage(synthetic_value("original", "producer"), "left");
         let transformed = synthetic_stage(synthetic_value("misleading", "consumer"), "right");
@@ -4421,6 +5323,57 @@ mod tests {
             None,
         )?;
         assert!(result.passed, "{:?}", result.undeclared_delta_paths);
+        Ok(())
+    }
+
+    #[test]
+    fn comparator_reports_nonbijective_derived_ids_as_a_delta() -> Result<()> {
+        let mut baseline_value = synthetic_value("original", "producer");
+        let mut transformed_value = synthetic_value("original", "producer");
+        baseline_value
+            .as_object_mut()
+            .expect("synthetic object")
+            .insert(
+                "contracts".to_string(),
+                serde_json::json!([
+                    {"contract_id": "baseline_a", "kind": "guarantee"},
+                    {"contract_id": "baseline_b", "kind": "guarantee"}
+                ]),
+            );
+        transformed_value
+            .as_object_mut()
+            .expect("synthetic object")
+            .insert(
+                "contracts".to_string(),
+                serde_json::json!([
+                    {"contract_id": "transformed_shared", "kind": "guarantee"},
+                    {"contract_id": "transformed_shared", "kind": "guarantee"}
+                ]),
+            );
+        let normalization = NormalizationSpec {
+            relation: BehavioralRelation::SymbolAlpha,
+            baseline_run_root: ".project-data/tmp/run".to_string(),
+            transformed_run_root: ".project-data/tmp/run".to_string(),
+            baseline_source: "synthetic.md".to_string(),
+            transformed_source: "synthetic.md".to_string(),
+            exact_transformed_to_baseline: BTreeMap::new(),
+            identifier_transformed_to_baseline: BTreeMap::new(),
+            reviewed_text_by_field: BTreeMap::new(),
+        };
+        let result = compare_stage(
+            BehavioralStage::SemanticIr,
+            &synthetic_stage(baseline_value, "left"),
+            &synthetic_stage(transformed_value, "right"),
+            &normalization,
+            None,
+        )?;
+        assert!(!result.passed);
+        assert!(
+            result
+                .undeclared_delta_paths
+                .iter()
+                .any(|path| path.ends_with("/contract_id"))
+        );
         Ok(())
     }
 
@@ -4701,6 +5654,7 @@ mod tests {
             "authority_unavailable",
             "provider_unavailable",
             "vacuous_baseline",
+            "eligible_symbol_surface_absent",
         ] {
             assert_eq!(
                 classify_attempt_error(&format!("{failure_id}: controlled")),
@@ -4797,6 +5751,7 @@ mod tests {
                         relation,
                         input_plane: relation.input_plane().to_string(),
                         transform_seed: 0,
+                        execution_mode: HeldOutExecutionMode::FreshPipeline,
                         state: if relation == BehavioralRelation::SymbolAlpha
                             && document.text_semantic_records == 0
                         {
@@ -4805,6 +5760,7 @@ mod tests {
                             BehavioralRunState::Pass
                         },
                         failure_id: None,
+                        detail: None,
                         identity: None,
                         coverage: None,
                         completed_stages: 0,

@@ -291,3 +291,18 @@ The active leaf now owns a fail-closed oracle repair: normalize only the declare
 alpha exclusively from typed opaque declarations; give an absent eligible catalog its own unmeasurable
 disposition; and rerun/recompare before making any held-out claim. The initial machine evidence stays durable in
 Git history so the repair cannot erase the discovery.
+
+## Corrected prospective qualification checkpoint (`.f.iii`)
+
+The corrected aggregate closes 34 pass / one fail / 16 unmeasurable / zero invalid. Both 17-document PDF
+relations pass. Fifteen rows have no typed opaque alpha declaration and one is vacuous. The sole measurable I2C
+alpha pair renames six declared signals bijectively across 352 occurrences; SourceIR is invariant, while
+EvidenceIR loses two claims and the delta propagates through SemanticIR, IntentIR, and ISF. Ambiguous downstream
+derived-id candidates are no longer confused with source-transform ambiguity: only one-to-one pairs normalize,
+and every remaining value stays visible to ordinary failure comparison.
+
+The final aggregate publishes 824,172 baseline / 824,113 transformed proof claims and 19,745,620 compared leaves.
+It distinguishes fresh pipeline, eligibility preflight, retained-artifact recompare, and retained-report
+revalidation. Multi-run evidence authority is followed recursively with digest verification, and every retained
+stage is reloaded through its typed proof validator. The checker and 17/17 mutations pass. `.f.iii.a` now owns the
+measured production symbol-spelling/ordering coupling before `.f.iv` whole-population replay.

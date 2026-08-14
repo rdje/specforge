@@ -1,3 +1,27 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior
+
+- Repaired the held-out conformance oracle without adding production exceptions: adversarial identity now
+  normalizes only the filename-derived stable stem, while alpha authority comes only from typed signal
+  declarations and an absent eligible surface is explicitly unmeasurable.
+- Made derived-id ambiguity fail honestly as an undeclared semantic delta instead of misclassifying an
+  independently bijective source rename as invalid. Added focused controls that preserve identity-only changes,
+  reject semantic role changes, and reject non-bijective downstream structure without throwing away coverage.
+- Added explicit `fresh_pipeline`, `eligibility_preflight`, `retained_artifacts_recompared`, and
+  `retained_report_revalidated` provenance, error detail, report/artifact digest checks, typed five-stage reload,
+  and recursive retained-evidence authority validation on repository-local storage.
+- Published the corrected 17-document / 51-attempt / 90-stratum result: unchanged PDF 17/17 pass; adversarial
+  identity 17/17 pass; alpha zero pass / one fail / 16 unmeasurable / zero invalid. The aggregate accounts for
+  824,172 baseline and 824,113 transformed proof claims, 19,745,620 compared leaves, and six of six rename deltas.
+- Preserved the sole measurable I2C alpha failure. Its six typed signals rename bijectively across 352
+  occurrences; SourceIR passes, EvidenceIR loses two claims, and 12,441 undeclared downstream paths propagate
+  through SemanticIR, IntentIR, and ISF. No held-out label, alias, result, or threshold enters production.
+- Added the corrected research report and updated task-tree, Knowledge Map, live docs, and mdBook truth. Opened
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` as the precise next remediation owner before whole-population replay.
+- Refreshed and pinned the exact 2,268-function / 11,811-edge / 11,339-decision / 1,442-macro production-flow
+  snapshot. Full CI passes all nine doctrines, all 11 production-genericity components, 1,972 Rust tests / eight
+  intentional ignores / zero failures, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook
+  test/build, and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects
 
 - Added the frozen 17-document held-out executor and a complete 51-attempt machine report spanning unchanged
