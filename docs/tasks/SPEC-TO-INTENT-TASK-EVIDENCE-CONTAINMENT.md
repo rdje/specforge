@@ -54,7 +54,7 @@ remains directly browsable and exactly recoverable.
   Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0 — own and pin alignment task boundary`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1`
-  Status: `in_progress`
+  Status: `done`
   Goal: measure and decide the target-specific information architecture
   Children: `.1.1`, `.1.2`
 
@@ -67,12 +67,12 @@ remains directly browsable and exactly recoverable.
   Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1 — census alignment task evidence`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2`
-  Status: `pending`
+  Status: `done`
   Goal: decide the bounded current/history/provenance topology and update transaction
   Acceptance: an accepted decision fixes target-derived authorities, partitions, bounds, routes, migration
   stages, rotation, failure restoration, and rejected alternatives; the target remains byte-identical
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `ADR 0039 accepted at 191 lines / 13,877 bytes; three authorities, seven exact legacy parts plus one reserved behavioral part, all-58 executable owner registry, conservative state precedence, target-local limits, root-plus-part transaction, split/rotation, four migration stages, restoration, and five rejected alternatives fixed; canonical catalogs, 234-fact / 1,801-key Knowledge Map, 218-card catalog, 808-file / 52-surface live-size gate, book-current truth, persisted trajectory-controller test, mdBook test/build, target identity diffs, and doctrines pass; 73 generated book files / 8,940 KiB removed`
+  Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2 — decide bounded alignment task architecture`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2`
   Status: `pending`
@@ -117,8 +117,9 @@ remains directly browsable and exactly recoverable.
 | --- | --- | --- | --- |
 | 1 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0` | `done` | clean untouched target is pinned exactly |
 | 2 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1` | `done` | exact target roles, constraints, and candidate groups are measured |
-| 3 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` | `pending` | accept the target-specific topology before implementing it |
-| 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
+| 3 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` | `done` | ADR 0039 fixes the target-specific architecture and transaction |
+| 4 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` | `pending` | make the accepted source-locked topology executable before migration inputs close |
+| 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
 
 ## Decisions
 
@@ -129,14 +130,15 @@ remains directly browsable and exactly recoverable.
 - `2026-08-14`: `.1.1` finds 21 exact source regions, 58 formal IDs, 31 stable-path consumers, and a load-bearing
   production reader that requires every exact ID declaration in the root. Seven semantic groups fit the neutral
   checker's existing portable caps; `.1.2` decides the target-specific hybrid and current-state precedence.
+- `2026-08-14`: ADR 0039 accepts a bounded stable root with all 58 executable owner declarations, seven exact
+  legacy parts, one reserved behavioral part, a complete index/manifest, and an exact capsule. It fixes
+  conservative parent/state precedence, target-local bounds, root-plus-part writes, split-before-rollover, and
+  same-volume root-last restoration without claiming the separately unreachable sealed-part transition.
 
 ## Open Questions
 
-- Which semantic boundaries preserve every alignment leaf and keep current `.f` work within one bounded hop?
-- Can the neutral active-task checker accept another target through data only, or does its topology encode the
-  first target? `.1.1` measures before `.1.2` decides.
-- Does the target contain stale current-state prose that must remain literal history but normalize in the future
-  root? Current truth may be corrected only from Git/task evidence under an accepted precedence rule.
+- None for `.1.2`; ADR 0039 fixes the authorities, partitions, reader compatibility, state precedence, bounds,
+  rotation, migration stages, and rollback rule. `.2.1` now makes that contract executable.
 
 ## Blockers
 
@@ -148,6 +150,7 @@ remains directly browsable and exactly recoverable.
 | --- | --- | --- | --- |
 | `2026-08-14` | `.0` baseline | `wc`; SHA-256; Git blob/history; status; target diff | 2,049 lines / 278,178 bytes / e70892a5…a26c / blob 66ae9b6c…3632 / 40 commits; untouched at `112bc333` |
 | `2026-08-14` | `.1.1` census | exact closure; path/id/readers/writers; trajectory currentness; catalogs/retrieval/live-size/doctrine; cleanup | 21 regions / 58 ids / 31 path and 92 id consumers; seven groups; target byte-identical; 2,901 files / 2,050,216 KiB removed |
+| `2026-08-14` | `.1.2` decision | ADR 0039; catalogs/KM/facts/live-size/book; persisted controller test; mdBook test/build; target diffs; doctrines; cleanup | 191-line accepted design; 234 facts / 1,801 keys; 808 files / 52 surfaces; one controller test; target unchanged; 73 generated files / 8,940 KiB removed |
 
 ## Commit Log
 
@@ -155,6 +158,7 @@ remains directly browsable and exactly recoverable.
 | --- | --- | --- |
 | `.0` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0 — own and pin alignment task boundary` | ownership and exact untouched baseline only |
 | `.1.1` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1 — census alignment task evidence` | complete read-only target-specific architecture input |
+| `.1.2` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2 — decide bounded alignment task architecture` | accepted topology, limits, reader compatibility, migration, restoration, book, and retrieval truth |
 
 ## Changelog
 
@@ -162,3 +166,5 @@ remains directly browsable and exactly recoverable.
   changed and `.6d.ii.f` remains the next product leaf after containment.
 - `2026-08-14`: `.1.1` publishes complete source, current-state, consumer, writer, checker-reuse, candidate, and
   reconstruction evidence without changing the target; `.1.2` is next.
+- `2026-08-14`: `.1.2` accepts ADR 0039, publishes the target-aware public method, and leaves the target exactly
+  unchanged; `.2.1` is the next eligible containment leaf.

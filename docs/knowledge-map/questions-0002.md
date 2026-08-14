@@ -2,6 +2,21 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > can a section-title shape alone license a signal declaration
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > can a signal name imply handshake clock reset polarity or direction
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > can a timing description or comment cell span columns without losing the timing record
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > can ambient validation reports define the tracked corpus KB validation page
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > can an active task tree use the terminal task archive topology
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > can an encoding table's column header SOURCE an enum name rather than only veto one / what did .5.iv measure (measured 2026-08-11 read-only, reproducer scripts/measure_encoding_enum_header_naming.py: derive_encoding_enum_name sources candidates ONLY from caption_text or the section title (evidence.rs:4698-4703) and then validates them against known_signals + the header
+  > (:4715-4733), so the header is a veto and never a source. Corpus: 2,540 encoding tables -> 281 header-nameable <FIELD> value|Description -> 134 minting a non-empty enum after the .5.ii spine gate, in 10 docs. GO on the lever, NO-GO on the naive predicate; CODE deferred to .5.iv.a)
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > can an estimated point claim a trend without paired uncertainty history
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -283,17 +298,3 @@
   > shared value identical 0b00=NON_SHAREABLE/0b10=OUTER_SHAREABLE/0b11=INNER_SHAREABLE/0b01=RESERVED — the merge IS the correct encoding)
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > does malformed page metadata preserve the last good normalized bundle
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > does markdown escaping cost recall on documents that already have a signal catalog
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > does mdbook test pass for the SpecForge book
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > does raising max_facts alone create fact-card headroom
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > does register extraction require the table_kind register classification

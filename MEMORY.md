@@ -17,15 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1` is complete and awaiting commit from clean
-  predecessor `5032b378`.
-  Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
-  `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.1.1` accounts exactly for 21 source regions, 58 formal ids, 45 frontier rows, 40 committed
-  leaves, 31 stable-path and 92 identifier consumers, the manual writer, and the load-bearing trajectory reader.
-  Seven semantic groups fit existing checker caps; the target remains byte-identical to `112bc333`.
-- Next action: commit `.1.1`, verify the clean handoff, then activate `.1.2` to accept exact authorities,
-  partitions, current-state precedence, bounds, writer/rotation rules, migration stages, and rejection cases.
-- In-flight uncommitted: completed census report/task/retrieval/resume updates awaiting commit; no background job.
+- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` is complete; `.2.1` is the next eligible leaf from
+  the clean handoff. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
+- Current state: ADR 0039 accepts the bounded stable root with all 58 executable owner declarations, seven exact
+  legacy parts, one reserved behavioral part, complete routing/provenance, target-local limits, and root-last
+  restoration. The source remains byte-identical to `112bc333`; `.6d.ii.f` remains unactivated and blocked only
+  until containment closes.
+- Next action: activate `.2.1` from the clean tree, then implement the source-locked target contract, third
+  composed checker invocation, live-surface declarations, destination-absence rules, and focused fault cases.
+- In-flight uncommitted: none after the `.1.2` commit; no background job.
 - Blockers: `.6d.ii.f` waits only for bounded task-evidence migration; product direction is unambiguous. The
   user-owned `.claude/settings.json` is untouched.

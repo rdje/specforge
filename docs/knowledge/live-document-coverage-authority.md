@@ -31,7 +31,7 @@ answers:
 date: 2026-08-14
 status: current
 tags: [documentation, containment, git, submodule]
-evidence: docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md; docs/tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md; docs/research/spec-to-intent-task-evidence-containment-census.md
+evidence: docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md; docs/tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md; docs/research/spec-to-intent-task-evidence-containment-census.md; docs/decisions/0039-bounded-spec-to-intent-task-evidence.md
 reverify: git ls-files '*.md' | wc -l
 ---
 
@@ -117,8 +117,13 @@ owner declarations used by historical tests and current `.6e`/`.7`/`.8`/`.9` con
 root must therefore retain all 58 compact ID declarations. Seven measured semantic groups fit the existing
 contract-driven checker's portable 24-part / 32-region / 128-route, 98,304-byte-part, and 6,400-byte-line caps;
 the 1,605-byte legacy maximum requires only a target-derived part limit, not a global-cap change. The source's
-root-child lists and `.4`/`.5b` open-question/blocker prose are stale current-state surfaces, so `.1.2` must set
-explicit precedence while the exact capsule retains every literal byte.
+root-child lists and `.4`/`.5b` open-question/blocker prose are stale current-state surfaces; ADR 0039 sets their
+current-state precedence while the exact capsule retains every literal byte.
+
+ADR 0039 accepts the target-aware hybrid. The bounded root keeps normalized current state and all 58 exact owner
+declarations; seven legacy parts, one reserved behavioral part, a complete route index/manifest, and an exact
+capsule separate current work, semantic history, and provenance. Migration is same-volume and root-last. The
+reserved part receives `.f` only in the closing audit, so containment does not activate product behavior.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

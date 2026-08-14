@@ -190,6 +190,26 @@ semantic part, eligible frontier, `post_migration` route, root-required literal,
 update pass together. The 35-case suite therefore proves both rejection and reachability of the future writer
 contract, and the containment program is closed.
 
+#### Alignment task migration preserves executable owner lookup
+
+Active `SPEC-TO-INTENT-ALIGNMENT` needs a target-aware form of the same topology. Its locked source is 2,049
+lines / 278,178 bytes, only 350 bytes below the unchanged task-evidence boundary. The target-specific census
+closes all bytes in 21 regions and finds 58 formal IDs, seven feasible semantic groups, and a load-bearing product
+reader: trajectory validation opens the stable Markdown and searches exact ``- ID: `<task_id>` `` declarations.
+Moving those declarations only to a nested route index would break existing ownership checks.
+
+[ADR 0039](../../../decisions/0039-bounded-spec-to-intent-task-evidence.md) therefore keeps all 58 compact owner
+declarations and normalized current state in the bounded stable root. A bounded index and seven immutable legacy
+payload parts provide semantic navigation, an exact capsule preserves literal provenance, and a reserved eighth
+active part prepares the `.6d.ii.f` behavioral lane without activating it. The closing audit alone moves `.f`'s
+primary route to that current part and makes it eligible.
+
+Every later task slice updates root plus exactly one owning active part in one commit. Index and manifest change
+only with routes, membership, state, or measured metrics. Migration writes the capsule, parts, index, manifest,
+and contract on the repository volume before replacing the root last; failure restores the locked root and
+contract and removes only proven migration-owned destinations. Completed post-migration parts remain honestly
+`active` until `TASK-PART-SEAL-REACHABILITY` supplies a compliant closed-state transition.
+
 #### Corpus task migration landed losslessly
 
 The same architecture was measured independently for active `CORPUS-COVERAGE`. Its pre-migration source was

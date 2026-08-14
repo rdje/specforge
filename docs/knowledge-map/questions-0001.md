@@ -70,6 +70,8 @@
   > How are production prompts kept specification neutral?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How are runtime alpha obligations, adversarial mutations, and legal raw-spelling uses structurally qualified?
+- [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
+  > How does ADR 0039 preserve trajectory owner lookup at the stable task path?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How does EvidenceIR schema 2 handle old protocol-specific artifacts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -126,6 +128,8 @@
   > Is the generic production core physically separated from conformance code?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Were downstream artifacts reconciled after SourceIR schema 2?
+- [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
+  > What are the local bounds for the partitioned alignment task evidence?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What changes a production implementation digest?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -148,6 +152,10 @@
   > What is the canonical claim-family migration denominator?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > What is the production genericity module denominator?
+- [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
+  > What is the root-last failure transaction for alignment evidence migration?
+- [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
+  > What normalized parent and state precedence does the alignment task migration use?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > What replaced SwdOperation and SerialFramePhase?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
@@ -158,6 +166,8 @@
   > What syntax uncertainty makes the production genericity graph fail closed?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Where is the whole extraction-pipeline genericity audit?
+- [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
+  > Where will behavioral qualification evidence live after alignment task migration?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which IntentIR fields are exact SemanticIR carries?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -166,8 +176,12 @@
   > Which premise kinds can the trusted promotion kernel accept?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which registered doctrine enforces the complete clean production-genericity boundary?
+- [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
+  > Which three authorities govern the bounded alignment task migration?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why are actors and actor contracts IntentIR projections rather than lossless carries?
+- [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
+  > Why can a completed post-migration alignment evidence part not be marked sealed yet?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why can downstream chain currency be unmeasurable rather than stale?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -178,6 +192,8 @@
   > Why is a forbidden vocabulary list insufficient?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > Why is an AST scan not sufficient by itself?
+- [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
+  > Why is the exact alignment source kept in both a capsule and marked semantic payloads?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why was EvidenceIR carry-forward removed?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -282,18 +298,3 @@
   > can a correct refreshed count hide a missing corpus document
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > can a section-title shape alone license a signal declaration
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > can a signal name imply handshake clock reset polarity or direction
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > can a timing description or comment cell span columns without losing the timing record
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > can ambient validation reports define the tracked corpus KB validation page
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > can an active task tree use the terminal task archive topology
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > can an encoding table's column header SOURCE an enum name rather than only veto one / what did .5.iv measure (measured 2026-08-11 read-only, reproducer scripts/measure_encoding_enum_header_naming.py: derive_encoding_enum_name sources candidates ONLY from caption_text or the section title (evidence.rs:4698-4703) and then validates them against known_signals + the header
-  > (:4715-4733), so the header is a veto and never a source. Corpus: 2,540 encoding tables -> 281 header-nameable <FIELD> value|Description -> 134 minting a non-empty enum after the .5.ii spine gate, in 10 docs. GO on the lever, NO-GO on the naive predicate; CODE deferred to .5.iv.a)
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > can an estimated point claim a trend without paired uncertainty history
