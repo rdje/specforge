@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how is the composition-frame grammar kept free of corpus false positives
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -296,5 +298,3 @@
   > is collect_known_signal_names UTF-8 safe
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > is converge the complete production capability path
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream

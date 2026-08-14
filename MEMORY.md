@@ -17,14 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` is complete; `.2.1` is the next eligible leaf from
-  the clean handoff. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: ADR 0039 accepts the bounded stable root with all 58 executable owner declarations, seven exact
-  legacy parts, one reserved behavioral part, complete routing/provenance, target-local limits, and root-last
-  restoration. The source remains byte-identical to `112bc333`; `.6d.ii.f` remains unactivated and blocked only
-  until containment closes.
-- Next action: activate `.2.1` from the clean tree, then implement the source-locked target contract, third
-  composed checker invocation, live-surface declarations, destination-absence rules, and focused fault cases.
-- In-flight uncommitted: none after the `.1.2` commit; no background job.
+- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` is complete from clean predecessor `3aaa9166` and
+  awaits its commit; `.2.2` is the next containment leaf.
+  Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
+- Current state: the source-locked alignment contract closes 21 regions, eight planned parts, and all 58 exact
+  owner declarations; three independent authorities now self-route through the neutral checker and doctrine.
+  Full CI passes, generated artifacts are removed, and the alignment source remains byte-identical to `112bc333`.
+- Next action: commit `.2.1`, then execute `.2.2` from the clean boundary to pin every final migration input.
+- In-flight uncommitted: completed and verified `.2.1` changes awaiting commit; no background job.
 - Blockers: `.6d.ii.f` waits only for bounded task-evidence migration; product direction is unambiguous. The
   user-owned `.claude/settings.json` is untouched.

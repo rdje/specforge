@@ -560,5 +560,5 @@
       "sha256" : "5d7acb0c973a75d821c9d5a963aac5c3899da19261dcf6427274cb123804123f"
    },
    "source_capsule" : "docs/archive/tasks/corpus-coverage/source-through-2026-08-10.md",
-   "verifier" : "perl scripts/check_active_task_evidence.pl --check"
+   "verifier" : "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/corpus_task_evidence.json --check"
 }

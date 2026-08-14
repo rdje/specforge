@@ -210,6 +210,17 @@ and contract on the repository volume before replacing the root last; failure re
 contract and removes only proven migration-owned destinations. Completed post-migration parts remain honestly
 `active` until `TASK-PART-SEAL-REACHABILITY` supplies a compliant closed-state transition.
 
+The verifier command stored in each contract and rendered into its index is self-routing. The default PDF
+contract may use the short `--check` command; every other contract must name its own repository-relative
+`--contract` path. This prevents a corpus or alignment reader from accidentally validating the default PDF
+authority while believing its own task evidence was checked.
+
+The alignment contract is now executable in `source_locked/topology_declared` state. It authenticates commit
+`112bc333`, blob `66ae9b6c…3632`, exact SHA/metrics, 21 contiguous regions, all 58 source and future-root owner
+literals, eight declared parts, target-local limits, and complete destination absence. The third unconditional
+driver invocation and 42-case neutral suite leave the monolith unchanged; exact region digests and routes remain
+the separately committed `.2.2` boundary.
+
 #### Corpus task migration landed losslessly
 
 The same architecture was measured independently for active `CORPUS-COVERAGE`. Its pre-migration source was

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -295,5 +297,3 @@
   > why can the fact-card maximum not simply be raised from 198
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > why can the roadmap not be split safely at Markdown headings
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact

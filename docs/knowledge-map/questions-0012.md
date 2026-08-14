@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why does constraint promotion run outside the convergence loop
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does decoder go from 0/0 to connected (decoder also consolidated)
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -293,7 +297,3 @@
   > why must a collection aggregate be at least files times per-file
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
   > why must read-only census commands avoid /tmp and /private/tmp
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why must source-library paths not determine whether a corpus document was refreshed
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why must terminal task tree containment use two commits

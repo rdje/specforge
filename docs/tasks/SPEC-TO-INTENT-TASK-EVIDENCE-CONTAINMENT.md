@@ -75,17 +75,17 @@ remains directly browsable and exactly recoverable.
   Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2 — decide bounded alignment task architecture`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2`
-  Status: `pending`
+  Status: `in_progress`
   Goal: implement neutral enforcement and close the committed migration boundary
   Children: `.2.1`, `.2.2`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1`
-  Status: `pending`
+  Status: `done`
   Goal: enforce the target contract while the source remains locked and destinations absent
   Acceptance: a repository-neutral contract/checker rejects source, region, route, bound, destination, and
   current-state faults, runs through doctrine, and leaves the target untouched
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `42/42 neutral checker self-tests; default PDF, corpus, and alignment contracts independently pass; alignment source lock closes 21 contiguous regions, eight planned parts, all 58 exact owner literals, target-local limits, destination absence, and zero warnings; non-default verifier routing regression fixed and fault-tested; all nine doctrines, genericity inventory, fmt, clippy, 1,953 tests with six ignored and zero failed, five doctests, Rust docs, mdBook test/build, and locality pass; target identity unchanged; 73 generated book files / 8,948 KiB removed with incremental and checker residue absent`
+  Commit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce alignment source lock`
 
 - ID: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2`
   Status: `pending`
@@ -118,8 +118,9 @@ remains directly browsable and exactly recoverable.
 | 1 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0` | `done` | clean untouched target is pinned exactly |
 | 2 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1` | `done` | exact target roles, constraints, and candidate groups are measured |
 | 3 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2` | `done` | ADR 0039 fixes the target-specific architecture and transaction |
-| 4 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` | `pending` | make the accepted source-locked topology executable before migration inputs close |
-| 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
+| 4 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` | `done` | accepted source-locked topology is executable and fault-tested |
+| 5 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.2` | `pending` | pin the final clean migration boundary and complete every migration input |
+| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `blocked` | behavioral work resumes only after the active task route is safely writable |
 
 ## Decisions
 
@@ -134,15 +135,36 @@ remains directly browsable and exactly recoverable.
   legacy parts, one reserved behavioral part, a complete index/manifest, and an exact capsule. It fixes
   conservative parent/state precedence, target-local bounds, root-plus-part writes, split-before-rollover, and
   same-volume root-last restoration without claiming the separately unreachable sealed-part transition.
+- `2026-08-14`: `.2.1` finds that non-default contracts could be checked explicitly but were forced to publish
+  the default PDF verifier command. Derive the one accepted command from the actual contract path, correct the
+  corpus index/manifest, and gate both positive and mismatched non-default cases before adding the third target.
 
 ## Open Questions
 
-- None for `.1.2`; ADR 0039 fixes the authorities, partitions, reader compatibility, state precedence, bounds,
-  rotation, migration stages, and rollback rule. `.2.1` now makes that contract executable.
+- None for `.2.2`; ADR 0039 fixes the authorities, partitions, reader compatibility, state precedence, bounds,
+  rotation, migration stages, and rollback rule, and `.2.1` makes that contract executable.
 
 ## Blockers
 
 - `.6d.ii.f` is temporarily blocked only by this bounded-evidence prerequisite; product direction is unambiguous.
+
+### Acceptance Checklist (enforced) — `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1`
+
+- [x] **REPRODUCE / MEASURE** — the pinned 2,049-line / 278,178-byte source closes through 21 contiguous regions,
+  eight planned parts, and the same 58 exact owner declarations read by the production task-currentness gate.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `check_active_task_evidence.pl` accepted an explicit non-default contract but
+  required every contract to publish the default PDF verifier command, so the corpus index's documented command
+  silently verified the wrong authority.
+- [x] **ADDRESSED (verified)** — the accepted verifier command is derived from each contract path; positive and
+  mismatched non-default cases plus a missing root owner are included in 42/42 neutral self-tests, and PDF,
+  corpus, and alignment contracts each pass their own exact invocation.
+- [x] **NO REGRESSION** — all nine doctrines, the production genericity inventory, formatting, Clippy, 1,953 tests
+  with six ignored and zero failed, five doctests, Rust docs, mdBook test/build, project-data locality, target
+  identity, and post-build residue checks pass.
+- [x] **GENERICITY** — enforcement branches only on contract-declared paths, identity, regions, ids, lifecycle,
+  routes, and limits; no checker branch names the PDF, corpus, alignment program, or any product-specific concept.
+- [x] **LOCKSTEP** — the three contracts and their indexes/manifests, doctrine driver, canonical method docs,
+  mdBook, retrieval fact, owning tree, generated Knowledge Map, live-size registry, and resume pointer agree.
 
 ## Verification Log
 
@@ -151,6 +173,7 @@ remains directly browsable and exactly recoverable.
 | `2026-08-14` | `.0` baseline | `wc`; SHA-256; Git blob/history; status; target diff | 2,049 lines / 278,178 bytes / e70892a5…a26c / blob 66ae9b6c…3632 / 40 commits; untouched at `112bc333` |
 | `2026-08-14` | `.1.1` census | exact closure; path/id/readers/writers; trajectory currentness; catalogs/retrieval/live-size/doctrine; cleanup | 21 regions / 58 ids / 31 path and 92 id consumers; seven groups; target byte-identical; 2,901 files / 2,050,216 KiB removed |
 | `2026-08-14` | `.1.2` decision | ADR 0039; catalogs/KM/facts/live-size/book; persisted controller test; mdBook test/build; target diffs; doctrines; cleanup | 191-line accepted design; 234 facts / 1,801 keys; 808 files / 52 surfaces; one controller test; target unchanged; 73 generated files / 8,940 KiB removed |
+| `2026-08-14` | `.2.1` source-locked enforcement | checker self-tests; three exact contracts; full doctrine/CI suite; target identity; cleanup | 42/42; 21 regions / eight parts / 58 owner literals; 1,953 passed / six ignored / zero failed plus five doctests; target unchanged; 73 generated files / 8,948 KiB removed |
 
 ## Commit Log
 
@@ -159,6 +182,7 @@ remains directly browsable and exactly recoverable.
 | `.0` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.0 — own and pin alignment task boundary` | ownership and exact untouched baseline only |
 | `.1.1` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.1 — census alignment task evidence` | complete read-only target-specific architecture input |
 | `.1.2` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.1.2 — decide bounded alignment task architecture` | accepted topology, limits, reader compatibility, migration, restoration, book, and retrieval truth |
+| `.2.1` | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce alignment source lock` | source-locked target contract, exact self-routing, doctrine composition, fault tests, and synchronized public truth |
 
 ## Changelog
 
@@ -168,3 +192,5 @@ remains directly browsable and exactly recoverable.
   reconstruction evidence without changing the target; `.1.2` is next.
 - `2026-08-14`: `.1.2` accepts ADR 0039, publishes the target-aware public method, and leaves the target exactly
   unchanged; `.2.1` is the next eligible containment leaf.
+- `2026-08-14`: `.2.1` makes the accepted source lock executable, corrects non-default verifier self-routing,
+  composes the third contract through doctrine, and leaves the target unchanged; `.2.2` is next.

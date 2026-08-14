@@ -1,0 +1,439 @@
+{
+   "contract_id" : "spec-to-intent-alignment-active-task-evidence",
+   "current_frontier" : {
+      "literal" : "No eligible product frontier until `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4` closes.",
+      "mode" : "none"
+   },
+   "current_path" : "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md",
+   "destinations" : {
+      "archive_directory" : "docs/archive/tasks/spec-to-intent-alignment",
+      "collection_directory" : "docs/tasks/spec-to-intent-alignment",
+      "index" : "docs/tasks/spec-to-intent-alignment/INDEX.md",
+      "manifest" : "docs/tasks/spec-to-intent-alignment/manifest.json",
+      "parts" : [
+         {
+            "heading" : "# SPEC-TO-INTENT-ALIGNMENT — program foundation",
+            "part_id" : "program-foundation",
+            "path" : "docs/tasks/spec-to-intent-alignment/program-foundation.md",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# SPEC-TO-INTENT-ALIGNMENT — qualification and repair",
+            "part_id" : "qualification-and-repair",
+            "path" : "docs/tasks/spec-to-intent-alignment/qualification-and-repair.md",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# SPEC-TO-INTENT-ALIGNMENT — genericity remediation",
+            "part_id" : "genericity-remediation",
+            "path" : "docs/tasks/spec-to-intent-alignment/genericity-remediation.md",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# SPEC-TO-INTENT-ALIGNMENT — structural proof",
+            "part_id" : "structural-proof",
+            "path" : "docs/tasks/spec-to-intent-alignment/structural-proof.md",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# SPEC-TO-INTENT-ALIGNMENT — current and future legacy",
+            "part_id" : "current-and-future",
+            "path" : "docs/tasks/spec-to-intent-alignment/current-and-future.md",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# SPEC-TO-INTENT-ALIGNMENT — verification",
+            "part_id" : "verification",
+            "path" : "docs/tasks/spec-to-intent-alignment/verification.md",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# SPEC-TO-INTENT-ALIGNMENT — commit and chronology",
+            "part_id" : "commit-and-chronology",
+            "path" : "docs/tasks/spec-to-intent-alignment/commit-and-chronology.md",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
+            "part_id" : "behavioral-qualification",
+            "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
+            "state" : "active"
+         }
+      ],
+      "source_capsule" : "docs/archive/tasks/spec-to-intent-alignment/source-through-2026-08-14.md"
+   },
+   "identity" : {
+      "active_status_literal" : "- Status: `active`",
+      "heading" : "# SPEC-TO-INTENT-ALIGNMENT: steer PDF evidence into complete executable-intent IR",
+      "tree_id" : "SPEC-TO-INTENT-ALIGNMENT"
+   },
+   "input_state" : "topology_declared",
+   "leaf_routes" : [],
+   "limits" : {
+      "capsule_exact" : {
+         "bytes" : 278178,
+         "line_bytes" : 1605,
+         "lines" : 2049
+      },
+      "index" : {
+         "enforcement_ceilings" : {
+            "bytes" : 24576,
+            "line_bytes" : 768,
+            "lines" : 192
+         },
+         "health_targets" : {
+            "bytes" : 16384,
+            "line_bytes" : 384,
+            "lines" : 128
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      },
+      "manifest" : {
+         "bytes" : 65536,
+         "line_bytes" : 1024,
+         "max_leaf_routes" : 128,
+         "max_parts" : 24,
+         "max_regions" : 32,
+         "scalar_bytes" : 1024
+      },
+      "parts" : {
+         "enforcement_ceilings" : {
+            "bytes_each" : 98304,
+            "bytes_total" : 1179648,
+            "files" : 24,
+            "line_bytes_each" : 2560,
+            "lines_each" : 896,
+            "lines_total" : 9600
+         },
+         "health_targets" : {
+            "bytes_each" : 86016,
+            "bytes_total" : 786432,
+            "files" : 16,
+            "line_bytes_each" : 2048,
+            "lines_each" : 640,
+            "lines_total" : 6400
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      },
+      "root" : {
+         "enforcement_ceilings" : {
+            "bytes" : 36864,
+            "line_bytes" : 1024,
+            "lines" : 384
+         },
+         "health_targets" : {
+            "bytes" : 24576,
+            "line_bytes" : 512,
+            "lines" : 256
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      }
+   },
+   "marker_prefix" : "spec-to-intent-task-source-region",
+   "migrated_requirements" : {
+      "index_required_literals" : [
+         "# SPEC-TO-INTENT-ALIGNMENT task-evidence index",
+         "## Semantic parts",
+         "## Primary leaf routes",
+         "## Exact provenance",
+         "## Verification"
+      ],
+      "root_forbidden_literals" : [
+         "- Status: `done`",
+         "- Status: `pending`"
+      ],
+      "root_required_literals" : [
+         "# SPEC-TO-INTENT-ALIGNMENT: steer PDF evidence into complete executable-intent IR",
+         "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
+         "- Status: `active`",
+         "## Current Frontier",
+         "No eligible product frontier until `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.4` closes.",
+         "## Detailed task evidence",
+         "## Verification Log",
+         "## Commit Log",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.0`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.1`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.2`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.3`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.4`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.4a`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.4b`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.4c`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.5`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.5a`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.5b`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6a`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.i`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.iii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6c`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6c.i`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6c.ii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.i`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6e`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.7`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.8`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.9`"
+      ]
+   },
+   "migration_state" : "source_locked",
+   "regions" : [
+      {
+         "end_line" : 43,
+         "part_id" : "program-foundation",
+         "region_id" : "program-identity",
+         "start_line" : 1
+      },
+      {
+         "end_line" : 129,
+         "part_id" : "program-foundation",
+         "region_id" : "program-nodes-00-05b",
+         "start_line" : 44
+      },
+      {
+         "end_line" : 225,
+         "part_id" : "qualification-and-repair",
+         "region_id" : "qualification-nodes-06-06d-i",
+         "start_line" : 130
+      },
+      {
+         "end_line" : 290,
+         "part_id" : "genericity-remediation",
+         "region_id" : "genericity-nodes-06d-ii-06d-ii-d-iv",
+         "start_line" : 226
+      },
+      {
+         "end_line" : 426,
+         "part_id" : "structural-proof",
+         "region_id" : "structural-nodes-06d-ii-e",
+         "start_line" : 291
+      },
+      {
+         "end_line" : 461,
+         "part_id" : "current-and-future",
+         "region_id" : "future-nodes-06d-ii-f-09",
+         "start_line" : 427
+      },
+      {
+         "end_line" : 511,
+         "part_id" : "current-and-future",
+         "region_id" : "ordered-current-frontier",
+         "start_line" : 462
+      },
+      {
+         "end_line" : 679,
+         "part_id" : "program-foundation",
+         "region_id" : "decisions",
+         "start_line" : 512
+      },
+      {
+         "end_line" : 715,
+         "part_id" : "structural-proof",
+         "region_id" : "structural-doctrine-contract",
+         "start_line" : 680
+      },
+      {
+         "end_line" : 721,
+         "part_id" : "program-foundation",
+         "region_id" : "legacy-open-question",
+         "start_line" : 716
+      },
+      {
+         "end_line" : 726,
+         "part_id" : "program-foundation",
+         "region_id" : "legacy-blocker",
+         "start_line" : 722
+      },
+      {
+         "end_line" : 877,
+         "part_id" : "verification",
+         "region_id" : "verification-ledger",
+         "start_line" : 727
+      },
+      {
+         "end_line" : 1019,
+         "part_id" : "program-foundation",
+         "region_id" : "acceptance-02-05b",
+         "start_line" : 878
+      },
+      {
+         "end_line" : 1205,
+         "part_id" : "qualification-and-repair",
+         "region_id" : "acceptance-06a-06d-i",
+         "start_line" : 1020
+      },
+      {
+         "end_line" : 1357,
+         "part_id" : "genericity-remediation",
+         "region_id" : "acceptance-genericity-remediation",
+         "start_line" : 1206
+      },
+      {
+         "end_line" : 1419,
+         "part_id" : "structural-proof",
+         "region_id" : "acceptance-proof-foundation",
+         "start_line" : 1358
+      },
+      {
+         "end_line" : 1555,
+         "part_id" : "structural-proof",
+         "region_id" : "acceptance-proof-migration",
+         "start_line" : 1420
+      },
+      {
+         "end_line" : 1652,
+         "part_id" : "structural-proof",
+         "region_id" : "acceptance-compiled-doctrine",
+         "start_line" : 1556
+      },
+      {
+         "end_line" : 1665,
+         "part_id" : "structural-proof",
+         "region_id" : "acceptance-structural-qualification",
+         "start_line" : 1653
+      },
+      {
+         "end_line" : 1712,
+         "part_id" : "commit-and-chronology",
+         "region_id" : "commit-log",
+         "start_line" : 1666
+      },
+      {
+         "end_line" : 2049,
+         "part_id" : "commit-and-chronology",
+         "region_id" : "chronology",
+         "start_line" : 1713
+      }
+   ],
+   "route_basis" : "boundary_path_commit_subject_ids",
+   "schema_version" : 1,
+   "source" : {
+      "boundary_commit" : "112bc3338c6c4a0dbd522add29e86706ff03c645",
+      "git_blob" : "66ae9b6cde51476d5b45a180c756f0f9463d3632",
+      "metrics" : {
+         "bytes" : 278178,
+         "line_bytes" : 1605,
+         "lines" : 2049
+      },
+      "sha256" : "e70892a5c6acbe794bea6a9dd4484a90481e31d0aba64d8b8e8dcaaeae90a26c"
+   },
+   "source_requirements" : [
+      "# SPEC-TO-INTENT-ALIGNMENT: steer PDF evidence into complete executable-intent IR",
+      "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
+      "- Status: `active`",
+      "## Goal",
+      "## Acceptance Criteria",
+      "## Task Tree",
+      "## Current Frontier",
+      "## Decisions",
+      "### Structural doctrine execution contract (`.6d.ii.e.v.i`)",
+      "## Open Questions",
+      "## Blockers",
+      "## Verification Log",
+      "## Commit Log",
+      "## Changelog",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.0`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.1`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.2`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.3`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.4`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.4a`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.4b`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.4c`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.5`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.5a`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.5b`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6a`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.i`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.iii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6c`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6c.i`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6c.ii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.i`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.6e`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.7`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.8`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.9`"
+   ],
+   "verifier" : "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --check"
+}

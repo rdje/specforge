@@ -678,5 +678,5 @@
       "## Changelog",
       "Corpus → 48 done / eight remaining /"
    ],
-   "verifier" : "perl scripts/check_active_task_evidence.pl --check"
+   "verifier" : "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/corpus_task_evidence.json --check"
 }

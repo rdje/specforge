@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
@@ -118,6 +120,8 @@
   > why did the canonical SWD relation count change from 25 to 21
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > why did the corpus KB size warning appear and how was it removed
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why did the corpus task-evidence index verify the PDF contract
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > why did the emitted ISF count drop from 57 to 44
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
@@ -294,7 +298,3 @@
   > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > why does condition_text matter for the NLI claim
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why does constraint promotion run outside the convergence loop
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > why does decoder go from 0/0 to connected (decoder also consolidated)

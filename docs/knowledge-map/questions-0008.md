@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > what is ADR 0031
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > what is ADR 0032
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -295,5 +297,3 @@
   > what is the next big PDF-variant digestion lever after the serial class
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)

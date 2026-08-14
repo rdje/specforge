@@ -85,6 +85,11 @@ perl "$ROOT/scripts/check_active_task_evidence.pl" \
   --contract doctrine/live_document_size/corpus_task_evidence.json \
   --check || fail=1
 
+perl "$ROOT/scripts/check_active_task_evidence.pl" \
+  --root "$ROOT" \
+  --contract doctrine/live_document_size/spec_to_intent_task_evidence.json \
+  --check || fail=1
+
 perl "$ROOT/scripts/check_live_document_size.pl" \
   --root "$ROOT" \
   --registry doctrine/live_document_size/surfaces.jsonl \

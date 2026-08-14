@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -295,5 +297,3 @@
   > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > where is register level access stored in RegisterRecord
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)

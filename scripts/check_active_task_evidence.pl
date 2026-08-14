@@ -21,8 +21,9 @@ binmode STDERR, ':encoding(UTF-8)';
 # Nested exact evidence may be as wide as the repository's direct task-evidence
 # surface, while each task-specific contract remains free to set a tighter cap.
 my $TASK_EVIDENCE_LINE_BYTES_CAP = 6_400;
+my $DEFAULT_CONTRACT_REL = 'doctrine/live_document_size/active_task_evidence.json';
 my $root;
-my $contract_rel = 'doctrine/live_document_size/active_task_evidence.json';
+my $contract_rel = $DEFAULT_CONTRACT_REL;
 my $report = 0;
 my $self_test = 0;
 my $migrate_template_rel;
@@ -76,6 +77,13 @@ exit 0;
 
 sub usage {
     die "Usage: $0 [--root DIR] [--contract PATH] [--check|--report|--self-test|--migrate ROOT_TEMPLATE]\n";
+}
+
+sub verifier_command_for {
+    my ($relative_contract) = @_;
+    return 'perl scripts/check_active_task_evidence.pl --check'
+        if ($relative_contract // '') eq $DEFAULT_CONTRACT_REL;
+    return "perl scripts/check_active_task_evidence.pl --contract $relative_contract --check";
 }
 
 sub raw_scalar {
@@ -490,7 +498,7 @@ sub validate_scalar_bounds {
 }
 
 sub validate_contract_schema {
-    my ($contract, $errors) = @_;
+    my ($contract, $relative_contract, $errors) = @_;
     reject_unknown(
         $contract,
         'contract',
@@ -512,8 +520,9 @@ sub validate_contract_schema {
     my $current = required_scalar($contract, 'current_path', 'contract', $errors);
     push @$errors, 'contract current_path is unsafe' if defined($current) && !safe_relative_path($current);
     my $verifier = required_scalar($contract, 'verifier', 'contract', $errors);
-    push @$errors, "contract verifier must be 'perl scripts/check_active_task_evidence.pl --check'"
-        if defined($verifier) && $verifier ne 'perl scripts/check_active_task_evidence.pl --check';
+    my $expected_verifier = verifier_command_for($relative_contract);
+    push @$errors, "contract verifier must be '$expected_verifier'"
+        if defined($verifier) && $verifier ne $expected_verifier;
     my $route_basis = required_scalar($contract, 'route_basis', 'contract', $errors);
     push @$errors, "contract route_basis must be 'boundary_path_commit_subject_ids'"
         if defined($route_basis) && $route_basis ne 'boundary_path_commit_subject_ids';
@@ -1149,7 +1158,7 @@ sub validate_tree {
     }
     my ($contract) = read_json_object($base, $relative_contract, 'contract', 131_072, \@errors);
     return (\@errors, {}) if !defined $contract;
-    validate_contract_schema($contract, \@errors);
+    validate_contract_schema($contract, $relative_contract, \@errors);
     my %result = (
         migration_state => $contract->{migration_state} // '',
         input_state => $contract->{input_state} // '',
@@ -1486,7 +1495,7 @@ sub fixture_contract {
             manifest => {bytes => 32768, line_bytes => 1024, scalar_bytes => 512, max_parts => 8, max_regions => 8, max_leaf_routes => 16},
         },
         migrated_requirements => {
-            root_required_literals => ['# PROGRAM: fixture', '- Tree ID: `PROGRAM`', '- Status: `active`', '## Current Frontier', 'No eligible frontier.', '## Detailed task evidence', '## Verification Log', '## Commit Log'],
+            root_required_literals => ['# PROGRAM: fixture', '- Tree ID: `PROGRAM`', '- Status: `active`', '- ID: `PROGRAM`', '- ID: `PROGRAM.1`', '## Current Frontier', 'No eligible frontier.', '## Detailed task evidence', '## Verification Log', '## Commit Log'],
             root_forbidden_literals => ['- Status: `done`'],
             index_required_literals => ['# PROGRAM task-evidence index', '## Semantic parts', '## Primary leaf routes', '## Exact provenance', '## Verification'],
         },
@@ -1538,6 +1547,11 @@ sub fixture_root {
 
 - Tree ID: `PROGRAM`
 - Status: `active`
+
+## Task owners
+
+- ID: `PROGRAM`
+- ID: `PROGRAM.1`
 
 ## Current Frontier
 
@@ -1651,9 +1665,11 @@ sub init_fixture_git {
 }
 
 sub seed_fixture {
-    my ($base, $state, $input_state, $mutator) = @_;
+    my ($base, $state, $input_state, $mutator, $fixture_contract_rel) = @_;
+    $fixture_contract_rel //= $DEFAULT_CONTRACT_REL;
     my $source_raw = fixture_source();
     my $contract = fixture_contract($input_state, $source_raw);
+    $contract->{verifier} = verifier_command_for($fixture_contract_rel);
     init_fixture_git($base, $contract, $source_raw);
     complete_fixture_inputs($contract, $source_raw) if $input_state eq 'complete';
     if ($state eq 'migrated') {
@@ -1679,7 +1695,7 @@ sub seed_fixture {
     $mutator->($base, $contract, $source_raw) if defined $mutator;
     write_raw(
         $base,
-        'doctrine/live_document_size/active_task_evidence.json',
+        $fixture_contract_rel,
         JSON::PP->new->canonical(1)->pretty(1)->encode($contract),
     );
 }
@@ -1725,6 +1741,8 @@ sub run_self_test {
     make_path($generated);
     my @cases = (
         ['source-locked topology positive', 'source_locked', 'topology_declared', undef, undef],
+        ['non-default contract verifier positive', 'source_locked', 'topology_declared', undef, undef, 'doctrine/live_document_size/fixture_task_evidence.json'],
+        ['non-default contract verifier mismatch', 'source_locked', 'topology_declared', sub { $_[1]{verifier} = 'perl scripts/check_active_task_evidence.pl --check' }, qr/contract verifier must be/, 'doctrine/live_document_size/fixture_task_evidence.json'],
         ['source-locked complete positive', 'source_locked', 'complete', undef, undef],
         ['unknown contract field', 'source_locked', 'topology_declared', sub { $_[1]{unknown} = 1 }, qr/unknown field/],
         ['unsafe current path', 'source_locked', 'topology_declared', sub { $_[1]{current_path} = '../escape.md' }, qr/current_path is unsafe/],
@@ -1751,6 +1769,7 @@ sub run_self_test {
         ['premature post-migration route', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{origin} = 'post_migration' }, qr/cannot declare post-migration/],
         ['migrated positive', 'migrated', 'complete', undef, undef],
         ['capsule mutation', 'migrated', 'complete', sub { write_raw($_[0], $_[1]{destinations}{source_capsule}, $_[2] . "changed\n") }, qr/source authority/],
+        ['root owner declaration missing', 'migrated', 'complete', sub { my $raw = fixture_root(); $raw =~ s/^- ID: `PROGRAM\.1`\n//m; write_raw($_[0], $_[1]{current_path}, $raw) }, qr/lacks required literal '- ID: `PROGRAM\.1`'/],
         ['root frontier missing', 'migrated', 'complete', sub { my $raw = fixture_root(); $raw =~ s/No eligible frontier\./Frontier unknown./; write_raw($_[0], $_[1]{current_path}, $raw) }, qr/frontier/],
         ['root mandatory rollover', 'migrated', 'complete', sub { $_[1]{limits}{root}{health_targets}{lines} = 20 }, qr/mandatory rollover/],
         ['index part route missing', 'migrated', 'complete', sub { my $raw = fixture_index(); $raw =~ s/^- \[Foundation\].*\n//m; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/links 'docs\/tasks\/program\/foundation.md'/],
@@ -1765,14 +1784,15 @@ sub run_self_test {
 
     my $passed = 0;
     for my $index (0 .. $#cases) {
-        my ($name, $state, $input_state, $mutator, $expected) = @{$cases[$index]};
+        my ($name, $state, $input_state, $mutator, $expected, $fixture_contract_rel) = @{$cases[$index]};
+        $fixture_contract_rel //= $DEFAULT_CONTRACT_REL;
         my $fixture = File::Spec->catdir($generated, ".active-task-evidence-self-test.$$.$index");
         remove_tree($fixture) if -e $fixture;
         make_path($fixture);
         my $case_failure;
         eval {
-            seed_fixture($fixture, $state, $input_state, $mutator);
-            my ($errors) = validate_tree($fixture, 'doctrine/live_document_size/active_task_evidence.json');
+            seed_fixture($fixture, $state, $input_state, $mutator, $fixture_contract_rel);
+            my ($errors) = validate_tree($fixture, $fixture_contract_rel);
             my $joined = join "\n", @$errors;
             if (!defined $expected) {
                 die "active-task-evidence self-test '$name' unexpectedly failed:\n$joined\n" if @$errors;

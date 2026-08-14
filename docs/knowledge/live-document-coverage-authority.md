@@ -28,10 +28,12 @@ answers:
   - "why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id"
   - "who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree"
   - "can the active-task evidence checker support the alignment task through data"
+  - "why did the corpus task-evidence index verify the PDF contract"
+  - "how does each active task-evidence index invoke its own contract"
 date: 2026-08-14
 status: current
 tags: [documentation, containment, git, submodule]
-evidence: docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md; docs/tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md; docs/research/spec-to-intent-task-evidence-containment-census.md; docs/decisions/0039-bounded-spec-to-intent-task-evidence.md
+evidence: docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md; docs/tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md; docs/research/spec-to-intent-task-evidence-containment-census.md; docs/decisions/0039-bounded-spec-to-intent-task-evidence.md; scripts/check_active_task_evidence.pl; docs/tasks/corpus-coverage/INDEX.md
 reverify: git ls-files '*.md' | wc -l
 ---
 
@@ -124,6 +126,17 @@ ADR 0039 accepts the target-aware hybrid. The bounded root keeps normalized curr
 declarations; seven legacy parts, one reserved behavioral part, a complete route index/manifest, and an exact
 capsule separate current work, semantic history, and provenance. Migration is same-volume and root-last. The
 reserved part receives `.f` only in the closing audit, so containment does not activate product behavior.
+
+The checker used to accept only the default PDF verifier string even when invoked with `--contract`. As a
+result, the corpus index's published command validated the PDF contract instead of itself. `.2.1` makes the
+expected command a function of the checked contract path: the default keeps its short command, while every
+non-default contract must publish its exact repository-relative `--contract … --check` invocation. Positive and
+mismatched non-default fixtures gate the rule, and the corpus index/manifest now self-route correctly.
+
+The alignment contract is the third unconditional invocation. In `source_locked/topology_declared` it binds
+commit `112bc333`, blob `66ae9b6c…3632`, the exact source SHA/metrics, 21 contiguous regions, eight planned parts,
+58 source/future-root owner literals, fixed local bounds, and absent collection/archive destinations. Exact
+region digests and all primary routes deliberately remain for `.2.2`; `.2.1` does not pretend they are closed.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

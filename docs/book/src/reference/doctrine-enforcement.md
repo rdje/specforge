@@ -80,9 +80,9 @@ The README guard is unconditional: it evaluates the resulting tree even when a c
 may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
 The project-owned normative contract is `README_POLICY.md`.
 
-Among its focused suites, the live-document gate runs 55 common lifecycle/control cases, 47 neutral derived-state
+Among its focused suites, the live-document gate runs 81 common lifecycle/control cases, 47 neutral derived-state
 classification cases, 25 SpecForge authority-adapter cases, and 15 terminal-task source/route/identity/boundary
-cases, plus 39 active-task source/topology/route/payload/bound/writer cases, 41 fact-catalog source/plan/route/residue/
+cases, plus 42 active-task source/topology/route/payload/bound/writer cases, 58 fact-catalog source/plan/route/residue/
 bound cases, and the projection-specific Knowledge Map contract and portable-bundle integration suite. Generated
 collections must have complete landing membership, exact derive-and-diff content,
 bounded repository-local check workspaces, and no stale parts or temporary residue. Exact current fields are
@@ -99,6 +99,9 @@ identities. Its guarded materializer preflights all inputs, preserves raw legacy
 UTF-8 scaffolds, writes the stable root last, validates the final tree, and rolls back only its proven-owned
 destinations. The positive continuation fixture also proves that a new active part, eligible frontier,
 post-migration route, root, index, manifest, and contract update form one accepted bounded transaction.
+The driver invokes the PDF, corpus, and alignment contracts independently. Every non-default contract must
+publish the exact repository-relative `--contract … --check` command rendered into its index; a command that
+falls back to the PDF authority is rejected.
 
 The fact-card contract authenticates its legacy commit/blob/index, raw digest/metrics, 158-card sources and row
 union, and former destination absence. Its current migrated state enforces the fixed-size landing router,

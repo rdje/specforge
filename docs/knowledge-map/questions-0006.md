@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > is identifier truncation a separate extractor defect or the same empty-catalog gap
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
@@ -296,5 +298,3 @@
   > what are the current CoreSight Base System artifact hashes
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > what are the current Introducing CoreSight artifact hashes
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > what are the current OpenCAPI AFU address note artifact hashes
