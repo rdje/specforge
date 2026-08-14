@@ -1,3 +1,19 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract
+
+- Froze the exact 24-document behavioral population with portable PDF authority, retained-Markdown hashes,
+  rich-capture counts, five vendor / 15 family / three layout strata, seven reviewed calibration rows, and 17
+  prospective holdouts. Four held-out documents are vendor-novel and 13 are family-novel.
+- Replayed all 24 normalized Markdown views without providers in repository-local scratch. They yield 27,330
+  evidence statements, 6,313 semantic records, and 9,543 intent records; 23 are non-vacuous, while the one
+  zero-semantic/zero-intent row remains explicitly unmeasurable for text metamorphics.
+- Defined six relations over two honest input planes and closed comparison across every field and proof claim in
+  SourceIR, EvidenceIR, SemanticIR, IntentIR, and the ISF adapter. Text variants cannot claim PDF page, visual,
+  table, content-element, section, or geometry coverage.
+- Added a neutral executable checker plus eight controlled omissions/drifts/leakage/vacuity/coverage faults, and
+  composed the contract into both production-genericity baseline and `--self-test` qualification.
+- Synchronized the task frontier to `.f.ii.a`, engineering rationale, mdBook, retrieval fact, and resume pointer;
+  exact census scratch was removed before publication.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification
 
 - Activated the released behavioral-genericity parent and decomposed it into bounded oracle-design,

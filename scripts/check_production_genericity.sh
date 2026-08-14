@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Compose the complete clean-tree production-genericity proof under one doctrine entry. The
-# default is the fast structural gate. `--self-test` adds the CI qualification oracles: controlled
-# mutations for every boundary class and the inventory-bound runtime alpha contract for all rules.
+# default is the fast structural gate plus the frozen behavioral design contract. `--self-test`
+# adds the CI qualification oracles: controlled mutations for every boundary class, contract
+# mutation controls, and the inventory-bound runtime alpha contract for all rules.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -61,6 +62,10 @@ run_component \
   INFORMATION-FLOW \
   'the compiled graph enforces raw/identity noninterference and proof-only promotion' \
   bash "$ROOT/scripts/check_production_genericity_flow.sh"
+run_component \
+  BEHAVIORAL-CONTRACT \
+  'the behavioral population, input planes, relations, held-out split, and evidence taxonomy are frozen' \
+  python3 -B "$ROOT/scripts/check_behavioral_genericity_contract.py"
 
 if [ "$qualify" -eq 1 ]; then
   run_component \
@@ -81,6 +86,10 @@ if [ "$qualify" -eq 1 ]; then
     cargo test --quiet --locked --offline -p specforge-production-graph --lib \
       tests::information_flow_fixture_fails_closed_on_boundary_breaches -- --exact
   run_component \
+    BEHAVIORAL-CONTRACT-MUTATIONS \
+    'population omission, unsafe authority, hash drift, leakage, vacuity, and partial comparison declarations fail closed' \
+    python3 -B "$ROOT/scripts/check_behavioral_genericity_contract.py" --self-test
+  run_component \
     ALPHA-OBLIGATIONS \
     'all 168 runtime rules exactly match inventory and execute their structural alpha obligations' \
     cargo test --quiet --locked --offline -p specforge-core --lib \
@@ -98,7 +107,7 @@ if [ "$fail" -eq 0 ]; then
   if [ "$qualify" -eq 1 ]; then
     printf 'production-genericity: all %d baseline and qualification components PASS.\n' "${#report[@]}" >&2
   else
-    printf 'production-genericity: all %d structural components PASS.\n' "${#report[@]}" >&2
+    printf 'production-genericity: all %d baseline contract components PASS.\n' "${#report[@]}" >&2
   fi
 else
   printf 'production-genericity: one or more requested components FAILED.\n' >&2

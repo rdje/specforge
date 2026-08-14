@@ -122,17 +122,21 @@ the common shell initializer, Rust production temp/subprocess boundaries, exact 
 locks, and any present venv's interpreter/launcher roots. A caller does not need to remember a
 `TMPDIR`; the gate rejects missing roots and cache symlinks that escape the repository.
 
-The production-genericity gate is one unconditional composition, not a forbidden-word scan. It runs
-the package dependency/disconnection check, the exact module and claim inventory, the exact rule/field/
-producer/seam/bypass joins, and the compiled graph's fixed-point information-flow and canonical-authority
-analysis. The graph follows the complete production Cargo surface and rejects raw or identity-dependent
-semantic control outside registered universal grammar/declassification, unregistered canonical mutation,
-protected capability or proof forgery, and proofless persistence. Its registry contains typed Rust paths and
-data classes, not document, vendor, protocol, or signal names. Cargo/Rust privacy remains the type oracle and
-executable replay remains semantic authority. CI adds the `--self-test` qualification: 27 controlled dependency,
-schema, rule, and flow faults; legal display/provenance/test-only uses; and an exact join from all 168 runtime
-rules to their inventory-declared structural alpha contracts. Population renaming, paraphrase, negative-control,
-and held-out behavior remain separate signoff work.
+The production-genericity gate is one unconditional composition, not a forbidden-word scan. Its baseline runs
+the package dependency/disconnection check, exact module/claim inventory, exact rule/field/producer/seam/bypass
+joins, compiled fixed-point information flow, and the frozen behavioral design contract. The graph follows the
+complete production Cargo surface and rejects raw or identity-dependent semantic control outside registered
+universal grammar/declassification, unregistered canonical mutation, protected capability or proof forgery, and
+proofless persistence. The behavioral contract joins all 24 current rows to portable source/normalized-text
+identity and every proof-bearing stage, freezes six relations plus the 7-calibration/17-prospective split, and
+keeps full-PDF capture separate from the lossy text projection. Missing source/provider and vacuous behavior are
+unmeasurable rather than passed. Its checker contains no document/vendor/protocol labels; those remain data.
+
+CI adds `--self-test`: 27 controlled dependency/schema/rule/flow faults, legal display/provenance/test-only uses,
+the exact 168-rule structural alpha join, and eight behavioral-contract faults covering population omission,
+unsafe authority, hash drift, reviewed-label leakage, vacuity laundering, and partial relation/stage assertions.
+This gates the behavioral oracle's currency, not the as-yet-unimplemented population results. Population
+renaming, paraphrase, negative-control, and held-out runs remain separate signoff work.
 
 It also runs the roadmap current/history contract. The structural check authenticates the exact
 1,487-line source capsule, five exhaustive source regions, all 23 workstream ids and owning task
@@ -252,7 +256,7 @@ bash scripts/check_doctrines.sh --all
 bash scripts/check_chain_currency.sh
 bash scripts/check_chain_currency.sh --self-test
 
-# run the complete clean-tree structural genericity proof directly:
+# run structural genericity plus the frozen behavioral design contract directly:
 bash scripts/check_production_genericity.sh
 
 # run the book's Rust examples and then build the complete HTML book:

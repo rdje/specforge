@@ -86,25 +86,15 @@ Its reviewed 12/12 current replay and access/provenance correction ship. Generic
 physical-applicability carriers now have clean whole-population qualification: current IntentIR is 24/2/16 TP/FP/FN with complete 29/29 provenance, and physical-link is the first supported reviewed category. The
 metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400 register fabrications under
 `.6e`; however, the owner-mandated whole-production genericity audit made structural neutrality a release blocker.
-SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are complete, and ADR 0038 freezes the proof-carrying migration. The workspace enforces the core/conformance boundary, and the sealed opaque-identity,
-ruleset, proof-ledger, compatibility, and promotion-kernel substrate is installed. A deserialized proof envelope
-cannot self-authorize. The current checked 41-family / 168-field graph resolves 117 producer/mutator entrypoints,
-53 canonical seams, four conformance-only bypasses, and the one cumulative-ledger compatibility contract.
-All four IR stages and the ISF adapter carry cumulative proof; 24 reachable adapters are current but honestly
-blocked/no-file, while 54 legacy chains are unmeasurable. `.e.iv.vii` binds proof identity to compiler-derived
-production registry/verifier/item/import/kernel closures. `.e.v.ii` derives the exact Cargo-rooted production
-module/item/import/call/macro graph with fail-closed syntax and configuration handling. `.e.v.iii` now joins a
-closed typed boundary registry to that graph and enforces fixed-point raw/identity noninterference, protected
-authority, and proof-only canonical promotion across the complete production surface. `.e.v.iv` now composes
-that analyzer with the dependency, inventory, and rule checks as the unconditional `PRODUCTION-GENERICITY`
-doctrine. `.e.vi` adds 27 controlled dependency/schema/rule/flow faults, legal display/provenance/test controls,
-and executable inventory-bound structural alpha obligations for all 168 runtime rules. `.e.vii` publishes the
-complete 15-commit structural range and exact final migration: 24 current chains carry 148,708 cumulative claims
-across 120 proof-bearing artifacts, all 120 non-proof/non-validation comparisons have zero delta, and 54 legacy
-chains remain explicitly unmeasurable rather than receiving synthetic authority.
-A finite forbidden-vocabulary list remains diagnostic, not proof. `.f` now owns population alpha-renaming, identity, paraphrase,
-and held-out qualification before `.6e`. A reproduced 400-page failure also drove resource-sized bounded
-activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.
+Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 168
+runtime rules, compiled information-flow doctrine, and 27 adversarial controls cover all five stages. The 24
+current chains carry 148,708 cumulative claims across 120 artifacts with zero public migration delta; 54 legacy
+chains remain explicitly unmeasurable. The task tree and structural report own the detailed implementation graph.
+A finite forbidden-vocabulary list remains diagnostic, not proof. `.f.i` freezes the 24-row behavioral
+population, PDF/text input planes, six relations, five-stage comparison, and 7-calibration/17-prospective split;
+23 text projections are non-vacuous and one is unmeasurable. `.f.ii.a` next owns PDF identity and text alpha
+evidence before paraphrase, negatives, held-out replay, final signoff, and then `.6e`. Resource-sized bounded
+activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
 
 Five active program groups support that north star:
 

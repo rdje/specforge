@@ -215,10 +215,10 @@ contract may use the short `--check` command; every other contract must name its
 `--contract` path. This prevents a corpus or alignment reader from accidentally validating the default PDF
 authority while believing its own task evidence was checked.
 
-The alignment contract is now `migrated/complete` from clean source boundary `38b79395`. The stable path is a
-127-line / 5,707-byte current root with all 58 exact owner declarations and `.f` as its one eligible product
-frontier. Its 86-line / 5,937-byte index routes seven immutable legacy parts plus the active 22-line / 974-byte
-behavioral part. The eight parts total 2,162 lines / 282,891 bytes; the largest is 502 lines / 65,125 bytes. All
+The alignment contract is `migrated/complete` from clean source boundary `38b79395`. The stable path is a
+142-line / 7,041-byte current root with all 66 exact owner declarations and `.f.ii.a` as its active product
+frontier. Its 94-line / 6,742-byte index routes seven immutable legacy parts plus the active 147-line / 9,410-byte
+behavioral part. The eight parts total 2,287 lines / 291,327 bytes; the largest is 502 lines / 65,125 bytes. All
 21 marked legacy payloads reconstruct the source, and the independent 2,049-line / 278,178-byte capsule remains
 exact at SHA-256 `e70892a5…a26c` and Git blob `66ae9b6c…3632`.
 
@@ -235,8 +235,8 @@ integration exposed a generic schema gap: one scalar `aggregate_composition` cou
 health band and 24-file ceiling band. A role may now retain the scalar form when counts are equal or declare a
 closed `{health, ceiling}` count object; both bands must still reproduce their file, line, byte, and per-member
 maxima exactly. The 84-case live-size suite proves the new positive profile, a missing band, and an unknown band.
-Containment `.4` has closed independent reconstruction and future-write qualification. `.6d.ii.f` is pending
-and eligible; its implementation must use the root-plus-behavioral-part transaction above.
+Containment `.4` has closed independent reconstruction and future-write qualification. `.6d.ii.f` is active,
+`.f.i` is complete, and every remaining child must use the root-plus-behavioral-part transaction above.
 
 #### Corpus task migration landed losslessly
 

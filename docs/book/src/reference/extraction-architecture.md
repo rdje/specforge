@@ -137,11 +137,14 @@ dependence through 2,169 functions and 11,295 helper edges, then check 10,419 br
 sensitive macro input, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
-The dependency, inventory, rule, compiled-graph, and information-flow checks now run together as the
-unconditional `PRODUCTION-GENERICITY` doctrine. CI adds 27 controlled faults, distinct literal/substring/regex
-decisions, legal display/provenance/test controls, and an exact inventory-to-runtime join that executes the
-structural alpha obligation of all 168 rules. Whole-population renaming, paraphrase, negative-control, and
-held-out qualification remain mandatory, so SpecForge does not yet claim production-genericity signoff.
+The dependency, inventory, rule, compiled-graph, information-flow, and frozen behavioral-contract checks now run
+together as the unconditional `PRODUCTION-GENERICITY` doctrine. The contract closes the 24-document population,
+full-PDF versus normalized-text input planes, six transform relations, five proof-bearing comparison stages,
+7-row calibration/17-row prospective holdout split, and pass/fail/unmeasurable/invalid evidence states. CI adds
+27 structural controls, eight contract mutations, legal display/provenance/test controls, and an exact
+inventory-to-runtime join that executes the structural alpha obligation of all 168 rules. The contract does not
+pretend the future runs already pass: whole-population renaming, paraphrase, negative-control, and held-out
+qualification remain mandatory before SpecForge can claim production-genericity signoff.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively
@@ -204,9 +207,10 @@ adapters are honestly blocked with zero current emitted files. The 54 legacy cha
 cannot feed canonical authority. The [structural qualification report](../../../research/production-genericity-structural-qualification.md)
 publishes the per-chain ledger and residual counts.
 
-This closes structural qualification only. Whole-document symbol renaming, identity perturbation,
-structure-preserving paraphrases, negative controls, held-out families, and complete-population replay remain
-the behavioral gate before the project can claim production genericity as a whole.
+This closes structural qualification only. The behavioral oracle and exact denominator are now frozen, but
+whole-document symbol renaming, identity perturbation, structure-preserving paraphrases, negative controls,
+held-out families, and complete-population replay remain the behavioral gate before the project can claim
+production genericity as a whole.
 
 ## Completion order
 

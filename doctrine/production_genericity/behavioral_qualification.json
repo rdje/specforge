@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "contract_id": "production-genericity-behavioral-qualification-v1",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
+  "selection_boundary_commit": "8307100e96a7ed6b9f04315949fd2f1c3c232bbf",
+  "declarations": {
+    "current_population": "doctrine/production_genericity/behavioral_population.tsv",
+    "retained_population": "doctrine/chain_currency/retained_bundles.json",
+    "reviewed_population": "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
+    "claim_family_inventory": "doctrine/production_genericity/claim_family_inventory.tsv",
+    "rule_family_inventory": "doctrine/production_genericity/rule_family_inventory.tsv"
+  },
+  "population_assertions": {
+    "current_documents": 24,
+    "repository_owned_sources": 3,
+    "external_input_sources": 21,
+    "reviewed_documents": 12,
+    "reviewed_current_overlap": 7,
+    "prospective_holdout_documents": 17,
+    "text_projection_measurable_documents": 23,
+    "text_projection_unmeasurable_documents": 1,
+    "vendor_strata": 5,
+    "prospective_vendor_novel_documents": 4,
+    "family_strata": 15,
+    "prospective_family_novel_documents": 13,
+    "layout_strata": 3,
+    "prospective_category_strata": 4,
+    "reviewed_category_strata": 6
+  },
+  "frozen_census": {
+    "prior_memory": {
+      "path": "generated/prior_memory/corpus_memory.json",
+      "sha256": "a416cc8b7b6bd84947e4b6780d5253b13c2985c57ca4e8f1c02d6daf56239633"
+    },
+    "replay_library": {
+      "path": "crates/specforge/src/ir/source_to_intent_replay.rs",
+      "sha256": "53d0ba5eba6cc85d92b4267d47188a7ae5ee05188016f36d5450f950c3e7097b"
+    },
+    "replay_entrypoint": {
+      "path": "crates/specforge/examples/source_to_intent_replay.rs",
+      "sha256": "0496637c076c95b62669dbf77080a0dc3d9d243be59212d890ad0d852c2236f9"
+    },
+    "command_template": "cargo run --quiet -p specforge --example source_to_intent_replay -- <normalized-markdown> .project-data/tmp/<fresh-root> generated/prior_memory/corpus_memory.json -",
+    "provider_calls": "forbidden",
+    "raw_output_disposition": "inspected_then_exactly_cleaned",
+    "aggregate": {
+      "documents": 24,
+      "normalized_markdown_bytes": 5455286,
+      "source_ir_rich_capture_records": 0,
+      "source_ir_proof_claims": 648,
+      "evidence_statements": 27330,
+      "evidence_proof_claims": 61017,
+      "semantic_records": 6313,
+      "semantic_proof_claims": 71276,
+      "intent_records": 9543,
+      "intent_proof_claims": 82095
+    }
+  },
+  "input_planes": [
+    {
+      "plane_id": "pdf_full_capture",
+      "authority": "hash_verified_pdf",
+      "relations": [
+        "unchanged_source",
+        "adversarial_identity"
+      ],
+      "covered_source_surfaces": [
+        "page_artifacts",
+        "visual_assets",
+        "structured_tables",
+        "content_elements",
+        "document_sections"
+      ],
+      "restriction": "An external PDF is measurable only when a runtime source map resolves its portable locator to a same-volume file with the frozen SHA-256."
+    },
+    {
+      "plane_id": "normalized_text_projection",
+      "authority": "hash_verified_retained_markdown",
+      "relations": [
+        "symbol_alpha"
+      ],
+      "covered_source_surfaces": [
+        "normalization_plan",
+        "downstream_text_extraction"
+      ],
+      "unmeasurable_source_surfaces": [
+        "page_artifacts",
+        "visual_assets",
+        "structured_tables",
+        "content_elements",
+        "document_sections"
+      ],
+      "restriction": "A text-projection result never qualifies PDF ingestion, image interpretation, table structure, page geometry, or another omitted rich-capture surface."
+    },
+    {
+      "plane_id": "reviewed_variant",
+      "base_plane": "normalized_text_projection",
+      "authority": "reviewed_transform_recipe",
+      "relations": [
+        "structure_preserving_paraphrase",
+        "harmless_layout",
+        "semantic_negative"
+      ],
+      "restriction": "Only a checked-in recipe that names the source spans, preserved conclusions, required deltas, and comparison complement may claim a reviewed relation."
+    }
+  ],
+  "stage_comparison": [
+    {
+      "stage_id": "source_ir",
+      "proof_required": true,
+      "coverage": "every serialized top-level field and every proof claim",
+      "semantic_surfaces": "all populated capture collections on the selected input plane"
+    },
+    {
+      "stage_id": "evidence_ir",
+      "proof_required": true,
+      "coverage": "every serialized top-level field and every proof claim",
+      "semantic_surfaces": "all captures, conflicts, residuals, validation, and provenance"
+    },
+    {
+      "stage_id": "semantic_ir",
+      "proof_required": true,
+      "coverage": "every serialized top-level field and every proof claim",
+      "semantic_surfaces": "all canonical records, conflicts, residuals, validation, and provenance"
+    },
+    {
+      "stage_id": "intent_ir",
+      "proof_required": true,
+      "coverage": "every serialized top-level field and every proof claim",
+      "semantic_surfaces": "all canonical intent, conflicts, residuals, validation, and provenance"
+    },
+    {
+      "stage_id": "isf_adapter",
+      "proof_required": true,
+      "coverage": "every serialized top-level field, emitted target identity, and every proof claim",
+      "semantic_surfaces": "lowering status, target model, residuals, validation, and emitted bytes"
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "unchanged_source",
+      "input_plane": "pdf_full_capture",
+      "eligibility": "the exact source authority and all required local providers are available",
+      "required_relation": "two isolated runs are byte-equal after only declared scratch-root substitution",
+      "allowed_deltas": [
+        "scratch_root"
+      ],
+      "required_deltas": [],
+      "forbidden_deltas": [
+        "canonical_fact",
+        "residual",
+        "proof_topology",
+        "validation",
+        "lowering"
+      ]
+    },
+    {
+      "relation_id": "adversarial_identity",
+      "input_plane": "pdf_full_capture",
+      "eligibility": "one byte-identical PDF is copied to two hash-verified adversarial repository-local locators",
+      "required_relation": "content capture and every semantic decision are invariant after declared document-identity and path normalization",
+      "allowed_deltas": [
+        "document_identity",
+        "source_locator",
+        "artifact_locator",
+        "identity_bound_proof_premise"
+      ],
+      "required_deltas": [
+        "document_identity"
+      ],
+      "forbidden_deltas": [
+        "content_capture",
+        "canonical_fact",
+        "residual_disposition",
+        "validation_metric",
+        "lowering_status"
+      ]
+    },
+    {
+      "relation_id": "symbol_alpha",
+      "input_plane": "normalized_text_projection",
+      "eligibility": "the baseline has at least one downstream semantic record and a bijective source-bound symbol catalog with complete occurrence coverage",
+      "required_relation": "inverse-renaming the transformed artifacts yields exact canonical decisions and exact proof topology",
+      "allowed_deltas": [
+        "declared_symbol_spelling",
+        "symbol_derived_stable_id",
+        "source_excerpt",
+        "source_content_digest"
+      ],
+      "required_deltas": [
+        "declared_symbol_spelling"
+      ],
+      "forbidden_deltas": [
+        "record_admission",
+        "semantic_role",
+        "conflict_topology",
+        "residual_disposition",
+        "validation_metric",
+        "lowering_status"
+      ]
+    },
+    {
+      "relation_id": "structure_preserving_paraphrase",
+      "input_plane": "reviewed_variant",
+      "eligibility": "a reviewed recipe exhaustively declares changed source spans and preserved conclusions",
+      "required_relation": "declared conclusions, residual accounting, and their complete unaffected complement remain equivalent",
+      "allowed_deltas": [
+        "reviewed_source_span",
+        "source_excerpt",
+        "source_content_digest",
+        "source_bound_provenance_id"
+      ],
+      "required_deltas": [
+        "reviewed_source_span"
+      ],
+      "forbidden_deltas": [
+        "undeclared_canonical_fact",
+        "undeclared_residual",
+        "provenance_loss",
+        "validation_regression",
+        "lowering_regression"
+      ]
+    },
+    {
+      "relation_id": "harmless_layout",
+      "input_plane": "reviewed_variant",
+      "eligibility": "a reviewed recipe declares a syntax-preserving heading, whitespace, table, or formatting change and its exact parser boundary",
+      "required_relation": "all semantic conclusions and residuals are invariant while only declared presentation records change",
+      "allowed_deltas": [
+        "reviewed_layout_span",
+        "presentation_record",
+        "source_bound_provenance_id"
+      ],
+      "required_deltas": [
+        "reviewed_layout_span"
+      ],
+      "forbidden_deltas": [
+        "canonical_fact",
+        "residual_disposition",
+        "proof_rule",
+        "validation_metric",
+        "lowering_status"
+      ]
+    },
+    {
+      "relation_id": "semantic_negative",
+      "input_plane": "reviewed_variant",
+      "eligibility": "a reviewed recipe declares one meaning-changing mutation, its required changed fact or residual, and the complete unaffected complement",
+      "required_relation": "the required semantic or residual delta occurs, the unaffected complement remains equivalent, and an invariant-only comparator rejects the run",
+      "allowed_deltas": [
+        "declared_changed_fact",
+        "declared_changed_residual",
+        "dependent_validation_metric",
+        "dependent_lowering_result"
+      ],
+      "required_deltas": [
+        "declared_changed_fact_or_residual"
+      ],
+      "forbidden_deltas": [
+        "undeclared_canonical_fact",
+        "undeclared_residual",
+        "provenance_loss",
+        "comparison_escape"
+      ]
+    }
+  ],
+  "held_out_policy": {
+    "prospective_definition": "Every current retained document absent from the reviewed-current overlap at the selection boundary is prospectively held out from behavioral recipe calibration.",
+    "historical_reviewed_status": "The 12-document reviewed dataset is evaluation authority but is not claimed historically unseen because its labels informed prior remediation.",
+    "novel_vendor_definition": "A prospective document is vendor-novel when its vendor is absent from reviewed calibration rows.",
+    "novel_family_definition": "A prospective document is family-novel when its family is absent from reviewed calibration rows.",
+    "layout_definition": {
+      "compact": "1-32 pages",
+      "medium": "33-96 pages",
+      "long": "97 or more pages"
+    },
+    "category_limit": "The prospective population covers four categories. Missing prospective register-ip and cpu-isa denominators are unmeasurable, not passed.",
+    "leakage_rule": "Production core cannot read this contract, transform recipes, held-out membership, expected relations, thresholds, or outcomes."
+  },
+  "evidence_contract": {
+    "required_run_states": [
+      "pass",
+      "fail",
+      "unmeasurable",
+      "invalid"
+    ],
+    "required_identity": [
+      "contract_sha256",
+      "production_revision",
+      "source_sha256",
+      "transform_recipe_sha256",
+      "prior_memory_sha256",
+      "tool_sha256"
+    ],
+    "required_coverage": [
+      "declared_documents",
+      "attempted_documents",
+      "completed_documents",
+      "unmeasurable_documents",
+      "all_stage_fields",
+      "all_proof_claims",
+      "all_expected_deltas",
+      "all_unaffected_complements"
+    ],
+    "partial_runs": "invalid",
+    "missing_expected_delta": "fail",
+    "undeclared_delta": "fail",
+    "missing_authority_or_provider": "unmeasurable",
+    "ambiguous_or_escaped_transform": "invalid"
+  },
+  "failure_taxonomy": [
+    {
+      "failure_id": "authority_unavailable",
+      "disposition": "unmeasurable"
+    },
+    {
+      "failure_id": "provider_unavailable",
+      "disposition": "unmeasurable"
+    },
+    {
+      "failure_id": "vacuous_baseline",
+      "disposition": "unmeasurable"
+    },
+    {
+      "failure_id": "stale_contract_or_population",
+      "disposition": "invalid"
+    },
+    {
+      "failure_id": "ambiguous_or_nonbijective_transform",
+      "disposition": "invalid"
+    },
+    {
+      "failure_id": "partial_or_escaped_run",
+      "disposition": "invalid"
+    },
+    {
+      "failure_id": "missing_expected_delta",
+      "disposition": "fail"
+    },
+    {
+      "failure_id": "undeclared_semantic_delta",
+      "disposition": "fail"
+    },
+    {
+      "failure_id": "proof_or_provenance_regression",
+      "disposition": "fail"
+    },
+    {
+      "failure_id": "validation_or_lowering_regression",
+      "disposition": "fail"
+    }
+  ]
+}

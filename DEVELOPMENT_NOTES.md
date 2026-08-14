@@ -1,4 +1,32 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i (`2026-08-14`) — input planes bound what a metamorphic pass proves
+
+The retained normalized Markdown is suitable for deterministic symbol and reviewed-text transformations, but it
+is not equivalent to the PDF capture. Building SourceIR directly from Markdown intentionally creates no page,
+visual, structured-table, content-element, or document-section records; EvidenceIR reads the promoted text and
+can still produce substantial downstream semantics. Comparing a PDF baseline with a Markdown variant would
+therefore confound the transform with a representation change. The accepted design compares baseline and
+variant on the same plane and reports the missing rich surfaces as unmeasurable. Only byte-identical PDF replay
+and PDF identity perturbation qualify the complete capture path.
+
+The provider-free 24-document text census makes vacuity mechanical. It produced 27,330 statements, 6,313
+SemanticIR records, and 9,543 IntentIR records. Twenty-three rows are nonempty. One row has extracted prose but
+zero SemanticIR and IntentIR semantic records; letting an invariant comparator pass that row would prove only
+that nothing remained nothing. The population table records it as text-unmeasurable while preserving its
+eligibility for PDF determinism and identity tests.
+
+The held-out language is also now bounded honestly. The 12-document reviewed evaluator affected earlier
+remediation and is not historically unseen. Its seven current overlaps form transform calibration; the other 17
+current rows are prospective holdout from the `.f` activation boundary. Novelty is derived from data: four rows
+have vendors absent from calibration, 13 have families absent from calibration, and all layout bands occur. Only
+four prospective categories exist, so missing register-IP and CPU/ISA prospective denominators cannot be passed
+by inference from the six-category reviewed evaluator.
+
+The relational oracle covers all fields and proof claims at all five stages. Missing source/provider or a
+vacuous baseline is unmeasurable; stale population, ambiguity, escaping, or partial coverage is invalid; missing
+expected or unexpected semantic/proof/provenance/validation/lowering deltas fail. This distinction prevents both
+missing infrastructure and a broken comparator from becoming green behavioral evidence.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f (`2026-08-14`) — behavior needs relational oracles, not one equality check
 
 Whole-document genericity qualification has several distinct semantic relations. Alpha renaming and harmless

@@ -17,14 +17,17 @@
   Children: `.f.i`, `.f.ii`, `.f.iii`, `.f.iv`, `.f.v`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i`
-  State: `pending`
+  State: `done`
   Goal: freeze the behavioral oracle, governed population, transform relations, failure taxonomy, and evidence
   Acceptance: an accepted, executable design names every current measurable document and held-out stratum;
   defines symbol, identity, paraphrase, negative-control, and unchanged-source relations at every proof-bearing
   stage; separates permissible renamed presentation from semantic/proof-topology deltas; fails closed on missing
   source authority, transform ambiguity, unsupported provider dependence, or incomplete comparison coverage
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `24/24 current rows join exact retained/source/proof authority; 23 text-measurable and one
+  vacuous/unmeasurable; 7 reviewed calibration / 17 prospective holdout, including 4 vendor-novel and 13
+  family-novel; five-stage relational contract and 8/8 mutation controls pass; wrapper, doctrines, mdBook,
+  retrieval, and cleanup pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii`
   State: `pending`
@@ -94,7 +97,7 @@
 
 | Order | Leaf | State | Why next |
 | --- | --- | --- | --- |
-| 1 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i` | `pending` | freeze the oracle and population before generating transformed evidence |
+| 1 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i` | `done` | oracle, population, relations, held-out split, and evidence states are frozen |
 | 2 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a` | `pending` | build alpha and adversarial identity qualification under the frozen oracle |
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `pending` | add reviewed paraphrase and harmless layout relations |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `pending` | prove the gate detects meaning and authority changes |
@@ -108,11 +111,15 @@
   paraphrase/layout, negative-sensitivity, held-out, population-reconciliation, and final closure slices.
 - `2026-08-14`: transformation and comparison authority belongs to conformance. Production core receives only
   transformed current-document inputs and cannot observe named fixtures, expected outcomes, or held-out labels.
+- `2026-08-14`: full-PDF unchanged/identity relations qualify rich capture; normalized-text relations qualify
+  only downstream text behavior and must report page/visual/table/geometry surfaces as unmeasurable.
+- `2026-08-14`: the seven reviewed/current overlaps are historically exposed calibration. The other 17 current
+  rows are the prospective holdout; the 12 reviewed rows remain evaluation authority, not relabeled unseen data.
 
 ## Open Questions
 
-- `.f.i` must establish which of the 24 current retained chains can support each transform from repository-local
-  source authority and which held-out strata have honest denominators.
+- `.f.ii.a` must implement the frozen five-stage comparator and deterministic identity/symbol generators without
+  widening the one text-vacuous row or the rich-capture exclusions.
 
 ## Blockers
 
@@ -124,12 +131,15 @@
 | Date | Unit | Result |
 | --- | --- | --- |
 | `2026-08-14` | `.f` activation | 66 owners/routes; 44/44 active-task and 84/84 live-size cases; trajectory owner lookup; 220 cards; 236 facts / 1,817 keys; mdBook and cleanup pass |
+| `2026-08-14` | `.f.i` population census | 24 PDF authorities; 1,822 pages / 1,995 visuals / 906 tables / 22,088 elements / 3,899 sections; text replay yields 27,330 statements / 6,313 semantic / 9,543 intent records, with 23 non-vacuous rows |
+| `2026-08-14` | `.f.i` executable contract | exact 24 retained rows and five stages join; 7 calibration / 17 prospective, 4 vendor-novel / 13 family-novel; baseline checker and 8/8 controlled faults pass |
 
 ## Commit Log
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
 | `.f` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification` | activate the parent and route `.f.i` as the precise design frontier |
+| `.f.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract` | freeze source planes, current and held-out denominators, six relations, five-stage comparison, and closed evidence states |
 
 ## Activation protocol
 

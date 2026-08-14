@@ -11,7 +11,7 @@ cd "${ROOT_DIR}"
 echo "[specforge-ci] enforcing every registered doctrine via the registry/driver (all tiers)"
 ./scripts/check_doctrines.sh --all
 
-echo "[specforge-ci] qualifying production genericity with controlled mutations and per-rule alpha obligations"
+echo "[specforge-ci] qualifying production genericity with controlled mutations, behavioral-contract faults, and per-rule alpha obligations"
 ./scripts/check_production_genericity.sh --self-test
 
 echo "[specforge-ci] checking formatting"

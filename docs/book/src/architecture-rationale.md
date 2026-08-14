@@ -218,13 +218,24 @@ proof-bearing artifacts: the 24 current chain ledgers contain all 168 rule ids a
 while exact comparison finds zero non-proof/non-validation or residual delta. The other 54 chains remain
 explicitly proof-unmeasurable.
 
-Population behavioral qualification is now active under `.6d.ii.f` and is deliberately relational rather than
-one byte-equality gate. `.f.i` first freezes the measurable population, transform taxonomy, normalized semantic
-and proof-topology projections, failure taxonomy, and evidence schema. Later bounded children separately own
-symbol/document alpha and adversarial identity changes, reviewed meaning-preserving paraphrase/layout changes,
-meaning-changing negative controls, identity-disjoint held-out strata, complete-population reconciliation, and
-final signoff. Transformation recipes, expected relations, held-out labels, and comparison evidence remain in
-the conformance plane; the production core receives each transformed document only as current input.
+Population behavioral qualification is active under `.6d.ii.f` and is deliberately relational rather than one
+byte-equality gate. `.f.i` has frozen 24 current rows: three repository-owned and 21 portable external PDF
+authorities, seven historically exposed reviewed calibration rows, and 17 prospective holdouts. Four holdouts
+are vendor-novel and 13 family-novel relative to calibration. Provider-free replay of every retained Markdown
+view yields nonempty semantic intent on 23 rows; the one vacuous row is text-unmeasurable, not passed.
+
+The oracle separates input planes. Unchanged replay and adversarial identity use exact PDFs and cover pages,
+visuals, structured tables, content elements, and sections. Symbol alpha-renaming and reviewed text variants use
+baseline and transformed normalized Markdown, so they qualify downstream text behavior only; they cannot claim
+PDF conversion, visual/table capture, or geometry. Six relations classify every field and proof claim through
+SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter lowering. Missing authority/provider or vacuity is
+`unmeasurable`; stale/ambiguous/partial evidence is `invalid`; missing expected or undeclared semantic/proof/
+provenance/validation/lowering deltas fail. The contract and eight mutations now run inside the production-
+genericity wrapper without claiming that the future behavioral evidence already passes. `.f.ii.a` next owns
+deterministic PDF identity and normalized-text alpha generation/comparison. Transformation recipes, expected
+relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
+current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)
+publishes the exact boundary and denominators.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

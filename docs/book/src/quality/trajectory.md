@@ -310,11 +310,14 @@ evaluator foundation is `.4a`; `.4b` locks the balanced reviewed population; `.4
 incomplete result and upstream blocker diagnosis; `.5a` supplies the generic controller; and `.5b` composes the
 first retrospective-baseline snapshot; `.6a` supplies the first current-binary replay and hard artifact-currency
 gate. The current metric controller recommends `.6e`, but remains report-only and reviewable; the stronger
-owner-mandated production-genericity invariant keeps `.6d.ii.e` as the active program frontier. Its preceding
-identity/spelling/prompt/corpus remediation parent `.6d.ii.d` is qualified and closed; `.e` installs the
-structural proof boundary and `.f` performs whole-population behavioral qualification.
+owner-mandated production-genericity invariant keeps `.6d.ii.f.ii.a` as the active program frontier. The
+identity/spelling/prompt/corpus remediation parent `.6d.ii.d` and structural proof parent `.e` are qualified and
+closed. `.f.i` freezes the behavioral oracle and population; `.f.ii.a` now implements whole-document identity
+and symbol-alpha evidence before the remaining paraphrase, negative, held-out, replay, and closure children.
 
 The current frontier is the production-genericity remediation under `.6d.ii`; its whole-pipeline audit is
 [`docs/research/production-genericity-pipeline-audit.md`](../../../research/production-genericity-pipeline-audit.md).
+The frozen behavioral oracle is
+[`docs/research/behavioral-genericity-qualification-design.md`](../../../research/behavioral-genericity-qualification-design.md).
 The detailed trajectory design and literature mapping live in
 [`docs/research/specforge-trajectory-control.md`](../../../research/specforge-trajectory-control.md).
