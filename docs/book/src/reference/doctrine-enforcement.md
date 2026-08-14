@@ -136,9 +136,11 @@ CI adds `--self-test`: 27 controlled dependency/schema/rule/flow faults, legal d
 the exact 168-rule structural alpha join, and eight behavioral-contract faults covering population omission,
 unsafe authority, hash drift, reviewed-label leakage, vacuity laundering, and partial relation/stage assertions.
 This gates the behavioral oracle's currency. The conformance harness now implements and calibrates full-PDF
-unchanged/adversarial PDF identity plus normalized-text alpha pairs across all five stages, but those focused executions are not the
-governed population result. Reviewed paraphrase, negative-control, held-out, and complete-population runs remain
-separate signoff work.
+unchanged/adversarial identity plus normalized-text alpha and reviewed paraphrase/layout pairs across all five
+stages. The contract checker also verifies the recipe manifest, source/recipe hashes, review ownership, exact
+single-occurrence spans, relation-specific change kinds, safe per-span fields, identifier projection, pinned
+conclusions, complete complement, and rich-capture exclusions. These focused executions are not the governed
+population result. Negative-control, held-out, and complete-population runs remain separate signoff work.
 
 It also runs the roadmap current/history contract. The structural check authenticates the exact
 1,487-line source capsule, five exhaustive source regions, all 23 workstream ids and owning task

@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "recipe_id": "um11732-v3-heading-table-whitespace-formatting-v1",
+  "relation": "harmless_layout",
+  "source_authority": "generated/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/normalized/um11732_v3_2022_02_17_i2s_bus_specification.md",
+  "source_sha256": "250339a784e657ac2c87a9762dfddbffc6a4bd42ed27da7e666c2f2db419753f",
+  "review_status": "approved",
+  "changed_spans": [
+    {
+      "change_id": "serial-data-heading-layout",
+      "kind": "heading_layout",
+      "exact_before": "## 3.1 Serial data",
+      "exact_after": "## 3.1 Serial data  ",
+      "expected_occurrences": 1,
+      "allowed_provenance_fields": [
+        "normalized_markdown",
+        "statement",
+        "text"
+      ],
+      "allow_source_bound_identifier_projection": true
+    },
+    {
+      "change_id": "document-information-table-alignment",
+      "kind": "table_layout",
+      "exact_before": "|---------------|------------------------------------------------------------|",
+      "exact_after": "|:--------------|:-----------------------------------------------------------|",
+      "expected_occurrences": 1,
+      "allowed_provenance_fields": [
+        "normalized_markdown",
+        "statement",
+        "text"
+      ],
+      "allow_source_bound_identifier_projection": true
+    },
+    {
+      "change_id": "introduction-blank-line-layout",
+      "kind": "whitespace_layout",
+      "exact_before": "## 1 Introduction\n\nMany digital audio systems are being introduced",
+      "exact_after": "## 1 Introduction\n  \nMany digital audio systems are being introduced",
+      "expected_occurrences": 1,
+      "allowed_provenance_fields": [
+        "normalized_markdown",
+        "statement",
+        "text"
+      ],
+      "allow_source_bound_identifier_projection": true
+    },
+    {
+      "change_id": "document-kind-emphasis-formatting",
+      "kind": "formatting_layout",
+      "exact_before": "User manual",
+      "exact_after": "**User manual**",
+      "expected_occurrences": 1,
+      "allowed_provenance_fields": [
+        "normalized_markdown",
+        "statement",
+        "text"
+      ],
+      "allow_source_bound_identifier_projection": true
+    }
+  ],
+  "preserved_conclusions": [
+    {
+      "conclusion_id": "semantic-minimum-timing-invariant",
+      "stage": "semantic_ir",
+      "baseline_pointer": "/invariants/6/statement",
+      "transformed_pointer": "/invariants/6/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "intent-minimum-timing-behavior",
+      "stage": "intent_ir",
+      "baseline_pointer": "/behaviors/7/statement",
+      "transformed_pointer": "/behaviors/7/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time."
+    }
+  ],
+  "unaffected_complement": "all_unlisted_leaf_values_and_all_proof_topology_exact",
+  "unmeasurable_source_surfaces": [
+    "content_elements",
+    "document_sections",
+    "page_artifacts",
+    "structured_tables",
+    "visual_assets"
+  ]
+}

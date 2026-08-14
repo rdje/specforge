@@ -107,6 +107,20 @@ every changed source span, preserved conclusion, allowed provenance replacement,
 comparison complement. An unsupported paraphrase or ambiguous parser boundary is invalid, not assumed
 equivalent.
 
+The released `.f.ii.b` manifest binds two approved UM11732 calibration recipes to their exact normalized-
+Markdown digest. The paraphrase replaces one timing sentence with the intent-equivalent “must not be lower than”
+form and pins all eight propagated source/semantic/intent conclusion occurrences. The layout recipe changes one
+heading's trailing whitespace, one table alignment row, one blank line's horizontal whitespace, and one emphasis
+span while pinning two unaffected timing conclusions. Each span independently declares its safe source-text
+fields and source-bound identifier projection; normalization never takes the union of permissions from other
+spans. The complement remains every unlisted leaf plus all proof topology.
+
+Calibration rejected three superficially plausible candidates instead of enlarging the allowance: “at least”
+entered a different timing-rule path and changed hundreds of downstream proof records; an extra blank line
+shifted every subsequent evidence coordinate; and reordering a numbered heading changed section-derived
+presentation records. This is the operational boundary between human semantic review and demonstrated parser-
+relation equivalence.
+
 `semantic_negative` names one meaning-changing omission, contradiction, relation reversal, value/timing change,
 undeclared symbol, misleading identity, proof corruption, or disabled-stage control. It also names the required
 changed fact or residual and the unaffected complement. Failure to observe the required change fails the gate;
@@ -163,7 +177,7 @@ behavioral runs already pass.
 
 ## Identity and alpha implementation checkpoint (`.f.ii.a`)
 
-`specforge-conformance::behavioral_genericity` now implements the first two executable relations without adding
+`specforge-conformance::behavioral_genericity` implements the executable identity/alpha relations without adding
 any conformance dependency to core. One request names a hash-pinned source, repository-local output root, exact
 prior memory, production revision, relation, and deterministic seed. The harness copies the source, runs fresh
 SourceIR → EvidenceIR → SemanticIR → IntentIR → ISF-adapter pipelines in isolated roots, reloads every persisted
@@ -183,6 +197,22 @@ explicitly set-valued collections and the emitted ISF interface declaration set.
 path compares exactly. This design rejects an injected semantic-role change and an incomplete stage set rather
 than teaching the comparator to excuse them.
 
+## Reviewed paraphrase and layout checkpoint (`.f.ii.b`)
+
+Reviewed requests must name a portable recipe id registered in
+`doctrine/production_genericity/reviewed_recipe_manifest.json`. The harness verifies manifest owner/schema,
+source and recipe SHA-256, reviewed-calibration membership, exact single-occurrence spans, non-overlap,
+reversibility, relation-specific change-kind coverage, safe per-span fields, pinned conclusion pointers/values,
+and the closed rich-capture exclusion before running production. Non-reviewed relations reject recipe authority;
+reviewed relations reject its absence.
+
+The comparator maps changed prose only inside each span's own declared source-bound fields. It additionally maps
+the exact identifier projection of that span when approved, so derived semantic ids and downstream references
+realign without arbitrary positional pairing. Every other leaf, collection cardinality/order, proof address,
+premise topology, rule, confidence, validation result, residual disposition, and lowering result remains exact.
+The JSON evidence schema records recipe/manifest identity, exact byte spans and hashes, expected/observed span
+counts, preserved-conclusion count, complete complement, and excluded rich surfaces.
+
 Two calibration executions pass:
 
 | Relation | Input and execution | Result |
@@ -190,14 +220,17 @@ Two calibration executions pass:
 | `symbol_alpha` | provider-free normalized Markdown; reversed symbol ordering and familiar aliases | all five persisted stages pass; copied spellings and derived identities normalize exactly |
 | `unchanged_source` | one valid PDF replayed in two isolated repo-local Docling roots | all five stages pass after scratch-root and scratch-root-bound proof-digest normalization; every non-digest value and proof topology are exact |
 | `adversarial_identity` | byte-identical generated valid PDF under a misleading filename; repo-local Docling | all five persisted stages pass; document key/path identity changes while rich capture and decisions remain invariant |
+| `structure_preserving_paraphrase` | reviewed normalized Markdown; one exact equivalent timing sentence | all five stages pass; 1/1 span and all eight propagated conclusions are accounted for |
+| `harmless_layout` | reviewed normalized Markdown; heading, table, whitespace, and emphasis variants | all five stages pass; 4/4 spans and both pinned unaffected conclusions are accounted for |
 
 These calibrations establish the harness mechanics and comparator sensitivity. They are not held-out population
 results and do not widen the Markdown plane to page, image, table, or geometry claims.
 
 ## Implementation handoff
 
-`.f.ii.a` now supplies deterministic full-PDF identity and text-projection symbol-alpha pairs plus the shared
-five-stage comparator. `.f.ii.b` adds only reviewed paraphrase/layout recipes. `.f.ii.c` extends sensitivity with
+`.f.ii.a` supplies deterministic full-PDF identity and text-projection symbol-alpha pairs plus the shared
+five-stage comparator. `.f.ii.b` supplies the approved paraphrase/layout recipe boundary and passing reviewed
+calibrations. `.f.ii.c` extends sensitivity with
 the complete semantic and authority-negative matrix and closes the `.f.ii` parent, including stale and
 unmeasurable attempt handling. `.f.iii` consumes the frozen 17-document prospective split without using its
 labels to steer production. `.f.iv` reconciles every measurable and unmeasurable row; `.f.v` alone may make the

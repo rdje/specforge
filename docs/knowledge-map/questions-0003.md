@@ -215,6 +215,8 @@
   > how are signal presence matrices captured into typed records
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > how are signal presence matrices with signals trapped in header rows handled
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > how are source-derived ids normalized for a reviewed paraphrase
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are spacing-artifact field names and the unit word Bits handled
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -295,5 +297,3 @@
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how do you audit registers/signals against the table image with the VLM
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how does .10g differ from .10f (register vs message routing)

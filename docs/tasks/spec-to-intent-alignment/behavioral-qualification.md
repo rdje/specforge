@@ -56,13 +56,19 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b`
-  State: `pending`
+  State: `done`
   Goal: qualify structure-preserving paraphrase and harmless layout perturbation
   Acceptance: reviewed intent-equivalent sentence, heading, table, and formatting variants preserve supported
   conclusions and residual accounting under declared relations; meaning-changing controls remain distinguishable
   and unsupported paraphrases fail closed instead of being silently labeled equivalent
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `two hash-pinned reviewed recipes apply one exact equivalent sentence replacement and four
+  exact heading/table/whitespace/formatting variants; 11 provider-free focused tests pass with two provider
+  tests intentionally ignored; all five proof-bearing stages preserve eight paraphrase and two layout
+  conclusions; missing authority, ambiguous/overlapping spans, unsafe provenance, semantic-role mutation, and
+  incomplete-stage controls reject; the independent compiled-flow snapshot pins 2,230 functions / 11,577 helper
+  edges / 10,868 decision sites / 1,411 semantic macros; full CI passes all doctrines, Rust, Clippy/Rustdoc,
+  mdBook, and locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c`
   State: `pending`
@@ -121,14 +127,35 @@
   research audit, Knowledge Map fact/projections, live-document contracts, and resume pointer publish `.f.ii.b`
   as the next leaf and the same bounded identity/alpha qualification.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b`
+
+- [x] **REPRODUCE / MEASURE** — the pinned UM11732 calibration runs one reviewed sentence paraphrase and four
+  harmless presentation changes through fresh SourceIR, EvidenceIR, SemanticIR, IntentIR, and ISF-adapter pairs;
+  every serialized leaf and proof claim is compared under the complete unaffected-complement rule.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `.f.ii.a` had no review-authority manifest or reviewed-text relation. Initial
+  trials also proved that “at least,” an added blank line, and a reworded heading cross real timing/coordinate/
+  section parser boundaries, so arbitrary textual equivalence cannot be inferred by the harness.
+- [x] **ADDRESSED (verified)** — two digest-pinned approved recipes name every exact span, safe field-scoped
+  source excerpt replacement, source-bound id projection, eight paraphrase conclusions, two layout conclusions,
+  and the rich-capture exclusions. Eleven provider-free focused tests pass; ambiguity, overlap, unsafe fields,
+  missing recipe authority, semantic-role change, incomplete stages, and path escape reject.
+- [x] **NO REGRESSION** — full CI passes the nine doctrines, all production-genericity components, Rust tests and
+  compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook test/build, and final project-data locality; the
+  independent graph snapshot matches the doctrine's 2,230 / 11,577 / 10,868 / 1,411 flow census.
+- [x] **GENERICITY (ADR 0006)** — recipes and comparator remain in conformance; core sees only ordinary current
+  Markdown. Normalization is exact-span, per-field, digest-pinned, bijective, and complete-complement bounded;
+  there is no document/vendor/protocol or expected-outcome branch in production.
+- [x] **LOCKSTEP** — behavioral contract, task frontier, research rationale, current module/flow census, mdBook,
+  Knowledge Map, live ledgers, and resume pointer publish `.f.ii.c` as the next negative-sensitivity leaf.
+
 ## Current Frontier
 
 | Order | Leaf | State | Why next |
 | --- | --- | --- | --- |
 | 1 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i` | `done` | oracle, population, relations, held-out split, and evidence states are frozen |
 | 2 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a` | `done` | deterministic alpha and full-PDF adversarial identity pairs pass the closed five-stage comparator |
-| 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `pending` | next: add reviewed paraphrase and harmless layout relations |
-| 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `pending` | prove the gate detects meaning and authority changes |
+| 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `done` | reviewed paraphrase and four harmless layout boundaries pass the complete five-stage comparator |
+| 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `pending` | next: prove the gate detects meaning and authority changes |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `pending` | measure identity-disjoint held-out generalization honestly |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `pending` | reconcile the complete reviewed population and all variants |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
@@ -152,15 +179,22 @@
 - `2026-08-14`: isolated unchanged-PDF roots necessarily change verified proof scopes and conclusion/input
   digests because scratch paths are proof-context inputs. The oracle normalizes those cryptographic consequences
   while keeping ruleset/prior/validation identities, proof topology, and every non-digest value exact.
+- `2026-08-14`: reviewed text authority is a checked-in manifest plus exact digest-pinned recipes. Each changed
+  span owns its own safe provenance fields and optional source-bound identifier projection; a field union across
+  changes is forbidden because it would broaden normalization beyond the reviewed declaration.
+- `2026-08-14`: human-equivalent wording is not automatically parser-equivalent. “At least” changed timing-rule
+  admission; an added line changed downstream coordinates; a reworded heading changed section-derived records.
+  Those candidates remain calibration failures, while “not be lower than,” trailing heading whitespace,
+  table alignment, blank-line spaces, and emphasis preserve the declared complement.
 
 ## Open Questions
 
-- `.f.ii.b` must introduce only reviewed, exhaustively declared paraphrase/layout recipes; the implemented
-  identity/alpha normalizer is not authority to label an arbitrary textual rewrite equivalent.
+- `.f.ii.c` must add meaning- and authority-changing controls without repurposing the accepted equivalence
+  recipes or teaching production about expected outcomes.
 
 ## Blockers
 
-- None for `.f.i`. Missing retained source or provider-free transform support becomes explicit unmeasurable
+- None for `.f.ii.c`. Missing retained source or provider-free transform support becomes explicit unmeasurable
   evidence, not permission to weaken the oracle.
 
 ## Verification Log
@@ -172,6 +206,8 @@
 | `2026-08-14` | `.f.i` executable contract | exact 24 retained rows and five stages join; 7 calibration / 17 prospective, 4 vendor-novel / 13 family-novel; baseline checker and 8/8 controlled faults pass |
 | `2026-08-14` | `.f.ii.a` identity/alpha harness | eight provider-free focused tests plus explicit unchanged and adversarial Docling-backed PDF tests pass; all three implemented relations execute and compare five persisted proof-bearing stages; identity-coupled role, partial-stage, and symlink-escape controls reject |
 | `2026-08-14` | `.f.ii.a` full repository gate | all 9 doctrines and 11 production-genericity components pass; Rust 1,961 passed / 8 ignored / 0 failed plus 5 compile-fail doctests; Clippy, Rustdoc, mdBook, and final locality pass |
+| `2026-08-14` | `.f.ii.b` reviewed transform calibration | one sentence and four layout spans pass all five stages with 8/8 and 2/2 pinned conclusions; 11 provider-free focused tests pass / 2 provider tests intentionally ignored; rejected parser-boundary candidates remain visible |
+| `2026-08-14` | `.f.ii.b` full repository gate | all doctrines and production-genericity components, exact 2,230 / 11,577 / 10,868 / 1,411 graph snapshot, Rust/compile-fail tests, warning-denied Clippy/Rustdoc, mdBook test/build, cleanup, and final locality pass |
 
 ## Commit Log
 
@@ -180,6 +216,7 @@
 | `.f` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification` | activate the parent and route `.f.i` as the precise design frontier |
 | `.f.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract` | freeze source planes, current and held-out denominators, six relations, five-stage comparison, and closed evidence states |
 | `.f.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification` | add deterministic source-bound alpha and byte-identical PDF identity generation, five-stage replay, closed comparison, evidence, and sensitivity controls |
+| `.f.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b — qualify reviewed paraphrase and layout` | add approved exact-span recipes, field-scoped inverse projection, preserved-conclusion evidence, complete-complement comparison, and fail-closed controls |
 
 ## Activation protocol
 

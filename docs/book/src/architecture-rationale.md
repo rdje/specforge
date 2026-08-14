@@ -208,7 +208,7 @@ Exact local calls are distinguished from method, associated, external, prelude/b
 dispatch rather than pretending that an AST alone is a type checker. The information-flow layer now makes the
 raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically checked. Its
 140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
-2,222 functions, 11,519 helper edges, 10,747 decision sites, and sensitive macros. Canonical mutation/protected
+2,230 functions, 11,577 helper edges, 10,868 decision sites, and 1,411 sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
@@ -232,14 +232,17 @@ SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter lowering. Missing author
 `unmeasurable`; stale/ambiguous/partial evidence is `invalid`; missing expected or undeclared semantic/proof/
 provenance/validation/lowering deltas fail. The contract and eight mutations now run inside the production-
 genericity wrapper without claiming that the complete population evidence already passes. `.f.ii.a` now owns
-and implements deterministic PDF identity and normalized-text alpha generation/comparison. It copies hash-pinned
-sources into repository-local scratch, executes fresh five-stage pairs, reloads every persisted proof-bearing
-artifact, and emits digest-pinned JSON evidence. Source-bound aliases are bijective, complete, familiar-looking,
-and deliberately reverse lexical order. The comparator normalizes only declared spelling/path/content identity,
-safe record-derived identities, and schema-declared keyed/set ordering; an identity-coupled semantic-role fault
-still fails. Provider-free Markdown alpha plus explicit unchanged/adversarial valid-PDF Docling calibrations pass all five
-stages. These are harness calibrations, not held-out population results. `.f.ii.b` next owns reviewed
-paraphrase/layout recipes. Transformation recipes, expected
+and implements deterministic PDF identity, normalized-text alpha, and reviewed paraphrase/layout comparison. It
+copies hash-pinned sources into repository-local scratch, executes fresh five-stage pairs, reloads every persisted
+proof-bearing artifact, and emits digest-pinned JSON evidence. Source-bound aliases are bijective, complete,
+familiar-looking, and deliberately reverse lexical order. Reviewed transforms require a checked-in manifest and
+digest-pinned recipe naming every exact span, per-span provenance field, derived-id projection, preserved
+conclusion, complete unaffected complement, and rich-capture exclusion. The released calibration passes one
+equivalent sentence plus heading, table, whitespace, and emphasis variants across all five stages. Candidate
+“at least,” added-line, and heading-rewording variants crossed real parser boundaries and were rejected rather
+than excused. The comparator still exposes identity-coupled semantic-role faults. These are harness
+calibrations, not held-out population results. `.f.ii.c` next owns semantic and authority negative controls.
+Transformation recipes, expected
 relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
 current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)
 publishes the exact boundary, implementation checkpoint, and denominators.

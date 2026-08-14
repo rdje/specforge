@@ -20,11 +20,33 @@ use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
 use crate::ir::source::SourceIr;
 
-const BEHAVIORAL_SCHEMA_VERSION: u32 = 1;
+const BEHAVIORAL_SCHEMA_VERSION: u32 = 2;
 const CONTRACT_PATH: &str = "doctrine/production_genericity/behavioral_qualification.json";
+const REVIEW_RECIPE_MANIFEST_PATH: &str =
+    "doctrine/production_genericity/reviewed_recipe_manifest.json";
+const REVIEW_RECIPE_ROOT: &str = "doctrine/production_genericity/reviewed_recipes";
 const TEMP_ROOT: &str = ".project-data/tmp";
 const EVIDENCE_FILE: &str = "behavioral_evidence.json";
 const GROUPED_INTERFACE_PREFIX: &str = "semantic channel inferred from grouped interface signals: ";
+const REVIEWED_RECIPE_SCHEMA_VERSION: u32 = 1;
+const REVIEWED_COMPLEMENT: &str = "all_unlisted_leaf_values_and_all_proof_topology_exact";
+
+const REVIEWED_PROVENANCE_FIELDS: &[&str] = &[
+    "conclusion",
+    "normalized_markdown",
+    "responsibilities",
+    "source_text",
+    "statement",
+    "text",
+];
+
+const RICH_CAPTURE_EXCLUSIONS: &[&str] = &[
+    "content_elements",
+    "document_sections",
+    "page_artifacts",
+    "structured_tables",
+    "visual_assets",
+];
 
 const FAMILIAR_IDENTIFIERS: &[&str] = &[
     "clk", "reset_n", "valid", "ready", "req", "ack", "data", "enable", "state", "master", "slave",
@@ -112,6 +134,8 @@ pub enum BehavioralRelation {
     UnchangedSource,
     AdversarialIdentity,
     SymbolAlpha,
+    StructurePreservingParaphrase,
+    HarmlessLayout,
 }
 
 impl BehavioralRelation {
@@ -120,6 +144,8 @@ impl BehavioralRelation {
             Self::UnchangedSource => "unchanged_source",
             Self::AdversarialIdentity => "adversarial_identity",
             Self::SymbolAlpha => "symbol_alpha",
+            Self::StructurePreservingParaphrase => "structure_preserving_paraphrase",
+            Self::HarmlessLayout => "harmless_layout",
         }
     }
 
@@ -127,7 +153,15 @@ impl BehavioralRelation {
         match self {
             Self::UnchangedSource | Self::AdversarialIdentity => "pdf_full_capture",
             Self::SymbolAlpha => "normalized_text_projection",
+            Self::StructurePreservingParaphrase | Self::HarmlessLayout => "reviewed_variant",
         }
+    }
+
+    fn is_reviewed(self) -> bool {
+        matches!(
+            self,
+            Self::StructurePreservingParaphrase | Self::HarmlessLayout
+        )
     }
 }
 
@@ -149,6 +183,7 @@ pub struct BehavioralQualificationRequest {
     pub prior_memory: PathBuf,
     pub production_revision: String,
     pub transform_seed: u64,
+    pub review_recipe_id: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -182,6 +217,45 @@ pub struct SymbolRename {
     pub familiar_adversarial_spelling: bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ReviewedChangeKind {
+    SentenceParaphrase,
+    HeadingLayout,
+    TableLayout,
+    WhitespaceLayout,
+    FormattingLayout,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewedSpanEvidence {
+    pub change_id: String,
+    pub kind: ReviewedChangeKind,
+    pub baseline_start_byte: usize,
+    pub baseline_byte_count: usize,
+    pub transformed_byte_count: usize,
+    pub occurrence_count: usize,
+    pub baseline_sha256: String,
+    pub transformed_sha256: String,
+    pub allowed_provenance_fields: Vec<String>,
+    pub allow_source_bound_identifier_projection: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewedRecipeEvidence {
+    pub recipe_id: String,
+    pub manifest_path: String,
+    pub recipe_path: String,
+    pub recipe_sha256: String,
+    pub review_status: String,
+    pub changed_spans: Vec<ReviewedSpanEvidence>,
+    pub preserved_conclusions: usize,
+    pub unaffected_complement: String,
+    pub unmeasurable_source_surfaces: Vec<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TransformEvidence {
@@ -194,6 +268,7 @@ pub struct TransformEvidence {
     pub source_bytes_equal: bool,
     pub lexical_order_changed: bool,
     pub symbol_renames: Vec<SymbolRename>,
+    pub reviewed_recipe: Option<ReviewedRecipeEvidence>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -232,6 +307,9 @@ pub struct BehavioralCoverage {
     pub compared_leaf_values: usize,
     pub expected_symbol_deltas: usize,
     pub observed_symbol_deltas: usize,
+    pub expected_reviewed_span_deltas: usize,
+    pub observed_reviewed_span_deltas: usize,
+    pub preserved_conclusions: usize,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -263,6 +341,72 @@ struct PipelineArtifacts {
     document_key: String,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewedRecipeManifest {
+    schema_version: u32,
+    owner: String,
+    recipes: Vec<ReviewedRecipeDeclaration>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewedRecipeDeclaration {
+    recipe_id: String,
+    relation: BehavioralRelation,
+    path: String,
+    sha256: String,
+    source_authority: String,
+    source_sha256: String,
+    review_role: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewedTransformRecipe {
+    schema_version: u32,
+    recipe_id: String,
+    relation: BehavioralRelation,
+    source_authority: String,
+    source_sha256: String,
+    review_status: String,
+    changed_spans: Vec<ReviewedSpanChange>,
+    preserved_conclusions: Vec<ReviewedConclusion>,
+    unaffected_complement: String,
+    unmeasurable_source_surfaces: Vec<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewedSpanChange {
+    change_id: String,
+    kind: ReviewedChangeKind,
+    exact_before: String,
+    exact_after: String,
+    expected_occurrences: usize,
+    allowed_provenance_fields: Vec<String>,
+    allow_source_bound_identifier_projection: bool,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReviewedConclusion {
+    conclusion_id: String,
+    stage: BehavioralStage,
+    baseline_pointer: String,
+    transformed_pointer: String,
+    baseline_value: String,
+    transformed_value: String,
+}
+
+#[derive(Debug, Clone)]
+struct LoadedReviewedRecipe {
+    manifest_path: String,
+    recipe_path: String,
+    recipe_sha256: String,
+    recipe: ReviewedTransformRecipe,
+}
+
 #[derive(Debug, Clone, Serialize)]
 struct TransformRecipe<'a> {
     relation: BehavioralRelation,
@@ -281,6 +425,7 @@ struct NormalizationSpec {
     transformed_source: String,
     exact_transformed_to_baseline: BTreeMap<String, String>,
     identifier_transformed_to_baseline: BTreeMap<String, String>,
+    reviewed_text_by_field: BTreeMap<String, BTreeMap<String, String>>,
 }
 
 /// Execute one complete frozen relation and write machine-readable evidence below `output_root`.
@@ -303,6 +448,12 @@ pub fn qualify_behavioral_relation(
     let prior_memory = resolve_repository_file(&repository, &request.prior_memory, "prior memory")?;
     let prior_memory_sha256 = sha256_file(&prior_memory)?;
     let contract_sha256 = sha256_file(&repository.join(CONTRACT_PATH))?;
+    let reviewed_recipe = load_reviewed_recipe(
+        &repository,
+        request,
+        &source_sha256,
+        &request.source_authority,
+    )?;
 
     let extension = source_authority
         .extension()
@@ -325,8 +476,8 @@ pub fn qualify_behavioral_relation(
         &repository,
     )?;
 
-    let (transformed_input, renames) = match request.relation {
-        BehavioralRelation::UnchangedSource => (baseline_input.clone(), Vec::new()),
+    let (transformed_input, renames, reviewed_spans) = match request.relation {
+        BehavioralRelation::UnchangedSource => (baseline_input.clone(), Vec::new(), Vec::new()),
         BehavioralRelation::AdversarialIdentity => {
             let filename = format!(
                 "clock_reset_handshake_reference_{:016x}.{}",
@@ -334,7 +485,7 @@ pub fn qualify_behavioral_relation(
             );
             let path = output_root.join("inputs/transformed").join(filename);
             copy_exact(&source_authority, &path)?;
-            (path, Vec::new())
+            (path, Vec::new(), Vec::new())
         }
         BehavioralRelation::SymbolAlpha => {
             let source_text = String::from_utf8(source_bytes.clone())
@@ -353,7 +504,19 @@ pub fn qualify_behavioral_relation(
                 alpha_transform(&source_text, &symbols, request.transform_seed)?;
             let path = output_root.join("inputs/transformed").join(&portable_id);
             write_new(&path, transformed.as_bytes())?;
-            (path, renames)
+            (path, renames, Vec::new())
+        }
+        BehavioralRelation::StructurePreservingParaphrase | BehavioralRelation::HarmlessLayout => {
+            let source_text = String::from_utf8(source_bytes.clone()).map_err(|_| {
+                invalid("reviewed transform input must be UTF-8 normalized Markdown")
+            })?;
+            let loaded = reviewed_recipe
+                .as_ref()
+                .ok_or_else(|| invalid("reviewed relation has no loaded recipe"))?;
+            let (transformed, spans) = apply_reviewed_recipe(&source_text, &loaded.recipe)?;
+            let path = output_root.join("inputs/transformed").join(&portable_id);
+            write_new(&path, transformed.as_bytes())?;
+            (path, Vec::new(), spans)
         }
     };
 
@@ -377,6 +540,8 @@ pub fn qualify_behavioral_relation(
         })
         .collect::<BTreeMap<_, _>>();
     let mut exact_transformed_to_baseline = BTreeMap::new();
+    let mut reviewed_text_by_field = BTreeMap::<String, BTreeMap<String, String>>::new();
+    let mut reviewed_text_reverse_by_field = BTreeMap::<String, BTreeMap<String, String>>::new();
     if request.relation == BehavioralRelation::AdversarialIdentity {
         exact_transformed_to_baseline.insert(
             transformed.document_key.clone(),
@@ -399,6 +564,64 @@ pub fn qualify_behavioral_relation(
         exact_transformed_to_baseline
             .insert(sha256_file(&transformed_input)?, source_sha256.clone());
     }
+    if let Some(loaded) = &reviewed_recipe {
+        exact_transformed_to_baseline
+            .insert(sha256_file(&transformed_input)?, source_sha256.clone());
+        let mut identifier_projection_reverse = BTreeMap::new();
+        for change in &loaded.recipe.changed_spans {
+            for field in &change.allowed_provenance_fields {
+                let mapping = reviewed_text_by_field.entry(field.clone()).or_default();
+                if let Some(existing) =
+                    mapping.insert(change.exact_after.clone(), change.exact_before.clone())
+                    && existing != change.exact_before
+                {
+                    return Err(invalid(format!(
+                        "ambiguous_or_nonbijective_transform: reviewed replacement maps twice in {field}: {}",
+                        change.change_id
+                    )));
+                }
+                let reverse = reviewed_text_reverse_by_field
+                    .entry(field.clone())
+                    .or_default();
+                if let Some(existing) =
+                    reverse.insert(change.exact_before.clone(), change.exact_after.clone())
+                    && existing != change.exact_after
+                {
+                    return Err(invalid(format!(
+                        "ambiguous_or_nonbijective_transform: reviewed replacement reverses twice in {field}: {}",
+                        change.change_id
+                    )));
+                }
+            }
+            if change.allow_source_bound_identifier_projection {
+                let transformed_projection =
+                    source_bound_identifier_projection(&change.exact_after);
+                let baseline_projection = source_bound_identifier_projection(&change.exact_before);
+                if !transformed_projection.is_empty()
+                    && transformed_projection != baseline_projection
+                {
+                    if let Some(existing) = exact_transformed_to_baseline
+                        .insert(transformed_projection.clone(), baseline_projection.clone())
+                        && existing != baseline_projection
+                    {
+                        return Err(invalid(format!(
+                            "ambiguous_or_nonbijective_transform: reviewed identifier projection maps twice: {}",
+                            change.change_id
+                        )));
+                    }
+                    if let Some(existing) = identifier_projection_reverse
+                        .insert(baseline_projection.clone(), transformed_projection.clone())
+                        && existing != transformed_projection
+                    {
+                        return Err(invalid(format!(
+                            "ambiguous_or_nonbijective_transform: reviewed identifier projection reverses twice: {}",
+                            change.change_id
+                        )));
+                    }
+                }
+            }
+        }
+    }
     let normalization = NormalizationSpec {
         relation: request.relation,
         baseline_run_root: repository_relative(&repository, &baseline_run_root)?,
@@ -407,9 +630,35 @@ pub fn qualify_behavioral_relation(
         transformed_source: transformed_source_relative.clone(),
         exact_transformed_to_baseline,
         identifier_transformed_to_baseline,
+        reviewed_text_by_field,
     };
-    let (state, stages, failures) = compare_pipelines(&baseline, &transformed, &normalization)?;
+    let (mut state, stages, mut failures) =
+        compare_pipelines(&baseline, &transformed, &normalization)?;
+    if let Some(loaded) = &reviewed_recipe {
+        failures.extend(validate_preserved_conclusions(
+            &loaded.recipe,
+            &baseline,
+            &transformed,
+        )?);
+        if fs::read(&baseline_input)? == fs::read(&transformed_input)? {
+            failures.push("missing_expected_delta: reviewed source did not change".to_string());
+        }
+        state = run_state(&failures);
+    }
     let lexical_order_changed = lexical_order_changed(&renames);
+    let reviewed_recipe_evidence = reviewed_recipe
+        .as_ref()
+        .map(|loaded| ReviewedRecipeEvidence {
+            recipe_id: loaded.recipe.recipe_id.clone(),
+            manifest_path: loaded.manifest_path.clone(),
+            recipe_path: loaded.recipe_path.clone(),
+            recipe_sha256: loaded.recipe_sha256.clone(),
+            review_status: loaded.recipe.review_status.clone(),
+            changed_spans: reviewed_spans.clone(),
+            preserved_conclusions: loaded.recipe.preserved_conclusions.len(),
+            unaffected_complement: loaded.recipe.unaffected_complement.clone(),
+            unmeasurable_source_surfaces: loaded.recipe.unmeasurable_source_surfaces.clone(),
+        });
     let transform = TransformEvidence {
         relation: request.relation,
         seed: request.transform_seed,
@@ -420,6 +669,7 @@ pub fn qualify_behavioral_relation(
         source_bytes_equal: fs::read(&baseline_input)? == fs::read(&transformed_input)?,
         lexical_order_changed,
         symbol_renames: renames,
+        reviewed_recipe: reviewed_recipe_evidence,
     };
     let recipe = TransformRecipe {
         relation: request.relation,
@@ -428,7 +678,11 @@ pub fn qualify_behavioral_relation(
         transformed_source: &transform.transformed_source,
         symbol_renames: &transform.symbol_renames,
     };
-    let recipe_sha256 = sha256_bytes(&serde_json::to_vec(&recipe)?);
+    let recipe_sha256 = if let Some(loaded) = &reviewed_recipe {
+        loaded.recipe_sha256.clone()
+    } else {
+        sha256_bytes(&serde_json::to_vec(&recipe)?)
+    };
 
     let coverage = BehavioralCoverage {
         required_stages: BehavioralStage::ALL.len(),
@@ -453,6 +707,14 @@ pub fn qualify_behavioral_relation(
             .iter()
             .filter(|rename| rename.occurrence_count > 0)
             .count(),
+        expected_reviewed_span_deltas: reviewed_spans.len(),
+        observed_reviewed_span_deltas: reviewed_spans
+            .iter()
+            .filter(|span| span.occurrence_count == 1)
+            .count(),
+        preserved_conclusions: reviewed_recipe
+            .as_ref()
+            .map_or(0, |loaded| loaded.recipe.preserved_conclusions.len()),
     };
     let report = BehavioralQualificationReport {
         schema_version: BEHAVIORAL_SCHEMA_VERSION,
@@ -516,17 +778,378 @@ fn validate_request(request: &BehavioralQualificationRequest) -> Result<()> {
         .and_then(|value| value.to_str())
         .unwrap_or_default()
         .to_ascii_lowercase();
+    if request.relation.is_reviewed() {
+        let recipe_id = request.review_recipe_id.as_deref().ok_or_else(|| {
+            invalid("reviewed behavioral relation requires a registered recipe id")
+        })?;
+        if recipe_id.len() > 128
+            || recipe_id.is_empty()
+            || !recipe_id
+                .bytes()
+                .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
+        {
+            return Err(invalid("reviewed behavioral recipe id is not portable"));
+        }
+    } else if request.review_recipe_id.is_some() {
+        return Err(invalid(
+            "non-reviewed behavioral relation cannot receive review authority",
+        ));
+    }
     match request.relation {
         BehavioralRelation::UnchangedSource | BehavioralRelation::AdversarialIdentity
             if extension != "pdf" =>
         {
             Err(invalid("full-capture behavioral relations require a PDF"))
         }
-        BehavioralRelation::SymbolAlpha if !matches!(extension.as_str(), "md" | "markdown") => Err(
-            invalid("symbol-alpha relation requires normalized Markdown"),
-        ),
+        BehavioralRelation::SymbolAlpha
+        | BehavioralRelation::StructurePreservingParaphrase
+        | BehavioralRelation::HarmlessLayout
+            if !matches!(extension.as_str(), "md" | "markdown") =>
+        {
+            Err(invalid(
+                "text-projection behavioral relation requires normalized Markdown",
+            ))
+        }
         _ => Ok(()),
     }
+}
+
+fn load_reviewed_recipe(
+    repository: &Path,
+    request: &BehavioralQualificationRequest,
+    source_sha256: &str,
+    source_authority: &Path,
+) -> Result<Option<LoadedReviewedRecipe>> {
+    if !request.relation.is_reviewed() {
+        return Ok(None);
+    }
+    let requested_id = request
+        .review_recipe_id
+        .as_deref()
+        .ok_or_else(|| invalid("reviewed relation has no recipe id"))?;
+    let manifest_path = repository.join(REVIEW_RECIPE_MANIFEST_PATH);
+    let manifest_bytes = fs::read(&manifest_path)?;
+    let manifest: ReviewedRecipeManifest = serde_json::from_slice(&manifest_bytes)?;
+    if manifest.schema_version != REVIEWED_RECIPE_SCHEMA_VERSION
+        || manifest.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b"
+    {
+        return Err(invalid("reviewed recipe manifest identity is stale"));
+    }
+    let mut seen = BTreeSet::new();
+    if manifest
+        .recipes
+        .iter()
+        .any(|declaration| !seen.insert(declaration.recipe_id.as_str()))
+    {
+        return Err(invalid("reviewed recipe manifest contains duplicate ids"));
+    }
+    let declaration = manifest
+        .recipes
+        .iter()
+        .find(|declaration| declaration.recipe_id == requested_id)
+        .ok_or_else(|| {
+            invalid(format!(
+                "reviewed recipe id is not registered: {requested_id}"
+            ))
+        })?;
+    if declaration.relation != request.relation
+        || declaration.review_role != "reviewed_calibration"
+        || declaration.source_sha256 != source_sha256
+        || !is_lower_hex(&declaration.sha256, 64)
+    {
+        return Err(invalid(format!(
+            "reviewed recipe declaration is stale or relation-mismatched: {requested_id}"
+        )));
+    }
+    let requested_source = if source_authority.is_absolute() {
+        return Err(invalid(
+            "reviewed recipe source authority must be repository-relative",
+        ));
+    } else {
+        source_authority.to_string_lossy().into_owned()
+    };
+    if declaration.source_authority != requested_source {
+        return Err(invalid(format!(
+            "reviewed recipe source authority differs: {} != {requested_source}",
+            declaration.source_authority
+        )));
+    }
+    let recipe_relative = Path::new(&declaration.path);
+    validate_relative_path(recipe_relative, "reviewed recipe")?;
+    if !recipe_relative.starts_with(REVIEW_RECIPE_ROOT) {
+        return Err(invalid(format!(
+            "reviewed recipe is outside its closed root: {}",
+            declaration.path
+        )));
+    }
+    let recipe_path = resolve_repository_file(repository, recipe_relative, "reviewed recipe")?;
+    let canonical_recipe_root = repository.join(REVIEW_RECIPE_ROOT).canonicalize()?;
+    if !recipe_path.starts_with(&canonical_recipe_root) {
+        return Err(invalid(format!(
+            "reviewed recipe escaped its closed root: {}",
+            declaration.path
+        )));
+    }
+    let recipe_bytes = fs::read(&recipe_path)?;
+    let recipe_sha256 = sha256_bytes(&recipe_bytes);
+    if recipe_sha256 != declaration.sha256 {
+        return Err(invalid(format!(
+            "reviewed recipe SHA-256 differs: {recipe_sha256} != {}",
+            declaration.sha256
+        )));
+    }
+    let recipe: ReviewedTransformRecipe = serde_json::from_slice(&recipe_bytes)?;
+    validate_reviewed_recipe(&recipe, declaration)?;
+    Ok(Some(LoadedReviewedRecipe {
+        manifest_path: REVIEW_RECIPE_MANIFEST_PATH.to_string(),
+        recipe_path: declaration.path.clone(),
+        recipe_sha256,
+        recipe,
+    }))
+}
+
+fn validate_reviewed_recipe(
+    recipe: &ReviewedTransformRecipe,
+    declaration: &ReviewedRecipeDeclaration,
+) -> Result<()> {
+    if recipe.schema_version != REVIEWED_RECIPE_SCHEMA_VERSION
+        || recipe.recipe_id != declaration.recipe_id
+        || recipe.relation != declaration.relation
+        || recipe.source_authority != declaration.source_authority
+        || recipe.source_sha256 != declaration.source_sha256
+        || recipe.review_status != "approved"
+        || recipe.unaffected_complement != REVIEWED_COMPLEMENT
+    {
+        return Err(invalid(format!(
+            "reviewed recipe identity or closed complement is stale: {}",
+            declaration.recipe_id
+        )));
+    }
+    let exclusions = recipe
+        .unmeasurable_source_surfaces
+        .iter()
+        .map(String::as_str)
+        .collect::<BTreeSet<_>>();
+    if exclusions
+        != RICH_CAPTURE_EXCLUSIONS
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>()
+        || exclusions.len() != recipe.unmeasurable_source_surfaces.len()
+    {
+        return Err(invalid(format!(
+            "reviewed recipe rich-capture exclusions differ: {}",
+            declaration.recipe_id
+        )));
+    }
+    if recipe.changed_spans.is_empty() || recipe.preserved_conclusions.is_empty() {
+        return Err(invalid(format!(
+            "reviewed recipe lacks changed spans or preserved conclusions: {}",
+            declaration.recipe_id
+        )));
+    }
+    let mut change_ids = BTreeSet::new();
+    let mut change_kinds = BTreeSet::new();
+    for change in &recipe.changed_spans {
+        let fields = change
+            .allowed_provenance_fields
+            .iter()
+            .map(String::as_str)
+            .collect::<BTreeSet<_>>();
+        if change.change_id.is_empty()
+            || !change_ids.insert(change.change_id.as_str())
+            || change.exact_before.is_empty()
+            || change.exact_after.is_empty()
+            || change.exact_before == change.exact_after
+            || change.expected_occurrences != 1
+            || fields.is_empty()
+            || fields.len() != change.allowed_provenance_fields.len()
+            || !change.allow_source_bound_identifier_projection
+            || !fields
+                .iter()
+                .all(|field| REVIEWED_PROVENANCE_FIELDS.contains(field))
+        {
+            return Err(invalid(format!(
+                "reviewed recipe change is ambiguous or opens unsafe provenance: {}",
+                change.change_id
+            )));
+        }
+        change_kinds.insert(change.kind);
+    }
+    let expected_kinds = match recipe.relation {
+        BehavioralRelation::StructurePreservingParaphrase => {
+            [ReviewedChangeKind::SentenceParaphrase]
+                .into_iter()
+                .collect::<BTreeSet<_>>()
+        }
+        BehavioralRelation::HarmlessLayout => [
+            ReviewedChangeKind::HeadingLayout,
+            ReviewedChangeKind::TableLayout,
+            ReviewedChangeKind::WhitespaceLayout,
+            ReviewedChangeKind::FormattingLayout,
+        ]
+        .into_iter()
+        .collect::<BTreeSet<_>>(),
+        _ => {
+            return Err(invalid(
+                "non-reviewed relation entered reviewed recipe validator",
+            ));
+        }
+    };
+    if change_kinds != expected_kinds {
+        return Err(invalid(format!(
+            "reviewed recipe change-kind coverage differs: {}",
+            declaration.recipe_id
+        )));
+    }
+    let mut conclusion_ids = BTreeSet::new();
+    let mut conclusion_stages = BTreeSet::new();
+    let mut changed_conclusion = false;
+    for conclusion in &recipe.preserved_conclusions {
+        if conclusion.conclusion_id.is_empty()
+            || !conclusion_ids.insert(conclusion.conclusion_id.as_str())
+            || !conclusion.baseline_pointer.starts_with('/')
+            || !conclusion.transformed_pointer.starts_with('/')
+            || conclusion.baseline_value.is_empty()
+            || conclusion.transformed_value.is_empty()
+            || !matches!(
+                conclusion.stage,
+                BehavioralStage::EvidenceIr
+                    | BehavioralStage::SemanticIr
+                    | BehavioralStage::IntentIr
+            )
+        {
+            return Err(invalid(format!(
+                "reviewed recipe conclusion is incomplete: {}",
+                conclusion.conclusion_id
+            )));
+        }
+        conclusion_stages.insert(conclusion.stage);
+        changed_conclusion |= conclusion.baseline_value != conclusion.transformed_value;
+    }
+    if !conclusion_stages.contains(&BehavioralStage::SemanticIr)
+        || !conclusion_stages.contains(&BehavioralStage::IntentIr)
+        || (recipe.relation == BehavioralRelation::StructurePreservingParaphrase
+            && !changed_conclusion)
+    {
+        return Err(invalid(format!(
+            "reviewed recipe conclusion coverage differs: {}",
+            declaration.recipe_id
+        )));
+    }
+    Ok(())
+}
+
+fn apply_reviewed_recipe(
+    source: &str,
+    recipe: &ReviewedTransformRecipe,
+) -> Result<(String, Vec<ReviewedSpanEvidence>)> {
+    let mut located = Vec::new();
+    for change in &recipe.changed_spans {
+        let matches = source
+            .match_indices(&change.exact_before)
+            .map(|(offset, _)| offset)
+            .collect::<Vec<_>>();
+        if matches.len() != change.expected_occurrences || source.contains(&change.exact_after) {
+            return Err(invalid(format!(
+                "ambiguous_or_nonbijective_transform: reviewed span is stale or ambiguous: {}",
+                change.change_id
+            )));
+        }
+        located.push((matches[0], change));
+    }
+    located.sort_by_key(|(offset, _)| *offset);
+    for pair in located.windows(2) {
+        let (left_offset, left) = pair[0];
+        let (right_offset, _) = pair[1];
+        if left_offset + left.exact_before.len() > right_offset {
+            return Err(invalid(format!(
+                "ambiguous_or_nonbijective_transform: reviewed spans overlap: {}",
+                left.change_id
+            )));
+        }
+    }
+    let mut transformed = source.to_string();
+    for (offset, change) in located.iter().rev() {
+        transformed.replace_range(
+            *offset..(*offset + change.exact_before.len()),
+            &change.exact_after,
+        );
+    }
+    let mut reversed = transformed.clone();
+    for (_, change) in &located {
+        if reversed.matches(&change.exact_after).count() != 1 {
+            return Err(invalid(format!(
+                "ambiguous_or_nonbijective_transform: transformed reviewed span is ambiguous: {}",
+                change.change_id
+            )));
+        }
+        reversed = reversed.replacen(&change.exact_after, &change.exact_before, 1);
+    }
+    if reversed != source {
+        return Err(invalid(
+            "ambiguous_or_nonbijective_transform: reviewed changed-span complement is incomplete",
+        ));
+    }
+    let evidence = located
+        .into_iter()
+        .map(|(offset, change)| ReviewedSpanEvidence {
+            change_id: change.change_id.clone(),
+            kind: change.kind,
+            baseline_start_byte: offset,
+            baseline_byte_count: change.exact_before.len(),
+            transformed_byte_count: change.exact_after.len(),
+            occurrence_count: change.expected_occurrences,
+            baseline_sha256: sha256_bytes(change.exact_before.as_bytes()),
+            transformed_sha256: sha256_bytes(change.exact_after.as_bytes()),
+            allowed_provenance_fields: change.allowed_provenance_fields.clone(),
+            allow_source_bound_identifier_projection: change
+                .allow_source_bound_identifier_projection,
+        })
+        .collect();
+    Ok((transformed, evidence))
+}
+
+fn validate_preserved_conclusions(
+    recipe: &ReviewedTransformRecipe,
+    baseline: &PipelineArtifacts,
+    transformed: &PipelineArtifacts,
+) -> Result<Vec<String>> {
+    let mut failures = Vec::new();
+    for conclusion in &recipe.preserved_conclusions {
+        let baseline_stage = baseline
+            .stages
+            .get(&conclusion.stage)
+            .ok_or_else(|| invalid("reviewed baseline conclusion stage is missing"))?;
+        let baseline_value = baseline_stage
+            .value
+            .pointer(&conclusion.baseline_pointer)
+            .and_then(Value::as_str)
+            .ok_or_else(|| {
+                invalid(format!(
+                    "reviewed baseline conclusion pointer is stale: {}",
+                    conclusion.conclusion_id
+                ))
+            })?;
+        if baseline_value != conclusion.baseline_value {
+            return Err(invalid(format!(
+                "reviewed baseline conclusion value is stale: {}",
+                conclusion.conclusion_id
+            )));
+        }
+        let transformed_value = transformed
+            .stages
+            .get(&conclusion.stage)
+            .and_then(|stage| stage.value.pointer(&conclusion.transformed_pointer))
+            .and_then(Value::as_str);
+        if transformed_value != Some(conclusion.transformed_value.as_str()) {
+            failures.push(format!(
+                "missing_expected_delta: preserved conclusion differs: {}",
+                conclusion.conclusion_id
+            ));
+        }
+    }
+    Ok(failures)
 }
 
 fn run_pipeline(
@@ -662,7 +1285,12 @@ fn compare_pipelines(
     {
         failures.push("missing_expected_delta: document identity did not change".to_string());
     }
-    let state = if failures
+    let state = run_state(&failures);
+    Ok((state, comparisons, failures))
+}
+
+fn run_state(failures: &[String]) -> BehavioralRunState {
+    if failures
         .iter()
         .any(|failure| failure.starts_with("partial_or_escaped_run"))
     {
@@ -671,8 +1299,7 @@ fn compare_pipelines(
         BehavioralRunState::Pass
     } else {
         BehavioralRunState::Fail
-    };
-    Ok((state, comparisons, failures))
+    }
 }
 
 fn is_complete_stage_set(
@@ -893,18 +1520,49 @@ fn replace_identifier_tokens(
     (output, counts)
 }
 
+fn source_bound_identifier_projection(source: &str) -> String {
+    let mut output = String::with_capacity(source.len());
+    let mut separator_pending = false;
+    for character in source.chars() {
+        if character.is_ascii_alphanumeric() {
+            if separator_pending && !output.is_empty() {
+                output.push('_');
+            }
+            output.push(character.to_ascii_lowercase());
+            separator_pending = false;
+        } else if !output.is_empty() {
+            separator_pending = true;
+        }
+    }
+    output
+}
+
 fn basic_normalize(value: &Value, spec: &NormalizationSpec, transformed: bool) -> Value {
+    basic_normalize_at(value, spec, transformed, None)
+}
+
+fn basic_normalize_at(
+    value: &Value,
+    spec: &NormalizationSpec,
+    transformed: bool,
+    field: Option<&str>,
+) -> Value {
     match value {
         Value::Object(object) => Value::Object(
             object
                 .iter()
-                .map(|(key, child)| (key.clone(), basic_normalize(child, spec, transformed)))
+                .map(|(key, child)| {
+                    (
+                        key.clone(),
+                        basic_normalize_at(child, spec, transformed, Some(key)),
+                    )
+                })
                 .collect(),
         ),
         Value::Array(values) => Value::Array(
             values
                 .iter()
-                .map(|child| basic_normalize(child, spec, transformed))
+                .map(|child| basic_normalize_at(child, spec, transformed, field))
                 .collect(),
         ),
         Value::String(text) => {
@@ -938,6 +1596,15 @@ fn basic_normalize(value: &Value, spec: &NormalizationSpec, transformed: bool) -
                     &spec.identifier_transformed_to_baseline,
                 )
                 .0;
+                if let Some(reviewed) =
+                    field.and_then(|field| spec.reviewed_text_by_field.get(field))
+                {
+                    let mut reviewed = reviewed.iter().collect::<Vec<_>>();
+                    reviewed.sort_by_key(|(from, _)| std::cmp::Reverse(from.len()));
+                    for (from, to) in reviewed {
+                        normalized = normalized.replace(from, to);
+                    }
+                }
             }
             Value::String(normalized)
         }
@@ -1237,8 +1904,12 @@ fn normalize_relation_bound_scalars(
         *right = Value::String("$DOCUMENT_SCOPE".to_string());
         return;
     }
-    if relation == BehavioralRelation::SymbolAlpha
-        && field == Some("size_bytes")
+    if matches!(
+        relation,
+        BehavioralRelation::SymbolAlpha
+            | BehavioralRelation::StructurePreservingParaphrase
+            | BehavioralRelation::HarmlessLayout
+    ) && field == Some("size_bytes")
         && left.is_number()
         && right.is_number()
         && left != right
@@ -1558,6 +2229,11 @@ mod tests {
     use super::*;
 
     const PRIOR_MEMORY: &str = "generated/prior_memory/corpus_memory.json";
+    const REVIEWED_SOURCE: &str = "generated/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/normalized/um11732_v3_2022_02_17_i2s_bus_specification.md";
+    const REVIEWED_SOURCE_SHA256: &str =
+        "250339a784e657ac2c87a9762dfddbffc6a4bd42ed27da7e666c2f2db419753f";
+    const PARAPHRASE_RECIPE_ID: &str = "um11732-v3-equivalent-minimum-timing-phrase-v1";
+    const LAYOUT_RECIPE_ID: &str = "um11732-v3-heading-table-whitespace-formatting-v1";
 
     fn synthetic_stage(value: Value, name: &str) -> StageArtifact {
         StageArtifact {
@@ -1630,6 +2306,29 @@ mod tests {
         pdf
     }
 
+    fn reviewed_request(
+        repository: &Path,
+        temporary: &Path,
+        relation: BehavioralRelation,
+        recipe_id: &str,
+        output_name: &str,
+    ) -> Result<BehavioralQualificationRequest> {
+        Ok(BehavioralQualificationRequest {
+            relation,
+            source_authority: PathBuf::from(REVIEWED_SOURCE),
+            expected_source_sha256: REVIEWED_SOURCE_SHA256.to_string(),
+            output_root: temporary
+                .join(output_name)
+                .strip_prefix(repository)
+                .map_err(|_| invalid("reviewed test output escaped repository"))?
+                .to_path_buf(),
+            prior_memory: PathBuf::from(PRIOR_MEMORY),
+            production_revision: "0".repeat(40),
+            transform_seed: 0,
+            review_recipe_id: Some(recipe_id.to_string()),
+        })
+    }
+
     #[test]
     fn alpha_transform_is_deterministic_bijective_and_complete() -> Result<()> {
         let source = "Signal ORBIT is input. ORBIT drives CLEAR. Signal CLEAR is output.";
@@ -1671,6 +2370,7 @@ mod tests {
                 ("misleading.pdf".to_string(), "original.pdf".to_string()),
             ]),
             identifier_transformed_to_baseline: BTreeMap::new(),
+            reviewed_text_by_field: BTreeMap::new(),
         };
         let result = compare_stage(
             BehavioralStage::SemanticIr,
@@ -1702,6 +2402,7 @@ mod tests {
                 ("misleading.pdf".to_string(), "original.pdf".to_string()),
             ]),
             identifier_transformed_to_baseline: BTreeMap::new(),
+            reviewed_text_by_field: BTreeMap::new(),
         };
         let result = compare_stage(
             BehavioralStage::SemanticIr,
@@ -1720,6 +2421,156 @@ mod tests {
         incomplete.remove(&BehavioralStage::IntentIr);
         assert!(!is_complete_stage_set(&incomplete, &expected));
         assert!(is_complete_stage_set(&expected, &expected));
+    }
+
+    #[test]
+    fn reviewed_recipe_guards_reject_missing_authority_ambiguity_and_unsafe_provenance()
+    -> Result<()> {
+        let repository = crate::project_data::repository_root()?;
+        let temporary = crate::project_data::tempdir()?;
+        let mut missing_authority = reviewed_request(
+            &repository,
+            temporary.path(),
+            BehavioralRelation::StructurePreservingParaphrase,
+            PARAPHRASE_RECIPE_ID,
+            "missing-authority",
+        )?;
+        missing_authority.review_recipe_id = None;
+        assert!(validate_request(&missing_authority).is_err());
+
+        let manifest: ReviewedRecipeManifest =
+            serde_json::from_slice(&fs::read(repository.join(REVIEW_RECIPE_MANIFEST_PATH))?)?;
+        let declaration = manifest
+            .recipes
+            .iter()
+            .find(|declaration| declaration.recipe_id == PARAPHRASE_RECIPE_ID)
+            .ok_or_else(|| invalid("paraphrase declaration missing in test"))?;
+        let mut recipe: ReviewedTransformRecipe =
+            serde_json::from_slice(&fs::read(repository.join(&declaration.path))?)?;
+        let repeated = format!(
+            "{}\n{}",
+            recipe.changed_spans[0].exact_before, recipe.changed_spans[0].exact_before
+        );
+        assert!(apply_reviewed_recipe(&repeated, &recipe).is_err());
+
+        let first = ReviewedSpanChange {
+            change_id: "left".to_string(),
+            kind: ReviewedChangeKind::SentenceParaphrase,
+            exact_before: "abc".to_string(),
+            exact_after: "ABC".to_string(),
+            expected_occurrences: 1,
+            allowed_provenance_fields: vec!["text".to_string()],
+            allow_source_bound_identifier_projection: true,
+        };
+        let second = ReviewedSpanChange {
+            change_id: "right".to_string(),
+            exact_before: "bcd".to_string(),
+            exact_after: "BCD".to_string(),
+            ..first.clone()
+        };
+        recipe.changed_spans = vec![first, second];
+        assert!(apply_reviewed_recipe("abcdef", &recipe).is_err());
+
+        recipe = serde_json::from_slice(&fs::read(repository.join(&declaration.path))?)?;
+        recipe.changed_spans[0].allowed_provenance_fields = vec!["role".to_string()];
+        assert!(validate_reviewed_recipe(&recipe, declaration).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn full_reviewed_paraphrase_run_emits_five_stage_evidence() -> Result<()> {
+        let repository = crate::project_data::repository_root()?;
+        let temporary = crate::project_data::tempdir()?;
+        let request = reviewed_request(
+            &repository,
+            temporary.path(),
+            BehavioralRelation::StructurePreservingParaphrase,
+            PARAPHRASE_RECIPE_ID,
+            "reviewed-paraphrase",
+        )?;
+        let report = qualify_behavioral_relation(&request)?;
+        assert_eq!(
+            report.state,
+            BehavioralRunState::Pass,
+            "failures={:#?}\nstages={:#?}",
+            report.failures,
+            report
+                .stages
+                .iter()
+                .map(|stage| (&stage.stage, &stage.undeclared_delta_paths))
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(report.schema_version, 2);
+        assert_eq!(report.stages.len(), 5);
+        assert_eq!(report.coverage.expected_reviewed_span_deltas, 1);
+        assert_eq!(report.coverage.observed_reviewed_span_deltas, 1);
+        assert_eq!(report.coverage.preserved_conclusions, 8);
+        assert!(!report.transform.source_bytes_equal);
+        let evidence = report
+            .transform
+            .reviewed_recipe
+            .as_ref()
+            .ok_or_else(|| invalid("reviewed paraphrase evidence is missing"))?;
+        assert_eq!(evidence.recipe_id, PARAPHRASE_RECIPE_ID);
+        assert_eq!(evidence.changed_spans.len(), 1);
+        assert_eq!(
+            evidence.unmeasurable_source_surfaces,
+            RICH_CAPTURE_EXCLUSIONS
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn full_reviewed_layout_run_emits_five_stage_evidence() -> Result<()> {
+        let repository = crate::project_data::repository_root()?;
+        let temporary = crate::project_data::tempdir()?;
+        let request = reviewed_request(
+            &repository,
+            temporary.path(),
+            BehavioralRelation::HarmlessLayout,
+            LAYOUT_RECIPE_ID,
+            "reviewed-layout",
+        )?;
+        let report = qualify_behavioral_relation(&request)?;
+        assert_eq!(
+            report.state,
+            BehavioralRunState::Pass,
+            "failures={:#?}\nstages={:#?}",
+            report.failures,
+            report
+                .stages
+                .iter()
+                .map(|stage| (&stage.stage, &stage.undeclared_delta_paths))
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(report.stages.len(), 5);
+        assert_eq!(report.coverage.expected_reviewed_span_deltas, 4);
+        assert_eq!(report.coverage.observed_reviewed_span_deltas, 4);
+        assert_eq!(report.coverage.preserved_conclusions, 2);
+        assert!(!report.transform.source_bytes_equal);
+        let evidence = report
+            .transform
+            .reviewed_recipe
+            .as_ref()
+            .ok_or_else(|| invalid("reviewed layout evidence is missing"))?;
+        assert_eq!(evidence.recipe_id, LAYOUT_RECIPE_ID);
+        assert_eq!(evidence.changed_spans.len(), 4);
+        assert_eq!(
+            evidence
+                .changed_spans
+                .iter()
+                .map(|span| span.kind)
+                .collect::<BTreeSet<_>>(),
+            [
+                ReviewedChangeKind::HeadingLayout,
+                ReviewedChangeKind::TableLayout,
+                ReviewedChangeKind::WhitespaceLayout,
+                ReviewedChangeKind::FormattingLayout,
+            ]
+            .into_iter()
+            .collect()
+        );
+        Ok(())
     }
 
     #[test]
@@ -1750,6 +2601,7 @@ mod tests {
             prior_memory: PathBuf::from(PRIOR_MEMORY),
             production_revision: "0".repeat(40),
             transform_seed: 42,
+            review_recipe_id: None,
         };
         let report = qualify_behavioral_relation(&request)?;
         assert_eq!(
@@ -1810,6 +2662,7 @@ mod tests {
             prior_memory: PathBuf::from(PRIOR_MEMORY),
             production_revision: "0".repeat(40),
             transform_seed: 73,
+            review_recipe_id: None,
         };
         let report = qualify_behavioral_relation(&request)?;
         assert_eq!(report.state, BehavioralRunState::Pass, "{report:#?}");
@@ -1846,6 +2699,7 @@ mod tests {
             prior_memory: PathBuf::from(PRIOR_MEMORY),
             production_revision: "0".repeat(40),
             transform_seed: 0,
+            review_recipe_id: None,
         };
         let report = qualify_behavioral_relation(&request)?;
         assert_eq!(report.state, BehavioralRunState::Pass, "{report:#?}");
@@ -1873,6 +2727,7 @@ mod tests {
             prior_memory: PathBuf::from(PRIOR_MEMORY),
             production_revision: "0".repeat(40),
             transform_seed: 1,
+            review_recipe_id: None,
         };
         assert!(validate_request(&escaped).is_err());
 

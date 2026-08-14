@@ -1,4 +1,40 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b (`2026-08-14`) — reviewed meaning needs demonstrated parser equivalence
+
+A human review label is necessary but insufficient for a metamorphic pass. The first reviewed timing rewrite,
+“must not be less than” to “must be at least,” is mathematically equivalent, yet `at least` enters a distinct
+production timing grammar and changed hundreds of semantic/intent proof records. Likewise, inserting an extra
+blank line shifted all subsequent evidence coordinates, while reordering a numbered heading changed section-
+derived presentation records. The comparator rejected each candidate. The accepted sentence keeps the same
+grammar path with “must not be lower than”; the accepted layout set uses same-line-count trailing heading
+whitespace, table alignment markers, horizontal whitespace on a blank line, and emphasis.
+
+Review authority is now a closed checked-in manifest. Each declaration binds recipe id, relation, calibration
+source path/hash, recipe path/hash, and review role. Each recipe exhaustively names exact single-occurrence spans,
+relation-specific change kinds, independently safe source-text fields, whether exact source-derived identifier
+projection is allowed, preserved conclusion pointers and values, the complete unaffected complement, and the
+normalized-text rich-capture exclusions. Missing, stale, escaped, ambiguous, overlapping, irreversible, open, or
+relation-mismatched authority rejects before comparison.
+
+The first normalization implementation combined all allowed fields across all changed spans. Layout calibration
+exposed that this could let one span borrow another span's permission. The final representation is field → exact
+replacement map, built independently for every span with forward and reverse collision checks. Source-bound ids
+receive only the exact lowercase alphanumeric projection of the approved span; arbitrary positional id pairing
+remains forbidden. This closes both copied prose and derived references while keeping every unlisted leaf,
+collection topology, proof address/rule/premise/confidence, residual, validation, and lowering value exact.
+
+The final paraphrase accounts for one source delta and eight propagated evidence/semantic/intent conclusions.
+The final layout recipe accounts for four source deltas and pins two unaffected semantic/intent conclusions. Both
+run the real five-stage production pipeline and pass. Negative semantic and authority sensitivity remains the
+separate `.f.ii.c` frontier; these reviewed calibrations neither consume the frozen holdout nor prove rich PDF
+capture.
+
+Full CI then caught an intentionally exact repository-flow snapshot still pinned to the pre-slice graph. The
+production-genericity doctrine had independently measured 2,230 functions, 11,577 helper edges, 10,868 decision
+sites, and 1,411 semantic macros; the snapshot retained 2,222 / 11,519 / 10,747 / 1,393. Updating those four
+assertions preserves the independent drift alarm while binding it to the same measured graph that passed the
+closed information-flow gate.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a (`2026-08-14`) — identity relations need closed, typed normalization
 
 The harness runs downstream of `specforge-core` and gives production only the current baseline or transformed

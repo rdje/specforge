@@ -137,10 +137,10 @@ regions, and 15 protected types. Rule roots, canonical
 seams, canonical fields, and conformance bypasses are derived directly from their existing inventories rather
 than being copied into a second reviewed list. A malformed, duplicate, or unresolved registry row fails closed.
 
-Symbolic dependencies propagate to a deterministic fixed point across 2,222 production functions and 11,519
+Symbolic dependencies propagate to a deterministic fixed point across 2,230 production functions and 11,577
 helper edges. Parameters, typed fields, provider returns, local and conservatively resolved method calls,
 closures, expression results, and macro tokens retain raw/identity dependence. The check rejects that dependence
-at 10,747 branch/selection/decision sites unless the call topology proves membership in a registered universal
+at 10,868 branch/selection/decision sites unless the call topology proves membership in a registered universal
 grammar, narrow exact-identity declassifier, trusted proof boundary, or non-authoritative inspection surface.
 Sensitive input entering an unclassified semantic macro fails instead of being ignored.
 

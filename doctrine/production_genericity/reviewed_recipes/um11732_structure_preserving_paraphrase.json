@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "recipe_id": "um11732-v3-equivalent-minimum-timing-phrase-v1",
+  "relation": "structure_preserving_paraphrase",
+  "source_authority": "generated/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/normalized/um11732_v3_2022_02_17_i2s_bus_specification.md",
+  "source_sha256": "250339a784e657ac2c87a9762dfddbffc6a4bd42ed27da7e666c2f2db419753f",
+  "review_status": "approved",
+  "changed_spans": [
+    {
+      "change_id": "equivalent-minimum-timing-phrase",
+      "kind": "sentence_paraphrase",
+      "exact_before": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "exact_after": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time.",
+      "expected_occurrences": 1,
+      "allowed_provenance_fields": [
+        "conclusion",
+        "normalized_markdown",
+        "responsibilities",
+        "source_text",
+        "statement",
+        "text"
+      ],
+      "allow_source_bound_identifier_projection": true
+    }
+  ],
+  "preserved_conclusions": [
+    {
+      "conclusion_id": "evidence-minimum-timing-statement",
+      "stage": "evidence_ir",
+      "baseline_pointer": "/extracted_statements/89/text",
+      "transformed_pointer": "/extracted_statements/89/text",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "semantic-minimum-timing-invariant",
+      "stage": "semantic_ir",
+      "baseline_pointer": "/invariants/6/statement",
+      "transformed_pointer": "/invariants/6/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "semantic-minimum-timing-contract",
+      "stage": "semantic_ir",
+      "baseline_pointer": "/contracts/7/statement",
+      "transformed_pointer": "/contracts/7/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "semantic-minimum-timing-assertion",
+      "stage": "semantic_ir",
+      "baseline_pointer": "/assertions/0/statement",
+      "transformed_pointer": "/assertions/0/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "intent-minimum-timing-constraint",
+      "stage": "intent_ir",
+      "baseline_pointer": "/constraints/6/statement",
+      "transformed_pointer": "/constraints/6/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "intent-minimum-timing-responsibility",
+      "stage": "intent_ir",
+      "baseline_pointer": "/actors/4/responsibilities/1",
+      "transformed_pointer": "/actors/4/responsibilities/1",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "intent-minimum-timing-behavior",
+      "stage": "intent_ir",
+      "baseline_pointer": "/behaviors/7/statement",
+      "transformed_pointer": "/behaviors/7/statement",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time."
+    },
+    {
+      "conclusion_id": "intent-minimum-timing-temporal-invariant",
+      "stage": "intent_ir",
+      "baseline_pointer": "/temporal_invariants/6/source_text",
+      "transformed_pointer": "/temporal_invariants/6/source_text",
+      "baseline_value": "- [6] The data set-up and hold time must not be less than the specified receiver set-up and hold time.",
+      "transformed_value": "- [6] The data set-up and hold time must not be lower than the specified receiver set-up and hold time."
+    }
+  ],
+  "unaffected_complement": "all_unlisted_leaf_values_and_all_proof_topology_exact",
+  "unmeasurable_source_surfaces": [
+    "content_elements",
+    "document_sections",
+    "page_artifacts",
+    "structured_tables",
+    "visual_assets"
+  ]
+}

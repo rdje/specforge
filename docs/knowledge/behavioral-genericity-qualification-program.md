@@ -14,10 +14,10 @@ reverify: cargo test --offline -p specforge-conformance behavioral_genericity --
 ---
 
 `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` is active. `.f.i` has frozen the oracle and governed population, and
-`.f.ii.a` implements the conformance-owned alpha-renaming plus adversarial document/symbol identity harness.
-`.f.ii.b` is the precise frontier for reviewed paraphrase and harmless-layout relations. Later
-children separately qualify reviewed structure-preserving paraphrase/layout changes, semantic negative
-controls, identity-disjoint held-out strata, complete-population replay, and final signoff.
+`.f.ii.a` implements the conformance-owned alpha-renaming plus adversarial document/symbol identity harness, and
+`.f.ii.b` implements digest-pinned reviewed paraphrase and harmless-layout relations. `.f.ii.c` is the precise
+frontier for semantic and authority negative controls. Later children separately qualify identity-disjoint
+held-out strata, complete-population replay, and final signoff.
 
 These transformations do not share one equality relation. Alpha-renaming preserves normalized canonical
 decisions and proof topology while copied symbols rename consistently. Reviewed paraphrase can preserve meaning
@@ -34,5 +34,6 @@ creating a new conformance-to-core authority path.
 
 The implemented harness copies hash-pinned input into repository-local scratch, executes and reloads SourceIR,
 EvidenceIR, SemanticIR, IntentIR, and ISF adapter pairs, compares every serialized field and proof claim, and
-emits digest-pinned JSON evidence. Provider-free alpha plus explicit unchanged/adversarial Docling-backed PDF
-calibrations pass; these focused calibrations are not the governed held-out or complete-population result.
+emits digest-pinned JSON evidence. Provider-free alpha and reviewed paraphrase/layout plus explicit unchanged/
+adversarial Docling-backed PDF calibrations pass; these focused calibrations are not the governed held-out or
+complete-population result. [[behavioral-reviewed-recipe-boundary]] records the exact review-authority boundary.

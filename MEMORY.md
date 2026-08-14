@@ -17,15 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` is the next eligible behavioral-qualification leaf after
-  the `.f.ii.a` identity/alpha harness. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` is the next eligible behavioral-qualification leaf after
+  the `.f.ii.b` reviewed paraphrase/layout slice. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: conformance now owns deterministic source-bound alpha and byte-identical adversarial-PDF identity
-  transforms, isolated five-stage replay, closed field/proof comparison, and machine JSON evidence. Provider-free
-  alpha plus explicit unchanged/adversarial Docling PDF calibrations pass; semantic-role and incomplete-stage
-  controls reject. The
-  frozen 24-row/23-text-measurable population and rich-PDF exclusions are unchanged.
-- Next action: execute `.f.ii.b`: add reviewed structure-preserving sentence, heading, table, whitespace, and
-  formatting recipes with exhaustive changed-span and unaffected-complement declarations.
-- In-flight uncommitted: none after the `.f.ii.a` commit; no background job.
+- Current state: conformance owns five passing calibration relations: full-PDF unchanged/adversarial identity and
+  normalized-text alpha, reviewed sentence paraphrase, and harmless layout. The two approved recipes are source/
+  recipe-digest pinned, exact-span, per-field, reversible, conclusion-pinned, and complete-complement bounded;
+  missing/unsafe/ambiguous authority rejects. The frozen 24-row/23-text-measurable population and rich-PDF
+  exclusions are unchanged.
+- Next action: execute `.f.ii.c`: add the complete semantic and authority-negative matrix, require the intended
+  changed fact/residual, and close stale/unmeasurable attempt handling without granting outcomes to core.
+- In-flight uncommitted: none after the `.f.ii.b` commit; no background job.
 - Blockers: none. Product direction is unambiguous. The user-owned `.claude/settings.json` is untouched.

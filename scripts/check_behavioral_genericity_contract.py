@@ -17,6 +17,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_PATH = Path("doctrine/production_genericity/behavioral_qualification.json")
 POPULATION_PATH = Path("doctrine/production_genericity/behavioral_population.tsv")
+RECIPE_MANIFEST_PATH = Path(
+    "doctrine/production_genericity/reviewed_recipe_manifest.json"
+)
 
 POPULATION_FIELDS = [
     "document_key",
@@ -117,6 +120,40 @@ EXPECTED_FAILURES = {
     "validation_or_lowering_regression": "fail",
 }
 
+EXPECTED_REVIEWED_RECIPE_RELATIONS = {
+    "structure_preserving_paraphrase",
+    "harmless_layout",
+}
+
+EXPECTED_REVIEWED_CHANGE_KINDS = {
+    "structure_preserving_paraphrase": {"sentence_paraphrase"},
+    "harmless_layout": {
+        "heading_layout",
+        "table_layout",
+        "whitespace_layout",
+        "formatting_layout",
+    },
+}
+
+SAFE_REVIEWED_PROVENANCE_FIELDS = {
+    "conclusion",
+    "normalized_markdown",
+    "responsibilities",
+    "source_text",
+    "statement",
+    "text",
+}
+
+RICH_CAPTURE_EXCLUSIONS = {
+    "content_elements",
+    "document_sections",
+    "page_artifacts",
+    "structured_tables",
+    "visual_assets",
+}
+
+REVIEWED_COMPLEMENT = "all_unlisted_leaf_values_and_all_proof_topology_exact"
+
 ARTIFACT_PATHS = {
     "source_ir": "generated/source_ir/{key}/source_ir.json",
     "evidence_ir": "generated/evidence_ir/{key}/evidence_ir.json",
@@ -214,6 +251,190 @@ def check_file_identity(
         problems.append(f"frozen census {label} SHA-256 differs: {relative}")
 
 
+def validate_reviewed_recipes(
+    rows: list[dict[str, str]], problems: list[str]
+) -> None:
+    try:
+        manifest = read_json(ROOT / RECIPE_MANIFEST_PATH)
+    except (OSError, json.JSONDecodeError) as error:
+        problems.append(f"reviewed recipe manifest is unavailable: {error}")
+        return
+    if not isinstance(manifest, dict):
+        problems.append("reviewed recipe manifest must be an object")
+        return
+    if manifest.get("schema_version") != 1:
+        problems.append("reviewed recipe manifest schema_version must be 1")
+    if manifest.get("owner") != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b":
+        problems.append("reviewed recipe manifest owner differs from .f.ii.b")
+    recipes = manifest.get("recipes")
+    recipe_ids = unique_ids(recipes, "recipe_id", "reviewed recipes", problems)
+    if not recipe_ids:
+        problems.append("reviewed recipe manifest is empty")
+    if not isinstance(recipes, list):
+        return
+    relations = {
+        row.get("relation")
+        for row in recipes
+        if isinstance(row, dict) and isinstance(row.get("relation"), str)
+    }
+    if relations != EXPECTED_REVIEWED_RECIPE_RELATIONS:
+        problems.append("reviewed recipe relations differ from the released .f.ii.b set")
+    population_by_markdown = {
+        row.get("normalized_markdown_path"): row for row in rows
+    }
+    for index, declaration in enumerate(recipes):
+        if not isinstance(declaration, dict):
+            problems.append(f"reviewed recipes[{index}] must be an object")
+            continue
+        recipe_id = declaration.get("recipe_id", f"index-{index}")
+        relative = safe_relative_path(declaration.get("path"))
+        if relative is None or not relative.is_relative_to(
+            Path("doctrine/production_genericity/reviewed_recipes")
+        ):
+            problems.append(f"reviewed recipe {recipe_id} path is unsafe")
+            continue
+        recipe_path = ROOT / relative
+        if not recipe_path.is_file():
+            problems.append(f"reviewed recipe {recipe_id} is missing: {relative}")
+            continue
+        if declaration.get("sha256") != sha256(recipe_path):
+            problems.append(f"reviewed recipe {recipe_id} SHA-256 differs")
+        try:
+            recipe = read_json(recipe_path)
+        except (OSError, json.JSONDecodeError) as error:
+            problems.append(f"reviewed recipe {recipe_id} is invalid JSON: {error}")
+            continue
+        if not isinstance(recipe, dict):
+            problems.append(f"reviewed recipe {recipe_id} must be an object")
+            continue
+        expected_keys = {
+            "schema_version",
+            "recipe_id",
+            "relation",
+            "source_authority",
+            "source_sha256",
+            "review_status",
+            "changed_spans",
+            "preserved_conclusions",
+            "unaffected_complement",
+            "unmeasurable_source_surfaces",
+        }
+        if set(recipe) != expected_keys:
+            problems.append(f"reviewed recipe {recipe_id} has an open or incomplete schema")
+        for field in (
+            "recipe_id",
+            "relation",
+            "source_authority",
+            "source_sha256",
+        ):
+            if recipe.get(field) != declaration.get(field):
+                problems.append(f"reviewed recipe {recipe_id} differs from manifest {field}")
+        if recipe.get("schema_version") != 1 or recipe.get("review_status") != "approved":
+            problems.append(f"reviewed recipe {recipe_id} is not approved schema 1")
+        if declaration.get("review_role") != "reviewed_calibration":
+            problems.append(f"reviewed recipe {recipe_id} is not calibration-owned")
+        source_row = population_by_markdown.get(declaration.get("source_authority"))
+        if source_row is None or source_row.get("review_role") != "reviewed_calibration":
+            problems.append(f"reviewed recipe {recipe_id} source is not frozen calibration")
+        elif source_row.get("normalized_markdown_sha256") != declaration.get(
+            "source_sha256"
+        ):
+            problems.append(f"reviewed recipe {recipe_id} source digest differs from population")
+        source_relative = safe_relative_path(recipe.get("source_authority"))
+        source_path = ROOT / source_relative if source_relative is not None else None
+        source_text = None
+        if source_path is None or not source_path.is_file():
+            problems.append(f"reviewed recipe {recipe_id} source is missing or unsafe")
+        elif sha256(source_path) != recipe.get("source_sha256"):
+            problems.append(f"reviewed recipe {recipe_id} source SHA-256 differs")
+        else:
+            source_text = source_path.read_text(encoding="utf-8")
+        changes = recipe.get("changed_spans")
+        change_ids = unique_ids(changes, "change_id", f"recipe {recipe_id} changes", problems)
+        if not change_ids or not isinstance(changes, list):
+            problems.append(f"reviewed recipe {recipe_id} has no exhaustive changed spans")
+            continue
+        kinds: set[str] = set()
+        for change_index, change in enumerate(changes):
+            if not isinstance(change, dict):
+                problems.append(f"recipe {recipe_id} change {change_index} must be an object")
+                continue
+            if set(change) != {
+                "change_id",
+                "kind",
+                "exact_before",
+                "exact_after",
+                "expected_occurrences",
+                "allowed_provenance_fields",
+                "allow_source_bound_identifier_projection",
+            }:
+                problems.append(f"recipe {recipe_id} change {change_index} schema is open")
+            kind = change.get("kind")
+            if isinstance(kind, str):
+                kinds.add(kind)
+            before = change.get("exact_before")
+            after = change.get("exact_after")
+            if (
+                not isinstance(before, str)
+                or not before
+                or not isinstance(after, str)
+                or not after
+                or before == after
+                or change.get("expected_occurrences") != 1
+            ):
+                problems.append(f"recipe {recipe_id} change {change_index} is not one exact delta")
+            elif source_text is not None and (
+                source_text.count(before) != 1 or source_text.count(after) != 0
+            ):
+                problems.append(f"recipe {recipe_id} change {change_index} is ambiguous or stale")
+            fields = change.get("allowed_provenance_fields")
+            if (
+                not isinstance(fields, list)
+                or not fields
+                or len(fields) != len(set(fields))
+                or not set(fields) <= SAFE_REVIEWED_PROVENANCE_FIELDS
+            ):
+                problems.append(f"recipe {recipe_id} change {change_index} opens unsafe fields")
+            if change.get("allow_source_bound_identifier_projection") is not True:
+                problems.append(
+                    f"recipe {recipe_id} change {change_index} lacks closed identifier projection"
+                )
+        if kinds != EXPECTED_REVIEWED_CHANGE_KINDS.get(recipe.get("relation"), set()):
+            problems.append(f"reviewed recipe {recipe_id} change-kind coverage differs")
+        conclusions = recipe.get("preserved_conclusions")
+        conclusion_ids = unique_ids(
+            conclusions, "conclusion_id", f"recipe {recipe_id} conclusions", problems
+        )
+        if not conclusion_ids or not isinstance(conclusions, list):
+            problems.append(f"reviewed recipe {recipe_id} has no preserved conclusions")
+        else:
+            for conclusion_index, conclusion in enumerate(conclusions):
+                if not isinstance(conclusion, dict) or set(conclusion) != {
+                    "conclusion_id",
+                    "stage",
+                    "baseline_pointer",
+                    "transformed_pointer",
+                    "baseline_value",
+                    "transformed_value",
+                }:
+                    problems.append(
+                        f"recipe {recipe_id} conclusion {conclusion_index} schema is open"
+                    )
+                elif conclusion.get("stage") not in EXPECTED_STAGES:
+                    problems.append(
+                        f"recipe {recipe_id} conclusion {conclusion_index} stage is invalid"
+                    )
+        if recipe.get("unaffected_complement") != REVIEWED_COMPLEMENT:
+            problems.append(f"reviewed recipe {recipe_id} complement is not closed")
+        exclusions = recipe.get("unmeasurable_source_surfaces")
+        if (
+            not isinstance(exclusions, list)
+            or set(exclusions) != RICH_CAPTURE_EXCLUSIONS
+            or len(exclusions) != len(set(exclusions))
+        ):
+            problems.append(f"reviewed recipe {recipe_id} rich-capture exclusions differ")
+
+
 def validate(
     contract: dict[str, Any],
     rows: list[dict[str, str]],
@@ -241,6 +462,7 @@ def validate(
         "reviewed_population": (
             "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json"
         ),
+        "reviewed_recipe_manifest": RECIPE_MANIFEST_PATH.as_posix(),
         "claim_family_inventory": (
             "doctrine/production_genericity/claim_family_inventory.tsv"
         ),
@@ -255,6 +477,8 @@ def validate(
         relative = safe_relative_path(relative_text)
         if relative is None or not (ROOT / relative).is_file():
             problems.append(f"declared {label} is missing or unsafe: {relative_text}")
+
+    validate_reviewed_recipes(rows, problems)
 
     relation_ids = unique_ids(contract.get("relations"), "relation_id", "relations", problems)
     if relation_ids != EXPECTED_RELATIONS:
