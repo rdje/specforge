@@ -137,9 +137,10 @@ lazily — when a durable fact is established or archaeology is caught.
 
 `MEMORY.md` becomes **only** layer A. Hard rules:
 
-- **Size cap** — keep it to roughly one screen (≤ ~50 lines). If it exceeds the cap,
-  information is in the wrong layer; move it down to B or C. *(This cap is mechanically
-  enforced — §9.)*
+- **Size caps** — keep it to roughly one screen (≤ ~50 lines), with an independent hard
+  maximum of **32,768 bytes (`32 * 1024 B`)** so the whole pointer remains a safe one-read
+  input. If it exceeds either cap, information is in the wrong layer; move it down to B
+  or C. *(Both caps are mechanically enforced — §9.)*
 - **Overwrite, don't append** — it always describes *now*, never the journey.
 - **No history** — that's git (D) and the task-tree logs (B).
 - **Prefer derived over hand-written** — a small script can regenerate the
@@ -156,7 +157,7 @@ stop carrying it forward.
 **Resume-pointer template** (the entire contents of a demoted `MEMORY.md`):
 
 ```markdown
-# MEMORY — resume pointer (layer A; overwrite-only, keep ≤ ~50 lines)
+# MEMORY — resume pointer (layer A; overwrite-only, keep ≤ ~50 lines / 32,768 bytes)
 
 ## How to resume
 - Read `MEMORY_ARCHITECTURE.md` (the memory system) and `README.md` (the project).
@@ -239,7 +240,7 @@ first read routes the agent here. Keep each to one line + a pointer so they can'
 
 **E2 — One self-check script (a single source of truth for the invariants).** A tracked
 script (e.g. `scripts/check_memory_architecture.sh`) that exits **nonzero** on any
-violation: `MEMORY.md` missing or over the line cap; a bootstrap file missing or not
+violation: `MEMORY.md` missing or over its line or 32,768-byte cap; a bootstrap file missing or not
 pointing at `MEMORY_ARCHITECTURE.md` + `README.md`; `docs/decisions/` missing or its
 index out of sync with the record files. Everything below calls this one script, so the
 rules live in exactly one place and can't fork.
@@ -269,14 +270,18 @@ have to defeat all four — and CI cannot be bypassed from a clone.
 # scripts/check_memory_architecture.sh — fail nonzero on any memory-architecture breach.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
-CAP="${MEMORY_POINTER_LINE_CAP:-60}"; fail=0
+CAP="${MEMORY_POINTER_LINE_CAP:-60}"
+BYTE_CAP="${MEMORY_POINTER_BYTE_CAP:-32768}"
+fail=0
 note(){ printf 'memory-arch: %s\n' "$1" >&2; fail=1; }
 
 [ -f MEMORY_ARCHITECTURE.md ] || note "MEMORY_ARCHITECTURE.md is missing"
 [ -f MEMORY.md ] || note "MEMORY.md (resume pointer) is missing"
 if [ -f MEMORY.md ]; then
   n=$(wc -l < MEMORY.md)
+  b=$(wc -c < MEMORY.md)
   [ "$n" -le "$CAP" ] || note "MEMORY.md is $n lines (> cap $CAP) — demote content to task-trees/decisions"
+  [ "$b" -le "$BYTE_CAP" ] || note "MEMORY.md is $b bytes (> cap $BYTE_CAP) — demote content to task-trees/decisions"
 fi
 for f in AGENTS.md CLAUDE.md; do
   [ -f "$f" ] || { note "$f bootstrap pointer is missing"; continue; }
@@ -356,7 +361,7 @@ work only by defeating all four layers, and CI (E4) cannot be defeated from a cl
   one `superseded by …`) so the audit trail stays honest.
 - **Dedupe** — before writing a fact, check the index for an existing record and update
   it instead of forking a near-duplicate.
-- **Cap enforcement** — if the resume pointer (A) grows past its cap, the self-check
+- **Cap enforcement** — if the resume pointer (A) grows past its line or 32,768-byte cap, the self-check
   (§9) fails: that is the signal that content belongs down in B or C.
 
 ---

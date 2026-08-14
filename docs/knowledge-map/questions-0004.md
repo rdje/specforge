@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how do I see which ingested PDFs form structural families (the corpus-cluster command)
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > how do I verify every task tree is linked exactly once
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how do I waive or range-scope the task-acceptance check
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how do byte-granular page fragments chain (offset plus size adjacency)
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
@@ -292,9 +298,3 @@
   > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > how is a roadmap rollover capsule verified
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how is a valid post-migration active task continuation verified
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how is an active task evidence migration written atomically

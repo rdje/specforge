@@ -111,6 +111,7 @@ The author template is linked separately and is never classified as active work.
 | `MEASUREMENT-PLANE-CONVERGENCE-RISK` | `superseded` | can we tell whether SpecForge is converging? | [open](tasks/MEASUREMENT-PLANE-CONVERGENCE-RISK.md) |
 | `MEMORY-ARCHITECTURE-DOC` | `done` | author a portable, harness-agnostic durable-memory standard | [open](tasks/MEMORY-ARCHITECTURE-DOC.md) |
 | `MEMORY-BOUNDED-INGEST` | `active` | bounded-memory ingestion of very large PDFs | [open](tasks/MEMORY-BOUNDED-INGEST.md) |
+| `MEMORY-RESUME-POINTER-BYTE-CAP` | `active` | set the durable resume pointer's one-read ceiling | [open](tasks/MEMORY-RESUME-POINTER-BYTE-CAP.md) |
 | `NLI-CLAIM-CONDITION` | `done` | carry a constraint's condition into its NLI claim (precision fix) | [open](tasks/NLI-CLAIM-CONDITION.md) |
 | `NLI-CLAIM-CONNECTOR` | `done` | join the condition clause with a connective so claims read as English | [open](tasks/NLI-CLAIM-CONNECTOR.md) |
 | `NLI-ENTAILMENT-VERIFIER` | `done` | a semantic "does the source actually say this?" gate | [open](tasks/NLI-ENTAILMENT-VERIFIER.md) |

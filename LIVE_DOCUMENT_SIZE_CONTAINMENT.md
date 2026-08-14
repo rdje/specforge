@@ -18,6 +18,9 @@
 - Local milestones: warning at 80% and rollover review at 90% of a health target. These values follow
   the approximately 20% headroom used for healthy local survivors; an inclusive enforcement ceiling
   remains the hard boundary.
+- Active resume boundary: the project owner fixed `MEMORY.md` at an exact 32,768-byte (`32 * 1024 B`) maximum
+  on 2026-08-15 under `MEMORY-RESUME-POINTER-BYTE-CAP.1`. Its independent 50-line and 160-byte content-line
+  limits continue to enforce concise, readable overwrite-only state.
 - Transition debt: baselines are immutable. A separately bounded `transition.max_growth` may carry
   only the containment program's own continuity updates until the owning migration lands; it never
   redefines health or moves the baseline.

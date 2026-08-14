@@ -1089,6 +1089,11 @@ The resume pointer also does not copy Git's current revision. Run
 owns only the active unit, concise current state, next action, in-flight work, and
 blockers.
 
+`MEMORY.md` has an exact 32,768-byte (`32 * 1024 B`) maximum so an agent can consume the complete pointer in one
+read. That outer byte boundary does not replace its stricter content-shape controls: the pointer remains limited
+to 50 lines, 160 bytes per content line, and overwrite-only current state. History and durable detail still route
+to task trees, decision records, fact cards, and Git rather than using the larger byte ceiling as storage.
+
 ## Root docs and what they are for
 
 - `README.md`

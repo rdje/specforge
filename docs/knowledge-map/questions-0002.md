@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > can FigureRegion raw_image_path store an absolute path
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > can ISF model an explicit state machine / FSM (proven)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > can SpecForge category-3 signal_connectivity lower to current FSMGen actor networks now (not yet proven; actor types, typed endpoints, widths, ownership, transactions, and multi-actor emission remain missing or unmeasured)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -291,9 +297,3 @@
   > does converge re-ingest the PDF every run
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > does convergence detect a same count protocol rewrite
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > does convergence preserve protocol record order
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > does corpus KB refresh mutate canonical IR or CorpusMemory
-- [contested-priors](../knowledge/contested-priors.md)
-  > does corpus prior memory only accrete

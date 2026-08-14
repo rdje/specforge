@@ -42,6 +42,8 @@
   > Cannot convert a MPS Tensor to float64
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > Did identity-independent prior learning converge?
+- [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md)
+  > Did raising the MEMORY.md byte cap relax its line or overwrite-only rules?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Does SemanticIR and IntentIR preserve generic protocol records?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -158,6 +160,8 @@
   > What is the canonical claim-family migration denominator?
 - [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
   > What is the current behavioral genericity frontier?
+- [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md)
+  > What is the maximum file size of MEMORY.md?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > What is the production genericity module denominator?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
@@ -206,6 +210,8 @@
   > Why is an AST scan not sufficient by itself?
 - [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
   > Why is behavioral genericity not one byte equality test?
+- [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md)
+  > Why is the MEMORY.md byte cap 32,768 bytes?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > Why is the exact alignment source kept in both a capsule and marked semantic payloads?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -292,9 +298,3 @@
   > are ungrounded SemanticIR records dropped silently or demoted
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > can EvidenceIR represent protocol structure without hardcoding a specification
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > can FigureRegion raw_image_path store an absolute path
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > can ISF model an explicit state machine / FSM (proven)

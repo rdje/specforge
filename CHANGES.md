@@ -1,3 +1,13 @@
+### MEMORY-RESUME-POINTER-BYTE-CAP.1 — set MEMORY.md maximum to 32,768 bytes
+
+- Raised only the `MEMORY.md` byte maximum from 4,096 to exactly 32,768 bytes (`32 * 1024 B`) in both executable
+  authorities: the memory-architecture checker and the `active_resume` live-document registry.
+- Preserved the independent 50-line, 160-byte content-line, overwrite-only, no-history, and derive-on-read rules;
+  the byte ceiling is a safe one-read boundary, not permission to accumulate chronology.
+- Synchronized the portable architecture, local containment doctrine, mdBook, task catalog, and Knowledge Map.
+  The default checker accepts 2,610/32,768 bytes while a 2,609-byte override rejects the exact same file; all 84
+  live-document cases, mdBook test/build, retrieval/catalog checks, and composed doctrines pass.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering
 
 - Kept opaque underscore identifiers atomic in EvidenceIR logic-level grammar, restoring the ninth I2C signal

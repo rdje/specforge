@@ -14,7 +14,7 @@ cd "${ROOT_DIR}"
 
 # ── Knobs (everything else is project-neutral) ──────────────────────────────
 MEMORY_POINTER_LINE_CAP="${MEMORY_POINTER_LINE_CAP:-50}"    # reviewed survivor: 28 lines
-MEMORY_POINTER_BYTE_CAP="${MEMORY_POINTER_BYTE_CAP:-4096}"  # reviewed survivor: 2,011 bytes
+MEMORY_POINTER_BYTE_CAP="${MEMORY_POINTER_BYTE_CAP:-32768}" # fixed one-read ceiling: 32 * 1024 B
 MEMORY_POINTER_LINE_BYTE_CAP="${MEMORY_POINTER_LINE_BYTE_CAP:-160}" # survivor max: 93
 TASKS_DIR="docs/tasks"                                      # task-trees (layer B)
 DECISIONS_DIR="docs/decisions"                              # decision records (layer C)

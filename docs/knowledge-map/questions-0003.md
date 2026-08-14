@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > does convergence preserve protocol record order
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > does corpus KB refresh mutate canonical IR or CorpusMemory
+- [contested-priors](../knowledge/contested-priors.md)
+  > does corpus prior memory only accrete
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -291,9 +297,3 @@
   > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > how do I run a Docling ingest or re-ingest on this machine
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how do I see which ingested PDFs form structural families (the corpus-cluster command)
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how do I verify every task tree is linked exactly once
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how do I waive or range-scope the task-acceptance check
