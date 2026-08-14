@@ -54,6 +54,7 @@ The author template is linked separately and is never classified as active work.
 | `CORPUS-PATTERN-REUSE` | `active` | reuse extraction patterns across PDFs, clustered by derived vendor/layout fingerprint | [open](tasks/CORPUS-PATTERN-REUSE.md) |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT` | `done` | keep the active corpus task bounded and lossless | [open](tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) |
 | `CVE-PROSE-EXTRACTION` | `done` | wire a live prose→ActorContract extractor into the R16 constrained-verified surface | [open](tasks/CVE-PROSE-EXTRACTION.md) |
+| `DECISION-RECORD-CAPACITY-HEADROOM` | `active` | restore room for durable architecture decisions | [open](tasks/DECISION-RECORD-CAPACITY-HEADROOM.md) |
 | `DEMPSTER-FUSION-COMBINER` | `done` | corroboration-boosting confidence fusion (Dempster's rule) | [open](tasks/DEMPSTER-FUSION-COMBINER.md) |
 | `DOC-INTENT-TAXONOMY` | `active` | chip-spec document intent taxonomy → per-category complete ISF synthesis | [open](tasks/DOC-INTENT-TAXONOMY.md) |
 | `DOCLING-DEVICE-CPU-DEFAULT` | `done` | make Docling ingest avoid the broken MPS auto-device | [open](tasks/DOCLING-DEVICE-CPU-DEFAULT.md) |

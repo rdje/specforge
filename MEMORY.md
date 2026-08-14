@@ -17,13 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` is complete from clean predecessor `3aaa9166` and
-  awaits its commit; `.2.2` is the next containment leaf.
-  Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
+- Active unit: `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.2.1` is committed at `9d2eeb6f`; `.2.2` is the next
+  containment leaf. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, and
+  `DECISION-RECORD-CAPACITY-HEADROOM.1` (41 of 44 decision-file slots used at clean `9d2eeb6f`).
 - Current state: the source-locked alignment contract closes 21 regions, eight planned parts, and all 58 exact
   owner declarations; three independent authorities now self-route through the neutral checker and doctrine.
   Full CI passes, generated artifacts are removed, and the alignment source remains byte-identical to `112bc333`.
-- Next action: commit `.2.1`, then execute `.2.2` from the clean boundary to pin every final migration input.
-- In-flight uncommitted: completed and verified `.2.1` changes awaiting commit; no background job.
+- Next action: commit the decision-capacity tracking tree, then activate `.2.2` from the clean boundary and pin
+  every final migration input.
+- In-flight uncommitted: tracking-only decision-capacity ownership/tree catalog/resume update; no background job.
 - Blockers: `.6d.ii.f` waits only for bounded task-evidence migration; product direction is unambiguous. The
   user-owned `.claude/settings.json` is untouched.
