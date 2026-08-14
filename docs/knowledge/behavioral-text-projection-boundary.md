@@ -10,8 +10,8 @@ answers:
   - "what makes a behavioral genericity run invalid unmeasurable or failed"
 date: 2026-08-14
 tags: [genericity, metamorphic-testing, source-authority, held-out, proof-ledger, residual-honesty]
-evidence: doctrine/production_genericity/behavioral_qualification.json; doctrine/production_genericity/behavioral_population.tsv; scripts/check_behavioral_genericity_contract.py; docs/research/behavioral-genericity-qualification-design.md
-reverify: "python3 -B scripts/check_behavioral_genericity_contract.py && python3 -B scripts/check_behavioral_genericity_contract.py --self-test"
+evidence: doctrine/production_genericity/behavioral_qualification.json; doctrine/production_genericity/behavioral_population.tsv; scripts/check_behavioral_genericity_contract.py; crates/specforge-conformance/src/behavioral_genericity.rs; docs/research/behavioral-genericity-qualification-design.md
+reverify: "python3 -B scripts/check_behavioral_genericity_contract.py && python3 -B scripts/check_behavioral_genericity_contract.py --self-test && cargo test --offline -p specforge-conformance behavioral_genericity --no-fail-fast"
 ---
 
 Behavioral qualification has two honest input planes. Byte-identical replay and adversarial filename/document
@@ -36,3 +36,9 @@ Every relation compares all fields and proof claims through SourceIR, EvidenceIR
 ISF adapter. Missing authority/provider or a vacuous baseline is `unmeasurable`; stale population, ambiguous
 transform, or partial coverage is `invalid`; a missing expected delta or undeclared semantic/proof/provenance/
 validation/lowering delta is `fail`. None of those states may be summarized as a pass.
+
+The first executable calibration preserves this boundary. A normalized-Markdown alpha pair passes all five
+stages but carries the explicit rich-capture exclusion; separate unchanged and byte-identical adversarial PDF
+pairs pass all five stages through the repo-local Docling provider. The unchanged relation normalizes scratch-root
+and scratch-root-derived proof identity; the adversarial pair additionally changes only declared path/display/
+document identity. None is yet the governed population signoff.

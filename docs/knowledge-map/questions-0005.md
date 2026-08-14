@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how is fact-plane capacity derived
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > how is max_cards derived from the knowledge_cards surface
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how is prose signal over-capture prevented (no garbage)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > how is register-field extraction quality measured / scored
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -291,9 +297,3 @@
   > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > is SWD at 100% and on what metric
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > is SpecForge converging diverging stalled mixed or unmeasurable
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > is SpecForge specification mining
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > is SpecForge still allowed to read chipdoc from the boot volume

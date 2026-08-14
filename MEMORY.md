@@ -17,14 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a` is the next eligible behavioral-qualification leaf after
-  the `.f.i` oracle freeze. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` is the next eligible behavioral-qualification leaf after
+  the `.f.ii.a` identity/alpha harness. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.f.i` freezes 24 current rows across full-PDF and normalized-text planes, six relations, all
-  five proof-bearing stages, and closed pass/fail/unmeasurable/invalid evidence. Text behavior is non-vacuous for
-  23 rows; 7 reviewed overlaps are calibration and 17 current-only rows are prospective holdout. The behavioral
-  contract plus eight mutations runs in the production-genericity wrapper; rich-PDF exclusions remain explicit.
-- Next action: execute `.f.ii.a`: implement deterministic unchanged-PDF/adversarial-identity and normalized-text
-  symbol-alpha generation plus complete five-stage comparison/evidence in conformance-owned code.
-- In-flight uncommitted: none after the `.f.i` commit; no background job.
+- Current state: conformance now owns deterministic source-bound alpha and byte-identical adversarial-PDF identity
+  transforms, isolated five-stage replay, closed field/proof comparison, and machine JSON evidence. Provider-free
+  alpha plus explicit unchanged/adversarial Docling PDF calibrations pass; semantic-role and incomplete-stage
+  controls reject. The
+  frozen 24-row/23-text-measurable population and rich-PDF exclusions are unchanged.
+- Next action: execute `.f.ii.b`: add reviewed structure-preserving sentence, heading, table, whitespace, and
+  formatting recipes with exhaustive changed-span and unaffected-complement declarations.
+- In-flight uncommitted: none after the `.f.ii.a` commit; no background job.
 - Blockers: none. Product direction is unambiguous. The user-owned `.claude/settings.json` is untouched.

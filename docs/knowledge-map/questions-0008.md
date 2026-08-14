@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > what happens to the extraction-quality gauge when the constraint surface is replaced
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what happens when SemanticIR has no authoritative signal declarations
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > what happens when SemanticIR has no authoritative signal names
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
@@ -291,9 +297,3 @@
   > what is the exact active PDF task evidence baseline
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > what is the exact pre-containment FSMGEN_FEEDBACK source identity
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what is the exact pre-containment ROADMAP source identity
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > what is the executable currentness authority for VALIDATION_SNAPSHOT
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)

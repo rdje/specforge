@@ -201,14 +201,14 @@ comparisons—and left every measurable chain current.
 This result is deliberately bounded. It proves the identity of the registered production proof relation and
 removes false staleness from tests/comments. Canonical verification also reconstructs each stage with the current
 binary, so builder or lowering changes still cannot silently authorize a mismatching old conclusion. The
-structural graph supplies the deterministic substrate: all four production targets, 76 reachable
-production files plus one explicit test-support-only file, and 77 target-module identities are parsed into
+structural graph supplies the deterministic substrate: all four production targets, 77 reachable
+production files plus one explicit test-support-only file, and 78 target-module identities are parsed into
 module, item, import/re-export/alias, call-candidate, macro-definition, macro-invocation, and attribute nodes.
 Exact local calls are distinguished from method, associated, external, prelude/binding, and unresolved compiler
 dispatch rather than pretending that an AST alone is a type checker. The information-flow layer now makes the
 raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically checked. Its
 140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
-2,169 functions, 11,295 helper edges, 10,419 decision sites, and sensitive macros. Canonical mutation/protected
+2,222 functions, 11,519 helper edges, 10,747 decision sites, and sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
@@ -231,11 +231,18 @@ PDF conversion, visual/table capture, or geometry. Six relations classify every 
 SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter lowering. Missing authority/provider or vacuity is
 `unmeasurable`; stale/ambiguous/partial evidence is `invalid`; missing expected or undeclared semantic/proof/
 provenance/validation/lowering deltas fail. The contract and eight mutations now run inside the production-
-genericity wrapper without claiming that the future behavioral evidence already passes. `.f.ii.a` next owns
-deterministic PDF identity and normalized-text alpha generation/comparison. Transformation recipes, expected
+genericity wrapper without claiming that the complete population evidence already passes. `.f.ii.a` now owns
+and implements deterministic PDF identity and normalized-text alpha generation/comparison. It copies hash-pinned
+sources into repository-local scratch, executes fresh five-stage pairs, reloads every persisted proof-bearing
+artifact, and emits digest-pinned JSON evidence. Source-bound aliases are bijective, complete, familiar-looking,
+and deliberately reverse lexical order. The comparator normalizes only declared spelling/path/content identity,
+safe record-derived identities, and schema-declared keyed/set ordering; an identity-coupled semantic-role fault
+still fails. Provider-free Markdown alpha plus explicit unchanged/adversarial valid-PDF Docling calibrations pass all five
+stages. These are harness calibrations, not held-out population results. `.f.ii.b` next owns reviewed
+paraphrase/layout recipes. Transformation recipes, expected
 relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
 current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)
-publishes the exact boundary and denominators.
+publishes the exact boundary, implementation checkpoint, and denominators.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

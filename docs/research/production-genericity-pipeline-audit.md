@@ -114,9 +114,10 @@ relation changes.
 A fourth workspace package, `specforge-production-graph`, derives the structural denominator without depending
 on any product package and without allowing any product package to depend on it. It reads Cargo metadata under
 the default production feature closure, evaluates compiler and Cargo configuration, starts from all four live
-library/binary targets, and parses the complete 77-file inventory. The current result is 76 reachable production
-files plus one explicit test-support-only file, 77 target-module identities, 3,180 items, 1,192 imports,
-25,347 call sites, five local macro definitions, and 9,610 macro invocations.
+library/binary targets, and parses the complete 78-file inventory. The current result is 77 reachable production
+files plus one explicit test-support-only file, 78 target-module identities, 3,260 items, 1,212 imports,
+26,072 call sites, five local macro definitions, and 9,674 macro invocations. The additional reachable file is
+the conformance-owned behavioral harness; it remains downstream of core.
 
 The analyzer resolves ordinary and `#[path]` modules, inline modules, imports, re-exports, globs, and aliases;
 rejects absent, duplicate, ambiguous, unparsed, disabled-but-misclassified, or unsupported syntax; and emits
@@ -136,10 +137,10 @@ regions, and 15 protected types. Rule roots, canonical
 seams, canonical fields, and conformance bypasses are derived directly from their existing inventories rather
 than being copied into a second reviewed list. A malformed, duplicate, or unresolved registry row fails closed.
 
-Symbolic dependencies propagate to a deterministic fixed point across 2,169 production functions and 11,295
+Symbolic dependencies propagate to a deterministic fixed point across 2,222 production functions and 11,519
 helper edges. Parameters, typed fields, provider returns, local and conservatively resolved method calls,
 closures, expression results, and macro tokens retain raw/identity dependence. The check rejects that dependence
-at 10,419 branch/selection/decision sites unless the call topology proves membership in a registered universal
+at 10,747 branch/selection/decision sites unless the call topology proves membership in a registered universal
 grammar, narrow exact-identity declassifier, trusted proof boundary, or non-authoritative inspection surface.
 Sensitive input entering an unclassified semantic macro fails instead of being ignored.
 

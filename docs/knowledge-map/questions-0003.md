@@ -67,6 +67,8 @@
   > does the administrative classifier name OpenCAPI or a vendor
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > does the alpha harness expose transform recipes to production core
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does the authority empty repair preserve formal and system contract interfaces
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -295,5 +297,3 @@
   > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does .10g differ from .10f (register vs message routing)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does / will SpecForge reuse extraction patterns across different PDFs

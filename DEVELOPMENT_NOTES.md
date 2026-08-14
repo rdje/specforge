@@ -1,4 +1,37 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a (`2026-08-14`) — identity relations need closed, typed normalization
+
+The harness runs downstream of `specforge-core` and gives production only the current baseline or transformed
+source. It copies the hash-pinned authority to repository-local scratch, executes all five canonical builders in
+fresh roots, reloads their persisted artifacts (thereby re-running canonical proof verification), and compares
+the serialized values. The evidence pins the frozen contract, production revision, source, transform recipe,
+prior memory, and harness digests. No expected relation, transform map, held-out label, or comparator result enters
+core.
+
+Alpha generation starts from typed signal/name catalogs that also occur as complete source identifier tokens. A
+case-folded duplicate, missed occurrence, replacement collision, empty semantic catalog, or non-bijective map
+rejects. Aliases contain familiar engineering components but are seed-qualified so fixed prior/rule text cannot
+collide with them. Their sortable rank is the reverse of the original lexical order, ensuring the test exercises
+name-order coupling instead of accidentally preserving it.
+
+The first end-to-end run found two comparator hazards. Raw substring inverse replacement changed unrelated prior
+text such as `valid` and `state`; it was replaced with unique exact aliases plus identifier-token normalization.
+Arbitrary positional stable-id pairing could also hide a semantic defect. The accepted comparator maps a changed
+derived id only when its enclosing normalized record is otherwise equivalent, enforces a bijection, and then
+rechecks the full artifact. It reorders only keyed schema collections, explicit set-valued id/name references,
+the generated unordered actor-signal group, and ISF interface declarations. Unkeyed ordered arrays remain exact.
+
+Calibration proves both source planes without conflating them. A provider-free Markdown contract undergoes a
+complete alpha transform and passes SourceIR through ISF adapter comparison. A generated valid one-page PDF is
+first replayed unchanged and then copied byte-for-byte to a deterministic misleading filename; both relations
+pass the same five stages through the actual repo-local Docling provider. The unchanged control exposed that
+scratch paths participate in verified proof contexts: although all normalized semantic fields were equal,
+cryptographic proof scopes and conclusion/input digests differed by construction. Those scratch-root-derived
+digests are now an explicit allowed consequence; ruleset/prior/validation identities, proof topology, and all
+non-digest fields remain exact. A changed semantic actor role still fails, and an omitted stage is invalid. These
+are harness calibrations, not the frozen 17-document held-out result; `.f.ii.b` next owns only reviewed
+paraphrase/layout recipes.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i (`2026-08-14`) — input planes bound what a metamorphic pass proves
 
 The retained normalized Markdown is suitable for deterministic symbol and reviewed-text transformations, but it

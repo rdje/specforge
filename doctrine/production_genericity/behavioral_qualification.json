@@ -141,9 +141,10 @@
       "relation_id": "unchanged_source",
       "input_plane": "pdf_full_capture",
       "eligibility": "the exact source authority and all required local providers are available",
-      "required_relation": "two isolated runs are byte-equal after only declared scratch-root substitution",
+      "required_relation": "two isolated runs are exact after declared scratch-root substitution and normalization of proof digests cryptographically derived from that root",
       "allowed_deltas": [
-        "scratch_root"
+        "scratch_root",
+        "scratch_root_bound_proof_digest"
       ],
       "required_deltas": [],
       "forbidden_deltas": [

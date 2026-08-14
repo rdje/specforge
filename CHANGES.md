@@ -1,3 +1,24 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification
+
+- Added a conformance-only whole-document harness that copies hash-pinned sources into repository-local scratch,
+  executes fresh SourceIR, EvidenceIR, SemanticIR, IntentIR, and ISF-adapter runs, reloads every persisted
+  artifact, and writes one digest-pinned JSON evidence report.
+- Implemented deterministic source-bound alpha bijections with complete occurrence coverage, unique familiar
+  engineering aliases, and deliberately reversed lexical order. Inverse comparison covers copied spellings,
+  relation-bound source/proof digests, safe derived identities, keyed/set-valued collection permutations, and
+  emitted ISF interface declaration order while leaving ordered unkeyed arrays exact.
+- Implemented isolated unchanged-PDF replay and byte-identical adversarial PDF identity copies whose misleading
+  filename/display identity and document key vary without granting the relation or expected outcome to core.
+  Unchanged comparison normalizes proof digests cryptographically derived from the declared scratch root while
+  keeping ruleset/prior/validation identity, proof topology, and every non-digest value exact.
+- Added sensitivity controls for case-fold ambiguity, identity-coupled semantic-role changes, incomplete stage
+  sets, wrong input planes, escaped output roots, and symlink traversal. Eight provider-free focused tests and
+  explicit unchanged/adversarial Docling-backed valid-PDF tests pass across all five proof-bearing stages.
+- Registered the new conformance module. The exact live graph is now 78 inventoried modules/files, 77 reachable
+  and one test-support-only; the closed flow boundary covers 2,222 functions, 11,519 helper edges, 10,747
+  decisions, and 1,393 sensitive macros without creating a core-to-conformance edge.
+- Synchronized the task frontier to `.f.ii.b`, research report, mdBook, retrieval truth, and resume pointer.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract
 
 - Froze the exact 24-document behavioral population with portable PDF authority, retained-Markdown hashes,

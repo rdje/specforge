@@ -1,4 +1,5 @@
 path	current_plane	target_plane	primary_lane	disposition
+crates/specforge-conformance/src/behavioral_genericity.rs	conformance	conformance	e.ii	behavioral transforms, five-stage replay, and relational comparison remain downstream of core; implementation is owned by f.ii
 crates/specforge-conformance/src/ir.rs	conformance	conformance	e.ii	downstream evaluation and replay registry over core APIs
 crates/specforge-conformance/src/lib.rs	conformance	conformance	e.ii	one-way conformance package root may depend on core
 crates/specforge-conformance/src/test_support.rs	test_support	conformance	e.ii	named reviewed fixtures remain outside the compiled core

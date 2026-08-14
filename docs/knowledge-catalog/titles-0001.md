@@ -28,6 +28,7 @@
 | [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md) | 2026-06-07 | `current` | A signal-constraint subject must be a DECLARED signal (drops property/config/doc-meta noise) |
 | [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md) | 2026-06-17 | `current` | Bar #5/#6 (behavior/temporal lowering, no silent drop) HOLDS on the broader 78-doc corpus — the 160 undecla… |
 | [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md) | 2026-08-14 | `current` | Behavioral genericity qualification uses bounded relational oracles in conformance |
+| [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md) | 2026-08-14 | `current` | Conformance owns closed five-stage identity and alpha qualification |
 | [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md) | 2026-08-14 | `current` | Behavioral genericity separates rich-PDF identity proof from normalized-text metamorphics |
 | [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md) | 2026-06-10 | `current` | Three-column bits\|name\|function tables split by CAPTION evidence — register-captioned chains become capti… |
 | [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md) | 2026-06-10 | `current` | Bit-location register tables fuse the field name into the description cell — read it as a gated leading ide… |
@@ -60,4 +61,3 @@
 | [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
 | [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md) | 2026-06-15 | `current` | The CORPUS-PATTERN-REUSE activate-only consume mechanism has no valid first opt-in extractor in the current c… |
 | [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md) | 2026-06-15 | `current` | The .9.10 serial-prose bus-line lever cannot be a CORPUS-PATTERN-REUSE first opt-in extractor — its safe/no… |
-| [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md) | 2026-08-10 | `current` | The active corpus task requires a bounded root, seven semantic parts, and exact provenance before refresh 49 |

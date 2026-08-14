@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does / will SpecForge reuse extraction patterns across different PDFs
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -84,6 +86,8 @@
   > how does an unknown-kind Continued from previous page table fragment get a kind
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does automatic task ranking keep hard failures ahead of breadth work
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > how does behavioral genericity normalize renamed stable ids safely
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -178,6 +182,8 @@
   > how does the VLM understand tables / can a VLM read PDF tables
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how does the active task migration preserve non-ASCII legacy bytes
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > how does the adversarial PDF identity test preserve source bytes
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -292,9 +298,3 @@
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how is docs knowledge INDEX kept complete
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > how is fact-plane capacity derived
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > how is max_cards derived from the knowledge_cards surface
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is prose signal over-capture prevented (no garbage)

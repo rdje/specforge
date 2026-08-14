@@ -94,11 +94,11 @@ Current status: the one-way package boundary and sealed derivation substrate are
 compiles the generic capture, IR, extraction, semantic, intent, and adapter surfaces without a dependency on
 `specforge-conformance`;
 `specforge-conformance` depends on core and owns evaluation, completeness characterization, replay, trajectory,
-reviewed snapshots, and named fixtures. The `specforge` application composes both and preserves the existing public
+reviewed snapshots, named fixtures, and behavioral transform/comparison evidence. The `specforge` application composes both and preserves the existing public
 module paths. Dependency mutations prove that a reverse edge, application cycle, or oracle-module reinsertion is
-rejected. The frozen pre-migration denominator remains 71 modules; the live post-split inventory is 76 modules,
-38 claim families, and 168 top-level fields. The added kernel makes the live inventory 77 modules while preserving
-the same claim/field denominator.
+rejected. The frozen pre-migration denominator remains 71 modules. The live inventory is now 78 modules, 41 claim
+families, and 168 top-level fields; the latest module is the conformance-owned behavioral harness, so it changes
+neither the core dependency direction nor the claim/field denominator.
 
 The kernel's compiler-visible contract is now concrete. Source-order opaque symbol and document atoms expose only
 scope/ordinal identity and exact comparison; they have no display, string-conversion, spelling-order, or Serde
@@ -122,7 +122,7 @@ schema 2 preserves that complete IntentIR ledger and proves four local families 
 populated array record, every nonblank rendered ISF line, and every blocking reason. Canonical build, load,
 serialization, write, emitted-file reconciliation, and closed validation mutation execute current replay.
 The compiled-production graph substrate is also shipped. A standalone enforcement crate starts from Cargo's four
-product library/binary targets, parses all 77 inventoried Rust files, and derives 77 target-qualified modules plus
+product library/binary targets, parses all 78 inventoried Rust files, and derives 78 target-qualified modules plus
 their items, imports/re-exports, aliases, calls, local macros, external/builtin macros, and attributes. Seventy-six
 files are production-reachable; the remaining file is explicitly classified test support. Unknown configuration,
 missing inventory, absent or ambiguous modules, duplicate items or aliases, parse failure, and opaque verbatim
@@ -133,7 +133,7 @@ The information-flow layer over that graph is now shipped. A closed 140-row regi
 field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
 rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
 non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
-dependence through 2,169 functions and 11,295 helper edges, then check 10,419 branch/selection/decision sites,
+dependence through 2,222 functions and 11,519 helper edges, then check 10,747 branch/selection/decision sites,
 sensitive macro input, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
@@ -144,7 +144,11 @@ full-PDF versus normalized-text input planes, six transform relations, five proo
 27 structural controls, eight contract mutations, legal display/provenance/test controls, and an exact
 inventory-to-runtime join that executes the structural alpha obligation of all 168 rules. The contract does not
 pretend the future runs already pass: whole-population renaming, paraphrase, negative-control, and held-out
-qualification remain mandatory before SpecForge can claim production-genericity signoff.
+qualification remain mandatory before SpecForge can claim production-genericity signoff. The first executable
+behavioral slice is now present in conformance: deterministic normalized-text alpha, unchanged-PDF, and
+byte-identical adversarial PDF identity pairs execute SourceIR through ISF adapter, compare every serialized field and proof claim after
+only declared normalization, and emit machine JSON evidence. This calibrates the harness; reviewed
+paraphrase/layout, negative sensitivity, held-out, and complete-population results remain open.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively
@@ -207,10 +211,10 @@ adapters are honestly blocked with zero current emitted files. The 54 legacy cha
 cannot feed canonical authority. The [structural qualification report](../../../research/production-genericity-structural-qualification.md)
 publishes the per-chain ledger and residual counts.
 
-This closes structural qualification only. The behavioral oracle and exact denominator are now frozen, but
-whole-document symbol renaming, identity perturbation, structure-preserving paraphrases, negative controls,
-held-out families, and complete-population replay remain the behavioral gate before the project can claim
-production genericity as a whole.
+This closes structural qualification only. The behavioral oracle and exact denominator are frozen, and the
+identity/alpha harness is implemented and calibrated. Reviewed structure-preserving paraphrases, negative
+controls, held-out families, and complete-population replay remain the behavioral gate before the project can
+claim production genericity as a whole.
 
 ## Completion order
 

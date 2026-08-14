@@ -49,7 +49,7 @@ mod tests {
         let root = repository_root();
         let first = analyze_repository(&root).expect("current production graph");
         let second = analyze_repository(&root).expect("repeat current production graph");
-        assert_eq!(first.inventory_files.len(), 77);
+        assert_eq!(first.inventory_files.len(), 78);
         assert_eq!(first.targets.len(), 4);
         assert!(!first.modules.is_empty());
         assert!(!first.items.is_empty());
@@ -84,12 +84,12 @@ mod tests {
         assert_eq!(first.trusted_regions, 11);
         assert_eq!(first.non_authoritative_regions, 5);
         assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_169);
-        assert_eq!(first.helper_edges, 11_295);
-        assert_eq!(first.decision_sites, 10_419);
+        assert_eq!(first.analyzed_functions, 2_222);
+        assert_eq!(first.helper_edges, 11_519);
+        assert_eq!(first.decision_sites, 10_747);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
-        assert_eq!(first.semantic_macros, 1_371);
+        assert_eq!(first.semantic_macros, 1_393);
         assert_eq!(
             serde_json::to_vec(&first).expect("serialize first flow report"),
             serde_json::to_vec(&second).expect("serialize repeated flow report")

@@ -4,6 +4,7 @@ Date: `2026-08-14`
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i`
 Machine authority: `doctrine/production_genericity/behavioral_qualification.json` and
 `doctrine/production_genericity/behavioral_population.tsv`
+Executable identity/alpha harness: `crates/specforge-conformance/src/behavioral_genericity.rs`
 
 ## Decision summary
 
@@ -77,8 +78,9 @@ and text-projection record counts are data rows. The checker contains none of th
 
 ### Full PDF capture
 
-`unchanged_source` runs one exact PDF twice in isolated roots and requires byte equality after only scratch-root
-substitution. `adversarial_identity` copies identical PDF bytes to deterministic misleading repository-local
+`unchanged_source` runs one exact PDF twice in isolated roots and requires equality after scratch-root
+substitution plus the proof scopes/digests cryptographically derived from that root. Ruleset, prior, validation,
+proof topology, and every non-digest value remain exact. `adversarial_identity` copies identical PDF bytes to deterministic misleading repository-local
 filenames. Document identity, source/artifact paths, and identity-bound proof premises must change; rich capture,
 canonical facts, residual disposition, validation metrics, and lowering status must not.
 
@@ -122,9 +124,12 @@ Each run must carry all five stages:
 | IntentIR | every canonical/conflict/residual/provenance/validation surface, every proof claim |
 | ISF adapter | lowering status, target model, residuals, validation, emitted bytes, every proof claim |
 
-Array order and cardinality remain part of the relation unless a transform explicitly declares and normalizes a
-stable-id substitution. Proof comparison includes claim address, rule id, premise topology, confidence, symbol
-use topology, and normalized conclusion. Removing proof fields before comparison is forbidden.
+Array order and cardinality remain part of the relation unless the schema declares the collection keyed or
+set-valued and the transform deliberately changes identity-dependent lexical order. The current alpha comparator
+realigns keyed records, id/name reference sets, grouped-interface symbol sets, and ISF interface declarations;
+unkeyed ordered arrays remain exact. Proof comparison includes claim address, rule id, premise topology,
+confidence, symbol-use topology, and normalized conclusion. Removing proof fields before comparison is
+forbidden.
 
 ## Evidence and failure semantics
 
@@ -156,11 +161,44 @@ population assertion. All eight must fail. The production-genericity wrapper now
 baseline and the mutations in `--self-test`; this gates design currency without claiming that the future
 behavioral runs already pass.
 
+## Identity and alpha implementation checkpoint (`.f.ii.a`)
+
+`specforge-conformance::behavioral_genericity` now implements the first two executable relations without adding
+any conformance dependency to core. One request names a hash-pinned source, repository-local output root, exact
+prior memory, production revision, relation, and deterministic seed. The harness copies the source, runs fresh
+SourceIR → EvidenceIR → SemanticIR → IntentIR → ISF-adapter pipelines in isolated roots, reloads every persisted
+artifact, and emits `behavioral_evidence.json` with stage identities, field/proof coverage, transform evidence,
+undeclared paths, and the final state.
+
+The symbol catalog is derived from typed baseline signal/name surfaces and restricted to complete identifier
+tokens present in the source. A case-fold collision, incomplete occurrence replacement, non-bijection, empty
+catalog, or failure to alter lexical ordering rejects. Familiar engineering components are embedded in
+seed-qualified aliases so they challenge name intuition without colliding with fixed prior/rule prose. Their
+lexical ranks reverse the original ordering.
+
+Normalization is deliberately closed. It substitutes only declared scratch/source paths, exact adversarial
+document identities, the recorded alpha bijection, relation-bound content/proof digests and scopes, and ids whose
+enclosing normalized records are otherwise equivalent under a verified bijection. It realigns only keyed or
+explicitly set-valued collections and the emitted ISF interface declaration set. Every remaining field and proof
+path compares exactly. This design rejects an injected semantic-role change and an incomplete stage set rather
+than teaching the comparator to excuse them.
+
+Two calibration executions pass:
+
+| Relation | Input and execution | Result |
+| --- | --- | --- |
+| `symbol_alpha` | provider-free normalized Markdown; reversed symbol ordering and familiar aliases | all five persisted stages pass; copied spellings and derived identities normalize exactly |
+| `unchanged_source` | one valid PDF replayed in two isolated repo-local Docling roots | all five stages pass after scratch-root and scratch-root-bound proof-digest normalization; every non-digest value and proof topology are exact |
+| `adversarial_identity` | byte-identical generated valid PDF under a misleading filename; repo-local Docling | all five persisted stages pass; document key/path identity changes while rich capture and decisions remain invariant |
+
+These calibrations establish the harness mechanics and comparator sensitivity. They are not held-out population
+results and do not widen the Markdown plane to page, image, table, or geometry claims.
+
 ## Implementation handoff
 
-`.f.ii.a` may now implement deterministic full-PDF unchanged/identity pairs and text-projection symbol-alpha
-pairs in conformance-owned code. It must emit the contract-defined five-stage evidence and preserve the plane
-exclusions above. `.f.ii.b` adds only reviewed paraphrase/layout recipes. `.f.ii.c` proves comparator sensitivity
-with semantic and authority negatives. `.f.iii` consumes the frozen 17-document prospective split without
-using its labels to steer production. `.f.iv` reconciles every measurable and unmeasurable row; `.f.v` alone may
-make the final behavioral genericity decision.
+`.f.ii.a` now supplies deterministic full-PDF identity and text-projection symbol-alpha pairs plus the shared
+five-stage comparator. `.f.ii.b` adds only reviewed paraphrase/layout recipes. `.f.ii.c` extends sensitivity with
+the complete semantic and authority-negative matrix and closes the `.f.ii` parent, including stale and
+unmeasurable attempt handling. `.f.iii` consumes the frozen 17-document prospective split without using its
+labels to steer production. `.f.iv` reconciles every measurable and unmeasurable row; `.f.v` alone may make the
+final behavioral genericity decision.

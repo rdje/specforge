@@ -141,7 +141,8 @@ and schema-1 claim ledger describe typed capture/model/prior/upstream/axiom prem
 uses, and exact conclusion bytes. The kernel is the only proposal-to-proof transition and returns an unforgeable
 in-memory verification witness. A deserialized ledger—even at the current schema and ruleset—still requires the
 current evidence/conclusion check; old/stale input rebuilds or residualizes, while malformed/future input rejects.
-The live inventory is now 77 modules / 39 families / 168 fields. The SemanticIR migration split the original
+The live inventory is now 78 modules / 41 families / 168 fields. The conformance-owned behavioral harness adds
+one downstream module without changing the core dependency direction or the exact field denominator. The SemanticIR migration split the original
 carry row after executable proof showed that three surfaces are filtered or visually extended projections.
 Existing later-stage producers remain proofless until the
 exact `.e.iv` migration, so whole-core signoff remains open.
@@ -264,8 +265,8 @@ AST information-flow and adversarial structural layers close that structural gap
 open work.
 
 The production syntax substrate derives the complete current graph. Cargo exposes four library/binary
-targets; their module graph reaches 76 of the 77 inventoried files, with the remaining application test-support
-file classified explicitly. The resulting 77 modules contain deterministic item, import/alias, call, local-macro,
+targets; their module graph reaches 77 of the 78 inventoried files, with the remaining application test-support
+file classified explicitly. The resulting 78 modules contain deterministic item, import/alias, call, local-macro,
 external/builtin-macro, and attribute-macro nodes. Exact calls are separated from conservative compiler-resolved
 method/associated/binding dispatch, so the AST does not impersonate Rust type resolution. Missing inventory,
 unknown configuration, absent or ambiguous modules, duplicate items or aliases, parse failure, opaque verbatim
@@ -276,7 +277,7 @@ The following flow layer joins a closed 140-row typed registry to that graph. It
 fields/seams, and conformance bypasses from existing inventories, then resolves explicit raw/identity aggregate,
 field, and provider-return sources; universal grammar and exact-identity declassifiers; proof gates and values;
 trusted/non-authoritative regions; and protected types. A deterministic fixed point propagates dependencies
-through 2,169 functions and 11,295 helper edges, checking 10,419 semantic decision sites plus macro, mutation,
+through 2,222 functions and 11,519 helper edges, checking 10,747 semantic decision sites plus macro, mutation,
 construction, capability-call, proof-value, and canonical-seam topology. Sensitive unresolved macros reject.
 Thirteen flow mutations independently reject identity selection, raw literal equality, substring and regex
 decisions, cross-class declassification, direct/aliased unregistered inference, authority forgery, helper/macro

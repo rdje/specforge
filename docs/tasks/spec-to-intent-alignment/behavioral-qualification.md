@@ -30,7 +30,7 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii`
-  State: `pending`
+  State: `in_progress`
   Goal: implement deterministic whole-document metamorphic generation and comparison
   Acceptance: a conformance-owned repository-local harness generates reproducible variants, runs the current
   production pipeline without granting named knowledge to core, normalizes only declared transform effects,
@@ -40,13 +40,20 @@
   Children: `.f.ii.a`, `.f.ii.b`, `.f.ii.c`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a`
-  State: `pending`
+  State: `done`
   Goal: qualify alpha-renaming plus adversarial document and symbol identity perturbation
   Acceptance: source-bound identifiers, document key, filename, title, ordering, and misleading familiar names
   vary under a deterministic bijection; normalized canonical decisions and complete proof topology remain
   invariant, copied symbols rename consistently, and injected identity-coupled faults fail
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `conformance-owned harness runs isolated SourceIR, EvidenceIR, SemanticIR, IntentIR, and ISF
+  adapter pairs; deterministic source-bound alpha bijection varies lexical order with familiar aliases; exact
+  PDF copies vary path/display identity; closed normalization covers declared spellings, identity/path, keyed
+  collection order, relation-bound digest/scope, and derived ids while a semantic-role fault and incomplete stage
+  set reject; 8 focused tests pass, unchanged and adversarial provider-backed full-PDF tests pass explicitly,
+  warning-denied Clippy and Rustdoc, all nine doctrines, 1,961/8/0 Rust tests, five compile-fail doctests,
+  mdBook test/build, and final locality pass;
+  exact 78-module inventory, 77-reachable/one-test-support graph, and 140-row flow boundary pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b`
   State: `pending`
@@ -93,13 +100,34 @@
   Verification: `pending`
   Commit: `pending`
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a`
+
+- [x] **REPRODUCE / MEASURE** — the frozen 24-row contract requires unchanged-source, adversarial-identity,
+  and symbol-alpha comparison across SourceIR, EvidenceIR, SemanticIR, IntentIR, and ISF adapter; 23 rows are
+  text-measurable and one is explicitly text-unmeasurable.
+- [x] **ROOT CAUSE (WHY + WHERE)** — at parent commit `5ea18fc`,
+  `crates/specforge-conformance/src/lib.rs:1` exported no whole-document behavioral executor, so the accepted
+  relations in `doctrine/production_genericity/behavioral_qualification.json` had no implementation or evidence.
+- [x] **ADDRESSED (verified)** — `cargo test --offline -p specforge-conformance behavioral_genericity` passes
+  8/8 provider-free controls with two provider tests intentionally ignored; an explicit serial ignored-test run
+  passes both unchanged and adversarial full-PDF cases, and all three relations compare exactly five stages.
+- [x] **NO REGRESSION** — `scripts/run_ci.sh` passes all nine doctrines, all 11 production-genericity components,
+  1,961 Rust tests with eight intentional ignores and zero failures, five compile-fail doctests, warning-denied
+  Clippy/Rustdoc, mdBook test/build, chain currency, and final project-data locality.
+- [x] **GENERICITY (ADR 0006)** — transformation/comparison stays conformance-only; production sees only current
+  input, the 78-module dependency graph has no core-to-conformance edge, and all 168 runtime field rules retain
+  their structural alpha obligations without a document, vendor, protocol, or expected-outcome branch.
+- [x] **LOCKSTEP** — the task frontier, behavioral contract, module/flow census, engineering rationale, mdBook,
+  research audit, Knowledge Map fact/projections, live-document contracts, and resume pointer publish `.f.ii.b`
+  as the next leaf and the same bounded identity/alpha qualification.
+
 ## Current Frontier
 
 | Order | Leaf | State | Why next |
 | --- | --- | --- | --- |
 | 1 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i` | `done` | oracle, population, relations, held-out split, and evidence states are frozen |
-| 2 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a` | `pending` | build alpha and adversarial identity qualification under the frozen oracle |
-| 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `pending` | add reviewed paraphrase and harmless layout relations |
+| 2 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a` | `done` | deterministic alpha and full-PDF adversarial identity pairs pass the closed five-stage comparator |
+| 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `pending` | next: add reviewed paraphrase and harmless layout relations |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `pending` | prove the gate detects meaning and authority changes |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `pending` | measure identity-disjoint held-out generalization honestly |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `pending` | reconcile the complete reviewed population and all variants |
@@ -115,11 +143,20 @@
   only downstream text behavior and must report page/visual/table/geometry surfaces as unmeasurable.
 - `2026-08-14`: the seven reviewed/current overlaps are historically exposed calibration. The other 17 current
   rows are the prospective holdout; the 12 reviewed rows remain evaluation authority, not relabeled unseen data.
+- `2026-08-14`: alpha aliases use unique, familiar engineering components and reverse source-symbol lexical
+  order. The comparator realigns only keyed/set-valued schema collections and the ISF interface declaration set;
+  ordered unkeyed arrays remain exact.
+- `2026-08-14`: relation-bound ids are normalized only when their enclosing records are otherwise equivalent
+  after declared symbol/path/digest normalization. Positional arbitrary-id pairing is forbidden because it could
+  hide an identity-coupled semantic change.
+- `2026-08-14`: isolated unchanged-PDF roots necessarily change verified proof scopes and conclusion/input
+  digests because scratch paths are proof-context inputs. The oracle normalizes those cryptographic consequences
+  while keeping ruleset/prior/validation identities, proof topology, and every non-digest value exact.
 
 ## Open Questions
 
-- `.f.ii.a` must implement the frozen five-stage comparator and deterministic identity/symbol generators without
-  widening the one text-vacuous row or the rich-capture exclusions.
+- `.f.ii.b` must introduce only reviewed, exhaustively declared paraphrase/layout recipes; the implemented
+  identity/alpha normalizer is not authority to label an arbitrary textual rewrite equivalent.
 
 ## Blockers
 
@@ -133,6 +170,8 @@
 | `2026-08-14` | `.f` activation | 66 owners/routes; 44/44 active-task and 84/84 live-size cases; trajectory owner lookup; 220 cards; 236 facts / 1,817 keys; mdBook and cleanup pass |
 | `2026-08-14` | `.f.i` population census | 24 PDF authorities; 1,822 pages / 1,995 visuals / 906 tables / 22,088 elements / 3,899 sections; text replay yields 27,330 statements / 6,313 semantic / 9,543 intent records, with 23 non-vacuous rows |
 | `2026-08-14` | `.f.i` executable contract | exact 24 retained rows and five stages join; 7 calibration / 17 prospective, 4 vendor-novel / 13 family-novel; baseline checker and 8/8 controlled faults pass |
+| `2026-08-14` | `.f.ii.a` identity/alpha harness | eight provider-free focused tests plus explicit unchanged and adversarial Docling-backed PDF tests pass; all three implemented relations execute and compare five persisted proof-bearing stages; identity-coupled role, partial-stage, and symlink-escape controls reject |
+| `2026-08-14` | `.f.ii.a` full repository gate | all 9 doctrines and 11 production-genericity components pass; Rust 1,961 passed / 8 ignored / 0 failed plus 5 compile-fail doctests; Clippy, Rustdoc, mdBook, and final locality pass |
 
 ## Commit Log
 
@@ -140,6 +179,7 @@
 | --- | --- | --- |
 | `.f` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification` | activate the parent and route `.f.i` as the precise design frontier |
 | `.f.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract` | freeze source planes, current and held-out denominators, six relations, five-stage comparison, and closed evidence states |
+| `.f.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a — implement identity and alpha qualification` | add deterministic source-bound alpha and byte-identical PDF identity generation, five-stage replay, closed comparison, evidence, and sensitivity controls |
 
 ## Activation protocol
 
