@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `MEMORY-RESUME-POINTER-BYTE-CAP`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-15`
 - Last updated: `2026-08-15`
@@ -35,7 +35,7 @@ resume state in lockstep.
 ## Task Tree
 
 - ID: `MEMORY-RESUME-POINTER-BYTE-CAP`
-  Status: `active`
+  Status: `done`
   Goal: enforce and document the exact 32,768-byte resume-pointer maximum
   Children: `.1`, `.2`
 
@@ -51,18 +51,19 @@ resume state in lockstep.
   Commit: `MEMORY-RESUME-POINTER-BYTE-CAP.1 — set MEMORY.md maximum to 32,768 bytes`
 
 - ID: `MEMORY-RESUME-POINTER-BYTE-CAP.2`
-  Status: `pending`
+  Status: `done`
   Goal: retire the consumed exact ceiling-increase authority after `.1` establishes the clean Git boundary
   Acceptance: the authority record is deleted only after `.1` commits; checker and registry retain 32,768 bytes;
     the live-size/doctrine gate rejects no unused or banked authority; resume pointer returns to product PNT
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `committed boundary 7e42d0f3 contains the exact 4,096→32,768-byte authority and increase;
+    deleting only the consumed authority leaves checker/registry equality at 32,768 bytes; live-size and all
+    doctrines pass without unused or banked authority`
+  Commit: `MEMORY-RESUME-POINTER-BYTE-CAP.2 — retire consumed ceiling authority`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
-| --- | --- | --- | --- |
-| 1 | `MEMORY-RESUME-POINTER-BYTE-CAP.2` | `pending` | retire the authority after the exact increase exists in committed history |
+No active frontier. Product PNT resumes at `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` clean-revision comparator
+replay and publication.
 
 ## Decisions
 
@@ -94,6 +95,16 @@ resume state in lockstep.
 - [x] **LOCKSTEP** — task tree/catalog, memory architecture, live-size authority, mdBook, fact retrieval, and
   `MEMORY.md` publish one non-conflicting policy.
 
+## Acceptance Checklist — `MEMORY-RESUME-POINTER-BYTE-CAP.2`
+
+- [x] **REPRODUCE / MEASURE** — committed revision `7e42d0f3` contains the exact authority and matching increase.
+- [x] **ROOT CAUSE (WHY + WHERE)** — ceiling authority is transactional; retaining it after the increase is Git
+  history would bank permission for a future unrelated change and must fail the live-size gate.
+- [x] **ADDRESSED (verified)** — the consumed data-only record is removed while both live ceilings remain 32,768.
+- [x] **NO REGRESSION** — live-size and composed doctrine checks pass without an unused-authority violation.
+- [x] **GENERICITY** — the generic authority lifecycle is followed unchanged; no checker exception is added.
+- [x] **LOCKSTEP** — task/catalog and resume pointer close the policy unit and restore the product frontier.
+
 ## Verification Log
 
 | Date | Leaf | Checks | Result |
@@ -101,13 +112,14 @@ resume state in lockstep.
 | `2026-08-15` | `.1` | opening census | checker and `active_resume` registry both cap `MEMORY.md` at 4,096 bytes; current pointer is 3,284 bytes |
 | `2026-08-15` | `.1` | checker boundary | default accepts 2,610/32,768 bytes; an explicit 2,609-byte override rejects the same file; 50-line and 160-byte content-line gates remain active |
 | `2026-08-15` | `.1` | synchronized gates | `active_resume` 2,610 bytes / 32 lines / 116 max-line bytes; 84/84 live-size cases; 145 task routes; 227 cards; 243 facts / 1,860 questions; mdBook test/build; doctrines green |
+| `2026-08-15` | `.2` | authority retirement | committed `.1` boundary `7e42d0f3`; consumed record deleted; exact 32,768-byte checker/registry limits retained; live-size and doctrines green with no banked authority |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.1` | `MEMORY-RESUME-POINTER-BYTE-CAP.1 — set MEMORY.md maximum to 32,768 bytes` | exact maximum and synchronized enforcement/documentation |
-| `.2` | `pending` | retire the consumed one-transaction authority and restore the product frontier |
+| `.2` | `MEMORY-RESUME-POINTER-BYTE-CAP.2 — retire consumed ceiling authority` | retire the consumed one-transaction authority and restore the product frontier |
 
 ## Changelog
 
@@ -115,3 +127,5 @@ resume state in lockstep.
   `2cdcd131`; no prior closed task tree is reopened.
 - `2026-08-15`: `.1` establishes exact checker/registry agreement and preserves independent concision rules;
   `.2` must retire the consumed authority before return to the interrupted product frontier.
+- `2026-08-15`: `.2` removes the authority after committed boundary `7e42d0f3`, closes the tree, and restores the
+  exact product resume pointer without changing the new limit.

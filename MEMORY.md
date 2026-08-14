@@ -17,14 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `MEMORY-RESUME-POINTER-BYTE-CAP.2` is pending behind the staged `.1` ceiling transaction. Product
-  PNT remains `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`, whose production remediation is clean at `2cdcd131`.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` is in progress; production alpha-ordering remediation is
+  clean at commit `2cdcd131`, and clean-revision comparator replay/publication is the remaining closure step.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.1` fixes the pointer maximum at exactly 32,768 bytes across both executable authorities while
-  preserving its 50-line, 160-byte content-line, and overwrite-only constraints. Its exact old/new live-size
-  authority is transaction-scoped and must be retired after this increase becomes Git history.
-- Next action: commit `.1`, delete the then-consumed ceiling-increase authority under `.2`, verify/commit that clean
-  state, then resume the field-aware comparator replay against production revision `2cdcd131`.
-- In-flight uncommitted: none after the `.1` policy commit; `.2` is the required next transaction. No background job.
+- Current state: four structural production causes are repaired; the exact six-signal pair preserves 11,170/11,170
+  claims over 266,194 leaves, retained chains are 24/24 current and zero stale, and the full production gate passes.
+  `MEMORY-RESUME-POINTER-BYTE-CAP` is complete: both executable authorities enforce exactly 32,768 bytes, independent
+  concision rules remain, and the consumed increase authority is retired after committed boundary `7e42d0f3`.
+- Next action: add the measured field-aware comparator normalization and replay/publish the exact pair against clean
+  production revision `2cdcd131`, then close `.f.iii.a` before whole-population reconciliation.
+- In-flight uncommitted: none after the memory-cap authority-retirement commit. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

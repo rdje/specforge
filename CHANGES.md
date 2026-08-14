@@ -7,6 +7,8 @@
 - Synchronized the portable architecture, local containment doctrine, mdBook, task catalog, and Knowledge Map.
   The default checker accepts 2,610/32,768 bytes while a 2,609-byte override rejects the exact same file; all 84
   live-document cases, mdBook test/build, retrieval/catalog checks, and composed doctrines pass.
+- Committed the exact old/new authority with the increase, then removed that consumed record in the next task
+  slice. The final registry retains the 32,768-byte ceiling and contains no reusable or banked permission.
 
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering
 
