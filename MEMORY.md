@@ -17,14 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-CLARIFICATION-LOOP.3` owns repository-local machine/human clarification workflows.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.0` owns and maps the requested fifth portable architecture.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.2` is complete: deterministic planning over normalized unresolved needs provides exact grouping,
-  autonomous-action filtering, structural information-gain ranking, dependency ordering/cycle refusal, and
-  dependency-closed blocking/advisory packets. Answer validation, CLI exchange, and proof resume remain open.
-- Next action: execute `SPEC-CLARIFICATION-LOOP.3`: freeze the bounded repository-local packet/answer exchange,
-  then add list/inspect/export/answer CLI workflows without granting semantic authority. `MEMORY.md` remains
-  capped at 32,768 B.
-- In-flight uncommitted: none after the `.2` commit; no background job.
+- Current state: claim-verification `.0` maps 39 current governed surfaces, 14 derived-state contracts, 33 tracked
+  checker files / 24 self-test fronts, the missing review template, and the dedicated bounded-registry path. The
+  standard is not yet adopted. `SPEC-CLARIFICATION-LOOP.3` remains the product frontier after this explicit
+  governance directive is satisfied.
+- Next action: commit `.0` cleanly, then pivot to `DECISION-RECORD-CAPACITY-HEADROOM.1/.2` because the required
+  claim-verification ADR cannot be added safely at the current 42/44 decision-file pressure; resume claim `.1`
+  from that clean prerequisite. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: none after the `.0` commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

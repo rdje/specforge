@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.0 (`2026-08-15`) — repeated checking is not independent evidence
+
+SpecForge already has many strong ingredients: exact derived-state contracts, deterministic projections,
+controlled mutation self-tests, and one doctrine driver. They do not yet answer the per-claim question “which
+source command reproduced this, which different oracle could make it false, and what tracked dependency makes it
+stale?” The adoption therefore joins those existing mechanisms through a bounded claim registry instead of
+inventing a second enforcement stack.
+
+The census governs actionable current claims, not raw digit syntax. Dates, versions, schema ids, examples,
+authored priorities, and immutable dated evidence have different authority classes. Reusing an old measurement as
+current creates a new claim and triggers the three-leg contract. This boundary keeps the later sweep complete
+without turning every numeric token into ceremonial metadata.
+
 ## SPEC-CLARIFICATION-LOOP.2 (`2026-08-15`) — equivalence is declared, not guessed
 
 Question minimization must not become a second semantic extractor. The planner therefore groups only an explicit

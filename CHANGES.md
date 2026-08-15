@@ -1,3 +1,14 @@
+### CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification
+
+- Opened the six-leaf adoption program for the requested fifth portable architecture: re-derive, falsify with an
+  independent oracle, and keep a tracked producer plus stale-state gate for actionable published claims.
+- Mapped 39 current governed Markdown surfaces, 14 derived-state contracts, 33 tracked checker files, 24 self-
+  test-capable checker fronts, the missing review template, and zero ignored producer-shaped files in governed
+  source directories without changing product, doctrine, or decision authority.
+- Sequenced implementation behind the existing decision-capacity remedy: the collection is already 42/44 files,
+  so `.1` must not consume another ADR slot before `DECISION-RECORD-CAPACITY-HEADROOM.1/.2` supplies a lossless
+  repeatable remedy.
+
 ### SPEC-CLARIFICATION-LOOP.2 — plan minimal clarification packets
 
 - Added a deterministic core planner over normalized residual, contradiction, completeness/validation,
