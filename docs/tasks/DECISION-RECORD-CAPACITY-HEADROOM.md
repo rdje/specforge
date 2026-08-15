@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DECISION-RECORD-CAPACITY-HEADROOM`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-15`
@@ -35,7 +35,7 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 ## Task Tree
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM`
-  Status: `active`
+  Status: `done`
   Goal: restore a durable and reachable capacity remedy for canonical decision records
   Children: `.0`, `.0a`, `.1`, `.2`, `.2a`
 
@@ -80,12 +80,14 @@ unrelated architecture slice consumes the remaining three file slots and is refu
   Commit: `DECISION-RECORD-CAPACITY-HEADROOM.2 — apply the 58-record coupled capacity profile`
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM.2a`
-  Status: `pending`
+  Status: `done`
   Goal: retire the exact ceiling-increase authority consumed by `.2`
   Acceptance: after `.2` commits, remove the now-banked decision-record authority without moving any surface,
   projection, decision, or limit; the live-size and doctrine gates return green against the committed profile
-  Verification: `pending`
-  Commit: `pending`
+  Verification: after committed `.2`, the authority is provably banked because the 58-record profile is already
+  HEAD state; removing its exact increase row leaves the registry header only, changes no capacity or content,
+  and the live-size, task catalog, Knowledge Map, and doctrine gates pass
+  Commit: `DECISION-RECORD-CAPACITY-HEADROOM.2a — retire the consumed decision-capacity authority`
 
 ## Current Frontier
 
@@ -95,7 +97,7 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | 2 | `DECISION-RECORD-CAPACITY-HEADROOM.0a` | `done` | per-record line/byte pressure is distinguished from collection count |
 | 3 | `DECISION-RECORD-CAPACITY-HEADROOM.1` | `done` | ADR 0041 derives a 58-record flat profile without moving accepted paths |
 | 4 | `DECISION-RECORD-CAPACITY-HEADROOM.2` | `done` | coupled registries and independent drift controls now carry the accepted profile |
-| 5 | `DECISION-RECORD-CAPACITY-HEADROOM.2a` | `pending` | retire `.2`'s consumed authority after the new profile is committed |
+| 5 | `DECISION-RECORD-CAPACITY-HEADROOM.2a` | `done` | consumed authority is absent; the committed profile stands on its own |
 
 ## Decisions
 
@@ -121,7 +123,22 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 
 ## Blockers
 
-- None. `.2a` must retire the consumed one-use authority before this tree closes.
+- None. The capacity tree is closed; `CLAIM-VERIFICATION-ADOPTION.1` may resume from the clean profile.
+
+### Acceptance Checklist (enforced) — `DECISION-RECORD-CAPACITY-HEADROOM.2a`
+
+- [x] **REPRODUCE / MEASURE** — committed `.2` makes the 58-record surface and coupled 393/3,584 projection the
+  comparison baseline, so its one-use increase record is banked and no longer authorizes a working-tree change.
+- [x] **ROOT CAUSE (WHY + WHERE)** — ceiling authorities are transaction evidence, not permanent capability;
+  retaining one after its exact old→new pair enters HEAD would create reusable stale authority.
+- [x] **ADDRESSED (verified)** — the exact `.2` increase row is removed and the self-bounded registry contains
+  only its schema/control record.
+- [x] **NO REGRESSION** — decision/fact/question capacities, all canonical records, routes, generator settings,
+  mdBook, and product files are byte-identical to `.2`; focused live-size and full doctrine gates pass.
+- [x] **GENERICITY** — retirement follows the same consumed-authority lifecycle as every ceiling transaction;
+  no special exemption or decision-subject rule is introduced.
+- [x] **LOCKSTEP** — this tree and resume pointer agree the capacity prerequisite is closed and claim-verification
+  `.1` is next; the derived task catalog reports the root done.
 
 ### Acceptance Checklist (enforced) — `DECISION-RECORD-CAPACITY-HEADROOM.2`
 
@@ -198,6 +215,8 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | `2026-08-15` | `.2` implementation | 60 catalog mutation/boundary cases; fact/KM catalogs; live-size; mdBook;
   doctrines | 43/58 stable decision files; 393 derived fact slots; 3,584 derived question keys; no path/topology/
   portable-cap change; exact one-use authority remains for `.2a` retirement |
+| `2026-08-15` | `.2a` authority retirement | committed-state authority comparison; task/KM catalogs; live-size;
+  doctrines | consumed increase row absent; registry control remains; all profile/content bytes unchanged |
 
 ## Commit Log
 
@@ -207,6 +226,7 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | `.0a` | `DECISION-RECORD-CAPACITY-HEADROOM.0a — pin independent decision-record size pressure` | distinguish immutable-member shape from collection count before design |
 | `.1` | `DECISION-RECORD-CAPACITY-HEADROOM.1 — derive the next decision capacity profile` | ADR 0041; flat stable paths retained; capacity implementation is next |
 | `.2` | `DECISION-RECORD-CAPACITY-HEADROOM.2 — apply the 58-record coupled capacity profile` | exact authority, coupled registries, drift controls, and book sync |
+| `.2a` | `DECISION-RECORD-CAPACITY-HEADROOM.2a — retire the consumed decision-capacity authority` | delete the banked one-use authority and close the tree |
 
 ## Changelog
 
@@ -219,3 +239,5 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 - `2026-08-15`: `.2` applies that profile atomically, makes the question-key derivation executable, and preserves
   all existing records, stable paths, per-file bounds, shard topology, and portable hard caps; `.2a` owns only
   retirement of the now-consumed increase authority.
+- `2026-08-15`: `.2a` removes the consumed increase row after `.2` becomes the committed baseline; the exact
+  profile stands without reusable authority and the capacity tree closes.

@@ -17,13 +17,12 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `DECISION-RECORD-CAPACITY-HEADROOM.2a` owns retirement of the consumed capacity authority.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.1` owns the local three-leg verification contract.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
-  `DECISION-RECORD-CAPACITY-HEADROOM.2a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.2` applies ADR 0041's exact coupled profile: 58 decision files, 393 facts, and 3,584 question
-  keys with stable flat paths, unchanged per-file limits, 60 fault-tested catalog cases, and synchronized book.
-  Its exact one-use increase authority remains only for the mandatory post-commit retirement leaf.
-- Next action: commit `.2`, remove its consumed authority in `.2a`, and close the capacity tree; resume
-  `CLAIM-VERIFICATION-ADOPTION.1` only from that clean prerequisite. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: none after the `.2` commit; no background job.
+  `CLAIM-VERIFICATION-ADOPTION.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
+- Current state: the decision-capacity prerequisite is closed at 58 decision files / 393 facts / 3,584 question
+  keys; its consumed increase authority is absent. Claim verification remains mapped but not yet adopted.
+- Next action: publish the bounded local claim-verification standard, ADR, routes, and review contract in
+  `CLAIM-VERIFICATION-ADOPTION.1`. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: none after the `.2a` commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

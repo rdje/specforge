@@ -1,3 +1,10 @@
+### DECISION-RECORD-CAPACITY-HEADROOM.2a — retire the consumed authority
+
+- Removed `.2`'s exact 44→58 decision-record increase record after the new coupled profile became committed
+  baseline state. The self-bounded authority registry now contains only its control record.
+- Closed the capacity tree without changing any decision, limit, projection, generator setting, mdBook page, or
+  product file; claim-verification adoption can now resume from the clean prerequisite.
+
 ### DECISION-RECORD-CAPACITY-HEADROOM.2 — apply the coupled capacity profile
 
 - Applied ADR 0041's measured 58-file decision capacity with unchanged per-file limits and aggregate bounds equal
