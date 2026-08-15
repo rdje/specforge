@@ -1,4 +1,15 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3b.1 (`2026-08-15`) — reuse route authority at its exact boundary
+
+The maintained-reference gaps did not reveal missing enforcement. README routing already derives its registered
+destinations; the fact-card plane already derives its routed index and title parts; and the canonical collection
+checker already derives the FSMGen issue-packet catalog. Each producer has a controlled failure suite, so adding
+another manifest or checker would create a second authority without improving discrimination.
+
+The eventual census repair will therefore classify each title as document identity and attach a separate
+identity-gated route region to the corresponding producer. That boundary is deliberate: complete navigation can
+prove that every member is reachable, but cannot prove that every statement in every member is currently true.
+
 ## CLAIM-VERIFICATION-ADOPTION.3b.0 (`2026-08-15`) — surface identity is not assertion truth
 
 The five incomplete records all use a first-line title as their region. That is a legitimate deterministic

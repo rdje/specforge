@@ -298,6 +298,11 @@ capacity assertion. Quantitative mdBook prose receives a bounded exact-region co
 currentness check cannot be promoted into blanket evidence for the whole manual. Only after those repairs does
 one closing leaf update the frozen region identities and result vector atomically.
 
+The maintained-reference audit found no missing route control. README policy, the routed fact-card catalog, and
+the canonical collection catalog each derive membership from tracked authority and each observes malformed or
+drifted fixtures go RED. The repair therefore reuses those producers at their exact navigation boundary; it does
+not add a parallel manifest and does not interpret a green route as semantic certification of linked prose.
+
 ## How the gates are layered
 
 Defense in depth, the same four-layer model the memory architecture uses. Each layer catches what the

@@ -1,3 +1,12 @@
+### CLAIM-VERIFICATION-ADOPTION.3b.1 — bind maintained-reference authorities
+
+- Proved that the existing README policy, fact-card route, and canonical collection producers already derive
+  exact maintained-reference membership and exercise controlled RED cases for missing, drifted, unsafe, residue,
+  and bounded states.
+- Froze their later census binding without adding a redundant checker or treating navigation identity as truth
+  of member prose. The 51 frozen outcomes remain unchanged until `.3b.4`.
+  `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map
 
 - Decomposed the five frozen incomplete title anchors by authority before any source or census repair: three

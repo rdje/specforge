@@ -193,7 +193,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3b.1`
-  Status: `pending`
+  Status: `done`
   Goal: repair the README, knowledge-card, and FSMGen-packet reference anchors through exact route authorities
   Acceptance: replace each broad incomplete title anchor with an explicit non-claim identity disposition plus
   executable route/catalog evidence; do not assert that membership validation proves member prose true
@@ -267,7 +267,7 @@ the workflow through the mdBook and repository review path.
 | 7 | `CLAIM-VERIFICATION-ADOPTION.3a.1` | `done` | bounded inventory contract, deterministic producer, and fail-closed joins implemented |
 | 8 | `CLAIM-VERIFICATION-ADOPTION.3a.2` | `done` | 51 evidence units frozen; five explicit incomplete units own the repair frontier |
 | 9 | `CLAIM-VERIFICATION-ADOPTION.3b.0` | `done` | five frozen gaps are assigned to authority-specific repair leaves |
-| 10 | `CLAIM-VERIFICATION-ADOPTION.3b.1` | `pending` | repair README, knowledge-card, and FSMGen-packet route identity |
+| 10 | `CLAIM-VERIFICATION-ADOPTION.3b.1` | `done` | existing route authorities and RED controls are proven sufficient |
 | 11 | `CLAIM-VERIFICATION-ADOPTION.3b.2` | `pending` | split authored workflow policy from its registered capacity claim |
 | 12 | `CLAIM-VERIFICATION-ADOPTION.3b.3` | `pending` | replace the blanket mdBook quantitative anchor with exact regions |
 | 13 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `pending` | atomically re-freeze repaired identities and close `.3b` |
@@ -343,6 +343,10 @@ the workflow through the mdBook and repository review path.
   repaired through the existing README/catalog producers, authored workflow identity remains out of claim scope
   while its actionable capacity paragraph joins the existing verified claim, and mdBook quantitative assertions
   receive their own exact-region contract instead of borrowing the selective book-currentness checker.
+- `2026-08-15` (`.3b.1`): the three maintained-reference gaps need no new checker. README policy, routed fact-
+  card membership, and canonical collection membership already derive their exact routes and each has a
+  controlled missing/drift/bound class observed RED. `.3b.4` will bind those authorities without claiming that
+  navigation identity verifies member prose.
 
 ## Frozen `.3b` Repair Frontier (`CLAIM-VERIFICATION-ADOPTION.3a.2`)
 
@@ -456,6 +460,22 @@ was added; the stable-path remedy and its consumed authority are complete.
 ## Blockers
 
 - None. `.3b` repairs only the five frozen incomplete evidence keys next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.1`
+
+- [x] **REPRODUCE / MEASURE** — the README route check, fact-card catalog check, and canonical collection check
+  each derive the current tracked route from its registered authority rather than comparing hand-carried lists.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the frozen census used first-line anchors and did not join these existing
+  route producers; it did not expose an absent membership control or a stale route.
+- [x] **ADDRESSED (verified)** — the final binding is frozen: title anchors are non-claim document identities,
+  while separate exact route regions execute the README, fact-card, and canonical-catalog authorities.
+- [x] **NO REGRESSION** — real route checks and their missing, drift, residue, unsafe-path, and bound controls pass;
+  the 51 census outcomes, source assertions, product code, registry schemas, hooks, CI paths, and limits do not
+  change in this evidence-only slice. `[claim: current-claim-census-frozen]`
+- [x] **GENERICITY** — route validity depends on registered path membership and generated projection identity,
+  never a member's title subject, vendor, protocol, prose, numeric contents, or implementation language.
+- [x] **LOCKSTEP** — task, resume pointer, ledgers, and mdBook agree that the three authorities are proven but the
+  frozen census changes only once in `.3b.4`; `.3b.2` owns the workflow baseline next.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.0`
 
@@ -607,6 +627,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3b.0` | five-key authority-route audit; current census/check/report; README/catalog/book/
   task/memory/claim/live-size/doctrine gates | repair sequence frozen without changing any source assertion or
   one of the 51 existing authority outcomes |
+| `2026-08-15` | `.3b.1` | README policy real/self-test; fact-card catalog real/self-test; canonical collection
+  real/self-test; current census; task/memory/book/claim/live-size/doctrine gates | all three existing route
+  authorities derive exact membership and fail closed; frozen census remains unchanged for `.3b.4` |
 
 ## Commit Log
 
@@ -621,6 +644,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3a.1` | `CLAIM-VERIFICATION-ADOPTION.3a.1 — implement the current-claim census` | bounded inventory contract, deterministic producer, exact region/authority joins, fail-closed controls |
 | `.3a.2` | `CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings` | 51 exact outcomes, complete surface/view coverage, five-key repair frontier |
 | `.3b.0` | `CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map` | authority-specific route, workflow-baseline, mdBook-quantitative, and closure leaves |
+| `.3b.1` | `CLAIM-VERIFICATION-ADOPTION.3b.1 — bind maintained-reference authorities` | existing README, fact-card, and canonical catalog authorities proven sufficient for later atomic binding |
 
 ## Changelog
 
@@ -648,3 +672,5 @@ was added; the stable-path remedy and its consumed authority are complete.
   five incomplete keys become the only legal `.3b` repair frontier and all source assertions remain unchanged.
 - `2026-08-15`: `.3b.0` decomposes repair by authority: three maintained-reference routes, the authored-policy /
   registered-capacity split, exact mdBook quantitative regions, then one atomic result re-freeze.
+- `2026-08-15`: `.3b.1` proves existing README, fact-card, and canonical-catalog route authorities plus their RED
+  controls; no new checker or premature frozen-result rewrite is needed.
