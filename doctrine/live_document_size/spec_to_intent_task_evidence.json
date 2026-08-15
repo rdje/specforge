@@ -1,8 +1,8 @@
 {
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`.",
+      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`.",
       "mode" : "eligible",
       "part_id" : "behavioral-qualification"
    },
@@ -100,13 +100,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
             "metrics" : {
-               "bytes" : 37062,
+               "bytes" : 40395,
                "line_bytes" : 439,
-               "lines" : 373
+               "lines" : 408
             },
             "part_id" : "behavioral-qualification",
             "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-            "sha256" : "efc4a3d1357097c9516158b42bae4d37fe46638b1eec23c5c800da070b9aa1f7",
+            "sha256" : "1552d1622d16e4764c1171382568db2e9716f370bdb78ccfdac0758d420c10b8",
             "state" : "active"
          }
       ],
@@ -483,6 +483,16 @@
          "part_id" : "behavioral-qualification"
       },
       {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
+      },
+      {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v",
          "origin" : "post_migration",
          "part_id" : "behavioral-qualification"
@@ -599,7 +609,7 @@
          "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
          "- Status: `active`",
          "## Current Frontier",
-         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`.",
+         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log",
@@ -665,6 +675,8 @@
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`",
+         "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.6e`",
          "- ID: `SPEC-TO-INTENT-ALIGNMENT.7`",

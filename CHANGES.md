@@ -1,3 +1,16 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv — route the blocked clean-population replay
+
+- Completed a clean 12-source / 48-stage diagnostic replay at revision `0d218116`; all source hashes and
+  same-volume external authorities verify exactly, while the 3,913-file scratch root remains intentionally in
+  flight and untracked.
+- Kept the resulting 12/15/28 TP/FP/FN aggregate out of current authority. Actual manifest hashes prove this is
+  fresh pipeline movement, not a same-stage evaluator contradiction.
+- Localized the three changed cells: the AMD packed-layout fabrication disappears correctly; GIC-400 gains 15
+  source-named register rows but loses their access carrier; Arm Debug loses 12 correct register/access facts
+  because its parenthesized address header does not satisfy the closed structural role.
+- Split `.f.iv` into `.f.iv.a` neutral structural-carrier repair and `.f.iv.b` clean replay/publication. No
+  diagnostic score, host path, or expected result entered production or tracked replay authority.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure
 
 - Made symbol-alpha normalization context-aware: renamed fragments embedded in source-derived identifiers use

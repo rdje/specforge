@@ -186,6 +186,15 @@ through `.6d.ii.f` is a release-signoff invariant and therefore precedes that me
 exist in the task tree, the complete metric ordering remains in the report, and review is still required before
 canonical mutation.
 
+The word “current” above is revision-bound. The tracked 24/2/16 result is valid for its pinned `b977a51f`
+production revision; fixed-input artifact-chain currency does not extend it across later PDF-to-SourceIR changes.
+The first clean `.f.iv` full-PDF replay at `0d218116` therefore remains an unpublished diagnostic. It completed all
+12 sources and 48 stages, but Arm Debug lost 12 correct register/access facts and GIC-400 emitted 15 source-named
+registers without access. AMD's former packed-layout false register correctly disappeared. Actual execution
+hashes in the replay manifest prove fresh stage movement; the cell fixture's `original_sha256` values are frozen
+review identities, not current artifact hashes. `.f.iv.a` repairs only the two generic structural carriers, and
+`.f.iv.b` must rerun from the clean repair revision before any result or controller authority changes.
+
 ### What the first current replay proved
 
 `.6a` isolates all four deterministic stages below a fresh `.project-data/tmp` root; it refuses absolute paths,

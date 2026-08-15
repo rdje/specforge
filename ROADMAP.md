@@ -99,8 +99,10 @@ replay pass 17/17, 16 alpha rows are honestly unmeasurable, and the sole measura
 production spelling/order coupling. `.f.iii.a` has localized and removed that production coupling; the exact
 pair and the final clean-revision held-out refresh now pass: 35 completed relations are fresh under revision
 `2cdcd131`, 16 alpha rows remain honestly unmeasurable, and no failure or invalid attempt remains. ADR 0025
-reconciliation restores 24/24 current with zero stale at every replayed persisted stage. Complete population
-reconciliation in `.f.iv`, final signoff, and then `.6e` remain. Resource-sized bounded
+reconciliation restores 24/24 current with zero stale at every replayed persisted stage. The first clean `.f.iv`
+full-PDF replay then exposed one qualified-header truth loss and one incomplete register-access carrier; `.f.iv.a`
+owns their neutral structural repair and `.f.iv.b` owns clean replay/publication. Final signoff and then `.6e`
+remain. Resource-sized bounded
 activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
 
 Five active program groups support that north star:

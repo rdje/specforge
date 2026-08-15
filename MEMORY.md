@@ -17,18 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` closure is implemented and evidence-complete; repository
-  verification and the closure commit remain before the durable frontier moves to `.f.iv`.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` restores structurally justified register-table carriers
+  exposed by the first clean complete-population replay; `.f.iv.b` owns replay publication after this repair.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: the exact clean-revision I2C pair passes 5/5 stages with 11,170/11,170 claims over 266,194 leaves.
-  Canonical held-out evidence SHA `06e2358c…68a1` records 35 fresh passes, 16 eligibility-preflight unmeasurables,
-  zero failures, and zero invalid attempts under production revision `2cdcd131`. The behavioral checker and 17/17
-  mutations pass. Full CI passes 9/9 doctrines, all 11 production-genericity components, 1,980 Rust tests with
-  eight intentional ignores, five doctests, warning-denied Clippy/Rustdoc, mdBook, and final locality. `MEMORY.md`
-  remains capped at exactly 32,768 bytes.
-- Next action: run the final explicit doctrine/commit workflow, commit `.f.iii.a`, then begin `.f.iv` complete
-  reviewed-population reconciliation. Task metrics, focused synchronization, locality, and diagnostic cleanup pass.
-- In-flight uncommitted: comparator/refresh implementation, canonical evidence, graph snapshot, and synchronized
-  task/research/live/book/retrieval updates. No background job.
+- Current state: clean revision `0d218116` replayed 12/12 reviewed PDFs and 48/48 isolated stages. The unpublished
+  diagnostic is 12/15/28 IntentIR TP/FP/FN. AMD's packed-layout fabrication is gone; GIC-400 has 15 source-named
+  rows with missing access; Arm Debug loses 12 correct facts because its qualified address header stays unknown.
+  The task split and durable diagnosis are being committed before code. `MEMORY.md` remains capped at 32,768 B.
+- Next action: implement and focus-test parenthesized closed-role matching plus register-map access-carrier
+  preservation under `.f.iv.a`, then rerun the complete population under `.f.iv.b` from the clean repair commit.
+- In-flight uncommitted: the exact 3,913-file diagnostic root and runtime source map remain repository-local and
+  untracked until the carrier repair consumes them. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

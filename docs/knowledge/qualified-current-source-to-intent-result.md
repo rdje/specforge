@@ -1,6 +1,6 @@
 ---
 id: qualified-current-source-to-intent-result
-title: The complete reviewed population now has a qualified current-binary result
+title: The b977 reviewed population replay is qualified but revision-bound
 answers:
   - "how many reviewed documents have current binary replay evidence"
   - "what are the current source to IntentIR precision recall and provenance counts"
@@ -12,6 +12,7 @@ answers:
   - "how are external reviewed PDFs replayed without persisting host paths"
   - "where is the 12 document current replay manifest"
   - "did whole population replay mutate canonical generated artifacts"
+  - "is the b977 reviewed result current for the latest production revision"
 date: 2026-08-12
 status: current
 tags: [spec-to-intent-alignment, replay, artifact-currency, provenance, fabrication, trajectory]
@@ -41,3 +42,7 @@ SemanticIR and IntentIR. The other 12 cells, all 24 prior true positives, and al
 remain exact. The controller meets replay currency and provenance closure, remains `diverging` on two unrelated
 fabricated register records, and recommends `SPEC-TO-INTENT-ALIGNMENT.6e` after the owner-mandated production-
 genericity remediation parent closes.
+
+This authority is revision-bound, not a claim about later production code. The first clean `.f.iv` replay at
+`0d218116` completed the same 12 sources and exposed later structural-carrier movement. Its blocked diagnostic is
+owned by `.f.iv.a`; no tracked current result or controller input changes until `.f.iv.b` reruns after repair.

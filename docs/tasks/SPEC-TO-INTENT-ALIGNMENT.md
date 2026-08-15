@@ -26,12 +26,13 @@ expressiveness as the bottleneck.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
 - `.6d.ii.f` is in progress; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
   corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has removed the production symbol-alpha
-  coupling and published clean-revision held-out closure; `.f.iv` now owns whole-population replay.
+  coupling and published clean-revision held-out closure; `.f.iv.a` now owns the structural carrier repair exposed
+  by the first whole-population replay, before `.f.iv.b` publication.
 - `.6e`, `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -46,7 +47,8 @@ opaque underscore identifiers atomic, uses source occurrence rather than symbol 
 excludes declared aliases from section-topic grammar, and normalizes only measured representation surfaces in
 conformance. The final clean-revision matrix is 35 pass / zero fail / 16 unmeasurable / zero invalid; all 35
 completed attempts are fresh under `2cdcd131`. Exact ADR 0025 reconciliation leaves all 24 measurable chains
-current and zero stale through the adapter. `.f.iv` is the active complete-population reconciliation frontier.
+current and zero stale through the adapter. The first `.f.iv` clean full-PDF replay found one truth-loss and one
+incomplete carrier family; `.f.iv.a` owns the neutral repair and `.f.iv.b` owns clean replay/publication.
 
 ## Detailed task evidence
 
@@ -120,6 +122,8 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6e`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7`

@@ -132,6 +132,33 @@
   all metamorphic and negative runs are attributed; exact canonical, residual, proof, validation, and lowering
   deltas are published; no accepted transform loses truthfulness, provenance, or currentness
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
+  Verification: `the first clean full-PDF replay covers 12/12 documents and 48/48 stages but correctly blocks
+  publication: compared with the pinned b977a51f authority, fresh structural classification removes the AMD
+  packed-layout fabrication, expands GIC-400 from one generic false register to 15 source-named registers whose
+  access carrier is missing, and loses all 12 previously correct Arm Debug register facts; .f.iv.a owns the
+  neutral carrier repair before .f.iv.b reruns and publishes the population`
+  Commit: `completed by .f.iv.a and .f.iv.b child commits`
+  Children: `.f.iv.a`, `.f.iv.b`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`
+  State: `in_progress`
+  Goal: restore structurally justified register-table carriers exposed by the clean reviewed replay
+  Acceptance: qualified generic header roles classify identically in embedded Docling and Rust revalidation;
+  register-map rows preserve an explicit or structurally unambiguous access column; Arm Debug retains its 12
+  reviewed register/access facts, GIC-400 preserves all 15 source-named register/access/offset facts, and the AMD
+  packed-layout false register remains absent; focused mutants and the behavioral genericity gate prove no
+  document, vendor, protocol, symbol, filename, or expected-result branch enters production
+  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b`
+  State: `pending`
+  Goal: rerun, reconcile, and publish the complete reviewed population after the structural carrier repair
+  Acceptance: all 12 sources and 48 isolated stages replay from the clean .f.iv.a revision; exact canonical,
+  residual, proof, validation, lowering, metamorphic, and negative deltas are published with current tool and
+  evaluator identities; tracked authorities reproduce byte-for-byte and all scratch is removed exactly
+  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`
   Verification: `pending`
   Commit: `pending`
 
@@ -273,8 +300,10 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `done` | real and synthetic negative controls prove semantic and authority sensitivity |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `done` | corrected held-out qualification is measured; child `.f.iii.a` owns the real I2C alpha coupling |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `done` | clean-revision exact and 51-attempt refresh evidence pass without prior-revision full-capture relabeling |
-| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `in_progress` | reconcile the complete reviewed population and all variants after the measured coupling is fixed |
-| 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
+| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `in_progress` | parent owns complete reviewed-population reconciliation after the measured coupling is fixed |
+| 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` | `in_progress` | restore neutral qualified-header and register-access carriers exposed by the first clean replay |
+| 9 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` | `pending` | rerun and publish the population only after the structural repair commits cleanly |
+| 10 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
 
 ## Decisions
 
@@ -318,15 +347,19 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
   comparator source digest, so a clean production commit is the truthful revision authority for the final replay.
 - `2026-08-15`: a retained full-capture report is never evidence for a different production revision. Refresh
   reruns unchanged/adversarial PDF capture; only frozen alpha eligibility may come from retained authority.
+- `2026-08-15`: the first `.f.iv` full-PDF replay is a diagnostic, not publishable current truth. Its actual
+  manifest hashes prove fresh SourceIR/EvidenceIR movement despite the bounded projection's frozen review hashes;
+  split `.f.iv.a` structural carrier repair from `.f.iv.b` clean replay and publication.
 
 ## Open Questions
 
-- `.f.iv` must reconcile every reviewed baseline and approved/negative variant under the now-closed behavioral
-  oracle without weakening the exact current-revision provenance boundary.
+- `.f.iv.a` must close the measured Arm Debug/GIC structural carrier gaps without restoring the AMD packed-layout
+  fabrication or weakening the exact current-revision provenance boundary.
 
 ## Blockers
 
-- None for `.f.iv`. The remediated held-out authority and all reviewed recipes are available repository-locally.
+- None for `.f.iv.a`. The clean diagnostic replay, retained current chains, and review-locked gold are available
+  repository-locally; external PDF authorities are same-volume, read-only runtime inputs.
 
 ## Verification Log
 
@@ -352,6 +385,7 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | `2026-08-15` | `.f.iii.a` first publication diagnostic | fresh I2C alpha passes, but all 34 retained unchanged/adversarial attempts correctly invalidate because prior-revision artifacts cannot be relabeled as `2cdcd131`; 16 alpha rows remain eligibility-preflight unmeasurable; canonical evidence is untouched and full-capture refresh is required |
 | `2026-08-15` | `.f.iii.a` final held-out refresh | 35 pass / zero fail / 16 unmeasurable / zero invalid; all 34 full-PDF relations and I2C alpha are fresh under `2cdcd131`; 824,172/824,172 claims, 19,745,620 leaves, six/six deltas, aggregate SHA `06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1`; checker and 17/17 mutations pass |
 | `2026-08-15` | `.f.iii.a` closure full repository gate | 9/9 doctrines and all 11 production-genericity components pass; graph snapshot 2,272 / 11,909 / 11,382 / 1,444; 1,980 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final project-data locality pass |
+| `2026-08-15` | `.f.iv` first clean population diagnostic | 12/12 hash-equal sources and 48/48 isolated stages complete at `0d218116`; unpublished 12/15/28 TP/FP/FN result changes exactly AMD packed PTE, GIC-400 register summary, and Arm Debug register summary; actual manifest hashes disprove a same-stage evaluator contradiction; `.f.iv.a` and `.f.iv.b` own repair and publication separately |
 
 ## Commit Log
 
@@ -366,6 +400,7 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | `.f.iii` qualification | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior` | close corrected identity/alpha authority and provenance, publish 34/1/16/0 outcomes, and route the measured I2C production coupling to `.f.iii.a` |
 | `.f.iii.a` production | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering` | keep opaque identifiers atomic, order generated relations and semantic signal collections by source occurrence, and exclude declared aliases from section-topic grammar |
 | `.f.iii.a` closure | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure` | normalize only measured representation surfaces, require fresh full-capture revision evidence, and publish the passing held-out matrix |
+| `.f.iv` diagnostic | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv — route clean replay carrier regressions` | preserve the blocked 12-source result, distinguish frozen review hashes from actual stage identities, and split neutral carrier repair from clean publication |
 
 ## Activation protocol
 

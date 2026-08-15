@@ -1,11 +1,11 @@
 # Knowledge fact-card catalog
 > **AUTO-GENERATED — DO NOT EDIT.** Run `perl scripts/check_fact_card_catalog.pl --write`. [README](README.md) · [questions](../../KNOWLEDGE_MAP.md) · [decisions](../decisions/INDEX.md).
-> 227 fact cards route through 5 title parts; find an id inside a range, then open that part.
+> 228 fact cards route through 5 title parts; find an id inside a range, then open that part.
 
 | Part | Cards | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](../knowledge-catalog/titles-0001.md) | 56 | `aarch64-external-debug-guide-refresh-is-authority-empty` | `corpus-refresh-frontier-derivation` |
 | [0002](../knowledge-catalog/titles-0002.md) | 56 | `corpus-register-table-shape-gap` | `isf-unrenderable-rule-value-residual` |
 | [0003](../knowledge-catalog/titles-0003.md) | 56 | `isf-value-width-operand-contract` | `register-record-access-and-table-provenance` |
-| [0004](../knowledge-catalog/titles-0004.md) | 56 | `register-reset-isf-emit` | `validate-explicit-artifact-path-contained-backannotation` |
-| [0005](../knowledge-catalog/titles-0005.md) | 3 | `validation-snapshot-reviewed-boundary` | `vlm-table-strategy` |
+| [0004](../knowledge-catalog/titles-0004.md) | 56 | `register-reset-isf-emit` | `usb4-inter-domain-refresh-is-portable-and-authority-empty` |
+| [0005](../knowledge-catalog/titles-0005.md) | 4 | `validate-explicit-artifact-path-contained-backannotation` | `vlm-table-strategy` |

@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv (`2026-08-15`) — replay identity and structural carriers
+
+The bounded evaluation fixture carries two different notions of identity. Its per-stage `original_sha256` is the
+frozen review-era identity used to keep cell queries comparable; it is not the fresh artifact digest. The
+portable replay manifest is the execution-identity authority. Reading the former as the latter briefly made the
+new score look impossible because unchanged stages appeared to evaluate differently. Comparing manifest hashes
+resolved the apparent contradiction: the target SourceIR and every downstream stage really changed.
+
+That distinction exposed a real freshness gap. The tracked 24/2/16 snapshot is honest for revision `b977a51f`,
+but fixed-input chain currency cannot prove what a fresh PDF-to-SourceIR run does. The `.f.iv` replay does: only
+three reviewed cells move. AMD's 4×21 packed layout correctly stops masquerading as a register. GIC-400's summary
+becomes 15 source-named register rows but drops the `Type` access column. Arm Debug loses all 12 correct facts
+because `Address (A a, SELECT.DPBANKSEL)` is not an exact member of the closed address-header vocabulary.
+
+The safe repair remains structural. Parenthesized qualifiers may decorate a closed header role without making
+arbitrary substring matching authoritative. Once a table is independently a register map, the same generic
+access grammar that established that kind must identify its access carrier instead of classifying on body values
+and then discarding the column. The AMD negative is the control: a layout without name/access structure stays
+unknown. `.f.iv.a` owns this repair; `.f.iv.b` owns the next clean publication.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a (`2026-08-15`) — revision identity requires fresh behavioral execution
 
 A retained report can prove what one production revision did; changing only its revision label cannot prove what
