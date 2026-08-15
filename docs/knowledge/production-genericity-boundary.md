@@ -70,7 +70,7 @@ date: 2026-08-15
 status: current
 tags: [genericity, extraction, architecture, doctrine]
 evidence: docs/research/production-genericity-pipeline-audit.md; docs/research/production-genericity-structural-qualification.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; doctrine/production_genericity/information_flow_boundary.tsv; tools/production-genericity-graph/src/analyzer.rs; tools/production-genericity-graph/src/flow.rs; scripts/check_production_genericity.sh; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_doctrines.sh; scripts/check_chain_currency.sh
-reverify: scripts/check_production_genericity.sh --self-test && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && bash scripts/check_chain_currency.sh --check
+reverify: scripts/check_production_genericity.sh --self-test && cargo test -p specforge-production-graph --lib --offline && cargo test -p specforge-core production_semantic_digests_are_compiler_derived_stage_closures --offline && cargo test -p specforge-core derivation --offline && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -264,37 +264,33 @@ reconstruction still observes builder/lowering dependencies outside the registry
 AST information-flow and adversarial structural layers close that structural gap; population behavior remains
 open work.
 
-The production syntax substrate derives the complete current graph. Cargo exposes four library/binary
-targets; their module graph reaches 77 of the 78 inventoried files, with the remaining application test-support
-file classified explicitly. The resulting 78 modules contain deterministic item, import/alias, call, local-macro,
-external/builtin-macro, and attribute-macro nodes. Exact calls are separated from conservative compiler-resolved
-method/associated/binding dispatch, so the AST does not impersonate Rust type resolution. Missing inventory,
-unknown configuration, absent or ambiguous modules, duplicate items or aliases, parse failure, opaque verbatim
-syntax, and non-relative output fail closed. The graph tool remains dependency-disconnected from all three
-product crates.
+The production syntax substrate derives the complete current graph. Four Cargo targets reach 78 of 79 inventoried
+files; the remaining application test-support file is explicit. The modules contain deterministic item, import/
+alias, call, local/external/builtin/attribute-macro nodes and distinguish exact calls from conservative compiler-
+resolved dispatch. Missing inventory, unknown configuration, absent/ambiguous modules, duplicate items/aliases,
+parse failure, opaque syntax, and non-relative output fail closed. The tool is disconnected from product crates.
 
-The following flow layer joins a closed 140-row typed registry to that graph. It derives rule roots, canonical
-fields/seams, and conformance bypasses from existing inventories, then resolves explicit raw/identity aggregate,
-field, and provider-return sources; universal grammar and exact-identity declassifiers; proof gates and values;
-trusted/non-authoritative regions; and protected types. A deterministic fixed point propagates dependencies
-through 2,270 functions and 11,902 helper edges, checking 11,355 semantic decision sites plus macro, mutation,
-construction, capability-call, proof-value, and canonical-seam topology. Sensitive unresolved macros reject.
-Thirteen flow mutations independently reject identity selection, raw literal equality, substring and regex
-decisions, cross-class declassification, direct/aliased unregistered inference, authority forgery, helper/macro
-laundering, proofless/wrong-stage persistence, and registry duplication. The clean fixture admits display,
-provenance capture, and excluded test-only uses because none grants semantic or canonical authority.
+The flow layer joins a closed 141-row typed registry to that graph. It resolves raw/identity sources, grammar and
+exact-identity declassifiers, proof gates/values, trusted/non-authoritative regions, and protected types. Its fixed
+point covers 2,347 functions, 14,294 helper edges, 12,514 decision sites, 1,459 semantic macros, and canonical-
+seam topology; sensitive unresolved macros reject. Thirteen mutations challenge identity/literal/substring/regex
+decisions, cross-class inference, authority forgery, laundering, proofless persistence, and registry duplication.
+The clean fixture admits display, provenance capture, and test-only uses only when they grant no authority.
 
-The registry names data classes and Rust structure, never a document/vendor/protocol vocabulary. Cargo and Rust privacy remain the type/capability oracle; executable replay remains semantic authority; the AST proves closed
-whole-surface flow/topology. `scripts/check_production_genericity.sh` composes dependency, inventory, rule, graph,
-and flow checks under the unconditional `PRODUCTION-GENERICITY` doctrine. Its `--self-test` mode runs 27 controlled
-dependency, inventory/schema, rule/alpha/bypass, and flow/authority mutations. Every test-only `RuleDescriptor`
-qualification executes its capability/premise/compatibility-shaped alpha condition; the independent oracle joins
-all 168 runtime rule ids, stages, surfaces, premises, capabilities, obligations, compatibilities, and owners. The
-conformance harness closes identity, alpha, paraphrase/layout, and negative sensitivity; held-out and population behavior belonged to later `.f`.
+The registry names Rust structure, never a document/vendor/protocol vocabulary; Cargo/privacy, executable replay,
+and the AST remain distinct type, semantic, and topology authorities. Closing full CI on 2026-08-16 caught the
+Rust test's stale 78-module/140-row snapshot; seven corrected expectations and this card's replay now check the
+current derived graph and independent crate oracle together.
 
-Final qualification covers `f7da4ab8..07b1f874`: 24 keys are current and 54 remain unmeasurable. One ruleset covers
-168 rules / 148,708 claims; all 120 public comparisons and 0/3/8/62 residual deltas are exact, while 24 adapters remain blocked/zero-file. See `docs/research/production-genericity-structural-qualification.md`.
+`scripts/check_production_genericity.sh` composes dependency, inventory, rule, graph, and flow checks under the
+unconditional doctrine. Its 27 controlled mutations cover those layers; every test-only `RuleDescriptor` runs
+its alpha obligation, and the independent oracle joins all 168 runtime rules to their structural contract. The
+conformance harness closes identity, alpha, paraphrase/layout, and negative sensitivity.
 
-Behavioral `.f` is complete. Its held-out matrix is 35 pass / zero fail / 16 unmeasurable / zero invalid; the clean
-12-source / 48-stage population is 39/0/1 IntentIR TP/FP/FN with 42/42 provenance, 117/118 conservation, zero fabrication, and one APB canonical loss. `.f.v` composes this with the 168-rule doctrine and 27 adversarial controls.
-Production is specification-instance-neutral within the governed boundary, not perfect or product-complete: unmeasurable alpha strata, incomplete coverage/accounting, blocked adapters, insufficient history, and `.7` remain explicit.
+Final qualification covers `f7da4ab8..07b1f874`: 24 keys are current and 54 unmeasurable; 168 rules cover
+148,708 claims, 120 exact comparisons, and exact 0/3/8/62 residual deltas. All 24 adapters are blocked/zero-file.
+
+Behavioral `.f` closes at 35 pass / 0 fail / 16 unmeasurable / 0 invalid and 39/0/1 IntentIR TP/FP/FN with
+42/42 provenance, 117/118 conservation, zero fabrication, and one APB loss. Production is neutral only within
+this governed boundary; unmeasurable alpha strata, incomplete coverage/accounting, blocked adapters, history,
+and `.7` remain explicit. See `docs/research/production-genericity-structural-qualification.md`.

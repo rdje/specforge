@@ -270,6 +270,64 @@ and six unique governed producers, with zero ignored or untracked producer-shape
 source roots. The expanded twenty-seven-case matrix makes missing, stale, or misdirected RED evidence and both
 scratch-producer classes fail. `[claim: claim-provenance-gate-active]`
 
+### A concrete author and reviewer walk-through
+
+Start with classification, not JSON. “The workflow-standard collection has its authored title” is a policy or
+identity statement; “a dated run observed a particular result” remains historical when it keeps that boundary;
+and a schema version is an identity token. None becomes a current measured claim merely because it contains a
+number. By contrast, “the current workflow-standard collection fits the selected capacity profile” can guide a
+repository decision and can drift, so it resolves to `workflow-standard-capacity-profile`.
+
+An author can reproduce that real SpecForge example without copying its result from this page:
+
+```sh
+perl scripts/measure_workflow_standard_capacity.pl --check
+perl scripts/check_claim_verification.pl --probe workflow-standard-capacity-profile
+perl scripts/check_claim_verification.pl --check
+```
+
+The first command derives the current profile from tracked membership and history. The probe computes the
+catalog independently and proves a controlled sub-ceiling case goes RED. The final command authenticates the
+tracked inputs, exact known-bad region, stale-state membership, and publication IDs. A commit that changes this
+current assertion then declares:
+
+```text
+Published-claims: workflow-standard-capacity-profile
+```
+
+If an author has only the new measurement, the honest result is not a half-filled verified record. It is an
+incomplete claim whose absent legs are machine-readable. This illustrative row is valid shape, but it is not a
+claim about the live repository and should not be added to the registry without an owning task:
+
+```json
+{"record_type":"claim","schema_version":1,"claim_id":"example-throughput-observation","status":"incomplete","assertion":"A bounded trial observed a throughput change.","owner":"example-owner","missing_legs":["falsification","durability"]}
+```
+
+Stochastic observations need more than a point estimate. Retain the seed policy, repetition count, aggregation
+method, environment and input identity, and an interval or distribution summary. The competing control must
+separate the claimed effect from within-arm variance or another named explanation. If the available repetitions
+cannot support that interval, keep the claim incomplete; a precise-looking point value does not repair the gap.
+
+Review is deliberately asymmetric. The author must make every leg succeed, while an auditor only needs one
+credible break. If a new capacity script disagrees with the registered result, the reviewer does not promote the
+newer value automatically. They rerun the source derivation, exercise the strict-boundary and catalog controls,
+check the exact RED region and producer census, and perturb one watched identity. The disagreement remains “one
+instrument or interpretation is wrong” until those competing explanations are separated.
+
+A closing review can replay the complete current boundaries directly:
+
+```sh
+perl scripts/check_claim_verification.pl --self-test
+perl scripts/check_claim_verification.pl --report
+perl scripts/check_current_claim_census.pl --report
+perl scripts/check_book_quantitative_claims.pl --report
+bash scripts/check_doctrines.sh
+```
+
+The reports answer different questions: provenance shape and current execution, silent current-claim closure,
+manual-wide quantitative adjudication, and repository doctrine composition. A green provenance report never
+promotes the book's explicitly incomplete assertion regions or turns a malformed interpretation into truth.
+
 ### The current-claim census freezes evidence before repair
 
 The migration sweep is deliberately staged. Its bounded contract derives eligible surfaces from the live-
@@ -298,7 +356,8 @@ perl scripts/check_current_claim_census.pl --produce
 
 The closing audit also reverses the join: every produced candidate must have exact frozen evidence or carry a
 current registered claim annotation. The `.3c` boundary closed 79 candidates as 51 exact keys and 28 annotations;
-the five exact claim publications added by `.4` make the current lockstep result 84 = 51 + 33 + 0 unresolved.
+`.4` closed at 84 = 51 + 33, and the two final documentation annotations make the `.5` lockstep result
+86 = 51 + 35 + 0 unresolved.
 The twenty-seven-case suite instantiates every outcome family and drives family-specific plus
 surface/view/path/region/source/identity coverage faults RED.
 

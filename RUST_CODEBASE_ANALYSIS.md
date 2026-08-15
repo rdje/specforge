@@ -4,6 +4,16 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-16 — production-graph oracle currency; `CLAIM-VERIFICATION-ADOPTION.5`)
+
+- Closing full CI found that `tools/production-genericity-graph` still asserted the exact pre-clarification
+  repository snapshot even though `SPEC-CLARIFICATION-LOOP.2` had added one compiled module and one declared
+  non-authoritative boundary row and had recorded the new graph in this analysis.
+- The deterministic current-repository oracle now matches the independently derived 79 modules / 141 rows /
+  six non-authoritative regions / 2,347 functions / 14,294 helper edges / 12,514 decision sites / 1,459 macros.
+  The four focused crate tests and all five production-genericity components pass. No graph derivation, product
+  path, public API, or production architecture changes.
+
 ## Session update (2026-08-15 — deterministic clarification planner; `SPEC-CLARIFICATION-LOOP.2`)
 
 - `ir::clarification` now normalizes governed unresolved observations as `ClarificationNeed` and plans at most

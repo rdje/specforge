@@ -67,8 +67,10 @@ enforced by the compositional `PRODUCTION-GENERICITY` row rather than a vocabula
 `CLAIM-VERIFICATION` is the fifth portable architecture's enforcement row. Its dedicated self-bounded registry
 and checker execute verified claims' argv-form source/RED controls, authenticate exact tracked artifact digests,
 require complete stale-check membership, and resolve the prepared commit message or `HEAD` against known current
-claim IDs. Twenty-two controlled cases keep malformed, stale, or untracked provenance fail-closed; record validity is
-not treated as proof that the underlying assertion is semantically correct.
+claim IDs. Twenty-seven controlled cases keep malformed, stale, untracked, missing/stale/misdirected exact-RED,
+and ignored/untracked scratch-producer provenance fail-closed. The live audit derives seven cited controls, seven
+exact RED regions, and six governed producers with zero ignored or untracked candidates; record validity is not
+treated as proof that the underlying assertion is semantically correct.
 
 **`TOOLBOX.md`** is SpecForge's own diagnostic catalog (the evidence the checklist cites comes from
 these): `doctor`, `inspect`, `validate`, `adapt --target isf` (`blocking_reasons`), FSMGen

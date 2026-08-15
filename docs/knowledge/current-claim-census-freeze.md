@@ -53,3 +53,7 @@ known registered annotation remains green, while an unrecorded derived marker fa
 The `.3c` commit boundary was 79 = 51 exact + 28 registered + zero unresolved. `.4` publishes five additional
 exact claim annotations in governed task, memory, ledger, toolbox, and book surfaces; the current closure is
 therefore 84 = 51 exact + 33 registered + zero unresolved without changing the 56 evidence classifications.
+
+The closing `.5` documentation adds two current annotations in the governed change ledger and task evidence.
+Final adoption therefore closes 86 = 51 exact + 35 registered + zero unresolved, again without changing the
+frozen 56-unit authority vector.

@@ -1,3 +1,14 @@
+### CLAIM-VERIFICATION-ADOPTION.5 — close three-leg claim verification adoption
+
+- Added the complete mdBook author/reviewer walk-through: scope classification, runnable source/control replay,
+  honest missing-leg records, stochastic intervals, and the auditor's asymmetric disagreement workflow.
+- Published the five-architecture composition fact and final public status, and corrected the stale public
+  priority from the completed genericity program to controller-ranked `SPEC-TO-INTENT-ALIGNMENT.7`.
+- Closing full CI exposed and repaired a stale production-graph test oracle left by the clarification planner's
+  one-module/one-boundary expansion; all seven exact expectations now match the independently derived live graph.
+- Closed the independent current/manual audit, all-tier doctrines, selected full CI, mdBook, and project-local
+  residue boundary; removed 12,097 rebuildable incremental files (about 9.6 GiB) and two empty temp logs. `[claim: claim-provenance-gate-active]`
+
 ### CLAIM-VERIFICATION-ADOPTION.4 — prove tracked producers and falsifying controls
 
 - Bound all seven cited falsification controls to named perturbations, expected diagnostics, and exact tracked

@@ -17,17 +17,21 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.4` owns tracked-producer and cited falsification-control closure.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.5` owns documentation, independent audit, and final adoption signoff.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.4` now binds 7 cited controls to 7 exact known-bad regions across 6 governed producers; the
-  ignored/untracked producer-shaped census is 0/0. The workflow catalog probe observes a controlled sub-ceiling
-  RED result, and the expanded claim-gate suite passes 27/27. `[claim: claim-provenance-gate-active]`
-  The completed outer/current and inner/mdBook census authorities remain unchanged.
+- Current state: the fifth architecture now has runnable author/reviewer, missing-leg, stochastic, and auditor-
+  asymmetry guidance plus a retrievable five-architecture composition fact. The clean-boundary audit found zero
+  silent current candidates and corrected the stale public priority to `SPEC-TO-INTENT-ALIGNMENT.7`. Closing CI
+  then found the production-graph crate's exact-count test still bound to the snapshot before clarification `.2`;
+  all seven expectations are repaired, and selected full CI passes every doctrine, qualification, Rust/doc/book,
+  and final locality plane.
+  `[claim: claim-provenance-gate-active]`
+  The completed outer/current and inner/mdBook census authorities remain mechanically closed.
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: reconcile current/book regions and all claim digests, run focused/book/live-size/locality/doctrine
-  gates, commit `.4`, verify clean, then activate `.5`. `MEMORY.md` stays capped.
-- In-flight uncommitted: `.4` checker/schema, standard/ADR/fact projections, ledgers, task, memory, toolbox, and
-  mdBook updates await exact-region/digest reconciliation and final gates; no background job.
+- Next action: refresh final exact identities, run closing gates, commit `.5`, verify clean, then activate
+  `SPEC-TO-INTENT-ALIGNMENT.7`. `MEMORY.md` stays capped.
+- In-flight uncommitted: verified `.5` implementation, book/fact/status/decision/ledger/task/memory, graph test
+  oracle, and derived projections await final identities, closing gates, and commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

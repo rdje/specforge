@@ -49,7 +49,7 @@ mod tests {
         let root = repository_root();
         let first = analyze_repository(&root).expect("current production graph");
         let second = analyze_repository(&root).expect("repeat current production graph");
-        assert_eq!(first.inventory_files.len(), 78);
+        assert_eq!(first.inventory_files.len(), 79);
         assert_eq!(first.targets.len(), 4);
         assert!(!first.modules.is_empty());
         assert!(!first.items.is_empty());
@@ -72,7 +72,7 @@ mod tests {
         let second =
             analyze_information_flow(&root).expect("repeat current information-flow boundary");
 
-        assert_eq!(first.boundary_rows, 140);
+        assert_eq!(first.boundary_rows, 141);
         assert_eq!(first.source_types, 22);
         assert_eq!(first.source_fields, 13);
         assert_eq!(first.source_parameters, 3);
@@ -82,14 +82,14 @@ mod tests {
         assert_eq!(first.canonical_seams, 12);
         assert_eq!(first.proof_gates, 25);
         assert_eq!(first.trusted_regions, 11);
-        assert_eq!(first.non_authoritative_regions, 5);
+        assert_eq!(first.non_authoritative_regions, 6);
         assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_275);
-        assert_eq!(first.helper_edges, 11_926);
-        assert_eq!(first.decision_sites, 11_396);
+        assert_eq!(first.analyzed_functions, 2_347);
+        assert_eq!(first.helper_edges, 14_294);
+        assert_eq!(first.decision_sites, 12_514);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
-        assert_eq!(first.semantic_macros, 1_446);
+        assert_eq!(first.semantic_macros, 1_459);
         assert_eq!(
             serde_json::to_vec(&first).expect("serialize first flow report"),
             serde_json::to_vec(&second).expect("serialize repeated flow report")

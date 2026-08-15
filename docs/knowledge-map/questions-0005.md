@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > how does the VLM understand tables / can a VLM read PDF tables
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how does the active task migration preserve non-ASCII legacy bytes
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > how does the adversarial PDF identity test preserve source bytes
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
@@ -291,9 +297,3 @@
   > how many pages elements and normalized files does the OpenCAPI data link ingest produce
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how many quantitative prose candidates are in the SpecForge book
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how many retained documents depended entirely on heuristic SemanticIR interfaces

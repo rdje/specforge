@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.5 (`2026-08-15`) — the five architectures form a join, not a hierarchy
+
+The closing documentation keeps the five portable architectures orthogonal. Task trees answer who owns work;
+memory answers how to resume it; the Knowledge Map answers where established truth lives; doctrine enforcement
+answers which repository invariants mechanically hold; claim verification answers what evidence earns a current
+assertion. Collapsing any pair would recreate a blind spot—for example, a perfectly owned task can still publish
+a non-independent measurement, while a current claim record cannot authorize an unowned change.
+
+The independent public-status review also found that its authored highest-priority field still named the already
+completed genericity program even though the current snapshot and roadmap select `SPEC-TO-INTENT-ALIGNMENT.7`.
+The repair updates the single authored-intent field and its exact census evidence; it does not rewrite the older
+dated achievement entries that accurately describe what was believed at their own boundaries.
+
+Closing CI supplied a second independent finding. `SPEC-CLARIFICATION-LOOP.2` correctly registered its new
+`clarification.rs` module and non-authoritative flow region, and its production-genericity report plus live Rust
+analysis recorded 79 modules / 141 rows / 2,347 functions / 14,294 edges / 12,514 decisions / 1,459 macros. The
+Rust graph crate's deterministic current-repository test still asserted the preceding snapshot. Because the
+ordinary structural gate derives the graph instead of comparing to that test snapshot, it stayed green; the
+workspace test plane independently caught the stale oracle. The repair updates all seven affected expectations
+and records the package test in the retrievable fact's replay, without changing graph derivation or product code.
+
 ## CLAIM-VERIFICATION-ADOPTION.4 (`2026-08-15`) — a self-test name is not RED evidence
 
 Executing a control proves its current top-level result, but a future reviewer still cannot tell which mutation

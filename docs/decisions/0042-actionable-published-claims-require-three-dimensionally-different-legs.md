@@ -87,8 +87,16 @@ The disagreement stays explicit until the falsification leg separates the compet
 - Historical records remain stable; only their reuse as current truth creates new verification work.
 - Claim verification complements rather than replaces task-tree acceptance, regression oracles, Knowledge Map
   retrieval, or doctrine enforcement.
-- The fifth architecture is published now; mechanical provenance enforcement, current-claim migration, RED-control
-  closure, and full adoption signoff remain owned by `.2` through `.5`.
+- The fifth architecture's implementation is owned by `.2` through `.5`: mechanical provenance enforcement,
+  current-claim migration, RED-control closure, documentation, and final signoff close through those leaves.
+
+## Implementation status
+
+`CLAIM-VERIFICATION-ADOPTION.5` closes the planned adoption. The bounded registry and doctrine gate are active;
+the current-surface and mdBook quantitative censuses expose silent or incomplete authority; every cited control
+binds exact known-bad evidence; ignored or untracked producer candidates fail; and the mdBook teaches the author
+and auditor workflow. This status records implementation of the decision without changing its scope or the
+deliberate boundary that registry validity alone cannot prove semantic truth.
 
 ## Links
 

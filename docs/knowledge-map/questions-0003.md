@@ -50,6 +50,8 @@
   > does cargo test need TMPDIR set manually
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > does changing a source path mean a corpus document was refreshed
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > does claim verification replace task trees or doctrine enforcement
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > does cleaning normalized bundles undo a completed corpus re-ingest
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
@@ -295,5 +297,3 @@
   > how are project rescan working directories kept portable
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how are register fields written as section headings extracted

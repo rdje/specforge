@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how are register fields written as section headings extracted
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how are repository owned and external input path origins labeled
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -102,6 +104,8 @@
   > how do dword-relative page fragments chain
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -182,6 +186,8 @@
   > how does a VLM timing note become a FigureRegion
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does a deliberate normalized-bundle reclamation get authorized
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > how does a future SpecForge session retrieve and re-run a current claim
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > how does a heterogeneous collection declare its legal maximum
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
@@ -292,9 +298,3 @@
   > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > how does the VLM understand tables / can a VLM read PDF tables
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how does the active task migration preserve non-ASCII legacy bytes
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > how does the adversarial PDF identity test preserve source bytes

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
 - Last updated: `2026-08-15`
@@ -59,7 +59,7 @@ the workflow through the mdBook and repository review path.
 ## Task Tree
 
 - ID: `CLAIM-VERIFICATION-ADOPTION`
-  Status: `active`
+  Status: `done`
   Goal: adopt re-derive / falsify / durability as the enforceable definition of a checked published claim
   Children: `.0`, `.1`, `.1a`, `.1b`, `.2`, `.3`, `.4`, `.5`
 
@@ -278,12 +278,13 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.4 — prove tracked producers and falsifying controls`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.5`
-  Status: `pending`
+  Status: `done`
   Goal: document, independently audit, and close the fifth portable architecture
   Acceptance: the mdBook teaches claim classification, authoring, review, missing-leg reporting, stochastic
   intervals, and the auditor asymmetry with runnable SpecForge examples; Knowledge Map, task/public status,
   architecture analysis, and resume pointer agree; an independent closure audit finds no silent in-scope claim;
-  selected full CI passes and project-owned verification artifacts are cleaned or retained by policy
+  selected full CI passes, including a current exact production-graph oracle, and project-owned verification
+  artifacts are cleaned or retained by policy
   Verification: mdBook test/build, catalogs, full CI, final doctrine and locality gates
   Commit: `CLAIM-VERIFICATION-ADOPTION.5 — close three-leg claim verification adoption`
 
@@ -309,7 +310,7 @@ the workflow through the mdBook and repository review path.
 | 16 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `done` | 56-unit repair freeze closes all five outer incomplete keys |
 | 17 | `CLAIM-VERIFICATION-ADOPTION.3c` | `done` | 27-case family/join matrix and zero-unresolved candidate closure close `.3` |
 | 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `done` | seven controls and six producers close with exact RED evidence and zero scratch candidates |
-| 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
+| 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `done` | public workflow, independent audit, and selected full CI close the fifth architecture |
 
 ## Decisions
 
@@ -452,6 +453,28 @@ the workflow through the mdBook and repository review path.
   under `scripts/`, `doctrine/`, `docs/`, and `.github/`. Any such scratch instrument is RED even if no registry
   row currently names it, preventing an omitted producer from silently becoming signoff authority.
   `[claim: claim-provenance-gate-active]`
+
+## Final Adoption Signoff (`CLAIM-VERIFICATION-ADOPTION.5`)
+
+- The mdBook now teaches the complete workflow through one real capacity claim: scope classification, source
+  replay, a controlled independent RED probe, tracked stale identity, exact publication declaration, an honest
+  incomplete-record example, stochastic interval requirements, and auditor asymmetry.
+- A dedicated Knowledge Map card joins the five architectures without conflating them: task ownership, durable
+  resume, question-first retrieval, composed doctrine enforcement, and per-claim evidence.
+- The clean `b101aaaa` boundary independently reproduced the outer candidate closure and inner manual map before
+  closing edits. Final reports retain zero silent current candidates and every manual candidate has one exact
+  authority or named missing legs. `[claim: claim-provenance-gate-active]`
+- Public alignment found one stale authored-intent field: `LIVE_ACHIEVEMENT_STATUS.md` still selected completed
+  `.6d.ii.f` work while the current snapshot and roadmap select `SPEC-TO-INTENT-ALIGNMENT.7`. The single current
+  priority field is corrected; historical dated entries remain immutable evidence.
+- Closing full CI found that `SPEC-CLARIFICATION-LOOP.2` had correctly expanded the production graph to 79
+  modules / 141 boundary rows and recorded the resulting 2,347 functions / 14,294 edges / 12,514 decisions /
+  1,459 macros, but the independent Rust determinism test retained its preceding 78 / 140 / 2,275 / 11,926 /
+  11,396 / 1,446 expectations and five instead of six non-authoritative regions. `.5` owns the exact test-oracle
+  currency repair because that defect blocks its selected-CI acceptance; no product path, public API, graph
+  derivation, or roadmap direction changes.
+- The roadmap direction stays byte-identical because it already selects `.7`; task, public status, book,
+  architecture analysis, retrieval, and resume state now agree.
 
 ## Repaired Current-Claim Result (`CLAIM-VERIFICATION-ADOPTION.3b.4`)
 
@@ -650,7 +673,28 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Blockers
 
-- None. `.4` is closed; `.5` owns independent documentation/signoff and selected full CI next.
+- None. The adoption tree is closed; after the clean `.5` commit, PNT activates controller-ranked
+  `SPEC-TO-INTENT-ALIGNMENT.7`.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.5`
+
+- [x] **REPRODUCE / MEASURE** — the clean `b101aaaa` replay closes the current and manual denominators before
+  final edits; the final tree reruns both reports, all claim commands, exact RED controls, and scratch census.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the implementation was mechanically complete but the book lacked a single
+  end-to-end author/auditor example and retrieval lacked the five-architecture join; public status also retained
+  a stale authored priority below current completion entries. Closing CI additionally proved that `.2` expanded
+  the governed production graph while `tools/production-genericity-graph/src/lib.rs` retained its preceding
+  exact-count oracle.
+- [x] **ADDRESSED (verified)** — runnable examples cover classification, missing/stochastic evidence, disagreement,
+  and review; the relationship fact is derived into bounded retrieval; the priority now agrees with the roadmap;
+  the Rust test oracle matches the independently derived current graph without changing graph production.
+- [x] **NO REGRESSION** — focused production-graph tests plus selected full CI, all-tier doctrines, current/manual
+  claim checks, catalogs, Knowledge Map, mdBook test/build, live-size, locality, and residue checks pass; the only
+  Rust change corrects exact test expectations and no roadmap byte changes occur.
+- [x] **GENERICITY** — examples depend on claim lifecycle, evidence dimensions, Git identity, and currentness,
+  never a specification, vendor, protocol, language, document, signal, or corpus identity.
+- [x] **LOCKSTEP** — standard/decisions, claim registry, book, five-architecture fact, public status, task,
+  ledgers, and resume pointer agree the fifth architecture is adopted and `.7` is the next product frontier.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.4`
 
@@ -991,6 +1035,12 @@ was added; the stable-path remedy and its consumed authority are complete.
   workflow sub-ceiling; tracked/ignored/untracked producer census; current/book/fact/Knowledge Map/task/memory/
   mdBook/live-size/locality/doctrine gates | 7 controls = 7 exact RED regions across 6 producers; 0 ignored and
   0 untracked candidates; current closure 84 = 51 + 33 + 0; `.4` closed |
+| `2026-08-16` | `.5` | clean-boundary current/manual replay; author/auditor review; production-graph exact-
+  oracle repair and focused four-test replay; fact/task/public-status/architecture alignment; all-tier doctrines;
+  selected full CI; mdBook/live-size/locality/residue gates | 10 doctrines and 11 genericity qualifications;
+  1,996 Rust tests / 8 ignored / 0 failed plus 5 compile-fail doctests; adoption closed at 79 modules / 141 rows,
+  zero silent current candidates and 304/304 manual candidates adjudicated; exact cleanup removes 12,097
+  rebuildable incremental files / about 9.6 GiB plus two zero-byte temp logs; `.7` aligned |
 
 ## Commit Log
 
@@ -1014,6 +1064,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3b.4` | `CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs` | five exact narrow replacements, zero outer incompletes, 46 non-frontier semantic outcomes preserved |
 | `.3c` | `CLAIM-VERIFICATION-ADOPTION.3c — close the current-claim sweep` | clean-boundary replay, all-family RED matrix, mechanically closed candidate denominator |
 | `.4` | `CLAIM-VERIFICATION-ADOPTION.4 — prove tracked producers and falsifying controls` | exact known-bad regions, repaired workflow probe, derived six-producer/scratch census |
+| `.5` | `CLAIM-VERIFICATION-ADOPTION.5 — close three-leg claim verification adoption` | complete author/reviewer workflow, five-architecture retrieval, public alignment, independent full signoff |
 
 ## Changelog
 
@@ -1066,3 +1117,6 @@ was added; the stable-path remedy and its consumed authority are complete.
 - `2026-08-15`: `.4` binds all seven cited controls to exact known-bad producer regions, repairs the independent
   workflow feasibility probe with a controlled sub-ceiling RED path, derives six governed producers with zero
   ignored/untracked candidates, and expands claim-gate controls from 22 to 27 before handing signoff to `.5`.
+- `2026-08-16`: `.5` publishes the runnable classification/author/auditor workflow and five-architecture join,
+  repairs the stale public priority and exact production-graph test oracle, independently closes both claim
+  censuses, runs selected full CI, and closes the adoption tree with `SPEC-TO-INTENT-ALIGNMENT.7` next.
