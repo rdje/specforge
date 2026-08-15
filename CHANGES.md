@@ -1,3 +1,13 @@
+### DECISION-RECORD-CAPACITY-HEADROOM.1 — derive the next decision capacity profile
+
+- Re-derived decision growth from Git: ADR 0041 brings the collection to 43 files and the observed peak active
+  day remains nine additions, so 58 is the smallest capacity keeping current use below 80% and one peak below
+  90%.
+- Kept every accepted record at its stable flat path. The coupled implementation must move 44→58 decision slots,
+  379→393 fact slots, and 3,072→3,584 question-key slots together without changing shard topology or hard caps.
+- Recorded why the 97.1%-byte ADR 0038 remains immutable evidence rather than being rewritten or special-cased;
+  future detailed measurements route out of the bounded decision itself.
+
 ### CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification
 
 - Opened the six-leaf adoption program for the requested fifth portable architecture: re-derive, falsify with an

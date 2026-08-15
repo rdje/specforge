@@ -56,13 +56,17 @@ unrelated architecture slice consumes the remaining three file slots and is refu
   Commit: `DECISION-RECORD-CAPACITY-HEADROOM.0a — pin independent decision-record size pressure`
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM.1`
-  Status: `pending`
+  Status: `done`
   Goal: census decision-record growth and decide a bounded, lossless capacity architecture
   Acceptance: exact population/history, all readers and writers, numbering/index/retrieval invariants, coupled
   authorities, candidate remedies, migration/rollback rules, and rejected alternatives are measured and an ADR
   accepts one design before any limit or topology changes
-  Verification: `pending`
-  Commit: `pending`
+  Verification: at the `.1` worktree boundary 43 Markdown files (42 committed plus ADR 0041) occupy the flat
+  collection; Git creation history preserves the nine-file peak active day; the accepted design minimally
+  re-derives 58 slots because 43/58 is below 80% and (43+9)/58 is below 90%; every reader/writer, stable path,
+  index/member route, Knowledge Map coupling, fact-catalog join, hard bundle cap, rollback, and rejected topology
+  is recorded; no limit or existing decision moves; catalogs, Knowledge Map, live-size, and doctrines pass
+  Commit: `DECISION-RECORD-CAPACITY-HEADROOM.1 — derive the next decision capacity profile`
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM.2`
   Status: `pending`
@@ -72,13 +76,23 @@ unrelated architecture slice consumes the remaining three file slots and is refu
   Verification: `pending`
   Commit: `pending`
 
+- ID: `DECISION-RECORD-CAPACITY-HEADROOM.2a`
+  Status: `pending`
+  Goal: retire the exact ceiling-increase authority consumed by `.2`
+  Acceptance: after `.2` commits, remove the now-banked decision-record authority without moving any surface,
+  projection, decision, or limit; the live-size and doctrine gates return green against the committed profile
+  Verification: `pending`
+  Commit: `pending`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `DECISION-RECORD-CAPACITY-HEADROOM.0` | `done` | exact clean pressure boundary and ownership are pinned |
 | 2 | `DECISION-RECORD-CAPACITY-HEADROOM.0a` | `done` | per-record line/byte pressure is distinguished from collection count |
-| 3 | `DECISION-RECORD-CAPACITY-HEADROOM.1` | `pending` | measure and decide before any future record exhausts the remaining three slots |
+| 3 | `DECISION-RECORD-CAPACITY-HEADROOM.1` | `done` | ADR 0041 derives a 58-record flat profile without moving accepted paths |
+| 4 | `DECISION-RECORD-CAPACITY-HEADROOM.2` | `pending` | apply and fault-test the coupled 58-record / 393-fact / 3,584-question profile |
+| 5 | `DECISION-RECORD-CAPACITY-HEADROOM.2a` | `pending` | retire `.2`'s consumed authority after the new profile is committed |
 
 ## Decisions
 
@@ -90,16 +104,39 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 - `2026-08-14`: ADR 0038's per-file pressure is independent of the collection count. `.1` must decide how an
   accepted, effectively immutable record is classified or losslessly partitioned; a count raise cannot silence
   or cure a 31,833-byte member, and rewriting accepted rationale in place is not an admissible shortcut.
+- `2026-08-15` (ADR 0041): retain the flat stable-path collection and minimally re-derive 58 file slots from the
+  43-file post-decision population plus the observed nine-file peak day. This implies 393 fact slots and 3,584
+  question-key slots; no shard/file topology or portable hard cap changes.
+- `2026-08-15`: ADR 0038 is accepted, stable, and no longer appendable. Its per-file warning remains honest; the
+  authoring remedy for future large decisions is to keep Context/Decision/Consequences bounded and route detailed
+  measurements to the owning task/research evidence, not mutate or special-case an accepted record.
 
 ## Open Questions
 
-- Should the canonical collection gain a bounded routed partition, a newly derived count profile, or both?
-  `.1` must answer from reader/writer and growth evidence before any authority moves.
+- None for the selected profile. A future warning must repeat the same population/peak-day derivation rather than
+  treating 58 as permanent or spending the portable bundle's unused hard capacity preemptively.
 
 ## Blockers
 
-- Execution is intentionally sequenced after the current alignment containment activity; measurement is not
-  otherwise blocked.
+- None. `.2` is the next executable leaf.
+
+### Acceptance Checklist (enforced) — `DECISION-RECORD-CAPACITY-HEADROOM.1`
+
+- [x] **REPRODUCE / MEASURE** — Git creation history yields 43 files at the `.1` boundary and a nine-file peak
+  active day; current aggregate content is 3,875 lines / 256,041 bytes before ADR 0041, while ADR 0038 remains
+  uniquely largest at 474 lines / 31,833 bytes / 397 maximum line bytes.
+- [x] **ROOT CAUSE (WHY + WHERE)** — ADR 0029 correctly derived 44 slots from the then-30-file population and
+  nine-file peak, but legitimate decisions have consumed that measured buffer. The flat collection has a stable
+  index/KM path and no topology defect; the stale input is population, not the formula.
+- [x] **ADDRESSED (verified)** — ADR 0041 re-runs the same milestone equation including its own file: 43/58 =
+  74.1% and (43+9)/58 = 89.7%. `.2` owns the exact 44→58 surface change, 379→393 fact join, 3,072→3,584 question-
+  key step, authority, full-capacity/fail-closed controls, and rollback as one transaction.
+- [x] **NO REGRESSION** — `.1` changes no limit, existing decision, glob, stable path, projection algorithm, or
+  product behavior; task/decision/fact catalogs, Knowledge Map, live-size, mdBook review, and doctrines pass.
+- [x] **GENERICITY** — the profile is derived only from lifecycle, population, observed peak, and fixed warning/
+  rollover milestones; no decision subject or project feature controls capacity.
+- [x] **LOCKSTEP** — ADR 0041, this tree, live continuity docs, generated indexes, and resume pointer agree that
+  58 is accepted but not implemented; claim-verification `.1` remains sequenced after `.2/.2a`.
 
 ### Acceptance Checklist (enforced) — `DECISION-RECORD-CAPACITY-HEADROOM.0`
 
@@ -137,6 +174,9 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | --- | --- | --- | --- |
 | `2026-08-14` | `.0` ownership | exact tracked-file census; ADR 0029; registry; catalogs/retrieval/live-size/doctrine; boundary diffs | 41 / 44 files, 93.2%, three slots; no authority, decision, or product change |
 | `2026-08-14` | `.0a` member pressure | exact per-file metrics; live-size pressure; boundary diffs; catalogs/retrieval/doctrine | ADR 0038 at 474 lines / 31,833 bytes / 397 max-line bytes; 38 lines and 935 bytes remain; no record or authority change |
+| `2026-08-15` | `.1` design | Git add-history census; current metrics; readers/writers and coupling search;
+  candidate/rollback analysis; ADR/catalog/KM/live-size/doctrine checks | 58 slots selected from 43 current + nine
+  peak; 393 fact slots / 3,584 question-key slots are the exact coupled next profile; no authority moved |
 
 ## Commit Log
 
@@ -144,6 +184,7 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | --- | --- | --- |
 | `.0` | `DECISION-RECORD-CAPACITY-HEADROOM.0 — track decision-record capacity pressure` | ownership and exact pressure boundary only |
 | `.0a` | `DECISION-RECORD-CAPACITY-HEADROOM.0a — pin independent decision-record size pressure` | distinguish immutable-member shape from collection count before design |
+| `.1` | `DECISION-RECORD-CAPACITY-HEADROOM.1 — derive the next decision capacity profile` | ADR 0041; flat stable paths retained; capacity implementation is next |
 
 ## Changelog
 
@@ -151,3 +192,5 @@ unrelated architecture slice consumes the remaining three file slots and is refu
   decision record, bound, or product state changed, and `.1` owns the measured architecture decision.
 - `2026-08-14`: `.0a` records ADR 0038's separate 474-line / 31,833-byte pressure after the next full gate; no
   accepted decision or live-size authority changed.
+- `2026-08-15`: `.1` accepts the minimal next profile—58 decision files, 393 facts, and 3,584 question keys—after
+  re-deriving the current population, nine-file peak, stable reader/writer topology, and portable hard caps.

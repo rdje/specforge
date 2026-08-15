@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## DECISION-RECORD-CAPACITY-HEADROOM.1 (`2026-08-15`) — changed inputs, same derivation
+
+The 44-file profile was not wrong; it was sized from 30 files and a nine-file peak. The population changed.
+Including ADR 0041 itself, 43 current files require a minimum of 58 slots to preserve the same warning/rollover
+contract. This keeps capacity review empirical: a future warning re-runs the trajectory rather than treating 58
+as a permanent entitlement.
+
+The fact plane makes the decision count nonlocal by design. Fifty-eight files imply 57 answers-bearing decision
+slots, so 336 card slots become 393 total facts and the next 512-key quantum is 3,584 question keys. The existing
+projection already funds that shape. Moving records or raising portable hard caps would add risk without solving
+a measured problem.
+
 ## CLAIM-VERIFICATION-ADOPTION.0 (`2026-08-15`) — repeated checking is not independent evidence
 
 SpecForge already has many strong ingredients: exact derived-state contracts, deterministic projections,

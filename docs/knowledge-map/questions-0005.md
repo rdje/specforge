@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > how does the register reader recover a field name with no name column
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how does the section-heading field reader tell a message container from a register container
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -123,6 +125,8 @@
   > how is the composition-frame grammar kept free of corpus false positives
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > how is the corpus distributed across the document intent categories
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > how is the decision-record file bound derived
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -293,7 +297,3 @@
   > how much memory did the guarded CoreSight Base System ingest use
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how much memory did the guarded Introducing CoreSight ingest use
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how much memory did the guarded OpenCAPI AFU address note ingest use
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Certified Definition ingest use
