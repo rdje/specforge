@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3b.3.3 (`2026-08-15`) — mapping authority is not assertion authority
+
+The mdBook freeze proves that every quantitative candidate has one exact current classification and that the
+classification cannot drift silently. It does not turn an `incomplete` outcome into evidence for the sentence it
+points at. The registered claim therefore asserts the denominator, exact-region identity, outcome vector, and
+explicit missing-leg representation; its wording refuses to assert that the 75 underlying measurements are true.
+
+That distinction lets the outer census consume a durable exact map without repeating a blanket-title error. A
+future repair can select one incomplete line, earn its evidence, and change exactly that region. Until then, the
+claim gate, fact card, and book all expose the missing re-derivation, independent falsification, and durability
+instead of using a green mapping checker as a semantic oracle.
+
 ## CLAIM-VERIFICATION-ADOPTION.3b.3.2 (`2026-08-15`) — scope is exact, uncertainty stays visible
 
 Quantitative syntax cannot decide whether a line is a current product promise, an authored limit, a worked

@@ -1,3 +1,14 @@
+### CLAIM-VERIFICATION-ADOPTION.3b.3.3 — freeze mdBook quantitative authorities
+
+- Registered `mdbook-quantitative-census-frozen` with executable result replay, the nineteen-case controlled
+  falsification suite, and digest-complete durability over the contract, sources, lockstep publications, fact
+  card/catalog, and retained task evidence.
+- Added the routed Knowledge Map fact card and bounded catalog/projection updates. The verified claim freezes the
+  exact 8 registered / 75 incomplete / 221 excluded map; it does not promote any incomplete underlying assertion.
+  `[claim: mdbook-quantitative-census-frozen]`
+- Closed `.3b.3` and left the outer five-key census unchanged for `.3b.4`'s atomic rewrite.
+  `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3b.3.2 — adjudicate mdBook quantitative assertions
 
 - Adjudicated all 304 prose candidates with exact single-line regions: eight join the verified workflow-capacity

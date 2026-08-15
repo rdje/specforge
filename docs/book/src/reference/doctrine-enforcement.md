@@ -389,14 +389,17 @@ WIRE-BASED-100 golds and `kg-bench` (156/156) are orthogonal by construction.
 
 ## Quantitative adjudication result
 
-At the `.3b.3.2` adjudication boundary, the pre-authority report records `regions=304`, `registered=8`,
-`incomplete=75`, and `excluded=221`. The exclusions remain separated as `authored=26`, `example=8`, `identity=1`,
-and `dated=186`; those labels are exact-region scope, not a claim that the rest of a section shares the same
-meaning. Registered regions are limited to the verified workflow-capacity profile. Every other current actionable
-assertion keeps re-derivation, independent falsification, and durability visibly missing until a later repair
-earns those legs. The next owned leaf must independently replay and freeze this result before an outer consumer
-treats the vector itself as current authority.
+The `.3b.3.3` authority freezes `regions=304`, `registered=8`, `incomplete=75`, and `excluded=221`. The exclusions
+remain separated as `authored=26`, `example=8`, `identity=1`, and `dated=186`; those labels are exact-region scope,
+not a claim that the rest of a section shares the same meaning. Registered regions are limited to the verified
+workflow-capacity profile. Every other current actionable assertion keeps re-derivation, independent
+falsification, and durability visibly missing until a later repair earns those legs.
+`[claim: mdbook-quantitative-census-frozen]`
 
 The first full replay also found and fixed a bound-dimension defect: record capacity belongs to `max_records`,
 while `max_array_items` applies only to arrays inside one record. The controlled suite now includes a contract
 whose record count exceeds its nested-array limit but remains inside the independent record limit.
+
+This claim verifies the mapping and its honest uncertainty, not the truth of an incomplete line. Reproduce the
+boundary with the checker commands above; `--self-test` challenges the failure classes before `--check` executes
+the tracked exact-region result.
