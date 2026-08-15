@@ -159,6 +159,7 @@ The author template is linked separately and is never classified as active work.
 | `SIGNAL-TABLE-COLUMNLESS-RECALL` | `done` | capture signals from column-less Signal\|Description tables | [open](tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md) |
 | `SIGNOFF-BURNDOWN` | `superseded` | WITHDRAWN — this tree was archaeology | [open](tasks/SIGNOFF-BURNDOWN.md) |
 | `SIGNOFF-REMEDIATION` | `done` | Restore signoff quality at HEAD | [open](tasks/SIGNOFF-REMEDIATION.md) |
+| `SPEC-CLARIFICATION-LOOP` | `active` | autonomous-first, user-assisted specification completion | [open](tasks/SPEC-CLARIFICATION-LOOP.md) |
 | `SPEC-MINING-PROVENANCE` | `done` | name the discipline + a per-author adopt/defer ledger | [open](tasks/SPEC-MINING-PROVENANCE.md) |
 | `SPEC-TO-INTENT-ALIGNMENT` | `active` | steer PDF evidence into complete executable-intent IR | [open](tasks/SPEC-TO-INTENT-ALIGNMENT.md) |
 | `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT` | `done` | keep the active alignment program bounded and resumable | [open](tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md) |

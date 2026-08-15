@@ -20,6 +20,8 @@
   > Can a temporary conformance artifact use a canonical stage writer?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can a test-only Rust edit stale production proof?
+- [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
+  > Can a user answer directly authorize canonical intent?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can fixture names decide KG capability or prior-candidate routing?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -82,6 +84,8 @@
   > How does SourceIR classification remain specification neutral?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does SpecForge keep source-owned symbol spelling opaque?
+- [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
+  > How does SpecForge minimize clarification round trips?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How does a canonical IR claim prove where it came from?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
@@ -126,8 +130,14 @@
   > How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How will SpecForge enforce that identifiers are opaque?
+- [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
+  > How will SpecForge proceed when a PDF lacks information needed for complete ISF?
+- [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
+  > How will SpecForge resume after the user answers a clarification?
 - [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md)
   > In what order must a current proof-bearing chain be rebuilt and validated?
+- [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
+  > Is the autonomous-first clarification loop implemented yet?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Is the generic production core physically separated from conformance code?
 - [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md)
@@ -168,6 +178,8 @@
   > What is the production genericity module denominator?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > What is the root-last failure transaction for alignment evidence migration?
+- [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
+  > What must a SpecForge clarification packet contain?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > What normalized parent and state precedence does the alignment task migration use?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
@@ -286,15 +298,3 @@
   > are the disconnected/unconnected KG agents a recoverable relation gap or false positives
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > are the external corpus PDFs on the same filesystem volume as the repository
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > are the per-page full-res page images read by any downstream consumer
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > are the register-bit-recovery plumbing gaps (unknown diagrams, fragmented field tables) fixed
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > are the wire-gold .isf affected by the module-name sanitization (no — byte-identical; their names are pure alphanumeric, so the allowlist is a no-op)
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > are the wire-gold / other .isf affected by the enum emit gate (no — byte-identical; only HBM2 hbm.isf changes corpus-wide; the criterion never flags a legit decimal)
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > are transaction phase names allowlisted by protocol
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > are ungrounded SemanticIR records dropped silently or demoted

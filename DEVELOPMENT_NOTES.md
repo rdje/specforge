@@ -1,4 +1,21 @@
 # DEVELOPMENT_NOTES
+## SPEC-CLARIFICATION-LOOP.0 (`2026-08-15`) — autonomous-first interaction boundary
+
+The useful boundary is not “human in the loop everywhere.” That would destroy throughput and make results depend
+on operator patience. SpecForge should exhaust governed autonomous work first, continue unaffected branches, and
+ask only when a missing premise blocks valuable downstream intent. Questions must therefore be deduplicated,
+dependency-ordered, grouped, and ranked by blocking impact and expected information gain.
+
+The opposite mistake is treating an answer as an oracle. A user may provide a design choice, point to overlooked
+source evidence, resolve a genuine specification ambiguity, or simply be wrong. The answer needs its own typed
+authority/currentness/consistency boundary and must enter the proof graph as provenance-bearing evidence. Minimal
+dependency replay then gives the feedback loop its efficiency: invalidate exactly what depended on the answer,
+retain unrelated current facts, and preserve crash-safe status across the exchange.
+
+The new task tree separates this from the existing weak-phrase detector. That detector remains a flag-only input;
+the clarification program owns question planning, interaction, validated answer ingestion, transactional resume,
+and end-to-end assisted PDF-to-FSMGen-ISF qualification.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v (`2026-08-15`) — bounded production-genericity signoff
 
 The final claim is deliberately narrower than “SpecForge is complete.” The production core is now signed off as

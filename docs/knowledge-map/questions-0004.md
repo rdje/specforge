@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how do I add a new enforced doctrine / doctrine check
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how do I add fact-card capacity
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > how do I file an FSMGen bug report or feature request
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how do I make the NLI verifier actively change extraction / demote claims
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I measure the extraction-quality gauge before and after a canonical promotion
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -286,15 +298,3 @@
   > how is SourceIr loaded from disk by downstream commands
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how is a CI-tier doctrine registered without slowing down the pre-commit hook
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how is a Reg.Field cross-reference distinguished from a real constraint subject
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how is a claim's grounding checked beyond a string match
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is a completed oversized task tree contained without losing evidence
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)

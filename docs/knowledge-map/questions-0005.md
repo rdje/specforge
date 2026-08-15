@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > how is a Reg.Field cross-reference distinguished from a real constraint subject
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > how is a claim's grounding checked beyond a string match
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is a completed oversized task tree contained without losing evidence
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how is a fused Fields(Continued) caption handled
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -285,15 +297,3 @@
   > how to recover register field bit positions that live in the layout graphic, not the table
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how was AHB HREADY recovered for the temporal antecedent
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how was AXI constraint precision fixed
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > how was the 400 page Docling SIGKILL reproduced
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > how was the CHI field-constraint routing measured without re-ingesting the PDF
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > how was the eval gold checked for idiosyncrasy
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > how was the migrated alignment task evidence independently audited

@@ -17,14 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` closes final behavioral/genericity signoff and parent state.
+- Active unit: `SPEC-CLARIFICATION-LOOP.1` owns the clarification, answer, lifecycle, and proof-authority IR.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: structural and behavioral production-genericity signoff is complete within the governed
-  boundary: 35/0/16/0 held-out outcomes and the 39/0/1, 42/42-provenance, zero-fabrication population compose.
-  This is not perfect recovery or product completion; one APB loss and coverage/accounting gaps remain.
-- Next action: run focused consistency checks, then full CI once as the selected `.f.v` signoff checkpoint;
-  commit the clean closure and create the durable user-assisted clarification-loop task tree. `MEMORY.md` remains
-  capped at 32,768 B.
-- In-flight uncommitted: `.f.v` closure and synchronized docs only; no background job. All replay scratch is absent.
+- Current state: `.f.v` is committed and production-genericity signoff is bounded complete. `.0` freezes and
+  publicly aligns typed source/proof-linked questions, validated answer evidence, minimal affected replay, and
+  honest unknown/defer/conflict states; the runtime interaction loop is not implemented yet.
+- Next action: inspect the current residual/proof/derivation schemas, then freeze the versioned clarification,
+  answer, and lifecycle IR plus its proof-authority ADR in `.1`. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: none after the `.0` commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

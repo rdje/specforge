@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > does changing a source path mean a corpus document was refreshed
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > does cleaning normalized bundles undo a completed corpus re-ingest
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > does constrained contract extraction ship code
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge apply the IntentIR NLI demotion gate
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge automatically run extract-contracts
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge automatically run recover-register-bits
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does converge automatically run signal-resolve
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
@@ -285,15 +297,3 @@
   > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how do Continued from previous page fragments find their home
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how do I add a new enforced doctrine / doctrine check
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > how do I add fact-card capacity
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > how do I file an FSMGen bug report or feature request
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how do I make the NLI verifier actively change extraction / demote claims

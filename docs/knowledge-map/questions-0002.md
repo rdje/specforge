@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > are the per-page full-res page images read by any downstream consumer
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > are the register-bit-recovery plumbing gaps (unknown diagrams, fragmented field tables) fixed
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > are the wire-gold .isf affected by the module-name sanitization (no — byte-identical; their names are pure alphanumeric, so the allowlist is a no-op)
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > are the wire-gold / other .isf affected by the enum emit gate (no — byte-identical; only HBM2 hbm.isf changes corpus-wide; the criterion never flags a legit decimal)
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > are transaction phase names allowlisted by protocol
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > are ungrounded SemanticIR records dropped silently or demoted
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > can EvidenceIR represent protocol structure without hardcoding a specification
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -285,15 +297,3 @@
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > does cargo test need TMPDIR set manually
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > does changing a source path mean a corpus document was refreshed
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > does cleaning normalized bundles undo a completed corpus re-ingest
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > does constrained contract extraction ship code
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > does converge apply the IntentIR NLI demotion gate
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > does converge automatically run extract-contracts
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > does converge automatically run recover-register-bits

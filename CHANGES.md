@@ -1,3 +1,17 @@
+### SPEC-CLARIFICATION-LOOP.0 — own autonomous and assisted completion
+
+- Added a dedicated eight-leaf task tree for the missing PDF-to-ISF interaction loop: autonomous completion where
+  evidence suffices, typed clarification where it does not, validated answer authority, minimal proof-bearing
+  resume, adversarial qualification, and end-to-end FSMGen-ISF closure.
+- Defined each clarification as a source/proof-linked artifact that explains the unresolved engineering
+  proposition, why automation stopped, alternatives, downstream impact, priority/information gain, accepted
+  answer schema, validation rules, lifecycle/currentness, and deterministic resume plan.
+- Kept the direction honest: user answers cannot bypass proof; unknown/defer/conflict remain explicit; unaffected
+  work continues autonomously; and the roadmap/book state that the runtime implementation begins in `.1`.
+- The required public status record reached the fail-closed 72-record threshold, so the same owned slice sealed
+  the 21 oldest eligible whole records as segment 0010 and restored the live ledger to 51 records without editing
+  a record or changing any limit.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v — close production-genericity signoff
 
 - Composed the unconditional proof-carrying 168-rule structural boundary, all 27 adversarial structural controls,

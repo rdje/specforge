@@ -6,6 +6,8 @@
 - treat text, layout, figures, captions, tables, and charts as first-class evidence rather than markdown decoration
 - prioritize semantic truthfulness and KG quality ahead of adapter breadth until the canonical four-layer pipeline is top-notch
 - make the workflow resumable and understandable through live project documentation
+- make PDF-to-ISF autonomous wherever evidence suffices and otherwise emit precise, source-linked clarification
+  packets whose validated answers resume only the affected proof-bearing work
 - apply the same identity-independent engine to any digital-chip specification: production decisions may use
   universal digital semantics and document grammar, but never document/vendor/protocol identity, named symbols,
   or corpus-specific phrases; undecidable input must become an explicit residual rather than a special case
@@ -41,8 +43,8 @@
   - validation
 - preserve ambiguity explicitly:
   - keep alternatives when the evidence is not yet decisive
-  - surface contradictions and residual decisions
-  - do not fabricate semantic certainty
+  - surface contradictions and residual decisions as typed clarification candidates with downstream impact
+  - resume affected work only after validated source/user evidence; never fabricate semantic certainty
 - keep generated replay plans inspectable without making display strings authoritative:
   - dry-run command text remains a review-facing rendering surface
   - empty dry-run selections still render an explicit queue header
