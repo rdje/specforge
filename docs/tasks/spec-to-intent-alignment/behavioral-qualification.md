@@ -126,17 +126,16 @@
   `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`
-  State: `in_progress`
+  State: `done`
   Goal: replay and reconcile the complete reviewed population under the behavioral oracle
   Acceptance: every current measurable chain and every explicitly unmeasurable legacy chain is accounted for;
   all metamorphic and negative runs are attributed; exact canonical, residual, proof, validation, and lowering
   deltas are published; no accepted transform loses truthfulness, provenance, or currentness
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
-  Verification: `the first clean full-PDF replay covers 12/12 documents and 48/48 stages but correctly blocks
-  publication: compared with the pinned b977a51f authority, fresh structural classification removes the AMD
-  packed-layout fabrication, expands GIC-400 from one generic false register to 15 source-named registers whose
-  access carrier is missing, and loses all 12 previously correct Arm Debug register facts; .f.iv.a owns the
-  neutral carrier repair before .f.iv.b reruns and publishes the population`
+  Verification: `the first clean full-PDF replay correctly blocks on the Arm/GIC carrier regressions; .f.iv.a
+  repairs them structurally and restores 24/24 retained-chain currency; .f.iv.b then replays 12/12 documents and
+  48/48 stages from clean e125aac7, publishes 39/0/1 IntentIR TP/FP/FN with 42/42 provenance and zero
+  fabrications, rebuilds the controller, and removes every declared replay root with residue absent`
   Commit: `completed by .f.iv.a and .f.iv.b child commits`
   Children: `.f.iv.a`, `.f.iv.b`
 
@@ -158,7 +157,7 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a — restore structural register carriers`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b`
-  State: `pending`
+  State: `done`
   Goal: rerun, reconcile, and publish the complete reviewed population after the structural carrier repair
   Acceptance: all 12 sources and 48 isolated stages replay from the clean .f.iv.a revision; exact canonical,
   residual, proof, validation, lowering, metamorphic, and negative deltas are published with current tool and
@@ -166,17 +165,29 @@
   a focused command-shape control prevents recurrence; tracked authorities reproduce byte-for-byte and all
   scratch is removed exactly
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `focused four-value command-builder test; exact 12-source / 48-stage replay manifest at
+  e125aac7; result 39/0/1, 42/42 provenance, 117/118 conservation, 7/14 disposition, 5/12 modality accounting,
+  zero fabrications, and one APB drop; replay/result/controller strict loaders and mutants; three roots / 5,616
+  files / 2,038,580 KiB plus runtime map removed with no residue; mandatory doctrine gate recorded below`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b — publish repaired reviewed population`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`
   State: `pending`
   Goal: close behavioral genericity and the `.6d.ii` parent without overstating the evidence
   Acceptance: structural and behavioral gates compose unconditionally; complete results, limitations, cleanup,
-  current status, task parents, controller, mdBook, retrieval facts, and full CI agree; `.6e` becomes eligible only
-  if the production core is genuinely specification-instance-neutral
+  current status, task parents, controller, mdBook, retrieval facts, and full CI agree; controller-ranked `.7`
+  becomes eligible only if the production core is genuinely specification-instance-neutral
   Verification: `pending`
   Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6e`
+  State: `superseded`
+  Goal: retire the former AMD IOMMU and GIC-400 fabrication repair lane after later evidence closes its premise
+  Replacement: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` repairs the structural carriers and `.f.iv.b` proves the
+  complete population; controller-ranked `SPEC-TO-INTENT-ALIGNMENT.7` is the next product gap after `.f.v`
+  Verification: `the current 12-source authority has zero fabricated canonical facts, 42/42 provenance, and zero
+  controller hard-gate violations; AMD is an honest empty cell and GIC-400 is 15/0/0 TP/FP/FN`
+  Commit: `superseded by the .f.iv.a and .f.iv.b commits`
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a`
 
@@ -313,6 +324,22 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 - [x] **LOCKSTEP** — roadmap, task frontier, live docs, mdBook, research, Knowledge Map, exact graph census,
   generated chain truth, cleanup evidence, and the resume pointer route `.f.iv.b` as the next leaf.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b`
+
+- [x] **REPRODUCE / MEASURE** — all 12 immutable reviewed sources and all 48 isolated stages replay from clean
+  `e125aac7`; the tracked manifest pins every source, command, tool, stage, result, and cleanup identity.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the recorded five-argument driver defect was a documentation miscount; the
+  command already had the example's exact source/root/prior/table four-value suffix, while the replay itself
+  needed bounded 16-page ingestion to complete safely under host pressure.
+- [x] **ADDRESSED (verified)** — a named command builder and focused test pin the separator contract; the repaired
+  replay publishes 39/0/1 IntentIR TP/FP/FN, 42/42 provenance, 117/118 conservation, and zero fabrications.
+- [x] **NO REGRESSION** — only GIC-400 and AMD change versus the prior authority; every other cell is identical.
+  APB's pre-existing `PSEL=HIGH` miss remains visible, and the AMD capture trade is reported as 13/14→12/14.
+- [x] **GENERICITY (ADR 0006)** — publication records the same universal production binary and bounded ingest
+  policy for every document; no source identity, expected result, or review label enters a production decision.
+- [x] **LOCKSTEP** — result, replay manifest, controller input/report, task tree, roadmap, live docs, mdBook,
+  retrieval facts, and cleanup evidence agree; `.6e` is superseded and `.7` is the controller-ranked product gap.
+
 ## Current Frontier
 
 | Order | Leaf | State | Why next |
@@ -323,10 +350,10 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `done` | real and synthetic negative controls prove semantic and authority sensitivity |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `done` | corrected held-out qualification is measured; child `.f.iii.a` owns the real I2C alpha coupling |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `done` | clean-revision exact and 51-attempt refresh evidence pass without prior-revision full-capture relabeling |
-| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `in_progress` | parent owns complete reviewed-population reconciliation after the measured coupling is fixed |
+| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `done` | carrier repair and clean population reconciliation are both published |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` | `done` | qualified headers, access carriers, target truth, migration, and retained-chain currency are closed |
-| 9 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` | `pending` | repair the replay command shape, then rerun and publish after the clean `.f.iv.a` commit |
-| 10 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
+| 9 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` | `done` | exact command shape, 12-source replay, current authority, and cleanup are closed |
+| 10 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | next after the clean `.f.iv.b` commit: close behavioral signoff and release `.7` |
 
 ## Decisions
 
@@ -376,16 +403,20 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 - `2026-08-15`: a qualified role is a closed role plus exactly one parenthesized qualifier; register access may
   come only from an explicit access header or one unambiguous closed-literal non-identity column. A classifier
   migration replays neutral proof-context capture and current validation rather than blessing stale conclusions.
+- `2026-08-15`: source and parent-revision inspection disproves the recorded replay-driver defect. The command
+  already had four post-`--` values; the diagnostic prose counted replay root twice. Preserve behavior and pin the
+  separator boundary with a focused test instead of fabricating a fix.
+- `2026-08-15`: use an evidence-recorded CPU/16-page policy for the qualification replay; keep the 85% memory
+  guard enabled. The successful 12-source result supersedes `.6e` because both planned register fabrications are
+  absent, and the controller's exact next product gap becomes `.7` after `.f.v` signoff.
 
 ## Open Questions
 
-- `.f.iv.b` must publish the repaired complete-population result without promoting the blocked diagnostic or
-  widening the fixed review/current revision boundary.
+- None for `.f.iv.b`; `.f.v` must compose final behavioral signoff without overstating unsupported categories.
 
 ## Blockers
 
-- None for `.f.iv.b`. Its first owned correction is the population driver's five positional values versus the
-  replay example's four-value contract; all sources and review authority remain same-volume and available.
+- None. `.f.iv.b` scratch and runtime-map residue is absent; `.f.v` is eligible after the clean commit.
 
 ## Verification Log
 
@@ -415,6 +446,8 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | `2026-08-15` | `.f.iv.a` focused and real-PDF qualification | qualified-role parity and closed negatives pass in Rust/embedded Python; SourceIR 62/62 and register EvidenceIR 10/10 pass; migration 3/3; Arm 12/12, GIC 15/15, AMD negative exact |
 | `2026-08-15` | `.f.iv.a` ADR 0025 reconciliation | 144-file / 964,185,725-byte snapshot at `6e27f458…80cf76`; one SourceIR and two downstream public surfaces move; Evidence/Semantic/Intent/adapter each 24/24 current / zero stale; 24 blocked/no-file states exact |
 | `2026-08-15` | `.f.iv.a` full repository gate and cleanup | 9/9 doctrines and all 11 genericity components pass; exact 2,275 / 11,926 / 11,396 / 1,446 flow snapshot; 1,981 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final locality; five roots / 5,112 files / 3,614,756 KiB removed with residue absent |
+| `2026-08-15` | `.f.iv.b` command and population replay | four-value command suffix/env-prefix guard passes; bounded CPU/16-page replay completes 12/12 sources and 48/48 stages from `e125aac7`; current result is 39/0/1 TP/FP/FN, 42/42 provenance, 117/118 conservation, 7/14 disposition, 5/12 modality accounting, zero fabrications, and one APB drop |
+| `2026-08-15` | `.f.iv.b` publication and cleanup | replay/result strict identities and mutants pass; controller has zero hard-gate violations, ranks `.7`, and is byte-current; successful root 3,094 files / 1,147,260 KiB, all three roots 5,616 files / 2,038,580 KiB; runtime map and every root are absent; focused checks and mandatory doctrine gate pass |
 
 ## Commit Log
 
@@ -431,6 +464,7 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | `.f.iii.a` closure | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure` | normalize only measured representation surfaces, require fresh full-capture revision evidence, and publish the passing held-out matrix |
 | `.f.iv` diagnostic | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv — route clean replay carrier regressions` | preserve the blocked 12-source result, distinguish frozen review hashes from actual stage identities, and split neutral carrier repair from clean publication |
 | `.f.iv.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a — restore structural register carriers` | close qualified header/access carriage, audited migration, real target truth, and retained-chain currency before clean replay |
+| `.f.iv.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b — publish repaired reviewed population` | pin the exact replay command, publish the fabrication-free 12-source authority and reranked controller, and remove all replay scratch exactly |
 
 ## Activation protocol
 

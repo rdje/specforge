@@ -83,7 +83,7 @@
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | [Behavioral qualification](behavioral-qualification.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.6e` | [Current and future](current-and-future.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6e` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.7` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.8` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9` | [Current and future](current-and-future.md) |

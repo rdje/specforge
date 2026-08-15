@@ -1,6 +1,6 @@
 ---
 id: reviewed-population-clean-replay-carrier-regression
-title: Fresh reviewed replay carrier gaps are repaired; clean publication remains pending
+title: Fresh reviewed replay carrier gaps are repaired and clean publication is complete
 answers:
   - "why is the latest reviewed population replay not published"
   - "did the current clean replay contradict the pinned b977 source to intent result"
@@ -11,12 +11,13 @@ answers:
   - "what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair"
   - "did the qualified header and register access carrier repair pass"
   - "what remains before the repaired reviewed population can be published"
+  - "was the repaired reviewed population published"
   - "what are the blocked clean replay source to IntentIR counts"
 date: 2026-08-15
 status: current
 tags: [spec-to-intent-alignment, replay, register-map, structural-classification, regression]
 evidence: docs/research/reviewed-population-clean-replay-diagnostic.md; docs/tasks/spec-to-intent-alignment/behavioral-qualification.md
-reverify: "python3 -B scripts/replay_source_to_intent_population.py --output-root .project-data/tmp/<fresh-root> --external-source-map .project-data/tmp/<runtime-map>.json --replay-id <portable-id> --owner SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b --dataset-id <portable-id>"
+reverify: "cargo test -p specforge-conformance --lib test_support::trajectory_snapshot"
 ---
 
 The first clean `.f.iv` replay completes 12/12 hash-equal sources and 48/48 isolated stages at revision
@@ -40,10 +41,14 @@ column. Direct real-PDF replay restores Arm's 12 and GIC-400's 15 reviewed facts
 retained-chain reconciliation is 24/24 current and zero stale through the adapter; only Arm and one OpenCAPI
 access carrier change outside proof/validation.
 
-Publication is still pending. `.f.iv.b` first repairs the population driver's five-versus-four positional
-argument mismatch, then owns a new clean 12-source replay, portable authority update, and exact cleanup. The
-blocked 12/15/28 diagnostic remains historical evidence rather than current product truth.
+Publication is complete. `.f.iv.b` reinspection disproved the recorded driver mismatch: source, parent
+revision, and the Rust example all show exactly four post-`--` values, while the diagnostic prose counted replay
+root twice. A focused command-builder test pins that suffix and separates environment prefixes. The clean replay
+publishes 39/0/1 IntentIR TP/FP/FN, 42/42 provenance, 117/118 conservation, zero fabrications, and one unexplained
+APB drop. All controller hard gates pass and `.7` ranks first; `.6e` is superseded. The blocked 12/15/28 diagnostic
+remains historical evidence rather than current product truth.
 
 The `.f.iv.a` five-root scratch set was removed after the complete gate consumed it: 5,112 files / 3,614,756 KiB,
 with every exact path absent on the residue census. The current retained chain remains 24/24 current at all four
-replayed stages; the deleted rollback copy is intentionally no longer recoverable.
+replayed stages; the deleted rollback copy is intentionally no longer recoverable. `.f.iv.b` additionally removes
+its three attempt roots (5,616 files / 2,038,580 KiB) and runtime map with no residue.

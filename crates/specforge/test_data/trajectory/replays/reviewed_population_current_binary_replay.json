@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "replay_id": "spec-to-intent-6dii-decibel-disposition-population",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii",
-  "production_revision": "b977a51ff24f966dcf6aca74ccf47d592a4fc452",
+  "replay_id": "spec-to-intent-f-iv-b-population-r3",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
+  "production_revision": "e125aac7ce05ea0dc810f99e042d5bc25337f2c4",
   "reviewed_dataset": {
     "path": "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
     "sha256": "231de7f6aded485c836af8e585334b373194b5af71d03c4ad7a52b7a0e6b34aa",
@@ -11,13 +11,13 @@
   },
   "prior_memory": {
     "path": "generated/prior_memory/corpus_memory.json",
-    "sha256": "4d66c82f1d0e6783d82a70cfa210fd2b3fad1e8f79df4b67c9f3cf876a386481",
-    "byte_count": 1492828
+    "sha256": "a416cc8b7b6bd84947e4b6780d5253b13c2985c57ca4e8f1c02d6daf56239633",
+    "byte_count": 869287
   },
   "tools": {
     "orchestrator": {
       "path": "scripts/replay_source_to_intent_population.py",
-      "sha256": "74151e8729b653df4b242d36d64fd9414e76e55967983c1d4fbcf27816b8b100"
+      "sha256": "55c8152048b9dd0f5d6754acfbd1339e0cfeeb2fbbbc72b57cc862a30eaa4569"
     },
     "projection": {
       "path": "crates/specforge/test_data/source_to_intent_vertical/build_fixture.py",
@@ -38,27 +38,27 @@
         "copied_from_external_authority": false,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/arm/amba/core/apb/current/IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/arm/amba/core/apb/current/IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/source_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/source_ir.json",
-          "sha256": "b03be08d7773dd7a0813f79ff977c5d526f03078f7adaa3664852c05f93fc990",
-          "byte_count": 325134
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/source_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/source_ir.json",
+          "sha256": "8e844870c1a0474f06895381433c78616fc217e6e17bb6a9540946ec148005ab",
+          "byte_count": 1794679
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json",
-          "sha256": "02238215a4238bbf03761a357e2dadf132c70421ad77ac73646c9a29ef29330f",
-          "byte_count": 597008
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json",
+          "sha256": "e8ec9f5732349ae341ae76f985191e7738d1711ab2c3b51dc0b054210bbb2d9a",
+          "byte_count": 5055218
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/semantic_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/semantic_ir.json",
-          "sha256": "edd13dd3b5f10be6f5486c0dc4c4fccfd7759892fc4c0c0875da423efa3669aa",
-          "byte_count": 303815
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/semantic_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/semantic_ir.json",
+          "sha256": "e063e98a5b3822614d3ad148734c199983110a3665b8ee2b5d8480a9a702d594",
+          "byte_count": 5286042
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json",
-          "sha256": "17b9a7d0610c0612d6dc5d86378a09bc47e98a4a2db4a3914061be26c86a4bcc",
-          "byte_count": 345052
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json",
+          "sha256": "793544e55fffa849fcc94cf0bde145a6fe3fcfe02b51beb1bbdcb14f9c330d36",
+          "byte_count": 5022724
         }
       }
     },
@@ -75,27 +75,27 @@
         "copied_from_external_authority": false,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/um11732_v3_2022_02_17_i2s_bus_specification generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/um11732_v3_2022_02_17_i2s_bus_specification generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/um11732_v3_2022_02_17_i2s_bus_specification/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/source_ir.json",
-          "sha256": "c07bc4d706c066dd0eb7caf3c38d619fe1296f7a189f0059414be48577f60630",
-          "byte_count": 122622
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/um11732_v3_2022_02_17_i2s_bus_specification/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/source_ir.json",
+          "sha256": "7d5bceeaeb0d83e82dcf8c3f15b7ac8ef013e4927726a125afbd213f2c0042be",
+          "byte_count": 654988
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/um11732_v3_2022_02_17_i2s_bus_specification/evidence_ir/um11732_v3_2022_02_17_i2s_bus_specification/evidence_ir.json",
-          "sha256": "56d5bf664aa1379133030f5ed8e1f6a365b4b610d495c8cf1067e3d57875fe66",
-          "byte_count": 166516
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/um11732_v3_2022_02_17_i2s_bus_specification/evidence_ir/um11732_v3_2022_02_17_i2s_bus_specification/evidence_ir.json",
+          "sha256": "3f5ddebfc4abe140fd78bf2f24196bb02b017b8cdee336e67e85c6cdbff63b48",
+          "byte_count": 2089004
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/um11732_v3_2022_02_17_i2s_bus_specification/semantic_ir/um11732_v3_2022_02_17_i2s_bus_specification/semantic_ir.json",
-          "sha256": "320351c9f848d0d3e480533e4686da912c44af8bc7e9e2d01aa137ca2a924c14",
-          "byte_count": 41673
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/um11732_v3_2022_02_17_i2s_bus_specification/semantic_ir/um11732_v3_2022_02_17_i2s_bus_specification/semantic_ir.json",
+          "sha256": "7350b6108a352cd8d1022aa4803935a6c7fbf96f047dfcd30fbbd4e08f486938",
+          "byte_count": 2041134
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/um11732_v3_2022_02_17_i2s_bus_specification/intent_ir/um11732_v3_2022_02_17_i2s_bus_specification/intent_ir.json",
-          "sha256": "5967bcc4b862efaeffc45d64ad73257bdc56ae2f1242eaa49de7386a959e93df",
-          "byte_count": 63500
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/um11732_v3_2022_02_17_i2s_bus_specification/intent_ir/um11732_v3_2022_02_17_i2s_bus_specification/intent_ir.json",
+          "sha256": "76debe9ee315d6fc40a0d54e1f9c3b84c5ce8ba94e796ea3e6f448f641dfcd85",
+          "byte_count": 1218283
         }
       }
     },
@@ -108,31 +108,31 @@
         "reviewed_sha256": "afcac68f733304fb2a236a5667d502783a3965d4609cc97d2115fc5d911fd7ec",
         "replay_sha256": "afcac68f733304fb2a236a5667d502783a3965d4609cc97d2115fc5d911fd7ec",
         "byte_count": 557071,
-        "repository_path": ".project-data/tmp/spec-to-intent-6dii-population-r1/sources/DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf",
+        "repository_path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf",
         "copied_from_external_authority": true,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6dii-population-r1/sources/DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/source_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/source_ir.json",
-          "sha256": "3efabff65a5c2339f7be9c2d5a1526860801a2037bcde491e857747357e9962a",
-          "byte_count": 422910
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/source_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/source_ir.json",
+          "sha256": "5685d519463fd41cf453cc2eaf35bd3d9e5938fc6b94d1a7db948335f665bc04",
+          "byte_count": 2303620
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/evidence_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/evidence_ir.json",
-          "sha256": "a32f9bdada5e4d850303d5357528ecd6daa3e303fd5d2bb205acb5863668a7ba",
-          "byte_count": 752827
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/evidence_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/evidence_ir.json",
+          "sha256": "81b4990fad9c0aed548fe0ef2e59d25e4b2a63350f9a06db78839ba04e5ed8cb",
+          "byte_count": 5918718
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/semantic_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/semantic_ir.json",
-          "sha256": "6d345484e8dc7718a50628501de0a84b514b2f94da8f52714e4cccf29bb5e42c",
-          "byte_count": 120808
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/semantic_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/semantic_ir.json",
+          "sha256": "0cea9ceb6792755154bb3a8107a80c6e19f7643dcd8adcb9600783814a221989",
+          "byte_count": 5461570
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/intent_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/intent_ir.json",
-          "sha256": "75c560ae139f61bf7c62722fa8678dad61ae131ea0ca284749416fa303921e92",
-          "byte_count": 147216
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/intent_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/intent_ir.json",
+          "sha256": "3b36479a45914356421c310f1a7f9c7b86d3f0c5d02d8d8463ff2c5eb032d9aa",
+          "byte_count": 4812576
         }
       }
     },
@@ -149,27 +149,27 @@
         "copied_from_external_authority": false,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/amd/system-ip/iommu/current/48882_PUB_3.10_2025-02_AMD_IO_Virtualization_Technology_IOMMU_Specification.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/amd/system-ip/iommu/current/48882_PUB_3.10_2025-02_AMD_IO_Virtualization_Technology_IOMMU_Specification.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/source_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/source_ir.json",
-          "sha256": "37d70ac37a64c9b7142fb786e5f5f7b7332649267c30fb6ae3e69ca9b9897f79",
-          "byte_count": 3287472
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/source_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/source_ir.json",
+          "sha256": "9784f375309f6703c3eb092f3273a178ab52a9bb5fba2506293462fb350d65b3",
+          "byte_count": 16222264
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/evidence_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/evidence_ir.json",
-          "sha256": "837c402d65a3e4fd40cb6437e00983a93bcbc4c985007291a0d5e9c8f2729136",
-          "byte_count": 5377833
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/evidence_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/evidence_ir.json",
+          "sha256": "81aa59cce07df830e97c6dffed3ebc491acd1d189102883ea4209e3a40fe3f8f",
+          "byte_count": 31088671
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/semantic_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/semantic_ir.json",
-          "sha256": "e283973e5bcae2796a03d9f3864ace130006481d06205a57a429c83ceeb74806",
-          "byte_count": 1342827
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/semantic_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/semantic_ir.json",
+          "sha256": "e764f8b100b240a4a64f1ccd39d101524a2a80d604d01672d0879e5a8e694132",
+          "byte_count": 26943275
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/intent_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/intent_ir.json",
-          "sha256": "da8d4c657f1a9968934b06e7f49d59289b0c2a087221ab1afdbacd030f2ceeaf",
-          "byte_count": 2460208
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/intent_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/intent_ir.json",
+          "sha256": "e106b6d85b2c1d747dbb6e3b66f7e5d3a223f5106ba0852767e539d5c1771b70",
+          "byte_count": 28140811
         }
       }
     },
@@ -182,31 +182,31 @@
         "reviewed_sha256": "c4a5f342afbae7ef5229f5f8344dbd63ec6b5473cd319830dd148d9dc732a66d",
         "replay_sha256": "c4a5f342afbae7ef5229f5f8344dbd63ec6b5473cd319830dd148d9dc732a66d",
         "byte_count": 165891,
-        "repository_path": ".project-data/tmp/spec-to-intent-6dii-population-r1/sources/DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf",
+        "repository_path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf",
         "copied_from_external_authority": true,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6dii-population-r1/sources/DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/den0068_2018_07_23_coresight_base_system_architecture generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/den0068_2018_07_23_coresight_base_system_architecture generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/den0068_2018_07_23_coresight_base_system_architecture/source_ir/den0068_2018_07_23_coresight_base_system_architecture/source_ir.json",
-          "sha256": "6ef8c27a6899c35f5c4c7afd58bbe41d1600dcccd276285e85e3d0164f22bf85",
-          "byte_count": 228266
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/den0068_2018_07_23_coresight_base_system_architecture/source_ir/den0068_2018_07_23_coresight_base_system_architecture/source_ir.json",
+          "sha256": "ddb4eeecf975ded31b836fac76dd24a44f74dc05ca267765af26e7761c9ad5e8",
+          "byte_count": 1251463
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/den0068_2018_07_23_coresight_base_system_architecture/evidence_ir/den0068_2018_07_23_coresight_base_system_architecture/evidence_ir.json",
-          "sha256": "a988f4806ee1e20918f6e3b034c60f7c63cfb537b9cdc3b03382b0aed1e2e5e0",
-          "byte_count": 431350
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/den0068_2018_07_23_coresight_base_system_architecture/evidence_ir/den0068_2018_07_23_coresight_base_system_architecture/evidence_ir.json",
+          "sha256": "05fb36a681c6431058db88fb71f82133e9ba01499373774679509e18074bf791",
+          "byte_count": 3662383
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/den0068_2018_07_23_coresight_base_system_architecture/semantic_ir/den0068_2018_07_23_coresight_base_system_architecture/semantic_ir.json",
-          "sha256": "ffa394ca995d650e3171e1a98b2071f0b3bc25ad969bcd3451e5e210e47a8c63",
-          "byte_count": 94184
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/den0068_2018_07_23_coresight_base_system_architecture/semantic_ir/den0068_2018_07_23_coresight_base_system_architecture/semantic_ir.json",
+          "sha256": "91275b45f45b3af2ab18c8650278164877b18c98cc7a45e5b8f59c2e5a8dca6a",
+          "byte_count": 3453601
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/den0068_2018_07_23_coresight_base_system_architecture/intent_ir/den0068_2018_07_23_coresight_base_system_architecture/intent_ir.json",
-          "sha256": "0431c2835348e83c57f39cb9eb8c9b1beee538a870531df6d71a58aa5271f639",
-          "byte_count": 156195
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/den0068_2018_07_23_coresight_base_system_architecture/intent_ir/den0068_2018_07_23_coresight_base_system_architecture/intent_ir.json",
+          "sha256": "70e1e0f34611f8efcb6cb58037d6192f300801ff4ef21cfd6583a534e5cc6c33",
+          "byte_count": 2807922
         }
       }
     },
@@ -219,31 +219,31 @@
         "reviewed_sha256": "be2134b407a1a3ce5a9da1779cbdc4b4c641ee50ab32676e0a858e5a04ff2b8e",
         "replay_sha256": "be2134b407a1a3ce5a9da1779cbdc4b4c641ee50ab32676e0a858e5a04ff2b8e",
         "byte_count": 1051915,
-        "repository_path": ".project-data/tmp/spec-to-intent-6dii-population-r1/sources/1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf",
+        "repository_path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf",
         "copied_from_external_authority": true,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6dii-population-r1/sources/1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/source_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/source_ir.json",
-          "sha256": "60970d72bd49a6e3255b86897e8f86b4ffca01b0cdfa537dadb2a6c4a1661105",
-          "byte_count": 1013029
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/source_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/source_ir.json",
+          "sha256": "4672da0178bc8ad7a722925e413c3bacaba8d1a52ed2ee6c5364a53b6caf7bad",
+          "byte_count": 5144211
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/evidence_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/evidence_ir.json",
-          "sha256": "3d0336983dbce204ab23aa3d9e70e11569ea6f69d4b3ec6f96f1f925573dc577",
-          "byte_count": 1723388
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/evidence_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/evidence_ir.json",
+          "sha256": "fef523da3b31c2319c2487e812082de68451a76c395f153467ecea89b6e93159",
+          "byte_count": 10944942
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/semantic_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/semantic_ir.json",
-          "sha256": "0ad0e38834e58a74fa838cc72d406c2de929afd3bc7585616a49db90ed787154",
-          "byte_count": 412440
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/semantic_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/semantic_ir.json",
+          "sha256": "dad25502b0aa3a11630b244c8e5b19d7fd285050b7efeae0853819b8321bc4cd",
+          "byte_count": 9746775
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/intent_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/intent_ir.json",
-          "sha256": "527b14817e187ab42d744f4d140084353f87f2258812a2e9038d0ee5d9b7c83f",
-          "byte_count": 626079
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/intent_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/intent_ir.json",
+          "sha256": "9e692282ae6c5f41206879b1331d7823ffe5ac8eea125dabdf9ad77b6d7d63ff",
+          "byte_count": 9553131
         }
       }
     },
@@ -256,31 +256,31 @@
         "reviewed_sha256": "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8",
         "replay_sha256": "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8",
         "byte_count": 827669,
-        "repository_path": ".project-data/tmp/spec-to-intent-6dii-population-r1/sources/1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf",
+        "repository_path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf",
         "copied_from_external_authority": true,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6dii-population-r1/sources/1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/source_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/source_ir.json",
-          "sha256": "f92e4f49d8233821455a7a0bebefc282d9d8830f16ebb23e9d2d50b646a3c6d0",
-          "byte_count": 725358
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/source_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/source_ir.json",
+          "sha256": "cc0207278cf8a77fa0ff235189dbb34d8273831bb36ad3334304b74f4a14ae6e",
+          "byte_count": 3580431
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/evidence_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/evidence_ir.json",
-          "sha256": "cd26239d43e8c9b2ff16050f74b621a0055737472652c207b8cf3b31a11e40a0",
-          "byte_count": 1205788
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/evidence_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/evidence_ir.json",
+          "sha256": "a33f80eec2554be62cf668dd6d8f2a200b6e100bf1a9c0ae05757e2419bbb1ba",
+          "byte_count": 7870118
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/semantic_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/semantic_ir.json",
-          "sha256": "a8dee1374f5cf43399328ea0311239bdd5c2494b288edb05650729c7ff00f1cd",
-          "byte_count": 359679
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/semantic_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/semantic_ir.json",
+          "sha256": "9eae129edffdaba69a7f12df41a2acb68834fc095ef7b4d711c657c7bd025010",
+          "byte_count": 7162845
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/intent_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/intent_ir.json",
-          "sha256": "68c2a7e7419856f4dc4f95184c1b2b9d531016008f1841635f64538158453a69",
-          "byte_count": 593719
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/intent_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/intent_ir.json",
+          "sha256": "2ac7e7496a352a6cc04be7c24bd7bec85078808aa79137bae7967107d6fb5252",
+          "byte_count": 6892911
         }
       }
     },
@@ -297,27 +297,27 @@
         "copied_from_external_authority": false,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir.json",
-          "sha256": "0077381c9e34b16da1ecfb8c6cb13325079ff9632708336d6fbd05944a39c1c9",
-          "byte_count": 3333966
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir.json",
+          "sha256": "acbaac4f95374e09b6884f422a28c427120679362002c6cb2119a797cb10f919",
+          "byte_count": 19285267
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json",
-          "sha256": "006995150e91d48115323e1330af2ab12e7db04c7036ce8462fe4ca9385dc268",
-          "byte_count": 6622983
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json",
+          "sha256": "fb5a06fa10e8ae325fcaed14cf14508f81d0751773cd402b84a68aaed70e5081",
+          "byte_count": 41255593
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/semantic_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/semantic_ir.json",
-          "sha256": "5c29fb7d876447ee7c63116f60f830c77ecd957c91b25a2fbd2526c4a1878402",
-          "byte_count": 1116880
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/semantic_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/semantic_ir.json",
+          "sha256": "4248e45f9afee7cda94177469c3b51e552588f97781fc4a862f5aff7cc2b59a3",
+          "byte_count": 37730552
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/intent_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/intent_ir.json",
-          "sha256": "99e341572d86e0ce1b7f6ebdcce396235050e958baa74d777b9ed92351c33679",
-          "byte_count": 1354944
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/intent_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/intent_ir.json",
+          "sha256": "5979a8052bb3757b206b9181d102d5b480a37ae921075d8d9dde2cb01167248f",
+          "byte_count": 39418529
         }
       }
     },
@@ -330,31 +330,31 @@
         "reviewed_sha256": "0e0c8afc1d89189f610dd8340ebb2206270958faa247c6b345c64ee5c8dece12",
         "replay_sha256": "0e0c8afc1d89189f610dd8340ebb2206270958faa247c6b345c64ee5c8dece12",
         "byte_count": 748724,
-        "repository_path": ".project-data/tmp/spec-to-intent-6dii-population-r1/sources/OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf",
+        "repository_path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf",
         "copied_from_external_authority": true,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6dii-population-r1/sources/OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_25gbps_phy_signaling_spec_1_0 generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_25gbps_phy_signaling_spec_1_0 generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_25gbps_phy_signaling_spec_1_0/source_ir/opencapi_25gbps_phy_signaling_spec_1_0/source_ir.json",
-          "sha256": "d29ae6844b1b38e6a91b4657f919ece1bd020c21f11beeb0b0b14781e165e69c",
-          "byte_count": 277707
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_25gbps_phy_signaling_spec_1_0/source_ir/opencapi_25gbps_phy_signaling_spec_1_0/source_ir.json",
+          "sha256": "9d616aa43d8a53ef03eabec1e40e7727e05f5756caad0434b84e21d0e006cd03",
+          "byte_count": 1492780
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_25gbps_phy_signaling_spec_1_0/evidence_ir/opencapi_25gbps_phy_signaling_spec_1_0/evidence_ir.json",
-          "sha256": "557b019a9c4d4514b1ee9d156ab8ae750953efef492857bfa2e0b63e72bb5283",
-          "byte_count": 418674
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_25gbps_phy_signaling_spec_1_0/evidence_ir/opencapi_25gbps_phy_signaling_spec_1_0/evidence_ir.json",
+          "sha256": "ea6551ae40aafc37a36839d17f8dc46e6b87cc2d1d86d76876f402560d98779f",
+          "byte_count": 3796591
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_25gbps_phy_signaling_spec_1_0/semantic_ir/opencapi_25gbps_phy_signaling_spec_1_0/semantic_ir.json",
-          "sha256": "e8b0034e37e7259f57da7115cf25f9663d6db3785588bfe24969cddaf1581a8d",
-          "byte_count": 72738
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_25gbps_phy_signaling_spec_1_0/semantic_ir/opencapi_25gbps_phy_signaling_spec_1_0/semantic_ir.json",
+          "sha256": "e610c5437d45dd084427c0a0016909f5744d35f8c4c6e7a35092f78c4cc41504",
+          "byte_count": 3509273
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_25gbps_phy_signaling_spec_1_0/intent_ir/opencapi_25gbps_phy_signaling_spec_1_0/intent_ir.json",
-          "sha256": "9c098c2ad64a93f08b602565b2726398638d99e652528507e650c4b201c040ce",
-          "byte_count": 74297
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_25gbps_phy_signaling_spec_1_0/intent_ir/opencapi_25gbps_phy_signaling_spec_1_0/intent_ir.json",
+          "sha256": "6121c8fa20e805f25e07c547174f53e15b9e141dde511def0518e81e7750162b",
+          "byte_count": 2729010
         }
       }
     },
@@ -367,31 +367,31 @@
         "reviewed_sha256": "d3eb19fc39dd5d1a3925e381bdc9c2f22683d2485d26a447c7ccdeb0080e38be",
         "replay_sha256": "d3eb19fc39dd5d1a3925e381bdc9c2f22683d2485d26a447c7ccdeb0080e38be",
         "byte_count": 855025,
-        "repository_path": ".project-data/tmp/spec-to-intent-6dii-population-r1/sources/OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf",
+        "repository_path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf",
         "copied_from_external_authority": true,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6dii-population-r1/sources/OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020 generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020 generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/source_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/source_ir.json",
-          "sha256": "ea04548532ed7528d3bd1ea2302a9585d6f7518ed18f87fa174e52e23c974a7d",
-          "byte_count": 412419
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/source_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/source_ir.json",
+          "sha256": "a9ae405830f124a9e6e6aa2020e5036cbc1abcbb098ca4d856d5564724a67117",
+          "byte_count": 2167113
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/evidence_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/evidence_ir.json",
-          "sha256": "198782cedc4cae346e680f84ef3849bc440c36890728e50d24ebd3b6d72b0b82",
-          "byte_count": 691162
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/evidence_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/evidence_ir.json",
+          "sha256": "ba481f8c3fd7cc0f4ecc73cbcd0f67eaf603d75901387db80f0059334fa4f871",
+          "byte_count": 5541748
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/semantic_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/semantic_ir.json",
-          "sha256": "c67abbbc491d11a0ed6524ae5150ad8ea68222f15d236af64915a29bbc6eaa71",
-          "byte_count": 144173
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/semantic_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/semantic_ir.json",
+          "sha256": "46b29c0eb40e9cf22781763d9631f986ea6c0cb3c1586bab190a46aa2901de1a",
+          "byte_count": 5059674
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/intent_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/intent_ir.json",
-          "sha256": "d2e3b5a944ccf455231a5f78f729aad62c50cb9ec0afc955b49b3a60d55073a9",
-          "byte_count": 208168
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/intent_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/intent_ir.json",
+          "sha256": "fa02682dc938254ffcbe9c95abd21e623804f819eee8e103b57d3ddfe5c74aca",
+          "byte_count": 4446995
         }
       }
     },
@@ -404,31 +404,31 @@
         "reviewed_sha256": "8358c5ae0d4b9fbc713b40dfec840d76e9ab3ce57cdf66badbdb41e0e60b3a22",
         "replay_sha256": "8358c5ae0d4b9fbc713b40dfec840d76e9ab3ce57cdf66badbdb41e0e60b3a22",
         "byte_count": 637434,
-        "repository_path": ".project-data/tmp/spec-to-intent-6dii-population-r1/sources/PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf",
+        "repository_path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf",
         "copied_from_external_authority": true,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6dii-population-r1/sources/PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/source_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/source_ir.json",
-          "sha256": "55ee86f193b972897eb64e2e512c07483a7bbe23cf10db193984ddb44e0502da",
-          "byte_count": 801602
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/source_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/source_ir.json",
+          "sha256": "8377489878594448714ec819dc0025003417ba046d50ed2bb47d86723f30f7df",
+          "byte_count": 4326918
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/evidence_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/evidence_ir.json",
-          "sha256": "b7921f70cf3208d79a498f4a8b3bb84f191236b39c892ec57317fcaf9c8d8e8b",
-          "byte_count": 870233
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/evidence_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/evidence_ir.json",
+          "sha256": "88ea5d96ba9e049a220a11e71a423f2c679e2ab8c3aac3132f158adfd164791a",
+          "byte_count": 7052381
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/semantic_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/semantic_ir.json",
-          "sha256": "d9e86e580a19a518ae11463883aec799db8ded281c6d57c5a73493e63d8b9395",
-          "byte_count": 48511
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/semantic_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/semantic_ir.json",
+          "sha256": "ad96e8bdbacbd7ba7c61facf143da27314490bf402b50cefd157b1a84c54b219",
+          "byte_count": 6169687
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/intent_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/intent_ir.json",
-          "sha256": "caec5f6d7f3c609a4cfa88cfb0494e461eebce584707882353e8039e1a99f7f1",
-          "byte_count": 22210
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/intent_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/intent_ir.json",
+          "sha256": "a10753f591260f97868f94cda215bc722b9f7559215609b6ed771040370a3fb6",
+          "byte_count": 5267644
         }
       }
     },
@@ -441,51 +441,51 @@
         "reviewed_sha256": "5358701e080664f2db98fb9d066a0c90a4deb2ba34ca35c81597332534707e97",
         "replay_sha256": "5358701e080664f2db98fb9d066a0c90a4deb2ba34ca35c81597332534707e97",
         "byte_count": 1571128,
-        "repository_path": ".project-data/tmp/spec-to-intent-6dii-population-r1/sources/198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf",
+        "repository_path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf",
         "copied_from_external_authority": true,
         "verified_equal_to_reviewed_authority": true
       },
-      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6dii-population-r1/sources/198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf .project-data/tmp/spec-to-intent-6dii-population-r1/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide generated/prior_memory/corpus_memory.json -",
+      "command": "env DOCLING_DEVICE=cpu SPECFORGE_INGEST_BATCH_THRESHOLD=0 SPECFORGE_INGEST_BATCH_PAGES=16 cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-f-iv-b-population-r3/sources/198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf .project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide generated/prior_memory/corpus_memory.json -",
       "stages": {
         "source_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/source_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/source_ir.json",
-          "sha256": "f094a561393b19b43238c90b266819348729bbc1d875f80b3da9055b792a8659",
-          "byte_count": 254438
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/source_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/source_ir.json",
+          "sha256": "90b15535b9fa0378aa62589dbef81f8ab9163d19d7ecd668989134c1e0e3012d",
+          "byte_count": 1329421
         },
         "evidence_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/evidence_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/evidence_ir.json",
-          "sha256": "dcc79eaa92e68858cabac85364ff970bd6bea38150d54ba678092c2121c2b80b",
-          "byte_count": 472613
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/evidence_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/evidence_ir.json",
+          "sha256": "57e56b094d59aa7dc9a7acab361e47f74d6f46b8677187b6e0cfed92da033f02",
+          "byte_count": 3717087
         },
         "semantic_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/semantic_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/semantic_ir.json",
-          "sha256": "626e7695e6ec3b240ac3ef42e794af39b264f75b57a7ed9732638b1213b3f352",
-          "byte_count": 93998
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/semantic_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/semantic_ir.json",
+          "sha256": "01c59a7d0332d5f15fa8a2bf2103160b55b44f833dfe559e3d322838cd0ffa16",
+          "byte_count": 3418653
         },
         "intent_ir": {
-          "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/intent_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/intent_ir.json",
-          "sha256": "a3e1aa4ee7b4642ca98c82c3ce8e851529a0b461bcbc1ef5aab1b96437f93af4",
-          "byte_count": 139160
+          "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/intent_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/intent_ir.json",
+          "sha256": "070fbbb8e9cfa5cd32f7688e65aef3c6010eda806ade09dacfd49e179683a6d8",
+          "byte_count": 2650155
         }
       }
     }
   ],
   "current_dataset": {
-    "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/current_dataset.json",
-    "sha256": "f5b31c90c639742de4bf7c8c9240a4566eae57eebd000c5607c1414b6f855469",
-    "byte_count": 142577
+    "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/current_dataset.json",
+    "sha256": "2deee6ad8c995a73fd68fa8ecab3a01cb3ef78ad15b8fd897e02c6fc98f28ac7",
+    "byte_count": 152664
   },
   "current_result": {
-    "path": ".project-data/tmp/spec-to-intent-6dii-population-r1/current_result.json",
-    "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
-    "byte_count": 100324,
-    "published_path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json"
+    "path": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3/current_result.json",
+    "published_path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+    "sha256": "3075863eea434bbb07f5abee6e8974da009f6a863235aa228a881767eb9a8560",
+    "byte_count": 103869
   },
   "cleanup": {
-    "external_source_map": ".project-data/tmp/spec-to-intent-6dii-source-map.json",
-    "population_root": ".project-data/tmp/spec-to-intent-6dii-population-r1",
-    "status": "removed_and_residue_absent",
-    "removed_file_count": 3913,
-    "removed_kib": 1090948
+    "external_source_map": ".project-data/tmp/spec-to-intent-f-iv-b-source-map.json",
+    "population_root": ".project-data/tmp/spec-to-intent-f-iv-b-population-r3",
+    "removed_file_count": 3094,
+    "removed_kib": 1147260,
+    "status": "removed_and_residue_absent"
   }
 }

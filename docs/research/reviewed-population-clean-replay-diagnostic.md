@@ -10,8 +10,9 @@
 ## Why this result is diagnostic, not current authority
 
 The first `.f.iv` replay completed all 12 hash-equal sources and all 48 stages from a clean production revision.
-The output is intentionally retained below repository-local scratch while its regressions are repaired. It has
-not replaced the tracked `b977a51f` result, controller input, report, or portable replay manifest.
+At discovery time it was retained below repository-local scratch and did not replace the tracked `b977a51f`
+result, controller input, report, or portable replay manifest. That diagnostic was later consumed and deleted;
+`.f.iv.b` now publishes a separate clean post-repair replay. The values below remain historical diagnosis.
 
 The replay manifest, not the bounded fixture projection, is stage-identity authority. The fixture's
 `original_sha256` fields retain the frozen review-era hashes so cells stay comparable across revisions. Actual
@@ -85,11 +86,13 @@ The independent chain oracle is 24/24 current and zero stale at all four replaye
 
 ## Replay-driver follow-up owned by `.f.iv.b`
 
-The population orchestrator currently passes five positional values to `source_to_intent_replay` after `--`:
-source, replay root twice, prior memory, and `-`. The example accepts four: source, output root, optional prior
-memory, and optional observed-table id. The extra replay-root value fails with `unexpected argument '-'`. Direct
-four-argument target replays and retained-chain reconciliation are unaffected. `.f.iv.b` must fix and test this
-command shape before it starts the clean publication replay.
+Reinspection against current source, parent revision `e125aac7^`, and the Rust example contract disproves the
+earlier five-versus-four claim. The orchestrator already passes exactly four values after `--`: source, replay
+root, prior memory, and `-` for no observed table. The earlier note counted replay root twice; any optional
+`env KEY=value` entries precede `cargo` and are not replay positionals. `.f.iv.b` preserves the command bytes
+through a named builder and pins the exact separator suffix plus environment prefix in a focused test. The clean
+publication replay then completes 12/12 sources and 48/48 stages at `e125aac7`, publishing 39/0/1 TP/FP/FN,
+42/42 provenance, 117/118 conservation, zero fabrication, and one APB unexplained drop.
 
 ## Storage and cleanup state
 
@@ -98,4 +101,5 @@ authorities were discovered once, verified hash-equal, and copied below the repo
 complete gate consumed the evidence, `.f.iv.a` removed the diagnostic root, source map, two target roots, and
 rollback/comparison root: 5,112 files / 3,614,756 KiB across the five exact paths. The residue census finds all
 five absent. The rollback copy is no longer recoverable; current generated artifacts remain reproducible and
-currency-gated. `.f.iv.b` will own a fresh repository-local replay lifecycle from the clean repair revision.
+currency-gated. `.f.iv.b` subsequently removed its own three attempt roots—5,616 files / 2,038,580 KiB—and runtime
+source map with no residue after promoting the successful 3,094-file / 1,147,260-KiB authority root.

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "dataset_id": "reviewed-source-to-intent-current-b977a51f",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii",
+  "dataset_id": "spec-to-intent-f-iv-b-current-population",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
   "selection_boundary_commit": "a3e9757d63ca5499a2393864fb503d6537de0035",
   "selection_claim": "Current-binary replay of the unchanged review-locked population; source bytes and all four replayed stage identities are re-verified without mutating the frozen baseline.",
   "minimum_documents_per_category": 2,
@@ -569,67 +569,57 @@
             "unprovenanced_records": 0
           },
           "evidence_capture": {
-            "actual_keys": [
-              "packed_page_table_entry"
-            ],
+            "actual_keys": [],
             "expected_keys": [
               "packed_page_table_entry"
             ],
-            "matched_keys": [
-              "packed_page_table_entry"
-            ],
-            "actual_total": 1,
+            "matched_keys": [],
+            "actual_total": 0,
             "expected_total": 1,
-            "true_positives": 1,
+            "true_positives": 0,
             "false_positives": 0,
-            "false_negatives": 0,
-            "precision": 1.0,
-            "recall": 1.0,
+            "false_negatives": 1,
+            "precision": null,
+            "recall": 0.0,
             "unprovenanced_records": 0
           },
           "canonical": {
             "evidence_ir": {
-              "actual_keys": [
-                "Guest-Physical Page-Table Base Address[31:21]"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 1,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 1,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             },
             "semantic_ir": {
-              "actual_keys": [
-                "Guest-Physical Page-Table Base Address[31:21]"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 1,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 1,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             },
             "intent_ir": {
-              "actual_keys": [
-                "Guest-Physical Page-Table Base Address[31:21]"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 1,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 1,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             }
@@ -691,14 +681,14 @@
           "disposition_accounted": false,
           "first_failing_stage": "source_to_evidence_ir",
           "hard_failures": [
-            "fabricated_canonical_facts:1",
+            "required_modality_capture_failed",
             "required_residual_missing_or_inactionable",
             "source_region_disposition_unaccounted"
           ]
         }
       ],
       "hard_failures": [
-        "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry:fabricated_canonical_facts:1",
+        "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry:required_modality_capture_failed",
         "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry:required_residual_missing_or_inactionable",
         "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry:source_region_disposition_unaccounted"
       ]
@@ -720,7 +710,7 @@
       },
       "review_scope_complete": true,
       "present_modalities": 1,
-      "accounted_modalities": 0,
+      "accounted_modalities": 1,
       "cells": [
         {
           "cell_id": "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary",
@@ -771,7 +761,21 @@
           "canonical": {
             "evidence_ir": {
               "actual_keys": [
-                "Table 3-6 CPU interface summary|access=<missing>|offset=<missing>"
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
               ],
               "expected_keys": [
                 "GICC_ABPR|access=RW|offset=0x001C",
@@ -790,19 +794,49 @@
                 "GICC_PMR|access=RW|offset=0x0004",
                 "GICC_RPR|access=RO|offset=0x0014"
               ],
-              "matched_keys": [],
-              "actual_total": 1,
+              "matched_keys": [
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
+              ],
+              "actual_total": 15,
               "expected_total": 15,
-              "true_positives": 0,
-              "false_positives": 1,
-              "false_negatives": 15,
-              "precision": 0.0,
-              "recall": 0.0,
+              "true_positives": 15,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
-                "Table 3-6 CPU interface summary|access=<missing>|offset=<missing>"
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
               ],
               "expected_keys": [
                 "GICC_ABPR|access=RW|offset=0x001C",
@@ -821,19 +855,49 @@
                 "GICC_PMR|access=RW|offset=0x0004",
                 "GICC_RPR|access=RO|offset=0x0014"
               ],
-              "matched_keys": [],
-              "actual_total": 1,
+              "matched_keys": [
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
+              ],
+              "actual_total": 15,
               "expected_total": 15,
-              "true_positives": 0,
-              "false_positives": 1,
-              "false_negatives": 15,
-              "precision": 0.0,
-              "recall": 0.0,
+              "true_positives": 15,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
-                "Table 3-6 CPU interface summary|access=<missing>|offset=<missing>"
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
               ],
               "expected_keys": [
                 "GICC_ABPR|access=RW|offset=0x001C",
@@ -852,14 +916,30 @@
                 "GICC_PMR|access=RW|offset=0x0004",
                 "GICC_RPR|access=RO|offset=0x0014"
               ],
-              "matched_keys": [],
-              "actual_total": 1,
+              "matched_keys": [
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
+              ],
+              "actual_total": 15,
               "expected_total": 15,
-              "true_positives": 0,
-              "false_positives": 1,
-              "false_negatives": 15,
-              "precision": 0.0,
-              "recall": 0.0,
+              "true_positives": 15,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             }
           },
@@ -929,38 +1009,28 @@
             {
               "boundary": "source_to_evidence_ir",
               "expected": 15,
-              "conserved_or_residualized": 0,
-              "unexplained_drops": 15
+              "conserved_or_residualized": 15,
+              "unexplained_drops": 0
             },
             {
               "boundary": "evidence_to_semantic_ir",
-              "expected": 0,
-              "conserved_or_residualized": 0,
+              "expected": 15,
+              "conserved_or_residualized": 15,
               "unexplained_drops": 0
             },
             {
               "boundary": "semantic_to_intent_ir",
-              "expected": 0,
-              "conserved_or_residualized": 0,
+              "expected": 15,
+              "conserved_or_residualized": 15,
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "source_to_evidence_ir",
-          "hard_failures": [
-            "fabricated_canonical_facts:1",
-            "reviewed_gold_misses:15",
-            "source_region_disposition_unaccounted",
-            "unexplained_stage_drops:15"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         }
       ],
-      "hard_failures": [
-        "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary:fabricated_canonical_facts:1",
-        "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary:reviewed_gold_misses:15",
-        "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary:source_region_disposition_unaccounted",
-        "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary:unexplained_stage_drops:15"
-      ]
+      "hard_failures": []
     },
     {
       "document_key": "den0068_2018_07_23_coresight_base_system_architecture",
@@ -2701,7 +2771,7 @@
       "category": "register-ip",
       "document_count": 2,
       "cell_count": 2,
-      "hard_failure_count": 7,
+      "hard_failure_count": 3,
       "status": "incomplete"
     },
     {
@@ -2735,31 +2805,31 @@
   ],
   "global": {
     "intent_bearing_source_region_disposition": {
-      "met": 6,
+      "met": 7,
       "total": 14,
-      "ratio": 0.42857142857142855
+      "ratio": 0.5
     },
     "required_modality_accounting": {
-      "met": 4,
+      "met": 5,
       "total": 12,
-      "ratio": 0.3333333333333333
+      "ratio": 0.4166666666666667
     },
     "canonical_provenance_closure": {
-      "met": 29,
-      "total": 29,
+      "met": 42,
+      "total": 42,
       "ratio": 1.0
     },
     "stage_conservation_or_residual": {
-      "met": 72,
-      "total": 88,
-      "ratio": 0.8181818181818182
+      "met": 117,
+      "total": 118,
+      "ratio": 0.9915254237288136
     },
     "residual_actionability": {
       "met": 4,
       "total": 24,
       "ratio": 0.16666666666666666
     },
-    "fabricated_canonical_facts": 2,
-    "unexplained_stage_drops": 16
+    "fabricated_canonical_facts": 0,
+    "unexplained_stage_drops": 1
   }
 }

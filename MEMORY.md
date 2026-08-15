@@ -17,15 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` is closing its verified structural-carrier repair;
-  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` is the durable next frontier for clean replay/publication.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` is closing clean population publication; `.f.v` is the
+  durable next frontier after this slice commits.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: qualified closed roles and unique structural access columns restore Arm 12/12 and GIC 15/15
-  target facts while AMD stays unknown. Exact ADR 0025 migration is 24/24 current and zero stale through every
-  stage; only Arm and one OpenCAPI access carrier change downstream. `MEMORY.md` remains capped at 32,768 B.
-- Next action: commit `.f.iv.a`, then under `.f.iv.b` fix the replay driver's five-versus-four positional
-  arguments and run/publish the complete 12-source population from the clean repair revision.
-- In-flight uncommitted: tracked `.f.iv.a` code/docs only. The five declared scratch roots were removed after
-  full CI and their residue is absent; no background job.
+- Current state: the 12-source / 48-stage replay from clean `e125aac7` publishes 39/0/1 IntentIR TP/FP/FN,
+  42/42 provenance, 117/118 conservation, zero fabrications, and one APB drop. All controller hard gates pass;
+  `.7` ranks first and `.6e` is superseded. The four-value driver contract is focused-test guarded.
+- Next action: finish focused publication/docs/doctrine checks, commit `.f.iv.b`, then activate `.f.v` final
+  behavioral signoff. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: `.f.iv.b` result/manifest/controller/code/docs are staged in the worktree. All three
+  replay roots and the runtime map are removed with residue absent; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

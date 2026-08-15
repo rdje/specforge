@@ -133,8 +133,9 @@ The example is illustrative; `.5a` contains no product values. `.5b` first attac
 `.2` capability evidence in a separate composition module, so controller policy remained untuned. `.6a` added
 one independent current-binary replay; `.6b.i` replaced that operational input with a hash-pinned 12-document
 current result; `.6b.ii.b` qualified the register-access/table-provenance repair against the same population;
-`.6c.ii` qualifies the timing-unit/table-provenance repair, and `.6d.ii.a` publishes the physical-applicability
-qualification. The generic controller engine is unchanged. The controller can report and propose; it cannot edit
+`.6c.ii` qualifies the timing-unit/table-provenance repair, `.6d.ii.a` publishes the physical-applicability
+qualification, and `.6d.ii.f.iv.b` publishes the later structural-register repair. The generic controller engine
+is unchanged. The controller can report and propose; it cannot edit
 canonical IR. The reviewed-corpus composer and exact assertions now compile only below `#[cfg(test)]`; they are
 not part of the production IR module graph.
 
@@ -147,44 +148,42 @@ validation rejects source-hash, population, artifact-path, result, and cleanup m
 reproduces the report byte for byte:
 
 ```console
-cargo test --quiet -p specforge --lib test_support::trajectory_snapshot
+cargo test --quiet -p specforge-conformance --lib test_support::trajectory_snapshot
 cargo run --quiet -p specforge --example trajectory_controller -- \
   crates/specforge/test_data/trajectory/controller_input.json \
   | cmp - crates/specforge/test_data/trajectory/trajectory_report.json
 ```
 
-The state is `diverging`, while `history_status` is `insufficient_history`. These fields answer different
-questions. Replay currency now meets its hard target at 12/12. Divergence instead comes from two exact current
-fabricated canonical facts; provenance reaches complete 29/29 closure. Missing comparable history independently
-prevents the controller from claiming a trend or stall. The `.4c` counts remain the retrospective baseline;
-the `.6d.ii` replay published by `.6d.ii.a` is the current product authority.
+The state is `unmeasurable`, while `history_status` is `insufficient_history`. All three hard gates now pass:
+replay currency is 12/12, fabricated canonical facts are zero, and provenance closes 42/42. Missing comparable
+history prevents the controller from claiming a trend or stall even though the current quality snapshot is
+materially better. The `.4c` counts remain the retrospective baseline; the `.f.iv.b` replay from clean production
+revision `e125aac7` is the current product authority.
 
 | Dimension | First exact observation | Status |
 | --- | --- | --- |
-| Source capture | source regions 14/14; required-modality captures 13/14 | capture deficit |
-| Semantic correctness | canonical IntentIR precision 24/26 | deficit |
-| Semantic completeness | recall 24/40; supported categories 1/6 | deficit |
-| Stage conservation | conserved or residualized crossings 72/88 | deficit |
-| Provenance/honesty | closure 29/29; fabricated-fact rate 2/26 | fabrication hard deficit; provenance met |
+| Source capture | source regions 14/14; required-modality captures 12/14 | capture deficit |
+| Semantic correctness | canonical IntentIR precision 39/39 | meets target |
+| Semantic completeness | recall 39/40; supported categories 1/6 | deficit |
+| Stage conservation | conserved or residualized crossings 117/118 | deficit |
+| Provenance/honesty | closure 42/42; fabricated-fact rate 0/39 | meets target |
 | Production participation | accounted 17/17; integrated or scheduled 12/17 | deficit, fully reported |
 | Generalization/robustness | reviewed category-oracle coverage 6/6 | meets target |
 | Operational confidence | complete review 12/12; current replay 12/12; provider-free execution 5/10 | replay target met; execution deficit |
-| Executable readiness | required-modality document accounting 4/12 | deficit |
+| Executable readiness | required-modality document accounting 5/12 | deficit |
 
-The current replay and provenance hard gates have zero violations. The fabrication gate records two fabricated
-canonical facts; 16 unexplained stage drops also remain. Four of 24 required residual observations are now
-actionable. The metric controller ranks the existing leaves as follows:
+The current replay, fabrication, and provenance hard gates all have zero violations. One unexplained canonical
+stage drop remains, and four of 24 required residual observations are actionable. The metric controller ranks the
+remaining leaves as follows:
 
-1. `.6e` — repair the remaining qualified fabrication families (`hard_invariant`, two affected canonical
-   records);
-2. `.7` — recover 16 source-to-evidence canonical losses (`source_evidence_loss`);
-3. `.8` — make the remaining 20/24 required residual observations actionable (`persistent_residual`); and
-4. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
+1. `.7` — recover the sole APB source-to-evidence canonical loss (`source_evidence_loss`);
+2. `.8` — make the remaining 20/24 required residual observations actionable (`persistent_residual`); and
+3. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
 
-The metric recommendation is `.6e`. The owner-mandated production-genericity remediation under `.6d.ii.b`
-through `.6d.ii.f` is a release-signoff invariant and therefore precedes that metric-ranked work. All task IDs
-exist in the task tree, the complete metric ordering remains in the report, and review is still required before
-canonical mutation.
+The metric recommendation is `.7`. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
+and `.f.iv.b` supplied its whole-population proof. Final behavioral `.f.v` remains a release-signoff invariant and
+therefore precedes controller-ranked work. All task IDs exist in the task tree, the complete metric ordering
+remains in the report, and review is still required before canonical mutation.
 
 The word “current” above is revision-bound. The tracked 24/2/16 result is valid for its pinned `b977a51f`
 production revision; fixed-input artifact-chain currency does not extend it across later PDF-to-SourceIR changes.
@@ -197,9 +196,11 @@ review identities, not current artifact hashes.
 `.f.iv.a` now closes both generic carrier defects. One parenthesized qualifier may follow a closed header role,
 and an already-classified register map may retain access from an explicit header or one unambiguous closed-literal
 column. Direct PDF replay restores Arm 12/12 and GIC-400 15/15 while AMD remains empty. Exact retained-chain
-reconciliation is 24/24 current and zero stale at every stage. This target proof still does not publish a new
-population result: `.f.iv.b` first repairs the replay driver's argument shape, then must rerun all 12 sources from
-the clean `.f.iv.a` revision before any result or controller authority changes.
+reconciliation is 24/24 current and zero stale at every stage. `.f.iv.b` now publishes that repaired population.
+All 12 sources and 48 stages complete under an evidence-recorded CPU/16-page ingest policy. Aggregate IntentIR
+moves to 39/0/1 TP/FP/FN; GIC-400 supplies 15 exact facts and AMD supplies no false register. APB's pre-existing
+missing `PSEL=HIGH` obligation is the sole canonical miss and unexplained drop. The replay driver's exact four
+post-`--` values are guarded by a focused executable test.
 
 ### What the first current replay proved
 
@@ -253,7 +254,7 @@ uses the review fixture's data-defined projections and the same Rust evaluator t
 The tracked manifest contains portable source identities, all 48 stage hashes, tool hashes, current dataset/result
 identities, and cleanup evidence. For a controlled qualification run, ingestion environment overrides are
 recorded in every document command, making the policy part of the evidence rather than hidden process state. That
-3,913-file / 1,090,908-KiB workspace and runtime map were deleted exactly; canonical `generated/`, the
+3,913-file / 1,090,948-KiB workspace and runtime map were deleted exactly; canonical `generated/`, the
 reviewed dataset, and the frozen `.4c` result stayed byte-identical.
 
 The access-carrier replay moves IntentIR TP/FP/FN from 7/22/33 to 19/10/21. All twelve Arm Debug register/access
@@ -288,6 +289,15 @@ cells, all 24 prior true positives, and 29/29 provenance remain exact. TP/FP/FN 
 disposition becomes 6/14; required-modality document accounting becomes 4/12; residual actionability becomes
 4/24; and physical-link becomes the first supported category. Two unrelated register fabrications and 16
 unexplained stage drops remain.
+
+The repaired-register publication replays the same 12 reviewed sources from `e125aac7`. GIC-400 changes from
+0/1/15 to 15/0/0 TP/FP/FN, while AMD changes from a 0/1/0 fabrication to an honest empty 0/0/0 cell. No other
+reviewed cell changes. Required-modality capture decreases from 13/14 to 12/14 because AMD's formerly spurious
+table capture is no longer counted as successful capture; this is an honest metric trade, not a regression hidden
+by the aggregate. IntentIR becomes 39/0/1, provenance 42/42, conservation 117/118, source disposition 7/14, and
+required-modality document accounting 5/12. All hard gates pass. The three attempt roots—two interrupted and one
+promoted—contained 5,616 files / 2,038,580 KiB and were deleted with the runtime map after publication; the
+portable manifest retains the successful root's 3,094-file / 1,147,260-KiB exact cleanup census.
 
 ## Current production-path caveat
 

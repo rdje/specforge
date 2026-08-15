@@ -1,4 +1,34 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b (`2026-08-15`) — repaired population authority
+
+The clean replay validates the structural repair across the whole reviewed population. All 12 immutable source
+identities and 48 isolated stage outputs completed from production revision `e125aac7`. Docling ran on CPU with
+the explicit, evidence-recorded `SPECFORGE_INGEST_BATCH_THRESHOLD=0` and
+`SPECFORGE_INGEST_BATCH_PAGES=16` policy. A default-path attempt was externally terminated after six documents;
+a second attempt stopped honestly at the 85% RAM guard while unrelated host work held several GiB. Once that
+work released memory, the identical bounded policy completed. This was host-pressure handling, not a semantic
+retry or a disabled safety check.
+
+The new qualified result changes only the two register cells relative to the prior `b977a51f` authority. GIC-400
+moves from 0/1/15 to 15/0/0 TP/FP/FN and becomes fully disposition-accounted. AMD's packed-layout 0/1/0
+fabrication becomes 0/0/0; its formerly spurious table capture is now honestly absent, so exact required-modality
+capture changes 13/14→12/14. Every other reviewed cell is identical, including APB's pre-existing missing
+`PSEL|must_be_value|HIGH` fact. Aggregate IntentIR becomes 39/0/1, provenance 42/42, conservation 117/118,
+source disposition 7/14, modality-document accounting 5/12, and residual actionability 4/24.
+
+The controller therefore has zero replay, fabrication, or canonical-provenance hard-gate violations. Because it
+still has no comparable history, its state is `unmeasurable` rather than a fabricated convergence claim. It ranks
+the one APB source-to-EvidenceIR drop first (`SPEC-TO-INTENT-ALIGNMENT.7`), followed by 20 non-actionable required
+residual observations and five omitted capability islands. Planned `.6e` is superseded: `.f.iv.a` supplied the
+structural repair and `.f.iv.b` supplied its clean population proof.
+
+The promoted manifest pins the bounded policy, all source/stage/tool/result hashes, revision, and exact cleanup.
+The three attempt roots contained 5,616 files / 2,038,580 KiB in total; the successful authority root alone was
+3,094 files / 1,147,260 KiB. All three roots and the runtime absolute-path map were deleted, and an exact
+repo-local residue census is empty. Focused command-builder and conformance snapshot/mutant tests plus the
+mandatory doctrine gate are the ordinary-slice verification set; the next `.f.v` signoff checkpoint owns full
+CI under the project policy.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a (`2026-08-15`) — replay closed structural carriers
 
 A closed vocabulary does not require headers to be byte-identical to their role word. Real specifications often
@@ -45,11 +75,12 @@ gate for push, release/signoff, or another explicitly defined cross-cutting chec
 after each slice. A documentation-only evidence update after a passing full gate needs only its affected doctrine
 and documentation checks unless it changes executable authority.
 
-One separate orchestration defect is now owned by `.f.iv.b`: `scripts/replay_source_to_intent_population.py`
-passes five positional values after `--`, while `source_to_intent_replay` accepts source, output root, optional
-prior memory, and optional observed-table id—four values. Direct four-argument target replays and the retained
-chain migration are unaffected. The population driver must fix and test that command shape before publishing a
-new full replay.
+`.f.iv.b` re-opened the recorded replay-command claim against source before changing production. The claim was
+wrong: `scripts/replay_source_to_intent_population.py` already passes exactly four values after `--`—source,
+output root, prior memory, and `-` for no observed table. The research note had counted the replay root twice;
+optional `env KEY=value` prefixes are also outside the example's positional boundary. The driver now builds the
+command through a named helper, and a focused test pins both the exact four-value suffix and the separate
+environment prefix before the clean publication replay.
 
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv (`2026-08-15`) — replay identity and structural carriers
 

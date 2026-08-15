@@ -82,10 +82,12 @@ fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-ISF-COMPLETENESS.md)
 
 The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical `IntentIR` before adapter expressiveness can be called the blocker.
 ISF/FSMGen remains the eventual executable boundary, but SpecForge does not anticipate a language gap without a source-grounded value. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).
-Its reviewed 12/12 current replay and access/provenance correction ship. Generic timing unit/provenance and
-physical-applicability carriers now have clean whole-population qualification: current IntentIR is 24/2/16 TP/FP/FN with complete 29/29 provenance, and physical-link is the first supported reviewed category. The
-metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400 register fabrications under
-`.6e`; however, the owner-mandated whole-production genericity audit made structural neutrality a release blocker.
+Its reviewed 12/12 current replay and access/provenance correction ship. Generic timing unit/provenance,
+physical applicability, and register carriers now have clean whole-population qualification: current IntentIR is
+39/0/1 TP/FP/FN with complete 42/42 provenance, and physical-link is the first supported reviewed category. All
+controller hard gates pass; `.6e` is superseded by the structural repair and clean proof, and `.7` is the ranked
+next product gap for the sole APB source-to-EvidenceIR canonical loss. The owner-mandated whole-production
+genericity audit remains a release blocker until behavioral `.f.v` signoff closes.
 Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 168
 runtime rules, compiled information-flow doctrine, and 27 adversarial controls cover all five stages. The 24
 current chains carry 148,708 cumulative claims across 120 artifacts with zero public migration delta; 54 legacy
@@ -102,8 +104,8 @@ pair and the final clean-revision held-out refresh now pass: 35 completed relati
 reconciliation restores 24/24 current with zero stale at every replayed persisted stage. The first clean `.f.iv`
 full-PDF replay then exposed one qualified-header truth loss and one incomplete register-access carrier. `.f.iv.a`
 now closes both with neutral structural grammar, real-PDF target proof, and exact 24-chain currency; `.f.iv.b`
-owns the replay-driver argument repair plus clean replay/publication. Final signoff and then `.6e`
-remain. Resource-sized bounded
+publishes the repaired 39/0/1 population and zero-hard-gate controller. Final behavioral `.f.v` signoff remains,
+then controller-ranked `.7` can begin. Resource-sized bounded
 activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
 
 Five active program groups support that north star:

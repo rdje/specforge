@@ -140,6 +140,24 @@ def replay_environment_prefix() -> list[str]:
     return ["env", *assignments] if assignments else []
 
 
+def source_to_intent_replay_command(source_path: Path, replay_root: Path) -> list[str]:
+    """Build the replay command with exactly the example's four positional values."""
+    return replay_environment_prefix() + [
+        "cargo",
+        "run",
+        "--quiet",
+        "-p",
+        "specforge",
+        "--example",
+        "source_to_intent_replay",
+        "--",
+        source_path.as_posix(),
+        replay_root.as_posix(),
+        PRIOR_MEMORY.as_posix(),
+        "-",
+    ]
+
+
 def artifact_identity(path_text: str) -> dict:
     path = Path(path_text)
     absolute = safe_repository_path(path, "replay artifact")
@@ -267,20 +285,7 @@ def main() -> int:
             document, external_sources, args.output_root
         )
         replay_root = args.output_root / "replays" / key
-        command = replay_environment_prefix() + [
-            "cargo",
-            "run",
-            "--quiet",
-            "-p",
-            "specforge",
-            "--example",
-            "source_to_intent_replay",
-            "--",
-            source_path.as_posix(),
-            replay_root.as_posix(),
-            PRIOR_MEMORY.as_posix(),
-            "-",
-        ]
+        command = source_to_intent_replay_command(source_path, replay_root)
         print(f"[{index:02d}/12] replaying {key}", file=sys.stderr, flush=True)
         report = run_json(command)
         if report.get("document_key") != key or report.get("output_root") != replay_root.as_posix():

@@ -1,3 +1,20 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b — publish repaired reviewed population
+
+- Audited and pinned the replay example's exact four post-`--` values. The previously recorded five-argument
+  defect was a documentation miscount, not a production defect; a focused Python test now guards both the suffix
+  and the optional environment prefix.
+- Replayed all 12 review-locked PDFs and all 48 isolated SourceIR/EvidenceIR/SemanticIR/IntentIR stages from clean
+  revision `e125aac7`, with CPU Docling and explicit 16-page batches recorded in every document command.
+- Published IntentIR TP/FP/FN 39/0/1 (precision 39/39, recall 39/40), canonical provenance 42/42, conservation
+  117/118, source disposition 7/14, and required-modality document accounting 5/12. The two register fabrications
+  are gone; GIC-400 contributes 15 exact facts, while APB's missing `PSEL=HIGH` is the sole canonical miss/drop.
+- Rebuilt the byte-current controller authority. All three hard gates now pass; with no comparable history the
+  state is honestly `unmeasurable`, and the first ranked product gap is `.7` source-to-evidence loss. `.6e` is
+  superseded by the `.f.iv.a` repair and this population proof.
+- Removed the exact three replay roots and runtime source map after promotion: 5,616 files / 2,038,580 KiB across
+  the roots, with no matching residue. Ordinary-slice verification used focused replay/controller checks and the
+  mandatory doctrine gate; full CI remains reserved for `.f.v` signoff or push.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a — restore structural register carriers
 
 - Kept table-role matching fail-closed while admitting exactly one well-formed parenthesized qualifier after a
@@ -18,8 +35,9 @@
   2,275 / 11,926 / 11,396 / 1,446 flow snapshot, 1,981 Rust tests with eight ignored and zero failed, five
   compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook test/build, and final locality. Removed the five
   declared scratch roots (5,112 files / 3,614,756 KiB) and proved their residue absent.
-- Advanced the frontier to `.f.iv.b`, which first owns the discovered five-versus-four positional-argument defect
-  in the population replay driver and then the clean 12-source publication replay.
+- Advanced the frontier to `.f.iv.b`. Its command-shape audit corrected a durable miscount: the driver already
+  supplied the example's exact four post-`--` values, and a focused executable guard now pins that contract before
+  the clean 12-source publication replay.
 
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv — route the blocked clean-population replay
 

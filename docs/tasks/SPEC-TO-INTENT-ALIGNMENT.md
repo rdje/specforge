@@ -26,13 +26,13 @@ expressiveness as the bottleneck.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
 - `.6d.ii.f` is in progress; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
   corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has removed the production symbol-alpha
-  coupling and published clean-revision held-out closure; `.f.iv.a` has restored and qualified the structural
-  carriers exposed by the first whole-population replay. `.f.iv.b` next owns driver repair and publication.
-- `.6e`, `.7`, `.8`, and `.9` are pending.
+  coupling and published clean-revision held-out closure; `.f.iv.a` restored the structural carriers and
+  `.f.iv.b` published their clean 12-source proof. `.f.iv` is complete; `.f.v` is next after the clean commit.
+- `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` closure; `.f.iv.b` is next after its clean commit.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` closure; `.f.v` is next after its clean commit.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -49,7 +49,7 @@ conformance. The final clean-revision matrix is 35 pass / zero fail / 16 unmeasu
 completed attempts are fresh under `2cdcd131`. Exact ADR 0025 reconciliation leaves all 24 measurable chains
 current and zero stale through the adapter. The first `.f.iv` clean full-PDF replay found one truth-loss and one
 incomplete carrier family. `.f.iv.a` restores both under closed structural grammar and leaves all 24 retained
-chains current; `.f.iv.b` owns replay-driver correction plus clean replay/publication.
+chains current; `.f.iv.b` publishes 39/0/1 TP/FP/FN with zero fabrications and routes final signoff to `.f.v`.
 
 ## Detailed task evidence
 
@@ -146,6 +146,7 @@ detail-routing authority.
 | `2026-08-15` | `.6d.ii.f.iii.a` production ordering | four alpha-sensitive production mechanisms are removed; exact retained-chain reconciliation, all doctrines, all production-genericity components, 1,976 Rust tests / eight ignored / zero failed, mdBook, and final locality pass |
 | `2026-08-15` | `.6d.ii.f.iii.a` clean-revision closure | exact I2C alpha passes 5/5 stages; refreshed held-out evidence is 35/0/16/0 with all completed attempts fresh under `2cdcd131`; aggregate SHA `06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1` |
 | `2026-08-15` | `.6d.ii.f.iv.a` structural carrier repair | qualified closed-role parity, unique access carriage, real Arm/GIC/AMD proof, SourceIR migration replay, exact 144-file comparison, and 24/24 zero-stale currency pass; `.f.iv.b` owns clean publication |
+| `2026-08-15` | `.6d.ii.f.iv.b` repaired population publication | 12/12 sources and 48/48 stages publish 39/0/1 TP/FP/FN, 42/42 provenance, zero fabrications, zero hard-gate violations, `.7` ranking, and exact residue-free cleanup; `.f.v` is next |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 

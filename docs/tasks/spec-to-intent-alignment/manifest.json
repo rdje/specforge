@@ -1,8 +1,8 @@
 {
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` closure; `.f.iv.b` is next after its clean commit.",
+      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` closure; `.f.v` is next after its clean commit.",
       "mode" : "eligible",
       "part_id" : "behavioral-qualification"
    },
@@ -389,9 +389,8 @@
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6e",
-         "origin" : "structural",
-         "part_id" : "current-and-future",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6e"
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7",
@@ -502,14 +501,14 @@
       },
       {
          "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
-         "metrics" : {
-            "bytes" : 44103,
-            "line_bytes" : 439,
-            "lines" : 438
+      "metrics" : {
+         "bytes" : 48019,
+         "line_bytes" : 439,
+         "lines" : 472
          },
          "part_id" : "behavioral-qualification",
          "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-         "sha256" : "7e37606971ec9e1ed327f8400f80080ebabf9e8861dc4b8634be51cc54974322",
+      "sha256" : "4bb2bdb02799412801d144953b1ebc8c3dc7db06462cd4d4500f3de95aad92aa",
          "state" : "active"
       }
    ],

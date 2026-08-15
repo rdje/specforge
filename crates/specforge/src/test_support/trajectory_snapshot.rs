@@ -1,7 +1,7 @@
 //! Composition of the qualified reviewed SpecForge trajectory snapshot.
 //!
 //! This remains deliberately separate from the generic controller in [`crate::ir::trajectory`]. It
-//! authenticates the `.6d.ii` whole-population current replay, the unchanged review-locked gold,
+//! authenticates the `.6d.ii.f.iv.b` whole-population current replay, the unchanged review-locked gold,
 //! and the `.2` provider-free production-capability observation, then derives and evaluates the
 //! nine-dimensional input without changing any source authority.
 
@@ -51,16 +51,16 @@ const OBJECTIVE_CONTRACT_SHA256: &str =
 const CAPABILITY_OBSERVATION_SHA256: &str =
     "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e";
 const POPULATION_REPLAY_EVIDENCE_SHA256: &str =
-    "81f1758b5143eb5ea5b78aeb5f2f2a8b189421945e74665df5fea29a2ff2c855";
+    "51e6f3d30e8aed5399429e6ad3c2f36cb0d1ef2e599b7c3f1273d2a3556be899";
 const REPLAY_VERTICAL_RESULT_SHA256: &str =
-    "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075";
+    "3075863eea434bbb07f5abee6e8974da009f6a863235aa228a881767eb9a8560";
 const REVIEWED_DATASET_SHA256: &str =
     "231de7f6aded485c836af8e585334b373194b5af71d03c4ad7a52b7a0e6b34aa";
 const POPULATION_REPLAY_ORCHESTRATOR_SHA256: &str =
-    "74151e8729b653df4b242d36d64fd9414e76e55967983c1d4fbcf27816b8b100";
+    "55c8152048b9dd0f5d6754acfbd1339e0cfeeb2fbbbc72b57cc862a30eaa4569";
 const REPLAY_PROJECTION_SHA256: &str =
     "f51f1ec3ac6521afca040e9142477db32b72f69ec37eb0b0c0d29b1af011214d";
-const POPULATION_REPLAY_PRODUCTION_REVISION: &str = "b977a51ff24f966dcf6aca74ccf47d592a4fc452";
+const POPULATION_REPLAY_PRODUCTION_REVISION: &str = "e125aac7ce05ea0dc810f99e042d5bc25337f2c4";
 const REVIEWED_REVISION: &str = "03e89b66cf87fcc1ec0bf342f47a147261a8d739";
 #[cfg(test)]
 const AIA_DOCUMENT_KEY: &str = "1_0_2025_03_12_risc_v_advanced_interrupt_architecture";
@@ -566,15 +566,16 @@ fn validate_population_replay_evidence(
 ) -> std::result::Result<(), Vec<String>> {
     let mut problems = Vec::new();
     if replay.schema_version != 1
-        || replay.replay_id != "spec-to-intent-6dii-decibel-disposition-population"
-        || replay.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii"
+        || replay.replay_id != "spec-to-intent-f-iv-b-population-r3"
+        || replay.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b"
     {
-        problems
-            .push("population replay identity must name the schema-1 .6d.ii authority".to_string());
+        problems.push(
+            "population replay identity must name the schema-1 .6d.ii.f.iv.b authority".to_string(),
+        );
     }
     if replay.production_revision != POPULATION_REPLAY_PRODUCTION_REVISION {
         problems.push(
-            "population replay production revision must name the committed .6d.i boundary"
+            "population replay production revision must name the committed .6d.ii.f.iv.a boundary"
                 .to_string(),
         );
     }
@@ -619,8 +620,8 @@ fn validate_population_replay_evidence(
     if !is_project_tmp_child(&cleanup.external_source_map)
         || !is_project_tmp_child(&cleanup.population_root)
         || cleanup.status != "removed_and_residue_absent"
-        || cleanup.removed_file_count != 3_913
-        || cleanup.removed_kib != 1_090_948
+        || cleanup.removed_file_count != 3_094
+        || cleanup.removed_kib != 1_147_260
     {
         problems.push(
             "population replay cleanup must retain the exact residue-free census".to_string(),
@@ -745,14 +746,14 @@ fn validate_population_replay_evidence(
     let dataset_prefix = format!("{}/", cleanup.population_root);
     if !replay.current_dataset.path.starts_with(&dataset_prefix)
         || !is_sha256_digest(&replay.current_dataset.sha256)
-        || replay.current_dataset.byte_count != 142_577
+        || replay.current_dataset.byte_count != 152_664
     {
         problems.push("current replay dataset identity is invalid".to_string());
     }
     if !replay.current_result.path.starts_with(&dataset_prefix)
         || replay.current_result.published_path != CURRENT_REPLAY_VERTICAL_RESULT_PATH
         || replay.current_result.sha256 != REPLAY_VERTICAL_RESULT_SHA256
-        || replay.current_result.byte_count != 100_324
+        || replay.current_result.byte_count != 103_869
     {
         problems.push("published current replay result identity is invalid".to_string());
     }
@@ -775,13 +776,14 @@ fn validate_replay_vertical_result(
 ) -> std::result::Result<(), Vec<String>> {
     let mut problems = Vec::new();
     if result.schema_version != 1
-        || result.dataset_id != "reviewed-source-to-intent-current-b977a51f"
-        || result.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii"
+        || result.dataset_id != "spec-to-intent-f-iv-b-current-population"
+        || result.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b"
         || result.selection_boundary_commit != "a3e9757d63ca5499a2393864fb503d6537de0035"
         || result.minimum_documents_per_category != 2
     {
-        problems
-            .push("current vertical result identity is not the .6d.ii reviewed replay".to_string());
+        problems.push(
+            "current vertical result identity is not the .6d.ii.f.iv.b reviewed replay".to_string(),
+        );
     }
     let cells = result
         .documents
@@ -838,32 +840,32 @@ fn validate_replay_vertical_result(
             .filter(|category| category.status == CategoryStatus::Incomplete)
             .count()
             != 5
-        || intent_true_positives != 24
-        || intent_false_positives != 2
-        || intent_false_negatives != 16
+        || intent_true_positives != 39
+        || intent_false_positives != 0
+        || intent_false_negatives != 1
         || exact_source_regions != 14
-        || exact_evidence_captures != 13
+        || exact_evidence_captures != 12
     {
         problems.push(
-            "current vertical result must retain exact 12/14/6 coverage, one supported category, 24/2/16 intent counts, and 14/13 source/capture counts"
+            "current vertical result must retain exact 12/14/6 coverage, one supported category, 39/0/1 intent counts, and 14/12 source/capture counts"
                 .to_string(),
         );
     }
     let global = &result.global;
-    if global.intent_bearing_source_region_disposition.met != 6
+    if global.intent_bearing_source_region_disposition.met != 7
         || global.intent_bearing_source_region_disposition.total != 14
-        || global.required_modality_accounting.met != 4
+        || global.required_modality_accounting.met != 5
         || global.required_modality_accounting.total != 12
-        || global.canonical_provenance_closure.met != 29
-        || global.canonical_provenance_closure.total != 29
-        || global.stage_conservation_or_residual.met != 72
-        || global.stage_conservation_or_residual.total != 88
+        || global.canonical_provenance_closure.met != 42
+        || global.canonical_provenance_closure.total != 42
+        || global.stage_conservation_or_residual.met != 117
+        || global.stage_conservation_or_residual.total != 118
         || global.residual_actionability.met != 4
         || global.residual_actionability.total != 24
         || global.residual_actionability.met != residual_actionability_met
         || global.residual_actionability.total != residual_actionability_total
-        || global.fabricated_canonical_facts != 2
-        || global.unexplained_stage_drops != 16
+        || global.fabricated_canonical_facts != 0
+        || global.unexplained_stage_drops != 1
     {
         problems.push(
             "current vertical result global counts differ from the qualified replay".to_string(),
@@ -914,7 +916,7 @@ fn is_safe_relative_path(value: &str) -> bool {
             .any(|component| matches!(component, std::path::Component::ParentDir))
 }
 
-/// Derive the current controller input from the qualified `.6d.ii` replay and `.2` capability authority.
+/// Derive the current controller input from the qualified `.6d.ii.f.iv.b` replay and `.2` capability authority.
 pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let result_bytes = read_repository_relative(
         Path::new(CURRENT_REPLAY_VERTICAL_RESULT_PATH),
@@ -935,7 +937,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let result_evidence = evidence(
         CURRENT_REPLAY_VERTICAL_RESULT_PATH,
         REPLAY_VERTICAL_RESULT_SHA256,
-        "qualified .6d.ii current-binary reviewed vertical result",
+        "qualified .6d.ii.f.iv.b current-binary reviewed vertical result",
     );
     let capability_evidence = evidence(
         CURRENT_CAPABILITY_OBSERVATION_PATH,
@@ -950,7 +952,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let replay_evidence = evidence(
         CURRENT_POPULATION_REPLAY_EVIDENCE_PATH,
         POPULATION_REPLAY_EVIDENCE_SHA256,
-        "isolated .6d.ii current-binary replay of all 12 reviewed documents",
+        "isolated .6d.ii.f.iv.b current-binary replay of all 12 reviewed documents",
     );
 
     let intent_actual = counts.intent_true_positives + counts.intent_false_positives;
@@ -1056,7 +1058,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
                 ImprovementDirection::HigherIsBetter,
                 false,
                 "exact three-boundary vertical conservation accounting",
-                "54 required stage-boundary crossings",
+                "all required stage-boundary observations in 14 reviewed cells",
                 &result_evidence,
             )],
         ),
@@ -1216,29 +1218,6 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
 
     let gaps = vec![
         gap(
-            "current-canonical-honesty",
-            "provenance_honesty",
-            GapPriorityTier::HardInvariant,
-            format!(
-                "all 12 documents are current-binary qualified; {} fabricated canonical facts and {} canonical provenance failures still reproduce",
-                result.global.fabricated_canonical_facts,
-                result.global.canonical_provenance_closure.total
-                    - result.global.canonical_provenance_closure.met,
-            ),
-            "zero fabricated canonical facts and complete provenance closure on the qualified current population",
-            "source_to_evidence_ir",
-            result.global.fabricated_canonical_facts
-                + result.global.canonical_provenance_closure.total
-                - result.global.canonical_provenance_closure.met,
-            CausalConfidence::High,
-            ReversibleSliceSize::Medium,
-            GapUncertainty::Exact,
-            "separate and repair the remaining AMD IOMMU and GIC-400 register fabrications without sacrificing any of the 24 reviewed true positives",
-            "python3 -B scripts/replay_source_to_intent_population.py --output-root .project-data/tmp/<fresh-root> --external-source-map .project-data/tmp/<runtime-map>.json --replay-id <portable-id> --owner <task-leaf> --dataset-id <portable-id>",
-            "SPEC-TO-INTENT-ALIGNMENT.6e",
-            &[result_evidence.clone(), replay_evidence.clone()],
-        ),
-        gap(
             "source-to-evidence-canonical-loss",
             "stage_conservation",
             GapPriorityTier::SourceEvidenceLoss,
@@ -1252,7 +1231,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             CausalConfidence::High,
             ReversibleSliceSize::Medium,
             GapUncertainty::Exact,
-            "recover the dominant measured loss boundary after the honesty invariant",
+            "recover the sole remaining measured canonical loss at the first failing boundary",
             "cargo test -p specforge --lib ir::source_to_intent_eval::tests::reviewed_result_snapshot_is_current_and_names_the_upstream_loss_boundary",
             "SPEC-TO-INTENT-ALIGNMENT.7",
             std::slice::from_ref(&result_evidence),
@@ -1304,8 +1283,8 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
 
     Ok(TrajectoryControllerInput {
         schema_version: 1,
-        snapshot_id: "specforge-source-to-intent-reviewed-v6".to_string(),
-        owner: "SPEC-TO-INTENT-ALIGNMENT.6d.ii".to_string(),
+        snapshot_id: "specforge-source-to-intent-reviewed-v7".to_string(),
+        owner: "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b".to_string(),
         reviewed_revision: REVIEWED_REVISION.to_string(),
         objective_contract,
         stall_window: 3,
@@ -1646,38 +1625,38 @@ mod tests {
     }
 
     #[test]
-    fn current_snapshot_derives_exact_authority_counts_and_hard_first_proposal() -> Result<()> {
+    fn current_snapshot_derives_exact_repaired_authority_and_loss_first_proposal() -> Result<()> {
         let input = build_current_controller_input()?;
         let report = evaluate_current_trajectory()?;
 
         assert_eq!(input.dimensions.len(), 9);
         assert!(input.history.is_empty());
-        assert_eq!(report.state, TrajectoryState::Diverging);
+        assert_eq!(report.state, TrajectoryState::Unmeasurable);
         assert_eq!(report.history_status, HistoryStatus::InsufficientHistory);
+        assert!(report.hard_gates.iter().all(|gate| gate.violations == 0));
         assert!(
             report
                 .state_reasons
-                .contains(&"hard_gate_failed:zero_fabricated_canonical_facts:2>0".to_string())
+                .contains(&"insufficient_comparable_history".to_string())
         );
         assert_eq!(
             report
                 .recommendation
                 .as_ref()
                 .map(|proposal| proposal.task_id.as_str()),
-            Some("SPEC-TO-INTENT-ALIGNMENT.6e")
+            Some("SPEC-TO-INTENT-ALIGNMENT.7")
         );
-        assert_eq!(report.ranked_gaps.len(), 4);
-        assert_eq!(report.ranked_gaps[0].tier, GapPriorityTier::HardInvariant);
+        assert_eq!(report.ranked_gaps.len(), 3);
         assert_eq!(
-            report.ranked_gaps[1].tier,
+            report.ranked_gaps[0].tier,
             GapPriorityTier::SourceEvidenceLoss
         );
         assert_eq!(
-            report.ranked_gaps[2].tier,
+            report.ranked_gaps[1].tier,
             GapPriorityTier::PersistentResidual
         );
         assert_eq!(
-            report.ranked_gaps[3].tier,
+            report.ranked_gaps[2].tier,
             GapPriorityTier::BreadthEfficiency
         );
         assert!(
@@ -1703,12 +1682,12 @@ mod tests {
         };
         for (metric_id, expected) in [
             ("exact_source_region_capture", Fraction::new(14, 14)),
-            ("exact_required_modality_capture", Fraction::new(13, 14)),
-            ("intent_canonical_precision", Fraction::new(24, 26)),
-            ("intent_canonical_recall", Fraction::new(24, 40)),
+            ("exact_required_modality_capture", Fraction::new(12, 14)),
+            ("intent_canonical_precision", Fraction::new(39, 39)),
+            ("intent_canonical_recall", Fraction::new(39, 40)),
             ("supported_reviewed_categories", Fraction::new(1, 6)),
-            ("stage_conservation_or_residual", Fraction::new(72, 88)),
-            ("canonical_provenance_closure", Fraction::new(29, 29)),
+            ("stage_conservation_or_residual", Fraction::new(117, 118)),
+            ("canonical_provenance_closure", Fraction::new(42, 42)),
             ("production_capability_accounting", Fraction::new(17, 17)),
             (
                 "non_omitted_production_participation",
@@ -1717,7 +1696,7 @@ mod tests {
             ("provider_free_integrated_execution", Fraction::new(5, 10)),
             (
                 "required_modality_document_accounting",
-                Fraction::new(4, 12),
+                Fraction::new(5, 12),
             ),
             ("current_binary_replay_coverage", Fraction::new(12, 12)),
         ] {
