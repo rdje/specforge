@@ -1,4 +1,56 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a (`2026-08-15`) — replay closed structural carriers
+
+A closed vocabulary does not require headers to be byte-identical to their role word. Real specifications often
+put address-selection notation after the role, as `Address (A[3:2], BANK)`. The safe boundary is grammatical:
+the complete head must already be a closed role, followed by exactly one nonempty, balanced parenthesized
+qualifier and nothing else. Rust revalidation and the embedded Docling classifier now implement the same rule;
+an arbitrary suffix remains unknown. This restores Arm Debug `table_0044` without weakening the AMD packed-layout
+negative, which still lacks independent register-name and access structure.
+
+Access carriage uses a similarly closed inference. An explicit `Access` or `R/W` header wins. Otherwise the
+reader selects only one non-name/non-offset/non-reset/non-description/non-bits column whose every body row supplies
+one of the closed register-access literals. GIC-400's `Type` and OpenCAPI's `Attributes` columns therefore survive,
+while a blank/missing value or a register named `RO` cannot authorize the column. The zero-candidate control caught an
+eager `then_some(candidates[0])` index before it reached production; slice-pattern selection now makes the
+exactly-one requirement executable.
+
+The production digest change exposed an audited-maintenance gap. `source_proof_migrate` had enough authority in
+schema-3 `proof_context` to replay the neutral capture, but it only refreshed proof around the stale classified
+fields. Arm consequently failed first on structured-table replay and then on its stale validation report. The
+migrator now reconstructs all three classification surfaces from the captured premises, reapplies grounded
+proposals, clears validation for the initial proof, and restores the exact current validation backannotation.
+It does not rerun Docling or trust the stale conclusion.
+
+ADR 0025 reconciliation used an exact 144-file / 964,185,725-byte rollback snapshot (manifest SHA-256
+`6e27f458f11afd5fd6090fc13de6daf7b07715121d7ca5b305b869c47b80cf76`). SourceIR changes outside proof and
+validation in one of 24 documents only: Arm `table_0044` becomes `register_map`. Evidence/Semantic/Intent change
+only Arm and OpenCAPI Discovery. Arm replaces four section-derived placeholders with 12 table-derived records
+(74→82 total); OpenCAPI keeps one register and adds real per-field `Attributes` access. Only Arm's blocked ISF
+payload changes, from 74→82 storage declarations; its missing clock/reset contract and no-file state remain.
+The independent currency oracle is 24/24 current and zero stale at every stage.
+
+The frozen candidate passes all nine doctrines, all 11 production-genericity components, the exact
+2,275-function / 11,926-edge / 11,396-decision / 1,446-macro flow snapshot, 1,981 Rust tests with eight ignored
+and zero failed, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook test/build, and final locality.
+Cleanup removed the five declared roots: 5,112 files / 3,614,756 KiB in total, including the now-expired
+144-file rollback snapshot plus its 96 dry-run comparisons and two control files. All five exact paths are absent;
+the rollback copy is no longer recoverable, while the current generated chain remains reproducible and gated.
+
+Verification sequencing also matters at this scale. This slice invoked the expensive integrated gate before the
+candidate was fully frozen, so later proof-digest and deterministic graph-count updates forced redundant full
+runs. Future slices should freeze implementation first, refresh generated proofs and deterministic snapshots
+second, then use the doctrine gate plus focused checks selected by the changed surfaces. Full CI is a milestone
+gate for push, release/signoff, or another explicitly defined cross-cutting checkpoint—not the routine default
+after each slice. A documentation-only evidence update after a passing full gate needs only its affected doctrine
+and documentation checks unless it changes executable authority.
+
+One separate orchestration defect is now owned by `.f.iv.b`: `scripts/replay_source_to_intent_population.py`
+passes five positional values after `--`, while `source_to_intent_replay` accepts source, output root, optional
+prior memory, and optional observed-table id—four values. Direct four-argument target replays and the retained
+chain migration are unaffected. The population driver must fix and test that command shape before publishing a
+new full replay.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv (`2026-08-15`) — replay identity and structural carriers
 
 The bounded evaluation fixture carries two different notions of identity. Its per-stage `original_sha256` is the

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > how will SpecForge automatically detect convergence or divergence
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > how will the million-byte Knowledge Map be sharded without losing question retrieval
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > how will the oversized SpecForge roadmap be made bounded without losing its history
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -290,11 +298,3 @@
   > temporal rule predicate atom vocabulary
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > torch MPS float64 error during ingest
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > was DL a signal declaration in the OpenCAPI Ready note
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > was OpenCAPI Discovery ingest deterministic and memory safe
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > was any USB4 pipeline artifact changed by the source locality probe
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > was the (contract ... eventually ...) ISF clause removed

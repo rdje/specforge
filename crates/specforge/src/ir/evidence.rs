@@ -13871,9 +13871,6 @@ fn synthesize_register_records(
         let offset_col = header
             .iter()
             .position(|h| h.contains("offset") || h.contains("address") || h.contains("addr"));
-        let access_col = header
-            .iter()
-            .position(|h| h.contains("access") || h.contains("r/w"));
         let reset_col = header
             .iter()
             .position(|h| h.contains("reset") || h.contains("default"));
@@ -13881,6 +13878,11 @@ fn synthesize_register_records(
         let bits_col = header
             .iter()
             .position(|h| h.contains("bits") || h.contains("bit") || h.contains("field"));
+        let access_col = register_access_column(
+            table,
+            &header,
+            &[Some(name_col), offset_col, reset_col, desc_col, bits_col],
+        );
 
         let table_id = table.table_id.clone();
         for (row_idx, row) in table.body_rows.iter().enumerate() {
@@ -13963,6 +13965,51 @@ fn synthesize_register_records(
     }
 
     records
+}
+
+fn is_register_access_literal(value: &str) -> bool {
+    matches!(
+        value.trim().to_ascii_lowercase().as_str(),
+        "ro" | "rw" | "wo" | "rc" | "rs" | "w1c" | "w1s" | "w0c" | "rw1c" | "r/w"
+    )
+}
+
+/// Resolve the access carrier of an already-classified register map. An explicit access header wins.
+/// Otherwise exactly one body column must consist entirely of the closed access-literal grammar. This mirrors
+/// the structural evidence that admits a register map while refusing an arbitrary `Type` label or ambiguous
+/// multi-column guess.
+fn register_access_column(
+    table: &StructuredTableRecord,
+    header: &[String],
+    excluded_columns: &[Option<usize>],
+) -> Option<usize> {
+    if let Some(explicit) = header
+        .iter()
+        .position(|label| label.contains("access") || label.contains("r/w"))
+    {
+        return Some(explicit);
+    }
+
+    let column_count = table
+        .body_rows
+        .iter()
+        .map(Vec::len)
+        .max()
+        .unwrap_or_default();
+    let candidates = (0..column_count)
+        .filter(|column| !excluded_columns.contains(&Some(*column)))
+        .filter(|column| {
+            !table.body_rows.is_empty()
+                && table.body_rows.iter().all(|row| {
+                    row.get(*column)
+                        .is_some_and(|cell| is_register_access_literal(&cell.text))
+                })
+        })
+        .collect::<Vec<_>>();
+    match candidates.as_slice() {
+        [candidate] => Some(*candidate),
+        _ => None,
+    }
 }
 
 /// PDF-VARIANT-DIGESTION.2 — does this header row name a REGISTER-FIELD table? Such tables define the
@@ -17466,9 +17513,90 @@ mod tests {
             row_count: 2,
             col_count: 2,
         });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_type_access".to_string(),
+            asset_id: "asset_type_access".to_string(),
+            page_id: None,
+            caption_text: Some("Register summary".to_string()),
+            source_ref: None,
+            table_kind: TableKind::RegisterMap,
+            header_rows: vec![vec![
+                make_table_cell("Offset", true),
+                make_table_cell("Name", true),
+                make_table_cell("Type", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("0x10", false),
+                    make_table_cell("CONTROL2", false),
+                    make_table_cell("RW", false),
+                ],
+                vec![
+                    make_table_cell("0x14", false),
+                    make_table_cell("STATUS2", false),
+                    make_table_cell("RO", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 3,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_access_like_names".to_string(),
+            asset_id: "asset_access_like_names".to_string(),
+            page_id: None,
+            caption_text: Some("Register summary".to_string()),
+            source_ref: None,
+            table_kind: TableKind::RegisterMap,
+            header_rows: vec![vec![
+                make_table_cell("Name", true),
+                make_table_cell("Offset", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("RO", false),
+                    make_table_cell("0x18", false),
+                    make_table_cell("First register", false),
+                ],
+                vec![
+                    make_table_cell("RW", false),
+                    make_table_cell("0x1C", false),
+                    make_table_cell("Second register", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 3,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_partial_type_access".to_string(),
+            asset_id: "asset_partial_type_access".to_string(),
+            page_id: None,
+            caption_text: Some("Register summary".to_string()),
+            source_ref: None,
+            table_kind: TableKind::RegisterMap,
+            header_rows: vec![vec![
+                make_table_cell("Offset", true),
+                make_table_cell("Name", true),
+                make_table_cell("Type", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("0x20", false),
+                    make_table_cell("CONTROL3", false),
+                    make_table_cell("RW", false),
+                ],
+                vec![
+                    make_table_cell("0x24", false),
+                    make_table_cell("STATUS3", false),
+                    make_table_cell("", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 3,
+        });
 
         let records = super::synthesize_register_records(&source_ir, None);
-        assert_eq!(records.len(), 3);
+        assert_eq!(records.len(), 9);
         assert_eq!(records[0].register_name, "CONTROL");
         assert_eq!(records[0].access_type.as_deref(), Some("RW"));
         assert_eq!(records[0].offset_address.as_deref(), Some("0x04"));
@@ -17486,6 +17614,19 @@ mod tests {
             records[2].supporting_table_ids,
             vec!["table_without_access"]
         );
+        assert_eq!(records[3].register_name, "CONTROL2");
+        assert_eq!(records[3].access_type.as_deref(), Some("RW"));
+        assert_eq!(records[3].offset_address.as_deref(), Some("0x10"));
+        assert_eq!(records[4].register_name, "STATUS2");
+        assert_eq!(records[4].access_type.as_deref(), Some("RO"));
+        assert_eq!(records[5].register_name, "RO");
+        assert_eq!(records[5].access_type, None);
+        assert_eq!(records[6].register_name, "RW");
+        assert_eq!(records[6].access_type, None);
+        assert_eq!(records[7].register_name, "CONTROL3");
+        assert_eq!(records[7].access_type, None);
+        assert_eq!(records[8].register_name, "STATUS3");
+        assert_eq!(records[8].access_type, None);
 
         let encoded = serde_json::to_vec(&records)?;
         let decoded: Vec<crate::ir::source::RegisterRecord> = serde_json::from_slice(&encoded)?;

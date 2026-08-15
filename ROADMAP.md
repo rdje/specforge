@@ -100,8 +100,9 @@ production spelling/order coupling. `.f.iii.a` has localized and removed that pr
 pair and the final clean-revision held-out refresh now pass: 35 completed relations are fresh under revision
 `2cdcd131`, 16 alpha rows remain honestly unmeasurable, and no failure or invalid attempt remains. ADR 0025
 reconciliation restores 24/24 current with zero stale at every replayed persisted stage. The first clean `.f.iv`
-full-PDF replay then exposed one qualified-header truth loss and one incomplete register-access carrier; `.f.iv.a`
-owns their neutral structural repair and `.f.iv.b` owns clean replay/publication. Final signoff and then `.6e`
+full-PDF replay then exposed one qualified-header truth loss and one incomplete register-access carrier. `.f.iv.a`
+now closes both with neutral structural grammar, real-PDF target proof, and exact 24-chain currency; `.f.iv.b`
+owns the replay-driver argument repair plus clean replay/publication. Final signoff and then `.6e`
 remain. Resource-sized bounded
 activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
 

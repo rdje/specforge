@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > what exact semantic delta does the at least timing variant produce
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > what extraction approach does SWD/ADI need
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > what falls outside Docling's segmented bounding boxes on a page
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what field holds the constrained signal name (signal_name vs subject_signal)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -289,11 +297,3 @@
   > what is the ambiguous_statements metric in validate
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > what is the behavioral genericity held-out population
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what is the bit-exact adjacency chain rule
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)

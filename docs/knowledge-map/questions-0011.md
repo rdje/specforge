@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > which register-table family stays residual (byte location size tables)
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > which root rolling ledger is currently above its rollover signal
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > which source modalities and IntentIR surfaces are required per chip-spec category
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -199,6 +209,8 @@
   > why did max_facts become 379
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > why did normalize_prior_phrase grow a string exponentially
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > why did proof-only SourceIR refresh fail after a table classifier change
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why did removing false signals ADD conditional rules to SemanticIR
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -285,15 +297,3 @@
   > why do conditional_rules lower to .isf only partially
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
   > why do environment-lock tests cascade with PoisonError
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why do four corpus documents have no document_class
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > why do generated IR files contain the old SpecForge repository path
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > why do message fields prevent a wire or register category completeness claim
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)

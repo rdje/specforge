@@ -490,6 +490,12 @@ therefore has a register-level `access_type` in addition to each real field's in
 is preserved exactly, while a table with no Access column keeps the register value absent. The reader never
 copies register access into a synthetic field merely to fit the older shape.
 
+The access carrier is structural rather than spelling-specific. An explicit `Access` or `R/W` header wins.
+Otherwise, an already-classified register map may use exactly one non-name/non-offset/non-reset/non-description/
+non-bits column whose every body row supplies a closed access literal such as `RO`, `RW`, `WO`, or `W1C`. This
+allows common `Type` and `Attributes` columns to survive. Zero candidates, multiple candidates, blank/missing or
+mixed values, and an access-looking register-name column leave access absent instead of guessing.
+
 Table-derived register records also carry `supporting_table_ids`. The row-per-register path records the exact
 source table for every row; bit-layout chains retain every member table; field-table fragments union and
 deduplicate their table ids when they merge. `supporting_statement_ids` remains a separate prose-provenance
@@ -499,7 +505,8 @@ from prose, or from both without pretending a table id is a statement id.
 Both fields are backward-compatible Serde additions: older artifacts load with no register-level access and an
 empty table-support list, and documents whose register tables do not declare access keep their existing JSON
 shape. SemanticIR and IntentIR clone the complete record unchanged. A clean whole-population replay is required
-before these carrier semantics are used to update product-quality counts.
+before these carrier semantics are used to update product-quality counts. The current structural carrier is
+qualified on real Arm Debug and GIC-400 PDFs while a packed-layout negative remains unclassified.
 
 ### `EXTRACTION-GAP-FIX.4a` — recovering bits that live only in the layout diagram
 

@@ -26,13 +26,13 @@ expressiveness as the bottleneck.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
 - `.6d.ii.f` is in progress; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
   corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has removed the production symbol-alpha
-  coupling and published clean-revision held-out closure; `.f.iv.a` now owns the structural carrier repair exposed
-  by the first whole-population replay, before `.f.iv.b` publication.
+  coupling and published clean-revision held-out closure; `.f.iv.a` has restored and qualified the structural
+  carriers exposed by the first whole-population replay. `.f.iv.b` next owns driver repair and publication.
 - `.6e`, `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` closure; `.f.iv.b` is next after its clean commit.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -48,7 +48,8 @@ excludes declared aliases from section-topic grammar, and normalizes only measur
 conformance. The final clean-revision matrix is 35 pass / zero fail / 16 unmeasurable / zero invalid; all 35
 completed attempts are fresh under `2cdcd131`. Exact ADR 0025 reconciliation leaves all 24 measurable chains
 current and zero stale through the adapter. The first `.f.iv` clean full-PDF replay found one truth-loss and one
-incomplete carrier family; `.f.iv.a` owns the neutral repair and `.f.iv.b` owns clean replay/publication.
+incomplete carrier family. `.f.iv.a` restores both under closed structural grammar and leaves all 24 retained
+chains current; `.f.iv.b` owns replay-driver correction plus clean replay/publication.
 
 ## Detailed task evidence
 
@@ -144,6 +145,7 @@ detail-routing authority.
 | `2026-08-14` | `.6d.ii.f.iii` corrected qualification | 34 pass / one fail / 16 unmeasurable / zero invalid; both PDF relations pass 17/17; the sole measurable six-signal I2C alpha pair fails below SourceIR and routes `.f.iii.a` |
 | `2026-08-15` | `.6d.ii.f.iii.a` production ordering | four alpha-sensitive production mechanisms are removed; exact retained-chain reconciliation, all doctrines, all production-genericity components, 1,976 Rust tests / eight ignored / zero failed, mdBook, and final locality pass |
 | `2026-08-15` | `.6d.ii.f.iii.a` clean-revision closure | exact I2C alpha passes 5/5 stages; refreshed held-out evidence is 35/0/16/0 with all completed attempts fresh under `2cdcd131`; aggregate SHA `06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1` |
+| `2026-08-15` | `.6d.ii.f.iv.a` structural carrier repair | qualified closed-role parity, unique access carriage, real Arm/GIC/AMD proof, SourceIR migration replay, exact 144-file comparison, and 24/24 zero-stale currency pass; `.f.iv.b` owns clean publication |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 
@@ -160,6 +162,7 @@ detail-routing authority.
 | `.6d.ii.f.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects` | retain the first 51-attempt diagnostic and own fail-closed oracle repair before qualification |
 | `.6d.ii.f.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior` | publish corrected provenance/denominators and route real I2C production coupling to `.f.iii.a` |
 | `.6d.ii.f.iii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure` | require fresh full-capture revision evidence and publish passing I2C/held-out closure before `.f.iv` |
+| `.6d.ii.f.iv.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a — restore structural register carriers` | restore qualified closed roles, unique structural access carriage, audited SourceIR migration, target truth, and exact retained-chain currency |
 | `.6d.ii.e.vi` | `07b1f874` | qualify generated production structure and controlled failure cases |
 | `.6d.ii.e.v.iv` | `9f37989f` | register the compiled production-genericity doctrine and clean baseline |
 

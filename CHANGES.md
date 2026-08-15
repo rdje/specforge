@@ -1,3 +1,26 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a — restore structural register carriers
+
+- Kept table-role matching fail-closed while admitting exactly one well-formed parenthesized qualifier after a
+  closed role, so `Address (A[3:2], BANK)` is structural authority but `Address qualifier` is not.
+- Preserved register access from an explicit access/RW header or the unique non-identity column whose every body
+  row supplies a closed access literal. Register names such as `RO`/`RW` cannot authorize their own access.
+- Repaired the audited SourceIR proof migrator so a classifier change replays the neutral captured table/visual/
+  section premises, reapplies grounded proposals, and recomputes validation instead of attempting a proof-only
+  refresh over stale classifications.
+- Qualified the real target PDFs: Arm Debug recovers all 12 exact register/access facts with `table_0044`
+  provenance; GIC-400 preserves all 15 source-named register/access/offset facts; the AMD packed-layout negative
+  remains unknown and cannot fabricate a register.
+- Reconciled all 24 retained chains under ADR 0025 from an exact 144-file / 964,185,725-byte same-volume snapshot.
+  Only Arm SourceIR changes outside proof/validation; downstream public content changes only for Arm and one
+  OpenCAPI `Attributes` access carrier. EvidenceIR, SemanticIR, IntentIR, and adapters each replay 24/24 current
+  with zero stale; all adapters remain honestly blocked with zero emitted files.
+- Passed the complete repository gate: 9/9 doctrines, all 11 production-genericity components, the exact
+  2,275 / 11,926 / 11,396 / 1,446 flow snapshot, 1,981 Rust tests with eight ignored and zero failed, five
+  compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook test/build, and final locality. Removed the five
+  declared scratch roots (5,112 files / 3,614,756 KiB) and proved their residue absent.
+- Advanced the frontier to `.f.iv.b`, which first owns the discovered five-versus-four positional-argument defect
+  in the population replay driver and then the clean 12-source publication replay.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv — route the blocked clean-population replay
 
 - Completed a clean 12-source / 48-stage diagnostic replay at revision `0d218116`; all source hashes and

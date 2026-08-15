@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -36,6 +40,8 @@
   > how does FSMGen decide two rule data-writes conflict (same target, different value, NOT compatible/disjoint/priority/resource resolved) and when is a guard proven disjoint (_condition_terms_prove_disjoint: shared eq: signal with different values; an absent/empty condition is NEVER proven disjoint)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how does SemanticIR preserve VALID READY without formal signal declarations
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > how does SourceIR proof migration handle a classifier implementation change
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
@@ -272,6 +278,8 @@
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how is IngestTerminatedBySignal different from IngestAbortedForMemory
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > how is SourceIR validation updated during classifier migration
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how is SourceIr loaded from disk by downstream commands
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -290,11 +298,3 @@
   > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how is a fused Fields(Continued) caption handled
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how is a fused contract's automation_confidence computed
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is a guide reported so it is not a silent 0-yield extraction miss
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how is a message field's width kept honest (per-variant widths stay None)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > how is a promoted constraint surface visible in the extraction manifest

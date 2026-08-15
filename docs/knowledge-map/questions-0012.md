@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why do four corpus documents have no document_class
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > why do generated IR files contain the old SpecForge repository path
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > why do message fields prevent a wire or register category completeness claim
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -286,15 +298,3 @@
   > why is Reset value not a semantic phase
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > why is SWD per-signal phase membership degenerate / empty
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why is SWD/ADI hard / different from APB AHB AXI
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is SWIO not captured as a third SWP signal
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > why is SpecForge called forward specification mining
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > why is TEMPLATE excluded from the task catalog
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why is Vital Product Data (VPD) not a signal

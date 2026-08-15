@@ -123,6 +123,8 @@
   > did the page sidecar repair change USB4 semantic artifacts
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > did the parenthetical data-head repair change real serial signals
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > did the qualified header and register access carrier repair pass
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -295,5 +297,3 @@
   > does converge automatically run recover-register-bits
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does converge automatically run signal-resolve
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > does converge detect a protocol only SWD change

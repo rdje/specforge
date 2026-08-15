@@ -229,9 +229,38 @@ def classifier_has_phrase(value, phrases):
 
 
 def classifier_header_has_role(headers, roles):
-    """Return whether a header has one of the closed structural roles."""
+    """Return whether a header has one of the closed structural roles.
+
+    A closed role may carry one trailing parenthesized qualifier. This admits labels such as
+    ``Address (A[3:2], BANK)`` without letting arbitrary prose or a symbol substring become a role.
+    """
     normalized_roles = {classifier_label(role) for role in roles}
-    return any(classifier_label(header) in normalized_roles for header in headers)
+    for header in headers:
+        if classifier_label(header) in normalized_roles:
+            return True
+        stripped = (header or "").strip()
+        if "(" not in stripped or not stripped.endswith(")"):
+            continue
+        head, qualifier = stripped.split("(", 1)
+        qualifier = qualifier[:-1]
+        depth = 0
+        balanced = True
+        for character in qualifier:
+            if character == "(":
+                depth += 1
+            elif character == ")":
+                if depth == 0:
+                    balanced = False
+                    break
+                depth -= 1
+        if (
+            balanced
+            and depth == 0
+            and classifier_label(head) in normalized_roles
+            and classifier_label(qualifier)
+        ):
+            return True
+    return False
 
 
 def classify_diagram_kind(caption_text, asset_kind):
@@ -2982,6 +3011,21 @@ payload = {
         [[_cell("RW", False), _cell("ITEM_BETA", False), _cell("0x08", False)]],
         "Unrelated title"
     ),
+    "qualified_address_register": classify_table_kind(
+        _headers("Register", "Access", "Address (A[3:2], BANK)"),
+        [[_cell("ITEM_GAMMA", False), _cell("RO", False), _cell("0x0C", False)]],
+        "Unrelated title"
+    ),
+    "unclosed_address_suffix": classify_table_kind(
+        _headers("Register", "Access", "Address qualifier"),
+        [[_cell("ITEM_DELTA", False), _cell("RO", False), _cell("0x10", False)]],
+        "Unrelated title"
+    ),
+    "unbalanced_address_qualifier": classify_table_kind(
+        _headers("Register", "Access", "Address (A[3:2]))"),
+        [[_cell("ITEM_EPSILON", False), _cell("RO", False), _cell("0x14", False)]],
+        "Unrelated title"
+    ),
     "addressed_bit_layout_without_access": classify_table_kind(
         _headers("Address", "Chunk Count"),
         [[_cell("[511:316]", False), _cell("4", False)]],
@@ -3030,6 +3074,9 @@ print(json.dumps(payload, sort_keys=True))
             observed["structural_register_a"],
             observed["structural_register_b"]
         );
+        assert_eq!(observed["qualified_address_register"], "register_map");
+        assert_eq!(observed["unclosed_address_suffix"], "unknown");
+        assert_eq!(observed["unbalanced_address_qualifier"], "unknown");
         assert_eq!(observed["addressed_bit_layout_without_access"], "unknown");
         Ok(())
     }

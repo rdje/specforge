@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > where do CCIX PER error structure fields land in the IR
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > where do DBID / TxnID / ReturnNID style names come from in CHI
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where do I log feedback or a suggestion to FSMGen
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > where do TimingConstraintRecord table provenance ids live
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -288,13 +298,3 @@
   > which persisted paths must exist and which may be historical references
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > which project rescan string fields are treated as filesystem paths
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > which register-table family stays residual (byte location size tables)
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > which root rolling ledger is currently above its rollover signal
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)

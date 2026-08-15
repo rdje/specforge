@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > does converge detect a protocol only SWD change
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > does converge re-ingest the PDF every run
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
@@ -59,6 +61,8 @@
   > does sanitizing the module name break initiator port matching (no — from_intent_ir re-derives the initiator raw; actor_name is only the label)
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does select_initiator_actor choose the first or last equal maximum
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > does source proof migration rerun Docling
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does specforge adapt remove an old actor isf when actor selection changes
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
@@ -293,7 +297,3 @@
   > how do I make the NLI verifier actively change extraction / demote claims
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I measure the extraction-quality gauge before and after a canonical promotion
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts

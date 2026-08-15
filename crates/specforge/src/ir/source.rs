@@ -566,6 +566,62 @@ fn neutralize_legacy_source_classifications(source_ir: &mut SourceIr) {
     ));
 }
 
+fn replay_source_classifications(
+    context: &SourceProofContext,
+) -> DerivationResult<(
+    Vec<VisualAsset>,
+    Vec<StructuredTableRecord>,
+    Vec<ContentSectionRecord>,
+)> {
+    if context.schema_version != SOURCE_PROOF_CONTEXT_SCHEMA_VERSION {
+        return Err(DerivationError::new(format!(
+            "unsupported SourceIR proof-context schema {}",
+            context.schema_version
+        )));
+    }
+    let mut visuals: Vec<VisualAsset> = serde_json::from_value(
+        context
+            .field_premises
+            .get("visual_assets")
+            .cloned()
+            .ok_or_else(|| DerivationError::new("visual capture root is absent"))?,
+    )
+    .map_err(|error| DerivationError::new(format!("invalid visual capture root: {error}")))?;
+    let mut tables: Vec<StructuredTableRecord> = serde_json::from_value(
+        context
+            .field_premises
+            .get("structured_tables")
+            .cloned()
+            .ok_or_else(|| DerivationError::new("table capture root is absent"))?,
+    )
+    .map_err(|error| DerivationError::new(format!("invalid table capture root: {error}")))?;
+    let mut sections: Vec<ContentSectionRecord> = serde_json::from_value(
+        context
+            .field_premises
+            .get("document_sections")
+            .cloned()
+            .ok_or_else(|| DerivationError::new("section capture root is absent"))?,
+    )
+    .map_err(|error| DerivationError::new(format!("invalid section capture root: {error}")))?;
+    classify_source_captures(&mut visuals, &mut tables, &mut sections);
+    let mut proposal_ids = BTreeSet::new();
+    for proposal in &context.grounded_proposals {
+        if !proposal_ids.insert(proposal.proposal_id()) {
+            return Err(DerivationError::new(format!(
+                "duplicate grounded SourceIR proposal id '{}'",
+                proposal.proposal_id()
+            )));
+        }
+        if !apply_source_grounded_proposal(proposal, &mut visuals, &mut tables)? {
+            return Err(DerivationError::new(format!(
+                "grounded SourceIR proposal '{}' does not authorize a refinement",
+                proposal.proposal_id()
+            )));
+        }
+    }
+    Ok((visuals, tables, sections))
+}
+
 /// Section kind classified from an explicit, document-independent heading grammar at ingest time.
 /// Downstream stages can use this to avoid re-discovering section roles.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -1289,9 +1345,32 @@ fn header_has_role(headers: &[&str], roles: &[&str]) -> bool {
         .iter()
         .map(|role| classifier_label(role))
         .collect::<BTreeSet<_>>();
-    headers
-        .iter()
-        .any(|header| roles.contains(&classifier_label(header)))
+    headers.iter().any(|header| {
+        if roles.contains(&classifier_label(header)) {
+            return true;
+        }
+        let header = header.trim();
+        let Some(open_index) = header.find('(') else {
+            return false;
+        };
+        let Some(qualifier) = header
+            .get(open_index + 1..)
+            .and_then(|value| value.strip_suffix(')'))
+        else {
+            return false;
+        };
+        let balanced = qualifier
+            .chars()
+            .try_fold(0_u32, |depth, character| match character {
+                '(' => Some(depth + 1),
+                ')' => depth.checked_sub(1),
+                _ => Some(depth),
+            })
+            == Some(0);
+        roles.contains(&classifier_label(&header[..open_index]))
+            && balanced
+            && !classifier_label(qualifier).is_empty()
+    })
 }
 
 fn table_cell_is_bit_range(value: &str) -> bool {
@@ -2188,17 +2267,34 @@ impl SourceIr {
         retained.verify_retained_capture_backing(&path)?;
 
         if retained.schema_version == SOURCE_IR_SCHEMA_VERSION {
-            let context = retained.proof_context.clone().ok_or_else(|| {
+            let mut context = retained.proof_context.clone().ok_or_else(|| {
                 AppError::InvalidStageArtifact(format!(
                     "current SourceIR at {} has no retained proof context to refresh",
                     path.display()
                 ))
             })?;
             let mut rebuilt = retained;
+            let (visual_assets, structured_tables, document_sections) =
+                replay_source_classifications(&context).map_err(source_derivation_error)?;
+            rebuilt.visual_assets = visual_assets;
+            rebuilt.structured_tables = structured_tables;
+            rebuilt.document_sections = document_sections;
+            let had_validation = !rebuilt.validation_reports.is_empty();
+            rebuilt.validation_reports.clear();
+            context.field_premises.retain(|key, _| {
+                key != "validation_reports" && !key.starts_with("validation_reports[")
+            });
+            context
+                .field_premises
+                .insert("validation_reports".to_string(), serde_json::json!([]));
             rebuilt.proof_context = None;
             rebuilt.proof_ledger = None;
             let persisted = rebuilt.persisted_clone()?;
             rebuilt.refresh_proof_from_context(persisted, context)?;
+            if had_validation {
+                let report = rebuilt.validation_report()?;
+                rebuilt.apply_validation_report(report)?;
+            }
             return Ok(rebuilt);
         }
 
@@ -2920,46 +3016,7 @@ impl SourceIr {
             }
         }
 
-        let mut visuals: Vec<VisualAsset> = serde_json::from_value(
-            context
-                .field_premises
-                .get("visual_assets")
-                .cloned()
-                .ok_or_else(|| DerivationError::new("visual capture root is absent"))?,
-        )
-        .map_err(|error| DerivationError::new(format!("invalid visual capture root: {error}")))?;
-        let mut tables: Vec<StructuredTableRecord> = serde_json::from_value(
-            context
-                .field_premises
-                .get("structured_tables")
-                .cloned()
-                .ok_or_else(|| DerivationError::new("table capture root is absent"))?,
-        )
-        .map_err(|error| DerivationError::new(format!("invalid table capture root: {error}")))?;
-        let mut sections: Vec<ContentSectionRecord> = serde_json::from_value(
-            context
-                .field_premises
-                .get("document_sections")
-                .cloned()
-                .ok_or_else(|| DerivationError::new("section capture root is absent"))?,
-        )
-        .map_err(|error| DerivationError::new(format!("invalid section capture root: {error}")))?;
-        classify_source_captures(&mut visuals, &mut tables, &mut sections);
-        let mut proposal_ids = BTreeSet::new();
-        for proposal in &context.grounded_proposals {
-            if !proposal_ids.insert(proposal.proposal_id()) {
-                return Err(DerivationError::new(format!(
-                    "duplicate grounded SourceIR proposal id '{}'",
-                    proposal.proposal_id()
-                )));
-            }
-            if !apply_source_grounded_proposal(proposal, &mut visuals, &mut tables)? {
-                return Err(DerivationError::new(format!(
-                    "grounded SourceIR proposal '{}' does not authorize a refinement",
-                    proposal.proposal_id()
-                )));
-            }
-        }
+        let (visuals, tables, sections) = replay_source_classifications(context)?;
         if visuals != self.visual_assets {
             return Err(DerivationError::new(
                 "SourceIR visual assets differ from registered capture/proposal replay",
@@ -3734,8 +3791,8 @@ mod tests {
     use super::{
         AutomationConfidence, DiagramKind, NormalizationBackend, SectionKind, SourceIr, SourceKind,
         StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
-        document_key, normalize_timing_table_kinds, stable_stem, timing_caption_unit,
-        timing_table_columns, timing_table_has_structural_authority,
+        classified_table_kind, document_key, normalize_timing_table_kinds, stable_stem,
+        timing_caption_unit, timing_table_columns, timing_table_has_structural_authority,
     };
 
     fn table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -3765,6 +3822,24 @@ mod tests {
             body_rows: Vec::new(),
             row_count,
             col_count,
+        }
+    }
+
+    fn classification_test_table(headers: &[&str], body: &[&[&str]]) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "table_classification".to_string(),
+            asset_id: "asset_classification".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![headers.iter().map(|text| table_cell(text, true)).collect()],
+            body_rows: body
+                .iter()
+                .map(|row| row.iter().map(|text| table_cell(text, false)).collect())
+                .collect(),
+            row_count: (body.len() + 1) as u32,
+            col_count: headers.len() as u32,
         }
     }
 
@@ -3831,6 +3906,36 @@ mod tests {
     fn document_key_normalizes_non_identifier_characters() {
         assert_eq!(document_key("Spec Rev.A"), "spec_rev_a");
         assert_eq!(document_key("$$$"), "source");
+    }
+
+    #[test]
+    fn table_classifier_accepts_only_closed_roles_with_parenthesized_qualifiers() {
+        let qualified = classification_test_table(
+            &["Register", "Access", "Address (A[3:2], BANK)"],
+            &[&["ITEM_ALPHA", "RW", "0x04"]],
+        );
+        assert_eq!(classified_table_kind(&qualified), TableKind::RegisterMap);
+
+        let arbitrary_suffix = classification_test_table(
+            &["Register", "Access", "Address qualifier"],
+            &[&["ITEM_BETA", "RW", "0x08"]],
+        );
+        assert_eq!(classified_table_kind(&arbitrary_suffix), TableKind::Unknown);
+
+        let unbalanced_qualifier = classification_test_table(
+            &["Register", "Access", "Address (A[3:2]))"],
+            &[&["ITEM_GAMMA", "RW", "0x0C"]],
+        );
+        assert_eq!(
+            classified_table_kind(&unbalanced_qualifier),
+            TableKind::Unknown
+        );
+
+        let packed_layout = classification_test_table(
+            &["63:52", "51:32", "31:21", "12:0"],
+            &[&["NX", "Address slice", "Reserved", "P"]],
+        );
+        assert_eq!(classified_table_kind(&packed_layout), TableKind::Unknown);
     }
 
     #[test]
@@ -4320,6 +4425,55 @@ mod tests {
         assert_eq!(rebuilt_fields, expected_fields);
         rebuilt.write_to_disk()?;
         SourceIr::load_from_path(&artifact)?;
+        Ok(())
+    }
+
+    #[cfg(feature = "source-proof-migration")]
+    #[test]
+    fn retained_capture_migration_replays_current_classification_from_neutral_capture() -> Result<()>
+    {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("classification.md");
+        let artifact_base = tempdir.path().join("artifacts");
+        fs::write(&source, "# classification\n")?;
+        let mut source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.structured_tables = vec![classification_test_table(
+            &["Register", "Access", "Address (A[3:2], BANK)"],
+            &[&["CONTROL", "RW", "0x00"]],
+        )];
+        let expected_kind = classified_table_kind(&source_ir.structured_tables[0]);
+        assert_eq!(expected_kind, TableKind::RegisterMap);
+        source_ir.structured_tables[0].table_kind = expected_kind;
+        source_ir.refresh_canonical_proof()?;
+        let report = source_ir.validation_report()?;
+        source_ir.apply_validation_report(report)?;
+        source_ir.write_to_disk()?;
+        let artifact = source_ir.artifact_layout.source_ir_path.clone();
+
+        let expected = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&artifact)?)?;
+        let mut stale = expected.clone();
+        stale["structured_tables"][0]["table_kind"] = serde_json::json!("unknown");
+        fs::write(&artifact, serde_json::to_string_pretty(&stale)?)?;
+        assert!(SourceIr::load_from_path(&artifact).is_err());
+
+        let rebuilt = SourceIr::rebuild_from_retained_capture(&artifact)?;
+        assert_eq!(
+            rebuilt.structured_tables[0].table_kind,
+            TableKind::RegisterMap
+        );
+        let mut rebuilt = serde_json::to_value(rebuilt)?;
+        let mut expected = expected;
+        for value in [&mut rebuilt, &mut expected] {
+            value
+                .as_object_mut()
+                .expect("SourceIR object")
+                .remove("proof_context");
+            value
+                .as_object_mut()
+                .expect("SourceIR object")
+                .remove("proof_ledger");
+        }
+        assert_eq!(rebuilt, expected);
         Ok(())
     }
 

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > was DL a signal declaration in the OpenCAPI Ready note
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > was OpenCAPI Discovery ingest deterministic and memory safe
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > was any USB4 pipeline artifact changed by the source locality probe
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > was the (contract ... eventually ...) ISF clause removed
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -289,11 +297,3 @@
   > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > what eval-extraction tasks score the SWD surfaces
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > what exact semantic delta does the at least timing variant produce
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > what extraction approach does SWD/ADI need
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > what falls outside Docling's segmented bounding boxes on a page
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what field holds the constrained signal name (signal_name vs subject_signal)

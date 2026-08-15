@@ -55,10 +55,47 @@ unqualified head is already a closed role. Within an already-classified register
 role or an unambiguous column of access literals may carry access. Neither rule may inspect a document, vendor,
 protocol, filename, symbol, expected score, or reviewed result.
 
+## `.f.iv.a` repair and target result
+
+The production repair implements that exact boundary in both SourceIR classifiers and EvidenceIR. A header may
+be a closed role followed by one nonempty parenthesized qualifier; arbitrary suffixes remain unknown. Register
+access comes from an explicit access/RW header or exactly one non-identity column whose every body row supplies a
+closed access literal. The unique-column rule excludes names, offsets, resets, descriptions, and bit positions;
+blank or missing values do not authorize the column.
+
+Direct fresh-PDF qualification now gives the intended three-cell result:
+
+- Arm Debug `table_0044` is `register_map` and yields all 12 reviewed register/access facts with exact table
+  provenance;
+- GIC-400 yields all 15 source-named registers with their exact offsets and RW/RO/WO access values; and
+- AMD's packed layout remains `unknown`, so the former false register cannot return.
+
+The feature-gated SourceIR migration seam also needed correction. Its schema-3 proof context already retained
+the exact neutral capture, but the old implementation refreshed proof around stale classified fields and stale
+validation. It now replays table/visual/section classification from those premises, reapplies grounded proposals,
+and recomputes current validation without rerunning Docling or trusting the prior conclusion.
+
+ADR 0025 reconciliation used an exact 144-file / 964,185,725-byte same-volume snapshot at SHA-256
+`6e27f458f11afd5fd6090fc13de6daf7b07715121d7ca5b305b869c47b80cf76`. Only Arm SourceIR changes outside
+proof/validation (`table_0044`: `unknown`→`register_map`). EvidenceIR, SemanticIR, and IntentIR change only Arm
+and OpenCAPI Discovery: Arm replaces four section-derived placeholder records with 12 table-derived records
+(74→82 total), while OpenCAPI keeps one register and gains its real `Attributes` access values. Only Arm's
+blocked adapter payload changes (74→82 storage records); the clock/reset blocker and no-file state remain exact.
+The independent chain oracle is 24/24 current and zero stale at all four replayed stages.
+
+## Replay-driver follow-up owned by `.f.iv.b`
+
+The population orchestrator currently passes five positional values to `source_to_intent_replay` after `--`:
+source, replay root twice, prior memory, and `-`. The example accepts four: source, output root, optional prior
+memory, and optional observed-table id. The extra replay-root value fails with `unexpected argument '-'`. Direct
+four-argument target replays and retained-chain reconciliation are unaffected. `.f.iv.b` must fix and test this
+command shape before it starts the clean publication replay.
+
 ## Storage and cleanup state
 
-The diagnostic root contains exactly 3,913 files and occupies 1,458,132 KiB by `du -sk`. Eight external PDF
-authorities were discovered once, verified hash-equal, and copied below the repository-volume root. Both runtime
-paths are untracked and remain in flight until `.f.iv.a` verification consumes them. `.f.iv.b` will run from the
-clean repair revision, publish only portable identities, then delete the exact diagnostic/replay roots and source
-map with a residue census.
+The diagnostic root contained exactly 3,913 files and occupied 1,458,132 KiB by `du -sk`. Eight external PDF
+authorities were discovered once, verified hash-equal, and copied below the repository-volume root. After the
+complete gate consumed the evidence, `.f.iv.a` removed the diagnostic root, source map, two target roots, and
+rollback/comparison root: 5,112 files / 3,614,756 KiB across the five exact paths. The residue census finds all
+five absent. The rollback copy is no longer recoverable; current generated artifacts remain reproducible and
+currency-gated. `.f.iv.b` will own a fresh repository-local replay lifecycle from the clean repair revision.

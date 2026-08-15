@@ -17,16 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` restores structurally justified register-table carriers
-  exposed by the first clean complete-population replay; `.f.iv.b` owns replay publication after this repair.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` is closing its verified structural-carrier repair;
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` is the durable next frontier for clean replay/publication.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: clean revision `0d218116` replayed 12/12 reviewed PDFs and 48/48 isolated stages. The unpublished
-  diagnostic is 12/15/28 IntentIR TP/FP/FN. AMD's packed-layout fabrication is gone; GIC-400 has 15 source-named
-  rows with missing access; Arm Debug loses 12 correct facts because its qualified address header stays unknown.
-  The task split and durable diagnosis are being committed before code. `MEMORY.md` remains capped at 32,768 B.
-- Next action: implement and focus-test parenthesized closed-role matching plus register-map access-carrier
-  preservation under `.f.iv.a`, then rerun the complete population under `.f.iv.b` from the clean repair commit.
-- In-flight uncommitted: the exact 3,913-file diagnostic root and runtime source map remain repository-local and
-  untracked until the carrier repair consumes them. No background job.
+- Current state: qualified closed roles and unique structural access columns restore Arm 12/12 and GIC 15/15
+  target facts while AMD stays unknown. Exact ADR 0025 migration is 24/24 current and zero stale through every
+  stage; only Arm and one OpenCAPI access carrier change downstream. `MEMORY.md` remains capped at 32,768 B.
+- Next action: commit `.f.iv.a`, then under `.f.iv.b` fix the replay driver's five-versus-four positional
+  arguments and run/publish the complete 12-source population from the clean repair revision.
+- In-flight uncommitted: tracked `.f.iv.a` code/docs only. The five declared scratch roots were removed after
+  full CI and their residue is absent; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

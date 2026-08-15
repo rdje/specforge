@@ -46,6 +46,11 @@ caption does not become a timing diagram merely because the operation is often d
 and `Name | Width | Description` does not become a signal table without signal authority. This may
 reduce recall, but it prevents a familiar-looking input from receiving unsupported semantics.
 
+A closed table-header role may carry one parenthesized qualifier. For example,
+`Address (A[3:2], BANK)` still has the closed `Address` role, while `Address qualifier`, an empty pair,
+an unclosed pair, or trailing text stays unmatched. The Rust verifier and embedded Docling classifier use the
+same grammar. This accommodates source notation without returning to substring classification.
+
 Schema 1 and 2 SourceIR files remain readable only through the explicit inspection API. Their source
 text, grids, assets, geometry, and provenance can still be examined, but their old diagram/table/
 section labels are neutralized and they cannot feed canonical EvidenceIR. The ordinary loader accepts

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > what is the behavioral genericity held-out population
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what is the bit-exact adjacency chain rule
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what is the built-in RAM guard / autonomous memory safeguard during ingest
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -197,6 +205,8 @@
   > what proved that analysis commands can violate project data locality
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > what real PDF proves the FigureRegion vertical path
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what remains before the repaired reviewed population can be published
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what remains under-extracted in OpenCAPI Discovery Configuration
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
@@ -287,13 +297,3 @@
   > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where did the root architecture catalog go
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > where do CCIX PER error structure fields land in the IR
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > where do DBID / TxnID / ReturnNID style names come from in CHI
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where do I log feedback or a suggestion to FSMGen
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > where do TimingConstraintRecord table provenance ids live

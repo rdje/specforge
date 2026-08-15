@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-15 — structural register-carrier repair; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`)
+
+- `ir::source` and the embedded Docling classifier share one exact qualified-role grammar: a closed role plus one
+  nonempty parenthesized qualifier. Arbitrary suffixes remain unknown, preserving the fail-closed table boundary.
+- `ir::evidence` resolves register access from an explicit access/RW header or exactly one non-identity column
+  containing only closed access literals. The slice-pattern uniqueness test prevents zero/multiple candidates and
+  name columns from self-authorizing.
+- The feature-gated SourceIR migrator now replays classifier conclusions from neutral proof-context premises,
+  reapplies grounded proposals, and recomputes current validation. This is a maintenance capability, not a new
+  production inference seam; ordinary loaders still reject stale proof.
+- Exact 24-chain comparison changes only Arm SourceIR and the Arm/OpenCAPI register carriers downstream. Arm's
+  blocked adapter storage count is 74→82; all blocking/emission policy remains exact. Currency is 24/24 current
+  and zero stale at every replayed stage.
+- The compiled boundary remains 78 modules / 41 families / 168 fields / 117 entrypoints / 53 seams / four
+  bypasses. Current flow is 2,275 functions / 11,926 helper edges / 11,396 decision sites / 1,446 semantic macros.
+
 ## Session update (2026-08-15 — clean-revision behavioral closure; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`)
 
 - `specforge-conformance::behavioral_genericity` now distinguishes standalone renamed symbols from fragments

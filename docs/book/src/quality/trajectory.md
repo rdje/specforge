@@ -192,8 +192,14 @@ The first clean `.f.iv` full-PDF replay at `0d218116` therefore remains an unpub
 12 sources and 48 stages, but Arm Debug lost 12 correct register/access facts and GIC-400 emitted 15 source-named
 registers without access. AMD's former packed-layout false register correctly disappeared. Actual execution
 hashes in the replay manifest prove fresh stage movement; the cell fixture's `original_sha256` values are frozen
-review identities, not current artifact hashes. `.f.iv.a` repairs only the two generic structural carriers, and
-`.f.iv.b` must rerun from the clean repair revision before any result or controller authority changes.
+review identities, not current artifact hashes.
+
+`.f.iv.a` now closes both generic carrier defects. One parenthesized qualifier may follow a closed header role,
+and an already-classified register map may retain access from an explicit header or one unambiguous closed-literal
+column. Direct PDF replay restores Arm 12/12 and GIC-400 15/15 while AMD remains empty. Exact retained-chain
+reconciliation is 24/24 current and zero stale at every stage. This target proof still does not publish a new
+population result: `.f.iv.b` first repairs the replay driver's argument shape, then must rerun all 12 sources from
+the clean `.f.iv.a` revision before any result or controller authority changes.
 
 ### What the first current replay proved
 

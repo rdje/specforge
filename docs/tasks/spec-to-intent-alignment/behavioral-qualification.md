@@ -141,23 +141,30 @@
   Children: `.f.iv.a`, `.f.iv.b`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`
-  State: `in_progress`
+  State: `done`
   Goal: restore structurally justified register-table carriers exposed by the clean reviewed replay
   Acceptance: qualified generic header roles classify identically in embedded Docling and Rust revalidation;
   register-map rows preserve an explicit or structurally unambiguous access column; Arm Debug retains its 12
   reviewed register/access facts, GIC-400 preserves all 15 source-named register/access/offset facts, and the AMD
   packed-layout false register remains absent; focused mutants and the behavioral genericity gate prove no
-  document, vendor, protocol, symbol, filename, or expected-result branch enters production
+  document, vendor, protocol, symbol, filename, or expected-result branch enters production; ADR 0025 exact
+  same-volume backup, proof migration, fixed-input delta attribution, complete retained-chain rebuild, currency
+  gate, cleanup, and residue census close every production-digest consequence before the leaf commits
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `qualified-role parity and negative controls; 62 SourceIR plus 10 register-focused EvidenceIR
+  tests; three source-proof migration controls; real Arm/GIC target replays; AMD structural negative; all five
+  production-genericity components; exact 144-file ADR 0025 comparison; 24/24 current and zero stale at every
+  replayed retained stage; full repository gate recorded below`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a — restore structural register carriers`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b`
   State: `pending`
   Goal: rerun, reconcile, and publish the complete reviewed population after the structural carrier repair
   Acceptance: all 12 sources and 48 isolated stages replay from the clean .f.iv.a revision; exact canonical,
   residual, proof, validation, lowering, metamorphic, and negative deltas are published with current tool and
-  evaluator identities; tracked authorities reproduce byte-for-byte and all scratch is removed exactly
+  evaluator identities; the population driver passes the replay example's exact four positional arguments and
+  a focused command-shape control prevents recurrence; tracked authorities reproduce byte-for-byte and all
+  scratch is removed exactly
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`
   Verification: `pending`
   Commit: `pending`
@@ -290,6 +297,22 @@ under `2cdcd131` and used retained evidence only for the predeclared alpha-eligi
 `06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1` records 35 fresh passes, 16 eligibility-
 preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now owns whole-population reconciliation.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`
+
+- [x] **REPRODUCE / MEASURE** — the clean diagnostic's three moved cells replay directly: Arm restores 12/12
+  register/access facts, GIC preserves 15/15 register/access/offset facts, and AMD remains an empty negative.
+- [x] **ROOT CAUSE (WHY + WHERE)** — exact role equality rejected a closed parenthesized qualifier; EvidenceIR
+  classified access-valued bodies but discarded a non-`Access` carrier; schema-3 migration refreshed proof without
+  replaying classifier conclusions or validation.
+- [x] **ADDRESSED (verified)** — Rust/embedded-Python qualified-role parity, exactly-one access-column selection,
+  and neutral-capture SourceIR migration replay pass focused controls and real target PDFs.
+- [x] **NO REGRESSION** — exact ADR 0025 comparison changes one SourceIR classification and only Arm/OpenCAPI
+  register carriers downstream; all four stages replay 24/24 current / zero stale and all adapters stay blocked.
+- [x] **GENERICITY (ADR 0006)** — every decision uses closed header grammar, closed access literals, typed column
+  roles, or retained proof premises; no document, vendor, protocol, filename, symbol, or expected result enters.
+- [x] **LOCKSTEP** — roadmap, task frontier, live docs, mdBook, research, Knowledge Map, exact graph census,
+  generated chain truth, cleanup evidence, and the resume pointer route `.f.iv.b` as the next leaf.
+
 ## Current Frontier
 
 | Order | Leaf | State | Why next |
@@ -301,8 +324,8 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `done` | corrected held-out qualification is measured; child `.f.iii.a` owns the real I2C alpha coupling |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `done` | clean-revision exact and 51-attempt refresh evidence pass without prior-revision full-capture relabeling |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `in_progress` | parent owns complete reviewed-population reconciliation after the measured coupling is fixed |
-| 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` | `in_progress` | restore neutral qualified-header and register-access carriers exposed by the first clean replay |
-| 9 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` | `pending` | rerun and publish the population only after the structural repair commits cleanly |
+| 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` | `done` | qualified headers, access carriers, target truth, migration, and retained-chain currency are closed |
+| 9 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` | `pending` | repair the replay command shape, then rerun and publish after the clean `.f.iv.a` commit |
 | 10 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
 
 ## Decisions
@@ -350,16 +373,19 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 - `2026-08-15`: the first `.f.iv` full-PDF replay is a diagnostic, not publishable current truth. Its actual
   manifest hashes prove fresh SourceIR/EvidenceIR movement despite the bounded projection's frozen review hashes;
   split `.f.iv.a` structural carrier repair from `.f.iv.b` clean replay and publication.
+- `2026-08-15`: a qualified role is a closed role plus exactly one parenthesized qualifier; register access may
+  come only from an explicit access header or one unambiguous closed-literal non-identity column. A classifier
+  migration replays neutral proof-context capture and current validation rather than blessing stale conclusions.
 
 ## Open Questions
 
-- `.f.iv.a` must close the measured Arm Debug/GIC structural carrier gaps without restoring the AMD packed-layout
-  fabrication or weakening the exact current-revision provenance boundary.
+- `.f.iv.b` must publish the repaired complete-population result without promoting the blocked diagnostic or
+  widening the fixed review/current revision boundary.
 
 ## Blockers
 
-- None for `.f.iv.a`. The clean diagnostic replay, retained current chains, and review-locked gold are available
-  repository-locally; external PDF authorities are same-volume, read-only runtime inputs.
+- None for `.f.iv.b`. Its first owned correction is the population driver's five positional values versus the
+  replay example's four-value contract; all sources and review authority remain same-volume and available.
 
 ## Verification Log
 
@@ -386,6 +412,9 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | `2026-08-15` | `.f.iii.a` final held-out refresh | 35 pass / zero fail / 16 unmeasurable / zero invalid; all 34 full-PDF relations and I2C alpha are fresh under `2cdcd131`; 824,172/824,172 claims, 19,745,620 leaves, six/six deltas, aggregate SHA `06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1`; checker and 17/17 mutations pass |
 | `2026-08-15` | `.f.iii.a` closure full repository gate | 9/9 doctrines and all 11 production-genericity components pass; graph snapshot 2,272 / 11,909 / 11,382 / 1,444; 1,980 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final project-data locality pass |
 | `2026-08-15` | `.f.iv` first clean population diagnostic | 12/12 hash-equal sources and 48/48 isolated stages complete at `0d218116`; unpublished 12/15/28 TP/FP/FN result changes exactly AMD packed PTE, GIC-400 register summary, and Arm Debug register summary; actual manifest hashes disprove a same-stage evaluator contradiction; `.f.iv.a` and `.f.iv.b` own repair and publication separately |
+| `2026-08-15` | `.f.iv.a` focused and real-PDF qualification | qualified-role parity and closed negatives pass in Rust/embedded Python; SourceIR 62/62 and register EvidenceIR 10/10 pass; migration 3/3; Arm 12/12, GIC 15/15, AMD negative exact |
+| `2026-08-15` | `.f.iv.a` ADR 0025 reconciliation | 144-file / 964,185,725-byte snapshot at `6e27f458…80cf76`; one SourceIR and two downstream public surfaces move; Evidence/Semantic/Intent/adapter each 24/24 current / zero stale; 24 blocked/no-file states exact |
+| `2026-08-15` | `.f.iv.a` full repository gate and cleanup | 9/9 doctrines and all 11 genericity components pass; exact 2,275 / 11,926 / 11,396 / 1,446 flow snapshot; 1,981 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final locality; five roots / 5,112 files / 3,614,756 KiB removed with residue absent |
 
 ## Commit Log
 
@@ -401,6 +430,7 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | `.f.iii.a` production | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering` | keep opaque identifiers atomic, order generated relations and semantic signal collections by source occurrence, and exclude declared aliases from section-topic grammar |
 | `.f.iii.a` closure | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure` | normalize only measured representation surfaces, require fresh full-capture revision evidence, and publish the passing held-out matrix |
 | `.f.iv` diagnostic | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv — route clean replay carrier regressions` | preserve the blocked 12-source result, distinguish frozen review hashes from actual stage identities, and split neutral carrier repair from clean publication |
+| `.f.iv.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a — restore structural register carriers` | close qualified header/access carriage, audited migration, real target truth, and retained-chain currency before clean replay |
 
 ## Activation protocol
 

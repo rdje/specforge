@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > how is a fused contract's automation_confidence computed
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how is a guide reported so it is not a silent 0-yield extraction miss
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how is a message field's width kept honest (per-variant widths stay None)
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > how is a promoted constraint surface visible in the extraction manifest
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -289,11 +297,3 @@
   > how was the migrated alignment task evidence independently audited
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > how will SpecForge automatically detect convergence or divergence
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > how will the million-byte Knowledge Map be sharded without losing question retrieval
