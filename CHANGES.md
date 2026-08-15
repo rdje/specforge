@@ -1,3 +1,13 @@
+### CLAIM-VERIFICATION-ADOPTION.4 — prove tracked producers and falsifying controls
+
+- Bound all seven cited falsification controls to named perturbations, expected diagnostics, and exact tracked
+  producer regions; the independent catalog-feasibility probe now observes a controlled sub-ceiling RED result.
+- Added a derived six-producer census that rejects producer-shaped ignored or untracked files under every
+  governed source root. The current result is 7 controls / 7 exact RED regions / 6 producers / 0 ignored /
+  0 untracked. `[claim: claim-provenance-gate-active]`
+- Expanded the claim-gate fixtures from 22 to 27 cases for missing, stale, or misdirected RED evidence and both
+  scratch-producer classes.
+
 ### CLAIM-VERIFICATION-ADOPTION.3c — close the current-claim sweep
 
 - Added a fail-closed reverse join from every produced current-census candidate to exact frozen evidence or a

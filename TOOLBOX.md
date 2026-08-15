@@ -83,12 +83,14 @@ The active registry is `doctrine/claim_verification/claims.jsonl`. Use
 `perl scripts/check_claim_verification.pl --report` to see status/publication resolution,
 `--check` for the real gate, and `--self-test` for its positive plus missing/unknown/duplicate/stale/untracked RED
 matrix. Commands are argv arrays and all producer/input/evidence paths are tracked, digest-bound, and covered by
-the declared stale check; the checker never evaluates registry content through a shell.
+the declared stale check; the checker never evaluates registry content through a shell. Each falsification
+control also binds one exact known-bad source region. The report exposes 7 cited controls / 7 exact RED regions /
+6 governed producers / 0 ignored / 0 untracked producer candidates. `[claim: claim-provenance-gate-active]`
 
 For the current-surface authority sweep, use `perl scripts/check_current_claim_census.pl --check`, `--report`,
 `--produce`, and `--self-test`. The repaired report has 56 exact units—11 derived, 7 identity-gated, 6 registered,
 0 incomplete, and 32 excluded—and retains every non-frontier outcome. Candidate closure separately reports
-79 produced anchors = 51 exact evidence keys + 28 current registered annotations + 0 unresolved; the 27-case
+84 produced anchors = 51 exact evidence keys + 33 current registered annotations + 0 unresolved; the 27-case
 self-test instantiates every outcome family and challenges all coverage joins. Zero outer incomplete does not
 certify the 75 incomplete assertion regions exposed by the narrower mdBook contract.
 `[claim: current-claim-census-frozen]`

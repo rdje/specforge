@@ -63,6 +63,10 @@ A valid falsification leg identifies:
 - a tracked known-bad case in which the cited control is observed going RED;
 - the result that rules out, narrows, or exposes the competitor.
 
+For a registry-backed verified claim, the cited control also binds one named known-bad case to an exact
+line-range/SHA-256 region in its tracked producer. The gate executes the whole control and rejects a stale or
+misdirected case region; a self-test name without durable mutation evidence is not enough.
+
 Conservation totals cannot falsify bucket misassignment. A source-derived row count cannot falsify a wrong value
 in every row. Tests and implementation derived from the same interpretation do not independently validate that
 interpretation. When no dimensionally different oracle exists, record the leg as missing.
@@ -125,7 +129,9 @@ and compares exact SHA-256 identities. The stale check must cover the complete a
 therefore fails until the owner re-runs the evidence and refreshes or deliberately downgrades the record.
 
 The JSONL control record bounds total records, bytes, record bytes, arrays, and scalars below checker-compiled
-portable hard caps. Unknown fields fail closed. Run the focused contract with:
+portable hard caps. Unknown fields fail closed. The report also inventories the unique governed producers and
+rejects ignored or untracked producer-shaped files below `scripts/`, `doctrine/`, `docs/`, or `.github/`. Run the
+focused contract with:
 
 ```sh
 perl scripts/check_claim_verification.pl --self-test
@@ -167,8 +173,8 @@ doctrine driver.
 3. For each ID, reproduce leg 1 and verify its exact boundary.
 4. Ask what competing hypothesis leg 2 separates; reject a second copy of the primary check.
 5. Confirm the control has a tracked RED case rather than an always-green name.
-6. Use `git ls-files`/`git check-ignore` to verify producers and dependencies, then perturb identity to confirm the
-   stale gate fails.
+6. Confirm the cited case's exact source region and use the report's ignored/untracked census; then perturb
+   identity to confirm the stale gate fails.
 7. Treat missing legs as explicit incompleteness, not a reason to invent evidence.
 
 ## 8. Anti-patterns

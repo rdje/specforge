@@ -69,6 +69,7 @@ if ($mode eq 'report') {
         commands_executed => $result->{commands_executed},
         publication_source => $result->{publication_source},
         published_claims => $result->{published_claims},
+        control_audit => $result->{control_audit},
         statuses => $result->{statuses},
     }), "\n";
 } else {
@@ -153,6 +154,7 @@ sub validate_registry {
         my $claim = $claims{$id};
         validate_claim_semantics($base, $claim, \%claims, \@errors);
     }
+    my $control_audit = audit_claim_controls_and_producers($base, \%claims, \@errors);
 
     if ($execute && !@errors) {
         for my $id (sort keys %claims) {
@@ -190,6 +192,7 @@ sub validate_registry {
         commands_executed => $commands_executed,
         publication_source => $publication_source,
         published_claims => $published_claims,
+        control_audit => $control_audit,
         statuses => \%statuses,
     };
 }
@@ -274,8 +277,8 @@ sub validate_claim_semantics {
             if exists $claim->{missing_legs};
         push @$errors, "$label verified claim must not declare superseded_by"
             if exists $claim->{superseded_by};
-        validate_rederive($claim->{rederive}, "$label.rederive", $errors);
-        validate_falsification($claim->{falsification}, "$label.falsification", $errors);
+        validate_rederive($base, $claim->{rederive}, "$label.rederive", $errors);
+        validate_falsification($base, $claim->{falsification}, "$label.falsification", $errors);
         validate_durability($base, $claim->{durability}, "$label.durability", $errors);
         validate_command_artifact_join($claim, $label, $errors);
     } elsif ($status eq 'incomplete') {
@@ -309,7 +312,7 @@ sub reject_unknown_optional_legs {
 }
 
 sub validate_rederive {
-    my ($leg, $label, $errors) = @_;
+    my ($base, $leg, $label, $errors) = @_;
     if (ref($leg) ne 'HASH') {
         push @$errors, "$label must be an object";
         return;
@@ -317,11 +320,11 @@ sub validate_rederive {
     reject_unknown($leg, $label, $errors, qw(boundary result commands));
     required_scalar($leg->{boundary}, "$label.boundary", $errors);
     required_scalar($leg->{result}, "$label.result", $errors);
-    validate_commands($leg->{commands}, "$label.commands", $errors);
+    validate_commands($base, $leg->{commands}, "$label.commands", $errors);
 }
 
 sub validate_falsification {
-    my ($leg, $label, $errors) = @_;
+    my ($base, $leg, $label, $errors) = @_;
     if (ref($leg) ne 'HASH') {
         push @$errors, "$label must be an object";
         return;
@@ -331,7 +334,7 @@ sub validate_falsification {
     required_scalar($leg->{result}, "$label.result", $errors);
     push @$errors, "$label.observed_red must be JSON true"
         if !defined($leg->{observed_red}) || !JSON::PP::is_bool($leg->{observed_red}) || !$leg->{observed_red};
-    validate_commands($leg->{controls}, "$label.controls", $errors);
+    validate_commands($base, $leg->{controls}, "$label.controls", $errors, 1);
 }
 
 sub validate_durability {
@@ -369,7 +372,7 @@ sub validate_durability {
             }
         }
     }
-    validate_command($leg->{stale_check}, "$label.stale_check", $errors);
+    validate_command($base, $leg->{stale_check}, "$label.stale_check", $errors);
     if (ref($leg->{retained_evidence}) ne 'ARRAY' || !@{$leg->{retained_evidence}}) {
         push @$errors, "$label.retained_evidence must be a nonempty array";
     } else {
@@ -383,7 +386,7 @@ sub validate_durability {
 }
 
 sub validate_commands {
-    my ($commands, $label, $errors) = @_;
+    my ($base, $commands, $label, $errors, $require_red_evidence) = @_;
     if (ref($commands) ne 'ARRAY' || !@$commands) {
         push @$errors, "$label must be a nonempty array";
         return;
@@ -391,7 +394,7 @@ sub validate_commands {
     my %seen;
     for my $index (0 .. $#$commands) {
         my $command = $commands->[$index];
-        validate_command($command, "$label\[$index\]", $errors);
+        validate_command($base, $command, "$label\[$index\]", $errors, $require_red_evidence);
         if (ref($command) eq 'HASH' && defined($command->{id}) && !ref($command->{id})) {
             push @$errors, "$label duplicates command id '$command->{id}'" if $seen{$command->{id}}++;
         }
@@ -399,12 +402,14 @@ sub validate_commands {
 }
 
 sub validate_command {
-    my ($command, $label, $errors) = @_;
+    my ($base, $command, $label, $errors, $require_red_evidence) = @_;
     if (ref($command) ne 'HASH') {
         push @$errors, "$label must be an object";
         return;
     }
-    reject_unknown($command, $label, $errors, qw(id argv producer inputs expected_exit stdout_contains));
+    my @fields = qw(id argv producer inputs expected_exit stdout_contains);
+    push @fields, 'red_evidence' if $require_red_evidence;
+    reject_unknown($command, $label, $errors, @fields);
     required_scalar($command->{id}, "$label.id", $errors);
     my $producer = required_scalar($command->{producer}, "$label.producer", $errors);
     push @$errors, "$label.producer '$producer' is unsafe"
@@ -436,6 +441,113 @@ sub validate_command {
     }
     exact_integer($command->{expected_exit}, 0, "$label.expected_exit", $errors);
     required_scalar($command->{stdout_contains}, "$label.stdout_contains", $errors);
+    validate_red_evidence($base, $producer, $command->{red_evidence}, "$label.red_evidence", $errors)
+        if $require_red_evidence;
+}
+
+sub validate_red_evidence {
+    my ($base, $producer, $evidence, $label, $errors) = @_;
+    if (ref($evidence) ne 'HASH') {
+        push @$errors, "$label must be an object";
+        return;
+    }
+    reject_unknown($evidence, $label, $errors, qw(case_id perturbation expected_red source_region));
+    my $case_id = required_scalar($evidence->{case_id}, "$label.case_id", $errors);
+    push @$errors, "$label.case_id '$case_id' is not a stable lowercase hyphenated id"
+        if defined($case_id) && $case_id !~ /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/;
+    required_scalar($evidence->{perturbation}, "$label.perturbation", $errors);
+    my $expected = required_scalar($evidence->{expected_red}, "$label.expected_red", $errors);
+    my $region = $evidence->{source_region};
+    if (ref($region) ne 'HASH') {
+        push @$errors, "$label.source_region must be an object";
+        return;
+    }
+    reject_unknown($region, "$label.source_region", $errors, qw(kind start_line end_line sha256));
+    exact_scalar($region->{kind}, 'line_range_sha256', "$label.source_region.kind", $errors);
+    my $start = positive_integer($region->{start_line}, "$label.source_region.start_line", $errors);
+    my $end = positive_integer($region->{end_line}, "$label.source_region.end_line", $errors);
+    my $sha = required_scalar($region->{sha256}, "$label.source_region.sha256", $errors);
+    push @$errors, "$label.source_region.sha256 is not lowercase SHA-256"
+        if defined($sha) && $sha !~ /\A[0-9a-f]{64}\z/;
+    return if !defined($start) || !defined($end) || !defined($producer) || !safe_relative($producer);
+    if ($start > $end) {
+        push @$errors, "$label.source_region start_line exceeds end_line";
+        return;
+    }
+    if ($end - $start + 1 > 64) {
+        push @$errors, "$label.source_region exceeds 64-line evidence bound";
+        return;
+    }
+    my $path = absolute($base, $producer);
+    if (!-f $path || -l $path) {
+        push @$errors, "$label producer '$producer' must be a regular non-symlink file";
+        return;
+    }
+    my $raw = read_raw($path, $errors, $producer);
+    my @lines = split /(?<=\n)/, $raw;
+    if ($end > @lines) {
+        push @$errors, "$label.source_region ends at line $end beyond producer line count " . scalar(@lines);
+        return;
+    }
+    my $selected = join '', @lines[$start - 1 .. $end - 1];
+    my $actual = sha256_hex($selected);
+    push @$errors, "$label.source_region is stale: SHA-256 $actual != $sha"
+        if defined($sha) && $sha =~ /\A[0-9a-f]{64}\z/ && $actual ne $sha;
+    push @$errors, "$label.source_region omits expected RED diagnostic '$expected'"
+        if defined($expected) && index($selected, $expected) < 0;
+}
+
+sub audit_claim_controls_and_producers {
+    my ($base, $claims, $errors) = @_;
+    my %producer;
+    my ($controls, $red_evidence) = (0, 0);
+    for my $id (sort keys %$claims) {
+        my $claim = $claims->{$id};
+        next if ($claim->{status} // '') ne 'verified';
+        my @commands = (
+            ref($claim->{rederive}{commands}) eq 'ARRAY' ? @{$claim->{rederive}{commands}} : (),
+            ref($claim->{falsification}{controls}) eq 'ARRAY' ? @{$claim->{falsification}{controls}} : (),
+            ref($claim->{durability}{stale_check}) eq 'HASH' ? ($claim->{durability}{stale_check}) : (),
+        );
+        $producer{$_->{producer}} = 1
+            for grep { ref($_) eq 'HASH' && defined($_->{producer}) && !ref($_->{producer}) } @commands;
+        for my $control (ref($claim->{falsification}{controls}) eq 'ARRAY'
+                ? @{$claim->{falsification}{controls}} : ()) {
+            next if ref($control) ne 'HASH';
+            $controls++;
+            $red_evidence++ if ref($control->{red_evidence}) eq 'HASH';
+        }
+    }
+    my ($untracked, $ignored) = (0, 0);
+    for my $scan (
+        ['untracked', ['git', 'ls-files', '-z', '--others', '--exclude-standard', '--', qw(scripts doctrine docs .github)]],
+        ['ignored', ['git', 'ls-files', '-z', '--others', '--ignored', '--exclude-standard', '--', qw(scripts doctrine docs .github)]],
+    ) {
+        my ($kind, $argv) = @$scan;
+        my ($stdout, $stderr, $exit) = capture_command($base, $argv);
+        if ($exit != 0) {
+            push @$errors, "cannot census $kind governed producer candidates: $stderr";
+            next;
+        }
+        for my $path (grep { $_ ne '' } split /\0/, $stdout) {
+            next if !producer_shaped($path);
+            $kind eq 'ignored' ? $ignored++ : $untracked++;
+            push @$errors, "$kind producer-shaped path '$path' exists under governed source roots";
+        }
+    }
+    return {
+        cited_controls => $controls,
+        exact_red_evidence => $red_evidence,
+        governed_producers => scalar(keys %producer),
+        ignored_candidates => $ignored,
+        untracked_candidates => $untracked,
+    };
+}
+
+sub producer_shaped {
+    my ($path) = @_;
+    return $path =~ m{\A(?:scripts|doctrine|docs|[.]github)/}
+        && $path =~ /(?:[.](?:pl|pm|sh|py|rb|js|ts|rs)|(?:\A|\/)Makefile)\z/;
 }
 
 sub validate_command_artifact_join {
@@ -576,13 +688,18 @@ sub run_probe {
             my $line_ceiling = $catalog_surface->{enforcement_ceilings}{lines_each} // 0;
             my $byte_ceiling = $catalog_surface->{enforcement_ceilings}{bytes_each} // 0;
             my $target_cap = $meta->{max_array_items} // 0;
-            push @errors, "full workflow catalog $full_lines/$full_bytes exceeds $line_ceiling/$byte_ceiling"
-                if $full_lines > $line_ceiling || $full_bytes > $byte_ceiling;
-            push @errors, "workflow capacity $capacity exceeds target-array cap $target_cap"
-                if $capacity > $target_cap;
+            push @errors, workflow_feasibility_errors(
+                $capacity, $full_lines, $full_bytes, $line_ceiling, $byte_ceiling, $target_cap,
+            );
+            my @controlled_red = workflow_feasibility_errors(
+                $capacity, $full_lines, $full_bytes, $full_lines - 1, $byte_ceiling, $target_cap,
+            );
+            push @errors, 'workflow feasibility controlled sub-ceiling mutation did not go RED'
+                if !grep { /exceeds controlled catalog ceiling/ } @controlled_red;
             if (!@errors) {
                 print "workflow-catalog-feasibility: $capacity members => $full_lines lines / $full_bytes bytes "
-                    . "below $line_ceiling / $byte_ceiling and target cap $target_cap PASS\n";
+                    . "below $line_ceiling / $byte_ceiling and target cap $target_cap; "
+                    . "controlled sub-ceiling RED PASS\n";
                 return;
             }
         }
@@ -591,6 +708,22 @@ sub run_probe {
         require_literal('DOCTRINE_ENFORCEMENT.md', '`CLAIM-VERIFICATION`', \@errors);
         require_literal('scripts/check_doctrines.sh', '"CLAIM-VERIFICATION|gate|', \@errors);
         require_regular('scripts/check_claim_verification.pl', \@errors);
+        my $audit_result = validate_registry(
+            root => $root, registry_rel => $registry_rel, execute_commands => 0, check_publication => 0,
+        );
+        push @errors, @{$audit_result->{errors}};
+        my $audit = $audit_result->{control_audit};
+        if (!@errors) {
+            push @errors, 'not every cited falsification control has exact RED evidence'
+                if $audit->{cited_controls} != $audit->{exact_red_evidence};
+            push @errors, 'governed producer census contains ignored or untracked candidates'
+                if $audit->{ignored_candidates} || $audit->{untracked_candidates};
+        }
+        if (!@errors) {
+            print "claim-control-audit: $audit->{cited_controls} controls / "
+                . "$audit->{exact_red_evidence} exact RED regions / $audit->{governed_producers} producers / "
+                . "$audit->{ignored_candidates} ignored / $audit->{untracked_candidates} untracked PASS\n";
+        }
     } else {
         die "claim-verification: unknown probe '$id'\n";
     }
@@ -599,6 +732,17 @@ sub run_probe {
         exit 1;
     }
     print "claim-verification-probe: $id PASS\n";
+}
+
+sub workflow_feasibility_errors {
+    my ($capacity, $full_lines, $full_bytes, $line_ceiling, $byte_ceiling, $target_cap) = @_;
+    my @errors;
+    push @errors, "full workflow catalog $full_lines/$full_bytes exceeds controlled catalog ceiling "
+        . "$line_ceiling/$byte_ceiling"
+        if $full_lines > $line_ceiling || $full_bytes > $byte_ceiling;
+    push @errors, "workflow capacity $capacity exceeds target-array cap $target_cap"
+        if $capacity > $target_cap;
+    return @errors;
 }
 
 sub require_literal {
@@ -631,6 +775,7 @@ sub run_self_test {
     write_raw(File::Spec->catfile($fixture, 'scripts', 'control.pl'), "#!/usr/bin/env perl\nprint qq{control RED observed\\n};\n");
     write_raw(File::Spec->catfile($fixture, 'input.txt'), "canonical\n");
     write_raw(File::Spec->catfile($fixture, 'evidence.txt'), "retained\n");
+    write_raw(File::Spec->catfile($fixture, '.gitignore'), "scripts/ignored-*.pl\n");
     command_ok($fixture, ['git', 'init', '-q']);
     command_ok($fixture, ['git', 'config', 'user.email', 'claim-self-test@example.invalid']);
     command_ok($fixture, ['git', 'config', 'user.name', 'Claim Self Test']);
@@ -673,6 +818,21 @@ sub run_self_test {
         }],
         ['unsafe path', 0, qr/is unsafe/, sub { $_[0][1]{durability}{artifacts}[0]{path} = '../escape' }],
         ['false RED assertion', 0, qr/observed_red must be JSON true/, sub { $_[0][1]{falsification}{observed_red} = JSON::PP::false }],
+        ['missing exact RED evidence', 0, qr/red_evidence must be an object/, sub {
+            delete $_[0][1]{falsification}{controls}[0]{red_evidence};
+        }],
+        ['stale exact RED evidence', 0, qr/source_region is stale/, sub {
+            $_[0][1]{falsification}{controls}[0]{red_evidence}{source_region}{sha256} = '0' x 64;
+        }],
+        ['RED evidence omits diagnostic', 0, qr/omits expected RED diagnostic/, sub {
+            $_[0][1]{falsification}{controls}[0]{red_evidence}{expected_red} = 'missing RED diagnostic';
+        }],
+        ['untracked producer candidate', 0, qr/untracked producer-shaped path/, sub {
+            write_raw(File::Spec->catfile($fixture, 'scripts', 'scratch.pl'), "print qq{scratch\\n};\n");
+        }],
+        ['ignored producer candidate', 0, qr/ignored producer-shaped path/, sub {
+            write_raw(File::Spec->catfile($fixture, 'scripts', 'ignored-scratch.pl'), "print qq{scratch\\n};\n");
+        }],
         ['unknown status', 0, qr/status 'almost' is unknown/, sub { $_[0][1]{status} = 'almost' }],
         ['stale-check omission', 0, qr/stale_check omits artifact/, sub { pop @{$_[0][1]{durability}{stale_check}{inputs}} }],
         ['unknown supersession target', 0, qr/superseded_by 'missing-claim' is unknown/, sub {
@@ -684,6 +844,10 @@ sub run_self_test {
         $total++;
         my ($name, $expected_ok, $diagnostic, $mutate) = @$case;
         unlink File::Spec->catfile($fixture, 'untracked.txt') if -e File::Spec->catfile($fixture, 'untracked.txt');
+        unlink File::Spec->catfile($fixture, 'scripts', 'scratch.pl')
+            if -e File::Spec->catfile($fixture, 'scripts', 'scratch.pl');
+        unlink File::Spec->catfile($fixture, 'scripts', 'ignored-scratch.pl')
+            if -e File::Spec->catfile($fixture, 'scripts', 'ignored-scratch.pl');
         my $records = clone(\@base_records);
         $mutate->($records);
         write_registry($fixture, $records);
@@ -748,6 +912,11 @@ sub fixture_claim {
             result => 'control distinguishes competitor', controls => [{
                 id => 'control', argv => ['perl', 'scripts/control.pl'], producer => 'scripts/control.pl',
                 inputs => ['input.txt'], expected_exit => 0, stdout_contains => 'control RED observed',
+                red_evidence => {case_id => 'fixture-known-bad', perturbation => 'fixture control input',
+                    expected_red => 'control RED observed', source_region => {
+                        kind => 'line_range_sha256', start_line => 2, end_line => 2,
+                        sha256 => sha256_hex("print qq{control RED observed\\n};\n"),
+                    }},
             }]},
         durability => {refresh_owner => 'fixture-owner', refresh_rule => 'refresh on digest drift',
             artifacts => \@artifacts,
@@ -883,5 +1052,7 @@ sub command_ok {
 sub empty_result {
     my (@errors) = @_;
     return {errors => \@errors, claim_count => 0, commands_executed => 0,
-        publication_source => 'not-checked', published_claims => [], statuses => {}};
+        publication_source => 'not-checked', published_claims => [], statuses => {},
+        control_audit => {cited_controls => 0, exact_red_evidence => 0, governed_producers => 0,
+            ignored_candidates => 0, untracked_candidates => 0}};
 }

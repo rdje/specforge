@@ -269,7 +269,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3c — close the current-claim sweep`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.4`
-  Status: `pending`
+  Status: `done`
   Goal: close producer-tracking and falsification-RED evidence across governed claims
   Acceptance: VCS ignored/untracked census proves no in-scope published claim depends on a scratch-only producer;
   every cited falsification control is exercised against a durable known-bad perturbation and demonstrably goes
@@ -308,7 +308,7 @@ the workflow through the mdBook and repository review path.
 | 15 | `CLAIM-VERIFICATION-ADOPTION.3b.3.3` | `done` | verified claim and fact card freeze the exact result without promoting incomplete lines |
 | 16 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `done` | 56-unit repair freeze closes all five outer incomplete keys |
 | 17 | `CLAIM-VERIFICATION-ADOPTION.3c` | `done` | 27-case family/join matrix and zero-unresolved candidate closure close `.3` |
-| 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
+| 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `done` | seven controls and six producers close with exact RED evidence and zero scratch candidates |
 | 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
 
 ## Decisions
@@ -436,6 +436,22 @@ the workflow through the mdBook and repository review path.
 - The 75 exact mdBook assertion incompletes remain explicit and therefore are not silent. The outer candidate
   closure proves only its mandated surface/view denominator; the manual's separate exact-region denominator
   continues to own quantitative assertion-level truth. `[claim: current-claim-census-frozen]`
+
+## Producer And RED-Control Closure (`CLAIM-VERIFICATION-ADOPTION.4`)
+
+- The governed registry cites seven falsification controls. Six already executed controlled mutation suites;
+  `independent-catalog-feasibility` was the repair frontier because it proved the live catalog bound without
+  exercising a known-bad bound inside the cited command.
+- Every falsification command now binds a named known-bad case to an exact line-range/SHA-256 region in its
+  tracked producer. The gate executes the cited command, while the exact region proves which durable mutation
+  case participates; removing or moving that case makes the claim stale instead of leaving a self-test name as
+  the only evidence.
+- The workflow feasibility probe executes both the live computation and a controlled sub-ceiling mutation,
+  requiring the latter to go RED before it publishes PASS.
+- The claim report exposes six unique governed producers plus ignored and untracked producer-shaped files
+  under `scripts/`, `doctrine/`, `docs/`, and `.github/`. Any such scratch instrument is RED even if no registry
+  row currently names it, preventing an omitted producer from silently becoming signoff authority.
+  `[claim: claim-provenance-gate-active]`
 
 ## Repaired Current-Claim Result (`CLAIM-VERIFICATION-ADOPTION.3b.4`)
 
@@ -634,7 +650,26 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Blockers
 
-- None. `.3` is closed; `.4` audits tracked producers and every cited falsification control next.
+- None. `.4` is closed; `.5` owns independent documentation/signoff and selected full CI next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.4`
+
+- [x] **REPRODUCE / MEASURE** — five verified claims cite 7 falsification controls through 6 unique producers;
+  all 7 controls have exact known-bad source regions and the ignored/untracked governed census is 0/0.
+- [x] **ROOT CAUSE (WHY + WHERE)** — executable control commands and tracked artifact joins prove current
+  behavior but do not prove which durable known-bad case made each control discriminating; the workflow catalog
+  feasibility probe had no controlled RED path in the cited command.
+- [x] **ADDRESSED (verified)** — exact producer regions now bind every cited RED case; the workflow probe observes
+  its controlled sub-ceiling failure; 27/27 fixtures make missing/stale/misdirected regions and ignored/untracked
+  producer candidates RED.
+- [x] **NO REGRESSION** — all governed controls, claim/current/book reports, catalogs, task/memory/book,
+  live-size/locality, mdBook test/build, and mandatory doctrines pass; underlying source assertions and the
+  frozen authority outcomes stay unchanged.
+- [x] **GENERICITY** — closure keys claim/control IDs, tracked producer paths, exact regions, Git state, and
+  controlled observations without depending on a product subject, protocol, vendor, language, or metric value.
+- [x] **LOCKSTEP** — checker/schema, claim records, standard/toolbox/book, fact retrieval, task, ledgers, and
+  resume pointer publish 7 controls / 7 exact RED regions / 6 producers / 0 ignored / 0 untracked, while the
+  current census closes 84 candidates as 51 exact + 33 registered + 0 unresolved.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3c`
 
@@ -952,6 +987,10 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3c` | clean `50775894` replay; 27-case all-family/coverage matrix; candidate-closure report;
   independent 304-region book replay; claim/catalog/Knowledge Map/task/memory/book/live-size/locality/doctrines |
   79 candidates = 51 exact + 28 registered + 0 unresolved; 56-unit vector unchanged; `.3` closed |
+| `2026-08-15` | `.4` | 27-case claim-gate matrix; all seven control commands and exact RED regions; controlled
+  workflow sub-ceiling; tracked/ignored/untracked producer census; current/book/fact/Knowledge Map/task/memory/
+  mdBook/live-size/locality/doctrine gates | 7 controls = 7 exact RED regions across 6 producers; 0 ignored and
+  0 untracked candidates; current closure 84 = 51 + 33 + 0; `.4` closed |
 
 ## Commit Log
 
@@ -974,6 +1013,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3b.3.3` | `CLAIM-VERIFICATION-ADOPTION.3b.3.3 — freeze mdBook quantitative authorities` | verified mapping claim, digest-complete stale replay, retrievable fact card, explicit incomplete boundary |
 | `.3b.4` | `CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs` | five exact narrow replacements, zero outer incompletes, 46 non-frontier semantic outcomes preserved |
 | `.3c` | `CLAIM-VERIFICATION-ADOPTION.3c — close the current-claim sweep` | clean-boundary replay, all-family RED matrix, mechanically closed candidate denominator |
+| `.4` | `CLAIM-VERIFICATION-ADOPTION.4 — prove tracked producers and falsifying controls` | exact known-bad regions, repaired workflow probe, derived six-producer/scratch census |
 
 ## Changelog
 
@@ -1023,3 +1063,6 @@ was added; the stable-path remedy and its consumed authority are complete.
   27-case matrix spanning every outcome family and coverage boundary, proves the final lockstep boundary closes
   79 current candidates as 51 exact + 28 registered + zero unresolved, and independently closes `.3` from clean
   commit `50775894`.
+- `2026-08-15`: `.4` binds all seven cited controls to exact known-bad producer regions, repairs the independent
+  workflow feasibility probe with a controlled sub-ceiling RED path, derives six governed producers with zero
+  ignored/untracked candidates, and expands claim-gate controls from 22 to 27 before handing signoff to `.5`.

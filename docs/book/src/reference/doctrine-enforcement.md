@@ -257,10 +257,18 @@ ADR 0042 and `CLAIM_VERIFICATION.md` freeze that author/reviewer contract. The a
 stores unique statuses, argv-form commands, complete tracked artifact membership, exact SHA-256 identities,
 refresh ownership, and retained evidence. The gate executes every verified source/control command, rejects digest
 drift or incomplete stale-check coverage, and resolves the prepared commit message—or otherwise `HEAD`—against
-known non-superseded IDs. Its 22-case fixture matrix observes valid honest statuses plus missing, unknown, duplicate, stale, untracked,
-unsafe, false-RED, supersession, and bound controls go RED. This proves provenance is current and rerunnable; it
-does not make a wrong assertion true merely because its record parses. Current-constant migration, the broader
-tracked-producer/RED-control audit, and final worked examples remain in the next adoption leaves.
+known non-superseded IDs. Its twenty-seven-case fixture matrix observes valid honest statuses plus missing,
+unknown, duplicate, stale, untracked, unsafe, false-RED, exact-RED-evidence, supersession, and bound controls go
+RED. This proves provenance is current and rerunnable; it does not make a wrong assertion true merely because
+its record parses.
+
+The producer/RED closure makes the falsification evidence concrete. Each of the seven cited controls binds a
+named perturbation and expected diagnostic to an exact region in its tracked producer; the gate executes the
+control and makes region drift RED. The independent catalog-feasibility command now proves its own controlled
+sub-ceiling failure before publishing the live result. Its report derives seven controls, seven exact RED regions,
+and six unique governed producers, with zero ignored or untracked producer-shaped candidates under the governed
+source roots. The expanded twenty-seven-case matrix makes missing, stale, or misdirected RED evidence and both
+scratch-producer classes fail. `[claim: claim-provenance-gate-active]`
 
 ### The current-claim census freezes evidence before repair
 
@@ -289,9 +297,9 @@ perl scripts/check_current_claim_census.pl --produce
 ```
 
 The closing audit also reverses the join: every produced candidate must have exact frozen evidence or carry a
-current registered claim annotation. The final lockstep report closes 79 candidates as 51 exact keys and 28
-annotations with
-zero unresolved. The twenty-seven-case suite instantiates every outcome family and drives family-specific plus
+current registered claim annotation. The `.3c` boundary closed 79 candidates as 51 exact keys and 28 annotations;
+the five exact claim publications added by `.4` make the current lockstep result 84 = 51 + 33 + 0 unresolved.
+The twenty-seven-case suite instantiates every outcome family and drives family-specific plus
 surface/view/path/region/source/identity coverage faults RED.
 
 The repair changed only the five frozen frontier keys and added one exact authority unit for each. Any unrelated

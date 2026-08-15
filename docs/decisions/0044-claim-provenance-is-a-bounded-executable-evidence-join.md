@@ -12,6 +12,8 @@ answers:
   - "what is the claim verification registry schema"
   - "how do Published-claims ids resolve"
   - "how does claim evidence become stale"
+  - "how are cited falsification controls bound to known-bad RED evidence"
+  - "how does the claim gate reject ignored or untracked scratch producers"
   - "why are claim evidence commands argv arrays"
   - "does a valid claim registry record prove the assertion true"
 ---
@@ -77,6 +79,19 @@ The real gate executes its self-test through the registered gate-active claim. T
 cover valid verified/incomplete/superseded records and `none`/known publication positives plus missing legs/declarations, unknown
 fields/status/IDs/successors, duplicate records/artifacts/declarations/IDs, digest staleness, omitted identity,
 untracked/unsafe paths, false RED assertions, incomplete stale coverage, and portable hard-cap refusal.
+
+### 6. Bind the actual RED case and census scratch producers
+
+`CLAIM-VERIFICATION-ADOPTION.4` closes the distinction between citing a self-test and identifying the mutation
+that makes it discriminating. Every falsification command binds a stable case ID, perturbation, expected RED
+diagnostic, and exact line-range/SHA-256 region in its tracked producer. The command still executes as a whole;
+the region makes removal, substitution, or drift of the named known-bad case fail closed.
+
+The same gate derives every unique producer used by verified re-derivation, falsification, and stale-check
+commands. It also asks Git for ignored and untracked producer-shaped paths under the four governed source roots.
+Either census being nonzero is RED. The expanded twenty-seven-case fixture covers missing/stale/misdirected RED
+evidence plus ignored and untracked scratch producers. The independent workflow-catalog probe now exercises a
+controlled sub-ceiling mutation before reporting its real feasibility result.
 
 ## Consequences
 

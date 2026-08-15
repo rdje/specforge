@@ -49,3 +49,7 @@ candidates must resolve to one of 51 exact frozen surface/view/path/line keys or
 annotations; the report has zero unresolved. The 27-case control fixture positively instantiates all five outcome
 families, then drives each family and every surface/view/path/region/source/identity coverage boundary RED. A
 known registered annotation remains green, while an unrecorded derived marker fails candidate closure.
+
+The `.3c` commit boundary was 79 = 51 exact + 28 registered + zero unresolved. `.4` publishes five additional
+exact claim annotations in governed task, memory, ledger, toolbox, and book surfaces; the current closure is
+therefore 84 = 51 exact + 33 registered + zero unresolved without changing the 56 evidence classifications.

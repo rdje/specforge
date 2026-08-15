@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.4 (`2026-08-15`) — a self-test name is not RED evidence
+
+Executing a control proves its current top-level result, but a future reviewer still cannot tell which mutation
+made it discriminating from the command name alone. The closure therefore binds one exact source region per
+control containing the expected RED diagnostic. Full-producer digests preserve the implementation; the narrower
+region preserves the identity of the cited known-bad case.
+
+Producer closure needs the reverse direction too. Registry joins catch an untracked path that is cited, but not
+an omitted scratch instrument later used by hand. The gate now derives all six command producers and separately
+censuses producer-shaped ignored and untracked files under the governed source roots. This is intentionally
+stricter than checking only the seven declared controls: omitted scratch authority becomes visible before it can
+support signoff.
+
 ## CLAIM-VERIFICATION-ADOPTION.3c (`2026-08-15`) — coverage needs a reverse join
 
 Validating every frozen record proves that selected evidence is well formed; it does not prove every newly

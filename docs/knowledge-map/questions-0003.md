@@ -249,6 +249,8 @@
   > how are byte location | size | register description tables extracted
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are caption-less page fragments of a split table stitched together
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how are cited falsification controls bound to known-bad RED evidence
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
@@ -295,5 +297,3 @@
   > how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how are register fields written as section headings extracted
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > how are repository owned and external input path origins labeled

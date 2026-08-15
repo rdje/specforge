@@ -17,15 +17,17 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.3c` owns the independent clean-boundary census challenge.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.4` owns tracked-producer and cited falsification-control closure.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.3c` independently closes 79 produced candidates as 51 exact evidence keys / 28 current
-  registered annotations / 0 unresolved. Its 27-case matrix covers all five outcome families and coverage joins;
-  the 56-unit outer vector and 75 inner mdBook incompletes remain unchanged. `.3` is closed.
+- Current state: `.4` now binds 7 cited controls to 7 exact known-bad regions across 6 governed producers; the
+  ignored/untracked producer-shaped census is 0/0. The workflow catalog probe observes a controlled sub-ceiling
+  RED result, and the expanded claim-gate suite passes 27/27. `[claim: claim-provenance-gate-active]`
+  The completed outer/current and inner/mdBook census authorities remain unchanged.
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: finish digest reconciliation and gates, commit `.3c`, verify a clean tree, then activate `.4` for
-  tracked-producer and cited-falsification closure. `MEMORY.md` stays capped.
-- In-flight uncommitted: `.3c` checker, claim, retrieval, and lockstep updates await final gates; no background job.
+- Next action: reconcile current/book regions and all claim digests, run focused/book/live-size/locality/doctrine
+  gates, commit `.4`, verify clean, then activate `.5`. `MEMORY.md` stays capped.
+- In-flight uncommitted: `.4` checker/schema, standard/ADR/fact projections, ledgers, task, memory, toolbox, and
+  mdBook updates await exact-region/digest reconciliation and final gates; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

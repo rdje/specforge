@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how are repository owned and external input path origins labeled
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how are rotated version matrices remapped for presence capture
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
@@ -154,6 +156,8 @@
   > how does SpecForge measure source-to-IntentIR stage loss
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > how does SpecForge prevent analog dB limits from becoming digital timing intent
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how does SpecForge prove a cited self-test contains a known-bad RED case
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -294,7 +298,3 @@
   > how does the active task migration preserve non-ASCII legacy bytes
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > how does the adversarial PDF identity test preserve source bytes
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > how does the behavioral genericity gate prove negative-control sensitivity
