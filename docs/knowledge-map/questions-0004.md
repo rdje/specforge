@@ -68,6 +68,8 @@
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how do I reverify the frozen current claim census
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -296,5 +298,3 @@
   > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > how does the corpus task preserve all evidence after containment
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)

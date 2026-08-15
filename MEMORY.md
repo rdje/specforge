@@ -17,14 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.3a.1` owns the bounded current-claim census producer.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.3a.2` owns the current-claim authority result freeze.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.3a.1`'s bounded inventory contract derives 39 current surfaces, assigns 32 to inspection and
-  seven to explicit exclusions across five views, emits 47 deterministic candidates, and passes 14 fault cases.
-  It intentionally freezes no authority outcomes and changes no source assertion.
-  `[claim: current-claim-census-inventory]`
-- Next action: commit `.3a.1`, then activate `.3a.2` and adjudicate every included surface into exact frozen
-  authority outcomes and the `.3b` repair frontier. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: `.3a.1` implementation and lockstep documentation await final gates; no background job.
+- Current state: `.3a.2` freezes 51 exact units across all 39 current surfaces and five views: 11 derived, four
+  identity-gated, four registered, five incomplete, and 27 excluded. No source assertion changed.
+  `[claim: current-claim-census-frozen]`
+- Next action: commit `.3a.2`, then activate `.3b` and repair only the five incomplete README, mdBook quantitative,
+  workflow-baseline, knowledge-card, and FSMGen-issue evidence keys. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: `.3a.2` frozen contract and lockstep result publication await gates; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

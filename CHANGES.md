@@ -1,3 +1,14 @@
+### CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings
+
+- Corrected the first result pass before freeze: candidate identity now includes semantic view, and frozen
+  validation requires evidence for every included surface and all five views.
+- Froze 51 exact tracked-region outcomes: 11 derived, four identity-gated, four registered, five incomplete, and
+  27 excluded. Fifteen source/identity verifiers execute from the frozen records.
+- The five incomplete keys are the README maintained-reference, mdBook quantitative, workflow-doctrine baseline,
+  knowledge-card reference, and FSMGen issue-packet reference surfaces. They are the complete `.3b` repair
+  frontier; this result slice changes no source assertion.
+  `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3a.1 — implement the current-claim census
 
 - Added a self-bounded inventory contract that derives the nonhistorical surface denominator from the live
@@ -9,7 +20,6 @@
 - The inventory boundary derives 39 current surfaces, assigns 32 to inspection and seven to explicit exclusions,
   and emits 47 review/known-authority candidates. Fourteen controlled cases prove missing, unknown, duplicate,
   untracked, stale, and bound failures go RED; no finding or source assertion is changed in this slice.
-  `[claim: current-claim-census-inventory]`
 
 ### CLAIM-VERIFICATION-ADOPTION.2 — gate published claim provenance
 

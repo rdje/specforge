@@ -274,12 +274,12 @@ sub validate_census {
         $claim_by_id{$id} = $claim if defined($id) && !ref($id) && $id ne '';
     }
 
-    my (%evidence_seen, %claim_key_seen, %surface_evidence, %outcome_counts);
+    my (%evidence_seen, %claim_key_seen, %surface_evidence, %view_evidence, %outcome_counts);
     for my $evidence (@evidence_records) {
         validate_evidence(
             $base, $evidence, $execute_commands, $tracked, \%views, \%surface_contract,
             \%path_owner, \%derived_by_id, \%claim_by_id, \%evidence_seen,
-            \%claim_key_seen, \%surface_evidence, \%outcome_counts, \@errors,
+            \%claim_key_seen, \%surface_evidence, \%view_evidence, \%outcome_counts, \@errors,
         );
     }
     if ($phase eq 'inventory') {
@@ -290,6 +290,8 @@ sub validate_census {
             for grep {
                 ($surface_contract{$_}{disposition} // '') eq 'included' && !$surface_evidence{$_}
             } sort keys %surface_contract;
+        push @errors, "required view '$_' has no frozen evidence unit"
+            for grep { !$view_evidence{$_} } @required_views;
     }
 
     return {
@@ -313,7 +315,7 @@ sub validate_census {
 sub validate_evidence {
     my ($base, $record, $execute, $tracked, $views, $surfaces, $path_owner,
         $derived, $claims, $evidence_seen, $claim_key_seen, $surface_evidence,
-        $outcome_counts, $errors) = @_;
+        $view_evidence, $outcome_counts, $errors) = @_;
     reject_unknown($record, 'census evidence record', $errors,
         qw(record_type schema_version evidence_id claim_key surface_id view_id path region outcome verifier claim_id missing_legs scope_reason source_authority_id));
     exact_integer($record->{schema_version}, 1, 'census evidence schema_version', $errors);
@@ -385,6 +387,7 @@ sub validate_evidence {
         reject_present($record, $id, $errors, qw(verifier claim_id missing_legs source_authority_id));
     }
     $surface_evidence->{$surface_id}++ if $surface;
+    $view_evidence->{$view_id}++ if $views->{$view_id};
 }
 
 sub validate_region {
@@ -464,8 +467,10 @@ sub produce_candidates {
             keys %{$result->{path_owner}};
         next if !defined $path;
         my ($line, $text) = first_nonblank_line($base, $path);
-        add_candidate(\%candidate, $surface_id, $surface->{views}[0], $path, $line, $text,
-            'surface_review', 'review_required');
+        for my $view (@{$surface->{views}}) {
+            add_candidate(\%candidate, $surface_id, $view, $path, $line, $text,
+                'surface_review', 'review_required');
+        }
     }
     for my $authority (@{$result->{derived_source}}) {
         my $surface_id = $authority->{surface_id} // next;
@@ -501,7 +506,7 @@ sub produce_candidates {
 sub add_candidate {
     my ($set, $surface, $view, $path, $line, $text, $basis, $suggestion) = @_;
     return if !$line || !defined($text) || $text eq '';
-    my $key = join(':', $surface, $path, $line);
+    my $key = join(':', $surface, $view, $path, $line);
     if ($set->{$key}) {
         if ($suggestion ne 'review_required') {
             $set->{$key}{basis} = $basis;
@@ -891,14 +896,17 @@ sub run_self_test {
             scope_reason => 'test_fixture_literals'},
     );
     my $status_text = "Status 2 current\n";
-    my $evidence = {record_type => 'evidence', schema_version => 1, evidence_id => 'status-current',
-        claim_key => 'status-current', surface_id => 'status', view_id => 'current_status', path => 'status.md',
-        region => {kind => 'line_range_sha256', start_line => 1, end_line => 1,
-            sha256 => sha256_hex($status_text)}, outcome => 'derived', source_authority_id => 'status-authority',
-        verifier => {argv => ['perl', 'scripts/probe.pl'], producer => 'scripts/probe.pl',
-            inputs => ['scripts/probe.pl', 'status.md'], expected_exit => 0,
-            stdout_contains => 'census source PASS'}};
-    my @base_records = ($meta, @sources, @views, @surfaces, $evidence);
+    my @evidence = map {
+        my $view = $_;
+        {record_type => 'evidence', schema_version => 1, evidence_id => "status-$view",
+            claim_key => "status-$view", surface_id => 'status', view_id => $view, path => 'status.md',
+            region => {kind => 'line_range_sha256', start_line => 1, end_line => 1,
+                sha256 => sha256_hex($status_text)}, outcome => 'derived', source_authority_id => 'status-authority',
+            verifier => {argv => ['perl', 'scripts/probe.pl'], producer => 'scripts/probe.pl',
+                inputs => ['scripts/probe.pl', 'status.md'], expected_exit => 0,
+                stdout_contains => 'census source PASS'}}
+    } @{$meta->{required_views}};
+    my @base_records = ($meta, @sources, @views, @surfaces, @evidence);
     write_jsonl(absolute($fixture, $contract_rel), \@base_records);
     command_ok($fixture, ['git', 'add', '.']);
     command_ok($fixture, ['git', 'commit', '-qm', 'fixture']);
@@ -911,11 +919,22 @@ sub run_self_test {
         ['clean frozen census', 1, qr//, sub {}],
         ['clean inventory census', 1, qr//, sub {
             $_[0][0]{phase} = 'inventory';
-            pop @{$_[0]};
+            @{$_[0]} = grep { ($_->{record_type} // '') ne 'evidence' } @{$_[0]};
         }],
-        ['missing current surface', 0, qr/lacks one census disposition/, sub { splice @{$_[0]}, -2, 1 }],
+        ['missing current surface', 0, qr/lacks one census disposition/, sub {
+            @{$_[0]} = grep { !(($_->{record_type} // '') eq 'surface' && ($_->{surface_id} // '') eq 'fixture') } @{$_[0]};
+        }],
         ['unknown view join', 0, qr/references unknown view/, sub { $_[0][-1]{view_id} = 'unknown_view' }],
-        ['duplicate surface', 0, qr/duplicates surface_id/, sub { push @{$_[0]}, clone($_[0][-3]) }],
+        ['missing required view evidence', 0, qr/required view 'mdbook_quantitative_claims' has no frozen evidence unit/, sub {
+            @{$_[0]} = grep {
+                !(($_->{record_type} // '') eq 'evidence'
+                    && ($_->{view_id} // '') eq 'mdbook_quantitative_claims')
+            } @{$_[0]};
+        }],
+        ['duplicate surface', 0, qr/duplicates surface_id/, sub {
+            my ($surface) = grep { ($_->{record_type} // '') eq 'surface' } @{$_[0]};
+            push @{$_[0]}, clone($surface);
+        }],
         ['stale source digest', 0, qr/is stale: SHA-256/, sub { $_[0][1]{sha256} = '0' x 64 }],
         ['untracked evidence path', 0, qr/is untracked/, sub {
             write_raw(absolute($fixture, 'untracked.md'), "Untracked\n");
@@ -932,7 +951,10 @@ sub run_self_test {
         ['missing executable verifier', 0, qr/lacks verifier/, sub { delete $_[0][-1]{verifier} }],
         ['duplicate evidence identity', 0, qr/duplicates evidence_id/, sub { push @{$_[0]}, clone($_[0][-1]) }],
         ['unknown evidence field', 0, qr/unknown field 'surprise'/, sub { $_[0][-1]{surprise} = 1 }],
-        ['excluded surface missing reason', 0, qr/scope_reason must be/, sub { delete $_[0][-2]{scope_reason} }],
+        ['excluded surface missing reason', 0, qr/scope_reason must be/, sub {
+            my ($surface) = grep { ($_->{surface_id} // '') eq 'fixture' } @{$_[0]};
+            delete $surface->{scope_reason};
+        }],
         ['portable record bound', 0, qr/max_records exceeds portable hard cap/, sub { $_[0][0]{max_records} = 257 }],
     );
     my ($passed, $total) = (0, 0);

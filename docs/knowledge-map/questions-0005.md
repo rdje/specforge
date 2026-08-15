@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > how does the extract-constraints-llm prompt express a validity requirement
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
@@ -229,10 +231,14 @@
   > how many corpus refreshes remain after the OpenCAPI Ready note
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how many current claim evidence units are derived registered incomplete or excluded
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > how many current documents are behaviorally measurable
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how many current governed Markdown surfaces are in the claim census
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -291,9 +297,3 @@
   > how many synthetic behaviors came from generic section phases
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > how many unknown-kind tables does the corpus carry
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > how much RAM did the qwen2.5vl:7b VLM use on a timing-diagram crop (13 GB; host hit 87% used, across the 85% kill threshold)

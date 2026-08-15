@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3a.2 (`2026-08-15`) — views need evidence, not only declarations
+
+The inventory contract declared five views, but its first producer key was surface + path + line. A surface that
+belonged to two views therefore emitted only the first anchor: surface coverage passed while semantic-view
+coverage could remain empty. The result freeze fixed the key before accepting any finding and added an
+independent frozen-phase requirement that every required view own at least one exact evidence unit.
+
+The final classifications deliberately preserve uncertainty. Existing projection/currentness authorities earn
+11 derived and four identity-gated units; four explicit publication tags join the claim registry; authored
+intent, navigation, dated evidence, and normative policy account for 27 exclusions. The remaining five broad
+current-reference/baseline surfaces are incomplete because a title anchor cannot establish three-leg coverage
+for every actionable assertion below it. `.3b` receives those exact keys instead of permission to rewrite the
+other 46 units.
+
 ## CLAIM-VERIFICATION-ADOPTION.3a.1 (`2026-08-15`) — measure before adjudicating
 
 A current-claim migration cannot define its denominator while repairing its own findings. The inventory contract

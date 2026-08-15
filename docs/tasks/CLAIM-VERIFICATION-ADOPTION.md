@@ -137,7 +137,7 @@ the workflow through the mdBook and repository review path.
   Commit: parent closes with `.3c`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3a`
-  Status: `active`
+  Status: `done`
   Goal: freeze and execute the bounded current-claim census before repairing any finding
   Children: `.3a.0`, `.3a.1`, `.3a.2`
   Acceptance: define an explicit self-bounded census over the live surface registry and the five mandated
@@ -167,7 +167,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3a.1 — implement the current-claim census`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3a.2`
-  Status: `pending`
+  Status: `done`
   Goal: freeze the resulting authority census and exact `.3b` repair frontier
   Acceptance: run `.3a.1` against the current tree; record every evidence unit as derived, identity-gated,
   registered, explicit incomplete, or excluded with authority; publish exact gap identities/counts without repair
@@ -220,7 +220,7 @@ the workflow through the mdBook and repository review path.
 | 5 | `CLAIM-VERIFICATION-ADOPTION.2` | `done` | bounded registry, executable evidence join, and doctrine gate active |
 | 6 | `CLAIM-VERIFICATION-ADOPTION.3a.0` | `done` | 39-surface denominator and bounded semantic schema frozen before code |
 | 7 | `CLAIM-VERIFICATION-ADOPTION.3a.1` | `done` | bounded inventory contract, deterministic producer, and fail-closed joins implemented |
-| 8 | `CLAIM-VERIFICATION-ADOPTION.3a.2` | `pending` | next: freeze exact authority outcomes and `.3b` gaps |
+| 8 | `CLAIM-VERIFICATION-ADOPTION.3a.2` | `done` | 51 evidence units frozen; five explicit incomplete units own the repair frontier |
 | 9 | `CLAIM-VERIFICATION-ADOPTION.3b` | `pending` | repair only the measured `.3a` gaps |
 | 10 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
 | 11 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
@@ -282,6 +282,24 @@ the workflow through the mdBook and repository review path.
 - `2026-08-15` (`.3a.1`): exact evidence identity is a one-based line range plus SHA-256 of those source bytes.
   A frozen `derived`/`identity_gated` unit must execute a tracked argv-form producer/input join; `registered`
   resolves a non-superseded claim ID; `incomplete` and `excluded` carry their required explicit reason fields.
+- `2026-08-15` (`.3a.2`): the first result-production pass exposed a structural gap: multi-view surfaces emitted
+  only their first-view review anchor. The freeze therefore requires at least one evidence unit for every
+  included surface **and** every required semantic view; the producer keys review anchors by surface + view +
+  path + line so overlapping views remain independently adjudicable.
+- `2026-08-15` (`.3a.2`): the final 51-unit authority census closes as 11 `derived`, four `identity_gated`, four
+  `registered`, five `incomplete`, and 27 `excluded`. The incomplete units are the README maintained-reference
+  surface, mdBook quantitative surface, workflow-doctrine baseline surface, knowledge-card reference surface,
+  and FSMGen issue-packet reference surface; `.3b` may repair only those five exact keys.
+
+## Frozen `.3b` Repair Frontier (`CLAIM-VERIFICATION-ADOPTION.3a.2`)
+
+| Evidence key | Missing legs |
+| --- | --- |
+| `evidence-readme-entrypoint-maintained-references-e1a5013b8d02` | re-derive, falsification, durability |
+| `evidence-shipped-behavior-mdbook-quantitative-claims-88501c2f5e66` | re-derive, falsification, durability |
+| `evidence-workflow-standards-doctrine-baselines-7bf07db7c4e8` | re-derive, falsification, durability |
+| `evidence-knowledge-cards-maintained-references-075a14c930ba` | re-derive, falsification, durability |
+| `evidence-fsmgen-issue-packets-maintained-references-ecf3712243ed` | re-derive, falsification, durability |
 
 ## Adoption Mapping (`CLAIM-VERIFICATION-ADOPTION.0`)
 
@@ -384,14 +402,31 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Blockers
 
-- None. `.3a.2` freezes the producer's exact authority outcomes and repair frontier next.
+- None. `.3b` repairs only the five frozen incomplete evidence keys next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3a.2`
+
+- [x] **REPRODUCE / MEASURE** — the frozen report derives 39 current surfaces, 32 inspection dispositions, seven
+  surface exclusions, five evidence-covered views, and 51 exact units: 11 derived + 4 identity-gated + 4
+  registered + 5 incomplete + 27 excluded. `[claim: current-claim-census-frozen]`
+- [x] **ROOT CAUSE (WHY + WHERE)** — the first production pass keyed surface anchors without `view_id`, allowing
+  a multi-view surface to satisfy surface coverage while leaving one semantic view without evidence.
+- [x] **ADDRESSED (verified)** — producer identity now includes surface + view + path + line; frozen validation
+  requires every included surface and every required view; all 51 units bind tracked line hashes and one closed
+  authority result, and all 15 derived/identity verifiers execute successfully.
+- [x] **NO REGRESSION** — 15/15 fault controls, frozen check/report/producer derive-and-diff, all joined focused
+  verifiers, claim/task/memory/book/live-size/currentness checks, and mandatory doctrines pass; source assertions,
+  product code, hooks, CI, and the five measured gaps remain unchanged.
+- [x] **GENERICITY** — the finding split follows authority and lifecycle classes only; the five incomplete keys
+  identify governed surfaces, not vendor, protocol, document-title, model, language, or metric exceptions.
+- [x] **LOCKSTEP** — contract, task evidence, dated ledgers, mdBook, registered frozen claim, and resume pointer
+  publish the same 51-unit outcome vector and exact `.3b` frontier; the 47-candidate inventory claim is superseded.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3a.1`
 
 - [x] **REPRODUCE / MEASURE** — the real report derives 39 current surfaces, assigns 32 to inspection and seven
   to explicit standard-scope exclusions, covers all five required views, and emits 47 deterministic candidates
   while the inventory phase correctly contains zero frozen evidence units.
-  `[claim: current-claim-census-inventory]`
 - [x] **ROOT CAUSE (WHY + WHERE)** — a hand-read constant sweep could omit a lifecycle, surface, overlapping
   semantic view, or stale evidence region; the missing seam was an executable join from the live registry to
   exact tracked source regions and closed authority outcomes.
@@ -496,6 +531,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3a.1` | checker syntax; 14-case fault matrix; real check/report/producer; task/memory/claim/
   live-size/book/doctrine gates | 39 current = 32 inspection + 7 explicit exclusions; five views; 47 deterministic
   candidates; inventory remains unfrozen and no source assertion changed |
+| `2026-08-15` | `.3a.2` | multi-view RED reproduction; 15-case fault matrix; frozen check/report/producer;
+  15 joined verifiers; claim/task/memory/book/live-size/doctrine gates | 51 units = 11 derived + 4 identity-gated
+  + 4 registered + 5 incomplete + 27 excluded; five exact `.3b` keys; no source assertion changed |
 
 ## Commit Log
 
@@ -508,6 +546,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.2` | `CLAIM-VERIFICATION-ADOPTION.2 — gate published claim provenance` | bounded registry, executable evidence join, stale digest gate, publication resolution, tenth doctrine |
 | `.3a.0` | `CLAIM-VERIFICATION-ADOPTION.3a.0 — freeze the current-claim census design` | 39-surface denominator, five category views, closed authority outcomes, staged implementation/results |
 | `.3a.1` | `CLAIM-VERIFICATION-ADOPTION.3a.1 — implement the current-claim census` | bounded inventory contract, deterministic producer, exact region/authority joins, fail-closed controls |
+| `.3a.2` | `CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings` | 51 exact outcomes, complete surface/view coverage, five-key repair frontier |
 
 ## Changelog
 
@@ -531,3 +570,5 @@ was added; the stable-path remedy and its consumed authority are complete.
   evidence schema before `.3a.1` implements any producer or `.3b` changes any source assertion.
 - `2026-08-15`: `.3a.1` implements the self-bounded inventory contract and deterministic producer, proves its
   missing/unknown/duplicate/untracked/stale/bound controls, and leaves every finding unfrozen for `.3a.2`.
+- `2026-08-15`: `.3a.2` repairs a first-view-only candidate-key defect before freezing 51 exact evidence units;
+  five incomplete keys become the only legal `.3b` repair frontier and all source assertions remain unchanged.

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > what does MessageFieldRecord.byte_offset mean
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -290,11 +298,3 @@
   > what is one-way grounding from EvidenceIR to ISF
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > what is promotion_status not_promoted_review_required and where does the canonical mutation live
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > what is recover-register-bits / how does the recover-register-bits command work
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is recovered_trapped_data_rows and who shares it
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is scripts/check_doctrines.sh / the doctrine driver

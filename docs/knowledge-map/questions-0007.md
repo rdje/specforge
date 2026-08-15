@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > is the reviewed source-to-intent dataset historically unseen
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
@@ -257,6 +263,8 @@
   > what did the corpus promotion sweep measure (gauge deltas per doc)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > what did the corpus task evidence containment census find
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > what did the current claim census find
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > what did the owner decide about PDF-to-IR work versus FSMGen work on 2026-08-11
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -289,11 +297,3 @@
   > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > what does MessageFieldRecord.bit_range mean and when is it set
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > what does MessageFieldRecord.byte_offset mean
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do

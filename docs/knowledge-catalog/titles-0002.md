@@ -14,6 +14,7 @@
 | [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md) | 2026-08-10 | `current` | The corpus-wide rebuild collapsed 14 documents' false interfaces, taking emitted ISFs from 57 to 44 |
 | [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The Cortex-A76 optimization guide is constraint evidence, not a 537-output instruction interface |
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
+| [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md) | 2026-08-15 | `current` | The current-claim census freezes 51 exact authority units and five incomplete repair keys |
 | [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md) | 2026-08-12 | `current` | Decibel-domain timing rows remain source evidence but are non-applicable to executable digital intent |
 | [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md) | 2026-08-11 | `current` | Converge emits a guarded per-run ledger for every production command and every capability island |
 | [definitional-signal-capture](../knowledge/definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
@@ -60,4 +61,3 @@
 | [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md) | 2026-06-17 | `current` | Which IntentIR surfaces reach the .isf vs are silently dropped (KG-ISF-COMPLETENESS.2 measurement) — the ba… |
 | [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md) | 2026-06-21 | `current` | The emitted `.isf` module name (and every internal `.isf` identifier) is HDL-sanitized by `sanitize_isf_name`… |
 | [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md) | 2026-08-12 | `current` | SpecForge emits no blanket ISF rule-over-transaction priorities; IntentIR has no precedence carrier, so a rul… |
-| [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md) | 2026-06-04 | `current` | temporal_rules are never silently dropped in the IntentIR->.isf lowering (already guaranteed) |
