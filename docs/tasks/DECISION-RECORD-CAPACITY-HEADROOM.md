@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `DECISION-RECORD-CAPACITY-HEADROOM`
-- Status: `active` (tracking-only while `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT` closes)
+- Status: `active`
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
-- Last updated: `2026-08-14`
+- Last updated: `2026-08-15`
 - Owner: repo-local workflow
 
 ## Goal
@@ -37,7 +37,7 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM`
   Status: `active`
   Goal: restore a durable and reachable capacity remedy for canonical decision records
-  Children: `.0`, `.0a`, `.1`, `.2`
+  Children: `.0`, `.0a`, `.1`, `.2`, `.2a`
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM.0`
   Status: `done`
@@ -69,12 +69,15 @@ unrelated architecture slice consumes the remaining three file slots and is refu
   Commit: `DECISION-RECORD-CAPACITY-HEADROOM.1 — derive the next decision capacity profile`
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement and fault-test the accepted capacity architecture
   Acceptance: the accepted transaction preserves every decision and route exactly, supplies actionable
   headroom, keeps aggregate reachability, synchronizes the fact plane and book, passes doctrine, and closes clean
-  Verification: `pending`
-  Commit: `pending`
+  Verification: the exact authority moves decision files 44→58 with unchanged per-file bounds and reachable
+  29,696-line / 1,900,544-byte aggregates; the catalog derives 393 facts and 3,584 question keys and rejects
+  independent fact, record, or question-key drift across 60/60 focused cases; all 43 stable records remain in
+  place; Knowledge Map remains 250 facts / 1,914 questions / 13 shards; mdBook, live-size, and doctrines pass
+  Commit: `DECISION-RECORD-CAPACITY-HEADROOM.2 — apply the 58-record coupled capacity profile`
 
 - ID: `DECISION-RECORD-CAPACITY-HEADROOM.2a`
   Status: `pending`
@@ -91,7 +94,7 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | 1 | `DECISION-RECORD-CAPACITY-HEADROOM.0` | `done` | exact clean pressure boundary and ownership are pinned |
 | 2 | `DECISION-RECORD-CAPACITY-HEADROOM.0a` | `done` | per-record line/byte pressure is distinguished from collection count |
 | 3 | `DECISION-RECORD-CAPACITY-HEADROOM.1` | `done` | ADR 0041 derives a 58-record flat profile without moving accepted paths |
-| 4 | `DECISION-RECORD-CAPACITY-HEADROOM.2` | `pending` | apply and fault-test the coupled 58-record / 393-fact / 3,584-question profile |
+| 4 | `DECISION-RECORD-CAPACITY-HEADROOM.2` | `done` | coupled registries and independent drift controls now carry the accepted profile |
 | 5 | `DECISION-RECORD-CAPACITY-HEADROOM.2a` | `pending` | retire `.2`'s consumed authority after the new profile is committed |
 
 ## Decisions
@@ -118,7 +121,22 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 
 ## Blockers
 
-- None. `.2` is the next executable leaf.
+- None. `.2a` must retire the consumed one-use authority before this tree closes.
+
+### Acceptance Checklist (enforced) — `DECISION-RECORD-CAPACITY-HEADROOM.2`
+
+- [x] **REPRODUCE / MEASURE** — the deciding-record boundary is 43 files and the nine-file peak remains the
+  accepted input; 43/58 = 74.1% and (43+9)/58 = 89.7%.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the stale input was the decision population, while the coupled authorities
+  lived in the live-size registry, Knowledge Map shard contract, and fact-card catalog join.
+- [x] **ADDRESSED (verified)** — one exact authority moves 44→58 files, aggregate bounds remain `files × per-file
+  bound`, and executable identities derive 393 facts plus 3,584 question keys from the two canonical writers.
+- [x] **NO REGRESSION** — every existing decision path and byte stays stable; 60 focused catalog controls include
+  independent record/fact/question drift; Knowledge Map, mdBook, live-size, and doctrine gates pass.
+- [x] **GENERICITY** — no decision subject is recognized; the implementation uses only registered capacities,
+  fact-writer slots, the portable eight-key ratio, and the 512-key registry quantum.
+- [x] **LOCKSTEP** — ADR 0041, both registries, project generator contract, executable derivations, normative
+  containment, mdBook, task tree, and continuity ledgers all publish the same 58 / 393 / 3,584 profile.
 
 ### Acceptance Checklist (enforced) — `DECISION-RECORD-CAPACITY-HEADROOM.1`
 
@@ -177,6 +195,9 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | `2026-08-15` | `.1` design | Git add-history census; current metrics; readers/writers and coupling search;
   candidate/rollback analysis; ADR/catalog/KM/live-size/doctrine checks | 58 slots selected from 43 current + nine
   peak; 393 fact slots / 3,584 question-key slots are the exact coupled next profile; no authority moved |
+| `2026-08-15` | `.2` implementation | 60 catalog mutation/boundary cases; fact/KM catalogs; live-size; mdBook;
+  doctrines | 43/58 stable decision files; 393 derived fact slots; 3,584 derived question keys; no path/topology/
+  portable-cap change; exact one-use authority remains for `.2a` retirement |
 
 ## Commit Log
 
@@ -185,6 +206,7 @@ unrelated architecture slice consumes the remaining three file slots and is refu
 | `.0` | `DECISION-RECORD-CAPACITY-HEADROOM.0 — track decision-record capacity pressure` | ownership and exact pressure boundary only |
 | `.0a` | `DECISION-RECORD-CAPACITY-HEADROOM.0a — pin independent decision-record size pressure` | distinguish immutable-member shape from collection count before design |
 | `.1` | `DECISION-RECORD-CAPACITY-HEADROOM.1 — derive the next decision capacity profile` | ADR 0041; flat stable paths retained; capacity implementation is next |
+| `.2` | `DECISION-RECORD-CAPACITY-HEADROOM.2 — apply the 58-record coupled capacity profile` | exact authority, coupled registries, drift controls, and book sync |
 
 ## Changelog
 
@@ -194,3 +216,6 @@ unrelated architecture slice consumes the remaining three file slots and is refu
   accepted decision or live-size authority changed.
 - `2026-08-15`: `.1` accepts the minimal next profile—58 decision files, 393 facts, and 3,584 question keys—after
   re-deriving the current population, nine-file peak, stable reader/writer topology, and portable hard caps.
+- `2026-08-15`: `.2` applies that profile atomically, makes the question-key derivation executable, and preserves
+  all existing records, stable paths, per-file bounds, shard topology, and portable hard caps; `.2a` owns only
+  retirement of the now-consumed increase authority.

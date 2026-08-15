@@ -9,8 +9,8 @@
   "shard_prefix": "questions-",
   "fact_catalog": "docs/knowledge/INDEX.md",
   "limits": {
-    "max_facts": 379,
-    "max_question_keys": 3072,
+    "max_facts": 393,
+    "max_question_keys": 3584,
     "max_question_bytes": 2048,
     "max_id_bytes": 96,
     "max_path_bytes": 192,

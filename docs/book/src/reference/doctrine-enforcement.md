@@ -112,8 +112,9 @@ membership/content, fixed capacity and mandatory-rollover bounds, residue cleanu
 The landing carries one range row per title part — part number, card count, and inclusive first/last id — and is
 rejected if it links a card directly, misorders or drops a row, miscounts a part, or names a boundary id the card
 list does not confirm. The 336-card maximum is cross-checked against the 338-file canonical surface, and the
-379-fact question authority is derived from that maximum plus the decision-record file ceiling rather than
-pinned as a literal, so the two fact writers can never disagree. The title-part generated-projection registry record
+current 393-fact authority is derived from that maximum plus the decision-record file ceiling rather than
+pinned as a literal. The 3,584-question-key authority is separately derived as eight keys per fact rounded to
+the 512-key registry quantum, so neither fact writer nor the question projection can drift alone. The title-part generated-projection registry record
 was forbidden before migration and is exact now; the canonical card surface declares `routed_membership` through
 that record, so the generic gate proves every card through exactly one hop.
 

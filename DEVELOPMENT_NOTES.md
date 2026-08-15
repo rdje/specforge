@@ -1,4 +1,14 @@
 # DEVELOPMENT_NOTES
+## DECISION-RECORD-CAPACITY-HEADROOM.2 (`2026-08-15`) — couple every downstream authority
+
+A decision-file capacity change is not local: each additional file is also a possible answers-bearing Knowledge
+Map fact. The implementation therefore changes the file, fact, and question-key authorities together and makes
+both arithmetic joins executable. A mutation that changes only one registry now fails at the catalog boundary.
+
+The 512-key rounding quantum matters even when current content remains far below it. Multiplying 393 facts by
+eight yields 3,144 keys, but 3,144 would invent a new registry step; 3,584 is the next existing quantum and stays
+under the portable 4,096-key hard cap. This preserves both bounded portability and future deterministic review.
+
 ## DECISION-RECORD-CAPACITY-HEADROOM.1 (`2026-08-15`) — changed inputs, same derivation
 
 The 44-file profile was not wrong; it was sized from 30 files and a nine-file peak. The population changed.

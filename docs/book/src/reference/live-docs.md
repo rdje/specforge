@@ -710,13 +710,27 @@ the decision-record file ceiling and rejects any other value, with a focused cas
 alone. A full 336-card render must cross no mandatory pressure and a 337th must fail closed, replacing the old
 198/199 pair; 58 focused cases pass.
 
-Every fact-plane rollover warning is gone: 195 of 338 collection files (57.7%), 30 of 44 decision records
+At that boundary every fact-plane rollover warning was gone: 195 of 338 collection files (57.7%), 30 of 44 decision records
 (68.2%), 2,976 of 12,384 projection lines (24.0%), and 199 of 379 facts. No card and no decision record was
 edited. One warning survives deliberately — `knowledge_cards` `lines_each` at 81.0%, because one 243-line card
 sits against a 300-line per-card bound. That is a per-card quality signal with a local remedy, not capacity
-pressure. The portable bundle's own hard caps (512 facts, 4,096 question keys, 64 shards) are now the visible
-architectural ceiling: this profile uses 74% of the fact cap, and growing past roughly 470 cards would have to
-raise the bundle's caps first.
+pressure. The portable bundle's own hard caps (512 facts, 4,096 question keys, 64 shards) became the visible
+architectural ceiling: that profile used 74% of the fact cap, and growing past roughly 470 cards would have had
+to raise the bundle's caps first.
+
+#### Decision growth re-derived the coupled profile
+
+ADR 0041 applies the same equation to changed inputs rather than treating the ADR 0029 numbers as permanent.
+The deciding record brings the collection to 43 files and Git still shows a nine-record peak active day.
+Fifty-eight is the smallest new file bound for which 43 is below the 80% warning and 52 is below the 90%
+rollover. The per-file line, byte, and width limits do not move; aggregate line and byte bounds remain exactly
+`files × per-file bound`.
+
+This changes both downstream capacities as one transaction. Fifty-eight decision files contain at most 57
+answers-bearing records, so the fixed 336 card slots yield `336 + 57 = 393` facts. Eight question keys per fact
+then require 3,144 keys, rounded up to the registry's 512-key quantum: 3,584. The catalog checker recomputes both
+identities and its controlled mutations make a fact-only, decision-only, or question-key-only change fail.
+Existing decision paths, the 32-shard topology, and the portable 512-fact/4,096-key hard caps stay fixed.
 
 #### Remaining canonical collection catalogs landed
 

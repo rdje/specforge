@@ -1,3 +1,13 @@
+### DECISION-RECORD-CAPACITY-HEADROOM.2 — apply the coupled capacity profile
+
+- Applied ADR 0041's measured 58-file decision capacity with unchanged per-file limits and aggregate bounds equal
+  to `files × per-file bound`; every existing record and stable route remains unchanged.
+- Moved the project generator contract and registry fact authority to 393 and question-key authority to 3,584
+  in the same transaction. The catalog derives both joins and rejects independent decision, fact, or question-
+  key drift across 60 focused cases.
+- Synchronized normative containment and mdBook explanations. The exact increase authority is intentionally
+  present for this commit and is owned for immediate retirement by `.2a`.
+
 ### DECISION-RECORD-CAPACITY-HEADROOM.1 — derive the next decision capacity profile
 
 - Re-derived decision growth from Git: ADR 0041 brings the collection to 43 files and the observed peak active
