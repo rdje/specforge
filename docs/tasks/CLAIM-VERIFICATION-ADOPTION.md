@@ -103,12 +103,14 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.1b`
-  Status: `pending`
+  Status: `done`
   Goal: retire the exact workflow-capacity authority consumed by `.1a`
   Acceptance: after `.1a` commits, remove its now-banked increase row without changing any standard, capacity,
   catalog, decision, route, measurement producer, or book content; return gates green on the committed profile
-  Verification: `pending`
-  Commit: `pending`
+  Verification: the authority registry contains only its bounded control record; the committed 21-file surface,
+  14 explicit targets, ADR, producer, catalog, Knowledge Map, standard set, and mdBook remain unchanged; focused
+  capacity/live-size/currentness checks and all gate-tier doctrines pass
+  Commit: `CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.2`
   Status: `pending`
@@ -156,8 +158,8 @@ the workflow through the mdBook and repository review path.
 | 1 | `CLAIM-VERIFICATION-ADOPTION.0` | `done` | external standard and local enforcement/current-claim planes are mapped |
 | 2 | `CLAIM-VERIFICATION-ADOPTION.1` | `done` | standard, ADR, discovery, authoring, and review contract are published |
 | 3 | `CLAIM-VERIFICATION-ADOPTION.1a` | `done` | measured 21-file profile restores headroom without changing explicit topology |
-| 4 | `CLAIM-VERIFICATION-ADOPTION.1b` | `pending` | retire `.1a`'s exact consumed authority after commit |
-| 5 | `CLAIM-VERIFICATION-ADOPTION.2` | `pending` | enforcement depends on the frozen local contract and clean workflow capacity |
+| 4 | `CLAIM-VERIFICATION-ADOPTION.1b` | `done` | exact transaction authority retired; committed profile remains unchanged |
+| 5 | `CLAIM-VERIFICATION-ADOPTION.2` | `pending` | next: implement the bounded claim registry and unconditional semantic gate |
 | 6 | `CLAIM-VERIFICATION-ADOPTION.3` | `pending` | the constant sweep needs the registered classification/gate shape |
 | 7 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
 | 8 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
@@ -277,7 +279,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Blockers
 
-- None. `.1b` is the next executable leaf before enforcement implementation.
+- None. `.2` is the next executable leaf.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.1a`
 
@@ -325,7 +327,10 @@ was added; the stable-path remedy and its consumed authority are complete.
   15 engineering records and restores the 61-record live root below warning; registry gate remains pending |
 | `2026-08-15` | `.1a` | tracked Git-growth report + five controls; full-catalog arithmetic; catalog/KM/
   live-size/mdBook/doctrine gates | 14 current / peak 4 derive 21; current 66.7%, one peak 85.7%; explicit paths
-  retained; exact one-use authority remains for `.1b` |
+  retained; exact one-use authority remained for `.1b` and was subsequently retired |
+| `2026-08-15` | `.1b` | authority census; capacity reproducer; canonical catalog; task/KM/currentness;
+  live-size; doctrine gates | registry returns to its one control record; 21-file profile and all evidence stay
+  unchanged; `.2` is executable |
 
 ## Commit Log
 
@@ -334,6 +339,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
 | `.1` | `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract` | normative scope, ADR 0042, discovery, authoring/review contract, and mdBook alignment |
 | `.1a` | `CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity` | tracked measurement, ADR 0043, exact authority, stable explicit topology |
+| `.1b` | `CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority` | one-use authority removed after the 21-file profile became baseline |
 
 ## Changelog
 
@@ -349,3 +355,5 @@ was added; the stable-path remedy and its consumed authority are complete.
   safe live root without editing any older archive member.
 - `2026-08-15`: `.1a` re-derives 21 workflow slots from 14 current members and a four-member peak, preserves the
   stable explicit topology, and leaves exact authority retirement to `.1b` after commit.
+- `2026-08-15`: `.1b` removes the consumed 16→21 authority while leaving the committed workflow profile and all
+  of its current evidence unchanged; `.2` is executable.

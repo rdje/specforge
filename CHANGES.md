@@ -1,3 +1,11 @@
+### CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority
+
+- Removed `.1a`'s exact 16→21 workflow-standard increase record after the measured profile became committed
+  baseline state. The self-bounded authority registry again contains only its control record.
+- Left the 21-file profile, all 14 explicit targets, stable paths, per-file/aggregate limits, ADR, producer,
+  catalogs, Knowledge Map, workflow documents, and mdBook unchanged. `.2` can now implement enforcement from a
+  clean authority boundary.
+
 ### CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity
 
 - Reproduced all 14 explicit workflow-standard creation dates from Git and measured a four-member peak active
@@ -5,8 +13,8 @@
   place the projected 18 members exactly at the 90% rollover.
 - Kept every stable path and per-file limit unchanged. Both aggregate bands remain reachable at 14,700 lines /
   1,376,256 bytes, while full-catalog arithmetic and the registry's 32-item cap prove the explicit topology fits.
-- Added ADR 0043 and a tracked five-case measurement producer. The exact 16→21 authority is present only for this
-  transaction; `.1b` owns its immediate retirement after commit.
+- Added ADR 0043 and a tracked five-case measurement producer. The exact 16→21 authority was present only for
+  this transaction and `.1b` subsequently retired it.
 
 ### CLAIM-VERIFICATION-ADOPTION.1 — publish the three-leg contract
 

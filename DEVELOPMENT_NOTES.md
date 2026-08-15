@@ -1,4 +1,10 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.1b (`2026-08-15`) — authority is a transaction, not stored permission
+
+Once the 21-file profile is committed, its prior 16-file state remains visible in Git and ADR 0043 remains the
+derivation authority. Keeping the increase row would add no evidence; it would leave reusable permission in the
+live registry. Removing that exact row immediately separates historical rationale from current mutation power.
+
 ## CLAIM-VERIFICATION-ADOPTION.1a (`2026-08-15`) — capacity follows measured change shape
 
 The 14/16 warning was real, but it did not imply that workflow policy needed a new topology. Stable explicit
