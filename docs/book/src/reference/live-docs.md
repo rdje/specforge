@@ -955,6 +955,34 @@ urgency. Second, the test harness itself was violating the new rule — `generou
 lines against a 500-line total — which is the cheapest available evidence that this shape is easy to write by
 accident.
 
+#### Workflow-standard headroom is measured, not guessed
+
+Publishing the claim-verification contract and pull-request review template grew the canonical workflow set from
+12 to 14 explicit members against a 16-file profile. That 87.5% count is a warning about collection growth, not
+large documents: the stable paths, individual files, generated browsing catalog, and registry array all remain
+comfortably inside their own bounds.
+
+[ADR 0043](../../../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+therefore repeats the same warning/rollover derivation used for decision records. Git creation history records a
+four-member peak active day. Twenty-one is the first capacity where current use is strictly below the 80% warning
+and one peak is strictly below 90% rollover:
+
+- `14 / 21 = 66.7%`;
+- `(14 + 4) / 21 = 85.7%`;
+- `18 / 20 = 90.0%`, so 20 is not safe under the strict boundary.
+
+The collection stays an explicit target list so a Markdown file cannot silently become policy. Its 700-line,
+65,536-byte, and 1,024-line-byte per-file limits do not change; reachable aggregate bands become 14,700 lines and
+1,376,256 bytes. A full 21-member generated catalog still fits below its own ceilings, and 21 stays below the
+registry's independent 32-item portable array cap. Reproduce the boundary with:
+
+```sh
+scripts/measure_workflow_standard_capacity.pl --check
+```
+
+The generic live-size count warning is the signal to remeasure again. Ordinary additions do not automatically
+raise capacity, and the exact 16→21 authority is retired as soon as the profile becomes committed baseline state.
+
 #### Bounded FSMGen feedback channel landed
 
 The stable [`docs/FSMGEN_FEEDBACK.md`](../../../FSMGEN_FEEDBACK.md) path is now an 81-line / 5,243-byte

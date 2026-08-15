@@ -17,13 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.1a` owns workflow-standard capacity headroom.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.1b` owns retirement of the workflow-capacity increase authority.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: ADR 0042 and `CLAIM_VERIFICATION.md` publish the three-leg author/reviewer contract, exact
-  claim/no-claim declaration, bootstrap/README discovery, and review template. Mechanical provenance is not yet
-  active; `claim-verification-contract-published` owns the publication/discovery assertion.
-- Next action: census and design a minimal repeatable remedy for `.1`'s resulting 14/16 workflow-standard file
-  pressure in `.1a`, then implement the claim registry/checker in `.2`. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: none after the `.1` commit; no background job.
+- Current state: ADR 0043 and the tracked Git-growth producer re-derive a 21-file workflow-standard profile from
+  14 explicit members and a four-member peak day. Stable paths/per-file bounds remain fixed; the exact one-use
+  16→21 authority is present only for the `.1a` transaction.
+- Next action: commit `.1a`, remove its consumed authority in `.1b`, then implement the claim registry/checker in
+  `.2`. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: `.1a` capacity/profile/docs synchronization is awaiting focused and doctrine gates; no
+  background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

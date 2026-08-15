@@ -61,7 +61,7 @@ the workflow through the mdBook and repository review path.
 - ID: `CLAIM-VERIFICATION-ADOPTION`
   Status: `active`
   Goal: adopt re-derive / falsify / durability as the enforceable definition of a checked published claim
-  Children: `.0`, `.1`, `.1a`, `.2`, `.3`, `.4`, `.5`
+  Children: `.0`, `.1`, `.1a`, `.1b`, `.2`, `.3`, `.4`, `.5`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.0`
   Status: `done`
@@ -91,11 +91,22 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.1a`
-  Status: `pending`
+  Status: `done`
   Goal: restore measured capacity headroom for the canonical workflow-standard collection
   Acceptance: census population/growth, readers/writers, catalog and route coupling, and candidate remedies after
   `.1`'s required two-file addition; choose a minimal repeatable capacity/topology remedy before another workflow
   standard is added; do not raise or reshape an authority merely to silence the 14/16 warning
+  Verification: tracked measurement reproduces 14 members over six active dates with a four-member peak; 21 is
+  minimal because 14/21 = 66.7%, 18/21 = 85.7%, and 18/20 is exactly rollover; explicit targets remain below
+  the 32-item registry cap and a full catalog is at most 31 lines / 11,138 bytes; exact authority moves both
+  reachable aggregate bands with unchanged per-file bounds; five controlled derivation cases and doctrines pass
+  Commit: `CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.1b`
+  Status: `pending`
+  Goal: retire the exact workflow-capacity authority consumed by `.1a`
+  Acceptance: after `.1a` commits, remove its now-banked increase row without changing any standard, capacity,
+  catalog, decision, route, measurement producer, or book content; return gates green on the committed profile
   Verification: `pending`
   Commit: `pending`
 
@@ -144,11 +155,12 @@ the workflow through the mdBook and repository review path.
 | --- | --- | --- | --- |
 | 1 | `CLAIM-VERIFICATION-ADOPTION.0` | `done` | external standard and local enforcement/current-claim planes are mapped |
 | 2 | `CLAIM-VERIFICATION-ADOPTION.1` | `done` | standard, ADR, discovery, authoring, and review contract are published |
-| 3 | `CLAIM-VERIFICATION-ADOPTION.1a` | `pending` | `.1` moves workflow standards to 14/16 files; derive a repeatable remedy before another member |
-| 4 | `CLAIM-VERIFICATION-ADOPTION.2` | `pending` | enforcement depends on the frozen local contract and clean workflow capacity |
-| 5 | `CLAIM-VERIFICATION-ADOPTION.3` | `pending` | the constant sweep needs the registered classification/gate shape |
-| 6 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
-| 7 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
+| 3 | `CLAIM-VERIFICATION-ADOPTION.1a` | `done` | measured 21-file profile restores headroom without changing explicit topology |
+| 4 | `CLAIM-VERIFICATION-ADOPTION.1b` | `pending` | retire `.1a`'s exact consumed authority after commit |
+| 5 | `CLAIM-VERIFICATION-ADOPTION.2` | `pending` | enforcement depends on the frozen local contract and clean workflow capacity |
+| 6 | `CLAIM-VERIFICATION-ADOPTION.3` | `pending` | the constant sweep needs the registered classification/gate shape |
+| 7 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
+| 8 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
 
 ## Decisions
 
@@ -176,6 +188,8 @@ the workflow through the mdBook and repository review path.
   IDs. `none` is scope-based, not a docs/code exemption; syntactic mechanical enforcement begins only in `.2`.
 - `2026-08-15`: the required root standard plus PR template raise canonical workflow standards from 12/16 to
   14/16 files (87.5%). `.1a` owns a measured repeatable remedy; `.1` does not hide the warning or widen a bound.
+- `2026-08-15` (ADR 0043): retain explicit stable membership and minimally re-derive 21 slots from 14 current
+  members plus the measured four-member peak. Per-file limits stay fixed; aggregate reachability moves with count.
 
 ## Adoption Mapping (`CLAIM-VERIFICATION-ADOPTION.0`)
 
@@ -218,6 +232,21 @@ was added; the stable-path remedy and its consumed authority are complete.
   tracked repository-relative inputs and reject stale derived projections. The exact repository-volume rollover
   plan preserves the rationale through segment 0008 rather than trimming a live record.
 
+## Claim Evidence — `workflow-standard-capacity-profile`
+
+- **Claim:** at the `.1a` boundary the canonical workflow collection has 14 explicit tracked members, a four-
+  member peak active day, and a minimal warning-safe 21-file profile with unchanged stable paths/per-file bounds.
+- **Status:** `verified` for the boundary/profile assertion.
+- **RE-DERIVE:** `scripts/measure_workflow_standard_capacity.pl --check` reads the canonical surface targets and
+  Git add history, reproducing 14 current / peak 4 / derived 21 and exact aggregate multiplication.
+- **FALSIFY:** the competing hypotheses are “20 is sufficient” and “the catalog or portable target array binds
+  before 21.” The tracked five-case self-test observes exact-90%, cap-20, and bad-aggregate controls go RED;
+  full-profile arithmetic gives 31 catalog lines / at most 11,138 bytes under 384 / 65,536, and the registry's
+  independent target-array hard cap is 32.
+- **DURABILITY:** the producer, surface registry, exact increase authority, ADR 0043, and catalog checker are
+  tracked. Generic live-size count warning is the stale-state trigger for a future re-measurement; `.1b` owns
+  retirement of the transaction-only authority.
+
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.0`
 
 - [x] **REPRODUCE / MEASURE** — SpecForge has zero local `CLAIM_VERIFICATION.md`, zero claim registry/checker,
@@ -244,11 +273,26 @@ was added; the stable-path remedy and its consumed authority are complete.
 - `.2` must select the exact claim identity/input-digest schema after `.1` freezes the local normative vocabulary;
   the dedicated bounded-registry topology and required semantic fields are no longer open.
 - `.1a` must decide whether measured workflow-standard growth warrants a re-derived flat profile or a bounded
-  routed topology; the 16-file authority does not move until that census/design is accepted.
+  routed topology; ADR 0043 resolves this in favor of the minimal 21-file flat explicit profile.
 
 ## Blockers
 
-- None. `.1a` is the next executable leaf before enforcement implementation.
+- None. `.1b` is the next executable leaf before enforcement implementation.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.1a`
+
+- [x] **REPRODUCE / MEASURE** — the tracked producer reads all 14 explicit targets and Git history: additions by
+  active date are 2/1/4/2/3/2, so the peak is four; current members total 2,632 lines / 166,521 bytes.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `.1` legitimately added two standards to a fixed 16-file canonical surface,
+  crossing count warning; member shape, catalog, and registry topology are not the binding dimensions.
+- [x] **ADDRESSED (verified)** — ADR 0043 selects the minimal 21-file profile, retains explicit stable targets,
+  and moves aggregates to 14,700 lines / 1,376,256 bytes with unchanged per-file limits.
+- [x] **NO REGRESSION** — five measurement controls, canonical catalog, decision/fact/task catalogs, Knowledge
+  Map, live-size, mdBook, and doctrines pass; no standard, route, product file, or old decision moves.
+- [x] **GENERICITY** — the equation uses lifecycle, current population, Git growth, and fixed milestones; it never
+  inspects a standard's subject, title, author, harness, or content.
+- [x] **LOCKSTEP** — producer, ADR 0043, exact authority, surface registry, containment prose, mdBook, task/current
+  status, change/engineering ledgers, and resume pointer publish the same 14 / 4 / 21 profile.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.1`
 
@@ -279,6 +323,9 @@ was added; the stable-path remedy and its consumed authority are complete.
   census; Knowledge Map; mdBook; live-size; doctrines | repository-owned standard/ADR/template published; exact
   claim/no-claim declaration active; 14 workflow standards and 36 README routes close; exact segment 0008 seals
   15 engineering records and restores the 61-record live root below warning; registry gate remains pending |
+| `2026-08-15` | `.1a` | tracked Git-growth report + five controls; full-catalog arithmetic; catalog/KM/
+  live-size/mdBook/doctrine gates | 14 current / peak 4 derive 21; current 66.7%, one peak 85.7%; explicit paths
+  retained; exact one-use authority remains for `.1b` |
 
 ## Commit Log
 
@@ -286,6 +333,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
 | `.1` | `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract` | normative scope, ADR 0042, discovery, authoring/review contract, and mdBook alignment |
+| `.1a` | `CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity` | tracked measurement, ADR 0043, exact authority, stable explicit topology |
 
 ## Changelog
 
@@ -299,3 +347,5 @@ was added; the stable-path remedy and its consumed authority are complete.
 - `2026-08-15`: `.1`'s required engineering rationale crosses the development-note line rollover; the exact
   boundary-authenticated plan seals 15 whole records as segment 0008 and retains the current record in a warning-
   safe live root without editing any older archive member.
+- `2026-08-15`: `.1a` re-derives 21 workflow slots from 14 current members and a four-member peak, preserves the
+  stable explicit topology, and leaves exact authority retirement to `.1b` after commit.

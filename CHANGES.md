@@ -1,3 +1,13 @@
+### CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity
+
+- Reproduced all 14 explicit workflow-standard creation dates from Git and measured a four-member peak active
+  day. Twenty-one is the minimal strict-boundary profile: current use is 66.7%, one peak is 85.7%, and 20 would
+  place the projected 18 members exactly at the 90% rollover.
+- Kept every stable path and per-file limit unchanged. Both aggregate bands remain reachable at 14,700 lines /
+  1,376,256 bytes, while full-catalog arithmetic and the registry's 32-item cap prove the explicit topology fits.
+- Added ADR 0043 and a tracked five-case measurement producer. The exact 16→21 authority is present only for this
+  transaction; `.1b` owns its immediate retirement after commit.
+
 ### CLAIM-VERIFICATION-ADOPTION.1 — publish the three-leg contract
 
 - Added the repository-owned `CLAIM_VERIFICATION.md` standard and ADR 0042: current actionable assertions must
@@ -7,8 +17,8 @@
   review workflows, plus bounded README and canonical workflow-catalog discovery.
 - Aligned the mdBook while stating the implementation boundary honestly: the author/reviewer contract is active,
   but the bounded registry and doctrine gate remain owned by `.2`.
-- The two required workflow members make that canonical collection 14/16 files; `.1a` owns its measured capacity
-  remedy before another standard is added, without widening the current authority in this slice.
+- The two required workflow members made that canonical collection 14/16 files; `.1a` subsequently re-derived a
+  measured 21-file profile without changing stable paths or per-file limits.
 - Applied the mandatory lossless development-note rollover after this slice's rationale crossed its line
   threshold: exact segment 0008 seals 15 whole records and leaves 61 records / 1,281 lines / 173,852 bytes live.
 

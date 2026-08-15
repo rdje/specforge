@@ -1,4 +1,15 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.1a (`2026-08-15`) — capacity follows measured change shape
+
+The 14/16 warning was real, but it did not imply that workflow policy needed a new topology. Stable explicit
+paths are part of the review contract, the external-membership catalog remains small at the full candidate
+profile, and the registry independently permits 32 targets. The binding dimension was only member count.
+
+Git addition dates provide the repeatable normal-update unit: the largest active day added four standards. The
+smallest profile holding 14 below warning and 18 below rollover is 21, because 20 leaves 18 exactly at the strict
+90% boundary. Keeping the equation and a controlled reproducer in the repository makes the next warning a prompt
+to remeasure growth, not an excuse to reuse 21 as a permanent entitlement.
+
 ## CLAIM-VERIFICATION-ADOPTION.1 (`2026-08-15`) — independence is a property of evidence lineage
 
 “Different command” is not the same as different evidence. A check fails to falsify when its classifier,

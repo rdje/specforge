@@ -93,6 +93,12 @@
   58 slots; the coupled current profile is therefore 336 cards + 57 answers-bearing decision slots = 393 facts,
   with 3,584 question keys from the eight-per-fact ratio rounded to the 512-key registry quantum. Stable decision
   paths, per-file bounds, shard topology, and portable hard caps remain unchanged.
+  ADR 0043 applies the same measured law to the canonical workflow-standard collection after claim verification
+  adds its root contract and review template. Fourteen explicit members plus the measured four-member peak need
+  21 slots: 14/21 is 66.7%, 18/21 is 85.7%, and 18/20 is exactly rollover. Stable explicit paths remain the
+  membership authority, per-file bounds remain 700 lines / 65,536 bytes / 1,024 line bytes, and both aggregate
+  bands move with the count to 14,700 lines / 1,376,256 bytes. The generic count warning triggers remeasurement;
+  capacity is not recalculated or banked on every ordinary member addition.
   ADR 0030 applies the same rule to a `bounded_snapshot`. The roadmap archive becomes a bounded capsule series
   rather than one pre-migration seal, because a one-time migration bounds a document once and says nothing
   about the next fill: a rollover copies the bounded root to a dated capsule, appends one contract record, adds

@@ -191,6 +191,8 @@
   > does the upstream-first decision weaken the executable-intent objective
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > does the vertical evaluator make a category support claim yet
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > does the workflow catalog fit the full 21-file profile
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > does transaction phase precision change phase membership or ISF output
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -295,5 +297,3 @@
   > how are serial/architecture spec interface signals added to the catalog
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how are signal presence matrices captured into typed records
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > how are signal presence matrices with signals trapped in header rows handled

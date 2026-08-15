@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > why was the Arm Debug replay killed at 400 pages
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > why was the ISF explicit-FSM feature request withdrawn
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > why was the at least timing paraphrase rejected
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > why was the spike's 'manager Reads ARID' direction error not in production
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > why were BDF DL and VPD removed from OpenCAPI Discovery
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
