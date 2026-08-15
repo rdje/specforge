@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3b.2 (`2026-08-15`) — policy identity and measured capacity are different
+
+The workflow surface is not one homogeneous claim. Its first-line pull-request-template anchor identifies an
+authored normative collection, while the capacity paragraph in `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` makes a
+repository-derived assertion. Treating the title as evidence for the number would give both the wrong region and
+the wrong authority class.
+
+The measured paragraph already has one complete authority: `workflow-standard-capacity-profile`. Its producer
+reads explicit membership and Git history; its controls challenge the strict boundary and catalog/target-array
+alternatives; its stale gate binds the inputs. The census repair can therefore reference that record directly
+and leave the authored title outside claim scope, without storing another copy of the result.
+
 ## CLAIM-VERIFICATION-ADOPTION.3b.1 (`2026-08-15`) — reuse route authority at its exact boundary
 
 The maintained-reference gaps did not reveal missing enforcement. README routing already derives its registered

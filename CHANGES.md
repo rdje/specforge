@@ -1,3 +1,11 @@
+### CLAIM-VERIFICATION-ADOPTION.3b.2 — bind the workflow baseline authority
+
+- Separated authored workflow identity from the actionable capacity paragraph and bound the latter to the
+  existing `workflow-standard-capacity-profile` authority; no duplicate claim or hand-carried value was added.
+  `[claim: workflow-standard-capacity-profile]`
+- Reproduced the tracked derivation, strict-boundary controls, and independent catalog-feasibility probe while
+  preserving the frozen census for its atomic closing leaf. `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3b.1 — bind maintained-reference authorities
 
 - Proved that the existing README policy, fact-card route, and canonical collection producers already derive

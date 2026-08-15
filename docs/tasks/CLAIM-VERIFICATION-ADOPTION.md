@@ -201,7 +201,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3b.1 — bind maintained-reference authorities`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3b.2`
-  Status: `pending`
+  Status: `done`
   Goal: repair the workflow/doctrine baseline anchor without treating authored policy as measured truth
   Acceptance: exclude only the exact authored identity anchor and bind the actionable 14 / 4 / 21 capacity
   paragraph to `workflow-standard-capacity-profile`; preserve one canonical capacity authority
@@ -268,7 +268,7 @@ the workflow through the mdBook and repository review path.
 | 8 | `CLAIM-VERIFICATION-ADOPTION.3a.2` | `done` | 51 evidence units frozen; five explicit incomplete units own the repair frontier |
 | 9 | `CLAIM-VERIFICATION-ADOPTION.3b.0` | `done` | five frozen gaps are assigned to authority-specific repair leaves |
 | 10 | `CLAIM-VERIFICATION-ADOPTION.3b.1` | `done` | existing route authorities and RED controls are proven sufficient |
-| 11 | `CLAIM-VERIFICATION-ADOPTION.3b.2` | `pending` | split authored workflow policy from its registered capacity claim |
+| 11 | `CLAIM-VERIFICATION-ADOPTION.3b.2` | `done` | authored identity and registered capacity authority are separated |
 | 12 | `CLAIM-VERIFICATION-ADOPTION.3b.3` | `pending` | replace the blanket mdBook quantitative anchor with exact regions |
 | 13 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `pending` | atomically re-freeze repaired identities and close `.3b` |
 | 14 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
@@ -347,6 +347,10 @@ the workflow through the mdBook and repository review path.
   card membership, and canonical collection membership already derive their exact routes and each has a
   controlled missing/drift/bound class observed RED. `.3b.4` will bind those authorities without claiming that
   navigation identity verifies member prose.
+- `2026-08-15` (`.3b.2`): workflow doctrine prose has two authority classes. The collection/title is authored
+  normative identity; the actionable capacity paragraph already resolves to `workflow-standard-capacity-profile`
+  with its tracked derivation, strict-boundary RED controls, and independent catalog-feasibility probe. No copied
+  capacity value or second claim record is introduced.
 
 ## Frozen `.3b` Repair Frontier (`CLAIM-VERIFICATION-ADOPTION.3a.2`)
 
@@ -460,6 +464,24 @@ was added; the stable-path remedy and its consumed authority are complete.
 ## Blockers
 
 - None. `.3b` repairs only the five frozen incomplete evidence keys next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.2`
+
+- [x] **REPRODUCE / MEASURE** — the tracked capacity producer derives the registered workflow profile from the
+  explicit collection and Git creation history; the exact published paragraph is in the registered authority.
+  `[claim: workflow-standard-capacity-profile]`
+- [x] **ROOT CAUSE (WHY + WHERE)** — the frozen first-line pull-request-template anchor conflated authored
+  normative workflow identity with one repository-derived capacity assertion in
+  `LIVE_DOCUMENT_SIZE_CONTAINMENT.md`.
+- [x] **ADDRESSED (verified)** — `.3b.4` will exclude only the title identity and add an exact registered region
+  for the capacity paragraph; it will not synchronize another literal or create another capacity authority.
+- [x] **NO REGRESSION** — the capacity derivation, five controlled boundary cases, independent catalog-
+  feasibility probe, canonical catalog, frozen census, claim, book, live-size, and doctrine checks pass; source
+  policy and all 51 census outcomes remain unchanged. `[claim: current-claim-census-frozen]`
+- [x] **GENERICITY** — the split follows authored-policy versus repository-derived measurement authority and
+  applies without inspecting the policy subject, harness, vendor, protocol, or numeric spelling.
+- [x] **LOCKSTEP** — task, resume pointer, ledgers, and mdBook name the existing claim as sole quantitative
+  authority; `.3b.3` owns the remaining mdBook-wide placeholder before `.3b.4` changes census results.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.1`
 
@@ -630,6 +652,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3b.1` | README policy real/self-test; fact-card catalog real/self-test; canonical collection
   real/self-test; current census; task/memory/book/claim/live-size/doctrine gates | all three existing route
   authorities derive exact membership and fail closed; frozen census remains unchanged for `.3b.4` |
+| `2026-08-15` | `.3b.2` | capacity derivation; five-case boundary controls; independent catalog-feasibility
+  probe; canonical catalog; current census; claim/book/live-size/doctrine gates | authored workflow identity is
+  separated from the existing registered capacity paragraph without changing source or census outcomes |
 
 ## Commit Log
 
@@ -645,6 +670,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3a.2` | `CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings` | 51 exact outcomes, complete surface/view coverage, five-key repair frontier |
 | `.3b.0` | `CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map` | authority-specific route, workflow-baseline, mdBook-quantitative, and closure leaves |
 | `.3b.1` | `CLAIM-VERIFICATION-ADOPTION.3b.1 — bind maintained-reference authorities` | existing README, fact-card, and canonical catalog authorities proven sufficient for later atomic binding |
+| `.3b.2` | `CLAIM-VERIFICATION-ADOPTION.3b.2 — bind the workflow baseline authority` | authored title identity separated from the existing registered capacity paragraph |
 
 ## Changelog
 
@@ -674,3 +700,5 @@ was added; the stable-path remedy and its consumed authority are complete.
   registered-capacity split, exact mdBook quantitative regions, then one atomic result re-freeze.
 - `2026-08-15`: `.3b.1` proves existing README, fact-card, and canonical-catalog route authorities plus their RED
   controls; no new checker or premature frozen-result rewrite is needed.
+- `2026-08-15`: `.3b.2` reuses `workflow-standard-capacity-profile` for the exact actionable paragraph and keeps
+  authored workflow identity outside measurement scope; no hand-carried copy or duplicate claim is added.

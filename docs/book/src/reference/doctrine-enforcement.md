@@ -303,6 +303,12 @@ the canonical collection catalog each derive membership from tracked authority a
 drifted fixtures go RED. The repair therefore reuses those producers at their exact navigation boundary; it does
 not add a parallel manifest and does not interpret a green route as semantic certification of linked prose.
 
+Workflow doctrine uses a different split. The collection title is authored normative identity, while the
+actionable capacity paragraph resolves to the existing `workflow-standard-capacity-profile` claim and its
+derivation, strict-boundary controls, and independent catalog-feasibility probe. Reusing that one authority
+avoids turning the pull-request template into numeric evidence or maintaining another copy of the result.
+`[claim: workflow-standard-capacity-profile]`
+
 ## How the gates are layered
 
 Defense in depth, the same four-layer model the memory architecture uses. Each layer catches what the
