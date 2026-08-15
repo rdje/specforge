@@ -1,3 +1,14 @@
+### CLAIM-VERIFICATION-ADOPTION.3b.3.2 — adjudicate mdBook quantitative assertions
+
+- Adjudicated all 304 prose candidates with exact single-line regions: eight join the verified workflow-capacity
+  claim, 75 current actionable assertions name all three evidence legs missing, and 221 have exact authored,
+  example/identity, or dated-boundary scope.
+- Repaired a frozen-result defect that applied the field-array cap to the JSONL record list; record and nested-
+  array bounds are now dimensionally separate and a nineteenth controlled case prevents recurrence.
+- Independent classification diff and current-language/past-tense challenge scans found no missing, overlap,
+  stale, or broadened exclusion. The outer frozen census remains unchanged.
+  `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3b.3.1 — implement the mdBook quantitative census
 
 - Added a self-bounded inventory contract and deterministic checker that derive governed book membership,

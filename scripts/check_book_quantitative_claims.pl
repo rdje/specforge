@@ -528,7 +528,8 @@ sub read_bounded_jsonl {
         push @$errors, "contract record " . ($index + 1) . " exceeds declared max_record_bytes $meta->{max_record_bytes}"
             if defined($meta->{max_record_bytes}) && length($lines[$index]) > $meta->{max_record_bytes};
     }
-    validate_shape(\@decoded, $meta->{max_array_items}, $meta->{max_scalar_bytes}, 'contract', $errors);
+    validate_shape($_, $meta->{max_array_items}, $meta->{max_scalar_bytes}, 'contract', $errors)
+        for @decoded;
     return ($meta, \@decoded);
 }
 
@@ -849,6 +850,9 @@ sub run_self_test {
         ['clean inventory contract', 1, qr//, sub {
             $_[0][0]{phase} = 'inventory';
             @{$_[0]} = grep { ($_->{record_type} // '') ne 'region' } @{$_[0]};
+        }],
+        ['record count is independent of field-array bound', 1, qr//, sub {
+            $_[0][0]{max_array_items} = 4;
         }],
         ['candidate coverage gap', 0, qr/lacks one adjudicated region/, sub { pop @{$_[0]} }],
         ['overlapping regions', 0, qr/covered by overlapping regions/, sub {

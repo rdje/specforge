@@ -89,7 +89,8 @@ For manual-wide quantitative review, use `perl scripts/check_book_quantitative_c
 governed mdBook membership and validate the current inventory/frozen contract, `--report` for bounded totals,
 `--produce` for stable path/line/SHA candidates, and `--self-test` for the fence, exact-coverage, authority-join,
 source-identity, and portable-bound fault matrix. Inventory output is a review denominator only; semantic
-authority is accepted only from exact non-overlapping regions in frozen phase.
+authority is accepted only from exact non-overlapping regions in frozen phase. The current report keeps authored,
+example/identity, and dated scope separate from registered authority and honest missing evidence legs.
 
 ## How to run the SpecForge CLI
 

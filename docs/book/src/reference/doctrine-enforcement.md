@@ -325,10 +325,10 @@ perl scripts/check_book_quantitative_claims.pl --report
 perl scripts/check_book_quantitative_claims.pl --produce
 ```
 
-The live inventory reports `book_files=39`, `candidate_lines=304`, and `candidate_files=21`. Those values are a
-derived review denominator, not semantic adjudication: inventory phase forbids authority regions. The next phase
-must bind every emitted path/line/SHA candidate exactly once to a derived or identity verifier, a current claim,
-honest missing legs, or one closed exclusion reason. The self-test exercises eighteen positive and controlled-
+The live contract reports `book_files=39`, `candidate_lines=304`, and `candidate_files=21`. Inventory established
+that review denominator without semantic regions; frozen phase now binds every emitted path/line/SHA candidate
+exactly once to a derived or identity verifier, a current claim, honest missing legs, or one closed exclusion
+reason. The self-test exercises nineteen positive and controlled-
 negative cases, and all fixtures are created and removed on the repository volume.
 
 ## How the gates are layered
@@ -386,3 +386,17 @@ task-acceptance check was exercised across all five of its paths (exempt, block-
 pass-with-evidence, block-when-unticked, block-when-unbacked) with throwaway staged files that were fully
 reverted, before it was allowed to gate a real commit. No extraction or emitter Rust was touched, so the
 WIRE-BASED-100 golds and `kg-bench` (156/156) are orthogonal by construction.
+
+## Quantitative adjudication result
+
+At the `.3b.3.2` adjudication boundary, the pre-authority report records `regions=304`, `registered=8`,
+`incomplete=75`, and `excluded=221`. The exclusions remain separated as `authored=26`, `example=8`, `identity=1`,
+and `dated=186`; those labels are exact-region scope, not a claim that the rest of a section shares the same
+meaning. Registered regions are limited to the verified workflow-capacity profile. Every other current actionable
+assertion keeps re-derivation, independent falsification, and durability visibly missing until a later repair
+earns those legs. The next owned leaf must independently replay and freeze this result before an outer consumer
+treats the vector itself as current authority.
+
+The first full replay also found and fixed a bound-dimension defect: record capacity belongs to `max_records`,
+while `max_array_items` applies only to arrays inside one record. The controlled suite now includes a contract
+whose record count exceeds its nested-array limit but remains inside the independent record limit.

@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3b.3.2 (`2026-08-15`) — scope is exact, uncertainty stays visible
+
+Quantitative syntax cannot decide whether a line is a current product promise, an authored limit, a worked
+example, an identity literal, or a revision-bounded observation. The adjudication therefore uses one exact line
+per region and defaults a present-tense actionable assertion to all three evidence legs missing. Only the
+workflow-capacity subsection had an existing verified claim whose assertion and artifacts matched its numbers;
+no broad book-currentness check was allowed to stand in for the remaining lines.
+
+The first complete replay also demonstrated why bounds must keep their dimensions. `max_records` controls the
+JSONL sequence, whereas `max_array_items` controls arrays nested inside one record. Treating the sequence as an
+array passed inventory and failed only when exact regions arrived. A positive fixture now places more records
+than the nested-array limit while remaining below the record limit, so future refactoring must preserve the
+distinction.
+
 ## CLAIM-VERIFICATION-ADOPTION.3b.3.1 (`2026-08-15`) — executable denominators beat transient estimates
 
 The tracked parser found 304 candidate lines where the design-time shell census had recorded 301. Replaying the
