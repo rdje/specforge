@@ -5,7 +5,7 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
 `.github/copilot-instructions.md`, …) point back here. The system of record is
 **`README.md`** + **`MEMORY_ARCHITECTURE.md`** (durability) +
 **`knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`**
-(retrieval — the `knowledge-map/` bundle).
+(retrieval — the `knowledge-map/` bundle) + **`CLAIM_VERIFICATION.md`** (what earns a published claim).
 
 ## On every session start / resume
 
@@ -18,12 +18,14 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
      **`TOOLBOX.md`**.
    - and **`LIVE_DOCUMENT_SIZE_CONTAINMENT.md`** — lifecycle and size controls for every tracked
      live-document surface.
-3. Resume from **`MEMORY.md`** — the bounded resume pointer: active unit/current state, the
+3. Read **`CLAIM_VERIFICATION.md`** — current actionable assertions must re-derive, distinguish a competing
+   hypothesis, and remain reproducible/stale-detecting; every slice declares claim IDs or `none`.
+4. Resume from **`MEMORY.md`** — the bounded resume pointer: active unit/current state, the
    single next action, any in-flight uncommitted work, and blockers. Query revision truth from Git.
-4. Open the active **task-tree** under `docs/tasks/` (index: `docs/TASK_TREE.md`); its
+5. Open the active **task-tree** under `docs/tasks/` (index: `docs/TASK_TREE.md`); its
    frontier row is your precise next step.
-5. Pull only the relevant **decision records** under `docs/decisions/`.
-6. **Before re-deriving any fact from code or runtime, open `KNOWLEDGE_MAP.md`** — use its bounded
+6. Pull only the relevant **decision records** under `docs/decisions/`.
+7. **Before re-deriving any fact from code or runtime, open `KNOWLEDGE_MAP.md`** — use its bounded
    landing command to grep all question shards, follow the one pointer to the canonical home, and
    trust the dated fact or run its `reverify` command. Re-deriving a fact that was already logged is *archaeology*
    (`knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`).
@@ -37,6 +39,8 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
   records (`docs/decisions/`) / git history. Nothing important may live only in this
   conversation.
 - **Commit per `COMMIT.md`** after every slice, with the **work-unit id in the subject**.
+- Declare exactly `Published-claims: none` or the governed claim IDs in every commit/review description; a
+  missing verification leg stays explicit and cannot be described as verified (`CLAIM_VERIFICATION.md`).
 - Keep root `README.md` within its landing-page contract (`README_POLICY.md`); route changing
   detail to the registered canonical destination instead of growing the entrypoint.
 - **Before committing, run `scripts/check_doctrines.sh`** (the general doctrine enforcer — it runs

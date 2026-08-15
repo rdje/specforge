@@ -53,6 +53,7 @@ changed* lives in git (layer D), not here.
 | [0039](0039-bounded-spec-to-intent-task-evidence.md) | SPEC-TO-INTENT-ALIGNMENT keeps executable ownership in a bounded root over semantic evidence and exact provenance | 2026-08-14 | accepted | documentation, continuity, task-tree, active-work, archive, retrieval, trajectory |
 | [0040](0040-clarification-answers-are-untrusted-evidence-envelopes.md) | Clarification answers are untrusted evidence envelopes with authority-specific promotion | 2026-08-15 | accepted | clarification, user-assistance, evidence, proof-authority, lifecycle, currentness |
 | [0041](0041-decision-capacity-is-rederived-without-moving-stable-records.md) | Decision capacity is re-derived without moving stable records | 2026-08-15 | accepted | documentation, decisions, knowledge-map, capacity, continuity, containment |
+| [0042](0042-actionable-published-claims-require-three-dimensionally-different-legs.md) | Actionable published claims require three dimensionally different verification legs | 2026-08-15 | accepted | claims, verification, doctrine, review, continuity, currentness |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

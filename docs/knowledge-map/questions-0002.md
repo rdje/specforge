@@ -8,6 +8,8 @@
   > are extracted evidence and semantic records rewritten by validate
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > are figure-mined contracts verified before fusion and lowering
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > are historical measurements governed as current claims
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > are instruction mnemonics in a software optimization guide declared interface signals (no)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -295,5 +297,3 @@
   > does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge model-check temporal properties
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)

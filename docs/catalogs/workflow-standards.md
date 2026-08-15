@@ -8,8 +8,10 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 
 | Repository path | Title |
 | --- | --- |
+| [.github/PULL_REQUEST_TEMPLATE.md](../../.github/PULL_REQUEST_TEMPLATE.md) | Change review |
 | [.github/copilot-instructions.md](../../.github/copilot-instructions.md) | GitHub Copilot instructions |
 | [AGENTS.md](../../AGENTS.md) | Agent bootstrap — read this first, whatever AI or harness you are |
+| [CLAIM_VERIFICATION.md](../../CLAIM_VERIFICATION.md) | Claim Verification Standard |
 | [CLAUDE.md](../../CLAUDE.md) | Claude Code bootstrap |
 | [COMMIT.md](../../COMMIT.md) | COMMIT.md |
 | [DOCTRINE_ENFORCEMENT.md](../../DOCTRINE_ENFORCEMENT.md) | Doctrine Enforcement Architecture |

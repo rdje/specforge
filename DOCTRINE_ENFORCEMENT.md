@@ -15,7 +15,7 @@ land: a local git hook blocks it, and CI makes it un-mergeable.
 > suggestion.** The fix is to pair every doctrine with a deterministic check, run all checks
 > from one registry/driver, and gate commits + CI on it.
 
-This file is the **4th portable architecture** SpecForge adopts, alongside the three it already has:
+This file is the **4th portable architecture** SpecForge adopts. Claim verification is its fifth sibling:
 
 | # | Portable architecture | Owns | Standard |
 |---|---|---|---|
@@ -23,12 +23,18 @@ This file is the **4th portable architecture** SpecForge adopts, alongside the t
 | 2 | **Memory-architecture** | durable harness-agnostic agent memory (4 layers) | `MEMORY_ARCHITECTURE.md` |
 | 3 | **Knowledge-map** | a retrieval layer over fact cards | `knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md` |
 | 4 | **Doctrine-enforcement** | turning every rule into a mechanically-gated check | **this file** |
+| 5 | **Claim-verification** | what earns a current actionable published assertion | `CLAIM_VERIFICATION.md` |
 
-All four are **project- and harness-agnostic**: a project backed by Codex, Claude Code, Gemini, or a
+All five are **project- and harness-agnostic**: a project backed by Codex, Claude Code, Gemini, or a
 human adopts each by replaying its standard. This one is the sibling of `MEMORY_ARCHITECTURE.md` —
 that standard mechanizes the *memory* doctrine; this one generalizes the *same E1→E4
 defense-in-depth* to **every** doctrine. The enforcement is **git-level** (hooks + CI), so it fires
 identically no matter which harness made the commit.
+
+`CLAIM_VERIFICATION.md` asks the upstream question: whether a current assertion has independent re-derivation,
+falsification, and stale-detecting durability evidence worth enforcing. Its author/reviewer contract is active;
+its bounded provenance checker remains explicitly pending under `CLAIM-VERIFICATION-ADOPTION.2` and is not yet a
+row in the live registry below.
 
 ---
 

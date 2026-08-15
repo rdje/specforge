@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how does the measurable corpus population grow
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > how does the no-re-ingest canonical promotion protocol stay in place
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how does the register reader recover a field name with no name column
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -293,7 +297,3 @@
   > how much intent does SpecForge extract across the whole corpus
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how much memory did the guarded AArch64 External Debug ingest use
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > how much memory did the guarded CoreSight Base System ingest use
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how much memory did the guarded Introducing CoreSight ingest use

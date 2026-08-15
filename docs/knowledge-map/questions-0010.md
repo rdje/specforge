@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what signals belong to which AXI channel
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what stable order may production use for opaque signal collections
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what stops a bounded snapshot from accreting chronology
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what structural cue separates a message-field table from a register-field table
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what structural cues recognize transactions universally (section anchors + enumeration tables)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -32,6 +42,8 @@
   > when is a single letter a field name
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > when may a commit use Published-claims none
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > when may a semantic family or source modality be marked non-applicable
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
@@ -286,15 +298,3 @@
   > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > which SourceIR and EvidenceIR paths serialize repository relative
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree is next at the live document warning
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree now requires bounded evidence containment
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > which behavioral genericity transforms cover rich PDF capture
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > which boot-volume Rust directories are allowed
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > which canonical Markdown collections still rely only on git query
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > which caption grammar can supply a unit to every timing row

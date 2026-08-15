@@ -1,3 +1,17 @@
+### CLAIM-VERIFICATION-ADOPTION.1 — publish the three-leg contract
+
+- Added the repository-owned `CLAIM_VERIFICATION.md` standard and ADR 0042: current actionable assertions must
+  re-derive from canonical source, distinguish a competing hypothesis with an observed-RED control, and remain
+  tracked and stale-detecting; missing legs are explicit `incomplete` evidence.
+- Added exact `Published-claims: none` / stable-ID declarations to bootstrap, commit, toolbox, and pull-request
+  review workflows, plus bounded README and canonical workflow-catalog discovery.
+- Aligned the mdBook while stating the implementation boundary honestly: the author/reviewer contract is active,
+  but the bounded registry and doctrine gate remain owned by `.2`.
+- The two required workflow members make that canonical collection 14/16 files; `.1a` owns its measured capacity
+  remedy before another standard is added, without widening the current authority in this slice.
+- Applied the mandatory lossless development-note rollover after this slice's rationale crossed its line
+  threshold: exact segment 0008 seals 15 whole records and leaves 61 records / 1,281 lines / 173,852 bytes live.
+
 ### DECISION-RECORD-CAPACITY-HEADROOM.2a — retire the consumed authority
 
 - Removed `.2`'s exact 44→58 decision-record increase record after the new coupled profile became committed

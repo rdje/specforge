@@ -62,6 +62,23 @@ independently of your tick (`DOCTRINE_ENFORCEMENT.md` §6.1). The local pre-comm
 (presence); the oracle re-run (`scripts/run_ci.sh` / CI, currently manual-only) is leg 3 — the
 un-self-tickable one.
 
+### Published-claim evidence (required for every slice)
+
+The implementation checklist above proves a change; it does not independently earn a current number or status
+published from that change. Every commit and review description also carries exactly
+`Published-claims: none` or comma-separated stable claim IDs under `CLAIM_VERIFICATION.md`.
+
+For each claim ID, the durable task/claim evidence must name:
+
+- **RE-DERIVE** — exact canonical source plus a repository-root-relative reproducing command/accessor;
+- **FALSIFY** — a competing hypothesis, a dimensionally different oracle, and a tracked known-bad RED case;
+- **DURABILITY** — tracked producer/control paths, complete artifact-input identity, and a stale-state gate;
+- **STATUS** — `verified`, `incomplete` with every missing leg named, or `superseded` with its successor.
+
+Use `none` only when the slice publishes or changes no current actionable assertion. A passing regression suite
+may be one named oracle, but repeating the implementation's own classifier or source interpretation is not an
+independent falsification leg.
+
 ## How to run the SpecForge CLI
 
 ```bash

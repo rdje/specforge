@@ -11,6 +11,22 @@ The workflow exists to preserve full operational continuity across session loss,
 - Identify the leaf ID (e.g. `PROVENANCE-HARDENING.4`) in the commit subject or first body line.
 - Commit every completed leaf before selecting another leaf from any task tree.
 
+## Published-Claim Declaration
+
+Every commit body and pull-request description must contain exactly one of:
+
+```text
+Published-claims: none
+Published-claims: <claim-id>[, <claim-id>...]
+```
+
+Use `none` only when the slice publishes or changes no current actionable assertion as defined by
+`CLAIM_VERIFICATION.md`. A docs-only change is not automatically exempt: changing a current score, count,
+capacity, compatibility statement, or status requires claim IDs. For each ID, the owning task/claim record must
+name re-derivation, a dimensionally different falsification oracle, tracked durability/staleness, and any missing
+leg. The declaration is author/reviewer policy until `CLAIM-VERIFICATION-ADOPTION.2` activates its mechanical
+registry gate.
+
 ## When To Run
 Run this workflow after each completed task/activity.
 
@@ -91,16 +107,17 @@ authority. Never edit a segment, widen a control, or hand-cut a root to bypass t
 5. Apply the `BOOK-METHOD-DOC` close rule when this commit closes a tree. For long-running work, commit
    completed verified units promptly and record genuinely in-flight state before a handoff.
 6. Write the concise message to `git_message_brief.txt` and stage only intended files.
-7. Run `scripts/check_doctrines.sh` and all risk-proportionate focused/broader gates.
-8. Commit with:
+7. Add exactly one `Published-claims:` declaration to the commit body per `CLAIM_VERIFICATION.md`.
+8. Run `scripts/check_doctrines.sh` and all risk-proportionate focused/broader gates.
+9. Commit with:
    - `git commit -F git_message_brief.txt`
-9. Clear the message file:
+10. Clear the message file:
    - `: > git_message_brief.txt`
-10. Confirm post-conditions:
+11. Confirm post-conditions:
    - `git ls-files --error-unmatch git_message_brief.txt` must fail (untracked).
    - `wc -c git_message_brief.txt` must be `0`.
    - `git status --short` must show expected state only.
-11. In a user-facing completion or handoff message, report:
+12. In a user-facing completion or handoff message, report:
    - the commit ID,
    - the exact commit message,
    - the list of tracked files included in the commit,
@@ -122,6 +139,8 @@ cat > git_message_brief.txt <<'EOF'
 
 - <brief bullet 1>
 - <brief bullet 2>
+
+Published-claims: none
 EOF
 
 # 2) stage intended files only

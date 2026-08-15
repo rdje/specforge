@@ -98,6 +98,7 @@ For contributors and project continuity:
 - [Knowledge-map architecture](knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md),
   [fact cards](docs/knowledge/INDEX.md), and [question search](KNOWLEDGE_MAP.md)
 - [Doctrine enforcement](DOCTRINE_ENFORCEMENT.md) and [diagnostic toolbox](TOOLBOX.md)
+- [Claim verification](CLAIM_VERIFICATION.md)
 - [README stability policy](README_POLICY.md)
 - [Live-document containment doctrine](LIVE_DOCUMENT_SIZE_CONTAINMENT.md)
 - [Project-data locality standard](PROJECT_DATA_LOCALITY.md)

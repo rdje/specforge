@@ -10,8 +10,9 @@ small program that **re-checks the rule from the repository itself** and fails l
 and that program runs automatically every time someone commits. A rule nobody checks is, in practice, a
 suggestion. A rule with a check that blocks the commit is enforced. This is the **fourth portable
 architecture** the project carries, alongside the task-trees, the memory architecture, and the
-knowledge map. The full standard lives in `DOCTRINE_ENFORCEMENT.md` at the repo root; this chapter is
-the friendly tour.
+knowledge map. Claim verification is the fifth: it decides what evidence earns a current assertion before a
+gate preserves it. The full enforcement standard lives in `DOCTRINE_ENFORCEMENT.md`; the claim standard lives in
+`CLAIM_VERIFICATION.md`; this chapter is the friendly tour.
 
 ## Why this exists
 
@@ -237,6 +238,24 @@ produce the cited evidence, live in `TOOLBOX.md` at the repo root.
 
 Changes that do **not** touch Rust code — documentation, scripts, the book itself — are exempt from this
 particular gate (they carry their own), so ordinary continuity work is never false-blocked.
+
+## Claim verification comes before enforcement
+
+A green gate can preserve the wrong number perfectly if the number was never independently earned. Every commit
+and review description therefore declares either `Published-claims: none` or the stable IDs of current actionable
+assertions it publishes or changes. `none` is about claim scope, not file type: a docs-only score change still
+needs an ID, while a normative refactor may legitimately publish no empirical claim.
+
+Each governed claim names three different legs: a command/accessor that re-derives it from canonical source; a
+falsification oracle that separates a concrete competing hypothesis and has been observed RED on a known-bad
+case; and tracked producers plus complete artifact identity and a stale-state gate. A repeated copy of the first
+check is not the second leg. Missing evidence remains an explicit `incomplete` status rather than being converted
+into “verified.”
+
+ADR 0042 and `CLAIM_VERIFICATION.md` freeze that author/reviewer contract. The bounded registry/checker is the
+next adoption leaf, so this page does not yet claim that provenance is mechanically gated. Current-constant
+migration, tracked-producer/RED-control closure, and detailed user examples follow in the remaining adoption
+leaves.
 
 ## How the gates are layered
 

@@ -61,7 +61,7 @@ the workflow through the mdBook and repository review path.
 - ID: `CLAIM-VERIFICATION-ADOPTION`
   Status: `active`
   Goal: adopt re-derive / falsify / durability as the enforceable definition of a checked published claim
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`
+  Children: `.0`, `.1`, `.1a`, `.2`, `.3`, `.4`, `.5`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.0`
   Status: `done`
@@ -78,13 +78,26 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.1`
-  Status: `pending`
+  Status: `done`
   Goal: publish the local standard, architecture decision, discovery routes, and authoring contract
   Acceptance: root standard and decision record establish the three legs and scope; bootstrap, README route,
   COMMIT/TOOLBOX guidance, and the repository review template require a claim tag or explicit no-claim marker;
   current documents use repository-root-relative paths and do not copy external absolute paths
-  Verification: focused route/currentness/catalog checks, mdBook no-drift review, and mandatory doctrines
+  Verification: root standard + ADR 0042 freeze scope/three-leg vocabulary; bootstrap, 36-record README route
+  plane, COMMIT/TOOLBOX, and pull-request template require the exact declaration; 14 workflow standards catalog
+  exactly; Knowledge Map is 251 facts / 1,922 questions / 14 shards; route/catalog fault controls, mdBook, and
+  mandatory doctrines pass; the required note prepend triggers an exact warning-safe 15-record development-note
+  rollover; no mechanical claim-registry capability is asserted
   Commit: `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.1a`
+  Status: `pending`
+  Goal: restore measured capacity headroom for the canonical workflow-standard collection
+  Acceptance: census population/growth, readers/writers, catalog and route coupling, and candidate remedies after
+  `.1`'s required two-file addition; choose a minimal repeatable capacity/topology remedy before another workflow
+  standard is added; do not raise or reshape an authority merely to silence the 14/16 warning
+  Verification: `pending`
+  Commit: `pending`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.2`
   Status: `pending`
@@ -130,11 +143,12 @@ the workflow through the mdBook and repository review path.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `CLAIM-VERIFICATION-ADOPTION.0` | `done` | external standard and local enforcement/current-claim planes are mapped |
-| 2 | `CLAIM-VERIFICATION-ADOPTION.1` | `pending` | first complete the existing decision-capacity remedy, then publish the normative contract |
-| 3 | `CLAIM-VERIFICATION-ADOPTION.2` | `pending` | enforcement depends on the frozen local contract |
-| 4 | `CLAIM-VERIFICATION-ADOPTION.3` | `pending` | the constant sweep needs the registered classification/gate shape |
-| 5 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
-| 6 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
+| 2 | `CLAIM-VERIFICATION-ADOPTION.1` | `done` | standard, ADR, discovery, authoring, and review contract are published |
+| 3 | `CLAIM-VERIFICATION-ADOPTION.1a` | `pending` | `.1` moves workflow standards to 14/16 files; derive a repeatable remedy before another member |
+| 4 | `CLAIM-VERIFICATION-ADOPTION.2` | `pending` | enforcement depends on the frozen local contract and clean workflow capacity |
+| 5 | `CLAIM-VERIFICATION-ADOPTION.3` | `pending` | the constant sweep needs the registered classification/gate shape |
+| 6 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
+| 7 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
 
 ## Decisions
 
@@ -152,9 +166,16 @@ the workflow through the mdBook and repository review path.
 - `2026-08-15`: `.2` will use a dedicated self-bounded JSONL registry under `doctrine/claim_verification/` and a
   focused checker registered through the existing doctrine driver. The 14-field derived-state plane remains an
   input/authority source rather than being overloaded with falsification semantics.
-- `2026-08-15`: no pull-request or review template exists. `.1` will add the repository-standard GitHub pull-
-  request template and align `COMMIT.md` / `TOOLBOX.md`; authors must state either governed claim tags or that the
-  slice publishes no actionable claim.
+- `2026-08-15`: at `.0`, no pull-request or review template existed. `.1` adds the repository-standard GitHub
+  pull-request template and aligns `COMMIT.md` / `TOOLBOX.md`; authors state either governed claim tags or that
+  the slice publishes no actionable claim.
+- `2026-08-15` (ADR 0042): reserve `verified` for re-derivation, dimensionally different falsification with an
+  observed RED control, and tracked stale-detecting durability. Govern current actionable assertions rather than
+  numeral syntax; current reuse of dated history creates a new claim.
+- `2026-08-15`: the exact author/reviewer declaration is `Published-claims: none` or comma-separated stable claim
+  IDs. `none` is scope-based, not a docs/code exemption; syntactic mechanical enforcement begins only in `.2`.
+- `2026-08-15`: the required root standard plus PR template raise canonical workflow standards from 12/16 to
+  14/16 files (87.5%). `.1a` owns a measured repeatable remedy; `.1` does not hide the warning or widen a bound.
 
 ## Adoption Mapping (`CLAIM-VERIFICATION-ADOPTION.0`)
 
@@ -173,10 +194,29 @@ copies, including four old corpus-KB self-test directories and a generated chain
 cannot support a published claim unless a registry row names them; `.4` owns the exact tracked-producer/residue
 audit and cleanup evidence.
 
-The decision collection is already 42/44 Markdown files and independently has one accepted record at 97.1% of
-its byte ceiling. Adding the required claim-verification ADR now would consume scarce capacity contrary to the
-already-active `DECISION-RECORD-CAPACITY-HEADROOM.1/.2` remedy. After `.0` commits cleanly, PNT must complete that
-prerequisite before this tree begins `.1`; this is sequencing, not ambiguity in the claim architecture.
+The decision collection was already 42/44 Markdown files at `.0`, so the required claim-verification ADR was
+sequenced behind `DECISION-RECORD-CAPACITY-HEADROOM`. That prerequisite closed cleanly at 58 slots before ADR 0042
+was added; the stable-path remedy and its consumed authority are complete.
+
+## Claim Evidence — `claim-verification-contract-published`
+
+- **Claim:** SpecForge publishes one repository-owned three-leg author/reviewer contract, discoverable from the
+  bootstrap and README, with ADR 0042 rationale and an exact claim/no-claim declaration; its mechanical provenance
+  registry is still pending rather than implied.
+- **Status:** `verified` for the publication/discovery assertion; mechanical registry enforcement is explicitly
+  outside the assertion and remains `.2` work.
+- **RE-DERIVE:** `rg -n 'Published-claims:|Re-derive|falsif|durab' CLAIM_VERIFICATION.md AGENTS.md COMMIT.md
+  TOOLBOX.md .github/PULL_REQUEST_TEMPLATE.md`; `scripts/check_readme_policy.sh`; and
+  `perl scripts/check_canonical_collection_catalogs.pl --check` reproduce the contract, entry routes, and exact
+  workflow-standard membership.
+- **FALSIFY:** the competing hypothesis is “the prose exists but a reader/reviewer path can omit or strand it.”
+  `scripts/check_readme_policy.sh --self-test` exercises missing/unclassified route failures, while
+  `perl scripts/check_canonical_collection_catalogs.pl --self-test` exercises missing/drifted catalog membership;
+  both controlled known-bad classes are observed RED before their suites report green.
+- **DURABILITY:** `git ls-files --stage` must contain the standard, ADR, template, bootstrap, workflow files, and
+  data registries; README-route, canonical-catalog, Knowledge Map, live-size, and doctrine checks re-run from
+  tracked repository-relative inputs and reject stale derived projections. The exact repository-volume rollover
+  plan preserves the rationale through segment 0008 rather than trimming a live record.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.0`
 
@@ -203,11 +243,29 @@ prerequisite before this tree begins `.1`; this is sequencing, not ambiguity in 
 
 - `.2` must select the exact claim identity/input-digest schema after `.1` freezes the local normative vocabulary;
   the dedicated bounded-registry topology and required semantic fields are no longer open.
+- `.1a` must decide whether measured workflow-standard growth warrants a re-derived flat profile or a bounded
+  routed topology; the 16-file authority does not move until that census/design is accepted.
 
 ## Blockers
 
-- `.1` must not add its required layer-C decision while the decision collection is at 42/44 files with no
-  repeatable capacity remedy. Complete `DECISION-RECORD-CAPACITY-HEADROOM.1/.2` from a clean pivot, then resume.
+- None. `.1a` is the next executable leaf before enforcement implementation.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.1`
+
+- [x] **REPRODUCE / MEASURE** — `.0` established zero local standard, registry/checker, or review template; `.1`
+  adds one root standard, ADR 0042, one PR template, and exact routes in a 14-member workflow catalog.
+- [x] **ROOT CAUSE (WHY + WHERE)** — existing task/doctrine/currentness mechanisms did not join a source
+  reproduction, a different competing-hypothesis oracle, and tracked stale-state durability per actionable claim.
+- [x] **ADDRESSED (verified)** — the standard freezes scope, three legs, stochastic/auditor rules, honest missing-
+  leg status, and exact `Published-claims:` syntax across bootstrap, README, COMMIT, TOOLBOX, PR review, and book.
+- [x] **NO REGRESSION** — workflow/decision/fact/task catalogs, README routes, Knowledge Map, mdBook, live-size,
+  and all gate-tier doctrines pass; no product code, existing decision, limit, or currentness checker changes;
+  the resulting legal 14/16 workflow-file warning is explicitly owned by `.1a`; development notes roll over
+  losslessly to 61 records / 1,281 lines / 173,852 bytes with all older archive members byte-identical.
+- [x] **GENERICITY** — classification depends on assertion authority/lifecycle and independence of evidence, not a
+  SpecForge feature, protocol, corpus, vendor, language, harness, or metric name.
+- [x] **LOCKSTEP** — ADR 0042, root standard, discovery routes, author/review workflows, mdBook, current status,
+  task evidence, and resume pointer agree the contract is published while mechanical provenance remains `.2`.
 
 ## Verification Log
 
@@ -217,12 +275,17 @@ prerequisite before this tree begins `.1`; this is sequencing, not ambiguity in 
   producer/capacity census; task catalog; derived-state report; canonical catalogs; live-size self-tests |
   `passed`; mapped 39 current surfaces, 14 derived-state contracts, 33/24 tracked/self-test checkers, zero
   governed ignored producers, and the 42/44 decision prerequisite without claiming adoption |
+| `2026-08-15` | `.1` | route/catalog self-tests and real checks; contract phrase probe; tracked path
+  census; Knowledge Map; mdBook; live-size; doctrines | repository-owned standard/ADR/template published; exact
+  claim/no-claim declaration active; 14 workflow standards and 36 README routes close; exact segment 0008 seals
+  15 engineering records and restores the 61-record live root below warning; registry gate remains pending |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
+| `.1` | `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract` | normative scope, ADR 0042, discovery, authoring/review contract, and mdBook alignment |
 
 ## Changelog
 
@@ -230,3 +293,9 @@ prerequisite before this tree begins `.1`; this is sequencing, not ambiguity in 
   local claim-verification standard, claim registry/checker, or dedicated task tree.
 - `2026-08-15`: `.0` maps the source checklist onto existing exact-currentness and mutation infrastructure,
   freezes scope, and identifies decision-record capacity as the required clean-boundary prerequisite to `.1`.
+- `2026-08-15`: `.1` publishes the local standard and ADR 0042, requires one exact claim/no-claim declaration in
+  commit and PR review, closes bootstrap/README/workflow-catalog discovery, and leaves mechanical provenance
+  honestly pending for `.2`; `.1a` owns the newly visible 14/16 workflow-standard capacity warning first.
+- `2026-08-15`: `.1`'s required engineering rationale crosses the development-note line rollover; the exact
+  boundary-authenticated plan seals 15 whole records as segment 0008 and retains the current record in a warning-
+  safe live root without editing any older archive member.

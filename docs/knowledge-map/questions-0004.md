@@ -2,10 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > how are source-derived ids normalized for a reviewed paraphrase
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are spacing-artifact field names and the unit word Bits handled
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > how are stale generated isf symlinks handled
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > how are stochastic claims published
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > how are temporal rules expressed as LTL or MTL
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -294,7 +298,3 @@
   > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how does the measurable corpus population grow
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > how does the no-re-ingest canonical promotion protocol stay in place
