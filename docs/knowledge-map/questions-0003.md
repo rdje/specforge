@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > does SpecForge model-check temporal properties
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -295,5 +297,3 @@
   > how are register fields written as section headings extracted
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how are repository owned and external input path origins labeled
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how are rotated version matrices remapped for presence capture

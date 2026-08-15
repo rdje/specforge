@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how are rotated version matrices remapped for presence capture
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how are serial/architecture spec interface signals added to the catalog
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -296,5 +298,3 @@
   > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
   > how does the behavioral genericity gate prove negative-control sensitivity
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does the controller prove a proposed task is task-tree owned

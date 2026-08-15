@@ -275,11 +275,11 @@ treated as findings. Before the result could freeze, a controlled first pass cau
 emitted only their first-view anchor. Candidate identity now includes the semantic view, and frozen validation
 requires evidence for every included surface and every required view.
 
-The frozen result contains 51 exact evidence units: 11 derived, four identity-gated, four registered, five
-incomplete, and 27 excluded. The incomplete frontier is deliberately narrow: README maintained references,
-mdBook quantitative claims, workflow/doctrine baselines, knowledge-card references, and FSMGen issue-packet
-references. This is a classification result, not a repair; those five source surfaces remain unchanged until the
-separately owned repair slice. `[claim: current-claim-census-frozen]` Reproduce the result with:
+The repaired result contains 56 exact evidence units: 11 derived, seven identity-gated, six registered, zero
+incomplete, and 32 excluded. The five old broad anchors for README maintained references, mdBook quantitative
+claims, workflow/doctrine baselines, knowledge-card references, and FSMGen issue-packet references now have
+narrow identity or registered authority; the other 46 units retain their original outcomes.
+`[claim: current-claim-census-frozen]` Reproduce the result with:
 
 ```sh
 perl scripts/check_current_claim_census.pl --self-test
@@ -288,15 +288,15 @@ perl scripts/check_current_claim_census.pl --report
 perl scripts/check_current_claim_census.pl --produce
 ```
 
-Only the separately owned repair slice may change one of the five incomplete source assertions. Any other
-surface or any changed exact region makes the frozen census fail closed first.
+The repair changed only the five frozen frontier keys and added one exact authority unit for each. Any unrelated
+surface or changed exact region still makes the frozen census fail closed.
 
-Repair is split by authority rather than by filename count. README, knowledge-card, and FSMGen issue-packet
+Repair was split by authority rather than by filename count. README, knowledge-card, and FSMGen issue-packet
 anchors first receive exact route/catalog membership evidence, which proves navigation identity but deliberately
 does not certify member prose. The workflow anchor separates authored policy from the already registered
 capacity assertion. Quantitative mdBook prose receives a bounded exact-region contract; the selective book-
-currentness check cannot be promoted into blanket evidence for the whole manual. Only after those repairs does
-one closing leaf update the frozen region identities and result vector atomically.
+currentness check is not promoted into blanket evidence for the whole manual. The closing leaf now binds those
+authorities atomically while the 75 incomplete assertion-level book regions remain explicitly unverified.
 
 The maintained-reference audit found no missing route control. README policy, the routed fact-card catalog, and
 the canonical collection catalog each derive membership from tracked authority and each observes malformed or

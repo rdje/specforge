@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3b.4 (`2026-08-15`) — repair the question, not the title
+
+The five frozen gaps were not five false documents; they were five overbroad questions attached to title lines.
+Atomic repair keeps each title as an explicit non-claim identity and adds a second unit at the narrow authority
+boundary: executable navigation for three maintained-reference surfaces, the registered capacity paragraph for
+workflow doctrine, and the registered exact-region mapping for the mdBook quantitative view.
+
+This makes the outer result complete without laundering inner uncertainty. The 75 book assertions still lack all
+three evidence legs inside their dedicated contract. A canonical semantic projection that removes record IDs and
+exact regions is identical for all 46 non-frontier units. Ledger, book, and task anchors still rotate to their new
+exact lines visibly; they are not mislabeled as byte-identical objects.
+
 ## CLAIM-VERIFICATION-ADOPTION.3b.3.3 (`2026-08-15`) — mapping authority is not assertion authority
 
 The mdBook freeze proves that every quantitative candidate has one exact current classification and that the

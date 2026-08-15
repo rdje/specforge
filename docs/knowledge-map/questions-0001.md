@@ -292,9 +292,9 @@
   > are SourceIR EvidenceIR SemanticIR and IntentIR pointers repository relative
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > are any SpecForge requests to FSMGen currently open
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > are any outer current claim census keys incomplete after CLAIM-VERIFICATION-ADOPTION.3b
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > are behavior or temporal rules silently dropped to the .isf on the broader 78-doc corpus
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > are byte-location placement tables registers or structures
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > are currently-strict-clean .isf affected by the overlap drop (no — a clean doc cannot contain an unconditional-overlap config or FSMGen would already reject it → byte-identical by construction; 100/107 emitted .isf unchanged)

@@ -1,3 +1,14 @@
+### CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs
+
+- Re-froze the outer current-claim census at 56 exact units: 11 derived, 7 identity-gated, 6 registered,
+  0 incomplete, and 32 excluded. Semantic comparison preserves all 46 non-frontier outcomes while exact
+  lockstep-publication identities rotate visibly.
+- Replaced only the five broad incomplete title anchors with explicit identity dispositions plus their exact
+  README/fact-card/FSMGen route, workflow-capacity, or mdBook-mapping authorities. The narrower 75 incomplete
+  mdBook assertion regions remain unverified.
+- Closed `.3b` with synchronized claim durability, retrieval truth, task/memory/toolbox, and mdBook guidance.
+  `[claim: current-claim-census-frozen]` `[claim: mdbook-quantitative-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3b.3.3 — freeze mdBook quantitative authorities
 
 - Registered `mdbook-quantitative-census-frozen` with executable result replay, the nineteen-case controlled

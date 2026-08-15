@@ -175,7 +175,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3b`
-  Status: `active`
+  Status: `done`
   Goal: repair every census finding through one canonical authority
   Children: `.3b.0`, `.3b.1`, `.3b.2`, `.3b.3`, `.3b.4`
   Acceptance: derive, identity-gate, register with three legs, or explicitly mark incomplete every `.3a` gap;
@@ -252,7 +252,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3b.3.3 — freeze mdBook quantitative authorities`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3b.4`
-  Status: `pending`
+  Status: `done`
   Goal: re-freeze the repaired result and close `.3b`
   Acceptance: update every affected region/source identity atomically; frozen report has zero incomplete or
   otherwise unclassified `.3a.2` frontier keys; the other 46 units retain their semantic outcomes
@@ -306,7 +306,7 @@ the workflow through the mdBook and repository review path.
 | 13 | `CLAIM-VERIFICATION-ADOPTION.3b.3.1` | `done` | bounded inventory and fail-closed producer derive the exact review denominator |
 | 14 | `CLAIM-VERIFICATION-ADOPTION.3b.3.2` | `done` | every candidate has one exact semantic authority or honest missing legs |
 | 15 | `CLAIM-VERIFICATION-ADOPTION.3b.3.3` | `done` | verified claim and fact card freeze the exact result without promoting incomplete lines |
-| 16 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `pending` | atomically re-freeze repaired identities and close `.3b` |
+| 16 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `done` | 56-unit repair freeze closes all five outer incomplete keys |
 | 17 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
 | 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
 | 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
@@ -410,6 +410,27 @@ the workflow through the mdBook and repository review path.
   challenge coverage, regions, sources, outcomes, joins, and bounds; digest-complete durability watches the
   producer, frozen contract, source identities, lockstep publications, fact card, and retained task evidence.
   The Knowledge Map card makes that authority/uncertainty boundary retrievable before `.3b.4` consumes it.
+- `2026-08-15` (`.3b.4`): close a broad incomplete title by narrowing its question, not by declaring the whole
+  document verified. The five old anchors become explicit identity exclusions and gain five separate exact
+  authorities: three executable routes plus the registered workflow-capacity and mdBook-mapping claims. The
+  resulting 56-unit vector has zero outer incompletes while the 75 inner mdBook incompletes remain unchanged.
+
+## Repaired Current-Claim Result (`CLAIM-VERIFICATION-ADOPTION.3b.4`)
+
+- The frozen report now derives 56 exact units: 11 `derived`, seven `identity_gated`, six `registered`, zero
+  `incomplete`, and 32 `excluded` across the same 39 current surfaces, 32 included surfaces, seven exclusions,
+  and five semantic views. `[claim: current-claim-census-frozen]`
+- Canonical semantic comparison to the `.3b.3.3` parent proves all 46 non-frontier outcomes are identical after
+  removing record IDs and exact regions. Ledger, book, and task anchors rotate visibly with their lockstep lines;
+  the five `.3a.2` frontier outcomes alone change and five new authority objects are added.
+- README documentation routes execute `check_readme_policy.sh`; the fact-card route executes
+  `check_fact_card_catalog.pl`; and the FSMGen packet H1 identity executes `check_canonical_collection_catalogs.pl`.
+  Each proves navigation membership only, not the truth of linked prose.
+- The pull-request-template H1 is authored normative identity while the doctrine capacity paragraph joins
+  `workflow-standard-capacity-profile`. The book `SUMMARY.md` H1 is generated navigation identity while the exact
+  quantitative mapping tag joins `mdbook-quantitative-census-frozen`.
+- Zero outer incompletes means every broad surface/view question has an honest authority or scope disposition.
+  It does not certify the 75 exact assertion-level `incomplete` regions retained by the mdBook contract.
 
 ## Frozen mdBook Quantitative-Census Design (`CLAIM-VERIFICATION-ADOPTION.3b.3.0`)
 
@@ -591,7 +612,25 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Blockers
 
-- None. `.3b` repairs only the five frozen incomplete evidence keys next.
+- None. `.3b` is closed; `.3c` independently replays and challenges the repaired census next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.4`
+
+- [x] **REPRODUCE / MEASURE** — the repaired report derives 39 current surfaces, five views, and 56 exact units:
+  11 derived + 7 identity-gated + 6 registered + 0 incomplete + 32 excluded.
+  `[claim: current-claim-census-frozen]`
+- [x] **ROOT CAUSE (WHY + WHERE)** — each frozen gap attached a surface-wide truth question to a deterministic H1
+  review anchor. Identity, route completeness, and actionable numeric truth require distinct evidence units.
+- [x] **ADDRESSED (verified)** — all five H1s have narrow identity exclusions; three route regions execute their
+  existing producers, workflow capacity joins its verified claim, and mdBook quantitative scope joins its verified
+  exact-region mapping without promoting any of the 75 inner incomplete assertions.
+- [x] **NO REGRESSION** — canonical parent/current semantic comparison preserves all 46 non-frontier outcomes and
+  changes only five frontier outcomes plus five additions; census self-test/report, every joined authority/control, fact/Knowledge Map,
+  task/memory/book/live-size/locality, mdBook test/build, and mandatory doctrines pass.
+- [x] **GENERICITY** — classification follows identity, navigation, authored policy, and registered quantitative
+  authority boundaries; no document subject, vendor, protocol, language, or metric value selects an outcome.
+- [x] **LOCKSTEP** — claim record, fact card/projections, task frontier, resume pointer, ledgers, toolbox, and
+  mdBook publish the same 56-unit vector and the same outer-complete/inner-incomplete boundary; `.3b` closes.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.3.3`
 
@@ -867,6 +906,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3b.3.3` | clean result replay; 19-case controls; claim rederive/registry/stale joins; fact-card catalog
   and Knowledge Map derive-and-diff; task/memory/book/live-size/doctrine gates | verified census-mapping authority
   freezes 304 regions and preserves 75 incomplete assertions; no underlying assertion is promoted |
+| `2026-08-15` | `.3b.4` | parent/current semantic-outcome diff plus exact identity audit; 15-case census controls; all five route/claim joins;
+  current and mdBook census reports; fact/Knowledge Map; task/memory/book/live-size/locality/doctrine gates |
+  56 exact units: 11 derived + 7 identity-gated + 6 registered + 0 incomplete + 32 excluded; `.3b` closed |
 
 ## Commit Log
 
@@ -887,6 +929,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3b.3.1` | `CLAIM-VERIFICATION-ADOPTION.3b.3.1 — implement the mdBook quantitative census` | bounded inventory contract, deterministic producer, exact membership/fence/region validation, 18-case RED matrix |
 | `.3b.3.2` | `CLAIM-VERIFICATION-ADOPTION.3b.3.2 — adjudicate mdBook quantitative assertions` | 304 exact semantic regions, honest 75-line incomplete set, verified workflow join, record/array bound repair |
 | `.3b.3.3` | `CLAIM-VERIFICATION-ADOPTION.3b.3.3 — freeze mdBook quantitative authorities` | verified mapping claim, digest-complete stale replay, retrievable fact card, explicit incomplete boundary |
+| `.3b.4` | `CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs` | five exact narrow replacements, zero outer incompletes, 46 non-frontier semantic outcomes preserved |
 
 ## Changelog
 
@@ -929,3 +972,6 @@ was added; the stable-path remedy and its consumed authority are complete.
 - `2026-08-15`: `.3b.3.3` registers and routes the exact census-mapping authority with executable replay,
   controlled falsification, digest-complete staleness, and a Knowledge Map fact card; the verified claim preserves
   rather than certifies the 75 incomplete underlying assertions, and `.3b.3` closes.
+- `2026-08-15`: `.3b.4` atomically replaces the five broad incomplete title anchors with narrow identity plus
+  route/registered authorities, re-freezes 56 units with zero outer incompletes, proves all other 46 semantic
+  outcomes unchanged, and closes `.3b` without promoting the 75 inner mdBook gaps.

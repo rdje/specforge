@@ -85,6 +85,12 @@ The active registry is `doctrine/claim_verification/claims.jsonl`. Use
 matrix. Commands are argv arrays and all producer/input/evidence paths are tracked, digest-bound, and covered by
 the declared stale check; the checker never evaluates registry content through a shell.
 
+For the current-surface authority sweep, use `perl scripts/check_current_claim_census.pl --check`, `--report`,
+`--produce`, and `--self-test`. The repaired report has 56 exact units—11 derived, 7 identity-gated, 6 registered,
+0 incomplete, and 32 excluded—and retains every non-frontier outcome. Its zero outer incomplete count does not
+certify the 75 incomplete assertion regions exposed by the narrower mdBook contract.
+`[claim: current-claim-census-frozen]`
+
 For manual-wide quantitative review, use `perl scripts/check_book_quantitative_claims.pl --check` to derive the
 governed mdBook membership and validate the current inventory/frozen contract, `--report` for bounded totals,
 `--produce` for stable path/line/SHA candidates, and `--self-test` for the fence, exact-coverage, authority-join,
