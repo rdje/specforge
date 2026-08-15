@@ -183,7 +183,7 @@ remaining leaves as follows:
 The metric recommendation is `.7`. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
 and `.f.iv.b` supplied its whole-population proof. Final behavioral `.f.v` remains a release-signoff invariant and
 therefore precedes controller-ranked work. All task IDs exist in the task tree, the complete metric ordering
-remains in the report, and review is still required before canonical mutation.
+remains in the report; canonical recovery is active, but its frozen contract still precedes mutation.
 
 The word “current” above is revision-bound. The tracked 24/2/16 result is valid for its pinned `b977a51f`
 production revision; fixed-input artifact-chain currency does not extend it across later PDF-to-SourceIR changes.

@@ -1,3 +1,13 @@
+### SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery
+
+- Activated the controller-ranked canonical-recovery program and decomposed it into `.7a` contract freeze,
+  `.7b` generic implementation plus retained-chain reconciliation, and `.7c` complete replay/signoff.
+- Localized the sole current APB loss without changing production: the consequence extractor correctly keeps
+  `PSEL` out of the three `must be valid` subjects, but no companion path preserves the antecedent's independently
+  explicit `is asserted` state. The repair contract therefore forbids borrowing consequence kind or value.
+- Added a bounded `canonical-recovery` task-evidence part, moved `.7` to its post-migration primary route, and
+  synchronized root, index, manifest, containment, live status, roadmap, mdBook, retrieval, and resume truth.
+
 ### CLAIM-VERIFICATION-ADOPTION.5 — close three-leg claim verification adoption
 
 - Added the complete mdBook author/reviewer walk-through: scope classification, runnable source/control replay,

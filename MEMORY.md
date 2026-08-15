@@ -17,21 +17,21 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.5` owns documentation, independent audit, and final adoption signoff.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.7a` owns the frozen contract for the current first-boundary canonical
+  recovery. `.7` is active with `.7a`–`.7c` as design, implementation/currency, and replay/signoff slices.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: the fifth architecture now has runnable author/reviewer, missing-leg, stochastic, and auditor-
-  asymmetry guidance plus a retrievable five-architecture composition fact. The clean-boundary audit found zero
-  silent current candidates and corrected the stale public priority to `SPEC-TO-INTENT-ALIGNMENT.7`. Closing CI
-  then found the production-graph crate's exact-count test still bound to the snapshot before clarification `.2`;
-  all seven expectations are repaired, and selected full CI passes every doctrine, qualification, Rust/doc/book,
-  and final locality plane.
+- Current state: current replay authority reports one missing APB canonical fact at the SourceIR-to-EvidenceIR
+  boundary. The compound sentence explicitly says `PSEL` is asserted and then infers that three other signals
+  must be valid. The existing extractor correctly prevents `PSEL` from borrowing the consequence's `VALID`
+  value, but no independent producer preserves the antecedent's own asserted state. The bounded root, index,
+  manifest, containment contract, and new canonical-recovery part route `.7a` as the sole frontier; the completed
+  behavioral part and source capsule are unchanged.
   `[claim: claim-provenance-gate-active]`
-  The completed outer/current and inner/mdBook census authorities remain mechanically closed.
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: refresh final exact identities, run closing gates, commit `.5`, verify clean, then activate
-  `SPEC-TO-INTENT-ALIGNMENT.7`. `MEMORY.md` stays capped.
-- In-flight uncommitted: verified `.5` implementation, book/fact/status/decision/ledger/task/memory, graph test
-  oracle, and derived projections await final identities, closing gates, and commit; no background job.
+- Next action: execute `.7a`: freeze the exact APB witness, declaration-grounded inference-antecedent grammar,
+  polarity/ambiguity controls, affected-chain inventory, and complete replay obligations before production code.
+- In-flight uncommitted: `.7` activation task/live/book/retrieval changes await focused gates and commit; no
+  production code or background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

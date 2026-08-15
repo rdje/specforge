@@ -1,4 +1,19 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.7 (`2026-08-16`) — a compound sentence can contain two independent facts
+
+The APB setup sentence is not one obligation with four subjects. Its prefix states that `PSEL` is asserted; the
+causal suffix says that `PADDR`, `PWRITE`, and `PWDATA` must be valid. The current consequence extractor removes
+the prefix at `which means`, and its precision test correctly proves that `PSEL` does not inherit `VALID`.
+Relaxing that boundary would recover the reviewed key with the wrong semantics and reopen a known condition-
+subject false-positive class.
+
+The actual gap is compositional: no second producer interprets the prefix's own explicit state after the suffix
+has been isolated. The repair therefore needs two independent evidence claims from one sentence, each with its
+own source span and proof: an antecedent-state claim grounded by a declared signal plus explicit copular state,
+and the existing consequence obligation. `.7a` freezes that grammar, polarity behavior, ambiguity refusals,
+controls, and replay obligations before `.7b` changes production. `.7c` then owns the only admissible product
+claim: a complete comparable population replay with no new fabrication or category regression.
+
 ## CLAIM-VERIFICATION-ADOPTION.5 (`2026-08-15`) — the five architectures form a join, not a hierarchy
 
 The closing documentation keeps the five portable architectures orthogonal. Task trees answer who owns work;

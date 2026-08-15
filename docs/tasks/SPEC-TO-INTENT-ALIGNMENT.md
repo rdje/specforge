@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: extraction quality and breadth
 - Created: `2026-08-11`
-- Last updated: `2026-08-15`
+- Last updated: `2026-08-16`
 - Owner: project owner and repo-local workflow
 
 ## Goal
@@ -29,11 +29,12 @@ expressiveness as the bottleneck.
   corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has removed the production symbol-alpha
   coupling and published clean-revision held-out closure; `.f.iv.a` restored the structural carriers and
   `.f.iv.b` published their clean 12-source proof. `.f.iv` and final signoff `.f.v` are complete.
-- `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7`, `.8`, and `.9` are pending.
+- `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7` is in progress with children `.7a` through `.7c`;
+  `.8` and `.9` are pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7a`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -55,8 +56,12 @@ chains current; `.f.iv.b` publishes 39/0/1 TP/FP/FN with zero fabrications and r
 behavioral evidence: 35 completed held-out relations pass, 16 unavailable alpha relations remain explicitly
 unmeasurable, and the selected full repository signoff passes. Production is specification-instance-neutral
 within that governed boundary; this does not claim perfect recovery or complete PDF-to-ISF product behavior.
-Controller-ranked `.7` is the next eligible leaf for the sole canonical APB source-to-EvidenceIR loss; activation
-belongs to a separate clean-tree slice after this closure commits.
+Controller-ranked `.7` is active for the sole canonical APB source-to-EvidenceIR loss. The current artifacts and
+an existing consequence-precision control localize the missing `PSEL|must_be_value|HIGH` fact to a compound
+inference sentence: the extractor correctly prevents the antecedent signal from inheriting the consequent's
+`VALID` value, but no separate path preserves the antecedent's own explicit `asserted` state. `.7a` freezes that
+generic repair boundary and its controls before `.7b` changes production; `.7c` owns complete replay and
+comparable publication.
 
 ## Detailed task evidence
 
@@ -135,6 +140,9 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6e`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.7a`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.7b`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.7c`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9`
 
@@ -142,6 +150,7 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-16` | `.7` activation | APB first-boundary loss is causally localized; compiled precision control, exact task/claim/book/live/KM gates and mdBook pass; bounded contract, implementation/currency, and replay/signoff children route `.7a` first |
 | `2026-08-14` | task-evidence containment input closure | 21 exact regions and 58 exact routes reproduce from the locked source; full CI passes |
 | `2026-08-14` | `.6d.ii.f` activation | bounded behavioral children and `.f.i` design frontier are routed through the active part; target contract and doctrines pass |
 | `2026-08-14` | `.6d.ii.f.i` oracle freeze | exact 24-row source/capture population, six relations, five proof-bearing stages, 17-row prospective holdout, and 8/8 contract mutations pass |
@@ -161,6 +170,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.7` | `SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery` | localize the compound-inference state loss and route `.7a`–`.7c` |
 | `.6d.ii.e.vii` | `112bc333` | close roadmap, implementation, doctrine, public-state, and mdBook alignment |
 | `.6d.ii.f` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification` | activate and decompose the population behavioral signoff program |
 | `.6d.ii.f.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i — freeze behavioral qualification contract` | freeze exact input planes, population/held-out denominators, relations, comparison, and failure/evidence semantics |

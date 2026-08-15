@@ -13,6 +13,7 @@
 - [Verification](verification.md)
 - [Commit and chronology](commit-and-chronology.md)
 - [Behavioral qualification](behavioral-qualification.md)
+- [Canonical recovery](canonical-recovery.md)
 
 ## Primary leaf routes
 
@@ -84,7 +85,10 @@
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | [Behavioral qualification](behavioral-qualification.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.7` | [Current and future](current-and-future.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.7` | [Canonical recovery](canonical-recovery.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.7a` | [Canonical recovery](canonical-recovery.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.7b` | [Canonical recovery](canonical-recovery.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.7c` | [Canonical recovery](canonical-recovery.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.8` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9` | [Current and future](current-and-future.md) |
 
