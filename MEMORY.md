@@ -20,10 +20,11 @@
 - Active unit: `CLAIM-VERIFICATION-ADOPTION.3a.1` owns the bounded current-claim census producer.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: ADR 0044's self-bounded claim registry/checker holds three verified records, executes eight
-  source/control commands, digest-checks complete tracked artifact sets, resolves publication IDs, and is the
-  tenth doctrine. Semantic truth still depends on the named evidence; `.3`/`.4` own census and closure audits.
-- Next action: implement the self-bounded five-view census and fail-closed 39-surface coverage checker without
-  rewriting any source assertion; `.3a.2` will freeze its findings. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: `.3a.0` task/continuity design closure awaits focused/doctrine gates; no background job.
+- Current state: `.3a.1`'s bounded inventory contract derives 39 current surfaces, assigns 32 to inspection and
+  seven to explicit exclusions across five views, emits 47 deterministic candidates, and passes 14 fault cases.
+  It intentionally freezes no authority outcomes and changes no source assertion.
+  `[claim: current-claim-census-inventory]`
+- Next action: commit `.3a.1`, then activate `.3a.2` and adjudicate every included surface into exact frozen
+  authority outcomes and the `.3b` repair frontier. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: `.3a.1` implementation and lockstep documentation await final gates; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

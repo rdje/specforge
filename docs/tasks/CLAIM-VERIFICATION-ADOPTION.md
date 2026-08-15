@@ -158,7 +158,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3a.0 — freeze the current-claim census design`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3a.1`
-  Status: `pending`
+  Status: `done`
   Goal: implement the bounded census contract and deterministic producer
   Acceptance: strict data/checker derive all 39 current surfaces, validate five category views, exact tracked
   regions and authority joins, and fail missing/unknown/duplicate/untracked/stale/bound controls; do not repair
@@ -219,8 +219,8 @@ the workflow through the mdBook and repository review path.
 | 4 | `CLAIM-VERIFICATION-ADOPTION.1b` | `done` | exact transaction authority retired; committed profile remains unchanged |
 | 5 | `CLAIM-VERIFICATION-ADOPTION.2` | `done` | bounded registry, executable evidence join, and doctrine gate active |
 | 6 | `CLAIM-VERIFICATION-ADOPTION.3a.0` | `done` | 39-surface denominator and bounded semantic schema frozen before code |
-| 7 | `CLAIM-VERIFICATION-ADOPTION.3a.1` | `pending` | next: implement the contract/producer without source repairs |
-| 8 | `CLAIM-VERIFICATION-ADOPTION.3a.2` | `pending` | freeze exact authority outcomes and `.3b` gaps |
+| 7 | `CLAIM-VERIFICATION-ADOPTION.3a.1` | `done` | bounded inventory contract, deterministic producer, and fail-closed joins implemented |
+| 8 | `CLAIM-VERIFICATION-ADOPTION.3a.2` | `pending` | next: freeze exact authority outcomes and `.3b` gaps |
 | 9 | `CLAIM-VERIFICATION-ADOPTION.3b` | `pending` | repair only the measured `.3a` gaps |
 | 10 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
 | 11 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
@@ -276,6 +276,12 @@ the workflow through the mdBook and repository review path.
 - `2026-08-15` (`.3a.0`): the JSONL control bounds records/bytes/record bytes/arrays/scalars below checker hard
   caps. `.3a.1` implements coverage and fault controls; `.3a.2` freezes results; neither may rewrite a source
   assertion. Repairs begin only in `.3b` from the frozen gap identities.
+- `2026-08-15` (`.3a.1`): keep the real census contract in `inventory` phase with zero adjudicated evidence
+  records. It derives rather than repeats lifecycle eligibility, gives all 39 current surfaces exactly one
+  disposition, and emits deterministic review anchors plus known derived-state/registered-claim candidates.
+- `2026-08-15` (`.3a.1`): exact evidence identity is a one-based line range plus SHA-256 of those source bytes.
+  A frozen `derived`/`identity_gated` unit must execute a tracked argv-form producer/input join; `registered`
+  resolves a non-superseded claim ID; `incomplete` and `excluded` carry their required explicit reason fields.
 
 ## Adoption Mapping (`CLAIM-VERIFICATION-ADOPTION.0`)
 
@@ -378,7 +384,27 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Blockers
 
-- None. `.3` is the next executable leaf.
+- None. `.3a.2` freezes the producer's exact authority outcomes and repair frontier next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3a.1`
+
+- [x] **REPRODUCE / MEASURE** — the real report derives 39 current surfaces, assigns 32 to inspection and seven
+  to explicit standard-scope exclusions, covers all five required views, and emits 47 deterministic candidates
+  while the inventory phase correctly contains zero frozen evidence units.
+  `[claim: current-claim-census-inventory]`
+- [x] **ROOT CAUSE (WHY + WHERE)** — a hand-read constant sweep could omit a lifecycle, surface, overlapping
+  semantic view, or stale evidence region; the missing seam was an executable join from the live registry to
+  exact tracked source regions and closed authority outcomes.
+- [x] **ADDRESSED (verified)** — the bounded JSONL contract and checker derive the denominator, expand exact
+  tracked surface paths, validate line-range digests, execute direct argv verifiers, resolve current claim and
+  derived-state authority IDs, and separate deterministic production from later result adjudication.
+- [x] **NO REGRESSION** — syntax, real check/report/producer, 14/14 controlled cases, task/memory/live-size/book/
+  claim checks, and mandatory doctrines pass; no source assertion, product file, hook, CI path, or existing
+  authority outcome changes.
+- [x] **GENERICITY** — selection uses registered lifecycles, semantic-view IDs, exact paths/regions, and authority
+  classes; no protocol, vendor, document title, metric spelling, model, or language receives special validity.
+- [x] **LOCKSTEP** — task evidence, dated ledgers, contributor-facing mdBook, and resume pointer all state the
+  inventory-only boundary; `.3a.2` alone freezes findings and `.3b` alone may repair measured gaps.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3a.0`
 
@@ -467,6 +493,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3a.0` | live-registry lifecycle census; task catalog; memory; claim check/report; live-size;
   doctrines | 55 total - 15 archive - 1 frozen = 39 current surfaces; five category views and five closed
   outcomes frozen; no source assertion changed |
+| `2026-08-15` | `.3a.1` | checker syntax; 14-case fault matrix; real check/report/producer; task/memory/claim/
+  live-size/book/doctrine gates | 39 current = 32 inspection + 7 explicit exclusions; five views; 47 deterministic
+  candidates; inventory remains unfrozen and no source assertion changed |
 
 ## Commit Log
 
@@ -478,6 +507,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.1b` | `CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority` | one-use authority removed after the 21-file profile became baseline |
 | `.2` | `CLAIM-VERIFICATION-ADOPTION.2 — gate published claim provenance` | bounded registry, executable evidence join, stale digest gate, publication resolution, tenth doctrine |
 | `.3a.0` | `CLAIM-VERIFICATION-ADOPTION.3a.0 — freeze the current-claim census design` | 39-surface denominator, five category views, closed authority outcomes, staged implementation/results |
+| `.3a.1` | `CLAIM-VERIFICATION-ADOPTION.3a.1 — implement the current-claim census` | bounded inventory contract, deterministic producer, exact region/authority joins, fail-closed controls |
 
 ## Changelog
 
@@ -499,3 +529,5 @@ was added; the stable-path remedy and its consumed authority are complete.
   claims, and registers the tenth doctrine without adding another hook or CI path; `.3` owns the constant sweep.
 - `2026-08-15`: `.3a.0` derives the exact 39-surface current denominator and freezes the bounded five-view
   evidence schema before `.3a.1` implements any producer or `.3b` changes any source assertion.
+- `2026-08-15`: `.3a.1` implements the self-bounded inventory contract and deterministic producer, proves its
+  missing/unknown/duplicate/untracked/stale/bound controls, and leaves every finding unfrozen for `.3a.2`.

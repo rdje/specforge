@@ -1,0 +1,48 @@
+{"record_type":"registry","schema_version":1,"phase":"inventory","expected_current_surfaces":39,"max_records":64,"max_bytes":65536,"max_record_bytes":2048,"max_array_items":8,"max_scalar_bytes":512,"required_views":["current_status","roadmap_controller_projections","maintained_references","doctrine_baselines","mdbook_quantitative_claims"]}
+{"record_type":"source","schema_version":1,"source_id":"surface_registry","path":"doctrine/live_document_size/surfaces.jsonl","sha256":"45f951a097efd95bbe6408b54cc0f5c4658634fbe03af6185d82d4afc5741d51"}
+{"record_type":"source","schema_version":1,"source_id":"derived_state_registry","path":"doctrine/live_document_size/derived_state_contracts.jsonl","sha256":"4af2bff9dc4db0a79a1bc316ce4a7c0100e45750a73776a1923dd9dc1204779d"}
+{"record_type":"source","schema_version":1,"source_id":"claim_registry","path":"doctrine/claim_verification/claims.jsonl","identity":"live_validated"}
+{"record_type":"view","schema_version":1,"view_id":"current_status","description":"Current completion, validation, readiness, active-state, and measured-status assertions."}
+{"record_type":"view","schema_version":1,"view_id":"roadmap_controller_projections","description":"Current priorities, task frontiers, roadmap projections, remaining-work counts, and controller state."}
+{"record_type":"view","schema_version":1,"view_id":"maintained_references","description":"Current user, product, source-registry, feedback, and retrieval reference assertions."}
+{"record_type":"view","schema_version":1,"view_id":"doctrine_baselines","description":"Current workflow, architecture, catalog, policy, bound, and mechanically enforced baseline assertions."}
+{"record_type":"view","schema_version":1,"view_id":"mdbook_quantitative_claims","description":"Current quantitative or completion assertions published through the maintained mdBook."}
+{"record_type":"surface","schema_version":1,"surface_id":"readme_entrypoint","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"active_resume","disposition":"included","views":["current_status","roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"change_history","disposition":"included","views":["current_status"]}
+{"record_type":"surface","schema_version":1,"surface_id":"rolling_ledger_archive_index","disposition":"excluded","scope_reason":"archive_navigation_only"}
+{"record_type":"surface","schema_version":1,"surface_id":"rolling_ledger_archive_indexes","disposition":"excluded","scope_reason":"archive_navigation_only"}
+{"record_type":"surface","schema_version":1,"surface_id":"engineering_notes","disposition":"included","views":["current_status"]}
+{"record_type":"surface","schema_version":1,"surface_id":"achievement_status","disposition":"included","views":["current_status","roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"rust_analysis","disposition":"included","views":["current_status"]}
+{"record_type":"surface","schema_version":1,"surface_id":"roadmap","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"roadmap_archive_index","disposition":"excluded","scope_reason":"archive_navigation_only"}
+{"record_type":"surface","schema_version":1,"surface_id":"validation_snapshot","disposition":"included","views":["current_status"]}
+{"record_type":"surface","schema_version":1,"surface_id":"fact_index","disposition":"included","views":["doctrine_baselines"]}
+{"record_type":"surface","schema_version":1,"surface_id":"workflow_standards","disposition":"included","views":["doctrine_baselines"]}
+{"record_type":"surface","schema_version":1,"surface_id":"root_user_guide_pointer","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"root_extraction_architecture_pointer","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"root_knowledge_graph_pointer","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"root_intentir_spec_pointer","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"task_tree_index","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"canonical_collection_indexes","disposition":"included","views":["doctrine_baselines"]}
+{"record_type":"surface","schema_version":1,"surface_id":"fsmgen_feedback","disposition":"included","views":["current_status","maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"fsmgen_feedback_archive_index","disposition":"excluded","scope_reason":"archive_navigation_only"}
+{"record_type":"surface","schema_version":1,"surface_id":"source_pdf_registry","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"shipped_behavior","disposition":"included","views":["maintained_references","mdbook_quantitative_claims"]}
+{"record_type":"surface","schema_version":1,"surface_id":"decision_records","disposition":"included","views":["doctrine_baselines"]}
+{"record_type":"surface","schema_version":1,"surface_id":"fsmgen_issue_packets","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"knowledge_cards","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"fact_card_titles","disposition":"included","views":["doctrine_baselines"]}
+{"record_type":"surface","schema_version":1,"surface_id":"research_records","disposition":"excluded","scope_reason":"dated_research_evidence"}
+{"record_type":"surface","schema_version":1,"surface_id":"task_evidence","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"active_task_evidence_index","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"active_task_evidence_parts","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"corpus_task_evidence_index","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"corpus_task_evidence_parts","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"alignment_task_evidence_index","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"alignment_task_evidence_parts","disposition":"included","views":["roadmap_controller_projections"]}
+{"record_type":"surface","schema_version":1,"surface_id":"task_evidence_archive_index","disposition":"excluded","scope_reason":"archive_navigation_only"}
+{"record_type":"surface","schema_version":1,"surface_id":"corpus_knowledge_base","disposition":"included","views":["maintained_references"]}
+{"record_type":"surface","schema_version":1,"surface_id":"kg_fixture_documents","disposition":"excluded","scope_reason":"test_fixture_literals"}
+{"record_type":"surface","schema_version":1,"surface_id":"knowledge_map_bundle","disposition":"included","views":["doctrine_baselines"]}

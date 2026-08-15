@@ -262,6 +262,29 @@ unsafe, false-RED, supersession, and bound controls go RED. This proves provenan
 does not make a wrong assertion true merely because its record parses. Current-constant migration, the broader
 tracked-producer/RED-control audit, and final worked examples remain in the next adoption leaves.
 
+### The current-claim census has an inventory boundary
+
+The migration sweep is deliberately staged. Its bounded contract derives eligible surfaces from the live-
+document registry, assigns every current surface either to one or more of five semantic views or to an explicit
+standard-scope exclusion, and binds eventual findings to tracked paths plus exact line-range hashes. Derived and
+identity-gated outcomes require a directly executed argv-form verifier; registered outcomes join the current
+claim registry; incomplete and excluded outcomes must name what is missing or why the assertion is out of scope.
+
+The first implementation boundary is `inventory`, so evidence records are forbidden rather than silently
+treated as findings. The producer emits deterministic surface-review and known-authority candidates, but those
+candidates are not yet a completeness claim and cannot repair source prose.
+`[claim: current-claim-census-inventory]` Reproduce that boundary with:
+
+```sh
+perl scripts/check_current_claim_census.pl --self-test
+perl scripts/check_current_claim_census.pl --check
+perl scripts/check_current_claim_census.pl --report
+perl scripts/check_current_claim_census.pl --produce
+```
+
+The following result-freeze slice must adjudicate every included surface before changing the contract to
+`frozen`; only the separately owned repair slice may then change a measured source assertion.
+
 ## How the gates are layered
 
 Defense in depth, the same four-layer model the memory architecture uses. Each layer catches what the

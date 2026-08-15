@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3a.1 (`2026-08-15`) — measure before adjudicating
+
+A current-claim migration cannot define its denominator while repairing its own findings. The inventory contract
+therefore derives lifecycle eligibility from the live surface registry, records one inclusion/exclusion
+disposition for every current surface, and keeps evidence records forbidden while its phase is `inventory`.
+`.3a.2` must change that phase only after every included surface has an exact adjudicated evidence unit.
+
+Region identity uses one-based line ranges plus a hash of the exact bytes. This is intentionally stricter than a
+free-form marker: moving or rewriting the assertion invalidates the result. Authority is a separate join—direct
+argv producer/input execution for derived or identity-gated evidence, a known non-superseded claim ID for
+registered evidence, and explicit missing-leg or exclusion reasons for the two honest non-verified outcomes.
+The producer supplies deterministic surface-review anchors and already-known authority candidates; it does not
+pretend that candidate generation is semantic adjudication.
+
 ## CLAIM-VERIFICATION-ADOPTION.2 (`2026-08-15`) — executable evidence needs two closed joins
 
 A digest alone can preserve the wrong producer, while an always-green command can rerun against incomplete input

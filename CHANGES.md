@@ -1,3 +1,16 @@
+### CLAIM-VERIFICATION-ADOPTION.3a.1 — implement the current-claim census
+
+- Added a self-bounded inventory contract that derives the nonhistorical surface denominator from the live
+  registry and gives every current surface exactly one inspection or explicit scope-exclusion disposition across
+  five semantic views.
+- Added a deterministic checker/producer with exact tracked-path ownership, line-range SHA-256 identity, direct
+  argv verifier execution, derived-state and current-claim joins, and closed authority outcomes for the later
+  finding freeze.
+- The inventory boundary derives 39 current surfaces, assigns 32 to inspection and seven to explicit exclusions,
+  and emits 47 review/known-authority candidates. Fourteen controlled cases prove missing, unknown, duplicate,
+  untracked, stale, and bound failures go RED; no finding or source assertion is changed in this slice.
+  `[claim: current-claim-census-inventory]`
+
 ### CLAIM-VERIFICATION-ADOPTION.2 — gate published claim provenance
 
 - Added ADR 0044, the self-bounded `doctrine/claim_verification/claims.jsonl` registry, and a strict checker that
