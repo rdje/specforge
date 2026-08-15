@@ -66,6 +66,7 @@ if ($mode eq 'produce') {
         evidence_units => scalar(@{$result->{evidence}}),
         authority_outcomes => $result->{outcome_counts},
         producer_candidates => scalar(@$candidates),
+        candidate_closure => $result->{candidate_closure},
     };
     print JSON::PP->new->canonical(1)->encode($summary), "\n";
 } else {
@@ -294,7 +295,7 @@ sub validate_census {
             for grep { !$view_evidence{$_} } @required_views;
     }
 
-    return {
+    my $result = {
         errors => \@errors,
         phase => $phase,
         current_surfaces => \%current_surfaces,
@@ -310,6 +311,9 @@ sub validate_census {
         excluded_surfaces => $excluded,
         outcome_counts => \%outcome_counts,
     };
+    $result->{candidate_closure} = validate_candidate_closure($result, \%claim_by_id, \@errors)
+        if $phase eq 'frozen' && !@errors;
+    return $result;
 }
 
 sub validate_evidence {
@@ -501,6 +505,36 @@ sub produce_candidates {
         }
     }
     return [map { $candidate{$_} } sort keys %candidate];
+}
+
+sub validate_candidate_closure {
+    my ($result, $claims, $errors) = @_;
+    my %summary = (candidates => 0, exact_evidence => 0, registered_annotations => 0, unresolved => 0);
+    my %covered = map {
+        join(':', $_->{surface_id} // '', $_->{view_id} // '', $_->{path} // '',
+            $_->{region}{start_line} // 0) => 1
+    } @{$result->{evidence}};
+    for my $candidate (@{produce_candidates($result)}) {
+        $summary{candidates}++;
+        my $key = join(':', $candidate->{surface_id} // '', $candidate->{view_id} // '',
+            $candidate->{path} // '', $candidate->{region}{start_line} // 0);
+        if ($covered{$key}) {
+            $summary{exact_evidence}++;
+            next;
+        }
+        my $basis = $candidate->{basis} // '';
+        if ($basis =~ /\Aregistered:([a-z0-9]+(?:-[a-z0-9]+)*)\z/) {
+            my $claim = $claims->{$1};
+            if ($claim && ($claim->{status} // '') ne 'superseded') {
+                $summary{registered_annotations}++;
+                next;
+            }
+        }
+        $summary{unresolved}++;
+        push @$errors, "frozen candidate '$candidate->{candidate_id}' lacks exact evidence or a current "
+            . "registered annotation";
+    }
+    return \%summary;
 }
 
 sub add_candidate {
@@ -896,16 +930,35 @@ sub run_self_test {
             scope_reason => 'test_fixture_literals'},
     );
     my $status_text = "Status 2 current\n";
-    my @evidence = map {
-        my $view = $_;
-        {record_type => 'evidence', schema_version => 1, evidence_id => "status-$view",
-            claim_key => "status-$view", surface_id => 'status', view_id => $view, path => 'status.md',
-            region => {kind => 'line_range_sha256', start_line => 1, end_line => 1,
-                sha256 => sha256_hex($status_text)}, outcome => 'derived', source_authority_id => 'status-authority',
-            verifier => {argv => ['perl', 'scripts/probe.pl'], producer => 'scripts/probe.pl',
-                inputs => ['scripts/probe.pl', 'status.md'], expected_exit => 0,
-                stdout_contains => 'census source PASS'}}
-    } @{$meta->{required_views}};
+    my $region = {kind => 'line_range_sha256', start_line => 1, end_line => 1,
+        sha256 => sha256_hex($status_text)};
+    my $verifier = {argv => ['perl', 'scripts/probe.pl'], producer => 'scripts/probe.pl',
+        inputs => ['scripts/probe.pl', 'status.md'], expected_exit => 0,
+        stdout_contains => 'census source PASS'};
+    my @evidence = (
+        {record_type => 'evidence', schema_version => 1, evidence_id => 'status-current_status',
+            claim_key => 'status-current_status', surface_id => 'status', view_id => 'current_status',
+            path => 'status.md', region => clone($region), outcome => 'derived',
+            source_authority_id => 'status-authority', verifier => clone($verifier)},
+        {record_type => 'evidence', schema_version => 1,
+            evidence_id => 'status-roadmap_controller_projections',
+            claim_key => 'status-roadmap_controller_projections', surface_id => 'status',
+            view_id => 'roadmap_controller_projections', path => 'status.md', region => clone($region),
+            outcome => 'identity_gated', verifier => clone($verifier)},
+        {record_type => 'evidence', schema_version => 1, evidence_id => 'status-maintained_references',
+            claim_key => 'status-maintained_references', surface_id => 'status',
+            view_id => 'maintained_references', path => 'status.md', region => clone($region),
+            outcome => 'registered', claim_id => 'fixture-claim'},
+        {record_type => 'evidence', schema_version => 1, evidence_id => 'status-doctrine_baselines',
+            claim_key => 'status-doctrine_baselines', surface_id => 'status', view_id => 'doctrine_baselines',
+            path => 'status.md', region => clone($region), outcome => 'incomplete',
+            missing_legs => [qw(rederive falsification durability)]},
+        {record_type => 'evidence', schema_version => 1,
+            evidence_id => 'status-mdbook_quantitative_claims',
+            claim_key => 'status-mdbook_quantitative_claims', surface_id => 'status',
+            view_id => 'mdbook_quantitative_claims', path => 'status.md', region => clone($region),
+            outcome => 'excluded', scope_reason => 'fixture_scope'},
+    );
     my @base_records = ($meta, @sources, @views, @surfaces, @evidence);
     write_jsonl(absolute($fixture, $contract_rel), \@base_records);
     command_ok($fixture, ['git', 'add', '.']);
@@ -925,11 +978,18 @@ sub run_self_test {
             @{$_[0]} = grep { !(($_->{record_type} // '') eq 'surface' && ($_->{surface_id} // '') eq 'fixture') } @{$_[0]};
         }],
         ['unknown view join', 0, qr/references unknown view/, sub { $_[0][-1]{view_id} = 'unknown_view' }],
+        ['view not assigned to surface', 0, qr/is not assigned to surface/, sub {
+            my ($surface) = grep { ($_->{surface_id} // '') eq 'status' } @{$_[0]};
+            @{$surface->{views}} = grep { $_ ne 'current_status' } @{$surface->{views}};
+        }],
         ['missing required view evidence', 0, qr/required view 'mdbook_quantitative_claims' has no frozen evidence unit/, sub {
             @{$_[0]} = grep {
                 !(($_->{record_type} // '') eq 'evidence'
                     && ($_->{view_id} // '') eq 'mdbook_quantitative_claims')
             } @{$_[0]};
+        }],
+        ['missing included surface evidence', 0, qr/included census surface 'status' has no frozen evidence unit/, sub {
+            @{$_[0]} = grep { ($_->{record_type} // '') ne 'evidence' } @{$_[0]};
         }],
         ['duplicate surface', 0, qr/duplicates surface_id/, sub {
             my ($surface) = grep { ($_->{record_type} // '') eq 'surface' } @{$_[0]};
@@ -941,19 +1001,68 @@ sub run_self_test {
             $_[0][-1]{path} = 'untracked.md';
             $_[0][-1]{region}{sha256} = sha256_hex("Untracked\n");
         }],
+        ['wrong surface path owner', 0, qr/belongs to 'fixture', not 'status'/, sub {
+            $_[0][-1]{path} = 'fixture.md';
+            $_[0][-1]{region}{sha256} = sha256_hex("Fixture literal 7\n");
+        }],
         ['stale exact region', 0, qr/exact region is stale/, sub { $_[0][-1]{region}{sha256} = '0' x 64 }],
         ['unknown registered claim', 0, qr/references unknown claim_id/, sub {
-            $_[0][-1]{outcome} = 'registered';
-            $_[0][-1]{claim_id} = 'missing-claim';
-            delete $_[0][-1]{verifier};
-            delete $_[0][-1]{source_authority_id};
+            my ($record) = grep { ($_->{outcome} // '') eq 'registered' } @{$_[0]};
+            $record->{claim_id} = 'missing-claim';
         }],
-        ['missing executable verifier', 0, qr/lacks verifier/, sub { delete $_[0][-1]{verifier} }],
+        ['derived unknown source authority', 0, qr/references unknown source_authority_id/, sub {
+            my ($record) = grep { ($_->{outcome} // '') eq 'derived' } @{$_[0]};
+            $record->{source_authority_id} = 'missing-authority';
+        }],
+        ['derived missing executable verifier', 0, qr/lacks verifier/, sub {
+            my ($record) = grep { ($_->{outcome} // '') eq 'derived' } @{$_[0]};
+            delete $record->{verifier};
+        }],
+        ['identity-gated missing executable verifier', 0, qr/lacks verifier/, sub {
+            my ($record) = grep { ($_->{outcome} // '') eq 'identity_gated' } @{$_[0]};
+            delete $record->{verifier};
+        }],
+        ['incomplete missing legs', 0, qr/has no missing leg/, sub {
+            my ($record) = grep { ($_->{outcome} // '') eq 'incomplete' } @{$_[0]};
+            $record->{missing_legs} = [];
+        }],
+        ['excluded evidence missing reason', 0, qr/scope_reason must be/, sub {
+            my ($record) = grep { ($_->{outcome} // '') eq 'excluded' } @{$_[0]};
+            delete $record->{scope_reason};
+        }],
+        ['unknown outcome family', 0, qr/has unknown outcome/, sub { $_[0][-1]{outcome} = 'asserted' }],
         ['duplicate evidence identity', 0, qr/duplicates evidence_id/, sub { push @{$_[0]}, clone($_[0][-1]) }],
+        ['duplicate claim key', 0, qr/duplicates claim_key/, sub {
+            $_[0][-1]{claim_key} = $_[0][-2]{claim_key};
+        }],
         ['unknown evidence field', 0, qr/unknown field 'surprise'/, sub { $_[0][-1]{surprise} = 1 }],
+        ['evidence references excluded surface', 0, qr/references excluded surface 'fixture'/, sub {
+            $_[0][-1]{surface_id} = 'fixture';
+            $_[0][-1]{path} = 'fixture.md';
+            $_[0][-1]{region}{sha256} = sha256_hex("Fixture literal 7\n");
+        }],
         ['excluded surface missing reason', 0, qr/scope_reason must be/, sub {
             my ($surface) = grep { ($_->{surface_id} // '') eq 'fixture' } @{$_[0]};
             delete $surface->{scope_reason};
+        }],
+        ['known registered annotation closes produced candidate', 1, qr//, sub {
+            write_raw(absolute($fixture, 'status.md'),
+                $status_text . "[claim: fixture-claim]\n");
+        }],
+        ['silent derived candidate', 0, qr/lacks exact evidence or a current registered annotation/, sub {
+            write_raw(absolute($fixture, 'status.md'),
+                $status_text . "Silent marker 3 current\n");
+            my @mutated_derived = (@derived_records,
+                {record_type => 'contract', contract_id => 'silent-authority', surface_id => 'status',
+                    path => 'status.md', field_marker => 'Silent marker 3 current',
+                    classification => 'verified_copy'});
+            my $derived_path = 'doctrine/live_document_size/derived_state_contracts.jsonl';
+            write_jsonl(absolute($fixture, $derived_path), \@mutated_derived);
+            my ($source) = grep {
+                ($_->{record_type} // '') eq 'source'
+                    && ($_->{source_id} // '') eq 'derived_state_registry'
+            } @{$_[0]};
+            $source->{sha256} = sha256_hex(read_raw(absolute($fixture, $derived_path), [], $derived_path));
         }],
         ['portable record bound', 0, qr/max_records exceeds portable hard cap/, sub { $_[0][0]{max_records} = 257 }],
     );
@@ -961,6 +1070,9 @@ sub run_self_test {
     for my $case (@cases) {
         $total++;
         unlink absolute($fixture, 'untracked.md') if -e absolute($fixture, 'untracked.md');
+        write_raw(absolute($fixture, 'status.md'), $status_text);
+        write_jsonl(absolute($fixture, 'doctrine/live_document_size/derived_state_contracts.jsonl'),
+            \@derived_records);
         my ($name, $expected_ok, $diagnostic, $mutate) = @$case;
         my $records = clone(\@base_records);
         $mutate->($records);

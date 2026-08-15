@@ -8,6 +8,8 @@
   > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > how does the corpus task preserve all evidence after containment
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how does the current claim census prove no produced candidate is silent
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
@@ -238,6 +240,8 @@
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how many current claim census candidates join exact evidence or registered annotations
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current claim evidence units are derived registered incomplete or excluded
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > how many current documents are behaviorally measurable
@@ -293,7 +297,3 @@
   > how many reviewed documents have current binary replay evidence
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > how many reviewed source regions and modalities were found
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > how many sentence-start signal descriptor phrases pollute the retained corpus
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how many signals does each AXI channel have

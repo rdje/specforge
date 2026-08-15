@@ -7,12 +7,14 @@ answers:
   - "why must a current claim census candidate key include the semantic view"
   - "which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair"
   - "are any outer current claim census keys incomplete after CLAIM-VERIFICATION-ADOPTION.3b"
+  - "how does the current claim census prove no produced candidate is silent"
+  - "how many current claim census candidates join exact evidence or registered annotations"
   - "how many current governed Markdown surfaces are in the claim census"
   - "how do I reverify the frozen current claim census"
 date: 2026-08-15
 status: current
 tags: [claim-verification, census, authority, currentness, doctrine, task-tree]
-evidence: doctrine/claim_verification/current_claim_census.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.3a.2 and .3b.4); doctrine/claim_verification/claims.jsonl (current-claim-census-frozen)
+evidence: doctrine/claim_verification/current_claim_census.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.3a.2, .3b.4, and .3c); doctrine/claim_verification/claims.jsonl (current-claim-census-frozen)
 reverify: perl scripts/check_current_claim_census.pl --self-test && perl scripts/check_current_claim_census.pl --check && perl scripts/check_current_claim_census.pl --report
 ---
 
@@ -41,3 +43,9 @@ maintained-reference surfaces add their executable route identity, workflow doct
 paragraph, and the mdBook view adds the registered exact-region mapping authority. The outer census has no
 incomplete key. That does **not** promote the 75 incomplete assertion-level regions inside the mdBook mapping;
 their three missing legs remain explicit in the narrower quantitative contract.
+
+`CLAIM-VERIFICATION-ADOPTION.3c` closes the reverse join from a clean committed boundary. All 79 produced
+candidates must resolve to one of 51 exact frozen surface/view/path/line keys or 28 current registered claim
+annotations; the report has zero unresolved. The 27-case control fixture positively instantiates all five outcome
+families, then drives each family and every surface/view/path/region/source/identity coverage boundary RED. A
+known registered annotation remains green, while an unrecorded derived marker fails candidate closure.

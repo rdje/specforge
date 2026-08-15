@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3c (`2026-08-15`) — coverage needs a reverse join
+
+Validating every frozen record proves that selected evidence is well formed; it does not prove every newly
+produced candidate was selected. The closing audit therefore adds the reverse invariant: exact evidence owns a
+surface/view/path/line candidate, or that line must explicitly name a current non-superseded claim. A new derived
+marker with neither route is now RED instead of silently sitting outside the frozen result.
+
+The fixture also had to represent the real outcome algebra. Its previous five view records were all `derived`, so
+the suite challenged other outcomes only by mutating a derived record into a malformed shape. The new clean
+fixture contains all five families before independent mutations break family-specific fields and every coverage
+join. Final lockstep replay reports 79 candidates, 51 exact keys, 28 registered annotations, and zero unresolved.
+The count rose by three from the pre-publication replay because the synchronized change, book, and task surfaces
+themselves add current registered annotations; rerunning after publication reaches the stable governed boundary.
+
 ## CLAIM-VERIFICATION-ADOPTION.3b.4 (`2026-08-15`) — repair the question, not the title
 
 The five frozen gaps were not five false documents; they were five overbroad questions attached to title lines.

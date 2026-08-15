@@ -17,15 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.3b.4` owns the atomic outer-census repair freeze.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.3c` owns the independent clean-boundary census challenge.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.3b.4` re-freezes 56 exact outer units as 11 derived / 7 identity-gated / 6 registered /
-  0 incomplete / 32 excluded. Only the five frontier outcomes change and five authorities are added; the other
-  46 semantic outcomes and all 75 inner mdBook incompletes remain unchanged. `.3b` is closed.
+- Current state: `.3c` independently closes 79 produced candidates as 51 exact evidence keys / 28 current
+  registered annotations / 0 unresolved. Its 27-case matrix covers all five outcome families and coverage joins;
+  the 56-unit outer vector and 75 inner mdBook incompletes remain unchanged. `.3` is closed.
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: finish digest reconciliation and gates, commit `.3b.4`, verify a clean tree, then activate `.3c` for
-  the independent repaired-census challenge. `MEMORY.md` stays capped.
-- In-flight uncommitted: `.3b.4` census, claim, retrieval, and lockstep updates await final gates; no background job.
+- Next action: finish digest reconciliation and gates, commit `.3c`, verify a clean tree, then activate `.4` for
+  tracked-producer and cited-falsification closure. `MEMORY.md` stays capped.
+- In-flight uncommitted: `.3c` checker, claim, retrieval, and lockstep updates await final gates; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

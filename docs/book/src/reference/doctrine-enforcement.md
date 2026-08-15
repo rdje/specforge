@@ -288,6 +288,12 @@ perl scripts/check_current_claim_census.pl --report
 perl scripts/check_current_claim_census.pl --produce
 ```
 
+The closing audit also reverses the join: every produced candidate must have exact frozen evidence or carry a
+current registered claim annotation. The final lockstep report closes 79 candidates as 51 exact keys and 28
+annotations with
+zero unresolved. The twenty-seven-case suite instantiates every outcome family and drives family-specific plus
+surface/view/path/region/source/identity coverage faults RED.
+
 The repair changed only the five frozen frontier keys and added one exact authority unit for each. Any unrelated
 surface or changed exact region still makes the frozen census fail closed.
 

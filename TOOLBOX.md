@@ -87,7 +87,9 @@ the declared stale check; the checker never evaluates registry content through a
 
 For the current-surface authority sweep, use `perl scripts/check_current_claim_census.pl --check`, `--report`,
 `--produce`, and `--self-test`. The repaired report has 56 exact units—11 derived, 7 identity-gated, 6 registered,
-0 incomplete, and 32 excluded—and retains every non-frontier outcome. Its zero outer incomplete count does not
+0 incomplete, and 32 excluded—and retains every non-frontier outcome. Candidate closure separately reports
+79 produced anchors = 51 exact evidence keys + 28 current registered annotations + 0 unresolved; the 27-case
+self-test instantiates every outcome family and challenges all coverage joins. Zero outer incomplete does not
 certify the 75 incomplete assertion regions exposed by the narrower mdBook contract.
 `[claim: current-claim-census-frozen]`
 

@@ -126,7 +126,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.2 — gate published claim provenance`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3`
-  Status: `active`
+  Status: `done`
   Goal: sweep current-facing published constants and remove silent carried-state claims
   Children: `.3a`, `.3b`, `.3c`
   Acceptance: a bounded census covers current status, roadmap/controller projections, maintained references,
@@ -261,7 +261,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3c`
-  Status: `pending`
+  Status: `done`
   Goal: independently close current-claim coverage and the `.3` parent
   Acceptance: re-run the census from a clean committed boundary, mutate every classification family and coverage
   join to RED, confirm no silent current-facing constant remains in the mandated scope, and close `.3`
@@ -307,7 +307,7 @@ the workflow through the mdBook and repository review path.
 | 14 | `CLAIM-VERIFICATION-ADOPTION.3b.3.2` | `done` | every candidate has one exact semantic authority or honest missing legs |
 | 15 | `CLAIM-VERIFICATION-ADOPTION.3b.3.3` | `done` | verified claim and fact card freeze the exact result without promoting incomplete lines |
 | 16 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `done` | 56-unit repair freeze closes all five outer incomplete keys |
-| 17 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
+| 17 | `CLAIM-VERIFICATION-ADOPTION.3c` | `done` | 27-case family/join matrix and zero-unresolved candidate closure close `.3` |
 | 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
 | 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
 
@@ -414,6 +414,28 @@ the workflow through the mdBook and repository review path.
   document verified. The five old anchors become explicit identity exclusions and gain five separate exact
   authorities: three executable routes plus the registered workflow-capacity and mdBook-mapping claims. The
   resulting 56-unit vector has zero outer incompletes while the 75 inner mdBook incompletes remain unchanged.
+- `2026-08-15` (`.3c`): frozen evidence coverage and producer-candidate closure are independent invariants. Every
+  produced anchor must have an exact evidence key or a current non-superseded registered annotation. The clean
+  final lockstep boundary closes 79 candidates as 51 exact keys + 28 registered annotations + zero unresolved.
+  The three-candidate increase from the pre-publication replay comes from the closure's own synchronized change,
+  book, and task annotations; the
+  27-case suite independently drives all five outcome families and every surface/view/path/identity join RED.
+
+## Independent Current-Claim Closure (`CLAIM-VERIFICATION-ADOPTION.3c`)
+
+- Clean revision `50775894c526108145aa978a854353dbd214f1af` replays the repaired 39-surface / five-view / 56-unit
+  census and the independent 304-region mdBook census without rewriting a classification.
+- The current checker now rejects a frozen produced candidate unless its surface/view/path/line key has exact
+  evidence or its line carries a current registered claim annotation. The final lockstep report exposes 79
+  candidates, 51 exact evidence keys, 28 registered annotations, and zero unresolved candidates.
+- The self-test fixture positively instantiates `derived`, `identity_gated`, `registered`, `incomplete`, and
+  `excluded`. Twenty-seven cases independently break every family plus surface disposition/evidence, view
+  assignment/coverage, path ownership/tracking, region freshness, source/claim authority, evidence/claim-key
+  uniqueness, schema, and portable bounds; a known current annotation passes while a silent derived marker goes
+  RED.
+- The 75 exact mdBook assertion incompletes remain explicit and therefore are not silent. The outer candidate
+  closure proves only its mandated surface/view denominator; the manual's separate exact-region denominator
+  continues to own quantitative assertion-level truth. `[claim: current-claim-census-frozen]`
 
 ## Repaired Current-Claim Result (`CLAIM-VERIFICATION-ADOPTION.3b.4`)
 
@@ -612,7 +634,25 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Blockers
 
-- None. `.3b` is closed; `.3c` independently replays and challenges the repaired census next.
+- None. `.3` is closed; `.4` audits tracked producers and every cited falsification control next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3c`
+
+- [x] **REPRODUCE / MEASURE** — clean commit `50775894c526108145aa978a854353dbd214f1af` independently replays
+  39 current surfaces, five views, 56 evidence units, and 79 produced candidates closed by 51 exact keys plus 28
+  current registered annotations with zero unresolved. `[claim: current-claim-census-frozen]`
+- [x] **ROOT CAUSE (WHY + WHERE)** — frozen evidence validates chosen classifications, but without a reverse
+  candidate join a newly produced non-tagged authority marker could remain outside the frozen result.
+- [x] **ADDRESSED (verified)** — frozen validation now joins every produced candidate to exact evidence or a
+  current registered annotation; the 27-case fixture instantiates and drives RED all five outcome families plus
+  every surface/view/path/region/source/identity coverage boundary, including a silent derived marker.
+- [x] **NO REGRESSION** — repaired vector and 75 inner incompletes are unchanged; syntax, real check/report,
+  candidate production, both self-test matrices, claim/catalog/Knowledge Map, task/memory/book/live-size/locality,
+  mdBook test/build, and mandatory doctrines pass from the clean boundary.
+- [x] **GENERICITY** — closure keys only surface, semantic view, repository-relative path, exact line, lifecycle
+  authority, and claim status; no subject, protocol, vendor, language, metric, or document title changes behavior.
+- [x] **LOCKSTEP** — checker/report, claim record, fact card/projections, task, memory, ledgers, toolbox, and mdBook
+  expose the same 79 = 51 + 28 + 0 closure and preserve the separate 304-region/75-incomplete book authority.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.4`
 
@@ -909,6 +949,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3b.4` | parent/current semantic-outcome diff plus exact identity audit; 15-case census controls; all five route/claim joins;
   current and mdBook census reports; fact/Knowledge Map; task/memory/book/live-size/locality/doctrine gates |
   56 exact units: 11 derived + 7 identity-gated + 6 registered + 0 incomplete + 32 excluded; `.3b` closed |
+| `2026-08-15` | `.3c` | clean `50775894` replay; 27-case all-family/coverage matrix; candidate-closure report;
+  independent 304-region book replay; claim/catalog/Knowledge Map/task/memory/book/live-size/locality/doctrines |
+  79 candidates = 51 exact + 28 registered + 0 unresolved; 56-unit vector unchanged; `.3` closed |
 
 ## Commit Log
 
@@ -930,6 +973,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3b.3.2` | `CLAIM-VERIFICATION-ADOPTION.3b.3.2 — adjudicate mdBook quantitative assertions` | 304 exact semantic regions, honest 75-line incomplete set, verified workflow join, record/array bound repair |
 | `.3b.3.3` | `CLAIM-VERIFICATION-ADOPTION.3b.3.3 — freeze mdBook quantitative authorities` | verified mapping claim, digest-complete stale replay, retrievable fact card, explicit incomplete boundary |
 | `.3b.4` | `CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs` | five exact narrow replacements, zero outer incompletes, 46 non-frontier semantic outcomes preserved |
+| `.3c` | `CLAIM-VERIFICATION-ADOPTION.3c — close the current-claim sweep` | clean-boundary replay, all-family RED matrix, mechanically closed candidate denominator |
 
 ## Changelog
 
@@ -975,3 +1019,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 - `2026-08-15`: `.3b.4` atomically replaces the five broad incomplete title anchors with narrow identity plus
   route/registered authorities, re-freezes 56 units with zero outer incompletes, proves all other 46 semantic
   outcomes unchanged, and closes `.3b` without promoting the 75 inner mdBook gaps.
+- `2026-08-15`: `.3c` adds the missing reverse candidate join, expands controls from 15 derived-heavy cases to a
+  27-case matrix spanning every outcome family and coverage boundary, proves the final lockstep boundary closes
+  79 current candidates as 51 exact + 28 registered + zero unresolved, and independently closes `.3` from clean
+  commit `50775894`.

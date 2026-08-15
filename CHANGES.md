@@ -1,3 +1,13 @@
+### CLAIM-VERIFICATION-ADOPTION.3c — close the current-claim sweep
+
+- Added a fail-closed reverse join from every produced current-census candidate to exact frozen evidence or a
+  current registered annotation. Final lockstep replay closes 79 candidates as 51 exact + 28 registered +
+  0 unresolved; the three-candidate increase is the visible effect of publishing this closure in governed files.
+- Expanded the census controls from 15 derived-heavy cases to 27 cases that positively instantiate and drive RED
+  all five outcome families plus every surface/view/path/region/source/identity coverage boundary.
+- Independently preserved the repaired 56-unit vector and 304-region book result, including all 75 narrower
+  incompletes, and closed `.3`. `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs
 
 - Re-froze the outer current-claim census at 56 exact units: 11 derived, 7 identity-gated, 6 registered,
