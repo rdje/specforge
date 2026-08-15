@@ -17,15 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` is closing clean population publication; `.f.v` is the
-  durable next frontier after this slice commits.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` closes final behavioral/genericity signoff and parent state.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: the 12-source / 48-stage replay from clean `e125aac7` publishes 39/0/1 IntentIR TP/FP/FN,
-  42/42 provenance, 117/118 conservation, zero fabrications, and one APB drop. All controller hard gates pass;
-  `.7` ranks first and `.6e` is superseded. The four-value driver contract is focused-test guarded.
-- Next action: finish focused publication/docs/doctrine checks, commit `.f.iv.b`, then activate `.f.v` final
-  behavioral signoff. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: `.f.iv.b` result/manifest/controller/code/docs are staged in the worktree. All three
-  replay roots and the runtime map are removed with residue absent; no background job.
+- Current state: structural and behavioral production-genericity signoff is complete within the governed
+  boundary: 35/0/16/0 held-out outcomes and the 39/0/1, 42/42-provenance, zero-fabrication population compose.
+  This is not perfect recovery or product completion; one APB loss and coverage/accounting gaps remain.
+- Next action: run focused consistency checks, then full CI once as the selected `.f.v` signoff checkpoint;
+  commit the clean closure and create the durable user-assisted clarification-loop task tree. `MEMORY.md` remains
+  capped at 32,768 B.
+- In-flight uncommitted: `.f.v` closure and synchronized docs only; no background job. All replay scratch is absent.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

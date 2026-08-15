@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v (`2026-08-15`) — bounded production-genericity signoff
+
+The final claim is deliberately narrower than “SpecForge is complete.” The production core is now signed off as
+specification-instance-neutral within the governed boundary: its 168 registered proof rules and full compiled
+information-flow surface pass the unconditional structural doctrine and 27 adversarial controls, while
+conformance independently exercises document identity, source-symbol alpha renaming, reviewed paraphrase/layout,
+semantic negatives, held-out inputs, and the complete reviewed population. Conformance labels, expected results,
+fixture identity, and review authority cannot flow back into core.
+
+Behavioral evidence retains denominators instead of collapsing them into one optimistic boolean. Thirty-five
+completed held-out relations pass, zero fail, 16 are unmeasurable because the input exposes no eligible opaque
+alpha surface or is vacuous, and zero are invalid. The clean 12-source / 48-stage population remains 39/0/1
+IntentIR TP/FP/FN with 42/42 provenance, 117/118 conservation, zero fabrication, and one APB canonical miss.
+Required-modality capture is 12/14, modality-document accounting is 5/12, source disposition is 7/14, and
+residual actionability is 4/24. These limits are product work, not genericity exceptions.
+
+The controller therefore remains honestly `unmeasurable` for trajectory convergence because no comparable
+history exists, even though all three hard gates pass. It ranks `.7` first for the missing APB
+`PSEL|must_be_value|HIGH` SourceIR-to-EvidenceIR fact. Parent closure makes that leaf eligible without implying
+that wider PDF-to-ISF automation, recall, modality handling, residual actionability, or adapter behavior is done.
+
+This is an explicitly selected cross-cutting checkpoint under the CI policy. The candidate was frozen first,
+focused consistency checks were used during editing, and the complete repository CI ran once at final signoff.
+No replay or build scratch is retained after verification.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b (`2026-08-15`) — repaired population authority
 
 The clean replay validates the structural repair across the whole reviewed population. All 12 immutable source

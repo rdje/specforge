@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > can EvidenceIR represent protocol structure without hardcoding a specification
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > can FigureRegion raw_image_path store an absolute path
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -295,5 +297,3 @@
   > does converge automatically run extract-contracts
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does converge automatically run recover-register-bits
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > does converge automatically run signal-resolve

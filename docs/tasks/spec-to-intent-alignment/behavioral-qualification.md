@@ -5,15 +5,53 @@
 
 ## Active behavioral qualification
 
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6`
+  State: `done`
+  Goal: qualify current-binary truth before eliminating the fabrication and provenance defects that still reproduce
+  Acceptance: hash-pinned isolated replay separates retrospective baseline from current product truth across all
+  12 reviewed documents; reversible upstream repair reduces exact fabrication and provenance defects without
+  sacrificing source-grounded truth; controlled mutants and a comparable snapshot retain authority
+  Verification: `all descendants close; the current 12-source / 48-stage replay is 39/0/1 IntentIR TP/FP/FN,
+  42/42 provenance, 117/118 conservation, and zero fabricated canonical facts; structural and behavioral
+  production-genericity gates compose; .f.v records the final selected full-CI signoff`
+  Commit: `completed by .6a through .6d.ii.f.v child commits`
+  Children: `.6a`, `.6b`, `.6c`, `.6d`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d`
+  State: `done`
+  Goal: remove the largest remaining qualified fabricated-fact family after canonical provenance reaches closure
+  Acceptance: decibel-domain analog observations do not become executable digital timing facts; current truth and
+  provenance survive; generic repair, replay qualification, and controller reranking agree
+  Verification: `all descendants close; the final population contains zero fabricated canonical facts, preserves
+  42/42 provenance, and routes the sole canonical APB source-to-EvidenceIR loss to .7`
+  Commit: `completed by .6d.i and .6d.ii child commits`
+  Children: `.6d.i`, `.6d.ii`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
+  State: `done`
+  Goal: publish clean reviewed-population truth and make production genericity a repository-wide release gate
+  Acceptance: complete reviewed replay, exact dispositions, current truth/provenance, specification-instance-
+  neutral production structure and behavior, fail-closed doctrine enforcement, controller, documentation,
+  retrieval, and cleanup agree without overstating unsupported evidence
+  Verification: `12/12 sources and 48/48 stages replay from clean e125aac7; IntentIR is 39/0/1 with 42/42
+  provenance and zero fabrication; the proof-carrying 168-rule structural boundary, 27 structural controls,
+  behavioral identity/alpha/paraphrase/layout/negative/held-out evidence, and final selected full CI pass; 16 alpha
+  strata remain honestly unmeasurable and one canonical APB fact remains missing`
+  Commit: `completed by .6d.ii.a through .6d.ii.f.v child commits`
+  Children: `.6d.ii.a`, `.6d.ii.b`, `.6d.ii.c`, `.6d.ii.d`, `.6d.ii.e`, `.6d.ii.f`
+
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`
-  State: `in_progress`
+  State: `done`
   Goal: qualify genericity behaviorally and replay the reviewed population after remediation
   Acceptance: alpha-renaming, structure-preserving paraphrase, adversarial identity, negative-control, and
   held-out-document tests prove decisions are not coupled to names; the complete reviewed replay and full gates
   publish all intended deltas without truthfulness/provenance regression; public/live/book/retrieval truth is
   synchronized
-  Verification: `activation decomposes the complete behavioral signoff into bounded oracle, transformation, held-out, population-replay, and closure children; 66 root owners/routes close; 44/44 active-task and 84/84 live-size cases, trajectory owner lookup, 220-card catalog, 236-fact / 1,817-key Knowledge Map, mdBook test/build, doctrines, and cleanup pass`
-  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification`
+  Verification: `all five children close: the governed identity, alpha, reviewed paraphrase/layout, semantic-
+  negative, held-out, and population relations are complete; the final matrix is 35 pass / zero fail / 16
+  unmeasurable / zero invalid and the reviewed replay is 39/0/1 with zero fabrication; structural and behavioral
+  gates plus the selected full repository signoff pass`
+  Commit: `activated by SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification; completed by .f.i through .f.v child commits`
   Children: `.f.i`, `.f.ii`, `.f.iii`, `.f.iv`, `.f.v`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i`
@@ -172,13 +210,17 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b — publish repaired reviewed population`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`
-  State: `pending`
+  State: `done`
   Goal: close behavioral genericity and the `.6d.ii` parent without overstating the evidence
   Acceptance: structural and behavioral gates compose unconditionally; complete results, limitations, cleanup,
   current status, task parents, controller, mdBook, retrieval facts, and full CI agree; controller-ranked `.7`
   becomes eligible only if the production core is genuinely specification-instance-neutral
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the unconditional production-genericity doctrine composes the proof-carrying 168-rule structural
+  boundary, 27 adversarial structural controls, and the governed behavioral contract; 35 completed held-out
+  relations pass, 16 unavailable alpha relations remain unmeasurable, the clean 12-source result is 39/0/1 with
+  zero fabrication and 42/42 provenance, all scratch is absent, synchronized task/live/book/retrieval truth
+  preserves every limitation, and the selected full repository CI gate passes`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v — close production-genericity signoff`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6e`
   State: `superseded`
@@ -340,6 +382,22 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 - [x] **LOCKSTEP** — result, replay manifest, controller input/report, task tree, roadmap, live docs, mdBook,
   retrieval facts, and cleanup evidence agree; `.6e` is superseded and `.7` is the controller-ranked product gap.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`
+
+- [x] **REPRODUCE / MEASURE** — the signoff composes the exact structural inventories and adversarial controls,
+  the 35/0/16/0 held-out matrix, and the 12-source / 48-stage 39/0/1 population result without inventing coverage.
+- [x] **ROOT CAUSE (WHY + WHERE)** — prior signoff remained open because structural neutrality alone could not
+  prove runtime invariance and the first behavioral runs exposed genuine oracle and production ordering defects.
+- [x] **ADDRESSED (verified)** — the conformance-owned behavioral oracle now proves identity, symbol-alpha,
+  reviewed paraphrase/layout, semantic-negative, held-out, and population behavior against the neutral core.
+- [x] **NO REGRESSION** — the selected milestone full-CI run passes after the final candidate is frozen; ordinary
+  preceding commits retained focused checks plus the mandatory commit-tier doctrine gate under the CI policy.
+- [x] **GENERICITY (ADR 0006)** — production is signed off as specification-instance-neutral within the governed
+  boundary; conformance labels and expected outcomes cannot steer it, and missing evidence remains residual or
+  unmeasurable rather than a named exception.
+- [x] **LOCKSTEP** — controller, task parents, roadmap, live status, engineering notes, research, mdBook, Knowledge
+  Map, cleanup, and resume truth all preserve the evidence and its limits; `.7` is the next product frontier.
+
 ## Current Frontier
 
 | Order | Leaf | State | Why next |
@@ -353,7 +411,7 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `done` | carrier repair and clean population reconciliation are both published |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a` | `done` | qualified headers, access carriers, target truth, migration, and retained-chain currency are closed |
 | 9 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` | `done` | exact command shape, 12-source replay, current authority, and cleanup are closed |
-| 10 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | next after the clean `.f.iv.b` commit: close behavioral signoff and release `.7` |
+| 10 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `done` | structural and behavioral evidence compose; selected frozen-candidate full CI releases `.7` |
 
 ## Decisions
 
@@ -409,14 +467,18 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 - `2026-08-15`: use an evidence-recorded CPU/16-page policy for the qualification replay; keep the 85% memory
   guard enabled. The successful 12-source result supersedes `.6e` because both planned register fabrications are
   absent, and the controller's exact next product gap becomes `.7` after `.f.v` signoff.
+- `2026-08-15`: production-genericity signoff means one specification-instance-neutral production core under the
+  governed structural and behavioral evidence. It does not claim perfect recovery, complete modality coverage,
+  a converged trajectory, or a complete PDF-to-ISF product; residual and unmeasurable states remain first-class.
 
 ## Open Questions
 
-- None for `.f.iv.b`; `.f.v` must compose final behavioral signoff without overstating unsupported categories.
+- None for `.f.v`. The remaining APB loss, non-actionable residuals, omitted capability islands, and wider
+  product completeness are explicitly owned by `.7` and later roadmap leaves.
 
 ## Blockers
 
-- None. `.f.iv.b` scratch and runtime-map residue is absent; `.f.v` is eligible after the clean commit.
+- None. All `.f.iv.b` replay roots and the runtime map remain absent; `.f.v` closes from clean `ef224008`.
 
 ## Verification Log
 
@@ -448,6 +510,7 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | `2026-08-15` | `.f.iv.a` full repository gate and cleanup | 9/9 doctrines and all 11 genericity components pass; exact 2,275 / 11,926 / 11,396 / 1,446 flow snapshot; 1,981 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final locality; five roots / 5,112 files / 3,614,756 KiB removed with residue absent |
 | `2026-08-15` | `.f.iv.b` command and population replay | four-value command suffix/env-prefix guard passes; bounded CPU/16-page replay completes 12/12 sources and 48/48 stages from `e125aac7`; current result is 39/0/1 TP/FP/FN, 42/42 provenance, 117/118 conservation, 7/14 disposition, 5/12 modality accounting, zero fabrications, and one APB drop |
 | `2026-08-15` | `.f.iv.b` publication and cleanup | replay/result strict identities and mutants pass; controller has zero hard-gate violations, ranks `.7`, and is byte-current; successful root 3,094 files / 1,147,260 KiB, all three roots 5,616 files / 2,038,580 KiB; runtime map and every root are absent; focused checks and mandatory doctrine gate pass |
+| `2026-08-15` | `.f.v` final signoff | structural and behavioral genericity evidence composes unconditionally; task parents, controller, public/live/book/retrieval truth, and cleanup agree; the selected milestone full repository CI gate passes and `.7` becomes eligible |
 
 ## Commit Log
 
@@ -465,6 +528,7 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 | `.f.iv` diagnostic | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv — route clean replay carrier regressions` | preserve the blocked 12-source result, distinguish frozen review hashes from actual stage identities, and split neutral carrier repair from clean publication |
 | `.f.iv.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a — restore structural register carriers` | close qualified header/access carriage, audited migration, real target truth, and retained-chain currency before clean replay |
 | `.f.iv.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b — publish repaired reviewed population` | pin the exact replay command, publish the fabrication-free 12-source authority and reranked controller, and remove all replay scratch exactly |
+| `.f.v` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v — close production-genericity signoff` | compose structural and behavioral evidence without overstatement, close `.f`/`.6d.ii`/`.6d`/`.6`, and release `.7` |
 
 ## Activation protocol
 

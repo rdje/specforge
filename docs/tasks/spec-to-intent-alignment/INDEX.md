@@ -30,7 +30,7 @@
 | `SPEC-TO-INTENT-ALIGNMENT.5` | [Program foundation](program-foundation.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.5a` | [Program foundation](program-foundation.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.5b` | [Program foundation](program-foundation.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.6` | [Qualification and repair](qualification-and-repair.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6a` | [Qualification and repair](qualification-and-repair.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6b` | [Qualification and repair](qualification-and-repair.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6b.i` | [Qualification and repair](qualification-and-repair.md) |
@@ -41,9 +41,9 @@
 | `SPEC-TO-INTENT-ALIGNMENT.6c` | [Qualification and repair](qualification-and-repair.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6c.i` | [Qualification and repair](qualification-and-repair.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | [Qualification and repair](qualification-and-repair.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.6d` | [Qualification and repair](qualification-and-repair.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.i` | [Qualification and repair](qualification-and-repair.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.6d.ii` | [Genericity remediation](genericity-remediation.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii` | [Behavioral qualification](behavioral-qualification.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a` | [Genericity remediation](genericity-remediation.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | [Genericity remediation](genericity-remediation.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | [Genericity remediation](genericity-remediation.md) |

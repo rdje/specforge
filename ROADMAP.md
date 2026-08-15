@@ -86,8 +86,7 @@ Its reviewed 12/12 current replay and access/provenance correction ship. Generic
 physical applicability, and register carriers now have clean whole-population qualification: current IntentIR is
 39/0/1 TP/FP/FN with complete 42/42 provenance, and physical-link is the first supported reviewed category. All
 controller hard gates pass; `.6e` is superseded by the structural repair and clean proof, and `.7` is the ranked
-next product gap for the sole APB source-to-EvidenceIR canonical loss. The owner-mandated whole-production
-genericity audit remains a release blocker until behavioral `.f.v` signoff closes.
+next product gap for the sole APB source-to-EvidenceIR canonical loss. Whole-production genericity audit and behavioral `.f.v` signoff are complete within the governed evidence boundary.
 Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 168
 runtime rules, compiled information-flow doctrine, and 27 adversarial controls cover all five stages. The 24
 current chains carry 148,708 cumulative claims across 120 artifacts with zero public migration delta; 54 legacy
@@ -104,8 +103,10 @@ pair and the final clean-revision held-out refresh now pass: 35 completed relati
 reconciliation restores 24/24 current with zero stale at every replayed persisted stage. The first clean `.f.iv`
 full-PDF replay then exposed one qualified-header truth loss and one incomplete register-access carrier. `.f.iv.a`
 now closes both with neutral structural grammar, real-PDF target proof, and exact 24-chain currency; `.f.iv.b`
-publishes the repaired 39/0/1 population and zero-hard-gate controller. Final behavioral `.f.v` signoff remains,
-then controller-ranked `.7` can begin. Resource-sized bounded
+publishes the repaired 39/0/1 population and zero-hard-gate controller. `.f.v` composes structural and behavioral
+production-genericity signoff. The claim is one specification-instance-neutral production core, not perfect
+recovery or a complete PDF-to-ISF product: 16 alpha strata remain honestly unmeasurable, coverage/accounting gaps
+remain published, and trajectory history is insufficient. Controller-ranked `.7` is now eligible. Resource-sized bounded
 activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
 
 Five active program groups support that north star:

@@ -129,8 +129,6 @@
 - [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md)
   > In what order must a current proof-bearing chain be rebuilt and validated?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
-  > Is SpecForge production-genericity signoff complete after identity remediation?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Is the generic production core physically separated from conformance code?
 - [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md)
   > Is validation backannotation part of the cumulative proof prefix?
@@ -146,6 +144,10 @@
   > What current priors are learned without protocol families?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What does spec-neutral extraction mean?
+- [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
+  > What evidence closed behavioral genericity signoff?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > What evidence closes current production-genericity signoff?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What exact proof population and migration delta closed structural genericity qualification?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -296,5 +298,3 @@
   > are transaction phase names allowlisted by protocol
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > are ungrounded SemanticIR records dropped silently or demoted
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > can EvidenceIR represent protocol structure without hardcoding a specification

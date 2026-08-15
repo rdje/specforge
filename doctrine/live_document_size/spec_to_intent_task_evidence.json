@@ -1,8 +1,8 @@
 {
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` closure; `.f.v` is next after its clean commit.",
+      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`.",
       "mode" : "eligible",
       "part_id" : "behavioral-qualification"
    },
@@ -100,13 +100,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
          "metrics" : {
-            "bytes" : 48019,
+            "bytes" : 53600,
             "line_bytes" : 439,
-            "lines" : 472
+            "lines" : 536
             },
             "part_id" : "behavioral-qualification",
             "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-         "sha256" : "4bb2bdb02799412801d144953b1ebc8c3dc7db06462cd4d4500f3de95aad92aa",
+         "sha256" : "0d7415ca6188ef0827b554bf1e180ce4fd1a7bcc76b17dc6a389c616ec67c54b",
             "state" : "active"
          }
       ],
@@ -193,9 +193,8 @@
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6",
-         "origin" : "structural",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6"
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6a",
@@ -259,9 +258,8 @@
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d",
-         "origin" : "structural",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d"
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.i",
@@ -271,9 +269,8 @@
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii",
-         "origin" : "structural",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii"
+         "origin" : "post_migration",
+         "part_id" : "behavioral-qualification"
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.a",
@@ -608,7 +605,7 @@
          "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
          "- Status: `active`",
          "## Current Frontier",
-         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` closure; `.f.v` is next after its clean commit.",
+         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log",

@@ -16,7 +16,6 @@ answers:
   - "How does the corpus knowledge base group fixtures without protocol-family names?"
   - "Can fixture names decide KG capability or prior-candidate routing?"
   - "What exact range qualified the identity and spelling remediation?"
-  - "Is SpecForge production-genericity signoff complete after identity remediation?"
   - "Is the generic production core physically separated from conformance code?"
   - "Which crate owns replay, completeness classification, and trajectory snapshots?"
   - "How does SpecForge keep source-owned symbol spelling opaque?"
@@ -66,7 +65,8 @@ answers:
   - "Which registered doctrine enforces the complete clean production-genericity boundary?"
   - "How are runtime alpha obligations, adversarial mutations, and legal raw-spelling uses structurally qualified?"
   - "What exact proof population and migration delta closed structural genericity qualification?"
-date: 2026-08-13
+  - "What evidence closes current production-genericity signoff?"
+date: 2026-08-15
 status: current
 tags: [genericity, extraction, architecture, doctrine]
 evidence: docs/research/production-genericity-pipeline-audit.md; docs/research/production-genericity-structural-qualification.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/build.rs; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; doctrine/production_genericity/information_flow_boundary.tsv; tools/production-genericity-graph/src/analyzer.rs; tools/production-genericity-graph/src/flow.rs; scripts/check_production_genericity.sh; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_graph.sh; scripts/check_production_genericity_flow.sh; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_doctrines.sh; scripts/check_chain_currency.sh
@@ -121,8 +121,8 @@ files, and 24 compiled-crate Rust source files. Focused alpha, identity, prompt,
 fail-closed proposal controls pass. The expected honesty cost is preserved rather than hidden: constraints,
 invariants, transactions, and renderable adapters fall where name-derived authority was removed. This closes
 identity/spelling/prompt/corpus remediation only.
-Structural proof enforcement and population-level metamorphic qualification remain release blockers in
-`.6d.ii.e` and `.6d.ii.f`; SpecForge is not yet whole-core genericity signoff-ready.
+Structural proof enforcement and population-level metamorphic qualification were the remaining release blockers
+at that checkpoint. Later `.6d.ii.e` and `.6d.ii.f` close both; the final bounded signoff is recorded below.
 
 The `.e.ii` package split now makes the first part of that architecture executable. `specforge-core` owns the
 generic production compilation unit and has no internal package dependency. `specforge-conformance` points one
@@ -284,17 +284,17 @@ decisions, cross-class declassification, direct/aliased unregistered inference, 
 laundering, proofless/wrong-stage persistence, and registry duplication. The clean fixture admits display,
 provenance capture, and excluded test-only uses because none grants semantic or canonical authority.
 
-The registry names data classes and Rust structure, never a document/vendor/protocol vocabulary. Cargo and Rust
-privacy remain the type/capability oracle; executable replay remains semantic authority; the AST proves closed
-whole-surface flow/topology. `scripts/check_production_genericity.sh` composes the dependency, inventory, rule,
-and graph/flow checks under the unconditional `PRODUCTION-GENERICITY` doctrine. Its `--self-test` CI mode runs
-27 controlled dependency, inventory/schema, rule/alpha/bypass, and flow/authority mutations. Every
-test-only `RuleDescriptor` qualification executes each capability/premise/compatibility-shaped alpha condition;
-the independent oracle expands the two TSV inventories and exactly joins all 168 runtime rule ids, stages,
-surfaces, premise kinds, capabilities, obligations, compatibilities, and implementation owners. The conformance
-harness now closes identity, alpha, reviewed paraphrase/layout, and semantic-negative sensitivity. Held-out and
-whole-population behavior remains `.f`, so whole-core genericity signoff is still open.
+The registry names data classes and Rust structure, never a document/vendor/protocol vocabulary. Cargo and Rust privacy remain the type/capability oracle; executable replay remains semantic authority; the AST proves closed
+whole-surface flow/topology. `scripts/check_production_genericity.sh` composes dependency, inventory, rule, graph,
+and flow checks under the unconditional `PRODUCTION-GENERICITY` doctrine. Its `--self-test` mode runs 27 controlled
+dependency, inventory/schema, rule/alpha/bypass, and flow/authority mutations. Every test-only `RuleDescriptor`
+qualification executes its capability/premise/compatibility-shaped alpha condition; the independent oracle joins
+all 168 runtime rule ids, stages, surfaces, premises, capabilities, obligations, compatibilities, and owners. The
+conformance harness closes identity, alpha, paraphrase/layout, and negative sensitivity; held-out and population behavior belonged to later `.f`.
 
-Final qualification covers `f7da4ab8..07b1f874`: 24 keys are current and 54 remain unmeasurable. One ruleset
-covers 168 rules / 148,708 claims; all 120 public comparisons and 0/3/8/62 residual-object deltas are exact, while
-24 adapters remain blocked/zero-file. See `docs/research/production-genericity-structural-qualification.md`; `.f` owns behavior.
+Final qualification covers `f7da4ab8..07b1f874`: 24 keys are current and 54 remain unmeasurable. One ruleset covers
+168 rules / 148,708 claims; all 120 public comparisons and 0/3/8/62 residual deltas are exact, while 24 adapters remain blocked/zero-file. See `docs/research/production-genericity-structural-qualification.md`.
+
+Behavioral `.f` is complete. Its held-out matrix is 35 pass / zero fail / 16 unmeasurable / zero invalid; the clean
+12-source / 48-stage population is 39/0/1 IntentIR TP/FP/FN with 42/42 provenance, 117/118 conservation, zero fabrication, and one APB canonical loss. `.f.v` composes this with the 168-rule doctrine and 27 adversarial controls.
+Production is specification-instance-neutral within the governed boundary, not perfect or product-complete: unmeasurable alpha strata, incomplete coverage/accounting, blocked adapters, insufficient history, and `.7` remain explicit.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how is a fused Fields(Continued) caption handled
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -295,5 +297,3 @@
   > how was the eval gold checked for idiosyncrasy
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how was the migrated alignment task evidence independently audited
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents

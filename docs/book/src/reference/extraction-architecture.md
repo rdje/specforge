@@ -169,7 +169,11 @@ words. Conformance projects only symbol fragments embedded inside generated iden
 unordered reference/responsibility sets plus top-level ISF declarations; ambiguous ids and transaction order stay
 exact. The final clean-revision aggregate has 35 pass / zero fail / 16 unmeasurable / zero invalid. Every completed
 relation is a fresh pipeline run under revision `2cdcd131`; retained evidence supplies only the frozen alpha-
-eligibility boundary. Complete-population results and final production-genericity signoff remain open.
+eligibility boundary. The subsequent clean 12-source / 48-stage replay publishes 39/0/1 IntentIR TP/FP/FN,
+42/42 provenance, 117/118 conservation, zero fabrication, and one APB canonical loss. Final `.f.v` signoff
+composes these behavioral results with the unconditional structural doctrine and its 27 adversarial controls.
+Production is specification-instance-neutral within that governed boundary. Sixteen alpha strata remain
+honestly unmeasurable, coverage/accounting is incomplete, and product-level PDF-to-ISF completion remains open.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively

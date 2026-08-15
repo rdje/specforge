@@ -96,9 +96,10 @@ executable relation. A current-schema artifact with no proof is rejected. Named 
 typed noncanonical overlays that have no canonical serializer or writer, and every production writer
 reloads its upstream artifact through the canonical verifier before persistence.
 
-Whole-pipeline production-genericity signoff still depends on the downstream remediation and
-qualification work described in
-[Extraction Architecture](../reference/extraction-architecture.md).
+Whole-pipeline production-genericity signoff is complete within the governed structural and behavioral boundary
+described in [Extraction Architecture](../reference/extraction-architecture.md). That claim does not convert
+missing evidence into success: the current population still publishes one canonical loss and incomplete
+coverage/accounting surfaces.
 SourceIR proof currency now uses the shared
 [production-semantic digest closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met):
 test/comment-only edits are inert, while the production registry, verifier closure, import bindings, and trusted

@@ -20,19 +20,20 @@ expressiveness as the bottleneck.
 
 - Root children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`.
 - `.0` through `.5` are complete, including the `.4a`–`.4c` and `.5a`–`.5b` children.
-- `.6` is in progress; its normalized children are `.6a`, `.6b`, `.6c`, `.6d`, and `.6e`.
-- `.6a`, `.6b`, and `.6c` are complete with all of their declared descendants.
-- `.6d` and `.6d.ii` are in progress; `.6d.i` and `.6d.ii.a` through `.6d.ii.e` are complete.
+- `.6` is complete; its normalized children are `.6a`, `.6b`, `.6c`, and `.6d`, while former lane `.6e` is
+  superseded by the later structural repair and clean population proof.
+- `.6a`, `.6b`, `.6c`, and `.6d` are complete with all of their declared descendants.
+- `.6d.i` and `.6d.ii` are complete; `.6d.ii.a` through `.6d.ii.f` are complete.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
-- `.6d.ii.f` is in progress; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
+- `.6d.ii.f` is complete; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
   corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has removed the production symbol-alpha
   coupling and published clean-revision held-out closure; `.f.iv.a` restored the structural carriers and
-  `.f.iv.b` published their clean 12-source proof. `.f.iv` is complete; `.f.v` is next after the clean commit.
+  `.f.iv.b` published their clean 12-source proof. `.f.iv` and final signoff `.f.v` are complete.
 - `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b` closure; `.f.v` is next after its clean commit.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -50,6 +51,12 @@ completed attempts are fresh under `2cdcd131`. Exact ADR 0025 reconciliation lea
 current and zero stale through the adapter. The first `.f.iv` clean full-PDF replay found one truth-loss and one
 incomplete carrier family. `.f.iv.a` restores both under closed structural grammar and leaves all 24 retained
 chains current; `.f.iv.b` publishes 39/0/1 TP/FP/FN with zero fabrications and routes final signoff to `.f.v`.
+`.f.v` composes the unconditional 168-rule structural boundary, its 27 adversarial controls, and the governed
+behavioral evidence: 35 completed held-out relations pass, 16 unavailable alpha relations remain explicitly
+unmeasurable, and the selected full repository signoff passes. Production is specification-instance-neutral
+within that governed boundary; this does not claim perfect recovery or complete PDF-to-ISF product behavior.
+Controller-ranked `.7` is the next eligible leaf for the sole canonical APB source-to-EvidenceIR loss; activation
+belongs to a separate clean-tree slice after this closure commits.
 
 ## Detailed task evidence
 

@@ -266,7 +266,10 @@ current input. The [behavioral design report](../../research/behavioral-generici
 publishes the exact boundary; the [initial-run report](../../research/behavioral-held-out-initial-run.md)
 preserves the diagnostic; and the [corrected qualification](../../research/behavioral-held-out-qualification.md)
 publishes denominators, execution provenance, uncertainty, the measured production failure, and its remediated
-clean-revision closure. Complete reviewed-population replay and final signoff remain open.
+clean-revision closure. The final reviewed-population replay is 39/0/1 IntentIR TP/FP/FN with 42/42 provenance,
+zero fabrication, and one APB loss. `.f.v` composes that evidence with the unconditional structural gate and
+closes production-genericity signoff within the governed boundary. This does not claim perfect recovery or a
+complete PDF-to-ISF product; 16 alpha strata and several coverage/accounting surfaces remain explicitly open.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

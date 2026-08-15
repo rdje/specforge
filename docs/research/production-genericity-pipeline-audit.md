@@ -1,9 +1,9 @@
 # Production-genericity pipeline audit
 
-Status: **discovery, proof migration, structural enforcement, adversarial mutation, per-rule alpha, and final structural/migration-delta qualification complete; population behavioral qualification remains**
+Status: **complete within the governed structural and behavioral production boundary; product recall and PDF-to-ISF completion remain separate work**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
-Latest structural update: 2026-08-13 (`.6d.ii.e.vii`)
+Latest signoff update: 2026-08-15 (`.6d.ii.f.v`)
 Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
 Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
 
@@ -606,6 +606,18 @@ dispositions, denominators, strata, and descriptive Wilson intervals; 17/17 cont
 held-out label, outcome, interval, alias, or threshold entered production. The real coupling is now owned by
 `.6d.ii.f.iii.a` before whole-population replay or final genericity decision.
 
+## Final behavioral and population signoff
+
+Leaf `.6d.ii.f.iii.a` removes the measured I2C symbol-spelling/ordering coupling without a named branch. Its exact six-signal / 352-occurrence alpha relation preserves all five stages; the refreshed matrix is 35 pass / zero fail /
+16 unmeasurable / zero invalid. Unmeasurable rows lack a typed opaque alpha surface or are vacuous, never passes.
+
+Clean `.f.iv.b` replays all 12 reviewed sources and 48 stages from `e125aac7`: 39/0/1 IntentIR TP/FP/FN, 42/42 provenance, 117/118 conservation, zero fabrication, and one missing APB `PSEL|must_be_value|HIGH` fact.
+Every controller hard gate passes; convergence remains unmeasurable because comparable history is insufficient.
+
+Final `.f.v` composes this with the unconditional 168-rule structural boundary and 27 adversarial controls under the doctrine gate and selected full CI. Production is specification-instance-neutral within this governed boundary;
+conformance labels and expected outcomes cannot steer canonical authority. This is not perfect recall or full PDF-to-ISF completion: modality capture/accounting, residual actionability, omitted capability islands, and one
+canonical loss remain published product work; controller-ranked `.7` owns the first loss.
+
 ## Historical correction
 
 `PDF-AGNOSTIC-EXTRACTION.4` previously closed genericity using a small seeded check focused on
@@ -616,7 +628,8 @@ neutrality and must be annotated as superseded by this audit and the `.6d.ii` re
 
 ## Exit criteria
 
-Discovery and structural qualification are complete. The production-genericity parent remains open until:
+Discovery, structural qualification, behavioral qualification, and the production-genericity parent are
+complete. Signoff is retained only while:
 
 - every P0/P1 item above is removed or relocated to conformance;
 - the core compiles without corpus-specific public types/modules;

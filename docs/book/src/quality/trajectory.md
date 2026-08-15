@@ -334,15 +334,15 @@ is `.1`; the guarded canonical-path capability ledger is `.2`; typed visual acti
 evaluator foundation is `.4a`; `.4b` locks the balanced reviewed population; `.4c` publishes the exact
 incomplete result and upstream blocker diagnosis; `.5a` supplies the generic controller; and `.5b` composes the
 first retrospective-baseline snapshot; `.6a` supplies the first current-binary replay and hard artifact-currency
-gate. The current metric controller recommends `.6e`, but remains report-only and reviewable; the stronger
-owner-mandated production-genericity invariant keeps `.6d.ii.f.iii.a` as the active program frontier. The
-identity/spelling/prompt/corpus remediation parent `.6d.ii.d` and structural proof parent `.e` are qualified and
-closed. `.f.i` freezes the behavioral oracle and population; `.f.ii` implements whole-document relations and
-negative sensitivity; and `.f.iii` corrects and executes the held-out matrix. Its sole measurable I2C alpha pair
-fails below SourceIR, so `.f.iii.a` now owns production symbol-spelling/ordering remediation before complete-
-population replay and closure.
+gate. The production-genericity program under `.6d.ii` is now complete: identity/spelling/prompt/corpus repair,
+proof-carrying structural enforcement, 27 adversarial controls, and behavioral identity, alpha, paraphrase,
+negative, held-out, and population evidence compose. The final matrix is 35 pass / zero fail / 16 unmeasurable /
+zero invalid, and the reviewed population is 39/0/1 IntentIR TP/FP/FN with zero fabrication. This signs off one
+specification-instance-neutral production core, not perfect recovery or product completion. The report-only
+controller has zero hard-gate violations, remains `unmeasurable` for convergence due to insufficient comparable
+history, and ranks `.7` first for the sole APB source-to-EvidenceIR canonical loss.
 
-The current frontier is the production-genericity remediation under `.6d.ii`; its whole-pipeline audit is
+The completed whole-pipeline audit is
 [`docs/research/production-genericity-pipeline-audit.md`](../../../research/production-genericity-pipeline-audit.md).
 The frozen behavioral oracle is
 [`docs/research/behavioral-genericity-qualification-design.md`](../../../research/behavioral-genericity-qualification-design.md).

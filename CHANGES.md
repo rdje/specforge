@@ -1,3 +1,18 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v — close production-genericity signoff
+
+- Composed the unconditional proof-carrying 168-rule structural boundary, all 27 adversarial structural controls,
+  and the conformance-owned identity, alpha, reviewed paraphrase/layout, semantic-negative, held-out, and complete-
+  population evidence into one final production-genericity signoff.
+- Preserved the exact evidence limits: 35 held-out relations pass, 16 alpha strata are honestly unmeasurable, the
+  reviewed population is 39/0/1 IntentIR TP/FP/FN with 42/42 provenance and zero fabrication, and the trajectory
+  remains unmeasurable until comparable history exists.
+- Closed `.f`, `.6d.ii`, `.6d`, and `.6` while explicitly limiting the claim to a specification-instance-neutral
+  production core. This is not perfect-recall or full PDF-to-ISF product completion; `.7` owns the remaining APB
+  `PSEL=HIGH` source-to-EvidenceIR loss.
+- Synchronized the task routes, controller interpretation, roadmap, live status, engineering record, research,
+  mdBook, Knowledge Map, and bounded resume pointer. The selected signoff full-CI checkpoint passes; ordinary
+  preceding commits used focused checks plus the mandatory doctrine gate under the repository CI policy.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b — publish repaired reviewed population
 
 - Audited and pinned the replay example's exact four post-`--` values. The previously recorded five-argument

@@ -27,7 +27,7 @@
 | [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |
 | [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md) | 2026-06-07 | `current` | A signal-constraint subject must be a DECLARED signal (drops property/config/doc-meta noise) |
 | [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md) | 2026-06-17 | `current` | Bar #5/#6 (behavior/temporal lowering, no silent drop) HOLDS on the broader 78-doc corpus — the 160 undecla… |
-| [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md) | 2026-08-14 | `current` | Behavioral genericity qualification uses bounded relational oracles in conformance |
+| [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md) | 2026-08-15 | `current` | Behavioral genericity qualification uses bounded relational oracles in conformance |
 | [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md) | 2026-08-15 | `current` | Behavioral holdout separates oracle defects, repairs I2C alpha coupling, and requires fresh revision evidence |
 | [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md) | 2026-08-14 | `current` | Conformance owns closed five-stage identity and alpha qualification |
 | [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md) | 2026-08-14 | `current` | Reviewed text equivalence is digest-pinned and parser-boundary demonstrated |
