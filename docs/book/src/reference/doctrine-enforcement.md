@@ -309,6 +309,13 @@ derivation, strict-boundary controls, and independent catalog-feasibility probe.
 avoids turning the pull-request template into numeric evidence or maintaining another copy of the result.
 `[claim: workflow-standard-capacity-profile]`
 
+The manual-wide quantitative repair starts from prose, not every digit. After fenced examples are excluded, a
+bounded lexical grammar emits percentages, fractions, and numeric dimensional units as review candidates. Every
+candidate must be covered exactly once by a tracked exact region, then semantic authority—not syntax—classifies
+it as current derived/identity-gated/registered/incomplete evidence or a named authored, example/identity, or
+dated-evidence exclusion. Inventory, adjudication, and result freeze are separate transactions so the grammar
+cannot be weakened in response to its own findings.
+
 ## How the gates are layered
 
 Defense in depth, the same four-layer model the memory architecture uses. Each layer catches what the

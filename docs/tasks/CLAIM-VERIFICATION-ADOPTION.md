@@ -209,14 +209,47 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3b.2 — bind the workflow baseline authority`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3b.3`
-  Status: `pending`
+  Status: `active`
   Goal: replace the mdBook-wide quantitative placeholder with bounded assertion-region authority
+  Children: `.3b.3.0`, `.3b.3.1`, `.3b.3.2`, `.3b.3.3`
   Acceptance: classify the maintained manual's actionable current quantitative assertions by exact region and
   canonical producer/claim authority; keep dated boundary evidence explicit; no blanket book-level verifier may
   stand in for uninspected prose
-  Verification: bounded quantitative contract/fault controls, exact source verifiers, book currentness/build,
-  census, claim, and doctrines
-  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.3 — bind mdBook quantitative authorities`
+  Verification: closes through `.3b.3.0`–`.3b.3.3`
+  Commit: parent closes with `.3b.3.3`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.3.0`
+  Status: `done`
+  Goal: freeze the quantitative candidate grammar, authority schema, bounds, and implementation sequence
+  Acceptance: derive the prose-only lexical denominator; require exact coverage without treating syntax as
+  semantic scope; freeze closed current/excluded outcomes, exact regions, joins, and portable caps before code
+  Verification: independent lexical census, task/current/book alignment, frozen current census, and doctrines
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.3.0 — freeze the mdBook quantitative census design`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.3.1`
+  Status: `pending`
+  Goal: implement the bounded mdBook quantitative inventory and fail-closed producer
+  Acceptance: derive book membership, ignore fenced code deterministically, emit every candidate prose line,
+  validate exact tracked regions and closed outcomes, and fail missing/overlap/stale/untracked/unknown/bounds
+  Verification: syntax, positive/negative fixtures, real inventory/check/report/producer, book, and doctrines
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.3.1 — implement the mdBook quantitative census`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.3.2`
+  Status: `pending`
+  Goal: adjudicate every candidate into current actionable authority or an exact standard-scope exclusion
+  Acceptance: every lexical candidate line is covered exactly once; current assertions join executable derived/
+  identity authority, a current claim id, or named missing legs; exclusions name authored/example/identity/dated
+  authority and cannot hide an actionable current assertion
+  Verification: derive-and-diff result, joined verifiers/claims, manual competing scan, book, and doctrines
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.3.2 — adjudicate mdBook quantitative assertions`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.3.3`
+  Status: `pending`
+  Goal: freeze the exact-region result as the mdBook quantitative authority consumed by `.3b.4`
+  Acceptance: publish bounded totals/outcomes, prove no uncovered or overlapping candidate, and expose any honest
+  incomplete assertion rather than promoting the selective book-currentness check
+  Verification: clean result replay, full fault matrix, currentness/docs build, claim/live-size, and doctrines
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.3.3 — freeze mdBook quantitative authorities`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3b.4`
   Status: `pending`
@@ -269,11 +302,14 @@ the workflow through the mdBook and repository review path.
 | 9 | `CLAIM-VERIFICATION-ADOPTION.3b.0` | `done` | five frozen gaps are assigned to authority-specific repair leaves |
 | 10 | `CLAIM-VERIFICATION-ADOPTION.3b.1` | `done` | existing route authorities and RED controls are proven sufficient |
 | 11 | `CLAIM-VERIFICATION-ADOPTION.3b.2` | `done` | authored identity and registered capacity authority are separated |
-| 12 | `CLAIM-VERIFICATION-ADOPTION.3b.3` | `pending` | replace the blanket mdBook quantitative anchor with exact regions |
-| 13 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `pending` | atomically re-freeze repaired identities and close `.3b` |
-| 14 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
-| 15 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
-| 16 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
+| 12 | `CLAIM-VERIFICATION-ADOPTION.3b.3.0` | `done` | prose candidate grammar and exact-region schema frozen before code |
+| 13 | `CLAIM-VERIFICATION-ADOPTION.3b.3.1` | `pending` | implement the bounded inventory and fail-closed producer |
+| 14 | `CLAIM-VERIFICATION-ADOPTION.3b.3.2` | `pending` | adjudicate every candidate line by semantic authority |
+| 15 | `CLAIM-VERIFICATION-ADOPTION.3b.3.3` | `pending` | independently freeze the mdBook quantitative result |
+| 16 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `pending` | atomically re-freeze repaired identities and close `.3b` |
+| 17 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
+| 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
+| 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
 
 ## Decisions
 
@@ -351,6 +387,30 @@ the workflow through the mdBook and repository review path.
   normative identity; the actionable capacity paragraph already resolves to `workflow-standard-capacity-profile`
   with its tracked derivation, strict-boundary RED controls, and independent catalog-feasibility probe. No copied
   capacity value or second claim record is introduced.
+- `2026-08-15` (`.3b.3.0`): the book quantitative repair uses a prose-only lexical candidate grammar as a
+  completeness alarm, not a semantic classifier. At this boundary it finds 301 candidate lines across 21 files;
+  exact region adjudication must cover each once, while code fences remain outside prose scope. The grammar,
+  candidate denominator, and outcome schema freeze before `.3b.3.1` implementation.
+
+## Frozen mdBook Quantitative-Census Design (`CLAIM-VERIFICATION-ADOPTION.3b.3.0`)
+
+- Membership derives from the tracked mdBook `SUMMARY.md` plane and must agree with the governed
+  `shipped_behavior` surface; no parallel hand-written file list is authoritative.
+- Fence state is per file and recognizes backtick or tilde fenced blocks. Fence delimiter lines and all enclosed
+  example code are excluded before lexical candidate discovery; unterminated fences fail closed.
+- A prose line is a candidate when it contains a percentage, numeric fraction, or a number followed by a bounded
+  quantitative unit such as files, lines, bytes, records, members, facts, questions, shards, cases, tests,
+  checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines,
+  signals, registers, artifacts, or rules. Syntax finds review work; it never decides claim scope.
+- Each candidate line is covered exactly once by a tracked exact line-range/SHA-256 region. Regions on one path
+  cannot overlap and every region must contain at least one candidate.
+- Current actionable regions use one of four closed authorities: executable `derived`, executable
+  `identity_gated`, current `registered` claim id, or honest `incomplete` with named missing legs. Excluded regions
+  use a closed standard-scope reason for authored threshold/choice, example literal, schema/version/date/path/
+  digest identity, or explicitly bounded historical evidence.
+- The JSONL contract is capped below portable checker maxima at 512 records, 262,144 bytes, 16,384 bytes per
+  record, 32 array items, and 2,048 scalar bytes. Inventory implementation and result adjudication/freeze are
+  separate leaves; `.3b.4` consumes only the frozen result.
 
 ## Frozen `.3b` Repair Frontier (`CLAIM-VERIFICATION-ADOPTION.3a.2`)
 
@@ -464,6 +524,23 @@ was added; the stable-path remedy and its consumed authority are complete.
 ## Blockers
 
 - None. `.3b` repairs only the five frozen incomplete evidence keys next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.3.0`
+
+- [x] **REPRODUCE / MEASURE** — a prose-only scan over governed book Markdown finds 301 quantitative-looking
+  candidate lines across 21 files at this dated design boundary; fenced examples are excluded before matching.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the frozen `SUMMARY.md` title anchor neither enumerates quantitative prose
+  nor distinguishes current actionable assertions from examples, authored thresholds, identities, and dated
+  evidence; the selective book-currentness checker covers only named product seams.
+- [x] **ADDRESSED (verified)** — exact coverage, non-overlap, SHA regions, closed authority/exclusion outcomes,
+  tracked verifier/claim joins, fence parsing, bounds, and staged inventory/adjudication/result leaves are frozen.
+- [x] **NO REGRESSION** — design changes no book assertion, product code, checker, census outcome, registry schema,
+  hook, CI path, or limit; current census, task/memory/book/live-size/claim and doctrines pass.
+  `[claim: current-claim-census-frozen]`
+- [x] **GENERICITY** — candidate discovery uses Markdown/fence and dimensional syntax only; authority follows
+  lifecycle and evidence, never a chapter, protocol, vendor, metric value, model, or language.
+- [x] **LOCKSTEP** — task, resume pointer, ledgers, and mdBook agree on design→inventory→adjudication→freeze;
+  `.3b.4` remains the only leaf permitted to change the outer 51-unit census.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.2`
 
@@ -655,6 +732,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3b.2` | capacity derivation; five-case boundary controls; independent catalog-feasibility
   probe; canonical catalog; current census; claim/book/live-size/doctrine gates | authored workflow identity is
   separated from the existing registered capacity paragraph without changing source or census outcomes |
+| `2026-08-15` | `.3b.3.0` | independent prose-only quantitative scan; design/schema/bound review; current census;
+  task/memory/book/claim/live-size/doctrine gates | bounded candidate and exact-region authority design frozen;
+  no book assertion or outer census outcome changed |
 
 ## Commit Log
 
@@ -671,6 +751,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3b.0` | `CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map` | authority-specific route, workflow-baseline, mdBook-quantitative, and closure leaves |
 | `.3b.1` | `CLAIM-VERIFICATION-ADOPTION.3b.1 — bind maintained-reference authorities` | existing README, fact-card, and canonical catalog authorities proven sufficient for later atomic binding |
 | `.3b.2` | `CLAIM-VERIFICATION-ADOPTION.3b.2 — bind the workflow baseline authority` | authored title identity separated from the existing registered capacity paragraph |
+| `.3b.3.0` | `CLAIM-VERIFICATION-ADOPTION.3b.3.0 — freeze the mdBook quantitative census design` | prose candidate grammar, exact coverage/authority schema, portable bounds, staged result freeze |
 
 ## Changelog
 
@@ -702,3 +783,5 @@ was added; the stable-path remedy and its consumed authority are complete.
   controls; no new checker or premature frozen-result rewrite is needed.
 - `2026-08-15`: `.3b.2` reuses `workflow-standard-capacity-profile` for the exact actionable paragraph and keeps
   authored workflow identity outside measurement scope; no hand-carried copy or duplicate claim is added.
+- `2026-08-15`: `.3b.3.0` freezes a prose-only quantitative candidate grammar and exact-region authority schema,
+  separating inventory, adjudication, and result freeze before the outer census can consume it.

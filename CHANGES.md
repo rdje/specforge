@@ -1,3 +1,11 @@
+### CLAIM-VERIFICATION-ADOPTION.3b.3.0 — freeze the mdBook quantitative census design
+
+- Froze a prose-only candidate grammar, exact non-overlapping region coverage, closed actionable/excluded
+  outcomes, tracked verifier/claim joins, and portable JSONL bounds before implementing the mdBook sweep.
+- Separated inventory, semantic adjudication, and result freeze so the candidate grammar cannot move while its
+  own findings are classified. No book assertion or outer census outcome changed.
+  `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3b.2 — bind the workflow baseline authority
 
 - Separated authored workflow identity from the actionable capacity paragraph and bound the latter to the

@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3b.3.0 (`2026-08-15`) — syntax discovers; authority adjudicates
+
+A title anchor cannot represent quantitative book coverage, but scanning every digit would confuse dates,
+versions, paths, schema tokens, and examples with current claims. The bounded design uses a higher-signal lexical
+grammar only to create review obligations: prose percentages, fractions, and numeric dimensional units. Fenced
+code is removed before discovery because executable examples have their own doctest authority.
+
+Every discovered line must then belong to one exact non-overlapping region whose semantic outcome is explicit.
+Current actionable regions need a derived/identity verifier, current claim id, or honest missing legs; excluded
+regions retain authored, example/identity, or dated-evidence authority. Inventory, adjudication, and result freeze
+are different leaves so neither the denominator nor the schema can be tuned to make a difficult finding vanish.
+
 ## CLAIM-VERIFICATION-ADOPTION.3b.2 (`2026-08-15`) — policy identity and measured capacity are different
 
 The workflow surface is not one homogeneous claim. Its first-line pull-request-template anchor identifies an
