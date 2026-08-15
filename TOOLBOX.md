@@ -79,6 +79,12 @@ Use `none` only when the slice publishes or changes no current actionable assert
 may be one named oracle, but repeating the implementation's own classifier or source interpretation is not an
 independent falsification leg.
 
+The active registry is `doctrine/claim_verification/claims.jsonl`. Use
+`perl scripts/check_claim_verification.pl --report` to see status/publication resolution,
+`--check` for the real gate, and `--self-test` for its positive plus missing/unknown/duplicate/stale/untracked RED
+matrix. Commands are argv arrays and all producer/input/evidence paths are tracked, digest-bound, and covered by
+the declared stale check; the checker never evaluates registry content through a shell.
+
 ## How to run the SpecForge CLI
 
 ```bash

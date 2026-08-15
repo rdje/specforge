@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how are signal presence matrices captured into typed records
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > how are signal presence matrices with signals trapped in header rows handled
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -76,6 +78,8 @@
   > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I waive or range-scope the task-acceptance check
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how do Published-claims ids resolve
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how do byte-granular page fragments chain (offset plus size adjacency)
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
@@ -186,6 +190,8 @@
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does chain currency distinguish a checked blocked adapter from an emitted ISF file
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how does claim evidence become stale
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how does collapse_section_header_register_identity decide same-register vs different-register
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -292,9 +298,3 @@
   > how does the corpus task preserve all evidence after containment
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does the extract-constraints-llm prompt express a validity requirement
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how does the extractor avoid minting a constraint about a cross-referenced register field
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split

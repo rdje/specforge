@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.2 (`2026-08-15`) — executable evidence needs two closed joins
+
+A digest alone can preserve the wrong producer, while an always-green command can rerun against incomplete input
+identity. The registry therefore closes both joins: every source/control command names a tracked producer and
+explicit inputs that must occur in the exact artifact set, and the stale check must cover that whole set. The
+gate then executes the commands and independently compares the identities.
+
+Commands are argv arrays rather than shell strings. That keeps the registry declarative and reviewable: adding a
+record cannot smuggle quoting, redirection, expansion, or a pipeline into the gate. It also makes the honest limit
+clear. Closed membership catches declared dependency drift; `.3` and `.4` still have to audit whether an author
+omitted a semantic dependency or chose a non-discriminating control.
+
 ## CLAIM-VERIFICATION-ADOPTION.1b (`2026-08-15`) — authority is a transaction, not stored permission
 
 Once the 21-file profile is committed, its prior 16-file state remains visible in Git and ADR 0043 remains the

@@ -113,13 +113,16 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.2`
-  Status: `pending`
+  Status: `done`
   Goal: mechanize bounded claim provenance and register it in the doctrine driver
   Acceptance: a self-bounded registry/checker validates governed claim ids, source commands, falsification
   evidence, durability state, complete artifact-input identity, tracked producers, and stale-state behavior;
   positive and controlled negative fixtures prove missing/unknown/duplicate/stale/untracked cases fail clearly;
   `scripts/check_doctrines.sh` registers the check without duplicating hook/CI wiring
-  Verification: checker self-test plus clean/controlled-failure cases and mandatory doctrines
+  Verification: strict JSONL parser and Git/digest/argv executor pass 22/22 positive plus missing/unknown/
+  duplicate/stale/untracked/bound cases; three verified records execute eight source/control commands; pending
+  message and HEAD ID resolution are covered; the tenth doctrine row runs through existing hook/CI wiring; all
+  focused documentation/currentness checks and gate-tier doctrines pass
   Commit: `CLAIM-VERIFICATION-ADOPTION.2 — gate published claim provenance`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3`
@@ -159,8 +162,8 @@ the workflow through the mdBook and repository review path.
 | 2 | `CLAIM-VERIFICATION-ADOPTION.1` | `done` | standard, ADR, discovery, authoring, and review contract are published |
 | 3 | `CLAIM-VERIFICATION-ADOPTION.1a` | `done` | measured 21-file profile restores headroom without changing explicit topology |
 | 4 | `CLAIM-VERIFICATION-ADOPTION.1b` | `done` | exact transaction authority retired; committed profile remains unchanged |
-| 5 | `CLAIM-VERIFICATION-ADOPTION.2` | `pending` | next: implement the bounded claim registry and unconditional semantic gate |
-| 6 | `CLAIM-VERIFICATION-ADOPTION.3` | `pending` | the constant sweep needs the registered classification/gate shape |
+| 5 | `CLAIM-VERIFICATION-ADOPTION.2` | `done` | bounded registry, executable evidence join, and doctrine gate active |
+| 6 | `CLAIM-VERIFICATION-ADOPTION.3` | `pending` | next: sweep current-facing constants through the active registry |
 | 7 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
 | 8 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
 
@@ -192,6 +195,12 @@ the workflow through the mdBook and repository review path.
   14/16 files (87.5%). `.1a` owns a measured repeatable remedy; `.1` does not hide the warning or widen a bound.
 - `2026-08-15` (ADR 0043): retain explicit stable membership and minimally re-derive 21 slots from 14 current
   members plus the measured four-member peak. Per-file limits stay fixed; aggregate reachability moves with count.
+- `2026-08-15` (`.2` design): use strict self-bounded JSONL claim records, argv-form commands, exact tracked
+  artifact digests, executed source/control probes, and exact message ID resolution. Do not execute a shell string
+  or duplicate hook/CI wiring; the existing doctrine driver is the sole composition seam.
+- `2026-08-15` (ADR 0044): verified records join executed re-derivation/RED-control commands to the complete
+  tracked SHA-256 artifact set; incomplete/superseded records preserve uncertainty, and registry validity never
+  substitutes for semantic truth.
 
 ## Adoption Mapping (`CLAIM-VERIFICATION-ADOPTION.0`)
 
@@ -217,10 +226,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 ## Claim Evidence — `claim-verification-contract-published`
 
 - **Claim:** SpecForge publishes one repository-owned three-leg author/reviewer contract, discoverable from the
-  bootstrap and README, with ADR 0042 rationale and an exact claim/no-claim declaration; its mechanical provenance
-  registry is still pending rather than implied.
-- **Status:** `verified` for the publication/discovery assertion; mechanical registry enforcement is explicitly
-  outside the assertion and remains `.2` work.
+  bootstrap and README, with ADR 0042 rationale, an exact claim/no-claim declaration, and active bounded provenance
+  enforcement.
+- **Status:** `verified` for the publication/discovery/enforcement assertion.
 - **RE-DERIVE:** `rg -n 'Published-claims:|Re-derive|falsif|durab' CLAIM_VERIFICATION.md AGENTS.md COMMIT.md
   TOOLBOX.md .github/PULL_REQUEST_TEMPLATE.md`; `scripts/check_readme_policy.sh`; and
   `perl scripts/check_canonical_collection_catalogs.pl --check` reproduce the contract, entry routes, and exact
@@ -245,9 +253,25 @@ was added; the stable-path remedy and its consumed authority are complete.
   before 21.” The tracked five-case self-test observes exact-90%, cap-20, and bad-aggregate controls go RED;
   full-profile arithmetic gives 31 catalog lines / at most 11,138 bytes under 384 / 65,536, and the registry's
   independent target-array hard cap is 32.
-- **DURABILITY:** the producer, surface registry, exact increase authority, ADR 0043, and catalog checker are
-  tracked. Generic live-size count warning is the stale-state trigger for a future re-measurement; `.1b` owns
-  retirement of the transaction-only authority.
+- **DURABILITY:** the producer, surface registry, ADR 0043, and catalog checker are tracked and digest-bound in the
+  active claim registry. Generic live-size count warning is the stale-state trigger for a future re-measurement;
+  `.1b` retired the transaction-only authority.
+
+## Claim Evidence — `claim-provenance-gate-active`
+
+- **Claim:** the bounded provenance checker is an unconditional gate-tier doctrine rejecting malformed, unknown,
+  duplicate, stale, untracked, incompletely watched, or unresolved published claim evidence.
+- **Status:** `verified` for the registered gate behavior; semantic truth still depends on the named independent
+  evidence and remains auditable rather than inferred from record syntax.
+- **RE-DERIVE:** `perl scripts/check_claim_verification.pl --check` validates three current verified records,
+  executes eight argv-form source/control commands, authenticates every artifact digest, and resolves the pending
+  message or `HEAD`; `--report` exposes the same census.
+- **FALSIFY:** the competing hypothesis is “plausible malformed or stale provenance can remain green.” The tracked
+  `--self-test` suite observes 22 positive/RED cases covering honest statuses plus missing/unknown/duplicate/stale/untracked/unsafe/
+  false-RED/supersession/bound failures before it reports green.
+- **DURABILITY:** ADR 0044, the self-bounded registry, checker, standard, and one doctrine-driver row are tracked;
+  each verified record's stale check covers its exact artifact set, and the existing pre-commit/CI driver is the
+  only wiring seam.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.0`
 
@@ -272,14 +296,30 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Open Questions
 
-- `.2` must select the exact claim identity/input-digest schema after `.1` freezes the local normative vocabulary;
-  the dedicated bounded-registry topology and required semantic fields are no longer open.
+- ADR 0044 resolves `.2`'s schema: closed self-bounded JSONL, unique stable ids/statuses, argv commands, exact
+  tracked artifact SHA-256, full stale-check membership, and exact publication resolution.
 - `.1a` must decide whether measured workflow-standard growth warrants a re-derived flat profile or a bounded
   routed topology; ADR 0043 resolves this in favor of the minimal 21-file flat explicit profile.
 
 ## Blockers
 
-- None. `.2` is the next executable leaf.
+- None. `.3` is the next executable leaf.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.2`
+
+- [x] **REPRODUCE / MEASURE** — the real checker reports three verified claim records, eight executed source/
+  control commands, exact tracked artifact identities, and pending-message or `HEAD` publication resolution.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the active prose contract had no join between claim IDs, rerunnable evidence,
+  complete artifact identity, stale-state behavior, and the existing doctrine composition seam.
+- [x] **ADDRESSED (verified)** — ADR 0044, strict bounded JSONL, direct argv execution, tracked SHA-256 artifacts,
+  complete stale membership, honest status semantics, message resolution, and one gate-tier row land together.
+- [x] **NO REGRESSION** — 22/22 controlled cases, all eight declared commands, claim report, canonical/task/
+  decision/Knowledge Map catalogs, README/current-book/live-size/locality checks, mdBook, and doctrines pass; no
+  product Rust, derived-state contract, hook, CI workflow, claim threshold, or workflow capacity changes.
+- [x] **GENERICITY** — records classify assertion lifecycle/evidence roles and execute opaque argv; no chip,
+  document, vendor, protocol, corpus, model, language, or metric name grants validity.
+- [x] **LOCKSTEP** — standard, ADR 0044, registry, checker, doctrine standard/driver, toolbox/commit workflow,
+  mdBook, task/current status, ledgers, Knowledge Map, and resume pointer agree that provenance gating is active.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.1a`
 
@@ -331,6 +371,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.1b` | authority census; capacity reproducer; canonical catalog; task/KM/currentness;
   live-size; doctrine gates | registry returns to its one control record; 21-file profile and all evidence stay
   unchanged; `.2` is executable |
+| `2026-08-15` | `.2` | checker syntax/report + 22-case RED matrix; 8 executed evidence commands; catalogs/KM/
+  README/book/live-size/locality/mdBook/doctrines | 3 verified records current; prepared/HEAD publications resolve;
+  tenth doctrine registered through the existing driver only |
 
 ## Commit Log
 
@@ -340,6 +383,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.1` | `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract` | normative scope, ADR 0042, discovery, authoring/review contract, and mdBook alignment |
 | `.1a` | `CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity` | tracked measurement, ADR 0043, exact authority, stable explicit topology |
 | `.1b` | `CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority` | one-use authority removed after the 21-file profile became baseline |
+| `.2` | `CLAIM-VERIFICATION-ADOPTION.2 — gate published claim provenance` | bounded registry, executable evidence join, stale digest gate, publication resolution, tenth doctrine |
 
 ## Changelog
 
@@ -357,3 +401,5 @@ was added; the stable-path remedy and its consumed authority are complete.
   stable explicit topology, and leaves exact authority retirement to `.1b` after commit.
 - `2026-08-15`: `.1b` removes the consumed 16→21 authority while leaving the committed workflow profile and all
   of its current evidence unchanged; `.2` is executable.
+- `2026-08-15`: `.2` activates ADR 0044's bounded executable evidence join, migrates three verified current
+  claims, and registers the tenth doctrine without adding another hook or CI path; `.3` owns the constant sweep.

@@ -28,6 +28,8 @@
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > does a valid claim registry record prove the assertion true
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does adapter output reconciliation delete unrelated files or directories
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -295,5 +297,3 @@
   > how are rotated version matrices remapped for presence capture
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how are serial/architecture spec interface signals added to the catalog
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how are signal presence matrices captured into typed records

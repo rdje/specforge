@@ -55,6 +55,7 @@ changed* lives in git (layer D), not here.
 | [0041](0041-decision-capacity-is-rederived-without-moving-stable-records.md) | Decision capacity is re-derived without moving stable records | 2026-08-15 | accepted | documentation, decisions, knowledge-map, capacity, continuity, containment |
 | [0042](0042-actionable-published-claims-require-three-dimensionally-different-legs.md) | Actionable published claims require three dimensionally different verification legs | 2026-08-15 | accepted | claims, verification, doctrine, review, continuity, currentness |
 | [0043](0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md) | Workflow-standard capacity is re-derived from explicit member growth | 2026-08-15 | accepted | workflow, documentation, capacity, catalogs, containment, continuity |
+| [0044](0044-claim-provenance-is-a-bounded-executable-evidence-join.md) | Claim provenance is a bounded executable evidence join | 2026-08-15 | accepted | claims, verification, registry, doctrine, currentness, review |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

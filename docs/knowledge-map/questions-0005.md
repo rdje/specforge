@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > how does the extract-constraints-llm prompt express a validity requirement
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > how does the extractor avoid minting a constraint about a cross-referenced register field
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -108,6 +114,8 @@
   > how is max_cards derived from the knowledge_cards surface
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is prose signal over-capture prevented (no garbage)
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how is published claim provenance mechanically gated
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > how is register-field extraction quality measured / scored
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -289,11 +297,3 @@
   > how many unknown-kind tables does the corpus carry
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > how much RAM did the qwen2.5vl:7b VLM use on a timing-diagram crop (13 GB; host hit 87% used, across the 85% kill threshold)
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > how much disk do normalized bundles cost across the corpus
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how much disk do the retained normalized bundles cost
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how much fact-card catalog index headroom remains
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how much headroom remains in the corpus coverage task file

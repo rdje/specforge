@@ -65,6 +65,7 @@ other re-derivable trace.
 | `PROJECT-DATA-LOCALITY` | structural | Cargo, shell, production temporary-workspace, subprocess, and Python runtime seams keep owned data below the current repository and reject stale or escaping roots |
 | `PRODUCTION-GENERICITY` | structural | package direction, exact production inventories and rule joins, compiled raw/identity information flow, protected authority, and proof-only persistence all hold without a named-specification exception |
 | `CORPUS-FRONTIER` | derive-and-diff | the SourceIR-derived corpus cohort is partitioned exactly into explicit refreshed and remaining sets, retained bundles agree, and the task file states the same counts — source-library relocation cannot impersonate a refresh |
+| `CLAIM-VERIFICATION` | structural + oracle | bounded claim records, tracked digest-current artifacts, executed source/known-bad-control commands, complete stale-check coverage, and publication IDs resolve together |
 | `CHAIN-CURRENCY` | oracle | every proof-current artifact under `generated/` is exactly what today's binary reproduces from verified upstream authority; a legacy/proofless compatibility refusal is reported as an explicit unmeasurable frontier, while a stale current proof still fails — and retained normalized bundles match their declaration exactly |
 
 `CORPUS-FRONTIER` exists because of a defect worth stating plainly. The corpus refresh program tracked its own
@@ -252,10 +253,14 @@ case; and tracked producers plus complete artifact identity and a stale-state ga
 check is not the second leg. Missing evidence remains an explicit `incomplete` status rather than being converted
 into “verified.”
 
-ADR 0042 and `CLAIM_VERIFICATION.md` freeze that author/reviewer contract. The bounded registry/checker is the
-next adoption leaf, so this page does not yet claim that provenance is mechanically gated. Current-constant
-migration, tracked-producer/RED-control closure, and detailed user examples follow in the remaining adoption
-leaves.
+ADR 0042 and `CLAIM_VERIFICATION.md` freeze that author/reviewer contract. The active self-bounded JSONL registry
+stores unique statuses, argv-form commands, complete tracked artifact membership, exact SHA-256 identities,
+refresh ownership, and retained evidence. The gate executes every verified source/control command, rejects digest
+drift or incomplete stale-check coverage, and resolves the prepared commit message—or otherwise `HEAD`—against
+known non-superseded IDs. Its 22-case fixture matrix observes valid honest statuses plus missing, unknown, duplicate, stale, untracked,
+unsafe, false-RED, supersession, and bound controls go RED. This proves provenance is current and rerunnable; it
+does not make a wrong assertion true merely because its record parses. Current-constant migration, the broader
+tracked-producer/RED-control audit, and final worked examples remain in the next adoption leaves.
 
 ## How the gates are layered
 

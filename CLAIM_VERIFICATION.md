@@ -6,9 +6,10 @@ memory, the Knowledge Map, and doctrine enforcement.
 
 > Re-derive · falsify · make durable. Repeating one kind of check does not create independent evidence.
 
-The standard is normative for authoring and review. The bounded claim registry and doctrine check that will make
-its provenance shape mechanical are owned by `CLAIM-VERIFICATION-ADOPTION.2`; until that leaf lands, a completed
-claim declaration is required but must not be described as mechanically enforced.
+The standard is normative for authoring and review. **The bounded registry and gate are active** through
+`doctrine/claim_verification/claims.jsonl`, `scripts/check_claim_verification.pl`, and the doctrine driver. The
+gate proves record shape, tracked current inputs, rerunnable evidence commands, stale-state failure, and exact
+publication-ID resolution; it does not turn a syntactically valid record into semantic truth.
 
 ## 1. Scope
 
@@ -101,10 +102,10 @@ Published-claims: <claim-id>[, <claim-id>...]
 Use `none` only when the slice introduces or changes no in-scope current assertion. Normative policy and code may
 legitimately use `none`; a completion/status update that publishes current counts or pass claims may not.
 
-Each listed claim ID must resolve through the bounded registry introduced by
-`CLAIM-VERIFICATION-ADOPTION.2`. Until that registry exists, the owning task leaf must state the claim, its three
-legs, and any missing leg explicitly. Once the registry is active, inline current-facing prose uses the compact
-tag `[claim: <claim-id>]` next to the assertion when a reviewer cannot otherwise map it unambiguously.
+Each listed claim ID must resolve through `doctrine/claim_verification/claims.jsonl`. The gate validates the
+nonempty `git_message_brief.txt` prepared by the commit workflow, or otherwise the current `HEAD` message, and
+rejects missing, duplicate, unknown, or superseded declarations. Inline current-facing prose uses the compact tag
+`[claim: <claim-id>]` next to the assertion when a reviewer cannot otherwise map it unambiguously.
 
 A claim record has one of these honest outcomes:
 
@@ -114,6 +115,23 @@ A claim record has one of these honest outcomes:
 
 The word “verified” is reserved for the first state. A syntactically complete record does not prove its assertion;
 it makes the evidence re-runnable and reviewable.
+
+### Registry execution and identity
+
+Commands are stored as argument arrays with one declared tracked producer and an explicit input list. The checker
+never evaluates a shell string. For every `verified` record it executes the re-derivation and falsification
+commands, requires the declared exit/output markers, authenticates every producer/input/evidence path through Git,
+and compares exact SHA-256 identities. The stale check must cover the complete artifact list. Any dependency move
+therefore fails until the owner re-runs the evidence and refreshes or deliberately downgrades the record.
+
+The JSONL control record bounds total records, bytes, record bytes, arrays, and scalars below checker-compiled
+portable hard caps. Unknown fields fail closed. Run the focused contract with:
+
+```sh
+perl scripts/check_claim_verification.pl --self-test
+perl scripts/check_claim_verification.pl --check
+perl scripts/check_claim_verification.pl --report
+```
 
 ## 4. Stochastic assertions
 
@@ -173,8 +191,8 @@ doctrine driver.
 - Diagnostic and acceptance guidance: `TOOLBOX.md`
 - Pull-request review contract: `.github/PULL_REQUEST_TEMPLATE.md`
 - Doctrine driver: `scripts/check_doctrines.sh`
-- Planned bounded registry/checker: `doctrine/claim_verification/` and
-  `scripts/check_claim_verification.pl` (`CLAIM-VERIFICATION-ADOPTION.2`)
+- Bounded registry: `doctrine/claim_verification/claims.jsonl`
+- Mechanical checker: `scripts/check_claim_verification.pl`
 
 All durable paths in claim evidence are relative to the repository root. Generated or external material is an
 input only through an explicit tracked authority and lifecycle; it is never silently promoted to canonical

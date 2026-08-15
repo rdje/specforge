@@ -24,8 +24,8 @@ Use `none` only when the slice publishes or changes no current actionable assert
 `CLAIM_VERIFICATION.md`. A docs-only change is not automatically exempt: changing a current score, count,
 capacity, compatibility statement, or status requires claim IDs. For each ID, the owning task/claim record must
 name re-derivation, a dimensionally different falsification oracle, tracked durability/staleness, and any missing
-leg. The declaration is author/reviewer policy until `CLAIM-VERIFICATION-ADOPTION.2` activates its mechanical
-registry gate.
+leg. `scripts/check_claim_verification.pl` now resolves the declaration against the bounded registry and rejects
+missing, duplicate, unknown, superseded, untracked, or stale evidence.
 
 ## When To Run
 Run this workflow after each completed task/activity.

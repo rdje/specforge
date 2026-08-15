@@ -1,6 +1,6 @@
 ---
 id: doctrine-enforcement-adoption
-title: SpecForge enforces every mechanizable doctrine via one registry/driver (scripts/check_doctrines.sh) gated E1→E4; a Rust code change is blocked unless its task leaf carries an evidence-backed acceptance checklist
+title: SpecForge enforces every mechanizable doctrine via one registry/driver gated E1→E4, including published-claim provenance
 answers:
   - "how are doctrines enforced in specforge"
   - "what is scripts/check_doctrines.sh / the doctrine driver"
@@ -16,7 +16,7 @@ answers:
 date: 2026-06-22
 tags: [doctrine-enforcement, process, governance, pre-commit, ci, task-tree-doctrine, toolbox, adr-0003, portable-architecture]
 evidence: DOCTRINE_ENFORCEMENT.md (the standard; §10 = live registry); scripts/check_doctrines.sh (registry+driver, DOCTRINES array); scripts/check_task_acceptance.sh (evidence check); scripts/check_memory_architecture.sh + knowledge-map/scripts/check_knowledge_map.sh (the two structural checks); TOOLBOX.md (tool catalog + acceptance-checklist template); .githooks/pre-commit + scripts/run_ci.sh (E3/E4 wiring); docs/decisions/0006-doctrine-enforcement-architecture.md; docs/tasks/DOCTRINE-ENFORCEMENT-ADOPT.md; docs/book/src/reference/doctrine-enforcement.md
-reverify: "bash scripts/check_doctrines.sh  # prints a per-doctrine report, exits 0 with 'ALL 3 enforced doctrines PASS' (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE). grep -n 'DOCTRINES=' -A4 scripts/check_doctrines.sh shows the registry. A staged crates/**/*.rs change with no staged owning docs/tasks/*.md leaf carrying ROOT-CAUSE/ADDRESSED/NO-REGRESSION (ticked+evidence-backed) makes scripts/check_task_acceptance.sh exit 1."
+reverify: "bash scripts/check_doctrines.sh; sed -n '/^DOCTRINES=(/,/^)/p' scripts/check_doctrines.sh; perl scripts/check_claim_verification.pl --report"
 ---
 
 **SpecForge adopted the Doctrine-Enforcement architecture (`DOCTRINE_ENFORCEMENT.md`) on `2026-06-22`
@@ -32,9 +32,10 @@ runs them all and the git gates run the driver.
   (collecting all results, not stopping at the first failure), prints a per-doctrine PASS/FAIL report,
   exits nonzero iff any failed, and **meta-checks** that each registered enforcer exists + is executable
   (so a registry entry can never be a dangling promise).
-- **Registered today (3):** `MEMORY-ARCH` (`scripts/check_memory_architecture.sh`, structural),
-  `KNOWLEDGE-MAP` (`knowledge-map/scripts/check_knowledge_map.sh`, structural), `TASK-ACCEPTANCE`
-  (`scripts/check_task_acceptance.sh`, evidence).
+- **Registered today (10):** nine gate-tier doctrines — `MEMORY-ARCH`, `KNOWLEDGE-MAP`, `TASK-ACCEPTANCE`,
+  `README-POLICY`, `LIVE-DOC-SIZE`, `PROJECT-DATA-LOCALITY`, `PRODUCTION-GENERICITY`, `CORPUS-FRONTIER`, and
+  `CLAIM-VERIFICATION` — plus CI-tier `CHAIN-CURRENCY`. The default report runs all nine gate rows and names the
+  deferred CI row; `--all` runs all ten.
 - **Wiring:** `.githooks/pre-commit` (E3, activate once with `git config core.hooksPath .githooks`) and
   `scripts/run_ci.sh` (E4) both invoke the driver. The pre-commit regenerates + stages the derived
   knowledge map BEFORE the driver validates it (so map drift is structurally impossible).
@@ -60,9 +61,14 @@ instantly. Re-enabling an auto CI doctrine-gate is the true "no matter what" bac
 
 **To add a doctrine:** write `scripts/check_<id>.sh` obeying the check-script contract
 (`DOCTRINE_ENFORCEMENT.md` §4 — exit nonzero on breach, deterministic, reads-the-repo-mutates-nothing,
-scope-aware, path-agnostic), add one line to the driver's `DOCTRINES` array, and add a §10 row. A
-candidate-but-deferred one is a structural ADR-0006 check (flag NEW hardcoded chip/signal-name literals
-in extraction code), held back until it can ship without false-blocking legitimate test fixtures.
+scope-aware, path-agnostic), add one line to the driver's `DOCTRINES` array, and add a §10 row. ADR 0006 is now
+enforced by the compositional `PRODUCTION-GENERICITY` row rather than a vocabulary denylist.
+
+`CLAIM-VERIFICATION` is the fifth portable architecture's enforcement row. Its dedicated self-bounded registry
+and checker execute verified claims' argv-form source/RED controls, authenticate exact tracked artifact digests,
+require complete stale-check membership, and resolve the prepared commit message or `HEAD` against known current
+claim IDs. Twenty-two controlled cases keep malformed, stale, or untracked provenance fail-closed; record validity is
+not treated as proof that the underlying assertion is semantically correct.
 
 **`TOOLBOX.md`** is SpecForge's own diagnostic catalog (the evidence the checklist cites comes from
 these): `doctor`, `inspect`, `validate`, `adapt --target isf` (`blocking_reasons`), FSMGen

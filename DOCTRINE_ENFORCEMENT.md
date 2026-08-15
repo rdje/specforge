@@ -32,9 +32,9 @@ defense-in-depth* to **every** doctrine. The enforcement is **git-level** (hooks
 identically no matter which harness made the commit.
 
 `CLAIM_VERIFICATION.md` asks the upstream question: whether a current assertion has independent re-derivation,
-falsification, and stale-detecting durability evidence worth enforcing. Its author/reviewer contract is active;
-its bounded provenance checker remains explicitly pending under `CLAIM-VERIFICATION-ADOPTION.2` and is not yet a
-row in the live registry below.
+falsification, and stale-detecting durability evidence worth enforcing. Its bounded registry now authenticates
+tracked evidence identity, executes declared source/control commands, resolves publication IDs, and runs as the
+`CLAIM-VERIFICATION` row in the live registry below.
 
 ---
 
@@ -299,6 +299,7 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `PROJECT-DATA-LOCALITY` | structural | gate | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
 | `PRODUCTION-GENERICITY` | structural | gate | `scripts/check_production_genericity.sh` | the product package direction and checker disconnection hold; the complete module/claim/rule/bypass inventories resolve; and the compiled production graph rejects raw/identity-driven semantic control, unregistered canonical mutation, protected-authority forgery, and proofless persistence |
 | `CORPUS-FRONTIER` | derive-and-diff | gate | `scripts/check_corpus_frontier.sh` | the SourceIR-derived corpus cohort is partitioned exactly by explicit root-neutral refreshed/remaining sets, retained bundles agree with that lifecycle declaration, and the counts agree with the root task file — moving a source library cannot silently change refresh status |
+| `CLAIM-VERIFICATION` | structural + oracle | gate | `scripts/check_claim_verification.pl` | the self-bounded claim registry has unique known IDs and honest statuses; every verified claim's tracked producer/input/evidence digests are current; argv-form source and RED-control commands reproduce; stale checks cover every artifact; and the prepared or committed publication declaration resolves exactly |
 | `CHAIN-CURRENCY` | oracle | ci | `scripts/check_chain_currency.sh` | every persisted corpus artifact is exactly what the current binary reproduces from its persisted input — the evidence, semantic, intent, and `.isf`-adapter stages replayed `--dry-run`, plus each emitted `.isf` against the adapter's rendered `source_text` — and the retained normalized bundles that make a document replayable are exactly the set declared in `doctrine/chain_currency/retained_bundles.json` (ADR 0025 decisions 2 and 3) |
 
 Every `collection` surface must also declare an aggregate at least as large as its own file bound times its

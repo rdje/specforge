@@ -17,14 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.2` owns the bounded claim registry and doctrine gate.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.3` owns the current-facing published-constant sweep.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: the 21-file workflow-standard profile is committed baseline and its exact 16→21 authority is
-  retired. ADR 0042/0043, the author/reviewer contract, and clean capacity boundary are ready for enforcement;
-  mechanical claim provenance is not yet active.
-- Next action: implement `.2`'s bounded claim registry, digest/currentness semantics, fail-closed checker, and
-  unconditional doctrine-driver entry. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: `.1b` authority retirement and continuity updates await focused/doctrine gates; no
-  background job.
+- Current state: ADR 0044's self-bounded claim registry/checker holds three verified records, executes eight
+  source/control commands, digest-checks complete tracked artifact sets, resolves publication IDs, and is the
+  tenth doctrine. Semantic truth still depends on the named evidence; `.3`/`.4` own census and closure audits.
+- Next action: run `.3`'s bounded census over current status, roadmap/controller projections, maintained
+  references, doctrine baselines, and mdBook constants; derive, register, or mark gaps explicitly. `MEMORY.md`
+  remains capped at 32,768 B.
+- In-flight uncommitted: `.2` registry/checker/doctrine/docs synchronization awaits final digest refresh and
+  focused/doctrine gates; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

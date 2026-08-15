@@ -67,6 +67,7 @@ DOCTRINES=(
   "PROJECT-DATA-LOCALITY|gate|project-owned temp, cache, dependency, artifact, and subprocess seams resolve from the repository root|scripts/check_project_data_locality.sh"
   "PRODUCTION-GENERICITY|gate|the product package boundary, complete inventories, compiled information flow, and proof-only canonical authority hold|scripts/check_production_genericity.sh"
   "CORPUS-FRONTIER|gate|the corpus refresh frontier is derived from persisted evidence and agrees exactly with its declaration, retention, and the root task file|scripts/check_corpus_frontier.sh"
+  "CLAIM-VERIFICATION|gate|bounded claim records, tracked current evidence, executed source/RED controls, complete stale coverage, and publication IDs resolve together|scripts/check_claim_verification.pl"
   "CHAIN-CURRENCY|ci|every persisted corpus artifact is exactly what the current binary reproduces from its persisted input (ADR 0025)|scripts/check_chain_currency.sh"
 )
 

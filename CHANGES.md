@@ -1,3 +1,14 @@
+### CLAIM-VERIFICATION-ADOPTION.2 — gate published claim provenance
+
+- Added ADR 0044, the self-bounded `doctrine/claim_verification/claims.jsonl` registry, and a strict checker that
+  joins unique honest claim statuses to direct argv-form re-derivation/known-bad-control commands, complete
+  Git-tracked artifact membership, exact SHA-256 currentness, retained evidence, and refresh ownership.
+- Migrated three current verified claims. The real gate executes eight source/control commands and resolves the
+  prepared commit message—or otherwise `HEAD`—against known non-superseded IDs.
+- Registered `CLAIM-VERIFICATION` as the tenth doctrine through the existing driver only. Its 22-case repository-
+  volume suite observes missing, unknown, duplicate, stale, untracked, unsafe, false-RED, supersession, and bound
+  failures go RED; no product code, hook, CI workflow, or derived-state authority changed.
+
 ### CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority
 
 - Removed `.1a`'s exact 16→21 workflow-standard increase record after the measured profile became committed
