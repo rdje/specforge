@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why did the OpenCAPI Certified DL signal disappear
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why did the OpenCAPI Ready DL signal disappear
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > why did the canonical SWD relation count change from 25 to 21
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > why did the corpus KB size warning appear and how was it removed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why did the corpus task-evidence index verify the PDF contract
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
@@ -286,15 +298,3 @@
   > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > why does the roadmap archive hold more than one capsule
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why does the same token AXI interface merge in one doc but not another
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > why does the tracked validation snapshot differ from current generated IntentIR reports
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir

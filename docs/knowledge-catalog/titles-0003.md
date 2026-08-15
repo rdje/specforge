@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md) | 2026-06-23 | `current` | The `.isf` emitter drops a rule that conflicts with an UNCONDITIONAL driver on the same signal (an empty-guar… |
 | [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md) | 2026-06-23 | `current` | The `.isf` emitter drops a rule whose drive VALUE is not a renderable ISF value expression (free prose, not a… |
 | [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md) | 2026-06-21 | `current` | FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract,… |
 | [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md) | 2026-08-08 | `current` | Knowledge-map architecture lives inside the knowledge-map bundle |
@@ -60,4 +61,3 @@
 | [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md) | 2026-06-08 | `current` | Register bit positions from a diagram image — reconstruct from VLM-read order+widths via tiling, not the VL… |
 | [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md) | 2026-06-08 | `current` | Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debu… |
 | [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md) | 2026-06-08 | `current` | A register whose field table a PDF backend split across several tables is de-fragmented into one record (cons… |
-| [register-field-table-extraction](../knowledge/register-field-table-extraction.md) | 2026-06-08 | `current` | Register-FIELD tables (Field\|…\|Access\|Reset) the classifier left "unknown" are recovered into RegisterRe… |

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [register-field-table-extraction](../knowledge/register-field-table-extraction.md) | 2026-06-08 | `current` | Register-FIELD tables (Field\|…\|Access\|Reset) the classifier left "unknown" are recovered into RegisterRe… |
 | [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md) | 2026-08-12 | `current` | Register records preserve register-level access and direct structured-table provenance |
 | [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md) | 2026-06-16 | `current` | SpecForge now lowers register-field reset_value to ISF (storage (var … (reset V))) at the true register wid… |
 | [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |
@@ -60,4 +61,3 @@
 | [transaction-channel-membership](../knowledge/transaction-channel-membership.md) | 2026-06-17 | `current` | KG-ISF-TRANSACTIONS.2m — a transaction's signal-set membership is grouped by the document-declared CHANNEL,… |
 | [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md) | 2026-06-17 | `current` | a named transaction's .2c signal-set membership includes its section's DESCENDANT-SUBSECTION statements (dott… |
 | [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md) | 2026-06-17 | `current` | AXI/SWD per-signal phase membership — the recorded "VLM timing-diagram phase columns" candidate is RESOLVED… |
-| [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md) | 2026-08-10 | `current` | Typed transaction-phase names require positive phrase authority |

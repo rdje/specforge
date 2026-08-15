@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > what is the Dempster combiner in fusion
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what is the FSMGen feature request for field-structured storage (declarative (var NAME (width N) (fields (field NAME (bits hi lo) (access ..) (reset ..) (enum ..)))); docs/FSMGEN_FEEDBACK.md 2026-06-22)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the FSMGen issue bundle protocol
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the I2C declared-signal recall / precision
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -285,15 +297,3 @@
   > what table structure is required before port or pin vocabulary grants signal authority
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > what temporal logic backs temporal_rules
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what was the HBM2 canonical promotion pilot result
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what was the must_be_value recall gap and how was it closed
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what were the initial 17-document held-out relation outcomes
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > when does a caption ground a register name
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > when does data (ACRONYM) declare a one-bit signal

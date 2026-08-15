@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > what does byte_offset mean on a message field record when bit_range is None
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > what does converge --promote-constraints-llm do and when does it run
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > what does converge do after stabilization
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > what does drop_unconditional_overlap_conflicts / unconditional_overlap_residual_packet do in ir/isf_ir.rs
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > what does drop_ungrounded_rule_transaction_conflicts do
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > what does drop_unrenderable_rule_values / unrenderable_rule_value_residual_packet do in ir/isf_ir.rs
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
@@ -285,15 +297,3 @@
   > what is the DOC-INTENT-TAXONOMY.1 corpus census
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > what is the Dempster combiner in fusion
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > what is the FSMGen feature request for field-structured storage (declarative (var NAME (width N) (fields (field NAME (bits hi lo) (access ..) (reset ..) (enum ..)))); docs/FSMGEN_FEEDBACK.md 2026-06-22)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the FSMGen issue bundle protocol
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is the I2C declared-signal recall / precision

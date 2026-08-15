@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > which corpus docs declare fields with a Field-titled column
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which corpus docs still yield nothing (the VLM frontier)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > which corpus documents are real signal-catalog capture misses
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > which corpus stages are measurable without re-ingesting a document
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > which docs fail to ingest (giants / timeouts)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -285,15 +297,3 @@
   > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why did the OpenCAPI Certified DL signal disappear
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why did the OpenCAPI Ready DL signal disappear
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > why did the canonical SWD relation count change from 25 to 21
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why did the corpus KB size warning appear and how was it removed

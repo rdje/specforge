@@ -2123,6 +2123,10 @@ impl EvidenceIr {
         Ok(())
     }
 
+    #[allow(
+        clippy::question_mark,
+        reason = "the explicit error branch preserves the test-fixture mutation fallback"
+    )]
     pub fn write_to_disk(&self) -> Result<()> {
         // Canonical persistence is a seam, not a generic serializer. Requiring a currently
         // verified SourceIR makes the noncanonical overlay non-persistable even if a conformance

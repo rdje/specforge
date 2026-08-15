@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what was the HBM2 canonical promotion pilot result
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what was the must_be_value recall gap and how was it closed
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what were the initial 17-document held-out relation outcomes
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > when does a caption ground a register name
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > when does data (ACRONYM) declare a one-bit signal
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -286,15 +298,3 @@
   > which conditional rules survive when a document declares no signals
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > which corpus PDFs are password/permission protected
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > which corpus docs declare fields with a Field-titled column
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which corpus docs still yield nothing (the VLM frontier)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > which corpus documents are real signal-catalog capture misses
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > which corpus stages are measurable without re-ingesting a document
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)

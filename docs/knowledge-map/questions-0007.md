@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > must a post-build signal_constraints replace re-apply build-path invariants
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > must a repair leaf rebuild every affected document or only the ones it measures
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > qwen2.5vl vs qwen3-vl which model
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > should I build an isf lowering-completeness verifier for temporal rules
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > should I fix the PSEL valid when PSEL asserted temporal rule
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > should NLP-SHALLOW-PARSE.2f build coordination distribution
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -285,15 +297,3 @@
   > what does SpecForge take from the spec-mining literature and what does it leave out
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what does a fast category recognizer need beyond surface counts (wire-relation shape, front-matter/self-declared type, topology cue)
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > what does byte_offset mean on a message field record when bit_range is None
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what does converge --promote-constraints-llm do and when does it run
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > what does converge do after stabilization
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > what does drop_unconditional_overlap_conflicts / unconditional_overlap_residual_packet do in ir/isf_ir.rs
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > what does drop_ungrounded_rule_transaction_conflicts do

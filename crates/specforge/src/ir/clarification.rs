@@ -893,6 +893,633 @@ impl ClarificationPacket {
     }
 }
 
+/// Whether one governed unresolved observation still needs external information or has an
+/// executable autonomous continuation. The planner treats the latter as work, never as a question.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+pub enum ClarificationReadiness {
+    NeedsClarification,
+    AutonomousActionAvailable {
+        action_id: String,
+        description: String,
+        evidence: Vec<EvidenceLink>,
+    },
+}
+
+/// One normalized unresolved observation emitted by a governed producer.
+///
+/// Producers, not the planner, decide whether an autonomous action is available and provide the
+/// explicit equivalence/dependency keys. This keeps planning structural and prevents diagnostic
+/// prose from becoming hidden semantic authority.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ClarificationNeed {
+    pub need_id: String,
+    pub equivalence_key: String,
+    pub question_revision: u32,
+    pub origin: ClarificationOrigin,
+    pub missing_information_reason: MissingInformationReason,
+    pub evidence: Vec<EvidenceLink>,
+    pub proposition: String,
+    pub why_automation_stopped: String,
+    pub alternatives: Vec<ClarificationAlternative>,
+    pub downstream_impacts: Vec<DownstreamImpact>,
+    pub priority: ClarificationPriority,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub dependencies: Vec<String>,
+    pub autonomous_continuation: AutonomousContinuation,
+    pub answer_schema: AnswerSchema,
+    pub readiness: ClarificationReadiness,
+}
+
+impl ClarificationNeed {
+    fn validate(&self) -> ClarificationResult<()> {
+        validate_id("clarification need id", &self.need_id)?;
+        validate_id("clarification equivalence key", &self.equivalence_key)?;
+        validate_positive_revision("planned clarification question", self.question_revision)?;
+        validate_nonempty_collection("clarification need evidence", &self.evidence)?;
+        validate_unique_serialized("clarification need evidence", &self.evidence)?;
+        for evidence in &self.evidence {
+            evidence.validate()?;
+        }
+        validate_text(
+            "clarification need proposition",
+            &self.proposition,
+            MAX_LONG_TEXT_BYTES,
+        )?;
+        validate_text(
+            "clarification need automation-stop explanation",
+            &self.why_automation_stopped,
+            MAX_LONG_TEXT_BYTES,
+        )?;
+        validate_nonempty_collection("clarification need alternatives", &self.alternatives)?;
+        let mut alternative_ids = BTreeSet::new();
+        for alternative in &self.alternatives {
+            alternative.validate()?;
+            if !alternative_ids.insert(alternative.alternative_id.as_str()) {
+                return Err(ClarificationError::new(
+                    "clarification need contains a duplicate alternative id",
+                ));
+            }
+        }
+        validate_nonempty_collection(
+            "clarification need downstream impacts",
+            &self.downstream_impacts,
+        )?;
+        for impact in &self.downstream_impacts {
+            impact.validate()?;
+        }
+        validate_bounded_collection("clarification need dependencies", &self.dependencies)?;
+        let mut dependencies = BTreeSet::new();
+        for dependency in &self.dependencies {
+            validate_id("clarification need dependency", dependency)?;
+            if dependency == &self.equivalence_key {
+                return Err(ClarificationError::new(
+                    "a clarification need cannot depend on its own equivalence key",
+                ));
+            }
+            if !dependencies.insert(dependency) {
+                return Err(ClarificationError::new(
+                    "clarification need contains a duplicate dependency",
+                ));
+            }
+        }
+        self.answer_schema.validate()?;
+        match &self.readiness {
+            ClarificationReadiness::NeedsClarification => Ok(()),
+            ClarificationReadiness::AutonomousActionAvailable {
+                action_id,
+                description,
+                evidence,
+            } => {
+                validate_id("autonomous clarification action id", action_id)?;
+                validate_text(
+                    "autonomous clarification action description",
+                    description,
+                    MAX_LONG_TEXT_BYTES,
+                )?;
+                validate_evidence_set(evidence)
+            }
+        }
+    }
+}
+
+/// A governed action the caller should execute before asking the corresponding question family.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AutonomousClarificationAction {
+    pub equivalence_key: String,
+    pub action_id: String,
+    pub description: String,
+    pub evidence: Vec<EvidenceLink>,
+}
+
+/// Whether a planned packet blocks canonical completion or is advisory debt.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ClarificationPacketClass {
+    Blocking,
+    Advisory,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PlannedClarificationPacket {
+    pub class: ClarificationPacketClass,
+    pub packet: ClarificationPacket,
+}
+
+/// Deterministic planner output. At most one packet per class minimizes user round trips.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ClarificationPlan {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub packets: Vec<PlannedClarificationPacket>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub autonomous_actions: Vec<AutonomousClarificationAction>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub deferred_equivalence_keys: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+struct NeedGroup {
+    equivalence_key: String,
+    revision: u32,
+    origins: BTreeSet<ClarificationOrigin>,
+    missing_information_reason: MissingInformationReason,
+    evidence: Vec<EvidenceLink>,
+    propositions: BTreeSet<String>,
+    stop_reasons: BTreeSet<String>,
+    alternatives: Vec<ClarificationAlternative>,
+    downstream_impacts: Vec<DownstreamImpact>,
+    priority: ClarificationPriority,
+    dependencies: BTreeSet<String>,
+    autonomous_continuation: AutonomousContinuation,
+    answer_schema: AnswerSchema,
+    answer_schema_sha256: Sha256Digest,
+    autonomous_actions: Vec<AutonomousClarificationAction>,
+}
+
+impl NeedGroup {
+    fn from_need(need: &ClarificationNeed) -> ClarificationResult<Self> {
+        let answer_schema_sha256 =
+            Sha256Digest::of_serializable(&need.answer_schema).map_err(|error| {
+                ClarificationError::new(format!("cannot hash clarification answer schema: {error}"))
+            })?;
+        let autonomous_actions = autonomous_actions_for_need(need);
+        let mut group = Self {
+            equivalence_key: need.equivalence_key.clone(),
+            revision: need.question_revision,
+            origins: BTreeSet::from([need.origin]),
+            missing_information_reason: need.missing_information_reason,
+            evidence: Vec::new(),
+            propositions: BTreeSet::from([need.proposition.clone()]),
+            stop_reasons: BTreeSet::from([need.why_automation_stopped.clone()]),
+            alternatives: Vec::new(),
+            downstream_impacts: Vec::new(),
+            priority: need.priority,
+            dependencies: need.dependencies.iter().cloned().collect(),
+            autonomous_continuation: need.autonomous_continuation,
+            answer_schema: need.answer_schema.clone(),
+            answer_schema_sha256,
+            autonomous_actions,
+        };
+        extend_unique_serialized(&mut group.evidence, &need.evidence)?;
+        extend_unique_serialized(&mut group.alternatives, &need.alternatives)?;
+        merge_downstream_impacts(&mut group.downstream_impacts, &need.downstream_impacts);
+        Ok(group)
+    }
+
+    fn merge(&mut self, need: &ClarificationNeed) -> ClarificationResult<()> {
+        let schema_sha256 =
+            Sha256Digest::of_serializable(&need.answer_schema).map_err(|error| {
+                ClarificationError::new(format!("cannot hash clarification answer schema: {error}"))
+            })?;
+        if self.revision != need.question_revision
+            || self.missing_information_reason != need.missing_information_reason
+            || self.answer_schema_sha256 != schema_sha256
+        {
+            return Err(ClarificationError::new(format!(
+                "equivalent clarification need '{}' has incompatible revision, missing-information reason, or answer schema",
+                self.equivalence_key
+            )));
+        }
+        self.origins.insert(need.origin);
+        extend_unique_serialized(&mut self.evidence, &need.evidence)?;
+        self.propositions.insert(need.proposition.clone());
+        self.stop_reasons
+            .insert(need.why_automation_stopped.clone());
+        extend_unique_serialized(&mut self.alternatives, &need.alternatives)?;
+        merge_downstream_impacts(&mut self.downstream_impacts, &need.downstream_impacts);
+        if priority_rank(need.priority) > priority_rank(self.priority) {
+            self.priority = need.priority;
+        }
+        self.dependencies.extend(need.dependencies.iter().cloned());
+        if need.autonomous_continuation == AutonomousContinuation::FullyBlocked {
+            self.autonomous_continuation = AutonomousContinuation::FullyBlocked;
+        }
+        self.autonomous_actions
+            .extend(autonomous_actions_for_need(need));
+        Ok(())
+    }
+
+    fn is_blocking(&self) -> bool {
+        self.autonomous_continuation == AutonomousContinuation::FullyBlocked
+            || self.downstream_impacts.iter().any(|impact| impact.blocking)
+    }
+
+    fn information_gain_score(&self) -> u8 {
+        let distinct_surfaces = self
+            .downstream_impacts
+            .iter()
+            .map(|impact| (impact.stage, impact.surface.as_str()))
+            .collect::<BTreeSet<_>>()
+            .len();
+        let score = 20usize
+            + usize::from(self.is_blocking()) * 35
+            + distinct_surfaces.saturating_mul(5).min(25)
+            + self.alternatives.len().saturating_mul(5).min(15)
+            + usize::from(self.autonomous_continuation == AutonomousContinuation::FullyBlocked) * 5;
+        u8::try_from(score.min(100)).expect("planner score is capped at 100")
+    }
+}
+
+/// Plan minimal clarification packets from governed unresolved observations.
+///
+/// Input order never affects output. Exact equivalence keys are the only grouping authority; prose
+/// similarity is intentionally ignored. Any family with an available autonomous action, plus every
+/// transitive dependent family, is withheld until the caller executes the action and replans.
+pub fn plan_clarifications(
+    packet_id_prefix: &str,
+    context: ClarificationArtifactContext,
+    needs: &[ClarificationNeed],
+) -> ClarificationResult<ClarificationPlan> {
+    validate_id("clarification plan packet-id prefix", packet_id_prefix)?;
+    context.validate()?;
+
+    let mut groups = BTreeMap::<String, NeedGroup>::new();
+    let mut need_ids = BTreeSet::new();
+    for need in needs {
+        need.validate()?;
+        if !need_ids.insert(need.need_id.as_str()) {
+            return Err(ClarificationError::new(
+                "clarification planner input contains a duplicate need id",
+            ));
+        }
+        match groups.entry(need.equivalence_key.clone()) {
+            std::collections::btree_map::Entry::Vacant(entry) => {
+                entry.insert(NeedGroup::from_need(need)?);
+            }
+            std::collections::btree_map::Entry::Occupied(mut entry) => {
+                entry.get_mut().merge(need)?;
+            }
+        }
+    }
+
+    for group in groups.values() {
+        for dependency in &group.dependencies {
+            if !groups.contains_key(dependency) {
+                return Err(ClarificationError::new(format!(
+                    "clarification need '{}' depends on absent equivalence key '{dependency}'",
+                    group.equivalence_key
+                )));
+            }
+        }
+    }
+
+    let autonomous_roots = groups
+        .iter()
+        .filter(|(_, group)| !group.autonomous_actions.is_empty())
+        .map(|(key, _)| key.clone())
+        .collect::<BTreeSet<_>>();
+    let mut deferred = autonomous_roots.clone();
+    loop {
+        let before = deferred.len();
+        for (key, group) in &groups {
+            if group
+                .dependencies
+                .iter()
+                .any(|dependency| deferred.contains(dependency))
+            {
+                deferred.insert(key.clone());
+            }
+        }
+        if deferred.len() == before {
+            break;
+        }
+    }
+
+    let mut autonomous_actions = autonomous_roots
+        .iter()
+        .flat_map(|key| groups[key].autonomous_actions.clone())
+        .collect::<Vec<_>>();
+    autonomous_actions.sort_by(|left, right| {
+        left.equivalence_key
+            .cmp(&right.equivalence_key)
+            .then_with(|| left.action_id.cmp(&right.action_id))
+    });
+    for pair in autonomous_actions.windows(2) {
+        if pair[0].equivalence_key == pair[1].equivalence_key
+            && pair[0].action_id == pair[1].action_id
+            && pair[0] != pair[1]
+        {
+            return Err(ClarificationError::new(format!(
+                "autonomous clarification action '{}'/{} has conflicting definitions",
+                pair[0].equivalence_key, pair[0].action_id
+            )));
+        }
+    }
+    autonomous_actions.dedup();
+
+    let eligible = groups
+        .into_iter()
+        .filter(|(key, _)| !deferred.contains(key))
+        .collect::<BTreeMap<_, _>>();
+    let blocking_keys = blocking_dependency_components(&eligible);
+    let blocking = eligible
+        .keys()
+        .filter(|key| blocking_keys.contains(*key))
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let advisory = eligible
+        .keys()
+        .filter(|key| !blocking_keys.contains(*key))
+        .cloned()
+        .collect::<BTreeSet<_>>();
+
+    let mut packets = Vec::new();
+    if let Some(packet) = build_planned_packet(
+        packet_id_prefix,
+        ClarificationPacketClass::Blocking,
+        &context,
+        &eligible,
+        &blocking,
+    )? {
+        packets.push(packet);
+    }
+    if let Some(packet) = build_planned_packet(
+        packet_id_prefix,
+        ClarificationPacketClass::Advisory,
+        &context,
+        &eligible,
+        &advisory,
+    )? {
+        packets.push(packet);
+    }
+
+    Ok(ClarificationPlan {
+        packets,
+        autonomous_actions,
+        deferred_equivalence_keys: deferred.into_iter().collect(),
+    })
+}
+
+fn autonomous_actions_for_need(need: &ClarificationNeed) -> Vec<AutonomousClarificationAction> {
+    match &need.readiness {
+        ClarificationReadiness::NeedsClarification => Vec::new(),
+        ClarificationReadiness::AutonomousActionAvailable {
+            action_id,
+            description,
+            evidence,
+        } => vec![AutonomousClarificationAction {
+            equivalence_key: need.equivalence_key.clone(),
+            action_id: action_id.clone(),
+            description: description.clone(),
+            evidence: evidence.clone(),
+        }],
+    }
+}
+
+fn blocking_dependency_components(groups: &BTreeMap<String, NeedGroup>) -> BTreeSet<String> {
+    let mut blocking = groups
+        .iter()
+        .filter(|(_, group)| group.is_blocking())
+        .map(|(key, _)| key.clone())
+        .collect::<BTreeSet<_>>();
+    loop {
+        let before = blocking.len();
+        for (key, group) in groups {
+            if blocking.contains(key)
+                || group
+                    .dependencies
+                    .iter()
+                    .any(|dependency| blocking.contains(dependency))
+                || blocking
+                    .iter()
+                    .any(|blocking_key| groups[blocking_key].dependencies.contains(key))
+            {
+                blocking.insert(key.clone());
+            }
+        }
+        if blocking.len() == before {
+            return blocking;
+        }
+    }
+}
+
+fn build_planned_packet(
+    packet_id_prefix: &str,
+    class: ClarificationPacketClass,
+    context: &ClarificationArtifactContext,
+    groups: &BTreeMap<String, NeedGroup>,
+    selected: &BTreeSet<String>,
+) -> ClarificationResult<Option<PlannedClarificationPacket>> {
+    if selected.is_empty() {
+        return Ok(None);
+    }
+    let order = dependency_order(groups, selected)?;
+    let mut references = BTreeMap::<String, QuestionRevisionRef>::new();
+    let mut questions = Vec::with_capacity(order.len());
+    for key in order {
+        let group = &groups[&key];
+        let dependencies = group
+            .dependencies
+            .iter()
+            .map(|dependency| {
+                references.get(dependency).cloned().ok_or_else(|| {
+                    ClarificationError::new(format!(
+                        "clarification dependency '{dependency}' was not ordered before '{key}'"
+                    ))
+                })
+            })
+            .collect::<ClarificationResult<Vec<_>>>()?;
+        let definition = ClarificationQuestionDefinition {
+            question_id: group.equivalence_key.clone(),
+            revision: group.revision,
+            origin: representative_origin(&group.origins),
+            missing_information_reason: group.missing_information_reason,
+            evidence: group.evidence.clone(),
+            proposition: group
+                .propositions
+                .iter()
+                .cloned()
+                .collect::<Vec<_>>()
+                .join(" | "),
+            why_automation_stopped: group
+                .stop_reasons
+                .iter()
+                .cloned()
+                .collect::<Vec<_>>()
+                .join(" | "),
+            alternatives: group.alternatives.clone(),
+            downstream_impacts: group.downstream_impacts.clone(),
+            priority: group.priority,
+            information_gain_score: group.information_gain_score(),
+            dependencies,
+            autonomous_continuation: group.autonomous_continuation,
+            answer_schema: group.answer_schema.clone(),
+        };
+        let reference = definition.reference()?;
+        references.insert(key, reference);
+        questions.push(ClarificationQuestion {
+            definition,
+            lifecycle: ClarificationLifecycle {
+                status: ClarificationStatus::Open,
+                state_sequence: 1,
+                answer: None,
+                superseded_by: None,
+                reason: None,
+            },
+        });
+    }
+    let suffix = match class {
+        ClarificationPacketClass::Blocking => "blocking",
+        ClarificationPacketClass::Advisory => "advisory",
+    };
+    let packet = ClarificationPacket::new(
+        format!("{packet_id_prefix}.{suffix}"),
+        context.clone(),
+        questions,
+    )?;
+    Ok(Some(PlannedClarificationPacket { class, packet }))
+}
+
+fn dependency_order(
+    groups: &BTreeMap<String, NeedGroup>,
+    selected: &BTreeSet<String>,
+) -> ClarificationResult<Vec<String>> {
+    let mut remaining = selected.clone();
+    let mut ordered = Vec::with_capacity(selected.len());
+    while !remaining.is_empty() {
+        let mut ready = remaining
+            .iter()
+            .filter(|key| {
+                groups[*key]
+                    .dependencies
+                    .iter()
+                    .all(|dependency| !remaining.contains(dependency))
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+        if ready.is_empty() {
+            return Err(ClarificationError::new(
+                "clarification dependency graph contains a cycle",
+            ));
+        }
+        ready.sort_by(|left, right| {
+            let left_group = &groups[left];
+            let right_group = &groups[right];
+            right_group
+                .information_gain_score()
+                .cmp(&left_group.information_gain_score())
+                .then_with(|| {
+                    priority_rank(right_group.priority).cmp(&priority_rank(left_group.priority))
+                })
+                .then_with(|| left.cmp(right))
+        });
+        let next = ready.remove(0);
+        remaining.remove(&next);
+        ordered.push(next);
+    }
+    Ok(ordered)
+}
+
+fn representative_origin(origins: &BTreeSet<ClarificationOrigin>) -> ClarificationOrigin {
+    origins
+        .iter()
+        .copied()
+        .max_by_key(|origin| origin_rank(*origin))
+        .expect("a need group always contains one origin")
+}
+
+fn origin_rank(origin: ClarificationOrigin) -> u8 {
+    match origin {
+        ClarificationOrigin::ExternalChoice => 6,
+        ClarificationOrigin::AdapterBlock => 5,
+        ClarificationOrigin::Contradiction => 4,
+        ClarificationOrigin::ResidualDecision => 3,
+        ClarificationOrigin::CompletenessFinding => 2,
+        ClarificationOrigin::ValidationFinding => 1,
+    }
+}
+
+fn priority_rank(priority: ClarificationPriority) -> u8 {
+    match priority {
+        ClarificationPriority::Critical => 4,
+        ClarificationPriority::High => 3,
+        ClarificationPriority::Normal => 2,
+        ClarificationPriority::Low => 1,
+    }
+}
+
+fn extend_unique_serialized<T: Clone + Serialize>(
+    target: &mut Vec<T>,
+    additions: &[T],
+) -> ClarificationResult<()> {
+    let mut seen = target
+        .iter()
+        .map(|value| {
+            serde_json::to_vec(value).map_err(|error| {
+                ClarificationError::new(format!(
+                    "cannot serialize clarification planner value: {error}"
+                ))
+            })
+        })
+        .collect::<ClarificationResult<BTreeSet<_>>>()?;
+    for addition in additions {
+        let encoded = serde_json::to_vec(addition).map_err(|error| {
+            ClarificationError::new(format!(
+                "cannot serialize clarification planner value: {error}"
+            ))
+        })?;
+        if seen.insert(encoded) {
+            target.push(addition.clone());
+        }
+    }
+    target.sort_by_cached_key(|value| {
+        serde_json::to_vec(value).expect("value serialized successfully during planner merge")
+    });
+    Ok(())
+}
+
+fn merge_downstream_impacts(target: &mut Vec<DownstreamImpact>, additions: &[DownstreamImpact]) {
+    for addition in additions {
+        let existing = target.iter_mut().find(|impact| {
+            impact.stage == addition.stage
+                && impact.surface == addition.surface
+                && impact.stable_record_key == addition.stable_record_key
+        });
+        if let Some(existing) = existing {
+            existing.blocking |= addition.blocking;
+            let explanations = existing
+                .explanation
+                .split(" | ")
+                .chain(addition.explanation.split(" | "))
+                .map(str::to_string)
+                .collect::<BTreeSet<_>>();
+            existing.explanation = explanations.into_iter().collect::<Vec<_>>().join(" | ");
+        } else {
+            target.push(addition.clone());
+        }
+    }
+    target.sort_by(|left, right| {
+        left.stage
+            .cmp(&right.stage)
+            .then_with(|| left.surface.cmp(&right.surface))
+            .then_with(|| left.stable_record_key.cmp(&right.stable_record_key))
+    });
+}
+
 /// Typed value carried by a value answer. Matching it against the issued schema belongs to answer
 /// validation; structural parsing alone is not acceptance.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -2038,5 +2665,248 @@ mod tests {
                 .to_string()
                 .contains("information-gain")
         );
+    }
+
+    fn planner_context() -> ClarificationArtifactContext {
+        ClarificationArtifactContext {
+            source: artifact("corpus/specification.pdf", "source"),
+            current_stage: IrStage::IntentIr,
+            current_artifact: artifact(
+                "generated/intent_ir/specification/intent_ir.json",
+                "intent",
+            ),
+            proof_ruleset_sha256: digest("ruleset"),
+        }
+    }
+
+    fn planner_need(
+        need_id: &str,
+        equivalence_key: &str,
+        origin: ClarificationOrigin,
+        blocking: bool,
+    ) -> ClarificationNeed {
+        let mut base = definition(equivalence_key, vec![]);
+        base.origin = origin;
+        base.downstream_impacts[0].blocking = blocking;
+        ClarificationNeed {
+            need_id: need_id.to_string(),
+            equivalence_key: equivalence_key.to_string(),
+            question_revision: 1,
+            origin,
+            missing_information_reason: base.missing_information_reason,
+            evidence: vec![EvidenceLink::ResidualDecision {
+                stage: IrStage::IntentIr,
+                artifact_sha256: digest("intent"),
+                packet_id: format!("residual.{need_id}"),
+            }],
+            proposition: base.proposition,
+            why_automation_stopped: base.why_automation_stopped,
+            alternatives: base.alternatives,
+            downstream_impacts: base.downstream_impacts,
+            priority: base.priority,
+            dependencies: Vec::new(),
+            autonomous_continuation: AutonomousContinuation::ContinueUnaffected,
+            answer_schema: base.answer_schema,
+            readiness: ClarificationReadiness::NeedsClarification,
+        }
+    }
+
+    #[test]
+    fn planner_joins_all_origins_and_separates_blocking_from_advisory() {
+        let origins = [
+            ClarificationOrigin::ResidualDecision,
+            ClarificationOrigin::Contradiction,
+            ClarificationOrigin::CompletenessFinding,
+            ClarificationOrigin::ValidationFinding,
+            ClarificationOrigin::AdapterBlock,
+            ClarificationOrigin::ExternalChoice,
+        ];
+        let mut needs = origins
+            .into_iter()
+            .enumerate()
+            .map(|(index, origin)| {
+                planner_need(
+                    &format!("need-{index}"),
+                    "question.shared-proposition",
+                    origin,
+                    index == 4,
+                )
+            })
+            .collect::<Vec<_>>();
+        needs.push(planner_need(
+            "need-advisory",
+            "question.advisory",
+            ClarificationOrigin::ValidationFinding,
+            false,
+        ));
+
+        let plan = plan_clarifications("clarification.plan", planner_context(), &needs).unwrap();
+        needs.reverse();
+        let reversed =
+            plan_clarifications("clarification.plan", planner_context(), &needs).unwrap();
+        assert_eq!(plan, reversed);
+        assert_eq!(plan.packets.len(), 2);
+        assert_eq!(plan.packets[0].class, ClarificationPacketClass::Blocking);
+        assert_eq!(plan.packets[0].packet.questions.len(), 1);
+        let grouped = &plan.packets[0].packet.questions[0].definition;
+        assert_eq!(grouped.origin, ClarificationOrigin::ExternalChoice);
+        assert_eq!(grouped.evidence.len(), 6);
+        assert!(grouped.downstream_impacts[0].blocking);
+        assert_eq!(plan.packets[1].class, ClarificationPacketClass::Advisory);
+        assert_eq!(
+            plan.packets[1].packet.questions[0].definition.question_id,
+            "question.advisory"
+        );
+    }
+
+    #[test]
+    fn planner_withholds_autonomous_work_and_its_transitive_dependents() {
+        let mut autonomous = planner_need(
+            "need-autonomous",
+            "question.autonomous",
+            ClarificationOrigin::CompletenessFinding,
+            false,
+        );
+        autonomous.readiness = ClarificationReadiness::AutonomousActionAvailable {
+            action_id: "action.rescan-source".to_string(),
+            description: "Run the governed source rescan before asking.".to_string(),
+            evidence: autonomous.evidence.clone(),
+        };
+        let mut dependent = planner_need(
+            "need-dependent",
+            "question.dependent",
+            ClarificationOrigin::AdapterBlock,
+            true,
+        );
+        dependent.dependencies = vec!["question.autonomous".to_string()];
+        let unrelated = planner_need(
+            "need-unrelated",
+            "question.unrelated",
+            ClarificationOrigin::ValidationFinding,
+            false,
+        );
+
+        let plan = plan_clarifications(
+            "clarification.plan",
+            planner_context(),
+            &[dependent, unrelated, autonomous],
+        )
+        .unwrap();
+        assert_eq!(plan.autonomous_actions.len(), 1);
+        assert_eq!(
+            plan.deferred_equivalence_keys,
+            vec![
+                "question.autonomous".to_string(),
+                "question.dependent".to_string()
+            ]
+        );
+        assert_eq!(plan.packets.len(), 1);
+        assert_eq!(plan.packets[0].class, ClarificationPacketClass::Advisory);
+        assert_eq!(
+            plan.packets[0].packet.questions[0].definition.question_id,
+            "question.unrelated"
+        );
+    }
+
+    #[test]
+    fn planner_orders_dependencies_and_rejects_cycles() {
+        let base = planner_need(
+            "need-base",
+            "question.base",
+            ClarificationOrigin::Contradiction,
+            false,
+        );
+        let mut dependent = planner_need(
+            "need-dependent",
+            "question.dependent",
+            ClarificationOrigin::AdapterBlock,
+            true,
+        );
+        dependent.dependencies = vec!["question.base".to_string()];
+        let plan = plan_clarifications(
+            "clarification.plan",
+            planner_context(),
+            &[dependent.clone(), base.clone()],
+        )
+        .unwrap();
+        let questions = &plan.packets[0].packet.questions;
+        assert_eq!(questions[0].definition.question_id, "question.base");
+        assert_eq!(questions[1].definition.question_id, "question.dependent");
+        assert_eq!(
+            questions[1].definition.dependencies[0],
+            questions[0].reference().unwrap()
+        );
+
+        let mut cyclic_base = base;
+        cyclic_base.dependencies = vec!["question.dependent".to_string()];
+        let error = plan_clarifications(
+            "clarification.plan",
+            planner_context(),
+            &[cyclic_base, dependent],
+        )
+        .unwrap_err();
+        assert!(error.to_string().contains("cycle"));
+    }
+
+    #[test]
+    fn planner_ranking_is_structural_and_input_order_independent() {
+        let low = planner_need(
+            "need-low",
+            "question.low",
+            ClarificationOrigin::ValidationFinding,
+            false,
+        );
+        let mut high = planner_need(
+            "need-high",
+            "question.high",
+            ClarificationOrigin::AdapterBlock,
+            false,
+        );
+        high.downstream_impacts.push(DownstreamImpact {
+            stage: IrStage::SemanticIr,
+            surface: "contract_projection".to_string(),
+            stable_record_key: None,
+            blocking: false,
+            explanation: "The unresolved value affects another canonical surface.".to_string(),
+        });
+        let forward = plan_clarifications(
+            "clarification.plan",
+            planner_context(),
+            &[low.clone(), high.clone()],
+        )
+        .unwrap();
+        let reverse =
+            plan_clarifications("clarification.plan", planner_context(), &[high, low]).unwrap();
+        assert_eq!(forward, reverse);
+        let questions = &forward.packets[0].packet.questions;
+        assert_eq!(questions[0].definition.question_id, "question.high");
+        assert!(
+            questions[0].definition.information_gain_score
+                > questions[1].definition.information_gain_score
+        );
+    }
+
+    #[test]
+    fn planner_rejects_incompatible_equivalent_needs() {
+        let first = planner_need(
+            "need-first",
+            "question.same",
+            ClarificationOrigin::ResidualDecision,
+            false,
+        );
+        let mut incompatible = planner_need(
+            "need-second",
+            "question.same",
+            ClarificationOrigin::ValidationFinding,
+            false,
+        );
+        incompatible.answer_schema.value = AnswerValueSchema::Boolean;
+        let error = plan_clarifications(
+            "clarification.plan",
+            planner_context(),
+            &[first, incompatible],
+        )
+        .unwrap_err();
+        assert!(error.to_string().contains("incompatible"));
     }
 }

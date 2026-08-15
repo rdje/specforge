@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how does the section-heading field reader tell a message container from a register container
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > how does the tiling gate keep register-bit recovery honest (no fabrication)
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate classify a document / what is document_class
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate know an intent_ir is stale relative to its semantic_ir
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -285,15 +297,3 @@
   > how much memory did the guarded OpenCAPI AFU address note ingest use
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how much memory did the guarded OpenCAPI Certified Definition ingest use
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Ready Definition ingest use
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how much memory did the guarded OpenCAPI Ready ingest use
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how much memory did the guarded USB4 Connection Manager ingest use
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how much memory did the guarded USB4 Inter-Domain ingest use
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > how much of the reviewed trajectory population has current binary replay evidence
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > how much page content escapes both the structured-element path and the region-crop path

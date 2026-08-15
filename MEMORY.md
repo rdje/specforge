@@ -17,13 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-CLARIFICATION-LOOP.2` owns deterministic minimal clarification planning.
+- Active unit: `SPEC-CLARIFICATION-LOOP.3` owns repository-local machine/human clarification workflows.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.1` implements schema-1 packet/question/lifecycle and untrusted answer envelopes with exact
-  currentness, dependency, policy, and supersession bindings. ADR 0040 forbids a generic user-answer premise;
-  planning, semantic validation, and proof resume are not implemented yet.
-- Next action: inventory the governed residual/completeness/validation/adapter findings, then implement `.2`'s
-  deterministic deduplicating dependency planner. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: none after the `.1` commit; no background job.
+- Current state: `.2` is complete: deterministic planning over normalized unresolved needs provides exact grouping,
+  autonomous-action filtering, structural information-gain ranking, dependency ordering/cycle refusal, and
+  dependency-closed blocking/advisory packets. Answer validation, CLI exchange, and proof resume remain open.
+- Next action: execute `SPEC-CLARIFICATION-LOOP.3`: freeze the bounded repository-local packet/answer exchange,
+  then add list/inspect/export/answer CLI workflows without granting semantic authority. `MEMORY.md` remains
+  capped at 32,768 B.
+- In-flight uncommitted: none after the `.2` commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

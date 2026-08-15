@@ -49,6 +49,7 @@
 | [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
 | [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md) | 2026-08-10 | `current` | CHAIN-CURRENCY replays every persisted corpus artifact against the current binary |
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
+| [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
 | [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
 | [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md) | 2026-06-06 | `current` | Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate |
 | [contested-priors](../knowledge/contested-priors.md) | 2026-06-04 | `current` | SpecForge detects contested priors (same key, conflicting values across docs) — read-only |
@@ -60,4 +61,3 @@
 | [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |
 | [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md) | 2026-08-12 | `current` | CorpusMemory schema 7 cannot route extraction by document identity |
 | [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md) | 2026-06-09 | `current` | Cross-PDF pattern reuse via a DERIVED vendor/layout fingerprint — extend CorpusMemory, advisory + honest |
-| [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md) | 2026-08-09 | `current` | Corpus current-binary refresh completion is independent of normalized-cache retention |

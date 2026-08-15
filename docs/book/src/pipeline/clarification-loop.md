@@ -6,9 +6,10 @@ captured visuals/tables, registered digital semantics, and validated identity-in
 is consulted only where a missing premise blocks valuable downstream work and cannot safely be recovered by the
 governed pipeline.
 
-The clarification foundation is now a versioned IR. It does **not** yet mean the runtime plans questions or
-resumes a build; those capabilities land in the following task-tree leaves. The current implementation freezes
-the interchange, lifecycle, currentness, and authority contracts so later automation cannot improvise them.
+The clarification foundation is now a versioned IR with a deterministic planner. It does **not** yet expose the
+CLI exchange or resume a build; those capabilities land in the following task-tree leaves. The current
+implementation freezes the interchange, lifecycle, currentness, authority, grouping, ranking, and scheduling
+contracts so later automation cannot improvise them.
 
 ## The Product Loop
 
@@ -58,8 +59,33 @@ contains:
 | Lifecycle | Open/pending/accepted/rejected/deferred/resolved/stale/superseded/cancelled state and exact links |
 
 Questions in one packet are dependency-ordered. A dependency identifies the earlier question's id, revision, and
-definition digest. A missing, forward, cyclic, or stale dependency fails validation. Later planning will use this
+definition digest. A missing, forward, cyclic, or stale dependency fails validation. The planner uses this
 structure to deduplicate equivalent gaps and ask high-information questions before dependent details.
+
+## How Planning Avoids Unnecessary Questions
+
+Governed producers normalize residual decisions, contradictions, completeness or validation findings, adapter
+blocks, and external choices into `ClarificationNeed` records. Each need supplies exact evidence, downstream
+impact, an answer schema, and an explicit structural equivalence key. It also states whether a governed
+autonomous action is still executable. The planner does not parse diagnostic wording to infer equivalence or
+eligibility.
+
+Planning then applies one deterministic policy:
+
+1. A family with an available autonomous action is returned as work, not rendered as a question. Any question
+   depending on that family is withheld until the action runs and the caller replans.
+2. Needs group only when their exact equivalence key, question revision, missing-information reason, and answer
+   schema agree. Conflicting grouped definitions fail closed.
+3. Evidence and alternatives are unioned deterministically. Impacts with the same stage/surface/record identity
+   collapse to one record; if any contributing impact blocks, the merged impact blocks.
+4. Information gain is computed from structural reach: blocking status, distinct affected surfaces, known
+   alternatives, and whole-pipeline blockage. No document or corpus-specific threshold participates.
+5. Dependency-connected questions stay in one class. If any question in that component blocks completion, the
+   component enters the blocking packet; the rest enter the advisory packet. Dependencies are topologically
+   ordered, and cycles reject.
+
+At most one blocking and one advisory packet are produced, which keeps the exchange bounded without letting
+advisory debt stop unrelated work. Planning creates no answer witness and grants no proof authority.
 
 The closed missing-information reasons are:
 
@@ -169,12 +195,14 @@ Implemented now:
 - schema-1 packet, immutable question definition, lifecycle, typed answer schema, answer envelope, authority
   claims, current binding, compatibility classification, bounded validation, deterministic hashes, and focused
   fail-closed tests;
+- deterministic planning over normalized residual, contradiction, completeness/validation, adapter-block, and
+  external-choice needs, including autonomous filtering, exact grouping, structural information-gain ranking,
+  dependency ordering, cycle refusal, and blocking/advisory packet separation;
 - public Rust access through `specforge_core::ir::clarification`; and
 - the authority decision in ADR 0040.
 
 Not implemented yet:
 
-- residual/completeness/validation/adapter question planning and deduplication (`.2`);
 - CLI list/inspect/export/answer workflows (`.3`);
 - semantic value, grounding, authorization, conflict, and tamper-evident acceptance (`.4`);
 - proof-kernel integration and minimal transactional replay (`.5`);

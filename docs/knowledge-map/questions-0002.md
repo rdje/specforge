@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > are description bracket slices like Store Data[63:32] positions or values
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > are extracted evidence and semantic records rewritten by validate
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > are figure-mined contracts verified before fusion and lowering
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > are instruction mnemonics in a software optimization guide declared interface signals (no)
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > are normalized pages page JSON image paths repository relative
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > are older register records compatible with access and table provenance fields
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > are older timing constraint records compatible with supporting_table_ids
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
@@ -285,15 +297,3 @@
   > does SpecForge model-check temporal properties
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > does SpecForge preserve certification workflow source evidence
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > does SpecForge reject a page metadata staging traversal or symlink escape
-- [contested-priors](../knowledge/contested-priors.md)
-  > does SpecForge revise or decay priors
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > does SpecForge use LTL CTL or TLA+
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > does SpecForge use the full scope of a page's visual information
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > does Wishbone declare its signals in a table

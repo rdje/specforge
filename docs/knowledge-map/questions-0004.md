@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how are spacing-artifact field names and the unit word Bits handled
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > how are stale generated isf symlinks handled
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > how are temporal rules expressed as LTL or MTL
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > how are test laboratory procedures distinguished from hardware test requirements
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > how are the .4c result and .2 capability ledger composed
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > how are the roadmap section bounds derived
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -286,15 +298,3 @@
   > how does the no-re-ingest canonical promotion protocol stay in place
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how does the register reader recover a field name with no name column
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how does the section-heading field reader tell a message container from a register container
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how does the tiling gate keep register-bit recovery honest (no fabrication)
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate classify a document / what is document_class
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate know an intent_ir is stale relative to its semantic_ir

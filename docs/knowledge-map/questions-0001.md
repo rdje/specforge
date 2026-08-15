@@ -62,6 +62,8 @@
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How are EvidenceIR mutations authorized after extraction?
+- [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md)
+  > How are blocking and advisory clarification packets separated?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How are frame fields extracted without hardcoding a protocol?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
@@ -86,6 +88,8 @@
   > How does EvidenceIR schema 2 remove protocol-specific extraction authority?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does SourceIR classification remain specification neutral?
+- [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md)
+  > How does SpecForge deduplicate equivalent clarification questions?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does SpecForge keep source-owned symbol spelling opaque?
 - [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
@@ -100,6 +104,8 @@
   > How does schema 3 prove generic protocol evidence?
 - [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
   > How does supplemental user information enter SpecForge proof?
+- [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md)
+  > How does the clarification planner avoid asking about autonomously recoverable information?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the corpus knowledge base group fixtures without protocol-family names?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -164,6 +170,8 @@
   > What closed registry defines the production information-flow boundary?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > What current priors are learned without protocol families?
+- [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md)
+  > What determines clarification information-gain ordering?
 - [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
   > What does current clarification-envelope compatibility mean?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -178,6 +186,8 @@
   > What exact range qualified the identity and spelling remediation?
 - [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
   > What explicit non-answer dispositions does the clarification IR support?
+- [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md)
+  > What happens when clarification dependencies form a cycle?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What happens when schema-1 SourceIR is loaded?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -206,6 +216,8 @@
   > What replaces a forbidden vocabulary list as the proof of production genericity?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What syntax uncertainty makes the production genericity graph fail closed?
+- [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md)
+  > Where is the deterministic clarification planner implemented?
 - [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
   > Where is the executable schema for SpecForge clarification packets and answers?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -286,15 +298,3 @@
   > are byte-location placement tables registers or structures
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > are currently-strict-clean .isf affected by the overlap drop (no — a clean doc cannot contain an unconditional-overlap config or FSMGen would already reject it → byte-identical by construction; 100/107 emitted .isf unchanged)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > are description bracket slices like Store Data[63:32] positions or values
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > are extracted evidence and semantic records rewritten by validate
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > are figure-mined contracts verified before fusion and lowering
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > are instruction mnemonics in a software optimization guide declared interface signals (no)
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > are normalized pages page JSON image paths repository relative
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > are older register records compatible with access and table provenance fields

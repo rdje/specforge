@@ -1,4 +1,21 @@
 # DEVELOPMENT_NOTES
+## SPEC-CLARIFICATION-LOOP.2 (`2026-08-15`) — equivalence is declared, not guessed
+
+Question minimization must not become a second semantic extractor. The planner therefore groups only an explicit
+producer-owned equivalence key and rejects a family whose revision, missing-information class, or answer schema
+disagrees. It never clusters diagnostic prose. This makes deduplication reproducible and keeps semantic authority
+at the governed producer boundary.
+
+Autonomy is also structural. A need whose producer supplies an executable governed action becomes an action, not
+a prompt; every dependent need waits for that action and a fresh plan. Blocking classification is conservative
+over the undirected dependency component so no dependency escapes into another packet. Information gain uses
+only blocking reach, affected surfaces, alternatives, and full-pipeline blockage.
+
+Rust 1.95's Clippy newly suggested replacing three explicit proof-persistence error branches with `?`. Those
+branches intentionally route test/test-support artifacts through typed mutation authorization; replacing them
+would remove that behavior. Narrow reason-bearing lint exceptions preserve the design while restoring the
+warning-denied gate.
+
 ## SPEC-CLARIFICATION-LOOP.1 (`2026-08-15`) — feedback is evidence, not an oracle
 
 The durable boundary is two-layered. An immutable question definition says exactly what is unresolved and binds

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > does SpecForge preserve certification workflow source evidence
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > does SpecForge reject a page metadata staging traversal or symlink escape
+- [contested-priors](../knowledge/contested-priors.md)
+  > does SpecForge revise or decay priors
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > does SpecForge use LTL CTL or TLA+
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > does SpecForge use the full scope of a page's visual information
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > does Wishbone declare its signals in a table
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does a PathBuf need portability handling before it has a producer
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -285,15 +297,3 @@
   > how are signal presence matrices with signals trapped in header rows handled
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > how are source-derived ids normalized for a reviewed paraphrase
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are spacing-artifact field names and the unit word Bits handled
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > how are stale generated isf symlinks handled
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > how are temporal rules expressed as LTL or MTL
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > how are test laboratory procedures distinguished from hardware test requirements
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > how are the .4c result and .2 capability ledger composed
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > how are the roadmap section bounds derived

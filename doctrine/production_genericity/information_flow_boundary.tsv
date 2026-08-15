@@ -69,6 +69,7 @@ lifecycle.clean	non_authoritative_root	document_identity	crates/specforge/src/co
 diagnostic.doctor	non_authoritative_root	raw_evidence	crates/specforge/src/commands/doctor.rs#run	diagnostics_only
 diagnostic.doctor_truncate	non_authoritative_root	raw_evidence	crates/specforge/src/commands/doctor.rs#truncate_for_display	diagnostics_only
 diagnostic.entity_type	non_authoritative_root	raw_evidence	crates/specforge/src/commands/entity_type.rs#run	diagnostics_only
+diagnostic.clarification_planner	non_authoritative_root	raw_evidence	crates/specforge/src/ir/clarification.rs#plan_clarifications	diagnostics_only
 diagnostic.nlp_truncate	non_authoritative_root	raw_evidence	crates/specforge/src/commands/nlp_enrich.rs#truncate_for_display	diagnostics_only
 declassify.opaque_exact	declassifier	symbol_identity	crates/specforge/src/ir/derivation.rs#OpaqueSymbol::eq	exact_identity_only
 declassify.document_exact	declassifier	document_identity	crates/specforge/src/ir/derivation.rs#OpaqueDocumentIdentity::eq	exact_identity_only

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > how much memory did the guarded OpenCAPI Ready Definition ingest use
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how much memory did the guarded OpenCAPI Ready ingest use
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how much memory did the guarded USB4 Connection Manager ingest use
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > how much memory did the guarded USB4 Inter-Domain ingest use
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > how much of the reviewed trajectory population has current binary replay evidence
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > how much page content escapes both the structured-element path and the region-crop path
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > how should Rust version copies be verified across Cargo README book and CI
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
@@ -286,15 +298,3 @@
   > may fact cards be deleted or merged to free catalog capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > must a corpus refresh update the frontier declaration
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > must a post-build signal_constraints replace re-apply build-path invariants
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > must a repair leaf rebuild every affected document or only the ones it measures
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > qwen2.5vl vs qwen3-vl which model
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > should I build an isf lowering-completeness verifier for temporal rules
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > should I fix the PSEL valid when PSEL asserted temporal rule

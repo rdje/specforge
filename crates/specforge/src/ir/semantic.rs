@@ -1463,6 +1463,10 @@ impl SemanticIr {
         Ok(serde_json::to_string_pretty(&persisted)?)
     }
 
+    #[allow(
+        clippy::question_mark,
+        reason = "the explicit error branch preserves the test-support mutation fallback"
+    )]
     pub fn write_to_disk(&self) -> Result<()> {
         EvidenceIr::load_from_path(&self.evidence_ir_path).map_err(|error| {
             AppError::InvalidStageArtifact(format!(

@@ -107,13 +107,15 @@ already valid autonomous work is retained, and repeated execution is determinist
   Commit: `SPEC-CLARIFICATION-LOOP.1 — define typed clarification and answer authority`
 
 - ID: `SPEC-CLARIFICATION-LOOP.2`
-  Status: `pending`
+  Status: `done`
   Goal: plan minimal, high-value clarification packets from governed unresolved state
   Acceptance: one deterministic planner joins eligible residuals, validation/completeness findings,
   contradictions, and blocked lowering decisions; it groups equivalent questions, orders dependencies, computes
   downstream impact, avoids answerable autonomous work, and distinguishes blocking from advisory packets
-  Verification: `pending`
-  Commit: `pending`
+  Verification: 15 focused clarification tests; warning-denied workspace Clippy and Rustdoc; all five
+  production-genericity components at 79 modules / 41 families / 168 fields / 141 declared boundary rows;
+  mdBook, Knowledge Map/catalogs, exact warning-safe dual-ledger rollover, and mandatory doctrines pass
+  Commit: `SPEC-CLARIFICATION-LOOP.2 — plan minimal clarification packets`
 
 - ID: `SPEC-CLARIFICATION-LOOP.3`
   Status: `pending`
@@ -160,6 +162,52 @@ already valid autonomous work is retained, and repeated execution is determinist
   Verification: `pending`
   Commit: `pending`
 
+## Planner Design (`SPEC-CLARIFICATION-LOOP.2`)
+
+The planner consumes one normalized `ClarificationNeed` per governed unresolved observation. Each need retains
+its source kind (`ResidualDecision`, contradiction, completeness/validation finding, adapter block, or external
+choice), exact evidence links, alternatives, affected downstream surfaces, and an explicit structural
+`equivalence_key`. Producers must also classify whether a governed autonomous action is still available. The
+planner never parses diagnostic prose to invent that classification and never asks the user while such an
+action remains executable.
+
+Planning is deterministic and specification-instance-neutral:
+
+- filter needs with an available autonomous action and return those actions as a separate continuation queue;
+- group only needs with the same explicit equivalence key, missing-information reason, and answer-schema digest;
+- union and stable-deduplicate evidence, alternatives, and downstream impacts without dropping any blocking
+  consequence;
+- compute information gain from structural facts only: blocking reach, distinct affected surfaces, known
+  alternatives, and whether the whole pipeline is blocked;
+- collapse grouped dependencies onto their representative question, reject self-dependencies/cycles, and emit a
+  stable topological order with information gain, priority, and equivalence key as deterministic tie-breakers;
+- emit separate blocking and advisory packets, so advisory debt cannot stop unrelated autonomous work.
+
+The output remains schema-1 `ClarificationPacket`; planning establishes no answer or proof authority. Later
+leaves own rendering, answer validation, persistence, and minimal proof-bearing replay.
+
+## Acceptance Checklist (enforced) — `SPEC-CLARIFICATION-LOOP.2`
+
+- [x] **REPRODUCE / MEASURE** — the pre-leaf clarification module contained schema/lifecycle validation but no
+  planner symbol; unresolved inputs remain separate residual, conflict, validation/completeness, and adapter
+  surfaces with no common deterministic packet construction path.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/clarification.rs` ended its production surface at
+  envelope compatibility/validation, while `ResidualDecisionPacket`, `ValidationFindingRecord`, semantic
+  conflict records, and `IsfAdapterArtifact.blocking_reasons` remain independent carriers; no code filters
+  autonomously answerable work, groups equivalent questions, orders dependencies, or separates blocking from
+  advisory packets.
+- [x] **ADDRESSED (verified)** — 15 focused `specforge-core` clarification tests prove all source origins,
+  autonomous filtering, exact grouping, information-gain ordering, dependency collapse/cycle refusal, and
+  blocking/advisory packet separation.
+- [x] **NO REGRESSION** — focused tests, warning-denied workspace Clippy/Rustdoc, all five production-genericity
+  components, mdBook, and the mandatory doctrine driver pass; the planner is additive and does not alter
+  extraction, canonical IR, adapter, or emitted ISF behavior. The dual exact ledger rollover preserves every
+  prior sealed member byte-for-byte and returns both live roots below warning.
+- [x] **GENERICITY (ADR 0006)** — eligibility, grouping, ranking, and ordering use typed structural fields and
+  opaque keys only; no vendor, document, protocol, signal, or corpus-instance vocabulary enters production.
+- [x] **LOCKSTEP** — task tree, mdBook clarification chapter, live docs, Knowledge Map fact, production inventory,
+  and resume pointer describe the same implemented planner and preserve `.3` as the next frontier.
+
 ## Acceptance Checklist (enforced) — `SPEC-CLARIFICATION-LOOP.1`
 
 - [x] **REPRODUCE / MEASURE** — before this leaf, the IR exposed zero versioned clarification or answer
@@ -189,7 +237,7 @@ already valid autonomous work is retained, and repeated execution is determinist
 | --- | --- | --- | --- |
 | 1 | `SPEC-CLARIFICATION-LOOP.0` | `done` | product contract and public direction are frozen |
 | 2 | `SPEC-CLARIFICATION-LOOP.1` | `done` | schema-1 exchange and fail-closed authority are frozen |
-| 3 | `SPEC-CLARIFICATION-LOOP.2` | `pending` | planner consumes the frozen schema and current unresolved surfaces |
+| 3 | `SPEC-CLARIFICATION-LOOP.2` | `done` | deterministic minimal packet planning is implemented and verified |
 | 4 | `SPEC-CLARIFICATION-LOOP.3` | `pending` | UX renders planned packets without becoming semantic authority |
 | 5 | `SPEC-CLARIFICATION-LOOP.4` | `pending` | answer ingestion depends on schema and interface contracts |
 | 6 | `SPEC-CLARIFICATION-LOOP.5` | `pending` | proof-bearing resume depends on validated answer authority |
@@ -212,15 +260,17 @@ already valid autonomous work is retained, and repeated execution is determinist
   locators must resolve to native captured proof, supplements must become governed source, and only an external
   design choice may later use a dedicated narrowly registered proof premise; there is no generic user-answer
   premise.
+- `2026-08-15`: `.2` makes producer-declared structural equivalence the only deduplication authority; question
+  planning is a declared non-authoritative diagnostic region and cannot influence canonical production state.
 
 ## Open Questions
 
-- `.2` must calibrate which unresolved findings are worth asking versus leaving as nonblocking residuals; the
-  policy must be evidence-driven and generic, not a hardcoded corpus threshold.
+- `.3` must choose the bounded repository-local artifact and CLI exchange shape without making rendering or
+  operator convenience a new semantic authority.
 
 ## Blockers
 
-- None. `.2` is the next executable leaf.
+- None. `.3` is the next executable leaf.
 
 ## Verification Log
 
@@ -232,6 +282,11 @@ already valid autonomous work is retained, and repeated execution is determinist
 | `2026-08-15` | `.1` | 10 clarification tests; warning-denied workspace Clippy/Rustdoc; production
   genericity; mdBook; catalogs/live-size; mandatory doctrines | `passed`; canonical denominator remains 41
   families / 168 fields; graph is 79 files / 2,332 functions / 13,970 edges / 12,196 decisions / 1,457 macros |
+| `2026-08-15` | `.2` | 15 clarification tests; warning-denied workspace Clippy/Rustdoc; five production-
+  genericity components; mdBook; Knowledge Map/fact catalogs; exact two-ledger rollover; mandatory doctrines |
+  `passed`; graph is 79 modules / 2,347 functions / 14,294 helper edges / 12,514 decision sites / 1,459 macros,
+  with 141 declared boundary rows and six non-authoritative regions; after final lockstep updates the live roots
+  are 90/1,325/194,745 and 51/1,015/85,521 records/lines/bytes for changes and Rust analysis respectively |
 
 ## Commit Log
 
@@ -239,6 +294,7 @@ already valid autonomous work is retained, and repeated execution is determinist
 | --- | --- | --- |
 | `.0` | `SPEC-CLARIFICATION-LOOP.0 — own autonomous and assisted completion` | direction frozen; runtime starts in `.1` |
 | `.1` | `SPEC-CLARIFICATION-LOOP.1 — define typed clarification and answer authority` | schema 1 + ADR 0040; planner is next |
+| `.2` | `SPEC-CLARIFICATION-LOOP.2 — plan minimal clarification packets` | deterministic structural planner; CLI exchange is next |
 
 ## Changelog
 
@@ -248,3 +304,6 @@ already valid autonomous work is retained, and repeated execution is determinist
   owns the exact segment-0010 rollover necessary to preserve that public alignment without changing a limit.
 - `2026-08-15`: `.1` implements the versioned exchange/currentness foundation and closes the answer-authority
   decision without claiming planner, validator, or replay behavior.
+- `2026-08-15`: `.2` implements deterministic autonomous-action deferral, exact compatible grouping, dependency-
+  closed blocking classification, cycle-safe topological ordering, and structural ranking. The required planner
+  records also triggered exact warning-safe `CHANGES.md` and Rust-analysis rollovers under the existing limits.
