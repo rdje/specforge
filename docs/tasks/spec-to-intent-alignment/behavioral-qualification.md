@@ -112,21 +112,21 @@
   proves both the fifth-part positive path and one-over-limit rejection without changing capacity.
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`
-  State: `in_progress`
+  State: `done`
   Goal: eliminate the production symbol-spelling and ordering coupling exposed by the valid I2C alpha relation
   Acceptance: the six-signal, 352-occurrence I2C transform preserves every normalized SourceIR→ISF value and
   proof claim without a document, protocol, vendor, filename, expected-result, or familiar-alias branch; the
   original failing attempt remains durable evidence; focused controls prove genuine semantic symbol changes and
   ambiguous derived-id structure still reject
-  Verification: `production diagnostic now preserves all 11,170 proof claims and every semantic record; only
-  five source-derived SemanticIR references, 78 downstream set/reference values, and one unordered ISF
-  declaration block remain for the conformance comparator; focused producer and negative controls pass; exact
-  two-chain ADR 0025 reconciliation restores 24/24 current and zero stale at every replayed stage`
+  Verification: `the exact clean-revision alpha replay passes 5/5 stages with 11,170/11,170 claims over 266,194
+  leaves and zero undeclared paths; refreshed held-out evidence closes 51/51 attempts at 35 pass / zero fail / 16
+  unmeasurable / zero invalid with all 35 completed relations fresh; comparator scalar/list ambiguity controls,
+  23/0/2 behavioral tests, 17/17 evidence-checker mutations, and exact two-chain ADR 0025 reconciliation pass`
   Commits: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering`;
-  `closure replay pending`
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`
-  State: `pending`
+  State: `in_progress`
   Goal: replay and reconcile the complete reviewed population under the behavioral oracle
   Acceptance: every current measurable chain and every explicitly unmeasurable legacy chain is accounted for;
   all metamorphic and negative runs are attributed; exact canonical, residual, proof, validation, and lowering
@@ -242,9 +242,10 @@
   grant section-topic semantics; and transaction/conflict/residual collections plus generated conflict ordinals
   followed raw `String` order instead of first source occurrence.
 - [x] **ADDRESSED (verified)** — remove each production mechanism without weakening the comparator. The
-  production-only diagnostic preserves all 11,170 claims and equal record counts, narrows every remaining delta
-  to five source-projected SemanticIR ids, 78 downstream set/reference values, and one unordered ISF declaration
-  block, and retains rejection of real semantic symbol changes and ambiguous derived-id structure.
+  production-only diagnostic preserves all 11,170 claims and equal record counts. Field-aware embedded-id
+  projection, unordered reference/responsibility sets, and top-level ISF declaration canonicalization close the
+  measured representation gaps while real semantic changes and non-bijective scalar/list ids still reject. The
+  clean-revision pair and final 35/0/16/0 held-out matrix pass with no retained full-capture relabeling.
 - [x] **NO REGRESSION** — focused producer, behavioral, checker-mutation, production-genericity, full CI,
   mdBook, and repository-locality gates pass with deterministic current counts. This shared-extractor leaf owns
   ADR 0025 reconciliation of every retained chain that the fixed-input current-binary replay proves changed,
@@ -255,9 +256,12 @@
 - [x] **LOCKSTEP** — machine evidence, task frontier, research, mdBook, Knowledge Map, live documents, and resume
   pointer describe the verified production state and retain the original failure.
 
-Leaf closure remains pending after this accepted production commit: normalize only the three measured
-representation-level comparator surfaces, replay the exact pair against the clean production revision, publish
-the successful held-out evidence, and then close `.f.iii.a` before `.f.iv` whole-population reconciliation.
+Leaf closure is complete. Publication did not relabel retained full-PDF artifacts across production revisions:
+the first diagnostic correctly returned 34 `stale_contract_or_population` invalids when revision `2cdcd131` was
+paired with prior-revision full-capture artifacts. The final executor reran all unchanged/adversarial relations
+under `2cdcd131` and used retained evidence only for the predeclared alpha-eligibility boundary. Canonical SHA
+`06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1` records 35 fresh passes, 16 eligibility-
+preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now owns whole-population reconciliation.
 
 ## Current Frontier
 
@@ -268,8 +272,8 @@ the successful held-out evidence, and then close `.f.iii.a` before `.f.iv` whole
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b` | `done` | reviewed paraphrase and four harmless layout boundaries pass the complete five-stage comparator |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c` | `done` | real and synthetic negative controls prove semantic and authority sensitivity |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` | `done` | corrected held-out qualification is measured; child `.f.iii.a` owns the real I2C alpha coupling |
-| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `in_progress` | production coupling is removed; commit it, then replay the exact pair with context-correct conformance normalization against that clean revision |
-| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `pending` | reconcile the complete reviewed population and all variants after the measured coupling is fixed |
+| 6 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` | `done` | clean-revision exact and 51-attempt refresh evidence pass without prior-revision full-capture relabeling |
+| 7 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv` | `in_progress` | reconcile the complete reviewed population and all variants after the measured coupling is fixed |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` | `pending` | close behavioral signoff and release the controller-ranked frontier |
 
 ## Decisions
@@ -312,16 +316,17 @@ the successful held-out evidence, and then close `.f.iii.a` before `.f.iv` whole
   lexical spelling—governs emission and generated ordinals.
 - `2026-08-14`: land production remediation before conformance normalization. The held-out aggregate pins the
   comparator source digest, so a clean production commit is the truthful revision authority for the final replay.
+- `2026-08-15`: a retained full-capture report is never evidence for a different production revision. Refresh
+  reruns unchanged/adversarial PDF capture; only frozen alpha eligibility may come from retained authority.
 
 ## Open Questions
 
-- `.f.iii.a` must publish the clean-production-revision replay after the comparator normalizes source-projected
-  reference ids and semantically unordered responsibility/ISF declaration sets without admitting ambiguity.
+- `.f.iv` must reconcile every reviewed baseline and approved/negative variant under the now-closed behavioral
+  oracle without weakening the exact current-revision provenance boundary.
 
 ## Blockers
 
-- None for `.f.iii.a`. The failing five-stage pair and exact proof deltas are available in repository-local
-  scratch; failure is evidence to remediate, not permission to weaken the oracle.
+- None for `.f.iv`. The remediated held-out authority and all reviewed recipes are available repository-locally.
 
 ## Verification Log
 
@@ -343,6 +348,10 @@ the successful held-out evidence, and then close `.f.iii.a` before `.f.iv` whole
 | `2026-08-14` | `.f.iii.a` first all-tier gate | correctly blocks on chain currency only: fixed-input replay identifies EvidenceIR drift in Arm Debug Interface v6 and I2C, with their downstream current-schema proofs consequently stale; this leaf owns exact ADR 0025 backup, delta attribution, rebuild, and replay before its production commit |
 | `2026-08-14` | `.f.iii.a` chain reconciliation | exact 16-file same-volume backup verified; Arm changes six relation-to-signal ordinal assignments and I2C changes two plus matching provenance/source-order projections; every stage record/proof count and both blocked adapter outcomes remain stable; EvidenceIR/SemanticIR/IntentIR/adapters each replay 24/24 current, zero stale, 54 explicitly unmeasurable, with 24 retained bundles exact |
 | `2026-08-15` | `.f.iii.a` production full repository gate | all nine doctrines and 11 production-genericity components; exact 2,270 / 11,902 / 11,355 / 1,443 flow snapshot; 1,976 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final locality; verified backup and five worktree diagnostic roots removed with no residue |
+| `2026-08-15` | `.f.iii.a` exact clean-revision alpha replay | all five stages pass against production revision `2cdcd131`; 11,170/11,170 claims over 266,194 leaves; zero undeclared paths; focused comparator controls pass 6/6 including non-bijective scalar/list rejection and nested-drive scope |
+| `2026-08-15` | `.f.iii.a` first publication diagnostic | fresh I2C alpha passes, but all 34 retained unchanged/adversarial attempts correctly invalidate because prior-revision artifacts cannot be relabeled as `2cdcd131`; 16 alpha rows remain eligibility-preflight unmeasurable; canonical evidence is untouched and full-capture refresh is required |
+| `2026-08-15` | `.f.iii.a` final held-out refresh | 35 pass / zero fail / 16 unmeasurable / zero invalid; all 34 full-PDF relations and I2C alpha are fresh under `2cdcd131`; 824,172/824,172 claims, 19,745,620 leaves, six/six deltas, aggregate SHA `06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1`; checker and 17/17 mutations pass |
+| `2026-08-15` | `.f.iii.a` closure full repository gate | 9/9 doctrines and all 11 production-genericity components pass; graph snapshot 2,272 / 11,909 / 11,382 / 1,444; 1,980 Rust tests / eight ignored / zero failed; five compile-fail doctests; warning-denied Clippy/Rustdoc; mdBook test/build; final project-data locality pass |
 
 ## Commit Log
 
@@ -356,6 +365,7 @@ the successful held-out evidence, and then close `.f.iii.a` before `.f.iv` whole
 | `.f.iii` diagnostic | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects` | preserve the initial fail-closed 51-attempt result, repair fact-card reachability, and own narrow oracle correction without laundering outcomes |
 | `.f.iii` qualification | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior` | close corrected identity/alpha authority and provenance, publish 34/1/16/0 outcomes, and route the measured I2C production coupling to `.f.iii.a` |
 | `.f.iii.a` production | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — remove alpha-sensitive production ordering` | keep opaque identifiers atomic, order generated relations and semantic signal collections by source occurrence, and exclude declared aliases from section-topic grammar |
+| `.f.iii.a` closure | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure` | normalize only measured representation surfaces, require fresh full-capture revision evidence, and publish the passing held-out matrix |
 
 ## Activation protocol
 

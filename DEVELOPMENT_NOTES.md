@@ -1,4 +1,27 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a (`2026-08-15`) — revision identity requires fresh behavioral execution
+
+A retained report can prove what one production revision did; changing only its revision label cannot prove what
+another revision does. The first closure publication made that boundary concrete: fresh I2C alpha passed, but all
+34 unchanged/adversarial reports correctly became `stale_contract_or_population` when old full-capture artifacts
+were presented as evidence for `2cdcd131`. The remedy is an explicit execution mode, not a bypass. Full-capture
+refresh reruns both PDF relations under the named revision and uses retained evidence only to answer the already-
+frozen question of whether a normalized-text row has an eligible opaque signal catalog.
+
+Alpha inverse projection also needs occurrence context rather than a field-only rule. A standalone alias in prose
+must regain source display spelling, while the same alias embedded in `actor_<alias>_channel` must use the
+lowercase source-bound projection used by generated ids. Applying one policy to the whole `statement` field left
+`actor_RESPONSE_REQUEST_channel` different from `actor_request_response_channel` and changed collection order.
+The comparator now detects whether the renamed fragment is embedded in a larger identifier. Unordered sets and
+top-level declarations canonicalize after that projection; transaction steps and ambiguous id structure remain
+exact.
+
+The 51-attempt refresh exposed a performance boundary without changing correctness: USB 3.2's unchanged attempt
+created 1,064 files / 554 MiB before downstream comparison, and the executor remained CPU-bound near 99% for the
+large normalization phases. The fixed population completed successfully, but future expansion of fresh full-PDF
+behavioral matrices should measure artifact amplification and comparator cost before increasing the denominator.
+This observation is part of `.f.iv` planning; it does not weaken the current evidence or authorize cache relabeling.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a (`2026-08-14`) — opaque spelling cannot be grammar or order authority
 
 The I2C failure began with a small tokenizer assumption: the bounded logic-level binder split on every

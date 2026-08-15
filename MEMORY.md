@@ -17,15 +17,18 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` is in progress; production alpha-ordering remediation is
-  clean at commit `2cdcd131`, and clean-revision comparator replay/publication is the remaining closure step.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a` closure is implemented and evidence-complete; repository
+  verification and the closure commit remain before the durable frontier moves to `.f.iv`.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: four structural production causes are repaired; the exact six-signal pair preserves 11,170/11,170
-  claims over 266,194 leaves, retained chains are 24/24 current and zero stale, and the full production gate passes.
-  `MEMORY-RESUME-POINTER-BYTE-CAP` is complete: both executable authorities enforce exactly 32,768 bytes, independent
-  concision rules remain, and the consumed increase authority is retired after committed boundary `7e42d0f3`.
-- Next action: add the measured field-aware comparator normalization and replay/publish the exact pair against clean
-  production revision `2cdcd131`, then close `.f.iii.a` before whole-population reconciliation.
-- In-flight uncommitted: none after the memory-cap authority-retirement commit. No background job.
+- Current state: the exact clean-revision I2C pair passes 5/5 stages with 11,170/11,170 claims over 266,194 leaves.
+  Canonical held-out evidence SHA `06e2358c…68a1` records 35 fresh passes, 16 eligibility-preflight unmeasurables,
+  zero failures, and zero invalid attempts under production revision `2cdcd131`. The behavioral checker and 17/17
+  mutations pass. Full CI passes 9/9 doctrines, all 11 production-genericity components, 1,980 Rust tests with
+  eight intentional ignores, five doctests, warning-denied Clippy/Rustdoc, mdBook, and final locality. `MEMORY.md`
+  remains capped at exactly 32,768 bytes.
+- Next action: run the final explicit doctrine/commit workflow, commit `.f.iii.a`, then begin `.f.iv` complete
+  reviewed-population reconciliation. Task metrics, focused synchronization, locality, and diagnostic cleanup pass.
+- In-flight uncommitted: comparator/refresh implementation, canonical evidence, graph snapshot, and synchronized
+  task/research/live/book/retrieval updates. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

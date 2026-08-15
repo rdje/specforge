@@ -61,6 +61,8 @@
   > can prior memory select extraction by filename or protocol family
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can provenance load after source normalized cleanup removes its leaf
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > can retained full capture artifacts be relabeled for a new production revision
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > can specforge emit a symbolic signal width like (width ADDR_WIDTH) to the .isf
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -295,5 +297,3 @@
   > does converge detect a protocol only SWD change
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > does converge re-ingest the PDF every run
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > does convergence detect a same count protocol rewrite

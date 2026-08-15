@@ -1,3 +1,23 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure
+
+- Made symbol-alpha normalization context-aware: renamed fragments embedded in source-derived identifiers use
+  the canonical lowercase projection, while standalone prose and declarations retain source spelling.
+- Canonicalized only semantically unordered responsibility/reference collections and top-level ISF interface/
+  named-drive declarations. Ordered transaction steps remain exact, and scalar/list many-to-one derived ids
+  remain visible failures.
+- Added explicit held-out full-capture refresh. Unchanged/adversarial PDF relations rerun through the current
+  production pipeline; retained evidence remains authority only for the frozen alpha-eligibility boundary.
+- Preserved the first publication diagnostic: all 34 prior-revision full-capture reports correctly invalidated
+  rather than being relabeled as revision `2cdcd131`. The canonical refresh then closed 51/51 attempts at 35 pass,
+  zero fail, 16 unmeasurable, and zero invalid, with SHA-256 `06e2358c…68a1`.
+- Exact I2C alpha now passes all five stages with 11,170/11,170 claims over 266,194 leaves and six/six expected
+  deltas. Aggregate full-capture evidence accounts for 824,172/824,172 claims and 19,745,620 compared leaves.
+- Advanced the behavioral frontier to `.f.iv` complete-population reconciliation and refreshed the independent
+  flow snapshot to 2,272 functions / 11,909 helper edges / 11,382 decision sites / 1,444 semantic macros.
+- Closed the full repository gate: 9/9 doctrines, all 11 production-genericity components, 1,980 Rust tests with
+  eight intentional ignores, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook test/build, and the
+  final project-data locality census all pass.
+
 ### MEMORY-RESUME-POINTER-BYTE-CAP.1 — set MEMORY.md maximum to 32,768 bytes
 
 - Raised only the `MEMORY.md` byte maximum from 4,096 to exactly 32,768 bytes (`32 * 1024 B`) in both executable

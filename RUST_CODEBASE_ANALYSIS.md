@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-15 — clean-revision behavioral closure; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`)
+
+- `specforge-conformance::behavioral_genericity` now distinguishes standalone renamed symbols from fragments
+  embedded in source-derived identifiers. Embedded fragments use the canonical lowercase projection; ordinary
+  prose/declarations retain source display spelling. The same comparator pass canonicalizes unordered reference/
+  responsibility arrays and top-level ISF declarations without sorting ordered transaction steps.
+- Held-out qualification has an explicit `refresh_full_capture` request. It executes unchanged/adversarial PDF
+  attempts through the current pipeline, retains the earlier artifact only for alpha eligibility, and refuses
+  refresh without that authority. The cross-revision retained-report guard remains unchanged and fail-closed.
+- The canonical 17-document aggregate contains 35 `fresh_pipeline` passes and 16 `eligibility_preflight`
+  unmeasurables, with no fail or invalid row. Exact I2C alpha passes 5/5 stages with 11,170/11,170 proof claims and
+  zero undeclared paths over 266,194 leaves.
+- The compiled production-flow boundary remains 78 inventoried files / 140 rows and now measures 2,272 functions,
+  11,909 helper edges, 11,382 decision sites, and 1,444 semantic macros. The added branches are conformance-only;
+  no dependency or information-flow direction changes.
+
 ## Session update (2026-08-14 — alpha-sensitive production ordering remediation; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`)
 
 - `ir::evidence` now tokenizes underscore identifiers atomically for bounded logic-level binding and emits
@@ -19,8 +35,8 @@
   assignments. All record and proof-claim counts, adapter blocking states, and emitted-target absence are stable;
   chain currency is 24/24 current and zero stale through every replayed stage.
 - The compiled production graph remains 78 inventoried files / 140 boundary rows and now measures 2,270 functions,
-  11,902 helper edges, 11,355 decision sites, and 1,443 semantic macros. The conformance comparator remains
-  downstream; its field-aware reference/set/declaration normalization is the next same-leaf commit.
+  11,902 helper edges, 11,355 decision sites, and 1,443 semantic macros. At this production-only checkpoint the
+  downstream conformance normalization remained open; the closure update above records its final implementation.
 
 ## Session update (2026-08-14 — initial behavioral holdout diagnostic; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`)
 

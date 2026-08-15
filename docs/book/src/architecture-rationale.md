@@ -140,7 +140,7 @@ criterion. A more ambitious future option — letting a language model
 read the spec end-to-end — is captured but deliberately parked until the current approach is proven;
 even then it would generalize the *how* and still never memorize names.
 
-### Current implementation status: structural proof complete, behavioral signoff open
+### Current implementation status: structural proof and held-out remediation complete, population signoff open
 
 The rule above is the required architecture, but an August 2026 whole-production audit found that the
 current implementation does not yet satisfy it completely. SourceIR classification, generic protocol evidence,
@@ -208,7 +208,7 @@ Exact local calls are distinguished from method, associated, external, prelude/b
 dispatch rather than pretending that an AST alone is a type checker. The information-flow layer now makes the
 raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically checked. Its
 140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
-2,270 functions, 11,902 helper edges, 11,355 decision sites, and 1,443 sensitive macros. Canonical mutation/protected
+2,272 functions, 11,909 helper edges, 11,382 decision sites, and 1,444 sensitive macros. Canonical mutation/protected
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
@@ -248,23 +248,25 @@ contradiction, reversal, value/timing, undeclared-symbol, misleading-name, proof
 faults. Unavailable or vacuous attempts are unmeasurable; stale, ambiguous, escaped, or partial attempts are
 invalid. Those remain harness calibrations. The first `.f.iii` prospective execution exposed an omitted
 filename-derived stem allowance and an overbroad alpha catalog; its exact diagnostic remains in Git history. The
-corrected 51-attempt aggregate is 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged PDF and
+corrected pre-remediation aggregate was 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged PDF and
 adversarial identity pass 17/17. Fifteen rows have no typed opaque alpha surface and one is vacuous. The I2C row
 alone has a measurable six-signal catalog; its bijective 352-occurrence rename exposed four generic coupling
 mechanisms. Opaque underscore identifiers had been split into grammar words; relation/conflict ordinals and
 signal collections followed lexical spelling; and a familiar word inside a declared alias could influence
 section-topic grammar. `.f.iii.a` keeps opaque identifiers atomic, orders source-owned signal collections by
-first occurrence, and removes complete declared aliases before interpreting title topics. The production-only
-diagnostic now preserves equal stage record counts and all 11,170 proof claims; only field-aware derived-id,
-set-valued responsibility, and unordered named-drive normalization remains before clean-revision replay. The
-shared-extractor movement is reconciled exactly: all 24 measurable persisted chains are current and zero stale
+first occurrence, and removes complete declared aliases before interpreting title topics. Context-aware inverse
+projection and narrow set/declaration canonicalization close the representation-only comparison surfaces while
+non-bijective ids and ordered transaction steps remain exact. The clean-revision aggregate is 35 pass / zero fail /
+16 unmeasurable / zero invalid: all 34 PDF relations and I2C alpha execute fresh under revision `2cdcd131`, while
+retained evidence supplies only alpha eligibility. The shared-extractor movement is reconciled exactly: all 24 measurable persisted chains are current and zero stale
 through EvidenceIR, SemanticIR, IntentIR, and adapter; all 24 adapters remain blocked with no emitted ISF.
 Transformation recipes, expected
 relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
 current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)
 publishes the exact boundary; the [initial-run report](../../research/behavioral-held-out-initial-run.md)
 preserves the diagnostic; and the [corrected qualification](../../research/behavioral-held-out-qualification.md)
-publishes denominators, execution provenance, uncertainty, and the measured production failure.
+publishes denominators, execution provenance, uncertainty, the measured production failure, and its remediated
+clean-revision closure. Complete reviewed-population replay and final signoff remain open.
 
 This finding does not invalidate the project. A specification-neutral extractor may retain universal
 digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and

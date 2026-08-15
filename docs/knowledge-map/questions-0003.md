@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > does convergence detect a same count protocol rewrite
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > does convergence preserve protocol record order
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > does corpus KB refresh mutate canonical IR or CorpusMemory
@@ -295,5 +297,3 @@
   > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how do I roll ROADMAP.md when it approaches its ceiling
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > how do I run a Docling ingest or re-ingest on this machine

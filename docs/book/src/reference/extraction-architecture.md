@@ -133,8 +133,8 @@ The information-flow layer over that graph is now shipped. A closed 140-row regi
 field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
 rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
 non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
-dependence through 2,270 functions and 11,902 helper edges, then check 11,355 branch/selection/decision sites,
-1,443 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
+dependence through 2,272 functions and 11,909 helper edges, then check 11,382 branch/selection/decision sites,
+1,444 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
 The dependency, inventory, rule, compiled-graph, information-flow, and frozen behavioral-contract checks now run
@@ -143,7 +143,7 @@ full-PDF versus normalized-text input planes, six transform relations, five proo
 7-row calibration/17-row prospective holdout split, and pass/fail/unmeasurable/invalid evidence states. CI adds
 27 structural controls, eight contract mutations, legal display/provenance/test controls, and an exact
 inventory-to-runtime join that executes the structural alpha obligation of all 168 rules. The contract does not
-pretend the future runs already pass: held-out and whole-population qualification remain mandatory before
+pretend whole-population replay already passes: that qualification remains mandatory before
 SpecForge can claim production-genericity signoff. The executable behavioral slices now present in conformance
 are deterministic normalized-text alpha, unchanged-PDF, byte-identical adversarial PDF identity, reviewed
 paraphrase/layout, and semantic-negative pairs; they execute SourceIR through ISF
@@ -157,16 +157,19 @@ then the exact declared complement passes. A separate nine-class synthetic matri
 contradiction, relation reversal, value/timing, undeclared-symbol, misleading-name, proof-corruption, and
 disabled-stage faults. Missing/provider/vacuous attempts are unmeasurable; stale/ambiguous/partial attempts are
 invalid. The initial frozen held-out execution exposed an omitted filename-derived stem allowance and an
-overbroad alpha catalog; that diagnostic remains in Git history. The corrected 17-document / 51-attempt /
-90-stratum aggregate has 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged PDF replay and
+overbroad alpha catalog; that diagnostic remains in Git history. The corrected pre-remediation 17-document /
+51-attempt / 90-stratum aggregate had 34 pass / one fail / 16 unmeasurable / zero invalid. Unchanged PDF replay and
 adversarial identity each pass 17/17. Fifteen rows have no typed opaque alpha declaration and one is vacuous.
 The sole measurable I2C alpha pair bijectively renames six signals across 352 occurrences, passes SourceIR, but
 originally lost two EvidenceIR proof claims and propagated undeclared deltas through SemanticIR, IntentIR, and
 ISF. `.f.iii.a` localized four generic causes: underscore-splitting of opaque grammar tokens, lexical relation
 and conflict ordinals, spelling-sorted semantic signal sets, and declared-alias leakage into section-topic
-grammar. The production repair uses atomic identifiers and first source occurrence, preserves genuine topic
-words, and now retains all 11,170 claims in the exact diagnostic. Clean-revision conformance replay,
-complete-population results, and final production-genericity signoff remain open.
+grammar. The production repair uses atomic identifiers and first source occurrence and preserves genuine topic
+words. Conformance projects only symbol fragments embedded inside generated identifiers and canonicalizes only
+unordered reference/responsibility sets plus top-level ISF declarations; ambiguous ids and transaction order stay
+exact. The final clean-revision aggregate has 35 pass / zero fail / 16 unmeasurable / zero invalid. Every completed
+relation is a fresh pipeline run under revision `2cdcd131`; retained evidence supplies only the frozen alpha-
+eligibility boundary. Complete-population results and final production-genericity signoff remain open.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively
@@ -234,10 +237,10 @@ Validation backannotation is verified artifact state and is retained in the down
 validating an upstream artifact after building its consumer therefore makes that consumer stale by design. The
 currency gate replays from persisted inputs and rejects any such sequencing error.
 
-This closes structural qualification only. The behavioral oracle and exact denominator are frozen, and the
-identity/alpha harness, reviewed paraphrase/layout relations, and negative sensitivity are implemented and
-calibrated. Held-out families and complete-population replay remain the behavioral gate before the project can
-claim production genericity as a whole.
+This closes structural qualification and the held-out remediation, not production genericity as a whole. The
+behavioral oracle and exact denominator are frozen; identity/alpha, reviewed paraphrase/layout, negative
+sensitivity, and the remediated held-out matrix are implemented and qualified. Complete reviewed-population
+replay remains the behavioral gate before final signoff.
 
 ## Completion order
 

@@ -97,9 +97,10 @@ text alpha, reviewed paraphrase/layout, semantic-negative sensitivity, and typed
 qualified the frozen identity-disjoint holdout after correcting its oracle: unchanged and adversarial-identity
 replay pass 17/17, 16 alpha rows are honestly unmeasurable, and the sole measurable I2C alpha pair exposed real
 production spelling/order coupling. `.f.iii.a` has localized and removed that production coupling; the exact
-pair now preserves all 11,170 proof claims in a production-only diagnostic, and ADR 0025 reconciliation restores
-24/24 current with zero stale at every replayed persisted stage. Clean-revision comparator replay,
-complete population reconciliation, final signoff, and then `.6e` remain. Resource-sized bounded
+pair and the final clean-revision held-out refresh now pass: 35 completed relations are fresh under revision
+`2cdcd131`, 16 alpha rows remain honestly unmeasurable, and no failure or invalid attempt remains. ADR 0025
+reconciliation restores 24/24 current with zero stale at every replayed persisted stage. Complete population
+reconciliation in `.f.iv`, final signoff, and then `.6e` remain. Resource-sized bounded
 activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
 
 Five active program groups support that north star:

@@ -869,10 +869,9 @@ def validate_held_out_evidence(
             problems.append(f"held-out attempt state is invalid: {pair!r}")
         execution_mode = attempt.get("execution_mode")
         expected_mode = (
-            "retained_report_revalidated"
+            "fresh_pipeline"
             if relation in {"unchanged_source", "adversarial_identity"}
-            else "fresh_pipeline"
-            if state in {"pass", "fail"}
+            or state in {"pass", "fail"}
             else "eligibility_preflight"
         )
         if execution_mode != expected_mode:
@@ -1797,8 +1796,8 @@ def run_self_test(contract: dict[str, Any], rows: list[dict[str, str]]) -> int:
         for attempt in bad_execution_mode["attempts"]
         if attempt["relation"] == "unchanged_source"
     )
-    full_capture["execution_mode"] = "fresh_pipeline"
-    evidence_mutants.append(("held-out execution provenance drift", bad_execution_mode))
+    full_capture["execution_mode"] = "retained_report_revalidated"
+    evidence_mutants.append(("held-out full-capture freshness drift", bad_execution_mode))
 
     missing_detail = copy.deepcopy(report)
     noncompleted = next(

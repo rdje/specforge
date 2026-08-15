@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: extraction quality and breadth
 - Created: `2026-08-11`
-- Last updated: `2026-08-14`
+- Last updated: `2026-08-15`
 - Owner: project owner and repo-local workflow
 
 ## Goal
@@ -25,13 +25,13 @@ expressiveness as the bottleneck.
 - `.6d` and `.6d.ii` are in progress; `.6d.i` and `.6d.ii.a` through `.6d.ii.e` are complete.
 - Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
 - `.6d.ii.f` is in progress; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
-  corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has localized and removed the resulting
-  production symbol-alpha coupling; clean-revision comparator replay remains before whole-population replay.
+  corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has removed the production symbol-alpha
+  coupling and published clean-revision held-out closure; `.f.iv` now owns whole-population replay.
 - `.6e`, `.7`, `.8`, and `.9` are pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -40,12 +40,13 @@ review authority plus one sentence and four harmless layout variants without wid
 exclusions. `.f.ii.c` proves one real semantic/proof delta plus all nine sensitivity classes and closes typed
 invalid/unmeasurable attempt handling. `.f.iii` qualifies the frozen prospective holdout.
 Its initial 51-attempt execution exposed two conformance-oracle defects and remains in Git history. The corrected
-matrix is 34 pass / one fail / 16 unmeasurable / zero invalid: both PDF relations pass 17/17, while the sole
-eligible I2C alpha pair originally failed below SourceIR after a valid six-signal rename. `.f.iii.a` now keeps
+pre-remediation matrix was 34 pass / one fail / 16 unmeasurable / zero invalid: both PDF relations passed 17/17,
+while the sole eligible I2C alpha pair failed below SourceIR after a valid six-signal rename. `.f.iii.a` keeps
 opaque underscore identifiers atomic, uses source occurrence rather than symbol spelling for generated order,
-and excludes declared aliases from section-topic grammar. The production-only diagnostic preserves all 11,170
-claims. Exact ADR 0025 reconciliation leaves all 24 measurable chains current and zero stale through the adapter;
-a clean-revision comparator replay remains before `.f.iv`.
+excludes declared aliases from section-topic grammar, and normalizes only measured representation surfaces in
+conformance. The final clean-revision matrix is 35 pass / zero fail / 16 unmeasurable / zero invalid; all 35
+completed attempts are fresh under `2cdcd131`. Exact ADR 0025 reconciliation leaves all 24 measurable chains
+current and zero stale through the adapter. `.f.iv` is the active complete-population reconciliation frontier.
 
 ## Detailed task evidence
 
@@ -138,6 +139,7 @@ detail-routing authority.
 | `2026-08-14` | `.6d.ii.f.iii` initial prospective execution | 51/51 attempts execute; unchanged replay passes 17/17, while 32 fail / one invalid expose two conformance-oracle defects and one vacuous row remains unmeasurable; no signoff claimed |
 | `2026-08-14` | `.6d.ii.f.iii` corrected qualification | 34 pass / one fail / 16 unmeasurable / zero invalid; both PDF relations pass 17/17; the sole measurable six-signal I2C alpha pair fails below SourceIR and routes `.f.iii.a` |
 | `2026-08-15` | `.6d.ii.f.iii.a` production ordering | four alpha-sensitive production mechanisms are removed; exact retained-chain reconciliation, all doctrines, all production-genericity components, 1,976 Rust tests / eight ignored / zero failed, mdBook, and final locality pass |
+| `2026-08-15` | `.6d.ii.f.iii.a` clean-revision closure | exact I2C alpha passes 5/5 stages; refreshed held-out evidence is 35/0/16/0 with all completed attempts fresh under `2cdcd131`; aggregate SHA `06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1` |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 
@@ -153,6 +155,7 @@ detail-routing authority.
 | `.6d.ii.f.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c — prove semantic-negative gate sensitivity` | require exact semantic/proof deltas, exercise nine negative classes, and classify invalid/unmeasurable attempts |
 | `.6d.ii.f.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — record initial held-out oracle defects` | retain the first 51-attempt diagnostic and own fail-closed oracle repair before qualification |
 | `.6d.ii.f.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii — qualify corrected held-out behavior` | publish corrected provenance/denominators and route real I2C production coupling to `.f.iii.a` |
+| `.6d.ii.f.iii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a — publish clean-revision behavioral closure` | require fresh full-capture revision evidence and publish passing I2C/held-out closure before `.f.iv` |
 | `.6d.ii.e.vi` | `07b1f874` | qualify generated production structure and controlled failure cases |
 | `.6d.ii.e.v.iv` | `9f37989f` | register the compiled production-genericity doctrine and clean baseline |
 

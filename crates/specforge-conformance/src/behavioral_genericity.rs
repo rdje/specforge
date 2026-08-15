@@ -378,6 +378,7 @@ pub struct BehavioralQualificationAttempt {
 pub struct HeldOutQualificationRequest {
     pub output_root: PathBuf,
     pub retained_output_root: Option<PathBuf>,
+    pub refresh_full_capture: bool,
     pub prior_memory: PathBuf,
     pub production_revision: String,
     pub transform_seed: u64,
@@ -1697,79 +1698,86 @@ pub fn qualify_held_out_population(
                 transform_seed,
                 review_recipe_id: None,
             };
-            let (attempt, execution_mode) = match (&request.retained_output_root, relation) {
-                (Some(retained_root), BehavioralRelation::UnchangedSource)
-                | (Some(retained_root), BehavioralRelation::AdversarialIdentity) => {
-                    let retained_attempt_root = retained_root
-                        .join("attempts")
-                        .join(relation.as_str())
-                        .join(&row.document_key);
-                    if retained_schema_version == Some(HELD_OUT_SCHEMA_VERSION as u64) {
-                        (
-                            attempt_revalidated_behavioral_report(
-                                &qualification_request,
-                                retained_root,
-                                &retained_attempt_root,
-                            ),
-                            HeldOutExecutionMode::RetainedReportRevalidated,
-                        )
-                    } else {
-                        (
-                            attempt_retained_behavioral_relation(
-                                &qualification_request,
-                                retained_root,
-                                &retained_attempt_root,
-                            ),
-                            HeldOutExecutionMode::RetainedArtifactsRecompared,
-                        )
-                    }
-                }
-                (Some(_), BehavioralRelation::SymbolAlpha) => {
-                    if row.text_semantic_records == 0 && row.text_intent_records == 0 {
-                        (
-                            classified_attempt_error(
-                                relation,
-                                "vacuous_baseline: frozen text projection has no semantic or intent records",
-                            ),
-                            HeldOutExecutionMode::EligibilityPreflight,
-                        )
-                    } else {
-                        let retained_attempt_root = retained_artifact_output_root
-                            .as_ref()
-                            .expect("retained request has an artifact authority")
+            let (attempt, execution_mode) = if refreshes_full_capture(request, relation) {
+                (
+                    attempt_behavioral_relation(&qualification_request),
+                    HeldOutExecutionMode::FreshPipeline,
+                )
+            } else {
+                match (&request.retained_output_root, relation) {
+                    (Some(retained_root), BehavioralRelation::UnchangedSource)
+                    | (Some(retained_root), BehavioralRelation::AdversarialIdentity) => {
+                        let retained_attempt_root = retained_root
                             .join("attempts")
                             .join(relation.as_str())
                             .join(&row.document_key);
-                        match retained_alpha_symbol_catalog(
-                            &repository,
-                            &retained_attempt_root,
-                            &source_authority,
-                            &expected_source_sha256,
-                            &row.document_key,
-                        ) {
-                            Ok(Some(symbols)) if symbols.is_empty() => (
-                                classified_attempt_error(
-                                    relation,
-                                    "eligible_symbol_surface_absent: symbol-alpha baseline has no typed opaque signal declaration",
+                        if retained_schema_version == Some(HELD_OUT_SCHEMA_VERSION as u64) {
+                            (
+                                attempt_revalidated_behavioral_report(
+                                    &qualification_request,
+                                    retained_root,
+                                    &retained_attempt_root,
                                 ),
-                                HeldOutExecutionMode::EligibilityPreflight,
-                            ),
-                            Ok(Some(_)) | Ok(None) => (
-                                attempt_behavioral_relation(&qualification_request),
-                                HeldOutExecutionMode::FreshPipeline,
-                            ),
-                            Err(error) => (
-                                classified_attempt_error(relation, &error.to_string()),
-                                HeldOutExecutionMode::EligibilityPreflight,
-                            ),
+                                HeldOutExecutionMode::RetainedReportRevalidated,
+                            )
+                        } else {
+                            (
+                                attempt_retained_behavioral_relation(
+                                    &qualification_request,
+                                    retained_root,
+                                    &retained_attempt_root,
+                                ),
+                                HeldOutExecutionMode::RetainedArtifactsRecompared,
+                            )
                         }
                     }
+                    (Some(_), BehavioralRelation::SymbolAlpha) => {
+                        if row.text_semantic_records == 0 && row.text_intent_records == 0 {
+                            (
+                                classified_attempt_error(
+                                    relation,
+                                    "vacuous_baseline: frozen text projection has no semantic or intent records",
+                                ),
+                                HeldOutExecutionMode::EligibilityPreflight,
+                            )
+                        } else {
+                            let retained_attempt_root = retained_artifact_output_root
+                                .as_ref()
+                                .expect("retained request has an artifact authority")
+                                .join("attempts")
+                                .join(relation.as_str())
+                                .join(&row.document_key);
+                            match retained_alpha_symbol_catalog(
+                                &repository,
+                                &retained_attempt_root,
+                                &source_authority,
+                                &expected_source_sha256,
+                                &row.document_key,
+                            ) {
+                                Ok(Some(symbols)) if symbols.is_empty() => (
+                                    classified_attempt_error(
+                                        relation,
+                                        "eligible_symbol_surface_absent: symbol-alpha baseline has no typed opaque signal declaration",
+                                    ),
+                                    HeldOutExecutionMode::EligibilityPreflight,
+                                ),
+                                Ok(Some(_)) | Ok(None) => (
+                                    attempt_behavioral_relation(&qualification_request),
+                                    HeldOutExecutionMode::FreshPipeline,
+                                ),
+                                Err(error) => (
+                                    classified_attempt_error(relation, &error.to_string()),
+                                    HeldOutExecutionMode::EligibilityPreflight,
+                                ),
+                            }
+                        }
+                    }
+                    (None, _) => (
+                        attempt_behavioral_relation(&qualification_request),
+                        HeldOutExecutionMode::FreshPipeline,
+                    ),
+                    (Some(_), _) => unreachable!("held-out relation list is closed above"),
                 }
-                (None, _) => (
-                    attempt_behavioral_relation(&qualification_request),
-                    HeldOutExecutionMode::FreshPipeline,
-                ),
-                (Some(_), _) => unreachable!("held-out relation list is closed above"),
             };
             let attempt_report_sha256 = if attempt.report.is_some() {
                 let evidence_path = repository.join(&attempt_root).join(EVIDENCE_FILE);
@@ -1905,6 +1913,11 @@ fn validate_held_out_request(request: &HeldOutQualificationRequest) -> Result<()
             "held-out production revision must be a full Git id",
         ));
     }
+    if request.refresh_full_capture && request.retained_output_root.is_none() {
+        return Err(invalid(
+            "held-out full-capture refresh requires retained alpha-eligibility authority",
+        ));
+    }
     let repository = crate::project_data::repository_root()?;
     if repository.join(&request.output_root).exists() {
         return Err(invalid(format!(
@@ -1947,6 +1960,17 @@ fn validate_held_out_request(request: &HeldOutQualificationRequest) -> Result<()
         )?;
     }
     Ok(())
+}
+
+fn refreshes_full_capture(
+    request: &HeldOutQualificationRequest,
+    relation: BehavioralRelation,
+) -> bool {
+    request.refresh_full_capture
+        && matches!(
+            relation,
+            BehavioralRelation::UnchangedSource | BehavioralRelation::AdversarialIdentity
+        )
 }
 
 fn validate_held_out_contract(contract: &HeldOutContractAuthority) -> Result<()> {
@@ -4183,8 +4207,8 @@ fn compare_stage(
     let adjusted_transformed_top_level_fields = object_len(&declared_right)?;
     let mut left = basic_normalize(&declared_left, normalization, false);
     let mut right = basic_normalize(&declared_right, normalization, true);
-    normalize_isf_interface_order(&mut left);
-    normalize_isf_interface_order(&mut right);
+    normalize_isf_unordered_declarations(&mut left);
+    normalize_isf_unordered_declarations(&mut right);
     normalize_unordered_symbol_groups(&mut left);
     normalize_unordered_symbol_groups(&mut right);
     normalize_changed_hashes(&mut left, &mut right, None);
@@ -4422,7 +4446,15 @@ fn basic_normalize_at(
                     .collect::<Vec<_>>();
                 identifiers.sort_by_key(|(from, _)| std::cmp::Reverse(from.len()));
                 for (from, to) in identifiers {
-                    normalized = normalized.replace(from, to);
+                    let force_source_bound_projection = field.is_some_and(|field| {
+                        is_relation_derived_id(field) || is_relation_derived_id_list(field)
+                    });
+                    normalized = replace_relation_identifier_occurrences(
+                        &normalized,
+                        from,
+                        to,
+                        force_source_bound_projection,
+                    );
                 }
                 normalized = replace_identifier_tokens(
                     &normalized,
@@ -4443,6 +4475,41 @@ fn basic_normalize_at(
         }
         _ => value.clone(),
     }
+}
+
+fn replace_relation_identifier_occurrences(
+    text: &str,
+    transformed: &str,
+    baseline: &str,
+    force_source_bound_projection: bool,
+) -> String {
+    if transformed.is_empty() || !text.contains(transformed) {
+        return text.to_string();
+    }
+    let source_bound = source_bound_identifier_projection(baseline);
+    let mut output = String::with_capacity(text.len());
+    let mut cursor = 0usize;
+    while let Some(relative_start) = text[cursor..].find(transformed) {
+        let start = cursor + relative_start;
+        let end = start + transformed.len();
+        output.push_str(&text[cursor..start]);
+        let embedded_in_identifier = text[..start]
+            .chars()
+            .next_back()
+            .is_some_and(is_identifier_continue)
+            || text[end..]
+                .chars()
+                .next()
+                .is_some_and(is_identifier_continue);
+        if force_source_bound_projection || embedded_in_identifier {
+            output.push_str(&source_bound);
+        } else {
+            output.push_str(baseline);
+        }
+        cursor = end;
+    }
+    output.push_str(&text[cursor..]);
+    output
 }
 
 fn canonicalize_keyed_collections(value: &mut Value) {
@@ -4488,10 +4555,13 @@ fn stable_collection_key(value: &Value) -> Option<String> {
 }
 
 fn is_unordered_reference_collection(field: &str) -> bool {
-    field == "signals" || field == "referenced_signal_names" || field.ends_with("_ids")
+    field == "signals"
+        || field == "referenced_signal_names"
+        || field == "responsibilities"
+        || field.ends_with("_ids")
 }
 
-fn normalize_isf_interface_order(value: &mut Value) {
+fn normalize_isf_unordered_declarations(value: &mut Value) {
     let Some(source_text) = value.pointer_mut("/isf/source_text") else {
         return;
     };
@@ -4515,6 +4585,18 @@ fn normalize_isf_interface_order(value: &mut Value) {
         };
         lines[start..end].sort();
         cursor = end + 1;
+    }
+    cursor = 0;
+    while cursor < lines.len() {
+        if !lines[cursor].starts_with("  (drive (") {
+            cursor += 1;
+            continue;
+        }
+        let start = cursor;
+        while cursor < lines.len() && lines[cursor].starts_with("  (drive (") {
+            cursor += 1;
+        }
+        lines[start..cursor].sort();
     }
     let trailing_newline = source_text.ends_with('\n');
     let mut normalized = lines.join("\n");
@@ -5266,6 +5348,36 @@ mod tests {
     }
 
     #[test]
+    fn held_out_full_capture_refresh_keeps_alpha_preflight_retained() {
+        let request = HeldOutQualificationRequest {
+            output_root: PathBuf::from(".project-data/tmp/synthetic-held-out-refresh"),
+            retained_output_root: Some(PathBuf::from(
+                ".project-data/tmp/synthetic-held-out-retained",
+            )),
+            refresh_full_capture: true,
+            prior_memory: PathBuf::from(PRIOR_MEMORY),
+            production_revision: "0".repeat(40),
+            transform_seed: 0,
+        };
+        assert!(refreshes_full_capture(
+            &request,
+            BehavioralRelation::UnchangedSource
+        ));
+        assert!(refreshes_full_capture(
+            &request,
+            BehavioralRelation::AdversarialIdentity
+        ));
+        assert!(!refreshes_full_capture(
+            &request,
+            BehavioralRelation::SymbolAlpha
+        ));
+
+        let mut missing_authority = request;
+        missing_authority.retained_output_root = None;
+        assert!(validate_held_out_request(&missing_authority).is_err());
+    }
+
+    #[test]
     fn comparator_rejects_identity_coupled_semantic_delta() -> Result<()> {
         let baseline = synthetic_stage(synthetic_value("original", "producer"), "left");
         let transformed = synthetic_stage(synthetic_value("misleading", "consumer"), "right");
@@ -5327,6 +5439,66 @@ mod tests {
     }
 
     #[test]
+    fn comparator_normalizes_source_bound_id_lists_and_unordered_responsibilities() {
+        let normalization = NormalizationSpec {
+            relation: BehavioralRelation::SymbolAlpha,
+            baseline_run_root: ".project-data/tmp/run".to_string(),
+            transformed_run_root: ".project-data/tmp/run".to_string(),
+            baseline_source: "synthetic.md".to_string(),
+            transformed_source: "synthetic.md".to_string(),
+            exact_transformed_to_baseline: BTreeMap::new(),
+            identifier_transformed_to_baseline: BTreeMap::from([
+                ("signal_alias_zz_scl".to_string(), "SCL".to_string()),
+                ("signal_alias_aa_sda".to_string(), "SDA".to_string()),
+            ]),
+            reviewed_text_by_field: BTreeMap::new(),
+        };
+        let mut baseline = basic_normalize(
+            &serde_json::json!({
+                "related_ids": ["edge_scl", "edge_sda"],
+                "responsibilities": ["SCL samples SDA", "SDA follows SCL"],
+                "statement": "actor_sda_scl_channel is backend-neutral"
+            }),
+            &normalization,
+            false,
+        );
+        let mut transformed = basic_normalize(
+            &serde_json::json!({
+                "related_ids": [
+                    "edge_signal_alias_aa_sda",
+                    "edge_signal_alias_zz_scl"
+                ],
+                "responsibilities": [
+                    "signal_alias_aa_sda follows signal_alias_zz_scl",
+                    "signal_alias_zz_scl samples signal_alias_aa_sda"
+                ],
+                "statement": "actor_signal_alias_aa_sda_signal_alias_zz_scl_channel is backend-neutral"
+            }),
+            &normalization,
+            true,
+        );
+        canonicalize_keyed_collections(&mut baseline);
+        canonicalize_keyed_collections(&mut transformed);
+        assert_eq!(baseline, transformed);
+    }
+
+    #[test]
+    fn comparator_normalizes_unordered_isf_named_drive_declarations() {
+        let mut value = serde_json::json!({
+            "isf": {
+                "source_text": "(isf\n(interface\n  (signal Z output)\n  (signal A input)\n)\n  (drive (Z) high)\n  (drive (A) low)\n(transaction\n      (drive (Z) high)\n      (drive (A) low)\n)\n)\n"
+            }
+        });
+        normalize_isf_unordered_declarations(&mut value);
+        assert_eq!(
+            value.pointer("/isf/source_text").and_then(Value::as_str),
+            Some(
+                "(isf\n(interface\n  (signal A input)\n  (signal Z output)\n)\n  (drive (A) low)\n  (drive (Z) high)\n(transaction\n      (drive (Z) high)\n      (drive (A) low)\n)\n)\n"
+            )
+        );
+    }
+
+    #[test]
     fn comparator_reports_nonbijective_derived_ids_as_a_delta() -> Result<()> {
         let mut baseline_value = synthetic_value("original", "producer");
         let mut transformed_value = synthetic_value("original", "producer");
@@ -5373,6 +5545,54 @@ mod tests {
                 .undeclared_delta_paths
                 .iter()
                 .any(|path| path.ends_with("/contract_id"))
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn comparator_reports_nonbijective_derived_id_lists_as_a_delta() -> Result<()> {
+        let mut baseline_value = synthetic_value("original", "producer");
+        let mut transformed_value = synthetic_value("original", "producer");
+        baseline_value
+            .as_object_mut()
+            .expect("synthetic object")
+            .insert(
+                "related_ids".to_string(),
+                serde_json::json!(["edge_scl", "edge_sda"]),
+            );
+        transformed_value
+            .as_object_mut()
+            .expect("synthetic object")
+            .insert(
+                "related_ids".to_string(),
+                serde_json::json!(["edge_signal_alias_zz_scl", "edge_signal_alias_zz_scl"]),
+            );
+        let normalization = NormalizationSpec {
+            relation: BehavioralRelation::SymbolAlpha,
+            baseline_run_root: ".project-data/tmp/run".to_string(),
+            transformed_run_root: ".project-data/tmp/run".to_string(),
+            baseline_source: "synthetic.md".to_string(),
+            transformed_source: "synthetic.md".to_string(),
+            exact_transformed_to_baseline: BTreeMap::new(),
+            identifier_transformed_to_baseline: BTreeMap::from([
+                ("signal_alias_zz_scl".to_string(), "SCL".to_string()),
+                ("signal_alias_aa_sda".to_string(), "SDA".to_string()),
+            ]),
+            reviewed_text_by_field: BTreeMap::new(),
+        };
+        let result = compare_stage(
+            BehavioralStage::SemanticIr,
+            &synthetic_stage(baseline_value, "left"),
+            &synthetic_stage(transformed_value, "right"),
+            &normalization,
+            None,
+        )?;
+        assert!(!result.passed);
+        assert!(
+            result
+                .undeclared_delta_paths
+                .iter()
+                .any(|path| path.contains("/related_ids/"))
         );
         Ok(())
     }
