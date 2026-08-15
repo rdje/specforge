@@ -17,15 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.3` owns the current-facing published-constant sweep.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.3a.1` owns the bounded current-claim census producer.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
 - Current state: ADR 0044's self-bounded claim registry/checker holds three verified records, executes eight
   source/control commands, digest-checks complete tracked artifact sets, resolves publication IDs, and is the
   tenth doctrine. Semantic truth still depends on the named evidence; `.3`/`.4` own census and closure audits.
-- Next action: run `.3`'s bounded census over current status, roadmap/controller projections, maintained
-  references, doctrine baselines, and mdBook constants; derive, register, or mark gaps explicitly. `MEMORY.md`
-  remains capped at 32,768 B.
-- In-flight uncommitted: `.2` registry/checker/doctrine/docs synchronization awaits final digest refresh and
-  focused/doctrine gates; no background job.
+- Next action: implement the self-bounded five-view census and fail-closed 39-surface coverage checker without
+  rewriting any source assertion; `.3a.2` will freeze its findings. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: `.3a.0` task/continuity design closure awaits focused/doctrine gates; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.
