@@ -39,6 +39,7 @@ crates/specforge/src/error.rs	core_foundation	core	e.ii	shared typed failures
 crates/specforge/src/eval.rs	conformance	conformance	e.ii	generic metric APIs and labeled evaluation compile only downstream of core
 crates/specforge/src/ir/adapters.rs	core	core	e.iii	lower only proof-covered IntentIR with explicit lowering capability
 crates/specforge/src/ir/ambiguity.rs	core_grammar	core_rule	e.iv	register universal ambiguity grammar
+crates/specforge/src/ir/clarification.rs	core_schema	core	e.iii	versioned clarification and untrusted answer envelopes; canonical authority remains proof-kernel gated
 crates/specforge/src/ir/completeness.rs	conformance	conformance	e.ii	structural quality characterization compiles downstream and cannot promote core claims
 crates/specforge/src/ir/condition_extract.rs	core_grammar	core_rule	e.iv	register condition grammar and grounded proposal proof
 crates/specforge/src/ir/constraint_extract_llm.rs	core_grammar	core_rule	e.iv	register typed grounding and provider-proof boundary

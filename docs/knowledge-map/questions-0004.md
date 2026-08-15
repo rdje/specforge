@@ -2,6 +2,34 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are two-column bits | description tables extracted
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > how are unknown tables reclassified by the VLM
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > how big does source_ir.json get / how does it scale with page count
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how can I browse every SpecForge knowledge fact card by id or title
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > how can SpecForge automatically choose the next task without gaming metrics
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > how can a collection use a membership index outside its own surface
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how complete is a document's extracted intent / what is the per-doc completeness gauge
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how did APB temporal reach 100% (WIRE-BASED-100.4)
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how do Continued from previous page fragments find their home
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I add a new enforced doctrine / doctrine check
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -270,31 +298,3 @@
   > how does validate classify a document / what is document_class
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > how does validate know an intent_ir is stale relative to its semantic_ir
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how flexible is the register model / what register-table shapes are handled
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > how good is prose signal capture / .3a quality
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how is AXI organized / what are the AXI channels
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how is AXI per-signal channel membership recovered without a VLM
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > how is AXI per-signal phase membership recoverable without a VLM
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > how is FigureRegion raw_image_path serialized
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how is IngestTerminatedBySignal different from IngestAbortedForMemory
-- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
-  > how is SourceIR validation updated during classifier migration
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > how is SourceIr loaded from disk by downstream commands
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how is a CI-tier doctrine registered without slowing down the pre-commit hook

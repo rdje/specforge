@@ -4,6 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-15 — typed clarification/answer foundation; `SPEC-CLARIFICATION-LOOP.1`)
+
+- New core-schema module `ir::clarification` defines bounded schema-1 packet, immutable question definition,
+  lifecycle, recursive answer schema/value, authority claim, and untrusted answer-envelope types.
+- Exact definition/content digests bind dependencies and supersession; normalized repository-relative artifact
+  paths and current source/artifact/ruleset/policy hashes make stale feedback fail closed.
+- Compatibility never grants canonical authority. Source locators/supplements must become native captured proof;
+  only a later validated external design choice may use a narrow registered premise (ADR 0040).
+- Ten module tests and warning-denied workspace Clippy pass. The classified graph is 79 files / 2,332 functions /
+  13,970 helper edges / 12,196 decision sites / 1,457 semantic macros; 41 families / 168 fields are unchanged.
+
 ## Session update (2026-08-15 — structural register-carrier repair; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a`)
 
 - `ir::source` and the embedded Docling classifier share one exact qualified-role grammar: a closed role plus one

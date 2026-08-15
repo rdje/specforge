@@ -14,6 +14,8 @@
   > Can a legacy or proofless adapter emit ISF?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can a model proposal authorize EvidenceIR by itself?
+- [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
+  > Can a persisted clarification answer directly authorize canonical intent?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Can a signal or response spelling select a production extractor?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -74,6 +76,8 @@
   > How are production prompts kept specification neutral?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How are runtime alpha obligations, adversarial mutations, and legal raw-spelling uses structurally qualified?
+- [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
+  > How can a question status change without invalidating its issued definition hash?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > How does ADR 0039 preserve trajectory owner lookup at the stable task path?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
@@ -88,10 +92,14 @@
   > How does SpecForge minimize clarification round trips?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How does a canonical IR claim prove where it came from?
+- [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
+  > How does a source-locator answer enter SpecForge proof?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How does alpha-renaming become a per-rule obligation?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How does schema 3 prove generic protocol evidence?
+- [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
+  > How does supplemental user information enter SpecForge proof?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the corpus knowledge base group fixtures without protocol-family names?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -128,6 +136,8 @@
   > How many IntentIR fields and rule families are proved?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?
+- [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
+  > How may an external design choice authorize generated ISF?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How will SpecForge enforce that identifiers are opaque?
 - [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
@@ -146,12 +156,16 @@
   > Were downstream artifacts reconciled after SourceIR schema 2?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > What are the local bounds for the partitioned alignment task evidence?
+- [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
+  > What binds a clarification answer to the question that was actually asked?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What changes a production implementation digest?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What closed registry defines the production information-flow boundary?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > What current priors are learned without protocol families?
+- [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
+  > What does current clarification-envelope compatibility mean?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What does spec-neutral extraction mean?
 - [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
@@ -162,6 +176,8 @@
   > What exact proof population and migration delta closed structural genericity qualification?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What exact range qualified the identity and spelling remediation?
+- [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
+  > What explicit non-answer dispositions does the clarification IR support?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What happens when schema-1 SourceIR is loaded?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -190,18 +206,26 @@
   > What replaces a forbidden vocabulary list as the proof of production genericity?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What syntax uncertainty makes the production genericity graph fail closed?
+- [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
+  > Where is the executable schema for SpecForge clarification packets and answers?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Where is the whole extraction-pipeline genericity audit?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > Where will behavioral qualification evidence live after alignment task migration?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which IntentIR fields are exact SemanticIR carries?
+- [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
+  > Which Rust module implements clarification definition hashes and lifecycle state?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which crate owns replay, completeness classification, and trajectory snapshots?
+- [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
+  > Which locality rule applies to a supplemental clarification source?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which premise kinds can the trusted promotion kernel accept?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which registered doctrine enforces the complete clean production-genericity boundary?
+- [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
+  > Which task leaves still own clarification validation and minimal replay?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > Which three authorities govern the bounded alignment task migration?
 - [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
@@ -228,6 +252,10 @@
   > Why is the MEMORY.md byte cap 32,768 bytes?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > Why is the exact alignment source kept in both a capsule and marked semantic payloads?
+- [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
+  > Why is there no generic UserAnswer proof premise?
+- [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
+  > Why must a source-locator answer resolve back to native captured evidence?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why was EvidenceIR carry-forward removed?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -270,31 +298,3 @@
   > are normalized pages page JSON image paths repository relative
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > are older register records compatible with access and table provenance fields
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > are older timing constraint records compatible with supporting_table_ids
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > are other docs affected by the rule-drive-value gate (no — only ihi0022_h_c carries a prose-valued rule corpus-wide; every other emit is byte-identical)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > are presence codes like Y N O C OC ever interpreted
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > are reference lists allowed to establish semantic intent
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > are temporal rules silently dropped when lowering IntentIR to .isf
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > are temporal_invariants / conditional_rules / signal_constraints silently dropped at ISF lowering
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > are the 'unknown diagram_kind' visual assets a capture gap
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > are the .4c fabrication counts current product truth
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > are the 33 empty signal catalogs a capture miss or honest absence
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > are the APB signals PCLK PADDR PWDATA the parity-check PADDRCHK extracted
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > are the AXI/SWD phase-header tables a signal→phase cue (no — AXI table_0150 is a coherency-sequence table, SWD table_0057 is an ACK-response table; neither maps declared signals to phases)
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > are the degenerate PSEL-header or WIDTH-subject temporal rules a live bug
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > are the disconnected/unconnected KG agents a recoverable relation gap or false positives
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > are the external corpus PDFs on the same filesystem volume as the repository

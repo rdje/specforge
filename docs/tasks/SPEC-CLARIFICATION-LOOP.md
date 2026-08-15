@@ -96,13 +96,15 @@ already valid autonomous work is retained, and repeated execution is determinist
   Commit: `SPEC-CLARIFICATION-LOOP.0 — own autonomous and assisted completion`
 
 - ID: `SPEC-CLARIFICATION-LOOP.1`
-  Status: `pending`
+  Status: `done`
   Goal: define the versioned clarification, answer, and lifecycle IR plus its authority boundary
   Acceptance: schemas cover stable identity, source/proof links, gap taxonomy, alternatives, downstream impact,
   priority/information gain, accepted response types, unknown/defer, answer provenance, status/currentness,
   supersession, and resume closure; compatibility fails closed; an ADR freezes what user evidence may authorize
-  Verification: `pending`
-  Commit: `pending`
+  Verification: 10 focused schema/currentness/compatibility tests; warning-denied workspace Clippy; all five
+  production-genericity components at 79 modules / 41 families / 168 fields; warning-denied Rustdoc; mdBook
+  test/build; Knowledge Map, fact/decision catalogs, live-size contracts, and mandatory doctrines pass
+  Commit: `SPEC-CLARIFICATION-LOOP.1 — define typed clarification and answer authority`
 
 - ID: `SPEC-CLARIFICATION-LOOP.2`
   Status: `pending`
@@ -158,12 +160,35 @@ already valid autonomous work is retained, and repeated execution is determinist
   Verification: `pending`
   Commit: `pending`
 
+## Acceptance Checklist (enforced) — `SPEC-CLARIFICATION-LOOP.1`
+
+- [x] **REPRODUCE / MEASURE** — before this leaf, the IR exposed zero versioned clarification or answer
+  envelopes; the only adjacent carrier was `ResidualDecisionPacket`. The leaf adds one schema-1 clarification
+  module and exercises it with 10 focused tests.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs:3613` carried a question, rationale,
+  alternatives, and source span, but no stable definition digest, lifecycle/current binding, typed response,
+  answer provenance, authority class, or supersession chain. Consequently, the runtime had no fail-closed
+  contract through which user-supplied information could later re-enter proof-bearing processing.
+- [x] **ADDRESSED (verified)** — `cargo test -p specforge-core clarification --offline` passes 10/10 tests over
+  packet validation, typed values, definition digests, current artifact/policy bindings, supersession, and
+  fail-closed compatibility; every persisted compatibility result still reports
+  `permits_canonical_authority() == false`.
+- [x] **NO REGRESSION** — `cargo fmt --all --check`, warning-denied workspace `cargo clippy`, and warning-denied
+  Rustdoc pass; the production-genericity gate passes all five components at the unchanged canonical denominator
+  of 41 families / 168 fields. This schema-only leaf changes no extraction, semantic, intent, adapter, or
+  emitter producer, so KG and WIRE-BASED-100 output surfaces are orthogonal by construction.
+- [x] **GENERICITY (ADR 0006)** — the schema and validators use structural evidence, lifecycle, authority, and
+  value-kind vocabulary; production code contains no chip, vendor, document, or protocol-name special case.
+- [x] **LOCKSTEP** — ADR 0040, the clarification-loop mdBook chapter, architecture rationale, task tree, live
+  docs, Knowledge Map fact card, generated catalogs, production inventory, and resume pointer describe the same
+  implemented foundation and preserve `.2` as the planner frontier.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `SPEC-CLARIFICATION-LOOP.0` | `done` | product contract and public direction are frozen |
-| 2 | `SPEC-CLARIFICATION-LOOP.1` | `pending` | typed authority and lifecycle must exist before planning questions |
+| 2 | `SPEC-CLARIFICATION-LOOP.1` | `done` | schema-1 exchange and fail-closed authority are frozen |
 | 3 | `SPEC-CLARIFICATION-LOOP.2` | `pending` | planner consumes the frozen schema and current unresolved surfaces |
 | 4 | `SPEC-CLARIFICATION-LOOP.3` | `pending` | UX renders planned packets without becoming semantic authority |
 | 5 | `SPEC-CLARIFICATION-LOOP.4` | `pending` | answer ingestion depends on schema and interface contracts |
@@ -183,18 +208,19 @@ already valid autonomous work is retained, and repeated execution is determinist
   blocking impact and information gain while continuing unaffected autonomous work.
 - `2026-08-15`: `AMBIGUITY-PHRASE-DETECTOR` remains a valid flag-only detector; this tree owns the broader
   question/answer/resume lifecycle and may consume that detector's findings without redefining them.
+- `2026-08-15`: `.1` resolves answer authority by keeping every persisted answer envelope untrusted. Source
+  locators must resolve to native captured proof, supplements must become governed source, and only an external
+  design choice may later use a dedicated narrowly registered proof premise; there is no generic user-answer
+  premise.
 
 ## Open Questions
 
-- `.1` must decide whether validated user answers become a dedicated proof premise kind or a separately signed
-  external-evidence envelope consumed by existing premise machinery; this is architecture work, not a blocker to
-  the `.0` direction freeze.
 - `.2` must calibrate which unresolved findings are worth asking versus leaving as nonblocking residuals; the
   policy must be evidence-driven and generic, not a hardcoded corpus threshold.
 
 ## Blockers
 
-- None. `.1` is the next executable leaf.
+- None. `.2` is the next executable leaf.
 
 ## Verification Log
 
@@ -203,12 +229,16 @@ already valid autonomous work is retained, and repeated execution is determinist
 | `2026-08-15` | `.0` | task and fact catalogs; Knowledge Map; live-document and roadmap contracts; exact
   whole-record status-ledger dry run/apply; mdBook test/build; diff hygiene; mandatory doctrine driver | `passed`;
   segment 0010 is 21 records / 23,508 bytes at `dce3a183…c71e`; live root is warning-safe at 51 records |
+| `2026-08-15` | `.1` | 10 clarification tests; warning-denied workspace Clippy/Rustdoc; production
+  genericity; mdBook; catalogs/live-size; mandatory doctrines | `passed`; canonical denominator remains 41
+  families / 168 fields; graph is 79 files / 2,332 functions / 13,970 edges / 12,196 decisions / 1,457 macros |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `SPEC-CLARIFICATION-LOOP.0 — own autonomous and assisted completion` | direction frozen; runtime starts in `.1` |
+| `.1` | `SPEC-CLARIFICATION-LOOP.1 — define typed clarification and answer authority` | schema 1 + ADR 0040; planner is next |
 
 ## Changelog
 
@@ -216,3 +246,5 @@ already valid autonomous work is retained, and repeated execution is determinist
   and should otherwise explain missing information thoroughly, accept validated feedback, and resume efficiently.
 - `2026-08-15`: The one required live-status record reached the 72-record fail-closed threshold, so `.0` also
   owns the exact segment-0010 rollover necessary to preserve that public alignment without changing a limit.
+- `2026-08-15`: `.1` implements the versioned exchange/currentness foundation and closes the answer-authority
+  decision without claiming planner, validator, or replay behavior.

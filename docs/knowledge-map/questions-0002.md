@@ -2,6 +2,34 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > are older timing constraint records compatible with supporting_table_ids
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > are other docs affected by the rule-drive-value gate (no — only ihi0022_h_c carries a prose-valued rule corpus-wide; every other emit is byte-identical)
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > are presence codes like Y N O C OC ever interpreted
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > are reference lists allowed to establish semantic intent
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > are temporal rules silently dropped when lowering IntentIR to .isf
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > are temporal_invariants / conditional_rules / signal_constraints silently dropped at ISF lowering
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > are the 'unknown diagram_kind' visual assets a capture gap
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > are the .4c fabrication counts current product truth
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > are the 33 empty signal catalogs a capture miss or honest absence
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > are the APB signals PCLK PADDR PWDATA the parity-check PADDRCHK extracted
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > are the AXI/SWD phase-header tables a signal→phase cue (no — AXI table_0150 is a coherency-sequence table, SWD table_0057 is an ACK-response table; neither maps declared signals to phases)
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > are the degenerate PSEL-header or WIDTH-subject temporal rules a live bug
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > are the disconnected/unconnected KG agents a recoverable relation gap or false positives
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > are the external corpus PDFs on the same filesystem volume as the repository
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > are the per-page full-res page images read by any downstream consumer
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -269,31 +297,3 @@
   > does SpecForge use the full scope of a page's visual information
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > does Wishbone declare its signals in a table
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > does a PathBuf need portability handling before it has a producer
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > does a SIGKILL prove that Docling ran out of memory
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > does a blocked adapter remove a previously emitted isf
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > does a metadata rewrite failure preserve the previous normalized bundle
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > does adapter output reconciliation delete unrelated files or directories
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > does adaptive batch sizing change the ingest output / break byte-identity
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > does agreement between sources boost confidence
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > does an actor signal relation alone authorize a SemanticIR interface signal
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > does an empty declared-signal catalog disable the SemanticIR grounding filter
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > does an explicit timing row unit override a caption unit
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > does canonical SWD EvidenceIR contain interface edge timing
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > does cargo test need TMPDIR set manually

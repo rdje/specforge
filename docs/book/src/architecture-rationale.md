@@ -279,11 +279,11 @@ identity-independent engine that promotes only source-justified intent and emits
 it cannot decide. The complete audit is
 [`docs/research/production-genericity-pipeline-audit.md`](../../research/production-genericity-pipeline-audit.md).
 
-### Planned autonomous-first clarification loop
+### Autonomous-first clarification foundation
 
 The product target is not “run once or fail.” SpecForge should finish every safely decidable branch
 autonomously. When required information is absent, contradictory, ambiguous, extraction-limited, or an external
-design choice, the planned `SPEC-CLARIFICATION-LOOP` will emit a typed clarification packet instead of guessing.
+design choice, `SPEC-CLARIFICATION-LOOP` will emit a typed clarification packet instead of guessing.
 That packet will identify the exact source/proof context, unresolved engineering proposition, known alternatives,
 reason automation stopped, downstream facts or ISF constructs blocked, priority, accepted answer shape and units,
 validation rules, and deterministic resume plan.
@@ -292,7 +292,9 @@ An answer will be treated as provenance-bearing evidence, not automatic truth. I
 consistent, grounded, and authorized before it can extend canonical proof. Unknown, unavailable, not-applicable,
 deferred, stale, incomplete, and conflicting answers remain explicit. Accepted answers will invalidate and replay
 only the affected dependency closure, preserving unrelated autonomous work and allowing an interrupted exchange
-to resume. The task tree owns this future behavior; the current runtime does not yet implement it.
+to resume. Schema-1 clarification and untrusted-answer envelopes now implement the interchange/currentness
+foundation; planning, CLI exchange, semantic validation, and proof replay remain subsequent leaves. See
+[Clarification and Assisted Completion](pipeline/clarification-loop.md).
 
 ### The honest limit of pattern-matching — and what comes after
 

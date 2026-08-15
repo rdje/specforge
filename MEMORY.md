@@ -17,13 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-CLARIFICATION-LOOP.1` owns the clarification, answer, lifecycle, and proof-authority IR.
+- Active unit: `SPEC-CLARIFICATION-LOOP.2` owns deterministic minimal clarification planning.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `DECISION-RECORD-CAPACITY-HEADROOM.1`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.f.v` is committed and production-genericity signoff is bounded complete. `.0` freezes and
-  publicly aligns typed source/proof-linked questions, validated answer evidence, minimal affected replay, and
-  honest unknown/defer/conflict states; the runtime interaction loop is not implemented yet.
-- Next action: inspect the current residual/proof/derivation schemas, then freeze the versioned clarification,
-  answer, and lifecycle IR plus its proof-authority ADR in `.1`. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: none after the `.0` commit; no background job.
+- Current state: `.1` implements schema-1 packet/question/lifecycle and untrusted answer envelopes with exact
+  currentness, dependency, policy, and supersession bindings. ADR 0040 forbids a generic user-answer premise;
+  planning, semantic validation, and proof resume are not implemented yet.
+- Next action: inventory the governed residual/completeness/validation/adapter findings, then implement `.2`'s
+  deterministic deduplicating dependency planner. `MEMORY.md` remains capped at 32,768 B.
+- In-flight uncommitted: none after the `.1` commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

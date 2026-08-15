@@ -1,4 +1,21 @@
 # DEVELOPMENT_NOTES
+## SPEC-CLARIFICATION-LOOP.1 (`2026-08-15`) — feedback is evidence, not an oracle
+
+The durable boundary is two-layered. An immutable question definition says exactly what is unresolved and binds
+that meaning to current source/artifact/ruleset digests; mutable lifecycle state can then advance without changing
+what the user answered. Answer revisions and question dependencies use exact definition/content hashes, making
+stale feedback detectable and resume deterministic.
+
+Authority must follow what the response actually contributes. A pointer to overlooked PDF content earns ordinary
+source proof after re-resolution. A new document must enter governed capture first. Only a genuine configuration
+choice may eventually become an external-decision proof premise, narrowly scoped by a registered rule. A generic
+`UserAnswer` premise would incorrectly turn all three into the same kind of truth and was rejected.
+
+The schema intentionally implements no “accepted answer” capability. Current compatibility means only that the
+envelope is structurally eligible for validation; even an accepted lifecycle label has
+`permits_canonical_authority() == false`. `.4` must create an in-memory validation witness, and `.5` must translate
+that witness through the authority-specific proof path before replaying only affected descendants.
+
 ## SPEC-CLARIFICATION-LOOP.0 (`2026-08-15`) — autonomous-first interaction boundary
 
 The useful boundary is not “human in the loop everywhere.” That would destroy throughput and make results depend

@@ -1,5 +1,6 @@
 pub mod adapters;
 pub mod ambiguity;
+pub mod clarification;
 pub mod condition_extract;
 pub mod constraint_extract_llm;
 pub mod contract;

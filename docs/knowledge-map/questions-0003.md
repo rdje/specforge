@@ -2,6 +2,34 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > does a PathBuf need portability handling before it has a producer
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > does a SIGKILL prove that Docling ran out of memory
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > does a blocked adapter remove a previously emitted isf
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > does a metadata rewrite failure preserve the previous normalized bundle
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > does adapter output reconciliation delete unrelated files or directories
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > does adaptive batch sizing change the ingest output / break byte-identity
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > does agreement between sources boost confidence
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > does an actor signal relation alone authorize a SemanticIR interface signal
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > does an empty declared-signal catalog disable the SemanticIR grounding filter
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > does an explicit timing row unit override a caption unit
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > does canonical SWD EvidenceIR contain interface edge timing
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > does cargo test need TMPDIR set manually
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > does changing a source path mean a corpus document was refreshed
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -269,31 +297,3 @@
   > how are the .4c result and .2 capability ledger composed
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > how are the roadmap section bounds derived
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > how are two-column bits | description tables extracted
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > how are unknown tables reclassified by the VLM
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > how big does source_ir.json get / how does it scale with page count
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how can I browse every SpecForge knowledge fact card by id or title
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > how can SpecForge automatically choose the next task without gaming metrics
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > how can a collection use a membership index outside its own surface
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how complete is a document's extracted intent / what is the per-doc completeness gauge
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how did APB temporal reach 100% (WIRE-BASED-100.4)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how do Continued from previous page fragments find their home

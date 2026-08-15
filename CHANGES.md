@@ -1,3 +1,14 @@
+### SPEC-CLARIFICATION-LOOP.1 — define typed clarification and answer authority
+
+- Added schema-1 clarification packets with immutable question-definition hashes, exact repository-local
+  artifact/proof context, typed evidence, alternatives, impact, dependency order, answer schemas, and lifecycle.
+- Added schema-1 untrusted answer envelopes with typed values/non-answers, responder/policy provenance, exact
+  question binding, supersession, fail-closed compatibility, and no serializable proof witness.
+- ADR 0040 separates source locators, governed supplements, and external design decisions; no generic user-answer
+  premise can bypass source grounding or the promotion kernel.
+- Ten focused tests, workspace Clippy, five production-genericity components, Rustdoc, and mdBook pass; question
+  planning, CLI exchange, semantic validation, and minimal replay remain explicitly owned by `.2`–`.5`.
+
 ### SPEC-CLARIFICATION-LOOP.0 — own autonomous and assisted completion
 
 - Added a dedicated eight-leaf task tree for the missing PDF-to-ISF interaction loop: autonomous completion where

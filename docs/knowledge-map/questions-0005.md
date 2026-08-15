@@ -2,6 +2,34 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how flexible is the register model / what register-table shapes are handled
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > how good is prose signal capture / .3a quality
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how is AXI organized / what are the AXI channels
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how is AXI per-signal channel membership recovered without a VLM
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > how is AXI per-signal phase membership recoverable without a VLM
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > how is FigureRegion raw_image_path serialized
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how is IngestTerminatedBySignal different from IngestAbortedForMemory
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > how is SourceIR validation updated during classifier migration
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > how is SourceIr loaded from disk by downstream commands
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how is a CI-tier doctrine registered without slowing down the pre-commit hook
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > how is a Reg.Field cross-reference distinguished from a real constraint subject
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -269,31 +297,3 @@
   > how much of the reviewed trajectory population has current binary replay evidence
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > how much page content escapes both the structured-element path and the region-crop path
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > how should Rust version copies be verified across Cargo README book and CI
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > how should a behavior-preserving evidence refactor be verified given the non-determinism
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how should an AXI gold or extraction be structured (per channel)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > how should the agent-identity / actor noise gate stay agnostic (no name list, ADR 0006)
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > how should the current FSMGen gitlink in documentation be verified
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > how to express the JTAG TAP / SWD FSM in .isf
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > how to get a fresh eval-extraction baseline for a spec
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how to re-measure the message-field corpus yield
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how to re-score SWD derivation
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > how to read a chip-spec PDF when the Read tool refuses it
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how to recover register field bit positions that live in the layout graphic, not the table
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how was AHB HREADY recovered for the temporal antecedent
