@@ -175,12 +175,57 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3b`
-  Status: `pending`
+  Status: `active`
   Goal: repair every census finding through one canonical authority
+  Children: `.3b.0`, `.3b.1`, `.3b.2`, `.3b.3`, `.3b.4`
   Acceptance: derive, identity-gate, register with three legs, or explicitly mark incomplete every `.3a` gap;
   remove hand-carried copies rather than synchronizing them; update census/result identities atomically
-  Verification: zero unclassified findings, focused producers/currentness/book checks, and doctrines
-  Commit: `CLAIM-VERIFICATION-ADOPTION.3b — repair current published constants`
+  Verification: closes through `.3b.0`–`.3b.4`
+  Commit: parent closes with `.3b.4`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.0`
+  Status: `done`
+  Goal: freeze the five-key repair map before changing a source assertion or evidence classification
+  Acceptance: distinguish navigation/membership identity from authored policy and actionable quantitative
+  assertions; assign every frozen incomplete key to one bounded repair leaf; preserve the other 46 outcomes
+  Verification: source-authority route audit, task/current/book alignment, focused current-census check, and
+  doctrines
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.1`
+  Status: `pending`
+  Goal: repair the README, knowledge-card, and FSMGen-packet reference anchors through exact route authorities
+  Acceptance: replace each broad incomplete title anchor with an explicit non-claim identity disposition plus
+  executable route/catalog evidence; do not assert that membership validation proves member prose true
+  Verification: README-policy, fact-card/catalog, canonical-catalog, census, and doctrine fault controls
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.1 — bind maintained-reference authorities`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.2`
+  Status: `pending`
+  Goal: repair the workflow/doctrine baseline anchor without treating authored policy as measured truth
+  Acceptance: exclude only the exact authored identity anchor and bind the actionable 14 / 4 / 21 capacity
+  paragraph to `workflow-standard-capacity-profile`; preserve one canonical capacity authority
+  Verification: capacity derivation/RED controls, canonical collection, census, claim, and doctrines
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.2 — bind the workflow baseline authority`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.3`
+  Status: `pending`
+  Goal: replace the mdBook-wide quantitative placeholder with bounded assertion-region authority
+  Acceptance: classify the maintained manual's actionable current quantitative assertions by exact region and
+  canonical producer/claim authority; keep dated boundary evidence explicit; no blanket book-level verifier may
+  stand in for uninspected prose
+  Verification: bounded quantitative contract/fault controls, exact source verifiers, book currentness/build,
+  census, claim, and doctrines
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.3 — bind mdBook quantitative authorities`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.3b.4`
+  Status: `pending`
+  Goal: re-freeze the repaired result and close `.3b`
+  Acceptance: update every affected region/source identity atomically; frozen report has zero incomplete or
+  otherwise unclassified `.3a.2` frontier keys; the other 46 units retain their semantic outcomes
+  Verification: derive-and-diff census, all joined producers, currentness/book/catalog/live-size checks, and
+  doctrines
+  Commit: `CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.3c`
   Status: `pending`
@@ -221,10 +266,14 @@ the workflow through the mdBook and repository review path.
 | 6 | `CLAIM-VERIFICATION-ADOPTION.3a.0` | `done` | 39-surface denominator and bounded semantic schema frozen before code |
 | 7 | `CLAIM-VERIFICATION-ADOPTION.3a.1` | `done` | bounded inventory contract, deterministic producer, and fail-closed joins implemented |
 | 8 | `CLAIM-VERIFICATION-ADOPTION.3a.2` | `done` | 51 evidence units frozen; five explicit incomplete units own the repair frontier |
-| 9 | `CLAIM-VERIFICATION-ADOPTION.3b` | `pending` | repair only the measured `.3a` gaps |
-| 10 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
-| 11 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
-| 12 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
+| 9 | `CLAIM-VERIFICATION-ADOPTION.3b.0` | `done` | five frozen gaps are assigned to authority-specific repair leaves |
+| 10 | `CLAIM-VERIFICATION-ADOPTION.3b.1` | `pending` | repair README, knowledge-card, and FSMGen-packet route identity |
+| 11 | `CLAIM-VERIFICATION-ADOPTION.3b.2` | `pending` | split authored workflow policy from its registered capacity claim |
+| 12 | `CLAIM-VERIFICATION-ADOPTION.3b.3` | `pending` | replace the blanket mdBook quantitative anchor with exact regions |
+| 13 | `CLAIM-VERIFICATION-ADOPTION.3b.4` | `pending` | atomically re-freeze repaired identities and close `.3b` |
+| 14 | `CLAIM-VERIFICATION-ADOPTION.3c` | `pending` | independently prove exhaustive current-claim coverage and close `.3` |
+| 15 | `CLAIM-VERIFICATION-ADOPTION.4` | `pending` | producer and RED-control closure needs the governed claim census |
+| 16 | `CLAIM-VERIFICATION-ADOPTION.5` | `pending` | documentation and independent signoff close the implemented system |
 
 ## Decisions
 
@@ -290,6 +339,10 @@ the workflow through the mdBook and repository review path.
   `registered`, five `incomplete`, and 27 `excluded`. The incomplete units are the README maintained-reference
   surface, mdBook quantitative surface, workflow-doctrine baseline surface, knowledge-card reference surface,
   and FSMGen issue-packet reference surface; `.3b` may repair only those five exact keys.
+- `2026-08-15` (`.3b.0`): a broad title anchor cannot earn authority for the prose below it. Route membership is
+  repaired through the existing README/catalog producers, authored workflow identity remains out of claim scope
+  while its actionable capacity paragraph joins the existing verified claim, and mdBook quantitative assertions
+  receive their own exact-region contract instead of borrowing the selective book-currentness checker.
 
 ## Frozen `.3b` Repair Frontier (`CLAIM-VERIFICATION-ADOPTION.3a.2`)
 
@@ -403,6 +456,23 @@ was added; the stable-path remedy and its consumed authority are complete.
 ## Blockers
 
 - None. `.3b` repairs only the five frozen incomplete evidence keys next.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3b.0`
+
+- [x] **REPRODUCE / MEASURE** — the frozen frontier contains exactly five incomplete keys: three maintained-
+  reference collection anchors, one workflow/doctrine anchor, and one mdBook quantitative anchor; the other 46
+  outcomes remain outside repair scope. `[claim: current-claim-census-frozen]`
+- [x] **ROOT CAUSE (WHY + WHERE)** — all five point at first-line review anchors. A title can identify a surface
+  but cannot prove navigation completeness, policy semantics, or the current truth of quantitative prose.
+- [x] **ADDRESSED (verified)** — `.3b.1` owns exact route/catalog identity, `.3b.2` splits authored workflow
+  identity from the registered capacity paragraph, `.3b.3` owns exact mdBook quantitative regions, and `.3b.4`
+  alone re-freezes changed identities and outcomes.
+- [x] **NO REGRESSION** — planning changes no source assertion, census classification, product code, producer,
+  registry schema, hook, CI path, or bound; focused census/currentness/book checks and doctrines pass.
+- [x] **GENERICITY** — the split follows assertion authority and lifecycle, not document subject, protocol,
+  vendor, metric name, numeric spelling, or implementation language.
+- [x] **LOCKSTEP** — task frontier, resume pointer, change/engineering ledgers, and contributor-facing mdBook
+  name the same four-step repair sequence while preserving the frozen 51-unit result.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.3a.2`
 
@@ -534,6 +604,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `2026-08-15` | `.3a.2` | multi-view RED reproduction; 15-case fault matrix; frozen check/report/producer;
   15 joined verifiers; claim/task/memory/book/live-size/doctrine gates | 51 units = 11 derived + 4 identity-gated
   + 4 registered + 5 incomplete + 27 excluded; five exact `.3b` keys; no source assertion changed |
+| `2026-08-15` | `.3b.0` | five-key authority-route audit; current census/check/report; README/catalog/book/
+  task/memory/claim/live-size/doctrine gates | repair sequence frozen without changing any source assertion or
+  one of the 51 existing authority outcomes |
 
 ## Commit Log
 
@@ -547,6 +620,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3a.0` | `CLAIM-VERIFICATION-ADOPTION.3a.0 — freeze the current-claim census design` | 39-surface denominator, five category views, closed authority outcomes, staged implementation/results |
 | `.3a.1` | `CLAIM-VERIFICATION-ADOPTION.3a.1 — implement the current-claim census` | bounded inventory contract, deterministic producer, exact region/authority joins, fail-closed controls |
 | `.3a.2` | `CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings` | 51 exact outcomes, complete surface/view coverage, five-key repair frontier |
+| `.3b.0` | `CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map` | authority-specific route, workflow-baseline, mdBook-quantitative, and closure leaves |
 
 ## Changelog
 
@@ -572,3 +646,5 @@ was added; the stable-path remedy and its consumed authority are complete.
   missing/unknown/duplicate/untracked/stale/bound controls, and leaves every finding unfrozen for `.3a.2`.
 - `2026-08-15`: `.3a.2` repairs a first-view-only candidate-key defect before freezing 51 exact evidence units;
   five incomplete keys become the only legal `.3b` repair frontier and all source assertions remain unchanged.
+- `2026-08-15`: `.3b.0` decomposes repair by authority: three maintained-reference routes, the authored-policy /
+  registered-capacity split, exact mdBook quantitative regions, then one atomic result re-freeze.

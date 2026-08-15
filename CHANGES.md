@@ -1,3 +1,12 @@
+### CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map
+
+- Decomposed the five frozen incomplete title anchors by authority before any source or census repair: three
+  maintained-reference routes, one authored-policy / registered-capacity split, and one exact-region mdBook
+  quantitative contract, followed by a single atomic result re-freeze.
+- Preserved all 51 census outcomes and every source assertion. The sequence prevents a broad title or selective
+  currentness check from being cited as evidence for uninspected member prose.
+  `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings
 
 - Corrected the first result pass before freeze: candidate identity now includes semantic view, and frozen

@@ -291,6 +291,13 @@ perl scripts/check_current_claim_census.pl --produce
 Only the separately owned repair slice may change one of the five incomplete source assertions. Any other
 surface or any changed exact region makes the frozen census fail closed first.
 
+Repair is split by authority rather than by filename count. README, knowledge-card, and FSMGen issue-packet
+anchors first receive exact route/catalog membership evidence, which proves navigation identity but deliberately
+does not certify member prose. The workflow anchor separates authored policy from the already registered
+capacity assertion. Quantitative mdBook prose receives a bounded exact-region contract; the selective book-
+currentness check cannot be promoted into blanket evidence for the whole manual. Only after those repairs does
+one closing leaf update the frozen region identities and result vector atomically.
+
 ## How the gates are layered
 
 Defense in depth, the same four-layer model the memory architecture uses. Each layer catches what the

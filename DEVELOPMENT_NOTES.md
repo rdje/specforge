@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3b.0 (`2026-08-15`) — surface identity is not assertion truth
+
+The five incomplete records all use a first-line title as their region. That is a legitimate deterministic
+review anchor, but it cannot carry one authority across three different questions: whether routes enumerate the
+right files, whether authored policy is in force, and whether quantitative prose still matches source state.
+
+The repair therefore follows evidence lineage. Existing README and catalog checks may prove exact navigation
+membership, but not member semantics. The workflow title remains authored policy while its one actionable
+capacity paragraph joins the already verified 14 / 4 / 21 claim. The mdBook gets a bounded exact-region
+quantitative contract because its selective current-truth checker cannot honestly stand for every number in the
+manual. Result identities change only once, after those independent repairs are complete.
+
 ## CLAIM-VERIFICATION-ADOPTION.3a.2 (`2026-08-15`) — views need evidence, not only declarations
 
 The inventory contract declared five views, but its first producer key was surface + path + line. A surface that

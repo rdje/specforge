@@ -17,13 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.3a.2` owns the current-claim authority result freeze.
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.3b.0` owns the bounded repair map for the five frozen census gaps.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.3a.2` freezes 51 exact units across all 39 current surfaces and five views: 11 derived, four
-  identity-gated, four registered, five incomplete, and 27 excluded. No source assertion changed.
+- Current state: `.3b.0` assigns the five incomplete title anchors to maintained-route identity (`.3b.1`), the
+  authored-policy / registered-workflow-capacity split (`.3b.2`), exact mdBook quantitative regions (`.3b.3`),
+  and atomic census re-freeze (`.3b.4`). The frozen 51-unit result and every source assertion remain unchanged.
   `[claim: current-claim-census-frozen]`
-- Next action: commit `.3a.2`, then activate `.3b` and repair only the five incomplete README, mdBook quantitative,
-  workflow-baseline, knowledge-card, and FSMGen-issue evidence keys. `MEMORY.md` remains capped at 32,768 B.
-- In-flight uncommitted: `.3a.2` frozen contract and lockstep result publication await gates; no background job.
+- Next action: commit `.3b.0`, verify a clean tree, then activate `.3b.1` and bind the README, knowledge-card,
+  and FSMGen-issue maintained-reference anchors to exact route/catalog authorities. `MEMORY.md` stays capped.
+- In-flight uncommitted: `.3b.0` task/continuity/book planning alignment awaits gates; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.
