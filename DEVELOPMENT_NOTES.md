@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.3b.3.1 (`2026-08-15`) — executable denominators beat transient estimates
+
+The tracked parser found 304 candidate lines where the design-time shell census had recorded 301. Replaying the
+same frozen grammar against the parent revision produced 304 again, proving that no implementation or book edit
+created the delta. The provisional scan itself was neither tracked nor retained, so its undercount cannot be
+more narrowly reconstructed; treating it as authority would make an irreproducible estimate control coverage.
+
+The inventory contract therefore binds membership sources, the frozen grammar, and the executable denominator
+in one check. Its `inventory` phase rejects semantic regions, while `frozen` requires exact-once coverage and
+validates each authority join. That phase split lets adjudication inspect a stable worklist without giving hard
+findings permission to change the worklist.
+
 ## CLAIM-VERIFICATION-ADOPTION.3b.3.0 (`2026-08-15`) — syntax discovers; authority adjudicates
 
 A title anchor cannot represent quantitative book coverage, but scanning every digit would confuse dates,

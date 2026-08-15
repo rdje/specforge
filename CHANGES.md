@@ -1,3 +1,13 @@
+### CLAIM-VERIFICATION-ADOPTION.3b.3.1 — implement the mdBook quantitative census
+
+- Added a self-bounded inventory contract and deterministic checker that derive governed book membership,
+  exclude fenced examples, emit stable prose candidates, and validate exact-once region authority fail closed.
+- The executable replay corrected the unreproducible design estimate from 301 to 304 stable candidates across
+  the same 21 files; eighteen controlled cases cover fence, region, authority, source, schema, and bound failures.
+- The inventory deliberately contains no semantic regions. `.3b.3.2` owns adjudication, and the outer frozen
+  census remains unchanged.
+  `[claim: current-claim-census-frozen]`
+
 ### CLAIM-VERIFICATION-ADOPTION.3b.3.0 — freeze the mdBook quantitative census design
 
 - Froze a prose-only candidate grammar, exact non-overlapping region coverage, closed actionable/excluded

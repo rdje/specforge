@@ -316,6 +316,21 @@ it as current derived/identity-gated/registered/incomplete evidence or a named a
 dated-evidence exclusion. Inventory, adjudication, and result freeze are separate transactions so the grammar
 cannot be weakened in response to its own findings.
 
+The inventory is executable and self-bounded:
+
+```bash
+perl scripts/check_book_quantitative_claims.pl --self-test
+perl scripts/check_book_quantitative_claims.pl --check
+perl scripts/check_book_quantitative_claims.pl --report
+perl scripts/check_book_quantitative_claims.pl --produce
+```
+
+The live inventory reports `book_files=39`, `candidate_lines=304`, and `candidate_files=21`. Those values are a
+derived review denominator, not semantic adjudication: inventory phase forbids authority regions. The next phase
+must bind every emitted path/line/SHA candidate exactly once to a derived or identity verifier, a current claim,
+honest missing legs, or one closed exclusion reason. The self-test exercises eighteen positive and controlled-
+negative cases, and all fixtures are created and removed on the repository volume.
+
 ## How the gates are layered
 
 Defense in depth, the same four-layer model the memory architecture uses. Each layer catches what the

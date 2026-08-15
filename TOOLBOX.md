@@ -85,6 +85,12 @@ The active registry is `doctrine/claim_verification/claims.jsonl`. Use
 matrix. Commands are argv arrays and all producer/input/evidence paths are tracked, digest-bound, and covered by
 the declared stale check; the checker never evaluates registry content through a shell.
 
+For manual-wide quantitative review, use `perl scripts/check_book_quantitative_claims.pl --check` to derive the
+governed mdBook membership and validate the current inventory/frozen contract, `--report` for bounded totals,
+`--produce` for stable path/line/SHA candidates, and `--self-test` for the fence, exact-coverage, authority-join,
+source-identity, and portable-bound fault matrix. Inventory output is a review denominator only; semantic
+authority is accepted only from exact non-overlapping regions in frozen phase.
+
 ## How to run the SpecForge CLI
 
 ```bash
