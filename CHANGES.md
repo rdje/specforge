@@ -1,4 +1,16 @@
-### SPEC-TO-INTENT-ALIGNMENT.7c.i — activate source-local grounding carry repair
+### SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding
+
+- Refactored the inference-antecedent recognizer into one shared parser that returns the exact subject, symbolic
+  state, and whether same-clause appositive authority was required. EvidenceIR production behavior and ordering
+  remain unchanged; the existing polarity pass is still the sole level authority.
+- Added a document-local SemanticIR grounding index that admits only the exact provenance-bearing record recreated
+  from one uniquely identified source statement. Matching requires subject, kind, target, condition, negation,
+  source, support, and confidence; it creates no interface signal, declaration, alias, or subject-wide exemption.
+- Proved the APB-shaped local `PSEL` record reaches SemanticIR and IntentIR while source- and support-altered
+  impostors remain residual and distinct globally declared `PSELX` remains unchanged.
+- Seven focused tests, the 1,365-pass/5-ignore/0-fail core suite, warning-denied Clippy, and all five production-
+  genericity components pass. All 24 retained chains are current; an independent 192-file rollback comparison
+  found 96 proof-only changes, zero public changes, and zero validation changes. Its exact rollback was removed.
 
 - Completed the first production-revision replay of all 12 reviewed sources and 48 isolated stages. APB's exact
   provenance-bearing inference-antecedent fact now closes EvidenceIR at 40/0/0 with zero fabrication; every other

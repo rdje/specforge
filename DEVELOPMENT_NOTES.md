@@ -1,21 +1,28 @@
 # DEVELOPMENT_NOTES
-## SPEC-TO-INTENT-ALIGNMENT.7c.i (`2026-08-16`) — local identity must travel with the record
+## SPEC-TO-INTENT-ALIGNMENT.7c.i (`2026-08-16`) — revalidate once, admit one record
 
-The first complete production replay proves that `.7b` repaired the intended boundary and no more. EvidenceIR
-now contains the exact APB `PSEL` asserted-state constraint with its source statement, but SemanticIR's Layer-D
-partition sees no globally declared `PSEL` and demotes it. This is the correct default: relaxing the partition or
-adding `PSEL` to the interface would convert a clause-local appositive into document-wide signal authority and
-could promote unrelated records.
+The inference-antecedent grammar now has one source of truth. Its shared parser returns the recognized subject and
+symbolic constraint plus an internal bit recording that global catalog resolution failed and the exact same-clause
+`signal, ID,` appositive supplied local authority. EvidenceIR extraction consumes that result exactly as before;
+the established polarity pass remains the only step that maps asserted/deasserted state to a concrete level.
 
-The safe carry mechanism is therefore record-scoped revalidation. SemanticIR may accept an otherwise undeclared
-constraint only when its exact source text, supporting statement identity, subject, and inference-appositive
-derivation reproduce through the same closed EvidenceIR grammar that created it. Matching a subject alone is
-insufficient, and the exception must not manufacture an interface record, signal declaration, alias, or authority
-for another constraint. Existing Layer-D demotion remains unchanged for every ordinary undeclared subject.
+SemanticIR builds one document-local index from unique statement identities before Layer D partitions records.
+For each locally grounded parse, it recreates the symbolic record, applies the persisted polarity once, and stores
+the complete semantic and provenance identity: subject, kind, target, condition, negation, source, supporting
+statement ids, and confidence. An undeclared record crosses Layer D only on that exact match. This avoids scanning
+every statement for every record and, more importantly, does not create global interface, declaration, alias, or
+subject-wide authority. Ordinary undeclared records retain their prior demotion behavior.
 
-This discovery splits publication into two auditable slices. `.7c.i` owns the narrow carry repair, refusal tests,
-selected production checks, and retained-chain reconciliation. `.7c.ii` starts from clean production and repeats
-the complete reviewed replay before any result, controller state, or closure claim becomes tracked authority.
+The APB-shaped integration test proves exact `PSEL` carry through SemanticIR and IntentIR while support-altered and
+source-altered same-subject impostors stay residual; no `PSEL` interface record appears and independently declared
+`PSELX` remains present. Seven focused tests, the 1,365-pass/5-ignore/0-fail core suite, warning-denied Clippy, and
+all five production-genericity components pass.
+
+All 24 retained chains were rebuilt in causal stage order and are current with zero stale. The same-volume rollback
+contained 192 files / 853,068 KiB; 96 raw artifacts changed only in proof context, proof ledger, or validation
+reports, while public content and validation outcomes changed zero times. Its aggregate was
+`d011b7004330d7533cc38d376d22222c4ce43c75b3cb9c75be952cbf44767a22`; the exact rollback directory is removed and
+absent. `.7c.ii` now owns the independent clean population replay and comparable publication.
 
 ## SPEC-TO-INTENT-ALIGNMENT.7b (`2026-08-16`) — append a sibling, then refine and deduplicate
 

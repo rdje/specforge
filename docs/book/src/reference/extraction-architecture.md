@@ -170,10 +170,10 @@ unordered reference/responsibility sets plus top-level ISF declarations; ambiguo
 exact. The final clean-revision aggregate has 35 pass / zero fail / 16 unmeasurable / zero invalid. Every completed
 relation is a fresh pipeline run under revision `2cdcd131`; retained evidence supplies only the frozen alpha-
 eligibility boundary. The subsequent clean 12-source / 48-stage replay publishes 39/0/1 IntentIR TP/FP/FN,
-42/42 provenance, 117/118 conservation, zero fabrication, and one APB canonical loss. Final `.f.v` signoff
-composes these behavioral results with the unconditional structural doctrine and its 27 adversarial controls.
-Production is specification-instance-neutral within that governed boundary. Sixteen alpha strata remain
-honestly unmeasurable, coverage/accounting is incomplete, and product-level PDF-to-ISF completion remains open.
+42/42 provenance, 117/118 conservation, zero fabrication, and one APB canonical loss. `.7b` recovers that local
+state at EvidenceIR; `.7c.i` shares its exact parser with a one-pass SemanticIR index so only the uniquely supported
+record crosses Layer D, without global interface, declaration, alias, or subject-wide authority. `.7c.ii` owns the
+clean replay. Final `.f.v` composes the earlier results with the structural doctrine; production remains instance-neutral within that boundary, with coverage/accounting and product-level PDF-to-ISF completion open.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively

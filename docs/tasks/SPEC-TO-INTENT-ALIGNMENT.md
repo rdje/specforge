@@ -34,7 +34,7 @@ expressiveness as the bottleneck.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7c.i`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7c.ii`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -65,10 +65,11 @@ chain-currency, and replay obligations. The exact span's appositive establishes 
 declared `PSELX` remains opaque, and suffix spelling is a refusal case rather than alias authority. With no
 resolved polarity, asserted stays symbolic and HIGH/LOW are forbidden. `.7b` now implements that sibling
 producer and has reconciled every proof-affected retained chain with zero public delta and zero stale stages.
-The first `.7c` complete replay closes APB at EvidenceIR but exposes the exact record being demoted at
-EvidenceIR→SemanticIR because source-local `PSEL` is intentionally absent from the global interface catalog.
-`.7c.i` owns record-scoped carry without widening Layer D or interface authority; `.7c.ii` owns the clean replay
-and comparable publication retry. The published 39/0/1 result remains revision-bound.
+The first `.7c` complete replay closes APB at EvidenceIR and localizes the remaining loss to the exact record's
+SemanticIR grounding. `.7c.i` now replays the closed inference/appositive grammar into a record-scoped grounding
+index, carries only an exact source/support/subject/kind match, creates no interface or alias, and keeps all 24
+retained chains current with zero public delta. `.7c.ii` owns the clean replay and comparable publication retry;
+the published 39/0/1 result remains revision-bound.
 
 ## Detailed task evidence
 
@@ -181,6 +182,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.7c.i` | `SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding` | revalidate exact local inference records across Layer D without widening document signal authority |
 | `.7b` | `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state` | ship the source-grounded sibling producer and exact proof-chain reconciliation |
 | `.7a` | `SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract` | freeze exact witness, generic sibling-producer grammar, refusal controls, affected-chain scope, and replay boundary |
 | `.7` | `SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery` | localize the compound-inference state loss and route `.7a`–`.7c` |

@@ -17,23 +17,24 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.7c.i` owns exact source-local constraint grounding across the
-  EvidenceIR-to-SemanticIR gate. `.7a` froze the design and `.7b` shipped production recovery plus exact
-  retained-chain reconciliation; `.7c.ii` owns the clean replay and publication retry.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.7c.ii` owns the clean complete replay, comparable publication, and
+  signoff after `.7c.i` implemented exact source-local constraint carry across the EvidenceIR-to-SemanticIR gate.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: the first complete 12-source/48-stage replay from `.7b` closes APB at EvidenceIR: the exact
-  provenance-bearing `PSEL|must_be_asserted|<missing>` fact raises that stage to 40/0/0 with zero fabrication.
-  SemanticIR then demotes only that record because source-local `PSEL` is intentionally absent from the global
-  interface catalog, leaving SemanticIR and IntentIR at 39/0/1 and moving the sole unexplained loss to
-  EvidenceIR-to-SemanticIR. Layer D remains correct for ordinary undeclared records; `.7c.i` must revalidate the
-  recovered record's exact source, statement, subject, and closed appositive derivation without creating an
-  interface, declaration, alias, or subject-wide exemption. The first replay is diagnostic, not publication.
+- Current state: `.7c.i` shares the closed inference-antecedent parser with a one-pass document-local grounding
+  index and admits an otherwise undeclared constraint only when its complete semantic and provenance identity
+  matches a uniquely supported same-clause appositive derivation after the existing polarity refinement. The exact
+  APB-shaped `PSEL` record reaches SemanticIR and IntentIR; support- and source-altered impostors remain residual,
+  no interface/catalog/alias authority is created, and distinct declared `PSELX` remains unchanged. Seven focused
+  tests, 1,365 core passes / five ignores / zero failures, warning-denied Clippy, and all five genericity components
+  pass. All 24 retained chains are current; 96/192 artifacts changed only in proof surfaces, with zero public or
+  validation delta, and the exact rollback is absent. Tracked publication remains revision-pinned at 39/0/1.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: implement `.7c.i`'s record-scoped grounding revalidation, prove exact positive/refusal behavior,
-  run selected core/genericity checks, and reconcile every proof-affected retained chain.
-- In-flight uncommitted: none; the failed-publication replay and external-source map remain isolated under
-  `.project-data/tmp` for repair comparison; production repair has not started and no background job is running.
+- Next action: execute `.7c.ii` from clean production across all 12 reviewed sources and 48 isolated stages,
+  compare it to the diagnostic replay, publish only a complete conserved result, prove reproducibility, and clean
+  exact project-local scratch.
+- In-flight uncommitted: none after the `.7c.i` commit; its diagnostic replay and external-source map remain
+  isolated under `.project-data/tmp` for `.7c.ii` comparison, and no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

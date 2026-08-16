@@ -4,16 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
-## Session update (2026-08-16 — source-local grounding carry boundary; `SPEC-TO-INTENT-ALIGNMENT.7c.i`)
+## Session update (2026-08-16 — exact source-local grounding carry; `SPEC-TO-INTENT-ALIGNMENT.7c.i`)
 
-- A complete reviewed replay proves that the inference-antecedent sibling now emits APB's exact local `PSEL`
-  constraint in EvidenceIR, but SemanticIR's uniform Layer-D partition demotes it because `PSEL` is intentionally
-  absent from the document-wide interface catalog.
-- Layer D remains the correct default and the appositive must remain clause-local. The repair boundary is one
-  exact `SignalConstraintRecord`: revalidate source text, supporting statement, subject, and closed inference-
-  appositive derivation through EvidenceIR's existing grammar; do not add catalog state or a subject-wide bypass.
-- The current fresh replay is diagnostic: EvidenceIR is 40/0/0, SemanticIR and IntentIR are 39/0/1, zero
-  fabrication holds, and the one unexplained loss has moved downstream. `.7c.ii` owns publication after repair.
+- EvidenceIR's inference-antecedent producer and SemanticIR now share one closed parser. Besides the subject and
+  symbolic state, it reports whether the exact same-clause appositive supplied local identity after catalog
+  resolution failed; the established polarity pass remains sole concrete-level authority.
+- SemanticIR computes one document-local index from uniquely identified statements, recreates only locally
+  grounded records, applies persisted polarity once, and matches the complete semantic/provenance identity before
+  Layer D promotion. No interface, declaration, alias, or subject-wide exemption is created; ordinary undeclared
+  records retain their previous demotion path.
+- The APB-shaped exact record reaches SemanticIR and IntentIR while support- and source-altered impostors remain
+  residual. Seven focused tests, 1,365 core passes / five ignores / zero failures, warning-denied Clippy, and all
+  five production-genericity components pass.
+- The current compiled graph is 79 modules / 41 claim families / 168 fields / 141 rows / 2,359 functions / 14,629
+  helper edges / 12,618 decision sites / 1,462 semantic macros. All 24 retained chains are current with zero
+  public delta; `.7c.ii` owns the clean comparable population replay and publication.
 
 ## Session update (2026-08-16 — inference-antecedent recovery; `SPEC-TO-INTENT-ALIGNMENT.7b`)
 

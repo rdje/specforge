@@ -200,7 +200,7 @@ reconciliation is 24/24 current and zero stale at every stage. `.f.iv.b` now pub
 All 12 sources and 48 stages complete under an evidence-recorded CPU/16-page ingest policy. Aggregate IntentIR
 moves to 39/0/1 TP/FP/FN; GIC-400 supplies 15 exact facts and AMD supplies no false register. APB's pre-existing
 missing polarity-neutral `PSEL` asserted-state obligation is the sole miss in that published revision. `.7b` now
-recovers it at EvidenceIR; the first replay localizes the remaining loss to SemanticIR grounding, `.7c.i` owns exact non-widening carry, and the published score stays pinned until `.7c.ii`.
+recovers it at EvidenceIR; `.7c.i` carries the exact local record through SemanticIR and IntentIR without catalog widening, and the published score stays pinned until `.7c.ii`.
 
 ### What the first current replay proved
 

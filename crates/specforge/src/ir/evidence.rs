@@ -8626,6 +8626,71 @@ fn is_same_clause_signal_appositive(before_state: &str, subject_span: (usize, us
     before_comma[noun_start..noun_end].eq_ignore_ascii_case("signal")
 }
 
+struct ParsedInferenceAntecedentConstraint {
+    subject_signal: String,
+    constraint_kind: SignalConstraintKind,
+    source_local_appositive: bool,
+}
+
+/// Parse one inference antecedent through the same closed grammar used by production extraction.
+/// The grounding bit is intentionally explicit: SemanticIR may carry a record around its global
+/// catalog gate only when this exact clause had to establish the subject locally.
+fn parse_inference_antecedent_signal_constraint(
+    statement: &ExtractedStatement,
+    declared_signals: &HashSet<String>,
+) -> Option<ParsedInferenceAntecedentConstraint> {
+    if !matches!(statement.class, StatementClass::SignalValueConstraint) {
+        return None;
+    }
+    let sentence = constraint_bearing_sentence(&statement.text);
+    let (marker_start, _marker_len) = unique_inference_marker(sentence)?;
+    let prefix = &sentence[..marker_start];
+    let lowered_prefix = prefix.to_ascii_lowercase();
+    if ascii_phrase_count(&lowered_prefix, "is asserted")
+        + ascii_phrase_count(&lowered_prefix, "is deasserted")
+        != 1
+    {
+        return None;
+    }
+
+    let bounded_prefix = prefix.trim_end_matches(is_clause_end_character);
+    let lowered_bounded_prefix = bounded_prefix.to_ascii_lowercase();
+    let (state_phrase, constraint_kind) = if lowered_bounded_prefix.ends_with("is asserted") {
+        ("is asserted", SignalConstraintKind::MustBeAsserted)
+    } else if lowered_bounded_prefix.ends_with("is deasserted") {
+        ("is deasserted", SignalConstraintKind::MustBeDeasserted)
+    } else {
+        return None;
+    };
+
+    let before_state = &bounded_prefix[..bounded_prefix.len() - state_phrase.len()];
+    let subject_span = last_identifier_span(before_state)?;
+    let proposed_subject = &before_state[subject_span.0..subject_span.1];
+
+    let mut local_declarations = declared_signals.clone();
+    let source_local_appositive =
+        resolve_declared_signal_identifier(proposed_subject, &local_declarations).is_none()
+            && is_same_clause_signal_appositive(before_state, subject_span);
+    if source_local_appositive {
+        local_declarations.insert(proposed_subject.to_string());
+    }
+    let subject_signal = resolve_declared_signal_identifier(proposed_subject, &local_declarations)?;
+
+    let referenced_signals: BTreeSet<String> = collect_subject_signal_tokens(prefix)
+        .into_iter()
+        .filter_map(|token| resolve_declared_signal_identifier(&token, &local_declarations))
+        .collect();
+    if referenced_signals.len() != 1 || !referenced_signals.contains(&subject_signal) {
+        return None;
+    }
+
+    Some(ParsedInferenceAntecedentConstraint {
+        subject_signal,
+        constraint_kind,
+        source_local_appositive,
+    })
+}
+
 fn extract_inference_antecedent_signal_constraints(
     statements: &[ExtractedStatement],
     declared_signals: &HashSet<String>,
@@ -8634,63 +8699,17 @@ fn extract_inference_antecedent_signal_constraints(
     let mut records = Vec::new();
 
     for statement in statements {
-        if !matches!(statement.class, StatementClass::SignalValueConstraint) {
-            continue;
-        }
-        let sentence = constraint_bearing_sentence(&statement.text);
-        let Some((marker_start, _marker_len)) = unique_inference_marker(sentence) else {
-            continue;
-        };
-        let prefix = &sentence[..marker_start];
-        let lowered_prefix = prefix.to_ascii_lowercase();
-        if ascii_phrase_count(&lowered_prefix, "is asserted")
-            + ascii_phrase_count(&lowered_prefix, "is deasserted")
-            != 1
-        {
-            continue;
-        }
-
-        let bounded_prefix = prefix.trim_end_matches(is_clause_end_character);
-        let lowered_bounded_prefix = bounded_prefix.to_ascii_lowercase();
-        let (state_phrase, constraint_kind) = if lowered_bounded_prefix.ends_with("is asserted") {
-            ("is asserted", SignalConstraintKind::MustBeAsserted)
-        } else if lowered_bounded_prefix.ends_with("is deasserted") {
-            ("is deasserted", SignalConstraintKind::MustBeDeasserted)
-        } else {
-            continue;
-        };
-
-        let before_state = &bounded_prefix[..bounded_prefix.len() - state_phrase.len()];
-        let Some(subject_span) = last_identifier_span(before_state) else {
-            continue;
-        };
-        let proposed_subject = &before_state[subject_span.0..subject_span.1];
-
-        let mut local_declarations = declared_signals.clone();
-        if resolve_declared_signal_identifier(proposed_subject, &local_declarations).is_none()
-            && is_same_clause_signal_appositive(before_state, subject_span)
-        {
-            local_declarations.insert(proposed_subject.to_string());
-        }
-        let Some(subject_signal) =
-            resolve_declared_signal_identifier(proposed_subject, &local_declarations)
+        let Some(parsed) =
+            parse_inference_antecedent_signal_constraint(statement, declared_signals)
         else {
             continue;
         };
 
-        let referenced_signals: BTreeSet<String> = collect_subject_signal_tokens(prefix)
-            .into_iter()
-            .filter_map(|token| resolve_declared_signal_identifier(&token, &local_declarations))
-            .collect();
-        if referenced_signals.len() != 1 || !referenced_signals.contains(&subject_signal) {
-            continue;
-        }
-
         *counter += 1;
         records.push(SignalConstraintRecord {
             constraint_id: format!("sigcon_{counter:04}"),
-            subject_signal,
-            constraint_kind,
+            subject_signal: parsed.subject_signal,
+            constraint_kind: parsed.constraint_kind,
             target_value: None,
             condition_text: None,
             negated: false,
@@ -8701,6 +8720,63 @@ fn extract_inference_antecedent_signal_constraints(
     }
 
     records
+}
+
+/// A document-local index of inference-antecedent constraints whose subject was established by
+/// the same clause's appositive rather than the global signal catalog. Construction replays the
+/// grammar and polarity pass once; matching grants authority only to an exact record.
+pub(crate) struct SourceLocalInferenceConstraintGrounding {
+    candidates: Vec<SignalConstraintRecord>,
+}
+
+impl SourceLocalInferenceConstraintGrounding {
+    pub(crate) fn from_evidence_ir(evidence_ir: &EvidenceIr) -> Self {
+        let declared_signals = collect_known_signal_names(&evidence_ir.extracted_statements);
+        let statement_id_counts = evidence_ir.extracted_statements.iter().fold(
+            HashMap::<String, usize>::new(),
+            |mut counts, statement| {
+                *counts.entry(statement.statement_id.clone()).or_default() += 1;
+                counts
+            },
+        );
+        let mut candidates = evidence_ir
+            .extracted_statements
+            .iter()
+            .filter(|statement| statement_id_counts.get(&statement.statement_id) == Some(&1))
+            .filter_map(|statement| {
+                let parsed =
+                    parse_inference_antecedent_signal_constraint(statement, &declared_signals)?;
+                parsed
+                    .source_local_appositive
+                    .then_some(SignalConstraintRecord {
+                        constraint_id: String::new(),
+                        subject_signal: parsed.subject_signal,
+                        constraint_kind: parsed.constraint_kind,
+                        target_value: None,
+                        condition_text: None,
+                        negated: false,
+                        source_text: statement.text.clone(),
+                        supporting_statement_ids: vec![statement.statement_id.clone()],
+                        automation_confidence: AutomationConfidence::Medium,
+                    })
+            })
+            .collect::<Vec<_>>();
+        apply_persisted_polarity_to_constraints(&mut candidates, &evidence_ir.signal_polarities);
+        Self { candidates }
+    }
+
+    pub(crate) fn contains(&self, record: &SignalConstraintRecord) -> bool {
+        self.candidates.iter().any(|candidate| {
+            candidate.subject_signal == record.subject_signal
+                && candidate.constraint_kind == record.constraint_kind
+                && candidate.target_value == record.target_value
+                && candidate.condition_text == record.condition_text
+                && candidate.negated == record.negated
+                && candidate.source_text == record.source_text
+                && candidate.supporting_statement_ids == record.supporting_statement_ids
+                && candidate.automation_confidence == record.automation_confidence
+        })
+    }
 }
 
 /// Preserve the established pattern/dynamic surface byte-for-byte and deduplicate only records

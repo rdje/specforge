@@ -12,7 +12,7 @@ date: 2026-08-16
 status: current
 tags: [spec-to-intent-alignment, evidence-ir, semantic-ir, grounding, apb, canonical-recall]
 evidence: docs/tasks/spec-to-intent-alignment/canonical-recovery.md; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; docs/knowledge/semantic-grounding-filter-is-catalog-independent.md
-reverify: "python3 -B scripts/replay_source_to_intent_population.py --help && cargo test --offline -p specforge-core --lib signal_constraints_for_undeclared_signals_are_filtered_by_layer_d"
+reverify: "cargo test --offline -p specforge-core --lib source_local_inference_grounding_carries_only_the_exact_record && bash scripts/check_chain_currency.sh --check"
 ---
 
 The first complete replay after `SPEC-TO-INTENT-ALIGNMENT.7b` processes every reviewed source and isolated stage.
@@ -30,8 +30,12 @@ Layer D must not be weakened. Its catalog-independent uniform filter correctly d
 records, including in empty-catalog documents. Adding `PSEL` globally would instead widen one sentence's local
 evidence into document authority and could promote unrelated records sharing the subject spelling.
 
-`SPEC-TO-INTENT-ALIGNMENT.7c.i` therefore owns an exact record-scoped carry rule. An otherwise undeclared
-constraint may cross the SemanticIR gate only if the same source text, supporting statement identity, subject,
-and closed inference-appositive derivation revalidate through the EvidenceIR grammar that created it. The rule
-must not create interface/catalog/alias state or authorize another constraint. `.7c.ii` owns the clean complete
-replay and publication retry after that repair.
+`SPEC-TO-INTENT-ALIGNMENT.7c.i` implements the exact record-scoped carry rule. EvidenceIR and SemanticIR share the
+closed parser; SemanticIR builds one index from unique statement identities, applies the existing persisted
+polarity, and compares the complete record identity. An otherwise undeclared constraint crosses only if its
+source, support, subject, semantic fields, confidence, and same-clause appositive derivation all reproduce.
+
+The APB-shaped exact `PSEL` record now reaches SemanticIR and IntentIR while support- and source-altered impostors
+remain residual; no `PSEL` interface record is created and distinct declared `PSELX` remains unchanged. All seven
+focused tests pass and all 24 retained chains are current with zero stale and zero public delta. `.7c.ii` owns the
+clean complete replay and comparable publication.

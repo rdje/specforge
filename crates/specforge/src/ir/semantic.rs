@@ -17,8 +17,8 @@ use crate::ir::evidence::{
     EvidenceIr, InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
     SerialFrameField, SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord,
     SignalSemanticConflictRecord, SignalSemanticHintRecord, SignalSemanticHintSourceKind,
-    SignalSemanticTag, StatementClass, VisualEvidenceRole, VisualObservationKind,
-    parse_visual_observation_json,
+    SignalSemanticTag, SourceLocalInferenceConstraintGrounding, StatementClass, VisualEvidenceRole,
+    VisualObservationKind, parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{
     CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
@@ -703,8 +703,10 @@ impl SemanticIr {
             .collect();
 
         // SEMANTIC-EMPTY-CATALOG-FILTER.1: ONE predicate governs every document.
-        // A record is promoted when the signal it names is declared, or — for a rule —
-        // when it names no signal at all (a genuine system-level behavioral rule).
+        // A record is promoted when the signal it names is declared. The one non-catalog
+        // constraint path revalidates the exact record produced from a same-clause inference
+        // appositive; it does not add a declaration or authorize another record. A rule may
+        // also name no signal at all (a genuine system-level behavioral rule).
         // There is deliberately no `declared_signal_names.is_empty()` escape hatch: that
         // former special case disabled the grounding filter on exactly the documents with
         // no signal authority, which is where an ungrounded record is *least* likely to be
@@ -713,12 +715,17 @@ impl SemanticIr {
         // Rejected records are not deleted: they stay in EvidenceIR (the honest capture
         // layer) and are demoted into a proportionate `residual_decisions` packet below,
         // so the evidence remains visible without claiming canonical authority.
+        let source_local_inference_grounding =
+            SourceLocalInferenceConstraintGrounding::from_evidence_ir(evidence_ir);
         let (signal_constraints_grounded, ungrounded_signal_constraints): (Vec<_>, Vec<_>) =
             evidence_ir
                 .signal_constraints
                 .iter()
                 .cloned()
-                .partition(|r| declared_signal_names.contains(&r.subject_signal));
+                .partition(|record| {
+                    declared_signal_names.contains(&record.subject_signal)
+                        || source_local_inference_grounding.contains(record)
+                });
         let (conditional_rules, ungrounded_conditional_rules): (Vec<_>, Vec<_>) = evidence_ir
             .conditional_rules
             .iter()
@@ -19436,6 +19443,123 @@ mod tests {
     }
 
     // ── Layer D: declared-signal gating ────────────────────────────────
+
+    #[test]
+    fn source_local_inference_grounding_carries_only_the_exact_record() -> Result<()> {
+        use crate::ir::source::SignalConstraintRecord;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("local-inference-grounding.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Interface\n",
+                "Signal PADDR is input width 32.\n",
+                "Signal PSELX is input width 1.\n",
+                "Signal PWRITE is input width 1.\n",
+                "Signal PWDATA is input width 32.\n\n",
+                "# Transfer\n",
+                "The Setup phase of the write transfer occurs at T1 in Figure 3-1. ",
+                "The select signal, PSEL , is asserted, which means that PADDR , PWRITE , ",
+                "and PWDATA must be valid.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let recovered = evidence_ir
+            .signal_constraints
+            .iter()
+            .find(|record| record.subject_signal == "PSEL")
+            .cloned()
+            .expect("EvidenceIR must contain the source-local inference antecedent");
+
+        let mut wrong_support: SignalConstraintRecord = recovered.clone();
+        wrong_support.constraint_id = "sigcon_psel_wrong_support".to_string();
+        wrong_support.supporting_statement_ids = vec!["statement_not_the_source".to_string()];
+        let mut wrong_source: SignalConstraintRecord = recovered.clone();
+        wrong_source.constraint_id = "sigcon_psel_wrong_source".to_string();
+        wrong_source.source_text.push_str(" Unrelated text.");
+        evidence_ir.signal_constraints.push(wrong_support);
+        evidence_ir.signal_constraints.push(wrong_source);
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        assert!(
+            semantic_ir
+                .signal_constraints
+                .iter()
+                .any(|record| record.constraint_id == recovered.constraint_id),
+            "the exact source-local inference record must survive Layer D"
+        );
+        for refused_id in ["sigcon_psel_wrong_support", "sigcon_psel_wrong_source"] {
+            assert!(
+                semantic_ir
+                    .signal_constraints
+                    .iter()
+                    .all(|record| record.constraint_id != refused_id),
+                "same-subject record {refused_id} must not borrow local grounding"
+            );
+        }
+        assert!(
+            semantic_ir.interfaces.iter().all(|interface| {
+                !interface.signals.iter().any(|signal| signal == "PSEL")
+                    && interface
+                        .signal_records
+                        .iter()
+                        .all(|record| record.signal_name != "PSEL")
+            }),
+            "record-scoped carry must not create a PSEL interface declaration"
+        );
+        assert!(
+            semantic_ir.interfaces.iter().any(|interface| {
+                interface.signals.iter().any(|signal| signal == "PSELX")
+                    || interface
+                        .signal_records
+                        .iter()
+                        .any(|record| record.signal_name == "PSELX")
+            }),
+            "the distinct declared PSELX identity must remain present"
+        );
+        assert!(
+            semantic_ir.residual_decisions.iter().any(|packet| {
+                packet.packet_id == "semantic_ungrounded_records_not_promoted"
+                    && packet.why_unresolved.contains("PSEL")
+            }),
+            "refused same-subject records must remain visible as residual evidence"
+        );
+
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        assert!(
+            intent_ir
+                .signal_constraints
+                .iter()
+                .any(|record| record.constraint_id == recovered.constraint_id),
+            "IntentIR must carry the exact admitted constraint"
+        );
+        assert!(intent_ir.signal_constraints.iter().all(|record| {
+            record.constraint_id != "sigcon_psel_wrong_support"
+                && record.constraint_id != "sigcon_psel_wrong_source"
+        }));
+
+        Ok(())
+    }
 
     #[test]
     fn signal_constraints_for_undeclared_signals_are_filtered_by_layer_d() -> Result<()> {
