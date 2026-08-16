@@ -1,6 +1,6 @@
 ---
 id: mdbook-quantitative-census-freeze
-title: The mdBook quantitative census freezes 304 exact regions and 75 honest incomplete assertions
+title: The mdBook quantitative census freezes 307 exact regions and 78 honest incomplete assertions
 answers:
   - "what did the mdBook quantitative claim census find"
   - "how many quantitative prose candidates are in the SpecForge book"
@@ -16,13 +16,13 @@ reverify: perl scripts/check_book_quantitative_claims.pl --self-test && perl scr
 ---
 
 `CLAIM-VERIFICATION-ADOPTION.3b.3.3` freezes the manual-wide quantitative review denominator and its exact
-semantic outcomes. The governed book has 39 Markdown files; 304 prose candidate lines occur across 21 files,
+semantic outcomes. The governed book has 39 Markdown files; 307 prose candidate lines occur across 21 files,
 and each has one non-overlapping exact line/SHA region.
 
-The frozen vector is eight `registered`, 75 `incomplete`, and 221 `excluded`. The registered regions all join
+The frozen vector is eight `registered`, 78 `incomplete`, and 221 `excluded`. The registered regions all join
 `workflow-standard-capacity-profile`. Every incomplete region explicitly names re-derivation, independent
 falsification, and durability as missing; the freeze verifies that uncertainty is represented, not the truth of
-those 75 underlying assertions. Exclusions remain exact: 26 authored thresholds or choices, eight examples, one
+those 78 underlying assertions. Exclusions remain exact: 26 authored thresholds or choices, eight examples, one
 schema/version/date/path/digest identity, and 186 dated boundary observations.
 
 The first full-region replay exposed a dimensional checker defect: the JSONL record sequence had been subjected

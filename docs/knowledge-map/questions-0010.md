@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > what kind of extractor actually needs the cross-document cluster mechanism
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what limits govern the corpus task root index parts and capsule
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > what made 14 corpus documents stop emitting an .isf
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
@@ -95,6 +99,8 @@
   > what structural surfaces discriminate document class
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what table structure is required before port or pin vocabulary grants signal authority
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what task does the current trajectory controller rank next
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > what temporal logic backs temporal_rules
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -291,9 +297,3 @@
   > where is the authoritative chipdoc source library now
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > where is the behavioral alpha renaming harness implemented
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > where is the biggest register extraction gap across the corpus
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the canonical SpecForge user guide
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "dataset_id": "spec-to-intent-f-iv-b-current-population",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
+  "dataset_id": "source-to-intent-reviewed-current-r4",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.7c.ii",
   "selection_boundary_commit": "a3e9757d63ca5499a2393864fb503d6537de0035",
   "selection_claim": "Current-binary replay of the unchanged review-locked population; source bytes and all four replayed stage identities are re-verified without mutating the frozen baseline.",
   "minimum_documents_per_category": 2,
@@ -1221,7 +1221,7 @@
       },
       "review_scope_complete": true,
       "present_modalities": 1,
-      "accounted_modalities": 0,
+      "accounted_modalities": 1,
       "cells": [
         {
           "cell_id": "ihi0024_e_2023_02_amba_5_apb_protocol_specification__01_setup_signal_state",
@@ -1273,6 +1273,7 @@
             "evidence_ir": {
               "actual_keys": [
                 "PADDR|must_be_value|VALID",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
@@ -1284,21 +1285,23 @@
               ],
               "matched_keys": [
                 "PADDR|must_be_value|VALID",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
-              "actual_total": 3,
+              "actual_total": 4,
               "expected_total": 4,
-              "true_positives": 3,
+              "true_positives": 4,
               "false_positives": 0,
-              "false_negatives": 1,
+              "false_negatives": 0,
               "precision": 1.0,
-              "recall": 0.75,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
                 "PADDR|must_be_value|VALID",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
@@ -1310,21 +1313,23 @@
               ],
               "matched_keys": [
                 "PADDR|must_be_value|VALID",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
-              "actual_total": 3,
+              "actual_total": 4,
               "expected_total": 4,
-              "true_positives": 3,
+              "true_positives": 4,
               "false_positives": 0,
-              "false_negatives": 1,
+              "false_negatives": 0,
               "precision": 1.0,
-              "recall": 0.75,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
                 "PADDR|must_be_value|VALID",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
@@ -1336,16 +1341,17 @@
               ],
               "matched_keys": [
                 "PADDR|must_be_value|VALID",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
-              "actual_total": 3,
+              "actual_total": 4,
               "expected_total": 4,
-              "true_positives": 3,
+              "true_positives": 4,
               "false_positives": 0,
-              "false_negatives": 1,
+              "false_negatives": 0,
               "precision": 1.0,
-              "recall": 0.75,
+              "recall": 1.0,
               "unprovenanced_records": 0
             }
           },
@@ -1387,36 +1393,28 @@
             {
               "boundary": "source_to_evidence_ir",
               "expected": 4,
-              "conserved_or_residualized": 3,
-              "unexplained_drops": 1
+              "conserved_or_residualized": 4,
+              "unexplained_drops": 0
             },
             {
               "boundary": "evidence_to_semantic_ir",
-              "expected": 3,
-              "conserved_or_residualized": 3,
+              "expected": 4,
+              "conserved_or_residualized": 4,
               "unexplained_drops": 0
             },
             {
               "boundary": "semantic_to_intent_ir",
-              "expected": 3,
-              "conserved_or_residualized": 3,
+              "expected": 4,
+              "conserved_or_residualized": 4,
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "source_to_evidence_ir",
-          "hard_failures": [
-            "reviewed_gold_misses:1",
-            "source_region_disposition_unaccounted",
-            "unexplained_stage_drops:1"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         }
       ],
-      "hard_failures": [
-        "ihi0024_e_2023_02_amba_5_apb_protocol_specification__01_setup_signal_state:reviewed_gold_misses:1",
-        "ihi0024_e_2023_02_amba_5_apb_protocol_specification__01_setup_signal_state:source_region_disposition_unaccounted",
-        "ihi0024_e_2023_02_amba_5_apb_protocol_specification__01_setup_signal_state:unexplained_stage_drops:1"
-      ]
+      "hard_failures": []
     },
     {
       "document_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
@@ -2764,8 +2762,8 @@
       "category": "wire-protocol",
       "document_count": 2,
       "cell_count": 2,
-      "hard_failure_count": 3,
-      "status": "incomplete"
+      "hard_failure_count": 0,
+      "status": "supported"
     },
     {
       "category": "register-ip",
@@ -2805,24 +2803,24 @@
   ],
   "global": {
     "intent_bearing_source_region_disposition": {
-      "met": 7,
+      "met": 8,
       "total": 14,
-      "ratio": 0.5
+      "ratio": 0.5714285714285714
     },
     "required_modality_accounting": {
-      "met": 5,
+      "met": 6,
       "total": 12,
-      "ratio": 0.4166666666666667
+      "ratio": 0.5
     },
     "canonical_provenance_closure": {
-      "met": 42,
-      "total": 42,
+      "met": 43,
+      "total": 43,
       "ratio": 1.0
     },
     "stage_conservation_or_residual": {
-      "met": 117,
-      "total": 118,
-      "ratio": 0.9915254237288136
+      "met": 120,
+      "total": 120,
+      "ratio": 1.0
     },
     "residual_actionability": {
       "met": 4,
@@ -2830,6 +2828,6 @@
       "ratio": 0.16666666666666666
     },
     "fabricated_canonical_facts": 0,
-    "unexplained_stage_drops": 1
+    "unexplained_stage_drops": 0
   }
 }

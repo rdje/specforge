@@ -86,9 +86,9 @@ The current sequencing is upstream-first: faithful PDF evidence must populate So
 ISF/FSMGen remains the eventual executable boundary, but SpecForge does not anticipate a language gap without a source-grounded value. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).
 Its reviewed 12/12 current replay and access/provenance correction ship. Generic timing unit/provenance,
 physical applicability, and register carriers now have clean whole-population qualification: current IntentIR is
-39/0/1 TP/FP/FN with complete 42/42 provenance, and physical-link is the first supported reviewed category. All
-controller hard gates pass; `.6e` is superseded by the structural repair and clean proof, and `.7` is the ranked
-next product gap for APB's sole canonical loss. Genericity and behavioral `.f.v` signoff are complete. `.7b` recovers EvidenceIR; `.7c.i` now carries the exact source-local record through SemanticIR and IntentIR without catalog widening and keeps 24 chains current with zero public delta; `.7c.ii` owns clean replay/signoff before 39/0/1 changes.
+40/0/0 TP/FP/FN at every reviewed stage with complete 43/43 provenance and 120/120 conservation; wire-protocol and
+physical-link are supported. All controller hard gates pass; `.6e` is superseded, `.7` canonical recovery is
+complete without catalog widening or fabrication, and `.8` is the ranked next product gap for required residual actionability. Genericity and behavioral `.f.v` signoff remain complete.
 Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 168
 runtime rules, compiled information-flow doctrine, and 27 adversarial controls cover all five stages. The 24
 current chains carry 148,708 cumulative claims across 120 artifacts with zero public migration delta; 54 legacy

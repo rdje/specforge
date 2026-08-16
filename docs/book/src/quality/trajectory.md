@@ -155,38 +155,37 @@ cargo run --quiet -p specforge --example trajectory_controller -- \
 ```
 
 The state is `unmeasurable`, while `history_status` is `insufficient_history`. All three hard gates now pass:
-replay currency is 12/12, fabricated canonical facts are zero, and provenance closes 42/42. Missing comparable
+replay currency is 12/12, fabricated canonical facts are zero, and provenance closes 43/43. Missing comparable
 history prevents the controller from claiming a trend or stall even though the current quality snapshot is
-materially better. The `.4c` counts remain the retrospective baseline; the `.f.iv.b` replay from clean production
-revision `e125aac7` is the current product authority.
+materially better. The `.4c` counts remain the retrospective baseline; the `.7c.ii` replay from clean production
+revision `a4a08cd4` is the current product authority.
 
 | Dimension | First exact observation | Status |
 | --- | --- | --- |
 | Source capture | source regions 14/14; required-modality captures 12/14 | capture deficit |
-| Semantic correctness | canonical IntentIR precision 39/39 | meets target |
-| Semantic completeness | recall 39/40; supported categories 1/6 | deficit |
-| Stage conservation | conserved or residualized crossings 117/118 | deficit |
-| Provenance/honesty | closure 42/42; fabricated-fact rate 0/39 | meets target |
+| Semantic correctness | canonical IntentIR precision 40/40 | meets target |
+| Semantic completeness | recall 40/40; supported categories 2/6 | recall target met; category deficit |
+| Stage conservation | conserved or residualized crossings 120/120 | meets target |
+| Provenance/honesty | closure 43/43; fabricated-fact rate 0/40 | meets target |
 | Production participation | accounted 17/17; integrated or scheduled 12/17 | deficit, fully reported |
 | Generalization/robustness | reviewed category-oracle coverage 6/6 | meets target |
 | Operational confidence | complete review 12/12; current replay 12/12; provider-free execution 5/10 | replay target met; execution deficit |
-| Executable readiness | required-modality document accounting 5/12 | deficit |
+| Executable readiness | required-modality document accounting 6/12 | deficit |
 
-The current replay, fabrication, and provenance hard gates all have zero violations. One unexplained canonical
-stage drop remains, and four of 24 required residual observations are actionable. The metric controller ranks the
+The current replay, fabrication, and provenance hard gates all have zero violations. Canonical stage drops are
+fully conserved, and four of 24 required residual observations are actionable. The metric controller ranks the
 remaining leaves as follows:
 
-1. `.7` — recover the sole APB source-to-evidence canonical loss (`source_evidence_loss`);
-2. `.8` — make the remaining 20/24 required residual observations actionable (`persistent_residual`); and
-3. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
+1. `.8` — make the remaining 20/24 required residual observations actionable (`persistent_residual`); and
+2. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
 
-The metric recommendation is `.7`. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
-and `.f.iv.b` supplied its whole-population proof. Final behavioral `.f.v` remains a release-signoff invariant and
-therefore precedes controller-ranked work. All task IDs exist in the task tree, the complete metric ordering
-remains in the report; canonical recovery is active; its executable contract now gates the next work.
+The metric recommendation is `.8`. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
+and `.f.iv.b` supplied its whole-population proof. Final behavioral `.f.v` remains a release-signoff invariant.
+All task IDs exist in the task tree, the complete metric ordering remains in the report, and canonical recovery
+is closed.
 
-The word “current” above is revision-bound. The published 39/0/1 result is valid for its pinned `e125aac7`
-production revision; fixed-input retained-chain currency cannot substitute for `.7c`'s fresh population replay.
+The word “current” above is revision-bound. The published 40/0/0 result is valid for its pinned `a4a08cd4`
+production revision and complete `.7c.ii` population replay.
 The first clean `.f.iv` full-PDF replay at `0d218116` therefore remains an unpublished diagnostic. It completed all
 12 sources and 48 stages, but Arm Debug lost 12 correct register/access facts and GIC-400 emitted 15 source-named
 registers without access. AMD's former packed-layout false register correctly disappeared. Actual execution
@@ -197,10 +196,10 @@ review identities, not current artifact hashes.
 and an already-classified register map may retain access from an explicit header or one unambiguous closed-literal
 column. Direct PDF replay restores Arm 12/12 and GIC-400 15/15 while AMD remains empty. Exact retained-chain
 reconciliation is 24/24 current and zero stale at every stage. `.f.iv.b` now publishes that repaired population.
-All 12 sources and 48 stages complete under an evidence-recorded CPU/16-page ingest policy. Aggregate IntentIR
-moves to 39/0/1 TP/FP/FN; GIC-400 supplies 15 exact facts and AMD supplies no false register. APB's pre-existing
-missing polarity-neutral `PSEL` asserted-state obligation is the sole miss in that published revision. `.7b` now
-recovers it at EvidenceIR; `.7c.i` carries the exact local record through SemanticIR and IntentIR without catalog widening, and the published score stays pinned until `.7c.ii`.
+All 12 sources and 48 stages complete under an evidence-recorded CPU/16-page ingest policy. IntentIR historically
+moves to 39/0/1 TP/FP/FN; GIC-400 supplies 15 exact facts and AMD supplies no false register. APB's polarity-neutral
+`PSEL` obligation is that revision's sole miss; `.7b` recovers it at EvidenceIR, `.7c.i` carries it through
+SemanticIR/IntentIR without catalog widening, and `.7c.ii` supersedes that authority with clean 40/0/0 closure.
 
 ### What the first current replay proved
 
@@ -339,8 +338,9 @@ proof-carrying structural enforcement, 27 adversarial controls, and behavioral i
 negative, held-out, and population evidence compose. The final matrix is 35 pass / zero fail / 16 unmeasurable /
 zero invalid, and the reviewed population is 39/0/1 IntentIR TP/FP/FN with zero fabrication. This signs off one
 specification-instance-neutral production core, not perfect recovery or product completion. The report-only
-controller has zero hard-gate violations, remains `unmeasurable` for convergence due to insufficient comparable
-history, and ranks `.7` first for the sole APB source-to-EvidenceIR canonical loss.
+controller had zero hard-gate violations and ranked `.7` at that signoff boundary. Subsequent `.7c.ii` canonical
+recovery publishes 40/0/0 at all three reviewed stages and now ranks `.8`, while insufficient comparable history
+keeps convergence honestly `unmeasurable`.
 
 The completed whole-pipeline audit is
 [`docs/research/production-genericity-pipeline-audit.md`](../../../research/production-genericity-pipeline-audit.md).

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > what did the OpenCAPI AFU address note prove about legal boilerplate
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -294,7 +298,3 @@
   > what is TimingIntentDisposition
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
-- [contested-priors](../knowledge/contested-priors.md)
-  > what is a contested prior

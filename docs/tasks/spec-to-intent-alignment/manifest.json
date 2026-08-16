@@ -1,10 +1,10 @@
 {
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7c.ii",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7c.ii`.",
+      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.8`.",
       "mode" : "eligible",
-      "part_id" : "canonical-recovery"
+      "part_id" : "current-and-future"
    },
    "current_path" : "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md",
    "index_path" : "docs/tasks/spec-to-intent-alignment/INDEX.md",
@@ -485,16 +485,16 @@
          "state" : "legacy"
       },
       {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — current and future legacy",
+         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — current and future",
          "metrics" : {
-            "bytes" : 10220,
+            "bytes" : 10213,
             "line_bytes" : 422,
             "lines" : 95
          },
          "part_id" : "current-and-future",
          "path" : "docs/tasks/spec-to-intent-alignment/current-and-future.md",
-         "sha256" : "ba6a91780eded69b39599bcf1f2faace7044d1f028b3f2d34abdda1d44f25b25",
-         "state" : "legacy"
+         "sha256" : "95fcc90d6338ec030e0f8c391a9187be9722cb5bf8621cdcd05b068cabd236ea",
+         "state" : "active"
       },
       {
          "heading" : "# SPEC-TO-INTENT-ALIGNMENT — verification",
@@ -535,13 +535,13 @@
       {
          "heading" : "# SPEC-TO-INTENT-ALIGNMENT — canonical recovery",
          "metrics" : {
-            "bytes" : 21622,
-            "line_bytes" : 374,
-            "lines" : 268
+            "bytes" : 24480,
+            "line_bytes" : 515,
+            "lines" : 294
          },
          "part_id" : "canonical-recovery",
          "path" : "docs/tasks/spec-to-intent-alignment/canonical-recovery.md",
-         "sha256" : "96c3e0a8cd4a7f7a11ce4b480aa10a485b4d51cf531695de73dc1b96fb17bbfc",
+         "sha256" : "ba7ca436975f7812abb6b3243e462aded635a4682091dac58b35123893e43be2",
          "state" : "active"
       }
    ],

@@ -1,7 +1,7 @@
-# SPEC-TO-INTENT-ALIGNMENT — current and future legacy
+# SPEC-TO-INTENT-ALIGNMENT — current and future
 
 - Part ID: `current-and-future`
-- State: `legacy`
+- State: `active`
 
 <!-- spec-to-intent-task-source-region:future-nodes-06d-ii-f-09:start -->
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`

@@ -272,7 +272,7 @@ parse failure, opaque syntax, and non-relative output fail closed. The tool is d
 
 The flow layer joins a closed 141-row typed registry to that graph. It resolves raw/identity sources, grammar and
 exact-identity declassifiers, proof gates/values, trusted/non-authoritative regions, and protected types. Its fixed
-point covers 2,356 functions, 14,324 helper edges, 12,553 decision sites, 1,462 semantic macros, and canonical-
+point covers 2,359 functions, 14,629 helper edges, 12,618 decision sites, 1,462 semantic macros, and canonical-
 seam topology; sensitive unresolved macros reject. Thirteen mutations challenge identity/literal/substring/regex
 decisions, cross-class inference, authority forgery, laundering, proofless persistence, and registry duplication.
 The clean fixture admits display, provenance capture, and test-only uses only when they grant no authority.

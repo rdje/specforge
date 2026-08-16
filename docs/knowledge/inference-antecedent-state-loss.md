@@ -57,5 +57,5 @@ Every measurable stage is current with zero stale and the 192-file comparison ha
 ISF delta. Those results prove the production boundary and fixed-input artifact currency; they do not rewrite
 the revision-pinned reviewed score. The first independent replay proves this SourceIR-to-EvidenceIR loss is
 closed and moves the remaining loss to SemanticIR's record-grounding boundary. See
-[[inference-antecedent-local-grounding-stops-at-semantic-layer-d]]; `.7c.i` now closes that exact carry boundary
-without catalog widening, and `.7c.ii` owns clean comparable publication.
+[[inference-antecedent-local-grounding-stops-at-semantic-layer-d]]; `.7c.i` closes that exact carry boundary
+without catalog widening, and `.7c.ii` publishes clean comparable 40/0/0 closure across all reviewed stages.

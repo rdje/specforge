@@ -1,4 +1,4 @@
-### SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding
+### SPEC-TO-INTENT-ALIGNMENT.7c — close canonical recovery
 
 - Refactored the inference-antecedent recognizer into one shared parser that returns the exact subject, symbolic
   state, and whether same-clause appositive authority was required. EvidenceIR production behavior and ordering
@@ -21,6 +21,20 @@
 - Split the repair from the clean publication retry. `.7c.i` owns exact record-scoped source/statement/subject/
   appositive revalidation without adding an interface, declaration, alias, or general Layer-D exemption;
   `.7c.ii` owns complete replay, controller refresh, publication, cleanup, and signoff.
+- Replayed all 12 review-locked sources and 48 isolated stages independently at production revision `a4a08cd4`.
+  EvidenceIR, SemanticIR, and IntentIR each publish 40/0/0 TP/FP/FN, provenance closes at 43/43, conservation
+  closes at 120/120, and fabrication plus unexplained drops are zero.
+- Published strict byte-current replay, result, controller-input, and controller-report authorities. Source/
+  evidence capture remain 14/14 and 12/14, residual actionability remains 4/24, wire-protocol joins physical-link
+  as supported, every hard gate passes, and insufficient comparable history keeps state honestly unmeasurable
+  while ranking `.8` first.
+- Removed both exact same-volume replay roots and the runtime source map after publication: 6,189 files /
+  2,294,248 KiB total, with all three paths absent and no shared cache touched.
+- The complete workspace suite independently caught and closed a stale production-graph test oracle after the
+  replay-composer refactor added 12 test-support functions. The refreshed derived boundary is 2,359 functions /
+  14,629 helper edges / 12,618 decision sites / 1,462 macros; graph derivation and production behavior are unchanged.
+- The scheduled artifact census removed the exact rebuildable `target/debug/incremental` tree: 6,531 files /
+  6,280,800 KiB, with residue absent; no dependency, durable evidence, or tracked artifact was removed.
 
 ### SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state
 

@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-16 — canonical recovery publication; `SPEC-TO-INTENT-ALIGNMENT.7c.ii`)
+
+- Production code is unchanged from `.7c.i`; this slice exercises the conformance-owned 12-source/48-stage replay
+  composer and replaces only the strict current replay, result, controller-input, and controller-report fixtures.
+- The independent clean replay publishes 40/0/0 TP/FP/FN at EvidenceIR, SemanticIR, and IntentIR, with 43/43
+  provenance, 120/120 conservation, zero fabrication, and zero unexplained drops. Exactly APB's source-local
+  `PSEL` cell changes relative to the first diagnostic replay.
+- The controller composition remains test-support-only and byte-reproducible. Wire-protocol and physical-link are
+  supported, all hard gates pass, insufficient history keeps the state unmeasurable, and `.8` ranks first.
+- Exact cleanup removes the two repository-volume replay roots and runtime map—6,189 files / 2,294,248 KiB—with
+  residue absent and no shared cache access.
+- The complete workspace suite caught the deterministic graph test's stale pre-refactor snapshot. The 12-function
+  increase is confined to the test-support composer; refreshing its four exact flow expectations closes the suite
+  at 2,359 functions / 14,629 helper edges / 12,618 decisions / 1,462 macros without changing graph derivation.
+
 ## Session update (2026-08-16 — exact source-local grounding carry; `SPEC-TO-INTENT-ALIGNMENT.7c.i`)
 
 - EvidenceIR's inference-antecedent producer and SemanticIR now share one closed parser. Besides the subject and
@@ -18,7 +33,7 @@
   five production-genericity components pass.
 - The current compiled graph is 79 modules / 41 claim families / 168 fields / 141 rows / 2,359 functions / 14,629
   helper edges / 12,618 decision sites / 1,462 semantic macros. All 24 retained chains are current with zero
-  public delta; `.7c.ii` owns the clean comparable population replay and publication.
+  public delta; the subsequent `.7c.ii` replay publishes clean comparable 40/0/0 all-stage closure.
 
 ## Session update (2026-08-16 — inference-antecedent recovery; `SPEC-TO-INTENT-ALIGNMENT.7b`)
 

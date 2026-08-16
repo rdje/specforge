@@ -111,17 +111,17 @@
       },
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-    "sha256": "25a2bd8469a6c27a915474e5beb9207909b5b27e4687b3019e3f62e29d76bda0"
+    "sha256": "e956a8f86848b779ad69de595a7b192fea992676a9412fe5f9dfeb2c1e60ab11"
     },
     {
       "metrics": {
-      "bytes": 12478,
+      "bytes": 12469,
         "line_bytes": 256,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-    "sha256": "a6853c4c9b18ffd9d317e18066264ce71fc42b1c5f18585dc5805ef3ce21e84c"
+    "sha256": "45137b10dce6ff3176d382876f086cd6e251866e1003ea088b143e3095d2eec4"
     },
     {
       "metrics": {

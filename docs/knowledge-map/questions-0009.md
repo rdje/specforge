@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
+- [contested-priors](../knowledge/contested-priors.md)
+  > what is a contested prior
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > what is aggregate_composition in surfaces.jsonl
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -293,7 +297,3 @@
   > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > what kind of extractor actually needs the cross-document cluster mechanism
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what limits govern the corpus task root index parts and capsule

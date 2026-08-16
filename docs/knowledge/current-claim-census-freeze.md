@@ -41,7 +41,7 @@ These five formerly incomplete evidence keys formed the `.3b` repair frontier:
 their lockstep publications move. Each old title anchor is now an explicit identity exclusion: the three
 maintained-reference surfaces add their executable route identity, workflow doctrine adds the registered capacity
 paragraph, and the mdBook view adds the registered exact-region mapping authority. The outer census has no
-incomplete key. That does **not** promote the 75 incomplete assertion-level regions inside the mdBook mapping;
+incomplete key. That does **not** promote the 78 incomplete assertion-level regions inside the mdBook mapping;
 their three missing legs remain explicit in the narrower quantitative contract.
 
 `CLAIM-VERIFICATION-ADOPTION.3c` closes the reverse join from a clean committed boundary. All 79 produced

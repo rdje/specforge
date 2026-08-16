@@ -39,8 +39,9 @@ emits digest-pinned JSON evidence. Provider-free alpha, reviewed paraphrase/layo
 explicit unchanged/adversarial Docling-backed PDF calibrations pass. The real negative removes exactly one
 SemanticIR assertion and its cumulative SemanticIR/IntentIR/adapter proof claim; ordinary invariance rejects and
 the declared exact complement passes. The governed held-out matrix closes at 35 pass / zero fail / 16 honestly
-unmeasurable / zero invalid; the clean 12-source population is 39/0/1 IntentIR TP/FP/FN with 42/42 provenance and
-zero fabrication. Composed with the unconditional structural doctrine and 27 adversarial controls, this closes
+unmeasurable / zero invalid; `.7c.ii` supersedes its then-current 39/0/1 population with 40/0/0 at all reviewed
+stages, 43/43 provenance, and zero fabrication, while the genericity signoff boundary itself remains unchanged.
+Composed with the unconditional structural doctrine and 27 adversarial controls, this closes
 production-genericity signoff within the governed boundary. It does not claim perfect recall or full PDF-to-ISF
 product completion. [[behavioral-reviewed-recipe-boundary]] records the review boundary and
 [[behavioral-semantic-negative-sensitivity]] records the negative-control contract.

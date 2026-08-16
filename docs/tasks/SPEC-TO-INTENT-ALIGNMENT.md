@@ -29,12 +29,12 @@ expressiveness as the bottleneck.
   corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has removed the production symbol-alpha
   coupling and published clean-revision held-out closure; `.f.iv.a` restored the structural carriers and
   `.f.iv.b` published their clean 12-source proof. `.f.iv` and final signoff `.f.v` are complete.
-- `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7` is in progress with children `.7a` through `.7c`;
-  `.8` and `.9` are pending.
+- `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7` and children `.7a` through `.7c` are complete;
+  `.8` is next and `.9` is pending.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7c.ii`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.8`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -66,10 +66,11 @@ declared `PSELX` remains opaque, and suffix spelling is a refusal case rather th
 resolved polarity, asserted stays symbolic and HIGH/LOW are forbidden. `.7b` now implements that sibling
 producer and has reconciled every proof-affected retained chain with zero public delta and zero stale stages.
 The first `.7c` complete replay closes APB at EvidenceIR and localizes the remaining loss to the exact record's
-SemanticIR grounding. `.7c.i` now replays the closed inference/appositive grammar into a record-scoped grounding
+SemanticIR grounding. `.7c.i` replays the closed inference/appositive grammar into a record-scoped grounding
 index, carries only an exact source/support/subject/kind match, creates no interface or alias, and keeps all 24
-retained chains current with zero public delta. `.7c.ii` owns the clean replay and comparable publication retry;
-the published 39/0/1 result remains revision-bound.
+retained chains current with zero public delta. `.7c.ii` independently replays all 12 sources/48 stages and
+publishes 40/0/0 at EvidenceIR, SemanticIR, and IntentIR, 43/43 provenance, 120/120 conservation, zero fabrication
+or unexplained drops, and a controller that ranks `.8`; wire-protocol and physical-link are supported.
 
 ## Detailed task evidence
 
@@ -160,6 +161,8 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-16` | `.7c.ii` canonical recovery closure | clean 12-source/48-stage replay publishes 40/0/0 at all reviewed stages, 43/43 provenance, 120/120 conservation, zero fabrication/drops, byte-current authorities, `.8` ranking, and exact residue-free cleanup |
+| `2026-08-16` | `.7c.i` source-local carry | exact local inference records cross Layer D without interface/declaration/alias widening; seven focused, full core, Clippy, genericity, and 24-chain currency checks pass |
 | `2026-08-16` | `.7b` inference-antecedent recovery | frozen 7/13 matrix and exact full build pass; complete core/Clippy/genericity checks pass; all 24 retained chains are current with zero stale and zero public delta; `.7c` is next |
 | `2026-08-16` | `.7a` contract freeze | exact current witness plus a closed grammar/refusal matrix, source-local appositive grounding, opaque-identifier no-alias and unknown-polarity controls, shared polarity truth table, 24-chain currency scope, 48-stage replay obligation, and 11/11 RED controls pass without production change; `.7b` is next |
 | `2026-08-16` | `.7` activation | APB first-boundary loss is causally localized; compiled precision control, exact task/claim/book/live/KM gates and mdBook pass; bounded contract, implementation/currency, and replay/signoff children route `.7a` first |
@@ -182,6 +185,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.7c.ii` | `SPEC-TO-INTENT-ALIGNMENT.7c.ii — publish canonical recovery closure` | publish clean all-stage canonical closure and route `.8` |
 | `.7c.i` | `SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding` | revalidate exact local inference records across Layer D without widening document signal authority |
 | `.7b` | `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state` | ship the source-grounded sibling producer and exact proof-chain reconciliation |
 | `.7a` | `SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract` | freeze exact witness, generic sibling-producer grammar, refusal controls, affected-chain scope, and replay boundary |

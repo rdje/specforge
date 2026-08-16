@@ -369,7 +369,7 @@ anchors first receive exact route/catalog membership evidence, which proves navi
 does not certify member prose. The workflow anchor separates authored policy from the already registered
 capacity assertion. Quantitative mdBook prose receives a bounded exact-region contract; the selective book-
 currentness check is not promoted into blanket evidence for the whole manual. The closing leaf now binds those
-authorities atomically while the 75 incomplete assertion-level book regions remain explicitly unverified.
+authorities atomically while the 78 incomplete assertion-level book regions remain explicitly unverified.
 
 The maintained-reference audit found no missing route control. README policy, the routed fact-card catalog, and
 the canonical collection catalog each derive membership from tracked authority and each observes malformed or
@@ -398,7 +398,7 @@ perl scripts/check_book_quantitative_claims.pl --report
 perl scripts/check_book_quantitative_claims.pl --produce
 ```
 
-The live contract reports `book_files=39`, `candidate_lines=304`, and `candidate_files=21`. Inventory established
+The live contract reports `book_files=39`, `candidate_lines=307`, and `candidate_files=21`. Inventory established
 that review denominator without semantic regions; frozen phase now binds every emitted path/line/SHA candidate
 exactly once to a derived or identity verifier, a current claim, honest missing legs, or one closed exclusion
 reason. The self-test exercises nineteen positive and controlled-
@@ -462,7 +462,7 @@ WIRE-BASED-100 golds and `kg-bench` (156/156) are orthogonal by construction.
 
 ## Quantitative adjudication result
 
-The `.3b.3.3` authority freezes `regions=304`, `registered=8`, `incomplete=75`, and `excluded=221`. The exclusions
+The current authority freezes `regions=307`, `registered=8`, `incomplete=78`, and `excluded=221`. The exclusions
 remain separated as `authored=26`, `example=8`, `identity=1`, and `dated=186`; those labels are exact-region scope,
 not a claim that the rest of a section shares the same meaning. Registered regions are limited to the verified
 workflow-capacity profile. Every other current actionable assertion keeps re-derivation, independent

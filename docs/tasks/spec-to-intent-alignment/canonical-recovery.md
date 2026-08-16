@@ -6,16 +6,14 @@
 ## Active canonical recovery
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7`
-  State: `in_progress`
+  State: `done`
   Goal: recover source-grounded canonical facts lost at the first failing SourceIR-to-EvidenceIR boundary
   Acceptance: the frozen vertical oracle identifies and repairs a bounded high-impact SourceIR-to-EvidenceIR loss
   family; stage conservation and held-out recall improve without fabrication, provenance, or category regression;
   a comparable snapshot records the result
-  Verification: `activation reproduces the sole current APB canonical miss and localizes it to a compound
-  inference sentence whose antecedent state has no independent EvidenceIR producer; the compiled specforge-core
-  consequence-precision control passes 1/1; exact task evidence, claim/current/book censuses, live-size,
-  Knowledge Map, mdBook test/build, and mandatory doctrines pass; .7a freezes the contract and .7b implements
-  it with exact retained-chain currency; .7c remains the complete population publication`
+  Verification: `the bounded .7a contract, .7b sibling producer, .7c.i record-scoped carry, and .7c.ii clean
+  publication close the APB loss at 40/0/0 across EvidenceIR, SemanticIR, and IntentIR; provenance is 43/43,
+  conservation is 120/120, fabrication and unexplained drops are zero, and the comparable controller routes .8`
   Commit: `SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery`
   Children: `.7a`, `.7b`, `.7c`
 
@@ -55,17 +53,17 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7c`
-  State: `in_progress`
+  State: `done`
   Goal: replay the complete reviewed population and publish comparable canonical-recovery closure
   Acceptance: all 12 reviewed sources and all four isolated stages replay under the frozen oracle; exact canonical,
   provenance, conservation, residual, category, held-out, genericity, and controller deltas are attributed; the APB
   miss closes without a new false fact or unexplained drop; tracked result/replay/controller authorities reproduce
   byte-for-byte; full selected CI, mdBook, retrieval truth, task parents, cleanup, and residue census agree
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.7b`
-  Verification: `the first complete 12-source/48-stage replay closes the intended SourceIR-to-EvidenceIR loss
-  at 40/0/0, then exposes the same exact fact being demoted by SemanticIR's declared-interface gate; .7c.i owns
-  the record-scoped carry repair and .7c.ii owns clean replay/publication`
-  Commit: `pending`
+  Verification: `the first complete 12-source/48-stage replay closes EvidenceIR at 40/0/0 and localizes the
+  remaining loss to SemanticIR record grounding; after .7c.i, an independent clean replay closes all three
+  reviewed stages at 40/0/0, 43/43 provenance, 120/120 conservation, zero fabrication, and zero drops`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.7c.ii — publish canonical recovery closure`
   Children: `.7c.i`, `.7c.ii`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7c.i`
@@ -88,20 +86,24 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7c.ii`
-  State: `in_progress`
+  State: `done`
   Goal: replay the complete reviewed population after carry repair and publish comparable closure
   Acceptance: the complete `.7c` publication contract passes from clean production, including canonical closure
   at all three reviewed stages, zero fabrication, provenance and conservation closure, controller refresh,
   reproducible tracked authorities, exact project-local cleanup, selected CI, mdBook, and doctrine signoff
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.7c.i`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `a fresh 12-source/48-stage replay at production revision a4a08cd4 reproduces 40/0/0 at
+  EvidenceIR, SemanticIR, and IntentIR; provenance is 43/43, conservation 120/120, source and evidence capture
+  14/14 and 12/14, residual actionability 4/24, zero fabrication, and zero unexplained drops; tracked replay,
+  result, controller input, and report are strict and byte-current; wire-protocol and physical-link are supported,
+  all hard gates pass, and the controller ranks .8; exact cleanup removes 6,189 files / 2,294,248 KiB with no
+  residue`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.7c.ii — publish canonical recovery closure`
 
 ## Current Frontier
 
-| Order | Leaf | State | Why next |
-| --- | --- | --- | --- |
-| 1 | `SPEC-TO-INTENT-ALIGNMENT.7c.ii` | `in_progress` | repeat the complete clean population and publish only reproducible all-stage closure |
+Canonical recovery is exhausted. The bounded root routes the next eligible product leaf,
+`SPEC-TO-INTENT-ALIGNMENT.8`, through the unchanged `current-and-future` part.
 
 ## Frozen antecedent-state contract (`.7a`)
 
@@ -173,6 +175,24 @@ only registered proof context, proof ledger, and validation backannotations. Ind
 and zero stale at every stage, with 54 explicit legacy/proofless unmeasurables, 24 blocked/no-file adapters, zero
 emitted files, and exact retained-bundle membership. The rollback was removed and exact residue is absent.
 
+## Published canonical recovery closure (`.7c.ii`)
+
+An independent clean replay at production revision `a4a08cd4` completes all 12 review-locked sources and all 48
+isolated stages. The first and second replay differ in exactly one reviewed cell: APB's recovered
+`PSEL|must_be_asserted|<missing>` record now survives SemanticIR and IntentIR. EvidenceIR, SemanticIR, and
+IntentIR each publish 40/0/0 TP/FP/FN. Provenance closes at 43/43 and conservation at 120/120, with zero
+fabricated canonical facts and zero unexplained drops.
+
+The current controller input and report are byte-reproducible from the published result. Source/evidence capture
+remain 14/14 and 12/14, source disposition becomes 8/14, required-modality document accounting becomes 6/12,
+and residual actionability remains 4/24. Wire-protocol joins physical-link as a supported reviewed category;
+the other four categories remain incomplete. All hard gates pass. With insufficient comparable history the
+trajectory state remains honestly `unmeasurable`, and `SPEC-TO-INTENT-ALIGNMENT.8` ranks first.
+
+The two exact same-volume replay roots and their runtime source map were removed after tracked publication:
+6,189 files / 2,294,248 KiB in total. All three paths are absent, no shared cache was touched, and the replay is
+reproducible from portable source identity and digest plus an authorized runtime map.
+
 ## Implemented recovery (`.7b`)
 
 `extract_normative_signal_constraints` now keeps the existing pattern and dynamic producers in their original
@@ -197,20 +217,21 @@ and zero emitted files, plus exact 24-bundle retention. The rollback is removed 
 
 ## Acceptance Checklist (enforced)
 
-- [x] **REPRODUCE / MEASURE** — current authority remains 39/0/1 IntentIR TP/FP/FN, 42/42 provenance,
-  117/118 conservation, and one APB first-boundary drop; the contract checker derives the same witness.
+- [x] **REPRODUCE / MEASURE** — clean current authority is 40/0/0 at all three reviewed stages, 43/43 provenance,
+  120/120 conservation, zero fabrication, and zero unexplained drops; tracked artifacts reproduce byte-for-byte.
 - [x] **ROOT CAUSE (WHY + WHERE)** — `current_result_snapshot.json` loses only
   `PSEL|must_be_asserted|<missing>`; `consequent_after_inference_marker` correctly protects suffix subjects,
   while no sibling producer captures the explicit prefix state.
 - [x] **ADDRESSED (verified)** — the production sibling and full-build witness execute the 7-positive/13-negative
   contract, exact provenance, local declaration, polarity, borrowing refusal, and semantic deduplication.
-- [x] **NO REGRESSION** — consequence precision and no-index-shape-alias controls, warning-denied Clippy, all
-  1,364 core tests, five production-genericity components, zero-public-delta comparison, and chain currency pass.
+- [x] **NO REGRESSION** — consequence precision and no-index-shape-alias controls, warning-denied Clippy, the
+  complete workspace suite, five production-genericity components, and chain currency pass; the independently
+  derived live-flow oracle is current at 2,359 functions / 14,629 helper edges / 12,618 decisions / 1,462 macros.
 - [x] **GENERICITY (ADR 0006 / ADR 0037)** — authority comes from current-document declarations, bounded
   appositive syntax, and closed state/polarity structure; identifiers remain opaque and names occur only in the
   conformance witness and cases, never as production selectors or shape-derived aliases.
-- [x] **LOCKSTEP** — task root, roadmap, live/resume/engineering records, mdBook, and Knowledge Map route `.7c.ii`
-  next while keeping the reviewed 39/0/1 snapshot revision-bound until complete clean replay.
+- [x] **LOCKSTEP** — tracked replay/result/controller authority, task root, roadmap, live/resume/engineering
+  records, mdBook, and Knowledge Map publish the same closure and route `.8` next.
 
 ## Decisions
 
@@ -231,20 +252,24 @@ and zero emitted files, plus exact 24-bundle retention. The rollback is removed 
 - `2026-08-16`: keep source-local grounding constraint-scoped across SemanticIR. The replay proves that adding
   `PSEL` to the interface catalog would evade Layer D by widening global authority; exact revalidation of only
   the recovered record preserves both the symmetric filter and `.7a`'s no-catalog-mutation decision.
+- `2026-08-16`: publish only the independent second clean replay. Its exact one-cell delta from the diagnostic
+  first replay proves the `.7c.i` carry, while unchanged population cells and zero hard-gate violations preserve
+  the comparable boundary.
 
 ## Open Questions
 
-- None for `.7c.ii`; the repair is committed to a closed boundary and the replay contract is frozen.
+- None; canonical recovery is closed and `.8` is the next eligible product leaf.
 
 ## Blockers
 
-- None for `.7c.ii`; the required external source map is an untracked runtime input and durable results remain
+- None; the required external source map remains an authorized untracked runtime input and durable results are
   portable by source identity and digest.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-16` | `.7c.ii` clean publication | all 12 sources/48 stages reproduce at `a4a08cd4`; all reviewed stages are 40/0/0, provenance 43/43, conservation 120/120, fabrication/drops zero, wire-protocol and physical-link supported, controller ranks `.8`, authorities are byte-current, the complete warning-denied workspace suite passes with the current 2,359 / 14,629 / 12,618 / 1,462 flow oracle, 6,189 replay files / 2,294,248 KiB and 6,531 incremental-cache files / 6,280,800 KiB are removed without residue |
 | `2026-08-16` | `.7c.i` source-local carry and currency | exact source/support/subject/kind revalidation carries APB through IntentIR without a PSEL interface or alias; seven focused, 1,365/5/0 core, Clippy, and five genericity checks pass; 24 retained chains are current with zero stale, 96 proof-only changes, zero public delta, exact retention, and no rollback residue |
 | `2026-08-16` | `.7c` first complete replay | all 12 sources/48 stages complete at `29dde0ac`; EvidenceIR improves 39/0/1→40/0/0 only for APB, SemanticIR/IntentIR stay 39/0/1, zero fabrication holds, and exact residual evidence localizes the remaining loss to record grounding at Layer D |
 | `2026-08-16` | `.7b` production recovery and currency | 7/13 contract plus exact full build pass; 1,364/5/0 core tests, Clippy, and five genericity components pass; 24 retained four-stage chains are current with zero stale, 96 proof-only changes, zero public deltas, exact retention, and rollback residue absent |
@@ -255,6 +280,7 @@ and zero emitted files, plus exact 24-bundle retention. The rollback is removed 
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.7c.ii` | `SPEC-TO-INTENT-ALIGNMENT.7c.ii — publish canonical recovery closure` | publish clean all-stage canonical closure, refresh the controller to `.8`, and remove exact replay scratch |
 | `.7c.i` | `SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding` | revalidate one exact local inference record across Layer D and reconcile all retained proof chains |
 | `.7c.i activation` | `SPEC-TO-INTENT-ALIGNMENT.7c.i — activate local-grounding carry repair` | own the replay-discovered SemanticIR carry gap without changing production |
 | `.7b` | `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state` | implement the frozen sibling producer, preserve consequence precision, and reconcile all proof-affected chains with zero public delta |

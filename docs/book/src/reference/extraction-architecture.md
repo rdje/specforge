@@ -133,7 +133,7 @@ The information-flow layer over that graph is now shipped. A closed 141-row regi
 field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
 rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
 non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
-dependence through 2,356 functions and 14,324 helper edges, then check 12,553 branch/selection/decision sites,
+dependence through 2,359 functions and 14,629 helper edges, then check 12,618 branch/selection/decision sites,
 1,462 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
@@ -169,11 +169,12 @@ words. Conformance projects only symbol fragments embedded inside generated iden
 unordered reference/responsibility sets plus top-level ISF declarations; ambiguous ids and transaction order stay
 exact. The final clean-revision aggregate has 35 pass / zero fail / 16 unmeasurable / zero invalid. Every completed
 relation is a fresh pipeline run under revision `2cdcd131`; retained evidence supplies only the frozen alpha-
-eligibility boundary. The subsequent clean 12-source / 48-stage replay publishes 39/0/1 IntentIR TP/FP/FN,
-42/42 provenance, 117/118 conservation, zero fabrication, and one APB canonical loss. `.7b` recovers that local
-state at EvidenceIR; `.7c.i` shares its exact parser with a one-pass SemanticIR index so only the uniquely supported
-record crosses Layer D, without global interface, declaration, alias, or subject-wide authority. `.7c.ii` owns the
-clean replay. Final `.f.v` composes the earlier results with the structural doctrine; production remains instance-neutral within that boundary, with coverage/accounting and product-level PDF-to-ISF completion open.
+eligibility boundary. `.7b` recovers APB's local state at EvidenceIR; `.7c.i` shares its exact parser with a one-pass
+SemanticIR index so only the uniquely supported record crosses Layer D, without global interface, declaration,
+alias, or subject-wide authority. The clean `.7c.ii` 12-source / 48-stage replay publishes 40/0/0 at EvidenceIR,
+SemanticIR, and IntentIR, 43/43 provenance, 120/120 conservation, zero fabrication, and zero unexplained drops.
+Final `.f.v` composes the earlier results with the structural doctrine; production remains
+instance-neutral within that boundary, with coverage/accounting and product-level PDF-to-ISF completion open.
 
 Implementation digests now follow the registered production relation rather than whole Rust modules. The core
 build roots each stage at its canonical production registry and hashes the selected verifier, recursively

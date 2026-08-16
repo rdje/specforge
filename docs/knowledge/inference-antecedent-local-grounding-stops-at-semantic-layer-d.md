@@ -37,5 +37,6 @@ source, support, subject, semantic fields, confidence, and same-clause appositiv
 
 The APB-shaped exact `PSEL` record now reaches SemanticIR and IntentIR while support- and source-altered impostors
 remain residual; no `PSEL` interface record is created and distinct declared `PSELX` remains unchanged. All seven
-focused tests pass and all 24 retained chains are current with zero stale and zero public delta. `.7c.ii` owns the
-clean complete replay and comparable publication.
+focused tests pass and all 24 retained chains are current with zero stale and zero public delta. `.7c.ii` then
+replays the complete population independently and publishes 40/0/0 at all three reviewed stages, 43/43 provenance,
+120/120 conservation, zero fabrication, and zero unexplained drops.

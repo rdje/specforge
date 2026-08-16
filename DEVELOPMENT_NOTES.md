@@ -1,4 +1,34 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.7c.ii (`2026-08-16`) — publish only the independent clean replay
+
+The second complete population run starts from clean committed production at `a4a08cd4`, processes all 12
+review-locked PDFs through all 48 isolated stages, and differs from the first diagnostic replay in exactly one
+reviewed cell. APB's exact locally grounded `PSEL|must_be_asserted|<missing>` record now survives SemanticIR and
+IntentIR. Every other cell is byte-semantically unchanged, so the intended carry—not unrelated extraction
+movement—explains the result.
+
+EvidenceIR, SemanticIR, and IntentIR each close at 40/0/0 TP/FP/FN. Provenance closes at 43/43, conservation at
+120/120, and fabrication and unexplained drops are both zero. Source/evidence capture stay 14/14 and 12/14;
+source disposition advances to 8/14, required-modality document accounting to 6/12, and residual actionability
+stays 4/24. Wire-protocol joins physical-link as supported. The controller has zero hard-gate violations and
+ranks `.8`; its trajectory classification remains honestly `unmeasurable` because comparable history is still
+insufficient.
+
+Tracked replay, result, controller input, and controller report are strict and byte-current. After publication,
+the two exact repository-volume replay roots and their runtime source map were removed: 6,189 files /
+2,294,248 KiB total. Exact residue is absent and no shared cache was touched. The durable evidence keeps only
+portable source identity, digest, byte count, and repository-relative paths.
+
+The complete workspace test plane then caught a stale deterministic graph expectation that the ordinary live
+flow gate intentionally does not freeze. The `.7c.ii` composer refactor adds 12 test-support functions; independent
+derivation reports 2,359 functions / 14,629 helper edges / 12,618 decision sites / 1,462 semantic macros. Updating
+those four oracle values makes the graph crate and complete warning-denied workspace suite pass without changing
+the analyzer, registered information-flow boundary, or production behavior.
+
+The closing artifact census found only ordinary Rust incremental compiler state. Removing the exact
+`target/debug/incremental` tree discarded 6,531 rebuildable files / 6,280,800 KiB; the path is absent afterward,
+and dependency outputs, durable evidence, and tracked artifacts remain untouched.
+
 ## SPEC-TO-INTENT-ALIGNMENT.7c.i (`2026-08-16`) — revalidate once, admit one record
 
 The inference-antecedent grammar now has one source of truth. Its shared parser returns the recognized subject and
@@ -22,7 +52,7 @@ All 24 retained chains were rebuilt in causal stage order and are current with z
 contained 192 files / 853,068 KiB; 96 raw artifacts changed only in proof context, proof ledger, or validation
 reports, while public content and validation outcomes changed zero times. Its aggregate was
 `d011b7004330d7533cc38d376d22222c4ce43c75b3cb9c75be952cbf44767a22`; the exact rollback directory is removed and
-absent. `.7c.ii` now owns the independent clean population replay and comparable publication.
+absent. The subsequent `.7c.ii` independent replay publishes comparable 40/0/0 all-stage closure.
 
 ## SPEC-TO-INTENT-ALIGNMENT.7b (`2026-08-16`) — append a sibling, then refine and deduplicate
 
