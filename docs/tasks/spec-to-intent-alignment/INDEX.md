@@ -89,6 +89,8 @@
 | `SPEC-TO-INTENT-ALIGNMENT.7a` | [Canonical recovery](canonical-recovery.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.7b` | [Canonical recovery](canonical-recovery.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.7c` | [Canonical recovery](canonical-recovery.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.7c.i` | [Canonical recovery](canonical-recovery.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.7c.ii` | [Canonical recovery](canonical-recovery.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.8` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9` | [Current and future](current-and-future.md) |
 

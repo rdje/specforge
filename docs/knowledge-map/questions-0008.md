@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what did the active PDF task containment census find
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > what did the corpus promotion sweep measure (gauge deltas per doc)
@@ -52,6 +54,8 @@
   > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -294,7 +298,3 @@
   > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
 - [contested-priors](../knowledge/contested-priors.md)
   > what is a contested prior
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > what is aggregate_composition in surfaces.jsonl
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b

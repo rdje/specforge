@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
@@ -295,5 +297,3 @@
   > how many generated SourceIR records still name the old livework checkout
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > how many generated artifacts still mention the deleted boot-volume repository
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how many governed claim producers are tracked

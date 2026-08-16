@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.7c.i (`2026-08-16`) — local identity must travel with the record
+
+The first complete production replay proves that `.7b` repaired the intended boundary and no more. EvidenceIR
+now contains the exact APB `PSEL` asserted-state constraint with its source statement, but SemanticIR's Layer-D
+partition sees no globally declared `PSEL` and demotes it. This is the correct default: relaxing the partition or
+adding `PSEL` to the interface would convert a clause-local appositive into document-wide signal authority and
+could promote unrelated records.
+
+The safe carry mechanism is therefore record-scoped revalidation. SemanticIR may accept an otherwise undeclared
+constraint only when its exact source text, supporting statement identity, subject, and inference-appositive
+derivation reproduce through the same closed EvidenceIR grammar that created it. Matching a subject alone is
+insufficient, and the exception must not manufacture an interface record, signal declaration, alias, or authority
+for another constraint. Existing Layer-D demotion remains unchanged for every ordinary undeclared subject.
+
+This discovery splits publication into two auditable slices. `.7c.i` owns the narrow carry repair, refusal tests,
+selected production checks, and retained-chain reconciliation. `.7c.ii` starts from clean production and repeats
+the complete reviewed replay before any result, controller state, or closure claim becomes tracked authority.
+
 ## SPEC-TO-INTENT-ALIGNMENT.7b (`2026-08-16`) — append a sibling, then refine and deduplicate
 
 The production change stays inside the constraint family's existing stateful orchestration. Pattern and dynamic

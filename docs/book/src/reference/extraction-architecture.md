@@ -283,5 +283,8 @@ case-fold ambiguity, and the wrong statement class emit nothing. The normal pola
 state to a level only when independent active-high or active-low evidence exists.
 
 The frozen production matrix covers accepted and refused syntax, polarity, ambiguity, deduplication, and
-consequence borrowing. The retained chain set is rebuilt and current with no public output delta. The published
-reviewed-population measurement remains revision-bound until its independent complete replay finishes.
+consequence borrowing. The retained chain set is rebuilt and current with no public output delta. A first complete
+population replay proves that the recovered fact reaches EvidenceIR, then stops at SemanticIR because clause-local
+`PSEL` is not a global interface declaration. The carry repair revalidates only that exact record's source,
+statement, subject, and appositive derivation; it does not add a catalog entry or weaken ordinary undeclared-record
+demotion. The published population measurement remains revision-bound until a clean post-repair replay finishes.

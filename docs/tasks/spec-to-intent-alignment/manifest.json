@@ -1,8 +1,8 @@
 {
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7c",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7c`.",
+      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7c.i",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7c.i`.",
       "mode" : "eligible",
       "part_id" : "canonical-recovery"
    },
@@ -410,6 +410,16 @@
          "part_id" : "canonical-recovery"
       },
       {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7c.i",
+         "origin" : "post_migration",
+         "part_id" : "canonical-recovery"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7c.ii",
+         "origin" : "post_migration",
+         "part_id" : "canonical-recovery"
+      },
+      {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8",
          "origin" : "structural",
          "part_id" : "current-and-future",
@@ -525,13 +535,13 @@
       {
          "heading" : "# SPEC-TO-INTENT-ALIGNMENT — canonical recovery",
          "metrics" : {
-            "bytes" : 14513,
+            "bytes" : 18362,
             "line_bytes" : 315,
-            "lines" : 190
+            "lines" : 237
          },
          "part_id" : "canonical-recovery",
          "path" : "docs/tasks/spec-to-intent-alignment/canonical-recovery.md",
-         "sha256" : "b34257df4aaa6c643e33c58e6c3474b0dbd4576cf38e5e8ac12d682c46beb9a1",
+         "sha256" : "dac9e761fd67d166fc203ed3a7d01ed3eae085fa2c546980cc3539df5dbdcfda",
          "state" : "active"
       }
    ],

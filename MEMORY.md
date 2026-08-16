@@ -17,24 +17,23 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.7c` owns the complete reviewed replay and publication of canonical-
-  recovery closure. `.7a` froze the design and `.7b` shipped production recovery plus exact retained-chain
-  reconciliation.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.7c.i` owns exact source-local constraint grounding across the
+  EvidenceIR-to-SemanticIR gate. `.7a` froze the design and `.7b` shipped production recovery plus exact
+  retained-chain reconciliation; `.7c.ii` owns the clean replay and publication retry.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: the `.7b` production sibling now preserves an inference antecedent's independently explicit
-  asserted/deasserted state without widening the existing consequence extractor. It accepts only the frozen
-  marker/state/declaration grammar, keeps source-local `PSEL` distinct from declared `PSELX`, and leaves unknown
-  polarity symbolic; the complete 7-positive/13-refusal contract, exact full-build witness, 1,364-test core
-  suite, warning-denied Clippy, and all five production-genericity components pass. All 24 retained chains were
-  rebuilt through the adapter: every measurable stage is current with zero stale, and comparison found zero
-  public JSON or emitted-ISF delta. The tracked 39/0/1 result remains the prior revision-bound publication until
-  `.7c` independently replays all 12 reviewed sources and 48 stages.
+- Current state: the first complete 12-source/48-stage replay from `.7b` closes APB at EvidenceIR: the exact
+  provenance-bearing `PSEL|must_be_asserted|<missing>` fact raises that stage to 40/0/0 with zero fabrication.
+  SemanticIR then demotes only that record because source-local `PSEL` is intentionally absent from the global
+  interface catalog, leaving SemanticIR and IntentIR at 39/0/1 and moving the sole unexplained loss to
+  EvidenceIR-to-SemanticIR. Layer D remains correct for ordinary undeclared records; `.7c.i` must revalidate the
+  recovered record's exact source, statement, subject, and closed appositive derivation without creating an
+  interface, declaration, alias, or subject-wide exemption. The first replay is diagnostic, not publication.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: execute `.7c`: replay the complete reviewed population, attribute every canonical/provenance/
-  conservation/residual/category/controller delta, and publish reproducible closure with exact cleanup evidence.
-- In-flight uncommitted: `.7b` production, tests, retained-chain reconciliation, and synchronized live/book/
-  retrieval records await the commit workflow; no background job.
+- Next action: implement `.7c.i`'s record-scoped grounding revalidation, prove exact positive/refusal behavior,
+  run selected core/genericity checks, and reconcile every proof-affected retained chain.
+- In-flight uncommitted: none; the failed-publication replay and external-source map remain isolated under
+  `.project-data/tmp` for repair comparison; production repair has not started and no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

@@ -34,7 +34,7 @@ expressiveness as the bottleneck.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7c`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7c.i`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -65,7 +65,10 @@ chain-currency, and replay obligations. The exact span's appositive establishes 
 declared `PSELX` remains opaque, and suffix spelling is a refusal case rather than alias authority. With no
 resolved polarity, asserted stays symbolic and HIGH/LOW are forbidden. `.7b` now implements that sibling
 producer and has reconciled every proof-affected retained chain with zero public delta and zero stale stages.
-The published 39/0/1 result remains revision-bound; `.7c` owns complete replay and comparable publication.
+The first `.7c` complete replay closes APB at EvidenceIR but exposes the exact record being demoted at
+EvidenceIR→SemanticIR because source-local `PSEL` is intentionally absent from the global interface catalog.
+`.7c.i` owns record-scoped carry without widening Layer D or interface authority; `.7c.ii` owns the clean replay
+and comparable publication retry. The published 39/0/1 result remains revision-bound.
 
 ## Detailed task evidence
 
@@ -147,6 +150,8 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7a`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7b`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7c`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.7c.i`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.7c.ii`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9`
 

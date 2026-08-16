@@ -4,6 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-16 — source-local grounding carry boundary; `SPEC-TO-INTENT-ALIGNMENT.7c.i`)
+
+- A complete reviewed replay proves that the inference-antecedent sibling now emits APB's exact local `PSEL`
+  constraint in EvidenceIR, but SemanticIR's uniform Layer-D partition demotes it because `PSEL` is intentionally
+  absent from the document-wide interface catalog.
+- Layer D remains the correct default and the appositive must remain clause-local. The repair boundary is one
+  exact `SignalConstraintRecord`: revalidate source text, supporting statement, subject, and closed inference-
+  appositive derivation through EvidenceIR's existing grammar; do not add catalog state or a subject-wide bypass.
+- The current fresh replay is diagnostic: EvidenceIR is 40/0/0, SemanticIR and IntentIR are 39/0/1, zero
+  fabrication holds, and the one unexplained loss has moved downstream. `.7c.ii` owns publication after repair.
+
 ## Session update (2026-08-16 — inference-antecedent recovery; `SPEC-TO-INTENT-ALIGNMENT.7b`)
 
 - The EvidenceIR normative constraint family now has one cohesive orchestration function: existing pattern and

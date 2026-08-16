@@ -55,13 +55,38 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7c`
-  State: `pending`
+  State: `in_progress`
   Goal: replay the complete reviewed population and publish comparable canonical-recovery closure
   Acceptance: all 12 reviewed sources and all four isolated stages replay under the frozen oracle; exact canonical,
   provenance, conservation, residual, category, held-out, genericity, and controller deltas are attributed; the APB
   miss closes without a new false fact or unexplained drop; tracked result/replay/controller authorities reproduce
   byte-for-byte; full selected CI, mdBook, retrieval truth, task parents, cleanup, and residue census agree
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.7b`
+  Verification: `the first complete 12-source/48-stage replay closes the intended SourceIR-to-EvidenceIR loss
+  at 40/0/0, then exposes the same exact fact being demoted by SemanticIR's declared-interface gate; .7c.i owns
+  the record-scoped carry repair and .7c.ii owns clean replay/publication`
+  Commit: `pending`
+  Children: `.7c.i`, `.7c.ii`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.7c.i`
+  State: `in_progress`
+  Goal: preserve exact source-local inference-subject grounding across the EvidenceIR-to-SemanticIR gate
+  Acceptance: SemanticIR admits only a constraint whose exact source text, supporting statement identity,
+  subject, and closed inference-appositive derivation revalidate through the existing EvidenceIR grammar;
+  source-local identity does not create an interface, global signal declaration, alias, or authority for another
+  record; ordinary undeclared constraints remain demoted; the APB fact carries through SemanticIR and IntentIR;
+  focused refusal tests, full core checks, genericity, and every proof-affected retained chain pass with zero stale
+  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.7b`
+  Verification: `pending`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.7c.ii`
+  State: `pending`
+  Goal: replay the complete reviewed population after carry repair and publish comparable closure
+  Acceptance: the complete `.7c` publication contract passes from clean production, including canonical closure
+  at all three reviewed stages, zero fabrication, provenance and conservation closure, controller refresh,
+  reproducible tracked authorities, exact project-local cleanup, selected CI, mdBook, and doctrine signoff
+  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.7c.i`
   Verification: `pending`
   Commit: `pending`
 
@@ -69,7 +94,7 @@
 
 | Order | Leaf | State | Why next |
 | --- | --- | --- | --- |
-| 1 | `SPEC-TO-INTENT-ALIGNMENT.7c` | `pending` | publish complete population and controller evidence after the implemented repair |
+| 1 | `SPEC-TO-INTENT-ALIGNMENT.7c.i` | `in_progress` | carry the exact source-local grounding through SemanticIR without widening interface authority |
 
 ## Frozen antecedent-state contract (`.7a`)
 
@@ -101,6 +126,23 @@ Any `.7b` production-semantic edit invalidates the EvidenceIR ruleset identity a
 reconciliation of all 24 retained chains through EvidenceIR, SemanticIR, IntentIR, and the ISF adapter. `.7c`
 then owns the independent 12-source × four-stage reviewed replay and comparable publication; a focused APB pass
 cannot substitute for the full population.
+
+## First publication replay finding (`.7c`)
+
+The first clean replay under production revision `29dde0ac` completed every reviewed source and all 48 isolated
+stages. It changes exactly one reviewed cell. APB EvidenceIR now closes at 40/0/0 TP/FP/FN and contains the exact
+polarity-neutral `PSEL` fact with complete statement provenance; every other cell and the zero-fabrication
+boundary remain unchanged. SemanticIR then partitions that same record into
+`semantic_ungrounded_records_not_promoted` because `PSEL` is intentionally source-local rather than a member of
+the document's global interface catalog. SemanticIR and IntentIR therefore remain 39/0/1, and the one unexplained
+drop moves from SourceIR→EvidenceIR to EvidenceIR→SemanticIR. Conservation moves 117/118→118/119 rather than
+closing.
+
+The repair must preserve both prior doctrines. Layer D continues to demote ordinary undeclared subjects, while
+the frozen appositive decision continues to avoid mutating interfaces or aliasing `PSEL` to another spelling.
+`.7c.i` therefore owns exact record-scoped revalidation through the already-closed EvidenceIR grammar; `.7c.ii`
+owns the fresh population retry and publication. The failed-publication scratch remains isolated and is not a
+tracked authority.
 
 ## Implemented recovery (`.7b`)
 
@@ -157,20 +199,24 @@ and zero emitted files, plus exact 24-bundle retention. The rollback is removed 
   polarity refinement. This prevents the repair from normalizing unrelated historical duplicates.
 - `2026-08-16`: execute unique-casefold rewriting only at the new antecedent boundary. The frozen dedicated
   borrowing row, not contextual consequence examples, guards the unchanged consequence-subject path.
+- `2026-08-16`: keep source-local grounding constraint-scoped across SemanticIR. The replay proves that adding
+  `PSEL` to the interface catalog would evade Layer D by widening global authority; exact revalidation of only
+  the recovered record preserves both the symmetric filter and `.7a`'s no-catalog-mutation decision.
 
 ## Open Questions
 
-- None for `.7c`; the replay denominator, authority, and publication invariants are frozen.
+- None for `.7c.i`; the first complete replay fixes the failing boundary and the non-widening carry contract.
 
 ## Blockers
 
-- None for `.7c`; the required external source map is an untracked runtime input and durable results remain
+- None for `.7c.i`; the required external source map is an untracked runtime input and durable results remain
   portable by source identity and digest.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-16` | `.7c` first complete replay | all 12 sources/48 stages complete at `29dde0ac`; EvidenceIR improves 39/0/1→40/0/0 only for APB, SemanticIR/IntentIR stay 39/0/1, zero fabrication holds, and exact residual evidence localizes the remaining loss to record grounding at Layer D |
 | `2026-08-16` | `.7b` production recovery and currency | 7/13 contract plus exact full build pass; 1,364/5/0 core tests, Clippy, and five genericity components pass; 24 retained four-stage chains are current with zero stale, 96 proof-only changes, zero public deltas, exact retention, and rollback residue absent |
 | `2026-08-16` | `.7a` contract freeze | exact witness/current join, 7/13 conformance matrix, local-appositive/opaque-no-alias/unknown-polarity controls, five markers, six polarity outcomes, 24-chain and 48-stage obligations pass; 11/11 mutations reject and all four focused 1/1 baselines remain green |
 | `2026-08-16` | `.7` activation | current result and 1/1 compiled core precision control localize one explicit antecedent-state loss; 56-unit/86-candidate current census and 304-region book census stay closed; three bounded children own design, implementation/currency, and replay/signoff |
@@ -179,6 +225,7 @@ and zero emitted files, plus exact 24-bundle retention. The rollback is removed 
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.7c.i` | `SPEC-TO-INTENT-ALIGNMENT.7c.i — activate local-grounding carry repair` | own the replay-discovered SemanticIR carry gap without changing production |
 | `.7b` | `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state` | implement the frozen sibling producer, preserve consequence precision, and reconcile all proof-affected chains with zero public delta |
 | `.7a` | `SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract` | freeze the executable witness, grammar/refusal matrix, affected chains, and population replay boundary without changing production |
 | `.7` | `SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery` | open the bounded recovery program with `.7a` as sole frontier |

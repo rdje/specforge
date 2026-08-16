@@ -1,3 +1,15 @@
+### SPEC-TO-INTENT-ALIGNMENT.7c.i — activate source-local grounding carry repair
+
+- Completed the first production-revision replay of all 12 reviewed sources and 48 isolated stages. APB's exact
+  provenance-bearing inference-antecedent fact now closes EvidenceIR at 40/0/0 with zero fabrication; every other
+  reviewed cell remains unchanged.
+- Localized the remaining loss to SemanticIR's declared-interface partition: source-local `PSEL` is correctly
+  absent from the global catalog, so the recovered record enters `semantic_ungrounded_records_not_promoted` and
+  SemanticIR/IntentIR remain 39/0/1. The attempt is retained only as diagnostic scratch, not published authority.
+- Split the repair from the clean publication retry. `.7c.i` owns exact record-scoped source/statement/subject/
+  appositive revalidation without adding an interface, declaration, alias, or general Layer-D exemption;
+  `.7c.ii` owns complete replay, controller refresh, publication, cleanup, and signoff.
+
 ### SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state
 
 - Added a production sibling inside the normative signal-constraint family that extracts one independently

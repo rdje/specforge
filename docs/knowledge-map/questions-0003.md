@@ -147,6 +147,8 @@
   > does the ISF adapter lower actor-relative direction
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > does the ISF adapter lower generic gate behaviors
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > does the Layer D grounding filter need to be weakened
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > does the NLI verifier actually catch real extraction errors
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -295,5 +297,3 @@
   > how are per-instance indexed signals (PSELx HSELx) referenced in prose handled
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > how are per-state actions captured
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > how are project rescan working directories kept portable

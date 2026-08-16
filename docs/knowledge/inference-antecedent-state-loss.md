@@ -55,5 +55,7 @@ borrowing.
 The ruleset change rotated proof identity, so `.7b` rebuilt all 24 retained chains through the ISF adapter.
 Every measurable stage is current with zero stale and the 192-file comparison has zero public JSON or emitted-
 ISF delta. Those results prove the production boundary and fixed-input artifact currency; they do not rewrite
-the revision-pinned reviewed score. `.7c` still owns the independent 12-source/48-stage replay and comparable
-publication.
+the revision-pinned reviewed score. The first independent replay proves this SourceIR-to-EvidenceIR loss is
+closed and moves the remaining loss to SemanticIR's record-grounding boundary. See
+[[inference-antecedent-local-grounding-stops-at-semantic-layer-d]]; `.7c.i` owns that carry repair and `.7c.ii`
+owns clean comparable publication.
