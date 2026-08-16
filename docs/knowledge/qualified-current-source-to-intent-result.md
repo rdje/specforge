@@ -41,7 +41,9 @@ is 5/12.
 Against the prior `b977a51f` authority, only two register cells change. GIC-400 moves from 0/1/15 to 15/0/0
 TP/FP/FN and closes disposition. AMD moves from one packed-layout fabrication to an honest empty canonical cell;
 its spurious table capture disappears, explaining the 13/14→12/14 capture trade. Every other cell is identical.
-APB's missing `PSEL|must_be_value|HIGH` fact is the sole canonical miss and unexplained drop.
+APB's missing polarity-neutral `PSEL|must_be_asserted|<missing>` fact is the sole canonical miss and unexplained
+drop. `.7a` corrected the earlier unsupported `asserted`→`HIGH` oracle refinement without changing the 39/0/1
+population score.
 
 All replay, fabrication, and canonical-provenance hard gates pass. The controller state is `unmeasurable` because
 comparable history is still absent; it does not infer convergence from one improved point. The first ranked gap

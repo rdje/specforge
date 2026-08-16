@@ -1278,7 +1278,7 @@
               ],
               "expected_keys": [
                 "PADDR|must_be_value|VALID",
-                "PSEL|must_be_value|HIGH",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
@@ -1304,7 +1304,7 @@
               ],
               "expected_keys": [
                 "PADDR|must_be_value|VALID",
-                "PSEL|must_be_value|HIGH",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
@@ -1330,7 +1330,7 @@
               ],
               "expected_keys": [
                 "PADDR|must_be_value|VALID",
-                "PSEL|must_be_value|HIGH",
+                "PSEL|must_be_asserted|<missing>",
                 "PWDATA|must_be_value|VALID",
                 "PWRITE|must_be_value|VALID"
               ],
@@ -1353,7 +1353,7 @@
             "semantic_ir": {
               "actual_keys": [],
               "expected_keys": [
-                "PSEL|must_be_value|HIGH"
+                "PSEL|must_be_asserted|<missing>"
               ],
               "matched_keys": [],
               "actual_total": 0,
@@ -1368,7 +1368,7 @@
             "intent_ir": {
               "actual_keys": [],
               "expected_keys": [
-                "PSEL|must_be_value|HIGH"
+                "PSEL|must_be_asserted|<missing>"
               ],
               "matched_keys": [],
               "actual_total": 0,

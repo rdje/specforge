@@ -34,7 +34,7 @@ expressiveness as the bottleneck.
 
 ## Current Frontier
 
-Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7a`.
+Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7b`.
 
 The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
 reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
@@ -57,11 +57,14 @@ behavioral evidence: 35 completed held-out relations pass, 16 unavailable alpha 
 unmeasurable, and the selected full repository signoff passes. Production is specification-instance-neutral
 within that governed boundary; this does not claim perfect recovery or complete PDF-to-ISF product behavior.
 Controller-ranked `.7` is active for the sole canonical APB source-to-EvidenceIR loss. The current artifacts and
-an existing consequence-precision control localize the missing `PSEL|must_be_value|HIGH` fact to a compound
+an existing consequence-precision control localize the missing `PSEL|must_be_asserted|<missing>` fact to a compound
 inference sentence: the extractor correctly prevents the antecedent signal from inheriting the consequent's
-`VALID` value, but no separate path preserves the antecedent's own explicit `asserted` state. `.7a` freezes that
-generic repair boundary and its controls before `.7b` changes production; `.7c` owns complete replay and
-comparable publication.
+`VALID` value, but no separate path preserves the antecedent's own explicit `asserted` state. `.7a` now freezes
+that generic repair boundary as an executable 7-positive/13-negative contract with exact polarity,
+chain-currency, and replay obligations. The exact span's appositive establishes source-local `PSEL`; distinct
+declared `PSELX` remains opaque, and suffix spelling is a refusal case rather than alias authority. With no
+resolved polarity, asserted stays symbolic and HIGH/LOW are forbidden. `.7b` owns the production implementation;
+`.7c` owns complete replay and comparable publication.
 
 ## Detailed task evidence
 
@@ -150,6 +153,7 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-16` | `.7a` contract freeze | exact current witness plus a closed grammar/refusal matrix, source-local appositive grounding, opaque-identifier no-alias and unknown-polarity controls, shared polarity truth table, 24-chain currency scope, 48-stage replay obligation, and 11/11 RED controls pass without production change; `.7b` is next |
 | `2026-08-16` | `.7` activation | APB first-boundary loss is causally localized; compiled precision control, exact task/claim/book/live/KM gates and mdBook pass; bounded contract, implementation/currency, and replay/signoff children route `.7a` first |
 | `2026-08-14` | task-evidence containment input closure | 21 exact regions and 58 exact routes reproduce from the locked source; full CI passes |
 | `2026-08-14` | `.6d.ii.f` activation | bounded behavioral children and `.f.i` design frontier are routed through the active part; target contract and doctrines pass |
@@ -170,6 +174,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.7a` | `SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract` | freeze exact witness, generic sibling-producer grammar, refusal controls, affected-chain scope, and replay boundary |
 | `.7` | `SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery` | localize the compound-inference state loss and route `.7a`–`.7c` |
 | `.6d.ii.e.vii` | `112bc333` | close roadmap, implementation, doctrine, public-state, and mdBook alignment |
 | `.6d.ii.f` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f — activate behavioral qualification` | activate and decompose the population behavioral signoff program |

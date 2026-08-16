@@ -88,7 +88,7 @@ Its reviewed 12/12 current replay and access/provenance correction ship. Generic
 physical applicability, and register carriers now have clean whole-population qualification: current IntentIR is
 39/0/1 TP/FP/FN with complete 42/42 provenance, and physical-link is the first supported reviewed category. All
 controller hard gates pass; `.6e` is superseded by the structural repair and clean proof, and `.7` is the ranked
-next product gap for the sole APB source-to-EvidenceIR canonical loss. Whole-production genericity audit and behavioral `.f.v` signoff are complete within the governed evidence boundary. `.7` is active: `.7a` freezes the compound-inference antecedent-state contract, `.7b` owns generic production repair and chain currency, and `.7c` owns complete comparable replay/signoff.
+next product gap for APB's sole SourceIR-to-EvidenceIR canonical loss. Genericity audit and behavioral `.f.v` signoff are complete within the governed boundary. `.7` is active: `.7a` freezes compound-inference recovery with source-local appositive grounding, opaque-identifier no-alias, and unknown-polarity controls; `.7b` owns production/currency and `.7c` complete replay/signoff.
 Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 168
 runtime rules, compiled information-flow doctrine, and 27 adversarial controls cover all five stages. The 24
 current chains carry 148,708 cumulative claims across 120 artifacts with zero public migration delta; 54 legacy

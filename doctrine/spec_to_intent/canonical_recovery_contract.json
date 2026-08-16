@@ -1,0 +1,605 @@
+{
+  "schema_version": 1,
+  "contract_id": "spec-to-intent-canonical-recovery-v1",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.7a",
+  "decision": "Recover an inference prefix's independently explicit signal state through a sibling normative-constraint producer; never widen the consequence subject or borrow its kind/value.",
+  "authorities": {
+    "reviewed_dataset": "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
+    "current_result": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+    "retained_chains": "doctrine/chain_currency/retained_bundles.json",
+    "population_replay": "scripts/replay_source_to_intent_population.py"
+  },
+  "witness": {
+    "document_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "cell_id": "ihi0024_e_2023_02_amba_5_apb_protocol_specification__01_setup_signal_state",
+    "region_id": "elem_00205",
+    "statement_id": "statement_0203",
+    "source_excerpt": "The Setup phase of the write transfer occurs at T1 in Figure 3-1. The select signal, PSEL , is asserted, which means that PADDR , PWRITE , and PWDATA must be valid.",
+    "identity_grounding": {
+      "preexisting_declarations": [
+        "PADDR",
+        "PSELX",
+        "PWDATA",
+        "PWRITE"
+      ],
+      "local_declaration_form": "descriptive signal appositive",
+      "local_declared_identifier": "PSEL",
+      "forbidden_spelling_alias": "PSELX",
+      "decision": "PSEL is independently grounded by the same-clause appositive 'select signal, PSEL'; PSELX remains a distinct opaque declaration and suffix spelling supplies no alias authority."
+    },
+    "polarity_grounding": {
+      "resolved_polarity": "unknown",
+      "expected_symbolic_kind": "must_be_asserted",
+      "forbidden_level_keys": [
+        "PSEL|must_be_value|HIGH",
+        "PSEL|must_be_value|LOW"
+      ],
+      "decision": "The span says asserted but supplies no active-high or active-low authority, so the canonical fact remains polarity-neutral."
+    },
+    "missing_key": "PSEL|must_be_asserted|<missing>",
+    "expected_canonical_keys": [
+      "PADDR|must_be_value|VALID",
+      "PSEL|must_be_asserted|<missing>",
+      "PWDATA|must_be_value|VALID",
+      "PWRITE|must_be_value|VALID"
+    ],
+    "current_canonical_keys": [
+      "PADDR|must_be_value|VALID",
+      "PWDATA|must_be_value|VALID",
+      "PWRITE|must_be_value|VALID"
+    ],
+    "current_population": {
+      "documents": 12,
+      "cells": 14,
+      "intent_true_positives": 39,
+      "intent_false_positives": 0,
+      "intent_false_negatives": 1,
+      "canonical_provenance_met": 42,
+      "canonical_provenance_total": 42,
+      "conservation_met": 117,
+      "conservation_total": 118,
+      "fabricated_canonical_facts": 0,
+      "unexplained_stage_drops": 1
+    }
+  },
+  "grammar": {
+    "producer_boundary": "sibling_evidence_normative_signal_constraint",
+    "input_statement_class": "signal_value_constraint",
+    "sentence_selector": "constraint_bearing_sentence",
+    "inference_markers": [
+      "which means that",
+      "which means",
+      "which implies that",
+      "which implies",
+      "meaning that"
+    ],
+    "required_marker_count": 1,
+    "prefix_state_forms": [
+      "is asserted",
+      "is deasserted"
+    ],
+    "subject_resolution": "first establish any same-clause descriptive-signal appositive declaration; then resolve exact identifier first or one unique ASCII-case-insensitive declaration; case-fold collisions reject; prefix/suffix spelling never aliases identities",
+    "local_declaration_form": "optional descriptive words followed by signal, comma, one identifier, comma, and the supported copular state; the description carries no semantic authority",
+    "prefix_requirements": [
+      "the selected sentence contains exactly one supported inference marker",
+      "the prefix ends with one explicit copular state form after optional punctuation and horizontal whitespace",
+      "the identifier immediately governing the copula resolves to one current-document declaration, including a declaration established by the same bounded appositive",
+      "the prefix references exactly one declared signal and exactly one supported state form",
+      "negation, a trailing qualifier, multiple state forms, or multiple declared signal references reject"
+    ],
+    "consequence_rule": "the existing consequent_after_inference_marker path remains authoritative and unchanged",
+    "record_contract": {
+      "condition_text": null,
+      "negated": false,
+      "source_text": "complete extracted statement text",
+      "supporting_statement_ids": "exact source statement id",
+      "automation_confidence": "medium"
+    },
+    "deduplication_key": "subject_signal + refined kind + target + condition + negation + source text",
+    "failure_policy": "emit no antecedent-state constraint when any grammar or declaration premise is absent or ambiguous; never recover an undeclared token by identifier shape"
+  },
+  "polarity_matrix": [
+    {
+      "symbolic_kind": "must_be_asserted",
+      "polarity": "active_high",
+      "refined_kind": "must_be_high"
+    },
+    {
+      "symbolic_kind": "must_be_asserted",
+      "polarity": "active_low",
+      "refined_kind": "must_be_low"
+    },
+    {
+      "symbolic_kind": "must_be_deasserted",
+      "polarity": "active_high",
+      "refined_kind": "must_be_low"
+    },
+    {
+      "symbolic_kind": "must_be_deasserted",
+      "polarity": "active_low",
+      "refined_kind": "must_be_high"
+    },
+    {
+      "symbolic_kind": "must_be_asserted",
+      "polarity": "unknown",
+      "refined_kind": "must_be_asserted"
+    },
+    {
+      "symbolic_kind": "must_be_deasserted",
+      "polarity": "unknown",
+      "refined_kind": "must_be_deasserted"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "positive_exact_witness",
+      "disposition": "positive",
+      "control_classes": [
+        "exact_witness",
+        "marker:which_means_that",
+        "state:asserted",
+        "polarity:unknown",
+        "descriptive_label",
+        "local_appositive_declaration",
+        "consequence_borrowing"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "The Setup phase of the write transfer occurs at T1 in Figure 3-1. The select signal, PSEL , is asserted, which means that PADDR , PWRITE , and PWDATA must be valid.",
+      "declared_signals": [
+        "PSEL",
+        "PSELX",
+        "PADDR",
+        "PWRITE",
+        "PWDATA"
+      ],
+      "polarity": {},
+      "expected_antecedent": {
+        "subject_signal": "PSEL",
+        "symbolic_kind": "must_be_asserted",
+        "refined_kind": "must_be_asserted"
+      },
+      "expected_consequence": [
+        "PADDR|must_be_value|VALID",
+        "PWDATA|must_be_value|VALID",
+        "PWRITE|must_be_value|VALID"
+      ],
+      "forbidden_keys": [
+        "PSEL|must_be_value|HIGH",
+        "PSEL|must_be_value|LOW",
+        "PSEL|must_be_value|VALID"
+      ]
+    },
+    {
+      "case_id": "positive_deasserted_active_high",
+      "disposition": "positive",
+      "control_classes": [
+        "marker:which_means",
+        "state:deasserted",
+        "polarity:active_high"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_A is deasserted, which means PAYLOAD_A must be stable.",
+      "declared_signals": [
+        "REQ_A",
+        "PAYLOAD_A"
+      ],
+      "polarity": {
+        "REQ_A": "active_high"
+      },
+      "expected_antecedent": {
+        "subject_signal": "REQ_A",
+        "symbolic_kind": "must_be_deasserted",
+        "refined_kind": "must_be_low"
+      },
+      "expected_consequence": [
+        "PAYLOAD_A|must_be_stable"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "positive_asserted_active_low",
+      "disposition": "positive",
+      "control_classes": [
+        "marker:which_implies_that",
+        "state:asserted",
+        "polarity:active_low"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_B is asserted, which implies that PAYLOAD_B shall be valid.",
+      "declared_signals": [
+        "REQ_B",
+        "PAYLOAD_B"
+      ],
+      "polarity": {
+        "REQ_B": "active_low"
+      },
+      "expected_antecedent": {
+        "subject_signal": "REQ_B",
+        "symbolic_kind": "must_be_asserted",
+        "refined_kind": "must_be_low"
+      },
+      "expected_consequence": [
+        "PAYLOAD_B|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "positive_deasserted_active_low",
+      "disposition": "positive",
+      "control_classes": [
+        "marker:which_implies",
+        "state:deasserted",
+        "polarity:active_low"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_C is deasserted, which implies PAYLOAD_C shall be stable.",
+      "declared_signals": [
+        "REQ_C",
+        "PAYLOAD_C"
+      ],
+      "polarity": {
+        "REQ_C": "active_low"
+      },
+      "expected_antecedent": {
+        "subject_signal": "REQ_C",
+        "symbolic_kind": "must_be_deasserted",
+        "refined_kind": "must_be_high"
+      },
+      "expected_consequence": [
+        "PAYLOAD_C|must_be_stable"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "positive_asserted_unknown_polarity",
+      "disposition": "positive",
+      "control_classes": [
+        "marker:meaning_that",
+        "state:asserted",
+        "polarity:unknown"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_D is asserted, meaning that PAYLOAD_D must be valid.",
+      "declared_signals": [
+        "REQ_D",
+        "PAYLOAD_D"
+      ],
+      "polarity": {},
+      "expected_antecedent": {
+        "subject_signal": "REQ_D",
+        "symbolic_kind": "must_be_asserted",
+        "refined_kind": "must_be_asserted"
+      },
+      "expected_consequence": [
+        "PAYLOAD_D|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "positive_casefold_unique_deasserted_unknown",
+      "disposition": "positive",
+      "control_classes": [
+        "casefold_unique",
+        "state:deasserted",
+        "polarity:unknown",
+        "descriptive_label"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "The request indicator, req_e, is DEASSERTED, which means that payload_e must be valid.",
+      "declared_signals": [
+        "REQ_E",
+        "PAYLOAD_E"
+      ],
+      "polarity": {},
+      "expected_antecedent": {
+        "subject_signal": "REQ_E",
+        "symbolic_kind": "must_be_deasserted",
+        "refined_kind": "must_be_deasserted"
+      },
+      "expected_consequence": [
+        "PAYLOAD_E|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "positive_duplicate_semantic_tuple",
+      "disposition": "positive",
+      "control_classes": [
+        "dedup",
+        "state:asserted",
+        "polarity:active_high"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_F is asserted, which means REQ_F must be asserted.",
+      "declared_signals": [
+        "REQ_F"
+      ],
+      "polarity": {
+        "REQ_F": "active_high"
+      },
+      "expected_antecedent": {
+        "subject_signal": "REQ_F",
+        "symbolic_kind": "must_be_asserted",
+        "refined_kind": "must_be_high"
+      },
+      "expected_consequence": [
+        "REQ_F|must_be_value|HIGH"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_undeclared_subject",
+      "disposition": "negative",
+      "control_classes": [
+        "undeclared_subject"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_G is asserted, which means PAYLOAD_G must be valid.",
+      "declared_signals": [
+        "PAYLOAD_G"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_G|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_multiple_declared_subjects",
+      "disposition": "negative",
+      "control_classes": [
+        "multiple_subjects"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "ALT_H is idle and REQ_H is asserted, which means PAYLOAD_H must be valid.",
+      "declared_signals": [
+        "ALT_H",
+        "REQ_H",
+        "PAYLOAD_H"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_H|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_contradictory_states",
+      "disposition": "negative",
+      "control_classes": [
+        "contradictory_states"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_I is asserted and REQ_I is deasserted, which means PAYLOAD_I must be valid.",
+      "declared_signals": [
+        "REQ_I",
+        "PAYLOAD_I"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_I|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_no_inference_marker",
+      "disposition": "negative",
+      "control_classes": [
+        "no_marker"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_J is asserted and PAYLOAD_J must be valid.",
+      "declared_signals": [
+        "REQ_J",
+        "PAYLOAD_J"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_condition_only",
+      "disposition": "negative",
+      "control_classes": [
+        "condition_only"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "PAYLOAD_K must be valid when REQ_K is asserted.",
+      "declared_signals": [
+        "REQ_K",
+        "PAYLOAD_K"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_K|must_be_value|VALID"
+      ],
+      "forbidden_keys": [
+        "REQ_K|must_be_value|VALID"
+      ]
+    },
+    {
+      "case_id": "negative_non_copular_state",
+      "disposition": "negative",
+      "control_classes": [
+        "non_copular"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "The controller asserts REQ_L, which means PAYLOAD_L must be valid.",
+      "declared_signals": [
+        "REQ_L",
+        "PAYLOAD_L"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_L|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_negated_state",
+      "disposition": "negative",
+      "control_classes": [
+        "negated_state"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_M is not asserted, which means PAYLOAD_M must be valid.",
+      "declared_signals": [
+        "REQ_M",
+        "PAYLOAD_M"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_M|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_trailing_prefix_qualifier",
+      "disposition": "negative",
+      "control_classes": [
+        "trailing_prefix_qualifier"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_N is asserted for setup, which means PAYLOAD_N must be valid.",
+      "declared_signals": [
+        "REQ_N",
+        "PAYLOAD_N"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_N|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_missing_state",
+      "disposition": "negative",
+      "control_classes": [
+        "missing_state"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_O, which means PAYLOAD_O must be valid.",
+      "declared_signals": [
+        "REQ_O",
+        "PAYLOAD_O"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_O|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_multiple_markers",
+      "disposition": "negative",
+      "control_classes": [
+        "multiple_markers"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "REQ_P is asserted, which means ALT_P changes, which implies PAYLOAD_P must be valid.",
+      "declared_signals": [
+        "REQ_P",
+        "ALT_P",
+        "PAYLOAD_P"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_casefold_collision",
+      "disposition": "negative",
+      "control_classes": [
+        "casefold_collision"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "Req_Q is asserted, which means PAYLOAD_Q must be valid.",
+      "declared_signals": [
+        "REQ_Q",
+        "req_q",
+        "PAYLOAD_Q"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_Q|must_be_value|VALID"
+      ],
+      "forbidden_keys": []
+    },
+    {
+      "case_id": "negative_indexed_spelling_alias",
+      "disposition": "negative",
+      "control_classes": [
+        "opaque_identifier_no_suffix_alias"
+      ],
+      "statement_class": "signal_value_constraint",
+      "text": "PSEL is asserted, which means PAYLOAD_S must be valid.",
+      "declared_signals": [
+        "PSELX",
+        "PAYLOAD_S"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [
+        "PAYLOAD_S|must_be_value|VALID"
+      ],
+      "forbidden_keys": [
+        "PSELX|must_be_value|HIGH"
+      ]
+    },
+    {
+      "case_id": "negative_wrong_statement_class",
+      "disposition": "negative",
+      "control_classes": [
+        "wrong_statement_class"
+      ],
+      "statement_class": "source_fact",
+      "text": "REQ_R is asserted, which means PAYLOAD_R must be valid.",
+      "declared_signals": [
+        "REQ_R",
+        "PAYLOAD_R"
+      ],
+      "polarity": {},
+      "expected_antecedent": null,
+      "expected_consequence": [],
+      "forbidden_keys": []
+    }
+  ],
+  "reconciliation": {
+    "affected_chain_contract": "doctrine/chain_currency/retained_bundles.json",
+    "affected_chain_count": 24,
+    "affected_chain_ids_sha256": "f3f3d87564d5664bfd6831f9e1e164a84e9c394abffee1f49eb84571239cfbb8",
+    "affected_stages": [
+      "evidence_ir",
+      "semantic_ir",
+      "intent_ir",
+      "isf_adapter"
+    ],
+    "currency_requirement": "rebuild all affected retained chains and require zero stale measurable stages before the implementation commit",
+    "reviewed_population_documents": 12,
+    "reviewed_replay_stages": [
+      "source_ir",
+      "evidence_ir",
+      "semantic_ir",
+      "intent_ir"
+    ],
+    "reviewed_replay_attempts": 48,
+    "reviewed_replay_requirement": "replay every reviewed source through all four isolated stages under unchanged reviewed authority before publication",
+    "publication_invariants": [
+      "the exact witness missing key becomes canonical at EvidenceIR, SemanticIR, and IntentIR",
+      "IntentIR false positives remain zero and no expected canonical fact disappears",
+      "canonical provenance remains complete and no fabricated canonical fact appears",
+      "the complete 12-source result and comparable trajectory snapshot are refreshed together"
+    ]
+  }
+}

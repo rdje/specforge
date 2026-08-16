@@ -1,5 +1,5 @@
 {"record_type":"registry","schema_version":1,"phase":"frozen","expected_book_files":39,"expected_candidate_lines":304,"expected_candidate_files":21,"max_records":512,"max_bytes":262144,"max_record_bytes":16384,"max_array_items":32,"max_scalar_bytes":2048}
-{"record_type":"source","schema_version":1,"source_id":"surface_registry","path":"doctrine/live_document_size/surfaces.jsonl","sha256":"0f18cb61190286ce4dba92f66e5724269793dbf5397d2042546f4bd80db03496"}
+{"record_type":"source","schema_version":1,"source_id":"surface_registry","path":"doctrine/live_document_size/surfaces.jsonl","sha256":"b8ed224c5b8561adb84e2d5162d3e19c0b4aaf2ea485f18341e60d866de30d74"}
 {"record_type":"source","schema_version":1,"source_id":"book_summary","path":"docs/book/src/SUMMARY.md","sha256":"8dd49ff652ff25e4a0f95128b5953b87f4cb6d10977ca5d92899abbf64280040"}
 {"record_type":"source","schema_version":1,"source_id":"derived_state_registry","path":"doctrine/live_document_size/derived_state_contracts.jsonl","sha256":"4af2bff9dc4db0a79a1bc316ce4a7c0100e45750a73776a1923dd9dc1204779d"}
 {"record_type":"source","schema_version":1,"source_id":"claim_registry","path":"doctrine/claim_verification/claims.jsonl","identity":"live_validated"}

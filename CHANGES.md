@@ -1,3 +1,18 @@
+### SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract
+
+- Added an executable design authority that joins the exact APB first-boundary witness to a closed,
+  source-grounded inference-prefix grammar without changing production extraction.
+- Froze seven positive and thirteen refusal cases across every supported marker, asserted/deasserted state,
+  active-high/active-low/unknown polarity, ambiguity, consequence-borrowing, and deduplication boundary.
+- Corrected a foundational identity premise before mutation: the witness grounds source-local `PSEL` through
+  its same-clause signal appositive; the separately declared `PSELX` remains opaque, and suffix spelling is
+  explicitly a negative control rather than alias authority.
+- Corrected the paired polarity premise: no reviewed evidence resolves `PSEL` active-high or active-low, so the
+  oracle now expects polarity-neutral `must_be_asserted`; explicit HIGH, LOW, and borrowed VALID are all
+  forbidden. The exact population remains 39/0/1 because the same single fact is still missing.
+- Bound `.7b` to all 24 proof-affected retained chains and `.7c` to the complete 12-source/48-stage replay;
+  the independent checker passes and all eleven controlled contract mutations go RED.
+
 ### SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery
 
 - Activated the controller-ranked canonical-recovery program and decomposed it into `.7a` contract freeze,

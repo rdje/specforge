@@ -183,7 +183,7 @@ remaining leaves as follows:
 The metric recommendation is `.7`. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
 and `.f.iv.b` supplied its whole-population proof. Final behavioral `.f.v` remains a release-signoff invariant and
 therefore precedes controller-ranked work. All task IDs exist in the task tree, the complete metric ordering
-remains in the report; canonical recovery is active, but its frozen contract still precedes mutation.
+remains in the report; canonical recovery is active; its executable contract now gates the next work.
 
 The word “current” above is revision-bound. The tracked 24/2/16 result is valid for its pinned `b977a51f`
 production revision; fixed-input artifact-chain currency does not extend it across later PDF-to-SourceIR changes.
@@ -199,7 +199,7 @@ column. Direct PDF replay restores Arm 12/12 and GIC-400 15/15 while AMD remains
 reconciliation is 24/24 current and zero stale at every stage. `.f.iv.b` now publishes that repaired population.
 All 12 sources and 48 stages complete under an evidence-recorded CPU/16-page ingest policy. Aggregate IntentIR
 moves to 39/0/1 TP/FP/FN; GIC-400 supplies 15 exact facts and AMD supplies no false register. APB's pre-existing
-missing `PSEL=HIGH` obligation is the sole canonical miss and unexplained drop. The replay driver's exact four
+missing polarity-neutral `PSEL` asserted-state obligation is the sole canonical miss and unexplained drop. The replay driver's exact four
 post-`--` values are guarded by a focused executable test.
 
 ### What the first current replay proved

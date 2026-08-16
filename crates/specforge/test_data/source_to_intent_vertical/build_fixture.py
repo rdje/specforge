@@ -109,10 +109,10 @@ DOCS = [
                 "gold": [
                     "PADDR|must_be_value|VALID",
                     "PWDATA|must_be_value|VALID",
-                    "PSEL|must_be_value|HIGH",
+                    "PSEL|must_be_asserted|<missing>",
                     "PWRITE|must_be_value|VALID",
                 ],
-                "residual_gold": ["PSEL|must_be_value|HIGH"],
+                "residual_gold": ["PSEL|must_be_asserted|<missing>"],
                 "oracle": "The prose states PSEL asserted and PADDR/PWRITE/PWDATA valid at setup T1.",
                 "scope": "Complete review of SourceIR elem_00205 and its four explicit signal-state obligations.",
             }

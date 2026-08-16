@@ -1,8 +1,8 @@
 {
    "contract_id" : "spec-to-intent-alignment-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7a",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7a`.",
+      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7b",
+      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7b`.",
       "mode" : "eligible",
       "part_id" : "canonical-recovery"
    },
@@ -112,13 +112,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — canonical recovery",
             "metrics" : {
-               "bytes" : 5487,
-               "line_bytes" : 291,
-               "lines" : 97
+               "bytes" : 11094,
+               "line_bytes" : 303,
+               "lines" : 158
             },
             "part_id" : "canonical-recovery",
             "path" : "docs/tasks/spec-to-intent-alignment/canonical-recovery.md",
-            "sha256" : "8c6f14b5e7bf4b784ad3eb6513522c0e052f0283efb960db31c9e12e1b50d0c5",
+            "sha256" : "2f243421ea524fe98cab5366e6f9b7e29bc480a28dac43cb8d8dc690fb4d1abb",
             "state" : "active"
          }
       ],
@@ -631,7 +631,7 @@
          "- Tree ID: `SPEC-TO-INTENT-ALIGNMENT`",
          "- Status: `active`",
          "## Current Frontier",
-         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7a`.",
+         "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.7b`.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log",

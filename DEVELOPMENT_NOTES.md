@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.7a (`2026-08-16`) — independent facts need independent grammar authority
+
+The repair belongs beside the existing normative constraint producer, not inside the consequence selector. A
+compound inference sentence supplies two separate proof obligations: the prefix's own explicit state and the
+suffix's normative consequence. Keeping those producers separate preserves the correct `PSEL`-not-`VALID`
+precision boundary while allowing the prefix to emit a polarity-neutral asserted/deasserted constraint.
+
+The accepted prefix grammar is intentionally end-anchored and source-grounded. Exactly one supported inference
+marker, one explicit copular state, and one declared prefix signal are required. A declaration can already exist
+in the current-document catalog or be established locally by the bounded appositive form `... signal, ID, is
+asserted|deasserted`; descriptive words do not decide meaning. Multiple declarations or states, negation,
+trailing qualifiers, case-fold collisions, a condition-only construction, or another statement class refuses
+extraction. The common polarity post-pass remains the sole authority that converts the symbolic state to a level.
+
+This distinction closes a pre-mutation identity trap. The APB catalog already declares `PSELX`, while the exact
+reviewed span explicitly calls its local subject `PSEL` in `The select signal, PSEL, is asserted`. ADR 0037
+forbids treating suffix shape as an alias, so `.7a` preserves those as two opaque identities: the appositive
+grounds `PSEL`; bare `PSEL` prose with only `PSELX` declared is a refusal case. The older indexed-family rule and
+fact card are historical, not production authority.
+
+The old oracle also over-refined `asserted` to `HIGH`. Neither the selected prose nor the current polarity
+records establish active-high or active-low polarity for `PSEL`/`PSELX`; `apply_signal_polarity_to_constraints`
+explicitly keeps the symbolic kind when polarity is absent. The corrected gold is therefore
+`PSEL|must_be_asserted|<missing>`, with HIGH and LOW both forbidden. This changes no score denominator or current
+39/0/1 result: it corrects the semantic identity of the same single false negative before implementation.
+
+The contract checker joins that grammar to the exact current APB loss, the complete positive/refusal matrix,
+every retained chain whose proof identity will move, and the whole reviewed replay denominator. This makes a
+focused APB green result insufficient for `.7b`/`.7c` signoff and prevents fixture success from hiding a wider
+production or currency regression.
+
 ## SPEC-TO-INTENT-ALIGNMENT.7 (`2026-08-16`) — a compound sentence can contain two independent facts
 
 The APB setup sentence is not one obligation with four subjects. Its prefix states that `PSEL` is asserted; the

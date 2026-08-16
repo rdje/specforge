@@ -95,13 +95,13 @@
     },
     {
       "metrics": {
-        "bytes": 12577,
+        "bytes": 12582,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0002.md",
       "role": "title_part",
-      "sha256": "6e7347752e8ca961b8e8b3b3f394ebb9bbd28c5d86d269b95543153b3b9465f3"
+      "sha256": "84ea9298e54d5942f3046d785bcbc27f6c44419f02f5bce2e80880d5d7650957"
     },
     {
       "metrics": {
