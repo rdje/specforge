@@ -185,8 +185,8 @@ and `.f.iv.b` supplied its whole-population proof. Final behavioral `.f.v` remai
 therefore precedes controller-ranked work. All task IDs exist in the task tree, the complete metric ordering
 remains in the report; canonical recovery is active; its executable contract now gates the next work.
 
-The word “current” above is revision-bound. The tracked 24/2/16 result is valid for its pinned `b977a51f`
-production revision; fixed-input artifact-chain currency does not extend it across later PDF-to-SourceIR changes.
+The word “current” above is revision-bound. The published 39/0/1 result is valid for its pinned `e125aac7`
+production revision; fixed-input retained-chain currency cannot substitute for `.7c`'s fresh population replay.
 The first clean `.f.iv` full-PDF replay at `0d218116` therefore remains an unpublished diagnostic. It completed all
 12 sources and 48 stages, but Arm Debug lost 12 correct register/access facts and GIC-400 emitted 15 source-named
 registers without access. AMD's former packed-layout false register correctly disappeared. Actual execution
@@ -199,8 +199,8 @@ column. Direct PDF replay restores Arm 12/12 and GIC-400 15/15 while AMD remains
 reconciliation is 24/24 current and zero stale at every stage. `.f.iv.b` now publishes that repaired population.
 All 12 sources and 48 stages complete under an evidence-recorded CPU/16-page ingest policy. Aggregate IntentIR
 moves to 39/0/1 TP/FP/FN; GIC-400 supplies 15 exact facts and AMD supplies no false register. APB's pre-existing
-missing polarity-neutral `PSEL` asserted-state obligation is the sole canonical miss and unexplained drop. The replay driver's exact four
-post-`--` values are guarded by a focused executable test.
+missing polarity-neutral `PSEL` asserted-state obligation is the sole miss in that published revision. `.7b` now
+recovers it; matrix and retained-chain currency pass with zero public delta. The score remains pinned until `.7c`.
 
 ### What the first current replay proved
 

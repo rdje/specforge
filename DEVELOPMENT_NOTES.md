@@ -1,4 +1,38 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.7b (`2026-08-16`) — append a sibling, then refine and deduplicate
+
+The production change stays inside the constraint family's existing stateful orchestration. Pattern and dynamic
+constraints retain their exact order and shared id counter. The new inference-antecedent producer appends its
+records, the existing polarity post-pass refines the complete surface, and a bounded merge drops only duplicates
+introduced by the appended sibling. Running a global cleanup would have changed unrelated historical duplicate
+behavior; deduplicating before polarity would have compared temporary rather than canonical kinds.
+
+The parser is a closed structural recognizer. It selects the sentence already carrying the normative consequence,
+requires exactly one of five inference markers, and accepts only an end-anchored `is asserted` or `is deasserted`
+prefix with one declared signal reference. Exact declaration spelling wins; one unique ASCII case-fold match is
+allowed; a collision rejects. A locally undeclared subject can enter only through both commas of the same-clause
+`signal, ID,` appositive. That local copy is used for this clause only, so it cannot create a global declaration or
+turn `PSEL` into `PSELX` by suffix shape.
+
+The production test reads all seven positive and thirteen refusal rows directly from the frozen JSON. It checks
+the raw symbolic kind, the shared polarity result, unconditional shape, exact statement provenance, forbidden
+keys, and sibling deduplication. The dedicated consequence-borrowing row additionally checks the three unchanged
+validity facts; contextual consequence examples do not authorize widening the existing consequence resolver. A
+full SourceIR-to-EvidenceIR synthetic build over the exact APB sentence proves integrated classification,
+declaration grounding, constraint composition, and absence of guessed or borrowed PSEL/PSELX values.
+
+The new Rust roots correctly rotate EvidenceIR production identity. All 24 retained chains were rebuilt through
+the adapter. Comparing a 192-file, 856,132-KiB same-volume rollback showed 96 raw JSON changes and zero public
+JSON or emitted-ISF deltas after excluding proof context, proof ledger, and validation reports. The independent
+currency gate reports 24 current / zero stale and 54 explicit proof-unmeasurable inputs at every stage, with 24
+blocked adapter states, zero emitted files, and exact retention. The rollback aggregate was
+`9a65d18c8c1653d4d1c388c94c34833d018a6a5ab39bacbc550a757b6359ff6d`; its directory is removed and absent.
+
+The full core suite passes 1,364 tests with five intentional ignores and zero failures; warning-denied Clippy and
+all five production-genericity components pass. Those results prove production repair and retained-chain safety,
+not the reviewed-population delta. The tracked 39/0/1 snapshot is still pinned to its prior replay, so `.7c` must
+replay all 12 sources and 48 stages before publishing closure.
+
 ## SPEC-TO-INTENT-ALIGNMENT.7a (`2026-08-16`) — independent facts need independent grammar authority
 
 The repair belongs beside the existing normative constraint producer, not inside the consequence selector. A

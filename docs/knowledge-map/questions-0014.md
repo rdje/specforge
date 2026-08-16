@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > why is the channel role kept verbatim instead of mapped to address/data/response phases
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > why is the default ingest threshold 131 pages on a 24 GiB host
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)

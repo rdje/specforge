@@ -11,11 +11,12 @@ answers:
   - "why does the APB recovery keep PSEL separate from PSELX"
   - "does suffix spelling authorize a PSEL to PSELX alias"
   - "why does the APB missing fact remain must_be_asserted instead of HIGH"
+  - "how does production recover explicit inference antecedent state"
 date: 2026-08-16
 status: current
 tags: [spec-to-intent-alignment, evidence-ir, signal-constraint, apb, canonical-recall]
 evidence: crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json; doctrine/spec_to_intent/canonical_recovery_contract.json; scripts/validate_canonical_recovery_contract.py; crates/specforge/src/ir/evidence.rs; docs/tasks/spec-to-intent-alignment/canonical-recovery.md
-reverify: "python3 -B scripts/validate_canonical_recovery_contract.py --check && python3 -B scripts/validate_canonical_recovery_contract.py --self-test && cargo test --offline -p specforge-core --lib inference_antecedent_signal_is_not_the_obligation_subject"
+reverify: "python3 -B scripts/validate_canonical_recovery_contract.py --check && python3 -B scripts/validate_canonical_recovery_contract.py --self-test && cargo test --offline -p specforge-core --lib canonical_inference_antecedent_recovery && bash scripts/check_chain_currency.sh --check"
 ---
 
 The current reviewed result has one canonical false negative and one unexplained SourceIR-to-EvidenceIR drop:
@@ -44,5 +45,15 @@ snapshot, and current snapshot to the polarity-neutral key. The same one fact is
 provenance, and conservation counts do not move; HIGH and LOW are now explicit forbidden outputs.
 
 `.7a` froze that source-grounded sibling-producer grammar, polarity and ambiguity controls, affected-chain
-scope, and population replay contract. `.7b` owns production repair and currency; `.7c` owns comparable
+scope, and population replay contract. `.7b` now implements it inside the normative constraint family: existing
+pattern and consequence paths keep their order, the sibling appends only an independently explicit antecedent
+state, the shared polarity pass refines it, and only sibling-introduced semantic duplicates are removed. The
+production test executes all 20 frozen cases directly, and a complete synthetic build recovers the exact
+polarity-neutral `PSEL` fact while preserving the three consequence facts and forbidding PSEL/PSELX value
+borrowing.
+
+The ruleset change rotated proof identity, so `.7b` rebuilt all 24 retained chains through the ISF adapter.
+Every measurable stage is current with zero stale and the 192-file comparison has zero public JSON or emitted-
+ISF delta. Those results prove the production boundary and fixed-input artifact currency; they do not rewrite
+the revision-pinned reviewed score. `.7c` still owns the independent 12-source/48-stage replay and comparable
 publication.

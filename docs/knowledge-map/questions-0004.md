@@ -244,6 +244,8 @@
   > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > how does production recover explicit inference antecedent state
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > how does register access differ from register field access
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -296,5 +298,3 @@
   > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation

@@ -14,8 +14,8 @@
   Verification: `activation reproduces the sole current APB canonical miss and localizes it to a compound
   inference sentence whose antecedent state has no independent EvidenceIR producer; the compiled specforge-core
   consequence-precision control passes 1/1; exact task evidence, claim/current/book censuses, live-size,
-  Knowledge Map, mdBook test/build, and mandatory doctrines pass; .7a through .7c own the frozen contract,
-  generic implementation plus chain currency, and complete population publication`
+  Knowledge Map, mdBook test/build, and mandatory doctrines pass; .7a freezes the contract and .7b implements
+  it with exact retained-chain currency; .7c remains the complete population publication`
   Commit: `SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery`
   Children: `.7a`, `.7b`, `.7c`
 
@@ -37,7 +37,7 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7b`
-  State: `pending`
+  State: `done`
   Goal: recover explicit inference-antecedent signal state and reconcile every production-identity consequence
   Acceptance: a structurally gated producer emits an independently proven constraint only for a source-grounded
   signal with an explicit antecedent state; a bounded same-clause signal appositive may establish that declaration,
@@ -46,8 +46,13 @@
   production-genericity structure and behavior remain green; every affected retained chain is rebuilt and exact
   chain currency reaches zero stale before commit
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.7a`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the production sibling executes the frozen 7-positive/13-refusal matrix; a complete synthetic
+  build recovers polarity-neutral PSEL plus all three unchanged consequences and forbids PSEL/PSELX
+  HIGH/LOW/VALID borrowing; four focused tests, the complete 1,364-pass/five-ignore core suite, warning-denied
+  Clippy, and all five production-genericity components pass; all 24 retained chains rebuild through four
+  stages, 96/192 files change proof/validation identity only, zero public files change, and chain currency is
+  24 current/zero stale at every stage with exact retention and no rollback residue`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7c`
   State: `pending`
@@ -64,8 +69,7 @@
 
 | Order | Leaf | State | Why next |
 | --- | --- | --- | --- |
-| 1 | `SPEC-TO-INTENT-ALIGNMENT.7b` | `pending` | implement the frozen producer and reconcile production-identity consequences |
-| 2 | `SPEC-TO-INTENT-ALIGNMENT.7c` | `pending` | publish complete population and controller evidence after repair |
+| 1 | `SPEC-TO-INTENT-ALIGNMENT.7c` | `pending` | publish complete population and controller evidence after the implemented repair |
 
 ## Frozen antecedent-state contract (`.7a`)
 
@@ -98,6 +102,28 @@ reconciliation of all 24 retained chains through EvidenceIR, SemanticIR, IntentI
 then owns the independent 12-source × four-stage reviewed replay and comparable publication; a focused APB pass
 cannot substitute for the full population.
 
+## Implemented recovery (`.7b`)
+
+`extract_normative_signal_constraints` now keeps the existing pattern and dynamic producers in their original
+order, appends one inference-antecedent sibling, applies the existing shared polarity post-pass, and removes only
+semantic duplicates introduced by the appended sibling. The sibling reads only already-classified
+`SignalValueConstraint` statements and the current document's declaration set. It requires one bounded marker,
+one end-anchored copular state, and exactly one declared prefix signal. A complete `signal, ID,` appositive may
+add only that clause-local opaque identifier; it does not mutate the document catalog or alias another spelling.
+
+The Rust conformance test consumes all 20 cases directly from the `.7a` JSON. Every row checks the sibling's raw
+symbolic result and post-polarity result; the dedicated borrowing row also checks all three existing consequence
+facts and the forbidden PSEL values. Consequence resolution otherwise remains deliberately unchanged: a case-only
+antecedent rewrite is not authority to broaden the consequence extractor. A full EvidenceIR build over the exact
+APB sentence proves the integrated result and exact statement provenance.
+
+The ruleset change required proof migration even though none of the retained 24 documents matched the new
+grammar. A repository-local 192-file / 856,132-KiB rollback at aggregate SHA-256
+`9a65d18c8c1653d4d1c388c94c34833d018a6a5ab39bacbc550a757b6359ff6d` covered all four stages. Rebuild changed
+96 JSON files only in proof/validation identity and changed zero public JSON or emitted-ISF files. Independent
+replay reports 24 current / zero stale / 54 explicit proof-unmeasurable at every stage, 24 blocked adapter states
+and zero emitted files, plus exact 24-bundle retention. The rollback is removed with residue absent.
+
 ## Acceptance Checklist (enforced)
 
 - [x] **REPRODUCE / MEASURE** — current authority remains 39/0/1 IntentIR TP/FP/FN, 42/42 provenance,
@@ -105,15 +131,15 @@ cannot substitute for the full population.
 - [x] **ROOT CAUSE (WHY + WHERE)** — `current_result_snapshot.json` loses only
   `PSEL|must_be_asserted|<missing>`; `consequent_after_inference_marker` correctly protects suffix subjects,
   while no sibling producer captures the explicit prefix state.
-- [x] **ADDRESSED (verified)** — the design gap is closed by an executable 7-positive/13-negative contract and
-  11/11 mutation controls; production extraction is deliberately unchanged and remains owned by `.7b`.
-- [x] **NO REGRESSION** — the contract checker and self-test pass; compiled consequence-precision,
-  no-index-shape-alias, retrospective snapshot, and current trajectory composition tests each pass 1/1.
+- [x] **ADDRESSED (verified)** — the production sibling and full-build witness execute the 7-positive/13-negative
+  contract, exact provenance, local declaration, polarity, borrowing refusal, and semantic deduplication.
+- [x] **NO REGRESSION** — consequence precision and no-index-shape-alias controls, warning-denied Clippy, all
+  1,364 core tests, five production-genericity components, zero-public-delta comparison, and chain currency pass.
 - [x] **GENERICITY (ADR 0006 / ADR 0037)** — authority comes from current-document declarations, bounded
   appositive syntax, and closed state/polarity structure; identifiers remain opaque and names occur only in the
   conformance witness and cases, never as production selectors or shape-derived aliases.
-- [x] **LOCKSTEP** — task root, roadmap, live/resume/engineering records, mdBook, and Knowledge Map route `.7b`
-  next without claiming a product-behavior improvement.
+- [x] **LOCKSTEP** — task root, roadmap, live/resume/engineering records, mdBook, and Knowledge Map route `.7c`
+  next while keeping the reviewed 39/0/1 snapshot revision-bound until complete replay.
 
 ## Decisions
 
@@ -127,20 +153,25 @@ cannot substitute for the full population.
   polarity, so the missing fact stays `MustBeAsserted`; the population score remains 39/0/1.
 - `2026-08-16`: keep the new interpretation inside the existing normative constraint family as a sibling
   producer. The common polarity post-pass and normal proof/carry path remain the only downstream authority.
+- `2026-08-16`: preserve existing pattern/dynamic order and deduplicate only appended sibling facts after
+  polarity refinement. This prevents the repair from normalizing unrelated historical duplicates.
+- `2026-08-16`: execute unique-casefold rewriting only at the new antecedent boundary. The frozen dedicated
+  borrowing row, not contextual consequence examples, guards the unchanged consequence-subject path.
 
 ## Open Questions
 
-- None for `.7b`; its implementation must consume the frozen matrix without weakening a refusal case.
+- None for `.7c`; the replay denominator, authority, and publication invariants are frozen.
 
 ## Blockers
 
-- None for `.7b`; missing authority or ambiguous clause structure remains a negative case, not a widened
-  heuristic.
+- None for `.7c`; the required external source map is an untracked runtime input and durable results remain
+  portable by source identity and digest.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-16` | `.7b` production recovery and currency | 7/13 contract plus exact full build pass; 1,364/5/0 core tests, Clippy, and five genericity components pass; 24 retained four-stage chains are current with zero stale, 96 proof-only changes, zero public deltas, exact retention, and rollback residue absent |
 | `2026-08-16` | `.7a` contract freeze | exact witness/current join, 7/13 conformance matrix, local-appositive/opaque-no-alias/unknown-polarity controls, five markers, six polarity outcomes, 24-chain and 48-stage obligations pass; 11/11 mutations reject and all four focused 1/1 baselines remain green |
 | `2026-08-16` | `.7` activation | current result and 1/1 compiled core precision control localize one explicit antecedent-state loss; 56-unit/86-candidate current census and 304-region book census stay closed; three bounded children own design, implementation/currency, and replay/signoff |
 
@@ -148,6 +179,7 @@ cannot substitute for the full population.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.7b` | `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state` | implement the frozen sibling producer, preserve consequence precision, and reconcile all proof-affected chains with zero public delta |
 | `.7a` | `SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract` | freeze the executable witness, grammar/refusal matrix, affected chains, and population replay boundary without changing production |
 | `.7` | `SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery` | open the bounded recovery program with `.7a` as sole frontier |
 

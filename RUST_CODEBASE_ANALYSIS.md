@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-16 — inference-antecedent recovery; `SPEC-TO-INTENT-ALIGNMENT.7b`)
+
+- The EvidenceIR normative constraint family now has one cohesive orchestration function: existing pattern and
+  dynamic producers keep their order, a closed inference-antecedent sibling appends independently explicit
+  asserted/deasserted state, the shared polarity pass refines all records, and only sibling-appended duplicates
+  are removed.
+- The sibling admits one supported inference marker, one end-anchored copular state, and one exact or uniquely
+  case-folded declared signal. A complete `signal, ID,` appositive grants clause-local identity only; ambiguity,
+  negation, qualifiers, multiple states/signals/markers, and suffix-shape aliases reject.
+- The compiled boundary remains 79 modules / 41 claim families / 168 fields / 141 rows. Current flow is 2,356
+  functions / 14,324 helper edges / 12,553 decision sites / 1,462 semantic macros, with six declared
+  non-authoritative regions. All five production-genericity components pass after the change.
+- Exact four-stage reconstruction keeps all 24 retained chains current with zero public content delta; the new
+  semantic roots rotate proof identity as designed. Complete reviewed-population publication remains `.7c`.
+
 ## Session update (2026-08-16 — production-graph oracle currency; `CLAIM-VERIFICATION-ADOPTION.5`)
 
 - Closing full CI found that `tools/production-genericity-graph` still asserted the exact pre-clarification

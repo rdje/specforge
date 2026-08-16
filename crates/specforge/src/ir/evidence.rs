@@ -8527,6 +8527,227 @@ fn resolve_declared_signal_identifier(
     Some(canonical.clone())
 }
 
+const SUPPORTED_INFERENCE_MARKERS: &[&str] = &[
+    "which means that",
+    "which implies that",
+    "which means",
+    "which implies",
+    "meaning that",
+];
+
+fn is_ascii_identifier_byte(byte: u8) -> bool {
+    byte.is_ascii_alphanumeric() || byte == b'_'
+}
+
+/// Locate one closed-vocabulary inference marker in a bounded sentence. Longer forms precede
+/// their prefixes, so `which means that` is one marker rather than both `which means that` and
+/// `which means`. Any second supported marker makes the sentence structurally ambiguous.
+fn unique_inference_marker(text: &str) -> Option<(usize, usize)> {
+    let lowered = text.to_ascii_lowercase();
+    let bytes = lowered.as_bytes();
+    let mut found = None;
+
+    for (start, _) in lowered.char_indices() {
+        if start > 0 && is_ascii_identifier_byte(bytes[start - 1]) {
+            continue;
+        }
+        let Some(marker) = SUPPORTED_INFERENCE_MARKERS.iter().find(|marker| {
+            lowered
+                .get(start..)
+                .is_some_and(|tail| tail.starts_with(**marker))
+                && bytes
+                    .get(start + marker.len())
+                    .is_none_or(|byte| !is_ascii_identifier_byte(*byte))
+        }) else {
+            continue;
+        };
+        if found.is_some() {
+            return None;
+        }
+        found = Some((start, marker.len()));
+    }
+
+    found
+}
+
+fn ascii_phrase_count(text: &str, phrase: &str) -> usize {
+    let bytes = text.as_bytes();
+    text.char_indices()
+        .filter(|(start, _)| {
+            (*start == 0 || !is_ascii_identifier_byte(bytes[*start - 1]))
+                && text
+                    .get(*start..)
+                    .is_some_and(|tail| tail.starts_with(phrase))
+                && bytes
+                    .get(*start + phrase.len())
+                    .is_none_or(|byte| !is_ascii_identifier_byte(*byte))
+        })
+        .count()
+}
+
+fn is_clause_end_character(character: char) -> bool {
+    character.is_ascii_whitespace()
+        || matches!(
+            character,
+            ',' | ';' | ':' | '.' | '!' | '?' | '(' | ')' | '[' | ']' | '{' | '}' | '"'
+        )
+}
+
+fn last_identifier_span(text: &str) -> Option<(usize, usize)> {
+    let trimmed = text.trim_end_matches(is_clause_end_character);
+    let end = trimmed.len();
+    let mut start = end;
+    for (index, character) in trimmed.char_indices().rev() {
+        if character.is_ascii_alphanumeric() || character == '_' {
+            start = index;
+        } else {
+            break;
+        }
+    }
+    (start < end).then_some((start, end))
+}
+
+/// A local declaration is intentionally narrower than the general prose signal synthesizer. It
+/// exists only inside this inference clause and requires the complete appositive punctuation:
+/// `<description> signal, IDENTIFIER, is asserted|deasserted`. The descriptive words carry no
+/// meaning, and the identifier never aliases another declaration by spelling shape.
+fn is_same_clause_signal_appositive(before_state: &str, subject_span: (usize, usize)) -> bool {
+    let (subject_start, subject_end) = subject_span;
+    if !before_state[subject_end..].contains(',') {
+        return false;
+    }
+    let before_subject = before_state[..subject_start].trim_end();
+    let Some(before_comma) = before_subject.strip_suffix(',') else {
+        return false;
+    };
+    let Some((noun_start, noun_end)) = last_identifier_span(before_comma) else {
+        return false;
+    };
+    before_comma[noun_start..noun_end].eq_ignore_ascii_case("signal")
+}
+
+fn extract_inference_antecedent_signal_constraints(
+    statements: &[ExtractedStatement],
+    declared_signals: &HashSet<String>,
+    counter: &mut usize,
+) -> Vec<SignalConstraintRecord> {
+    let mut records = Vec::new();
+
+    for statement in statements {
+        if !matches!(statement.class, StatementClass::SignalValueConstraint) {
+            continue;
+        }
+        let sentence = constraint_bearing_sentence(&statement.text);
+        let Some((marker_start, _marker_len)) = unique_inference_marker(sentence) else {
+            continue;
+        };
+        let prefix = &sentence[..marker_start];
+        let lowered_prefix = prefix.to_ascii_lowercase();
+        if ascii_phrase_count(&lowered_prefix, "is asserted")
+            + ascii_phrase_count(&lowered_prefix, "is deasserted")
+            != 1
+        {
+            continue;
+        }
+
+        let bounded_prefix = prefix.trim_end_matches(is_clause_end_character);
+        let lowered_bounded_prefix = bounded_prefix.to_ascii_lowercase();
+        let (state_phrase, constraint_kind) = if lowered_bounded_prefix.ends_with("is asserted") {
+            ("is asserted", SignalConstraintKind::MustBeAsserted)
+        } else if lowered_bounded_prefix.ends_with("is deasserted") {
+            ("is deasserted", SignalConstraintKind::MustBeDeasserted)
+        } else {
+            continue;
+        };
+
+        let before_state = &bounded_prefix[..bounded_prefix.len() - state_phrase.len()];
+        let Some(subject_span) = last_identifier_span(before_state) else {
+            continue;
+        };
+        let proposed_subject = &before_state[subject_span.0..subject_span.1];
+
+        let mut local_declarations = declared_signals.clone();
+        if resolve_declared_signal_identifier(proposed_subject, &local_declarations).is_none()
+            && is_same_clause_signal_appositive(before_state, subject_span)
+        {
+            local_declarations.insert(proposed_subject.to_string());
+        }
+        let Some(subject_signal) =
+            resolve_declared_signal_identifier(proposed_subject, &local_declarations)
+        else {
+            continue;
+        };
+
+        let referenced_signals: BTreeSet<String> = collect_subject_signal_tokens(prefix)
+            .into_iter()
+            .filter_map(|token| resolve_declared_signal_identifier(&token, &local_declarations))
+            .collect();
+        if referenced_signals.len() != 1 || !referenced_signals.contains(&subject_signal) {
+            continue;
+        }
+
+        *counter += 1;
+        records.push(SignalConstraintRecord {
+            constraint_id: format!("sigcon_{counter:04}"),
+            subject_signal,
+            constraint_kind,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: statement.text.clone(),
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+
+    records
+}
+
+/// Preserve the established pattern/dynamic surface byte-for-byte and deduplicate only records
+/// appended by the inference-antecedent sibling. Polarity runs first because the semantic identity
+/// is the refined kind, not the temporary asserted/deasserted form.
+fn dedup_appended_signal_constraints(
+    records: &mut Vec<SignalConstraintRecord>,
+    established_count: usize,
+) {
+    let mut seen = HashSet::new();
+    let mut retained = Vec::with_capacity(records.len());
+    for (index, record) in std::mem::take(records).into_iter().enumerate() {
+        let key = signal_constraint_merge_key(&record);
+        if index < established_count {
+            seen.insert(key);
+            retained.push(record);
+        } else if seen.insert(key) {
+            retained.push(record);
+        }
+    }
+    *records = retained;
+}
+
+fn extract_normative_signal_constraints(
+    statements: &[ExtractedStatement],
+    declared_signals: &HashSet<String>,
+    discovered_values: &HashSet<String>,
+    signal_polarity: &HashMap<String, SignalPolarity>,
+    counter: &mut usize,
+) -> Vec<SignalConstraintRecord> {
+    let mut records = extract_signal_constraints(statements, counter);
+    records.extend(extract_dynamic_signal_constraints(
+        statements,
+        counter,
+        discovered_values,
+    ));
+    let established_count = records.len();
+    records.extend(extract_inference_antecedent_signal_constraints(
+        statements,
+        declared_signals,
+        counter,
+    ));
+    apply_signal_polarity_to_constraints(&mut records, signal_polarity);
+    dedup_appended_signal_constraints(&mut records, established_count);
+    records
+}
+
 /// Level 2 NLP — Extract `SignalConstraintRecord` entries from `SignalValueConstraint` sentences.
 /// Operates only on already-classified sentences to keep precision high.
 ///
@@ -16366,14 +16587,13 @@ fn converge_evidence_extractions(
         );
 
         let mut constraint_counter = 1usize;
-        let mut signal_constraints =
-            extract_signal_constraints(&extracted_statements, &mut constraint_counter);
-        signal_constraints.extend(extract_dynamic_signal_constraints(
+        let signal_constraints = extract_normative_signal_constraints(
             &extracted_statements,
-            &mut constraint_counter,
+            &known_signals,
             &discovered_values,
-        ));
-        apply_signal_polarity_to_constraints(&mut signal_constraints, &signal_polarity.resolved);
+            &signal_polarity.resolved,
+            &mut constraint_counter,
+        );
         let conditional_rules =
             extract_conditional_rules(&extracted_statements, &mut constraint_counter);
 
@@ -27830,6 +28050,322 @@ mod tests {
             assert!(
                 ev.fact_provenance.iter().any(|p| p.canonical_key == key),
                 "every pattern constraint must have a provenance entry"
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod canonical_inference_antecedent_recovery {
+    use super::*;
+
+    fn statement(class: StatementClass, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: "statement_under_test".to_string(),
+            text: text.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec!["span_under_test".to_string()],
+            related_visual_evidence_ids: Vec::new(),
+        }
+    }
+
+    fn declarations(names: &HashSet<String>) -> ExtractedStatement {
+        let mut ordered: Vec<_> = names.iter().collect();
+        ordered.sort();
+        statement(
+            StatementClass::SourceFact,
+            &ordered
+                .into_iter()
+                .map(|name| format!("Signal {name} is width 1."))
+                .collect::<Vec<_>>()
+                .join(" "),
+        )
+    }
+
+    fn contract_key(record: &SignalConstraintRecord) -> String {
+        match &record.constraint_kind {
+            SignalConstraintKind::MustBeHigh => {
+                format!("{}|must_be_value|HIGH", record.subject_signal)
+            }
+            SignalConstraintKind::MustBeLow => {
+                format!("{}|must_be_value|LOW", record.subject_signal)
+            }
+            SignalConstraintKind::MustBeAsserted => {
+                format!("{}|must_be_asserted|<missing>", record.subject_signal)
+            }
+            SignalConstraintKind::MustBeDeasserted => {
+                format!("{}|must_be_deasserted|<missing>", record.subject_signal)
+            }
+            SignalConstraintKind::MustBeValue { value } => {
+                format!("{}|must_be_value|{value}", record.subject_signal)
+            }
+            kind => format!("{}|{}", record.subject_signal, kind.as_str()),
+        }
+    }
+
+    fn case_polarity(case: &serde_json::Value) -> HashMap<String, SignalPolarity> {
+        case["polarity"]
+            .as_object()
+            .expect("case polarity object")
+            .iter()
+            .map(|(name, value)| {
+                let polarity = match value.as_str().expect("polarity string") {
+                    "active_high" => SignalPolarity::ActiveHigh,
+                    "active_low" => SignalPolarity::ActiveLow,
+                    other => panic!("unsupported frozen polarity {other:?}"),
+                };
+                (name.clone(), polarity)
+            })
+            .collect()
+    }
+
+    #[test]
+    fn frozen_contract_matrix_executes_against_the_production_sibling() {
+        let contract: serde_json::Value = serde_json::from_str(include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../doctrine/spec_to_intent/canonical_recovery_contract.json"
+        )))
+        .expect("frozen canonical-recovery contract parses");
+        let cases = contract["cases"].as_array().expect("case matrix");
+        assert_eq!(cases.len(), 20, "the frozen 7/13 denominator changed");
+
+        for case in cases {
+            let case_id = case["case_id"].as_str().expect("case id");
+            let declared_signals: HashSet<String> = case["declared_signals"]
+                .as_array()
+                .expect("declared signal array")
+                .iter()
+                .map(|value| value.as_str().expect("declared signal").to_string())
+                .collect();
+            let class = match case["statement_class"].as_str().expect("statement class") {
+                "signal_value_constraint" => StatementClass::SignalValueConstraint,
+                "source_fact" => StatementClass::SourceFact,
+                other => panic!("unsupported frozen statement class {other:?}"),
+            };
+            let source = statement(class, case["text"].as_str().expect("case text"));
+            let polarity = case_polarity(case);
+            let mut raw_counter = 0usize;
+            let raw = extract_inference_antecedent_signal_constraints(
+                std::slice::from_ref(&source),
+                &declared_signals,
+                &mut raw_counter,
+            );
+
+            if case["disposition"] == "positive" {
+                let expected = case["expected_antecedent"]
+                    .as_object()
+                    .expect("positive antecedent expectation");
+                assert_eq!(raw.len(), 1, "{case_id}: expected one raw antecedent");
+                assert_eq!(
+                    raw[0].subject_signal,
+                    expected["subject_signal"].as_str().unwrap(),
+                    "{case_id}: canonical subject"
+                );
+                assert_eq!(
+                    raw[0].constraint_kind.as_str(),
+                    expected["symbolic_kind"].as_str().unwrap(),
+                    "{case_id}: symbolic kind before polarity"
+                );
+                assert_eq!(raw[0].condition_text, None, "{case_id}: unconditional");
+                assert!(!raw[0].negated, "{case_id}: non-negated");
+                assert_eq!(raw[0].source_text, source.text, "{case_id}: full source");
+                assert_eq!(
+                    raw[0].supporting_statement_ids,
+                    vec![source.statement_id.clone()],
+                    "{case_id}: exact statement provenance"
+                );
+                assert_eq!(
+                    raw[0].automation_confidence,
+                    AutomationConfidence::Medium,
+                    "{case_id}: confidence"
+                );
+
+                let mut refined = raw.clone();
+                apply_signal_polarity_to_constraints(&mut refined, &polarity);
+                assert_eq!(
+                    refined[0].constraint_kind.as_str(),
+                    expected["refined_kind"].as_str().unwrap(),
+                    "{case_id}: refined kind"
+                );
+            } else {
+                assert!(raw.is_empty(), "{case_id}: negative emitted {raw:?}");
+            }
+
+            let statements = vec![declarations(&declared_signals), source];
+            let mut combined_counter = 0usize;
+            let combined = extract_normative_signal_constraints(
+                &statements,
+                &declared_signals,
+                &HashSet::new(),
+                &polarity,
+                &mut combined_counter,
+            );
+            let combined_keys: Vec<_> = combined.iter().map(contract_key).collect();
+            let controls = case["control_classes"].as_array().expect("control array");
+            if controls
+                .iter()
+                .any(|value| value == "consequence_borrowing")
+            {
+                for expected in case["expected_consequence"]
+                    .as_array()
+                    .expect("consequence array")
+                {
+                    let expected = expected.as_str().expect("consequence key");
+                    assert!(
+                        combined_keys.iter().any(|actual| actual == expected),
+                        "{case_id}: missing frozen consequence {expected:?}; got {combined_keys:?}"
+                    );
+                }
+            }
+            for forbidden in case["forbidden_keys"].as_array().expect("forbidden array") {
+                let forbidden = forbidden.as_str().expect("forbidden key");
+                assert!(
+                    combined_keys.iter().all(|actual| actual != forbidden),
+                    "{case_id}: emitted forbidden key {forbidden:?}; got {combined_keys:?}"
+                );
+            }
+
+            if controls.iter().any(|value| value == "dedup") {
+                let expected = case["expected_antecedent"]["refined_kind"]
+                    .as_str()
+                    .expect("dedup refined kind");
+                let subject = case["expected_antecedent"]["subject_signal"]
+                    .as_str()
+                    .expect("dedup subject");
+                assert_eq!(
+                    combined
+                        .iter()
+                        .filter(|record| {
+                            record.subject_signal == subject
+                                && record.constraint_kind.as_str() == expected
+                        })
+                        .count(),
+                    1,
+                    "{case_id}: semantic tuple must occur once; got {combined:?}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn exact_witness_establishes_local_psel_without_aliasing_pselx() {
+        let declared_signals = ["PADDR", "PSELX", "PWDATA", "PWRITE"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        let source = statement(
+            StatementClass::SignalValueConstraint,
+            "The Setup phase of the write transfer occurs at T1 in Figure 3-1. The select signal, PSEL , is asserted, which means that PADDR , PWRITE , and PWDATA must be valid.",
+        );
+        let mut counter = 0usize;
+        let records = extract_inference_antecedent_signal_constraints(
+            &[source],
+            &declared_signals,
+            &mut counter,
+        );
+        assert_eq!(records.len(), 1, "local appositive must recover one fact");
+        assert_eq!(records[0].subject_signal, "PSEL");
+        assert!(matches!(
+            records[0].constraint_kind,
+            SignalConstraintKind::MustBeAsserted
+        ));
+        assert!(!declared_signals.contains("PSEL"));
+        assert!(declared_signals.contains("PSELX"));
+    }
+
+    #[test]
+    fn full_build_recovers_the_exact_witness_without_borrowing_the_consequence() {
+        let workspace = tempfile::tempdir().expect("test workspace");
+        let source_path = workspace.path().join("source.md");
+        std::fs::write(
+            &source_path,
+            concat!(
+                "# Interface\n",
+                "Signal PADDR is input width 32.\n",
+                "Signal PSELX is input width 1.\n",
+                "Signal PWRITE is input width 1.\n",
+                "Signal PWDATA is input width 32.\n\n",
+                "# Transfer\n",
+                "The Setup phase of the write transfer occurs at T1 in Figure 3-1. ",
+                "The select signal, PSEL , is asserted, which means that PADDR , PWRITE , ",
+                "and PWDATA must be valid.\n"
+            ),
+        )
+        .expect("write source fixture");
+        let source_ir = SourceIr::build(&source_path, &workspace.path().join("source_ir"))
+            .expect("build SourceIR");
+        source_ir
+            .write_test_fixture_to_disk()
+            .expect("persist SourceIR fixture");
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &workspace.path().join("evidence_ir"),
+        )
+        .expect("build EvidenceIR");
+
+        let keys: Vec<_> = evidence_ir
+            .signal_constraints
+            .iter()
+            .map(contract_key)
+            .collect();
+        for expected in [
+            "PADDR|must_be_value|VALID",
+            "PSEL|must_be_asserted|<missing>",
+            "PWDATA|must_be_value|VALID",
+            "PWRITE|must_be_value|VALID",
+        ] {
+            assert!(
+                keys.iter().any(|actual| actual == expected),
+                "missing {expected:?}; got {keys:?}"
+            );
+        }
+        for forbidden in [
+            "PSEL|must_be_value|HIGH",
+            "PSEL|must_be_value|LOW",
+            "PSEL|must_be_value|VALID",
+            "PSELX|must_be_value|HIGH",
+        ] {
+            assert!(
+                keys.iter().all(|actual| actual != forbidden),
+                "emitted forbidden {forbidden:?}; got {keys:?}"
+            );
+        }
+        let recovered = evidence_ir
+            .signal_constraints
+            .iter()
+            .find(|record| record.subject_signal == "PSEL")
+            .expect("recovered PSEL record");
+        assert_eq!(recovered.condition_text, None);
+        assert!(!recovered.negated);
+        assert_eq!(recovered.supporting_statement_ids.len(), 1);
+        let statement_id = &recovered.supporting_statement_ids[0];
+        assert!(
+            evidence_ir.extracted_statements.iter().any(|statement| {
+                statement.statement_id == *statement_id
+                    && statement.text == recovered.source_text
+                    && statement.class == StatementClass::SignalValueConstraint
+            }),
+            "recovered constraint must cite the exact classified source statement"
+        );
+    }
+
+    #[test]
+    fn local_appositive_requires_both_commas() {
+        let declared_signals = ["PAYLOAD"].into_iter().map(str::to_string).collect();
+        for text in [
+            "The select signal PSEL, is asserted, which means PAYLOAD must be valid.",
+            "The select signal, PSEL is asserted, which means PAYLOAD must be valid.",
+        ] {
+            let mut counter = 0usize;
+            let records = extract_inference_antecedent_signal_constraints(
+                &[statement(StatementClass::SignalValueConstraint, text)],
+                &declared_signals,
+                &mut counter,
+            );
+            assert!(
+                records.is_empty(),
+                "incomplete appositive emitted {records:?}"
             );
         }
     }

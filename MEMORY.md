@@ -17,26 +17,24 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.7b` owns production recovery and exact retained-chain reconciliation.
-  `.7a` has frozen the design; `.7c` remains the complete reviewed replay and publication slice.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.7c` owns the complete reviewed replay and publication of canonical-
+  recovery closure. `.7a` froze the design and `.7b` shipped production recovery plus exact retained-chain
+  reconciliation.
   Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: current replay authority reports one missing APB canonical fact at the SourceIR-to-EvidenceIR
-  boundary. The compound sentence explicitly says `PSEL` is asserted and then infers that three other signals
-  must be valid. The existing extractor correctly prevents `PSEL` from borrowing the consequence's `VALID`
-  value, but no independent producer preserves the antecedent's own asserted state. The `.7a` machine contract
-  now binds a source-grounded sibling producer, closed asserted/deasserted and polarity grammar, positive and
-  refusal controls, every proof-affected retained chain, and the complete population replay obligation. The
-  exact source-local `PSEL` identity is grounded by its same-clause signal appositive; distinct declared `PSELX`
-  remains opaque and an explicit refusal proves suffix spelling cannot alias it. Because the reviewed evidence
-  establishes no polarity, the corrected missing key is polarity-neutral `PSEL|must_be_asserted|<missing>`;
-  HIGH, LOW, and borrowed VALID are forbidden.
-  Existing current-result and consequence-precision baselines remain unchanged; `.7b` is the sole frontier.
+- Current state: the `.7b` production sibling now preserves an inference antecedent's independently explicit
+  asserted/deasserted state without widening the existing consequence extractor. It accepts only the frozen
+  marker/state/declaration grammar, keeps source-local `PSEL` distinct from declared `PSELX`, and leaves unknown
+  polarity symbolic; the complete 7-positive/13-refusal contract, exact full-build witness, 1,364-test core
+  suite, warning-denied Clippy, and all five production-genericity components pass. All 24 retained chains were
+  rebuilt through the adapter: every measurable stage is current with zero stale, and comparison found zero
+  public JSON or emitted-ISF delta. The tracked 39/0/1 result remains the prior revision-bound publication until
+  `.7c` independently replays all 12 reviewed sources and 48 stages.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: execute `.7b`: implement the frozen sibling producer, run the complete conformance matrix and
-  genericity controls, rebuild all affected retained chains, and require zero stale measurable stages.
-- In-flight uncommitted: `.7a` contract/checker and synchronized task/live/book/retrieval records await the
-  commit workflow; no production Rust change or background job.
+- Next action: execute `.7c`: replay the complete reviewed population, attribute every canonical/provenance/
+  conservation/residual/category/controller delta, and publish reproducible closure with exact cleanup evidence.
+- In-flight uncommitted: `.7b` production, tests, retained-chain reconciliation, and synchronized live/book/
+  retrieval records await the commit workflow; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

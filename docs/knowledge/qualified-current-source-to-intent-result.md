@@ -1,6 +1,6 @@
 ---
 id: qualified-current-source-to-intent-result
-title: The e125 repaired reviewed population replay is current and fabrication-free
+title: The e125 repaired reviewed population replay is the revision-bound published baseline
 answers:
   - "how many reviewed documents have current binary replay evidence"
   - "what are the current source to IntentIR precision recall and provenance counts"
@@ -14,7 +14,8 @@ answers:
   - "where is the 12 document current replay manifest"
   - "did whole population replay mutate canonical generated artifacts"
   - "is the b977 reviewed result current for the latest production revision"
-date: 2026-08-15
+  - "is the e125 reviewed result current after inference antecedent recovery"
+date: 2026-08-16
 status: current
 tags: [spec-to-intent-alignment, replay, artifact-currency, provenance, fabrication, trajectory]
 evidence: crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json; crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json; crates/specforge/test_data/trajectory/controller_input.json; crates/specforge/test_data/trajectory/trajectory_report.json; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6d.ii.f.iv.b)
@@ -48,5 +49,8 @@ population score.
 All replay, fabrication, and canonical-provenance hard gates pass. The controller state is `unmeasurable` because
 comparable history is still absent; it does not infer convergence from one improved point. The first ranked gap
 is `SPEC-TO-INTENT-ALIGNMENT.7`, the sole APB source-to-EvidenceIR loss. Planned `.6e` is superseded by `.f.iv.a`
-structural repair plus `.f.iv.b` whole-population proof. This authority remains revision-bound and must be replayed
-after future production changes.
+structural repair plus `.f.iv.b` whole-population proof. This authority is now the revision-bound published
+baseline rather than current evidence for the latest production revision. `.7b` added the closed inference-
+antecedent producer and rebuilt all 24 retained artifact chains with zero stale stages and zero public delta.
+That fixed-input reconciliation proves currency of retained chains, not the reviewed 12-source population.
+`.7c` must perform all 48 fresh stages before the published 39/0/1 result or controller state may change.

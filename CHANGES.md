@@ -1,3 +1,22 @@
+### SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state
+
+- Added a production sibling inside the normative signal-constraint family that extracts one independently
+  explicit `is asserted` or `is deasserted` state from the prefix of a bounded inference sentence. It requires
+  exactly one supported marker, state, and declared prefix signal; ambiguity, negation, trailing qualification,
+  missing authority, case-fold collision, and another statement class fail closed.
+- Added clause-local authority for the complete descriptive appositive `... signal, ID, ...` without mutating
+  the document catalog or aliasing identifier shape. Exact declarations win, one unique ASCII-case-insensitive
+  declaration may resolve, and distinct suffix spellings remain opaque.
+- Preserved the existing consequence producer and pattern/dynamic ordering. The shared polarity post-pass remains
+  sole level authority, and only sibling-appended semantic duplicates are removed after refinement.
+- Executed all 20 frozen cases directly from the `.7a` contract and added a complete synthetic EvidenceIR build
+  of the APB witness. The build emits polarity-neutral `PSEL|must_be_asserted|<missing>` plus the three unchanged
+  validity facts while forbidding PSEL/PSELX HIGH, LOW, or borrowed VALID.
+- Rebuilt all 24 proof-affected retained chains through four stages. A 192-file / 856,132-KiB rollback showed 96
+  proof/validation-only changes and zero public deltas; independent currency is 24 current / zero stale at every
+  stage, exact retention passes, and the rollback is removed without residue. The published 39/0/1 population
+  remains unchanged until `.7c` performs the complete 12-source/48-stage replay.
+
 ### SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract
 
 - Added an executable design authority that joins the exact APB first-boundary witness to a closed,

@@ -96,9 +96,9 @@ compiles the generic capture, IR, extraction, semantic, intent, and adapter surf
 `specforge-conformance` depends on core and owns evaluation, completeness characterization, replay, trajectory,
 reviewed snapshots, named fixtures, and behavioral transform/comparison evidence. The `specforge` application composes both and preserves the existing public
 module paths. Dependency mutations prove that a reverse edge, application cycle, or oracle-module reinsertion is
-rejected. The frozen pre-migration denominator remains 71 modules. The live inventory is now 78 modules, 41 claim
-families, and 168 top-level fields; the latest module is the conformance-owned behavioral harness, so it changes
-neither the core dependency direction nor the claim/field denominator.
+rejected. The frozen pre-migration denominator remains 71 modules. The live inventory is now 79 modules, 41 claim
+families, and 168 top-level fields; the latest module is the core clarification planner. Its boundary is declared
+non-authoritative, so it changes neither the package direction nor the claim/field denominator.
 
 The kernel's compiler-visible contract is now concrete. Source-order opaque symbol and document atoms expose only
 scope/ordinal identity and exact comparison; they have no display, string-conversion, spelling-order, or Serde
@@ -122,19 +122,19 @@ schema 2 preserves that complete IntentIR ledger and proves four local families 
 populated array record, every nonblank rendered ISF line, and every blocking reason. Canonical build, load,
 serialization, write, emitted-file reconciliation, and closed validation mutation execute current replay.
 The compiled-production graph substrate is also shipped. A standalone enforcement crate starts from Cargo's four
-product library/binary targets, parses all 78 inventoried Rust files, and derives 78 target-qualified modules plus
-their items, imports/re-exports, aliases, calls, local macros, external/builtin macros, and attributes. Seventy-six
+product library/binary targets, parses all 79 inventoried Rust files, and derives 79 target-qualified modules plus
+their items, imports/re-exports, aliases, calls, local macros, external/builtin macros, and attributes. Seventy-eight
 files are production-reachable; the remaining file is explicitly classified test support. Unknown configuration,
 missing inventory, absent or ambiguous modules, duplicate items or aliases, parse failure, and opaque verbatim
 syntax reject. Exact syntactic calls are separated from conservative compiler-resolved method, associated,
 binding, and callable-expression edges; Cargo compilation remains the type/privacy oracle.
 
-The information-flow layer over that graph is now shipped. A closed 140-row registry resolves typed aggregate,
+The information-flow layer over that graph is now shipped. A closed 141-row registry resolves typed aggregate,
 field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
 rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
 non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
-dependence through 2,272 functions and 11,909 helper edges, then check 11,382 branch/selection/decision sites,
-1,444 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
+dependence through 2,356 functions and 14,324 helper edges, then check 12,553 branch/selection/decision sites,
+1,462 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
 seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
 The dependency, inventory, rule, compiled-graph, information-flow, and frozen behavioral-contract checks now run
@@ -266,3 +266,22 @@ separate dimensions.
 - [Validation And Learning](../quality/validation.md) explains current quality signals.
 - [Current roadmap](../../../../ROADMAP.md) and the [task-tree catalog](../../../TASK_TREE.md) own
   implementation direction and delivery state.
+
+### Compound inference sentences preserve independent facts
+
+A causal sentence can carry separate facts. For example, “the select signal, `PSEL`, is asserted, which means
+`PADDR`, `PWRITE`, and `PWDATA` must be valid” states both the antecedent's own state and a later consequence.
+EvidenceIR therefore uses sibling producers: the existing consequence path emits only the validity obligations,
+while the antecedent path may emit `PSEL` as `must_be_asserted`. The antecedent never borrows `VALID` from the
+consequence.
+
+This recovery is intentionally closed. The classified sentence must contain a single supported inference marker,
+an explicit end-anchored `is asserted` or `is deasserted` state, and a single current-document signal declaration.
+A complete same-clause `signal, ID,` appositive may establish that identifier locally; spelling shape cannot turn
+it into a different declaration such as `PSELX`. Negation, trailing qualifiers, plural markers, states or signals,
+case-fold ambiguity, and the wrong statement class emit nothing. The normal polarity pass converts the symbolic
+state to a level only when independent active-high or active-low evidence exists.
+
+The frozen production matrix covers accepted and refused syntax, polarity, ambiguity, deduplication, and
+consequence borrowing. The retained chain set is rebuilt and current with no public output delta. The published
+reviewed-population measurement remains revision-bound until its independent complete replay finishes.
