@@ -161,7 +161,15 @@ visual assets fall from 1,191 to 1,152 across the live population. Seven documen
 one gains two; the Arm external-debug guide alone drops from eight to five, USB 3.2 from 482 to 458.
 A concrete instance: `structured_tables[1].caption_text` is
 `Figure 5-1: External debugger and core handshake sequence` in the persisted artifact and `null` in
-the replay. The captured caption text becomes a loose interior text element instead of a binding.
+the replay.
+
+What is lost is the **binding**, not the text. In the persisted Arm external-debug artifact all eight
+bound captions also exist as standalone `content_elements`, so a caption is normally carried twice —
+once as text in the reading order and once as an association to the table or figure it captions. A
+re-ingest that drops `caption_text` therefore loses the association while the words stay in the
+document. That is narrower than "the caption disappears", and it is the accurate reading: anything
+that resolves a figure's caption *through the binding* — which is what caption-mediated coverage
+does — stops finding it, while a text search still would.
 
 This is the census's most consequential result, and it inverts the obvious remedy. Re-ingesting the
 corpus would not simply refresh a stale artifact: it would trade thirty-nine caption bindings — which
@@ -203,6 +211,16 @@ Each suspect is excluded by measurement, not by argument:
 - **Input.** Every source is byte-count-checked against what the persisted artifact recorded, and its
   SHA-256 is measured and reported.
 - **Run-to-run noise.** Excluded by the repeat control above.
+
+One suspect is **not** excluded, and it is named here rather than left implicit. Host run conditions —
+thread count, parallelism, and machine load — were not controlled between the corpus refresh that
+built the persisted bundles and this census, and cannot be recovered after the fact. Every comparison
+in this tree is *persisted-then* against *replayed-now*, so the time axis and the run-condition axis
+are confounded. If Docling's layout model is sensitive to host parallelism, "not reproducible across
+time" would be the wrong name for the same measurements. The repeat control cannot separate them: it
+re-ran under identical conditions. The **toolchain** exclusion is also weaker than the others — it
+rests on the `.venv-docling` modification time, not on a content digest of the installed packages,
+because no digest was recorded when the bundles were built.
 
 What is left is that the same PDF, the same installed Docling, and the same model blobs produced one
 result when the persisted bundles were built and a different result now, for thirteen of

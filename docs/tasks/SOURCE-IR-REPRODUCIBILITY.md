@@ -102,10 +102,12 @@ still present and exactly three are content the current toolchain emits nowhere.
 `content_elements` changes cardinality anywhere, and `proof_ledger.ruleset_sha256` is identical for all 24.
 
 **The decisive result is the captions.** Caption bindings on tables and visual assets fall from 1,191 to
-1,152; seven documents lose bindings and one gains two. A captured caption becomes a loose interior text
-element — `structured_tables[1].caption_text` is `Figure 5-1: External debugger and core handshake sequence`
-persisted and `null` replayed. Re-ingesting is therefore not a refresh but a trade: newer figure-interior
-text for 39 caption bindings and three paragraphs. That inverts the obvious remedy and is why `.5` exists.
+1,152; seven documents lose bindings and one gains two — `structured_tables[1].caption_text` is
+`Figure 5-1: External debugger and core handshake sequence` persisted and `null` replayed. What is lost is the
+**binding, not the text**: in the persisted Arm external-debug artifact all eight bound captions also exist as
+standalone `content_elements`, so a caption is carried twice and a re-ingest drops only the association.
+Re-ingesting is therefore a trade — newer figure-interior text for 39 caption bindings and three paragraphs —
+which inverts the obvious remedy and is why `.5` exists.
 
 The result is not run-to-run noise. The largest proportional drift was ingested twice more into separate
 roots; all three replays produce the same 347 elements and the same `+81 / -0`, and differ from each other
@@ -196,6 +198,15 @@ Full result, method, controls, and per-document table:
   content-dependent rather than uniform, and identifying the trigger would narrow the mechanism faster than
   another whole-population re-measurement.
 - `.4` now owns the fingerprint question that was recorded here.
+- **Is "across time" even the right name?** Host run conditions — thread count, parallelism, machine load —
+  were not controlled between the corpus refresh that built the persisted bundles and the `.1` census, and
+  cannot be recovered after the fact. Every comparison in this tree is *persisted-then* against *replayed-now*,
+  so the temporal and run-condition axes are confounded, and the repeat control cannot separate them because it
+  re-ran under identical conditions. The cheapest discriminator is a forward experiment on one drifted
+  document: re-ingest it under two different thread counts at the same revision. If the output moves, the
+  drift is environmental rather than temporal, and `.4`'s fingerprint must record host conditions rather than
+  only versions. The toolchain exclusion is likewise mtime-based, not a content digest of the installed
+  packages, because none was recorded when the bundles were built.
 
 ## Blockers
 

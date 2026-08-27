@@ -34,8 +34,13 @@ of it is diagram furniture rather than specification prose.
 1,152 across the live population — seven documents lose bindings, one gains two. The Arm external-debug guide
 drops from eight to five; USB 3.2 from 482 to 458. The mechanism is visible in a single field:
 `structured_tables[1].caption_text` is `Figure 5-1: External debugger and core handshake sequence` in the
-persisted artifact and `null` in the replay. The caption is not deleted — it reappears as a loose interior text
-element, unbound from the table it captions.
+persisted artifact and `null` in the replay.
+
+**What is lost is the binding, not the text.** In the persisted artifact all eight bound captions also exist as
+standalone `content_elements`, so a caption is normally carried twice: once as text in the reading order, once
+as an association to the table or figure. A re-ingest that drops `caption_text` loses the association while the
+words stay in the document. Consumers that resolve a caption *through the binding* — caption-mediated coverage
+is the one that matters here — stop finding it; a text search still would.
 
 That is a real regression for this pipeline specifically. SpecForge's roadmap treats captions as first-class
 evidence rather than decoration, and caption-mediated coverage is a measured surface

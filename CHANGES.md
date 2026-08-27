@@ -34,10 +34,10 @@
   content the current toolchain emits nowhere. No collection but `content_elements` changes cardinality, and
   `proof_ledger.ruleset_sha256` is identical for all 24.
 - Found the result that inverts the obvious remedy. Caption bindings on tables and visual assets fall from
-  1,191 to 1,152: seven documents lose bindings and one gains two, and a captured caption becomes a loose
-  interior text element — `structured_tables[1].caption_text` is `Figure 5-1: External debugger and core
-  handshake sequence` persisted and `null` replayed. Re-ingesting is a trade, not a refresh, so it is a
-  decision and now has an owning leaf.
+  1,191 to 1,152: seven documents lose bindings and one gains two — `structured_tables[1].caption_text` is
+  `Figure 5-1: External debugger and core handshake sequence` persisted and `null` replayed. What is lost
+  is the binding, not the text: all eight bound captions in that artifact also exist as standalone
+  `content_elements`, so a re-ingest drops the association while the words stay. `.5` owns that decision.
 - Separated drift from noise. The largest proportional drift was ingested twice more into separate roots; all
   three replays produce the same 347 elements and the same `+81 / -0`, and differ only in `proof_ledger`.
   Comparing two same-input replays isolates that to each claim's `scope` and `conclusion_sha256` with the
