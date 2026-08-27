@@ -44,7 +44,15 @@ toolchain places that prose at `elem_00230`:
 An 11-element shift, with table, visual-asset, and page counts identical. The fixture failed closed — it
 refuses an element whose text does not contain the reviewed excerpt rather than matching the wrong one.
 
-**The cause is not this repository's code.** Every usual suspect is excluded by measurement:
+**The change is in Docling's own output, not this repository's code.** The decisive comparison is at the
+ingest boundary: the persisted `2026-08-10` promoted markdown is 168,210 bytes / 1,302 lines; a fresh run of the
+same PDF through the same installed Docling produces 168,359 bytes / 1,324 lines. The 22 added lines are text
+fragments recovered from *inside a block diagram* (`IN ORDER`, `Rename,`/`Dispatch`, `Branch`,
+`Integer Single-Cycle O`/`1`, `FP/ASIMD O`) — current Docling extracts text from a figure region the earlier run
+left alone, and those 22 lines become the 11 additional content elements. SpecForge's code never sees a
+difference it could have caused.
+
+Every remaining suspect is excluded by measurement:
 
 - **Input.** The PDF is byte-identical throughout: SHA-256 `8358c5ae…3a22`, unchanged on disk since
   `2026-04-02`, and the replay orchestrator asserts source digest equality before ingesting.
@@ -55,13 +63,18 @@ refuses an element whose text does not contain the reviewed excerpt rather than 
 - **Toolchain.** Docling `2.84.0`, `docling-core 2.78.0`, `docling-ibm-models 3.13.2`, `docling-parse 5.11.0`,
   unchanged on disk since `2026-08-08`; no model blob under `.cache/huggingface` is newer than `2026-08-09`.
 - **Batching.** Batched (`SPECFORGE_INGEST_BATCH_PAGES=16`) and unbatched ingest both produce 260.
+- **Compute device.** The CPU default landed `2026-06-02`, over two months before the persisted bundle, so both
+  runs take the same device path.
 - **Run-to-run noise.** Two back-to-back runs are byte-identical after normalizing the replay root, so ingest is
   stable *within* a session. Artifact digests always differ across roots because `SourceIR` embeds its own
   output paths; that is expected and is not drift.
 
-What remains is that the same PDF, toolchain, and models produced 249 elements when the persisted bundle was
-built and produce 260 now. `SourceIR` ingest is therefore not reproducible across time in this environment, and
-no doctrine can currently observe it.
+What remains is that the same PDF, the same installed Docling, and the same model blobs produced one markdown
+rendering when the persisted bundle was built and a different one now. `SourceIR` ingest is therefore not
+reproducible across time in this environment, the instability originates upstream of SpecForge, and no doctrine
+can currently observe it. Why Docling's figure handling changed without a version change is the open question
+`.1` must answer; the normalized bundle records no device, thread, or model fingerprint that would settle it
+after the fact.
 
 ### Why this matters beyond one cell
 
@@ -97,9 +110,10 @@ no doctrine can currently observe it.
 
 ## Open Questions
 
-- What actually changed between the `2026-08-10` bundle and now, given that input, revision, toolchain, and
-  models are all excluded? Candidates not yet tested: host-level parallelism or thread-count sensitivity in the
-  layout model, and a Docling cache or scratch directory whose state affects segmentation.
+- What changed inside Docling between the `2026-08-10` bundle and now, given that input, revision, installed
+  version, model blobs, batching, and device are all excluded, and the difference is specifically that a figure
+  region now yields text? Candidates not yet tested: host-level parallelism or thread-count sensitivity in the
+  layout/OCR models, and a Docling cache or scratch directory whose state affects figure handling.
 - Should ingest record a reproducibility fingerprint (toolchain versions plus model blob digests) in the
   normalized bundle metadata, so a future drift is attributable instead of archaeological?
 
@@ -111,7 +125,7 @@ no doctrine can currently observe it.
 
 | Date | Unit | Result |
 | --- | --- | --- |
-| `2026-08-27` | `.0` reproduction and exclusion | the reviewed Cortex-A76 prose moves `elem_00219` to `elem_00230` (249 to 260 content elements, identical table/visual/page counts); input digest, production revision, Docling and model versions, batching, and run-to-run noise are each excluded by direct measurement; `check_chain_currency.sh` is shown to start from the persisted `source_ir.json`, so the ingest boundary is outside its oracle |
+| `2026-08-27` | `.0` reproduction and exclusion | the reviewed Cortex-A76 prose moves `elem_00219` to `elem_00230` (249 to 260 content elements, identical table/visual/page counts); the drift is localized to Docling's own promoted markdown (168,210 to 168,359 bytes; 22 added lines, all text from inside a block diagram) with input digest, production revision, installed Docling and model versions, batching, device, and run-to-run noise each excluded by direct measurement; `check_chain_currency.sh` is shown to start from the persisted `source_ir.json`, so the ingest boundary is outside its oracle |
 
 ## Commit Log
 

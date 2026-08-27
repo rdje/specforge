@@ -10,6 +10,8 @@ answers:
   - "why do replayed SourceIR digests always differ between replay roots"
   - "is SpecForge PDF ingest deterministic"
   - "what changed between the persisted source_ir and a fresh ingest"
+  - "did docling output change without a version change"
+  - "why does docling now extract text from inside a figure"
   - "which task owns the SourceIR reproducibility gap"
   - "why are reviewed fixture anchors fragile"
 date: 2026-08-27
@@ -25,8 +27,15 @@ element id `elem_00219` plus an asserted excerpt; the current toolchain places t
 Ingest now emits 260 content elements where the persisted chain holds 249 — an 11-element shift, with table
 (68), visual-asset (71), and page (46) counts identical. Exact source-region capture therefore reads 13/14.
 
-**The cause is not this repository's code**, and each usual suspect is excluded by direct measurement rather
-than by argument:
+**The change is in Docling's own output, not in this repository's code.** The decisive comparison is at the
+ingest boundary itself: the persisted `2026-08-10` promoted markdown is 168,210 bytes / 1,302 lines, and a fresh
+run of the same PDF through the same installed Docling produces 168,359 bytes / 1,324 lines. The 22 added lines
+are text fragments recovered from *inside a block diagram* — `IN ORDER`, `Rename,` / `Dispatch`, `Branch`,
+`Integer Single-Cycle O` / `1`, `FP/ASIMD O` — i.e. current Docling extracts text from a figure region that the
+earlier run left alone. Those 22 markdown lines become the 11 additional content elements, which is the whole
+shift. SpecForge's own code never sees a difference it could have caused.
+
+Each remaining suspect is excluded by direct measurement rather than by argument:
 
 - **Input** — the PDF is byte-identical throughout, SHA-256 `8358c5ae…3a22`, unchanged on disk since
   `2026-04-02`; the replay orchestrator asserts source digest equality before ingesting.
@@ -35,9 +44,12 @@ than by argument:
   revision and `483e525d`, the only change under `crates/specforge/src/ir/source*` is additive.
 - **Toolchain** — Docling `2.84.0` and its sibling packages are unchanged on disk since `2026-08-08`, and no
   model blob under `.cache/huggingface` is newer than `2026-08-09`.
-- **Batching** — batched (`SPECFORGE_INGEST_BATCH_PAGES=16`) and unbatched ingest both produce 260.
+- **Batching** — batched (`SPECFORGE_INGEST_BATCH_PAGES=16`) and unbatched ingest both produce 260, and both
+  the persisted and the fresh comparison runs were unbatched.
+- **Compute device** — the CPU default landed `2026-06-02`, more than two months before the persisted bundle,
+  so both runs take the same device path.
 - **Run-to-run noise** — two back-to-back runs are byte-identical after normalizing the replay root, so ingest
-  is stable *within* a session.
+  is stable *within* a session. The instability is across time, not within a run.
 
 Two consequences follow, and the second is the structural one.
 
