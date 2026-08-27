@@ -33,8 +33,11 @@
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: start `SPEC-TO-INTENT-ALIGNMENT.9` (measure and resolve the five omitted production-capability
-  islands the controller ranks second), or take `SOURCE-IR-REPRODUCIBILITY.1` first if ingest currency should
-  gate before breadth.
+- Next action: run `SOURCE-IR-REPRODUCIBILITY.1` — the bounded read-only census of standing `SourceIR` drift
+  across the persisted corpus. Decided ahead of `SPEC-TO-INTENT-ALIGNMENT.9`: `.8d` proved at the ingest
+  boundary that Docling's output for an unchanged PDF changed (22 added markdown lines, all figure-interior
+  text, becoming 11 extra content elements), and `check_chain_currency.sh` treats `source_ir.json` as input,
+  never output — so an unknown share of every persisted chain may be stale while all gates read green. Breadth
+  measured on that foundation would have to be re-measured. `.9` follows the census.
 - In-flight uncommitted: none after this commit; no background job is running.
 - Blockers: none.
