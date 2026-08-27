@@ -920,6 +920,52 @@ impl TimingIntentDisposition {
     }
 }
 
+/// Typed cause for a captured source region that no canonical carrier accepts.
+///
+/// Closed vocabulary, deliberately narrower than the whole residual grammar: a producer may add a
+/// cause only when the structural evidence for it is decidable from the current document without
+/// a document, vendor, protocol, or review label. The sibling
+/// [`NonApplicableTimingQuantityDomain`] carries the physical/analog cause on scalar timing rows;
+/// this enum carries the "the target IR declares no carrier family for this content" cause on a
+/// captured region.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case", deny_unknown_fields)]
+pub enum CapturedRegionResidualCause {
+    /// The region is captured, but the target IR declares no carrier family for its content.
+    NoCanonicalCarrierForCapturedRegion,
+}
+
+/// First canonical-promotion boundary at which a captured region is refused a carrier.
+///
+/// Separate from [`TimingIntentBoundary`] on purpose: each carrier declares exactly the boundaries
+/// its own producer can reach, so neither grammar can widen by borrowing the other's variants.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case", deny_unknown_fields)]
+pub enum CapturedRegionBoundary {
+    EvidenceToSemanticIr,
+}
+
+/// One captured source region that crossed into `EvidenceIR` but reached no canonical carrier.
+///
+/// This is the region-side sibling of [`TimingIntentDisposition::NonApplicable`]: the region stays
+/// visible with its exact identity, evidence provenance, typed cause, first failing boundary, and
+/// operator replay route instead of disappearing from the IR chain. The record states only that no
+/// canonical carrier accepted the region — it never asserts a canonical value in its place.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CapturedRegionResidualRecord {
+    /// The captured region's own identity — the `SourceIR` visual asset id.
+    pub region_id: String,
+    /// The region's structural kind, carried verbatim from capture.
+    pub region_kind: VisualAssetKind,
+    /// `EvidenceIR` identifiers for the captured region this residual explains. Never empty: a
+    /// residual without provenance cannot be reviewed or replayed.
+    pub supporting_evidence_ids: Vec<String>,
+    pub cause: CapturedRegionResidualCause,
+    pub reason: String,
+    pub first_failing_stage: CapturedRegionBoundary,
+    pub replay: String,
+}
+
 /// One scalar constraint or physical limit captured from a timing/limits table.
 /// Parameter names typically follow the tXX convention (tSU, tHD, tCKH, etc.).
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

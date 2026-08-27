@@ -1,4 +1,42 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.8c (`2026-08-27`) — a residual for the region, not only for the record
+
+`residual_decisions` explains a record the pipeline refused. It has never been able to explain a source region
+the pipeline never turned into a record, and that is the more dangerous silence: nothing is left in the artifact
+to notice. A component-topology figure is real design content, but `SemanticIR` declares no collection that can
+hold "this block sits here and connects there", so the figure stopped at `EvidenceIR` and vanished.
+
+`captured_region_residuals` closes that hole on both `SemanticIR` and `IntentIR`. The producer runs last, over
+the assembled artifact, and asks one structural question per captured visual region: does any canonical record
+name it in its own provenance? The collections it reads are exactly the ones a visual region can reach, so
+coverage is a membership test over concrete records rather than a scan for the region's name.
+
+Reading the two production paths that consume visual evidence corrected the frozen design once.
+`extract_records_from_vlm_observations` threads the item's `evidence_id`, but `mine_verified_figure_contracts`
+cites the region as `figure:<asset_id>`. Testing only the first would have handed a residual to a figure that
+demonstrably produced verified waveform contracts — a false statement in a published artifact, and precisely
+what the contract's no-fabrication rule forbids. Both citation forms now count, through one shared constructor.
+
+The refusal that mattered most was statement-mediated coverage. `EvidenceIR` relates a statement to a visual
+region when the statement *is* its caption. Counting that would have marked 466 of the corpus's 1,089 captured
+figure-kind regions explained — including the reviewed `picture_0001`, whose only mediating statement is the
+literal caption `Figure 1: Example 1, with a shared ETB`. The reviewed cell would have failed while the run
+reported success.
+
+The field lives in the existing residual claim families rather than new ones, taking the registry from 168 to
+170 rules over 50 public fields at each stage. It is deliberately not an `INTENT_CARRIED_FIELDS` entry even
+though the value is a byte-identical clone: a carry rule is satisfied by matching an upstream claim, while
+`intent.residual` is `current_only` and must rebuild the field and compare it. For a record whose whole meaning
+is that nothing accepted the region, re-establishing it is the honest obligation.
+
+The frozen `.8a` contract moved by one line, and its checker stopped taking that line on trust. A named carrier
+must now resolve to a real production declaration, so a future slice can neither claim shipped coverage it never
+built nor delete a carrier the contract still cites. The self-test is 24/24.
+
+Two chains snapshotted before the rebuild show the public delta is exactly the intended record: I2S differs only
+in `captured_region_residuals(absent->20)` across 37 SemanticIR and 40 IntentIR public fields, and I2C only in
+`captured_region_residuals(absent->103)` across 40 and 42. Nothing else moved at either stage.
+
 ## SPEC-TO-INTENT-ALIGNMENT.7c.ii (`2026-08-16`) — publish only the independent clean replay
 
 The second complete population run starts from clean committed production at `a4a08cd4`, processes all 12

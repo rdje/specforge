@@ -369,7 +369,7 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   unconditionally through the doctrine driver and pre-commit hook.
 - **HOW:** `bash scripts/check_production_genericity.sh` for the fast clean-tree doctrine;
   `bash scripts/check_production_genericity.sh --self-test` for the CI qualification matrix and exact
-  inventory-to-runtime alpha-obligation join over all 168 rules.
+  inventory-to-runtime alpha-obligation join over all 170 rules.
 - **LIMIT:** structural alpha qualification proves declared capability/premise/topology invariants, not the
   population renaming/paraphrase/held-out behavior owned by `.f`.
 

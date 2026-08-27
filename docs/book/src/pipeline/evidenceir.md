@@ -370,8 +370,11 @@ table that yielded **zero** records as an `UnexplainedTableResidual` (a Warning
 finding + the `region_unexplained_tables` metric). It is flag-only: it never
 invents a fact, it makes a *gap visible* so you (or a rescan, or a fix) can act.
 
-This is the first slice of the broader region-accounting instrument (prose and
-figure regions, and a unified coverage report, follow). Verified by unit tests
+This is the first slice of the broader region-accounting instrument. Its
+figure-side sibling now ships one stage later: every captured visual region that
+no canonical `SemanticIR` record cites earns a typed
+[captured-region residual](semanticir.md#captured-regions-that-reach-no-carrier).
+A unified coverage report over both still follows. Verified by unit tests
 (covered table / zero-yield table / non-intent kinds skipped / id-marker
 precision) and a `validate` wiring test + `scripts/run_ci.sh`. *Authoritative
 tracking:* `docs/tasks/COMPLETENESS-REGION-ACCOUNTING.md`.

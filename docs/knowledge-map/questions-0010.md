@@ -2,6 +2,34 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the register-field eval surface (EvalTask::RegisterField)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > what is the registers.section_header_field strategy
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what is the rolling ledger archive protocol
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > what is the semantic_ungrounded_records_not_promoted residual packet
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > what is the size-immunity binding constraint for source_ir.json at extreme page counts
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what is the source-to-IntentIR completeness contract
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what is the standing per-doc quality report wired into converge/CI
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is the table-kind precision estimate and the flagged-mismatch list
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > what is the transaction phase qualifier authority rule
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -117,6 +145,8 @@
   > what was the must_be_value recall gap and how was it closed
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what were the initial 17-document held-out relation outcomes
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > when do I run specforge validate during a chain rebuild
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > when does a caption ground a register name
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -213,6 +243,8 @@
   > where does EvidenceIR statement text come from
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > where does SpecForge canonicalize upstream artifact paths before serialization
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > where does SpecForge record a captured region that produced no fact
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > where does SpecForge store temporary files and caches
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -265,35 +297,3 @@
   > where is consolidate_interface_actor_relations and strip_interface_suffix wired
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > where is coordinated-object actor-signal relation extraction implemented
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > where is current binary replay evidence stored
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > where is legal administrative prose filtered
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > where is normalized staging removed from Docling metadata
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > where is parenthetical single-wire authority enforced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > where is register level access stored in RegisterRecord
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > where is the 12 document current replay manifest
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > where is the I2C signal gold seed
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > where is the LTL renderer for temporal rules
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where is the SpecForge FSMGen feedback or handoff channel
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > where is the SpecForge trajectory controller engine
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > where is the U+F0B7 signal integrity panic in evidence extraction

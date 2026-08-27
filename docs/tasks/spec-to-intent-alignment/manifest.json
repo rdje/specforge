@@ -1,847 +1,859 @@
 {
-   "contract_id" : "spec-to-intent-alignment-active-task-evidence",
-   "current_frontier" : {
-      "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8",
-      "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.8`.",
-      "mode" : "eligible",
-      "part_id" : "residual-actionability"
-   },
-   "current_path" : "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md",
-   "index_path" : "docs/tasks/spec-to-intent-alignment/INDEX.md",
-   "leaf_routes" : [
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT",
-         "origin" : "structural",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.0",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.0"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.1",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.1"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.2",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.2"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.3",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.3"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.4",
-         "origin" : "structural",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.4"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.4a",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.4a"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.4b",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.4b"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.4c",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.4c"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.5",
-         "origin" : "structural",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.5"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.5a",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.5a"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.5b",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.5b"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6a",
-         "origin" : "legacy",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6a"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6b",
-         "origin" : "structural",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6b"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6b.i",
-         "origin" : "legacy",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6b.i"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6b.ii",
-         "origin" : "structural",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6b.ii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6b.ii.a",
-         "origin" : "legacy",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6b.ii.a"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b",
-         "origin" : "legacy",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6b.iii",
-         "origin" : "legacy",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6b.iii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6c",
-         "origin" : "structural",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6c"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6c.i",
-         "origin" : "legacy",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6c.i"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6c.ii",
-         "origin" : "legacy",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6c.ii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.i",
-         "origin" : "legacy",
-         "part_id" : "qualification-and-repair",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.i"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.a",
-         "origin" : "legacy",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.a"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.b",
-         "origin" : "legacy",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.b"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.c",
-         "origin" : "legacy",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.c"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d",
-         "origin" : "structural",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i",
-         "origin" : "legacy",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii",
-         "origin" : "legacy",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii",
-         "origin" : "legacy",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv",
-         "origin" : "legacy",
-         "part_id" : "genericity-remediation",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e",
-         "origin" : "structural",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv",
-         "origin" : "structural",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v",
-         "origin" : "structural",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii",
-         "origin" : "legacy",
-         "part_id" : "structural-proof",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6e",
-         "origin" : "post_migration",
-         "part_id" : "behavioral-qualification"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7",
-         "origin" : "post_migration",
-         "part_id" : "canonical-recovery"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7a",
-         "origin" : "post_migration",
-         "part_id" : "canonical-recovery"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7b",
-         "origin" : "post_migration",
-         "part_id" : "canonical-recovery"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7c",
-         "origin" : "post_migration",
-         "part_id" : "canonical-recovery"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7c.i",
-         "origin" : "post_migration",
-         "part_id" : "canonical-recovery"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.7c.ii",
-         "origin" : "post_migration",
-         "part_id" : "canonical-recovery"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8",
-         "origin" : "post_migration",
-         "part_id" : "residual-actionability"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8a",
-         "origin" : "post_migration",
-         "part_id" : "residual-actionability"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8b",
-         "origin" : "post_migration",
-         "part_id" : "residual-actionability"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8c",
-         "origin" : "post_migration",
-         "part_id" : "residual-actionability"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8d",
-         "origin" : "post_migration",
-         "part_id" : "residual-actionability"
-      },
-      {
-         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.9",
-         "origin" : "structural",
-         "part_id" : "current-and-future",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.9"
-      }
-   ],
-   "marker_prefix" : "spec-to-intent-task-source-region",
-   "migrated_on" : "2026-08-14",
-   "migration_state" : "migrated",
-   "parts" : [
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — program foundation",
-         "metrics" : {
-            "bytes" : 43701,
-            "line_bytes" : 461,
-            "lines" : 472
-         },
-         "part_id" : "program-foundation",
-         "path" : "docs/tasks/spec-to-intent-alignment/program-foundation.md",
-         "sha256" : "6bce224da33bc93b3b25a4ba9b0ee56cb3706cae24588d71a338147e9377b4fd",
-         "state" : "legacy"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — qualification and repair",
-         "metrics" : {
-            "bytes" : 30129,
-            "line_bytes" : 669,
-            "lines" : 292
-         },
-         "part_id" : "qualification-and-repair",
-         "path" : "docs/tasks/spec-to-intent-alignment/qualification-and-repair.md",
-         "sha256" : "9475b57c015fbbb06b88b2660dc6fd9931fcba43a02900f13fa4ffd66200f5c9",
-         "state" : "legacy"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — genericity remediation",
-         "metrics" : {
-            "bytes" : 23803,
-            "line_bytes" : 608,
-            "lines" : 227
-         },
-         "part_id" : "genericity-remediation",
-         "path" : "docs/tasks/spec-to-intent-alignment/genericity-remediation.md",
-         "sha256" : "17c784751fcce94ac4418e81f0dea809839e77b420e5dc87f45a9d1d7b48fb72",
-         "state" : "legacy"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — structural proof",
-         "metrics" : {
-            "bytes" : 62558,
-            "line_bytes" : 1605,
-            "lines" : 502
-         },
-         "part_id" : "structural-proof",
-         "path" : "docs/tasks/spec-to-intent-alignment/structural-proof.md",
-         "sha256" : "940142adc67ffa16ed2a252cbf55774e47a2fbe24974052bd5468dfc2d35402b",
-         "state" : "legacy"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — current and future",
-         "metrics" : {
-            "bytes" : 10213,
-            "line_bytes" : 422,
-            "lines" : 95
-         },
-         "part_id" : "current-and-future",
-         "path" : "docs/tasks/spec-to-intent-alignment/current-and-future.md",
-         "sha256" : "95fcc90d6338ec030e0f8c391a9187be9722cb5bf8621cdcd05b068cabd236ea",
-         "state" : "active"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — verification",
-         "metrics" : {
-            "bytes" : 65125,
-            "line_bytes" : 780,
-            "lines" : 158
-         },
-         "part_id" : "verification",
-         "path" : "docs/tasks/spec-to-intent-alignment/verification.md",
-         "sha256" : "946a69c8f0756e7c6d2fbe243662d9b15385d6cc323ba273dc8c9f220f539efd",
-         "state" : "legacy"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — commit and chronology",
-         "metrics" : {
-            "bytes" : 46381,
-            "line_bytes" : 364,
-            "lines" : 394
-         },
-         "part_id" : "commit-and-chronology",
-         "path" : "docs/tasks/spec-to-intent-alignment/commit-and-chronology.md",
-         "sha256" : "fc179ea27926422319247aa5841697866bbd63153630312cdd9fc5ba8134a816",
-         "state" : "legacy"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
-         "metrics" : {
-            "bytes" : 53600,
-            "line_bytes" : 439,
-            "lines" : 536
-         },
-         "part_id" : "behavioral-qualification",
-         "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-         "sha256" : "0d7415ca6188ef0827b554bf1e180ce4fd1a7bcc76b17dc6a389c616ec67c54b",
-         "state" : "active"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — canonical recovery",
-         "metrics" : {
-            "bytes" : 24480,
-            "line_bytes" : 515,
-            "lines" : 294
-         },
-         "part_id" : "canonical-recovery",
-         "path" : "docs/tasks/spec-to-intent-alignment/canonical-recovery.md",
-         "sha256" : "ba7ca436975f7812abb6b3243e462aded635a4682091dac58b35123893e43be2",
-         "state" : "active"
-      },
-      {
-         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — residual actionability",
-         "metrics" : {
-            "bytes" : 39356,
-            "line_bytes" : 541,
-            "lines" : 478
-         },
-         "part_id" : "residual-actionability",
-         "path" : "docs/tasks/spec-to-intent-alignment/residual-actionability.md",
-         "sha256" : "32569195b2f90214ea54bb3ec0b4422bc4c17a201bbb0297937cc81a2ac1b3c9",
-         "state" : "active"
-      }
-   ],
-   "reason" : "contain oversized active alignment task without losing task evidence or executable ownership",
-   "regions" : [
-      {
-         "end_line" : 43,
-         "metrics" : {
-            "bytes" : 2290,
-            "line_bytes" : 110,
-            "lines" : 43
-         },
-         "part_id" : "program-foundation",
-         "region_id" : "program-identity",
-         "sha256" : "febecb3e36936eb84f01426f40d69917f69ffb75bf5dd210d780dc42abf93e0e",
-         "start_line" : 1
-      },
-      {
-         "end_line" : 129,
-         "metrics" : {
-            "bytes" : 10027,
-            "line_bytes" : 461,
-            "lines" : 86
-         },
-         "part_id" : "program-foundation",
-         "region_id" : "program-nodes-00-05b",
-         "sha256" : "0bda0367e3d199f7416a76c56fa9e7e6ef0452708d28be17561497bec87a79fc",
-         "start_line" : 44
-      },
-      {
-         "end_line" : 225,
-         "metrics" : {
-            "bytes" : 13317,
-            "line_bytes" : 669,
-            "lines" : 96
-         },
-         "part_id" : "qualification-and-repair",
-         "region_id" : "qualification-nodes-06-06d-i",
-         "sha256" : "66af2846924f39c12853e596fc4afaa9abfdefab4e4bbe5a01d29e3405d47bba",
-         "start_line" : 130
-      },
-      {
-         "end_line" : 290,
-         "metrics" : {
-            "bytes" : 9800,
-            "line_bytes" : 608,
-            "lines" : 65
-         },
-         "part_id" : "genericity-remediation",
-         "region_id" : "genericity-nodes-06d-ii-06d-ii-d-iv",
-         "sha256" : "651dede6faa42ab615cecda4951621009807b3a6ce0d4f271dfacae3c1ecaa78",
-         "start_line" : 226
-      },
-      {
-         "end_line" : 426,
-         "metrics" : {
-            "bytes" : 29957,
-            "line_bytes" : 1605,
-            "lines" : 136
-         },
-         "part_id" : "structural-proof",
-         "region_id" : "structural-nodes-06d-ii-e",
-         "sha256" : "38ac4473fb28c74da2e86842661211aa803c52749aac08dbbdb6f3e51182d207",
-         "start_line" : 291
-      },
-      {
-         "end_line" : 461,
-         "metrics" : {
-            "bytes" : 2575,
-            "line_bytes" : 422,
-            "lines" : 35
-         },
-         "part_id" : "current-and-future",
-         "region_id" : "future-nodes-06d-ii-f-09",
-         "sha256" : "4bc08412651cd7f1558116d6d502321a14708b7614b3a4647bccf0d394d0ab33",
-         "start_line" : 427
-      },
-      {
-         "end_line" : 511,
-         "metrics" : {
-            "bytes" : 7243,
-            "line_bytes" : 251,
-            "lines" : 50
-         },
-         "part_id" : "current-and-future",
-         "region_id" : "ordered-current-frontier",
-         "sha256" : "ebb11131fc86e69ce08eaac5f9cf9b0e07c0d3359aefb17fe484e34bc588b8ee",
-         "start_line" : 462
-      },
-      {
-         "end_line" : 679,
-         "metrics" : {
-            "bytes" : 17342,
-            "line_bytes" : 115,
-            "lines" : 168
-         },
-         "part_id" : "program-foundation",
-         "region_id" : "decisions",
-         "sha256" : "534e72b0d001d972cd18beb60e7c077486c34bf51c2fb3f9b07a0ab6e634851b",
-         "start_line" : 512
-      },
-      {
-         "end_line" : 715,
-         "metrics" : {
-            "bytes" : 3336,
-            "line_bytes" : 115,
-            "lines" : 36
-         },
-         "part_id" : "structural-proof",
-         "region_id" : "structural-doctrine-contract",
-         "sha256" : "12ad2e2ed4d1815f480f4104582d9557a133d59689a1b477996da99f4570f43f",
-         "start_line" : 680
-      },
-      {
-         "end_line" : 721,
-         "metrics" : {
-            "bytes" : 294,
-            "line_bytes" : 111,
-            "lines" : 6
-         },
-         "part_id" : "program-foundation",
-         "region_id" : "legacy-open-question",
-         "sha256" : "e7bde2529da582872a5812305a547fcf45bb24effbb6465489489ac1e330a8a4",
-         "start_line" : 716
-      },
-      {
-         "end_line" : 726,
-         "metrics" : {
-            "bytes" : 228,
-            "line_bytes" : 107,
-            "lines" : 5
-         },
-         "part_id" : "program-foundation",
-         "region_id" : "legacy-blocker",
-         "sha256" : "310be0a2e02fe704311795f97cdd0a9de6b8267488e7478b2df2884a40542398",
-         "start_line" : 722
-      },
-      {
-         "end_line" : 877,
-         "metrics" : {
-            "bytes" : 64899,
-            "line_bytes" : 780,
-            "lines" : 151
-         },
-         "part_id" : "verification",
-         "region_id" : "verification-ledger",
-         "sha256" : "ebbaea1a1cc496a9058efebeee7f5ff1ed65f08175b4718b355dd814e84dfacb",
-         "start_line" : 727
-      },
-      {
-         "end_line" : 1019,
-         "metrics" : {
-            "bytes" : 12633,
-            "line_bytes" : 115,
-            "lines" : 142
-         },
-         "part_id" : "program-foundation",
-         "region_id" : "acceptance-02-05b",
-         "sha256" : "16f3fca452eb15a030143aa1d78843a27c67cb6e5c7041f434c0f6d6e578b6b7",
-         "start_line" : 878
-      },
-      {
-         "end_line" : 1205,
-         "metrics" : {
-            "bytes" : 16405,
-            "line_bytes" : 118,
-            "lines" : 186
-         },
-         "part_id" : "qualification-and-repair",
-         "region_id" : "acceptance-06a-06d-i",
-         "sha256" : "ed5ffc0527c70072506b661afad2cb112b34d8b567a4bc4f77b509cf05e88bc4",
-         "start_line" : 1020
-      },
-      {
-         "end_line" : 1357,
-         "metrics" : {
-            "bytes" : 13560,
-            "line_bytes" : 117,
-            "lines" : 152
-         },
-         "part_id" : "genericity-remediation",
-         "region_id" : "acceptance-genericity-remediation",
-         "sha256" : "4112046b82c1b2ada6ef4516be045cd052aa91eafcc451fb89137e405b429db1",
-         "start_line" : 1206
-      },
-      {
-         "end_line" : 1419,
-         "metrics" : {
-            "bytes" : 5774,
-            "line_bytes" : 117,
-            "lines" : 62
-         },
-         "part_id" : "structural-proof",
-         "region_id" : "acceptance-proof-foundation",
-         "sha256" : "cf0d2f8d117be2939bc6a254282ffe4235773c41a0e9589b909c9ce34c438e12",
-         "start_line" : 1358
-      },
-      {
-         "end_line" : 1555,
-         "metrics" : {
-            "bytes" : 12713,
-            "line_bytes" : 118,
-            "lines" : 136
-         },
-         "part_id" : "structural-proof",
-         "region_id" : "acceptance-proof-migration",
-         "sha256" : "a422a3cd50aa66bc46b1c23fcdfc674b251f2c90c72c189777fe66a97d4a7508",
-         "start_line" : 1420
-      },
-      {
-         "end_line" : 1652,
-         "metrics" : {
-            "bytes" : 8746,
-            "line_bytes" : 130,
-            "lines" : 97
-         },
-         "part_id" : "structural-proof",
-         "region_id" : "acceptance-compiled-doctrine",
-         "sha256" : "abc6d812fb36030e0d0cd0838fd9336842950c4f98bdb7f764d682b81f7c517d",
-         "start_line" : 1556
-      },
-      {
-         "end_line" : 1665,
-         "metrics" : {
-            "bytes" : 1003,
-            "line_bytes" : 116,
-            "lines" : 13
-         },
-         "part_id" : "structural-proof",
-         "region_id" : "acceptance-structural-qualification",
-         "sha256" : "5770911bbf44fba6905a0e29e2ceb456f60a18a74a7fb7adf68b411649003398",
-         "start_line" : 1653
-      },
-      {
-         "end_line" : 1712,
-         "metrics" : {
-            "bytes" : 11016,
-            "line_bytes" : 364,
-            "lines" : 47
-         },
-         "part_id" : "commit-and-chronology",
-         "region_id" : "commit-log",
-         "sha256" : "658206c635cb60acee2210134f455c0dfe0e0d686df0d66d3af1f2ea2f93ced2",
-         "start_line" : 1666
-      },
-      {
-         "end_line" : 2049,
-         "metrics" : {
-            "bytes" : 35020,
-            "line_bytes" : 119,
-            "lines" : 337
-         },
-         "part_id" : "commit-and-chronology",
-         "region_id" : "chronology",
-         "sha256" : "33a0baa30939431b898d52cdd83c9abaec577dcc046f22ea697664d2217020a9",
-         "start_line" : 1713
-      }
-   ],
-   "schema_version" : 1,
-   "source" : {
-      "boundary_commit" : "38b793957d26d259a0abce5c84de9273d597d391",
-      "git_blob" : "66ae9b6cde51476d5b45a180c756f0f9463d3632",
-      "metrics" : {
-         "bytes" : 278178,
-         "line_bytes" : 1605,
-         "lines" : 2049
-      },
-      "sha256" : "e70892a5c6acbe794bea6a9dd4484a90481e31d0aba64d8b8e8dcaaeae90a26c"
-   },
-   "source_capsule" : "docs/archive/tasks/spec-to-intent-alignment/source-through-2026-08-14.md",
-   "verifier" : "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --check"
+  "contract_id": "spec-to-intent-alignment-active-task-evidence",
+  "current_frontier": {
+    "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8",
+    "literal": "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.8`.",
+    "mode": "eligible",
+    "part_id": "residual-actionability"
+  },
+  "current_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md",
+  "index_path": "docs/tasks/spec-to-intent-alignment/INDEX.md",
+  "leaf_routes": [
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT",
+      "origin": "structural",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.0",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.0"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.1",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.1"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.2",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.2"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.3",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.3"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.4",
+      "origin": "structural",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.4"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.4a",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.4a"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.4b",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.4b"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.4c",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.4c"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.5",
+      "origin": "structural",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.5"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.5a",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.5a"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.5b",
+      "origin": "legacy",
+      "part_id": "program-foundation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.5b"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6a",
+      "origin": "legacy",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6a"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b",
+      "origin": "structural",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.i",
+      "origin": "legacy",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.i"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.ii",
+      "origin": "structural",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.ii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.a",
+      "origin": "legacy",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.a"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b",
+      "origin": "legacy",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.iii",
+      "origin": "legacy",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.iii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6c",
+      "origin": "structural",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6c"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6c.i",
+      "origin": "legacy",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6c.i"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6c.ii",
+      "origin": "legacy",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6c.ii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.i",
+      "origin": "legacy",
+      "part_id": "qualification-and-repair",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.i"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.a",
+      "origin": "legacy",
+      "part_id": "genericity-remediation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.a"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.b",
+      "origin": "legacy",
+      "part_id": "genericity-remediation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.b"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.c",
+      "origin": "legacy",
+      "part_id": "genericity-remediation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.c"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d",
+      "origin": "structural",
+      "part_id": "genericity-remediation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i",
+      "origin": "legacy",
+      "part_id": "genericity-remediation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii",
+      "origin": "legacy",
+      "part_id": "genericity-remediation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii",
+      "origin": "legacy",
+      "part_id": "genericity-remediation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv",
+      "origin": "legacy",
+      "part_id": "genericity-remediation",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e",
+      "origin": "structural",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv",
+      "origin": "structural",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v",
+      "origin": "structural",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii",
+      "origin": "legacy",
+      "part_id": "structural-proof",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6e",
+      "origin": "post_migration",
+      "part_id": "behavioral-qualification"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7",
+      "origin": "post_migration",
+      "part_id": "canonical-recovery"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7a",
+      "origin": "post_migration",
+      "part_id": "canonical-recovery"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7b",
+      "origin": "post_migration",
+      "part_id": "canonical-recovery"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7c",
+      "origin": "post_migration",
+      "part_id": "canonical-recovery"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7c.i",
+      "origin": "post_migration",
+      "part_id": "canonical-recovery"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7c.ii",
+      "origin": "post_migration",
+      "part_id": "canonical-recovery"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8",
+      "origin": "post_migration",
+      "part_id": "residual-actionability"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8a",
+      "origin": "post_migration",
+      "part_id": "residual-actionability"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8b",
+      "origin": "post_migration",
+      "part_id": "residual-actionability"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8c",
+      "origin": "post_migration",
+      "part_id": "residual-carrier"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8d",
+      "origin": "post_migration",
+      "part_id": "residual-carrier"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9",
+      "origin": "structural",
+      "part_id": "current-and-future",
+      "source_literal": "SPEC-TO-INTENT-ALIGNMENT.9"
+    }
+  ],
+  "marker_prefix": "spec-to-intent-task-source-region",
+  "migrated_on": "2026-08-14",
+  "migration_state": "migrated",
+  "parts": [
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — program foundation",
+      "metrics": {
+        "bytes": 43701,
+        "line_bytes": 461,
+        "lines": 472
+      },
+      "part_id": "program-foundation",
+      "path": "docs/tasks/spec-to-intent-alignment/program-foundation.md",
+      "sha256": "6bce224da33bc93b3b25a4ba9b0ee56cb3706cae24588d71a338147e9377b4fd",
+      "state": "legacy"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — qualification and repair",
+      "metrics": {
+        "bytes": 30129,
+        "line_bytes": 669,
+        "lines": 292
+      },
+      "part_id": "qualification-and-repair",
+      "path": "docs/tasks/spec-to-intent-alignment/qualification-and-repair.md",
+      "sha256": "9475b57c015fbbb06b88b2660dc6fd9931fcba43a02900f13fa4ffd66200f5c9",
+      "state": "legacy"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — genericity remediation",
+      "metrics": {
+        "bytes": 23803,
+        "line_bytes": 608,
+        "lines": 227
+      },
+      "part_id": "genericity-remediation",
+      "path": "docs/tasks/spec-to-intent-alignment/genericity-remediation.md",
+      "sha256": "17c784751fcce94ac4418e81f0dea809839e77b420e5dc87f45a9d1d7b48fb72",
+      "state": "legacy"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — structural proof",
+      "metrics": {
+        "bytes": 62558,
+        "line_bytes": 1605,
+        "lines": 502
+      },
+      "part_id": "structural-proof",
+      "path": "docs/tasks/spec-to-intent-alignment/structural-proof.md",
+      "sha256": "940142adc67ffa16ed2a252cbf55774e47a2fbe24974052bd5468dfc2d35402b",
+      "state": "legacy"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — current and future",
+      "metrics": {
+        "bytes": 10213,
+        "line_bytes": 422,
+        "lines": 95
+      },
+      "part_id": "current-and-future",
+      "path": "docs/tasks/spec-to-intent-alignment/current-and-future.md",
+      "sha256": "95fcc90d6338ec030e0f8c391a9187be9722cb5bf8621cdcd05b068cabd236ea",
+      "state": "active"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — verification",
+      "metrics": {
+        "bytes": 65125,
+        "line_bytes": 780,
+        "lines": 158
+      },
+      "part_id": "verification",
+      "path": "docs/tasks/spec-to-intent-alignment/verification.md",
+      "sha256": "946a69c8f0756e7c6d2fbe243662d9b15385d6cc323ba273dc8c9f220f539efd",
+      "state": "legacy"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — commit and chronology",
+      "metrics": {
+        "bytes": 46381,
+        "line_bytes": 364,
+        "lines": 394
+      },
+      "part_id": "commit-and-chronology",
+      "path": "docs/tasks/spec-to-intent-alignment/commit-and-chronology.md",
+      "sha256": "fc179ea27926422319247aa5841697866bbd63153630312cdd9fc5ba8134a816",
+      "state": "legacy"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
+      "metrics": {
+        "bytes": 53600,
+        "line_bytes": 439,
+        "lines": 536
+      },
+      "part_id": "behavioral-qualification",
+      "path": "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
+      "sha256": "0d7415ca6188ef0827b554bf1e180ce4fd1a7bcc76b17dc6a389c616ec67c54b",
+      "state": "active"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — canonical recovery",
+      "metrics": {
+        "bytes": 24480,
+        "line_bytes": 515,
+        "lines": 294
+      },
+      "part_id": "canonical-recovery",
+      "path": "docs/tasks/spec-to-intent-alignment/canonical-recovery.md",
+      "sha256": "ba7ca436975f7812abb6b3243e462aded635a4682091dac58b35123893e43be2",
+      "state": "active"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual actionability",
+      "metrics": {
+        "bytes": 36012,
+        "line_bytes": 634,
+        "lines": 413
+      },
+      "part_id": "residual-actionability",
+      "path": "docs/tasks/spec-to-intent-alignment/residual-actionability.md",
+      "sha256": "d5b61d8d14d9a5c15ad141e7240bf736678e40d050fdb797ecc2d8c29f83da1b",
+      "state": "active"
+    },
+    {
+      "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual carrier",
+      "metrics": {
+        "bytes": 16735,
+        "line_bytes": 138,
+        "lines": 212
+      },
+      "part_id": "residual-carrier",
+      "path": "docs/tasks/spec-to-intent-alignment/residual-carrier.md",
+      "sha256": "319e11aa960371f225bcb568006b390adb6d2756194b369f6df45f86054f729d",
+      "state": "active"
+    }
+  ],
+  "reason": "contain oversized active alignment task without losing task evidence or executable ownership",
+  "regions": [
+    {
+      "end_line": 43,
+      "metrics": {
+        "bytes": 2290,
+        "line_bytes": 110,
+        "lines": 43
+      },
+      "part_id": "program-foundation",
+      "region_id": "program-identity",
+      "sha256": "febecb3e36936eb84f01426f40d69917f69ffb75bf5dd210d780dc42abf93e0e",
+      "start_line": 1
+    },
+    {
+      "end_line": 129,
+      "metrics": {
+        "bytes": 10027,
+        "line_bytes": 461,
+        "lines": 86
+      },
+      "part_id": "program-foundation",
+      "region_id": "program-nodes-00-05b",
+      "sha256": "0bda0367e3d199f7416a76c56fa9e7e6ef0452708d28be17561497bec87a79fc",
+      "start_line": 44
+    },
+    {
+      "end_line": 225,
+      "metrics": {
+        "bytes": 13317,
+        "line_bytes": 669,
+        "lines": 96
+      },
+      "part_id": "qualification-and-repair",
+      "region_id": "qualification-nodes-06-06d-i",
+      "sha256": "66af2846924f39c12853e596fc4afaa9abfdefab4e4bbe5a01d29e3405d47bba",
+      "start_line": 130
+    },
+    {
+      "end_line": 290,
+      "metrics": {
+        "bytes": 9800,
+        "line_bytes": 608,
+        "lines": 65
+      },
+      "part_id": "genericity-remediation",
+      "region_id": "genericity-nodes-06d-ii-06d-ii-d-iv",
+      "sha256": "651dede6faa42ab615cecda4951621009807b3a6ce0d4f271dfacae3c1ecaa78",
+      "start_line": 226
+    },
+    {
+      "end_line": 426,
+      "metrics": {
+        "bytes": 29957,
+        "line_bytes": 1605,
+        "lines": 136
+      },
+      "part_id": "structural-proof",
+      "region_id": "structural-nodes-06d-ii-e",
+      "sha256": "38ac4473fb28c74da2e86842661211aa803c52749aac08dbbdb6f3e51182d207",
+      "start_line": 291
+    },
+    {
+      "end_line": 461,
+      "metrics": {
+        "bytes": 2575,
+        "line_bytes": 422,
+        "lines": 35
+      },
+      "part_id": "current-and-future",
+      "region_id": "future-nodes-06d-ii-f-09",
+      "sha256": "4bc08412651cd7f1558116d6d502321a14708b7614b3a4647bccf0d394d0ab33",
+      "start_line": 427
+    },
+    {
+      "end_line": 511,
+      "metrics": {
+        "bytes": 7243,
+        "line_bytes": 251,
+        "lines": 50
+      },
+      "part_id": "current-and-future",
+      "region_id": "ordered-current-frontier",
+      "sha256": "ebb11131fc86e69ce08eaac5f9cf9b0e07c0d3359aefb17fe484e34bc588b8ee",
+      "start_line": 462
+    },
+    {
+      "end_line": 679,
+      "metrics": {
+        "bytes": 17342,
+        "line_bytes": 115,
+        "lines": 168
+      },
+      "part_id": "program-foundation",
+      "region_id": "decisions",
+      "sha256": "534e72b0d001d972cd18beb60e7c077486c34bf51c2fb3f9b07a0ab6e634851b",
+      "start_line": 512
+    },
+    {
+      "end_line": 715,
+      "metrics": {
+        "bytes": 3336,
+        "line_bytes": 115,
+        "lines": 36
+      },
+      "part_id": "structural-proof",
+      "region_id": "structural-doctrine-contract",
+      "sha256": "12ad2e2ed4d1815f480f4104582d9557a133d59689a1b477996da99f4570f43f",
+      "start_line": 680
+    },
+    {
+      "end_line": 721,
+      "metrics": {
+        "bytes": 294,
+        "line_bytes": 111,
+        "lines": 6
+      },
+      "part_id": "program-foundation",
+      "region_id": "legacy-open-question",
+      "sha256": "e7bde2529da582872a5812305a547fcf45bb24effbb6465489489ac1e330a8a4",
+      "start_line": 716
+    },
+    {
+      "end_line": 726,
+      "metrics": {
+        "bytes": 228,
+        "line_bytes": 107,
+        "lines": 5
+      },
+      "part_id": "program-foundation",
+      "region_id": "legacy-blocker",
+      "sha256": "310be0a2e02fe704311795f97cdd0a9de6b8267488e7478b2df2884a40542398",
+      "start_line": 722
+    },
+    {
+      "end_line": 877,
+      "metrics": {
+        "bytes": 64899,
+        "line_bytes": 780,
+        "lines": 151
+      },
+      "part_id": "verification",
+      "region_id": "verification-ledger",
+      "sha256": "ebbaea1a1cc496a9058efebeee7f5ff1ed65f08175b4718b355dd814e84dfacb",
+      "start_line": 727
+    },
+    {
+      "end_line": 1019,
+      "metrics": {
+        "bytes": 12633,
+        "line_bytes": 115,
+        "lines": 142
+      },
+      "part_id": "program-foundation",
+      "region_id": "acceptance-02-05b",
+      "sha256": "16f3fca452eb15a030143aa1d78843a27c67cb6e5c7041f434c0f6d6e578b6b7",
+      "start_line": 878
+    },
+    {
+      "end_line": 1205,
+      "metrics": {
+        "bytes": 16405,
+        "line_bytes": 118,
+        "lines": 186
+      },
+      "part_id": "qualification-and-repair",
+      "region_id": "acceptance-06a-06d-i",
+      "sha256": "ed5ffc0527c70072506b661afad2cb112b34d8b567a4bc4f77b509cf05e88bc4",
+      "start_line": 1020
+    },
+    {
+      "end_line": 1357,
+      "metrics": {
+        "bytes": 13560,
+        "line_bytes": 117,
+        "lines": 152
+      },
+      "part_id": "genericity-remediation",
+      "region_id": "acceptance-genericity-remediation",
+      "sha256": "4112046b82c1b2ada6ef4516be045cd052aa91eafcc451fb89137e405b429db1",
+      "start_line": 1206
+    },
+    {
+      "end_line": 1419,
+      "metrics": {
+        "bytes": 5774,
+        "line_bytes": 117,
+        "lines": 62
+      },
+      "part_id": "structural-proof",
+      "region_id": "acceptance-proof-foundation",
+      "sha256": "cf0d2f8d117be2939bc6a254282ffe4235773c41a0e9589b909c9ce34c438e12",
+      "start_line": 1358
+    },
+    {
+      "end_line": 1555,
+      "metrics": {
+        "bytes": 12713,
+        "line_bytes": 118,
+        "lines": 136
+      },
+      "part_id": "structural-proof",
+      "region_id": "acceptance-proof-migration",
+      "sha256": "a422a3cd50aa66bc46b1c23fcdfc674b251f2c90c72c189777fe66a97d4a7508",
+      "start_line": 1420
+    },
+    {
+      "end_line": 1652,
+      "metrics": {
+        "bytes": 8746,
+        "line_bytes": 130,
+        "lines": 97
+      },
+      "part_id": "structural-proof",
+      "region_id": "acceptance-compiled-doctrine",
+      "sha256": "abc6d812fb36030e0d0cd0838fd9336842950c4f98bdb7f764d682b81f7c517d",
+      "start_line": 1556
+    },
+    {
+      "end_line": 1665,
+      "metrics": {
+        "bytes": 1003,
+        "line_bytes": 116,
+        "lines": 13
+      },
+      "part_id": "structural-proof",
+      "region_id": "acceptance-structural-qualification",
+      "sha256": "5770911bbf44fba6905a0e29e2ceb456f60a18a74a7fb7adf68b411649003398",
+      "start_line": 1653
+    },
+    {
+      "end_line": 1712,
+      "metrics": {
+        "bytes": 11016,
+        "line_bytes": 364,
+        "lines": 47
+      },
+      "part_id": "commit-and-chronology",
+      "region_id": "commit-log",
+      "sha256": "658206c635cb60acee2210134f455c0dfe0e0d686df0d66d3af1f2ea2f93ced2",
+      "start_line": 1666
+    },
+    {
+      "end_line": 2049,
+      "metrics": {
+        "bytes": 35020,
+        "line_bytes": 119,
+        "lines": 337
+      },
+      "part_id": "commit-and-chronology",
+      "region_id": "chronology",
+      "sha256": "33a0baa30939431b898d52cdd83c9abaec577dcc046f22ea697664d2217020a9",
+      "start_line": 1713
+    }
+  ],
+  "schema_version": 1,
+  "source": {
+    "boundary_commit": "38b793957d26d259a0abce5c84de9273d597d391",
+    "git_blob": "66ae9b6cde51476d5b45a180c756f0f9463d3632",
+    "metrics": {
+      "bytes": 278178,
+      "line_bytes": 1605,
+      "lines": 2049
+    },
+    "sha256": "e70892a5c6acbe794bea6a9dd4484a90481e31d0aba64d8b8e8dcaaeae90a26c"
+  },
+  "source_capsule": "docs/archive/tasks/spec-to-intent-alignment/source-through-2026-08-14.md",
+  "verifier": "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --check"
 }

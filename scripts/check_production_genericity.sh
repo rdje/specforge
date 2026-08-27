@@ -91,7 +91,7 @@ if [ "$qualify" -eq 1 ]; then
     python3 -B "$ROOT/scripts/check_behavioral_genericity_contract.py" --self-test
   run_component \
     ALPHA-OBLIGATIONS \
-    'all 168 runtime rules exactly match inventory and execute their structural alpha obligations' \
+    'all 170 runtime rules exactly match inventory and execute their structural alpha obligations' \
     cargo test --quiet --locked --offline -p specforge-core --lib \
       ir::production_genericity_qualification_tests::every_registered_rule_satisfies_its_inventory_bound_structural_alpha_obligation \
       -- --exact

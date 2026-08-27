@@ -1,3 +1,44 @@
+### SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier
+
+- Shipped the second typed residual carrier in production. A captured visual region that no canonical
+  `SemanticIR` record cites now earns exactly one `CapturedRegionResidualRecord` carrying its region id, typed
+  region kind, `EvidenceIR` provenance, the closed cause `no_canonical_carrier_for_captured_region`, a reason,
+  the boundary `evidence_to_semantic_ir`, and an operator replay route. `IntentIR` carries it unchanged, because
+  the region gains no carrier at that boundary either.
+- Made coverage a provenance membership test over concrete record collections rather than a text scan. A region
+  counts as explained only when a timing constraint, signal constraint, conditional rule, state, transition,
+  temporal rule, temporal conflict, or actor contract names it in its own provenance list.
+- Corrected the frozen design in the one place reading the code showed it was wrong. It tested only the item's
+  evidence id, but `mine_verified_figure_contracts` is a second path from a figure to a canonical carrier and
+  cites the region as `figure:<asset_id>`. Coverage now accepts either form, so a figure that produced verified
+  waveform contracts is never handed a residual claiming it reached nothing. `waveform::figure_region_provenance_id`
+  is the single construction site both sides read.
+- Refused statement-mediated coverage deliberately. `EvidenceIR` relates a statement to a visual region when the
+  statement *is* that region's caption; admitting those links would mark 466 of the corpus's 1,089 captured
+  figure-kind regions as explained, including the reviewed `picture_0001` whose only mediating statement is its
+  own caption. Table-kind and unclassified regions stay excluded — the first already has canonical carriers, and
+  the second was never established as intent-bearing.
+- Registered the field in the existing `semantic.residual` and `intent.residual` families, expanding the runtime
+  registry from 168 to 170 rules over 50 SemanticIR and 50 IntentIR public fields. It is deliberately not an
+  exact IntentIR carry: the residual family's `current_only` rule rebuilds and compares the field instead of
+  matching an upstream claim.
+- Updated the frozen `.8a` contract by exactly one line and made the claim checkable. The captured-region cause
+  now names `CapturedRegionResidualRecord`, and the checker resolves any named carrier to a real production
+  declaration, so claiming coverage that does not exist and deleting a carrier the contract still cites both
+  fail closed. Three new RED cases raise the self-test to 24/24.
+- Proved the public delta is exactly the intended record. Two chains snapshotted before the rebuild and compared
+  field-by-field against their rebuilds differ only in `captured_region_residuals` at both stages — I2S
+  `absent->20` over 37/40 public fields, I2C `absent->103` over 40/42.
+- Rebuilt all 24 retained chains stage by stage. The carrier emits 1,089 records at SemanticIR and 1,089 at
+  IntentIR — exactly the captured `figure` and `diagram` regions the population holds, and none of its 906
+  `table_region` ones. The 24 adapter ledgers still share one ruleset and now carry 150,942 cumulative claims
+  over the same 120 artifacts referencing all 170 rule ids, with `residual_decisions` unchanged at 0/3/8/62 and
+  every adapter still blocked with no emitted `.isf`.
+- Corrected the rebuild procedure itself. A first pass built every stage and validated afterwards; `specforge
+  validate` back-annotates as a registered mutation, so each IntentIR pinned the pre-validation SemanticIR ledger
+  and failed closed on the exact-prefix check. The gate was right and the book already stated the rule, so the
+  durable fix is the `retained-chain-rebuild-order` fact card that leads from the failure message back to it.
+
 ### SPEC-TO-INTENT-ALIGNMENT.8d — admit the supplied external reviewed sources
 
 - The owner supplied all eight authorized `external_read_only` reviewed sources from the sibling `chipdoc`

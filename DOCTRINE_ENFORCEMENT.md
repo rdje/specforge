@@ -392,7 +392,7 @@ closed production flow/topology coverage. The default invocation remains the fas
 `scripts/check_production_genericity.sh --self-test`, called explicitly by `scripts/run_ci.sh`, adds six
 forbidden dependency mutations, two inventory/schema mutations, six rule/alpha/bypass mutations, thirteen
 flow/authority mutations, legal display/provenance/test-only controls, and an exact runtime join that executes
-the structural alpha obligation of all 168 registered rules. This structural qualification does not claim the
+the structural alpha obligation of all 170 registered rules. This structural qualification does not claim the
 population renaming/paraphrase/held-out behavior owned by `.f`.
 
 `CHAIN-CURRENCY` is the registry's first `ci`-tier doctrine. It re-executes the pipeline rather than

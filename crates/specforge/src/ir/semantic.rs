@@ -24,8 +24,9 @@ use crate::ir::prior_memory::{
     CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
 };
 use crate::ir::source::{
-    ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
-    ResidualDecisionPacket, ValidationReportRecord, WidthHint, document_key,
+    ActorSignalRelation, AutomationConfidence, CandidateInterpretation, CapturedRegionBoundary,
+    CapturedRegionResidualCause, CapturedRegionResidualRecord, RelationKind,
+    ResidualDecisionPacket, ValidationReportRecord, VisualAssetKind, WidthHint, document_key,
 };
 use crate::persisted_path::{
     PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
@@ -297,6 +298,14 @@ pub struct SemanticIr {
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
+    /// SPEC-TO-INTENT-ALIGNMENT.8c: captured visual regions that reached no canonical carrier.
+    ///
+    /// The region-side sibling of `residual_decisions`: `residual_decisions` explains a record the
+    /// pipeline *refused*, while this collection explains a captured source region the pipeline
+    /// never turned into a record at all. Serde-skipped while empty ⇒ zero artifact churn on
+    /// documents whose captured regions all reach a carrier.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub captured_region_residuals: Vec<CapturedRegionResidualRecord>,
     #[serde(default)]
     pub validation_reports: Vec<ValidationReportRecord>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -379,6 +388,7 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("fidelity_findings", "semantic.temporal_contract"),
     ("temporal_conflicts", "semantic.temporal_contract"),
     ("residual_decisions", "semantic.residual"),
+    ("captured_region_residuals", "semantic.residual"),
     ("validation_reports", "semantic.validation"),
 ];
 
@@ -860,7 +870,7 @@ impl SemanticIr {
         // composition (`.2i`); universal English grammar, no name list (ADR 0006).
         let transaction_phases = build_transaction_phases(&context, &declared_signal_names);
 
-        Ok(Self {
+        let mut artifact = Self {
             schema_version: SEMANTIC_IR_SCHEMA_VERSION,
             stage: IrStage::SemanticIr,
             evidence_ir_path,
@@ -912,10 +922,65 @@ impl SemanticIr {
             signal_constraints,
             conditional_rules,
             residual_decisions,
+            captured_region_residuals: Vec::new(),
             validation_reports: Vec::new(),
             proof_context: None,
             proof_ledger: None,
-        })
+        };
+        // SPEC-TO-INTENT-ALIGNMENT.8c: account every captured region this artifact's own canonical
+        // records do not cite. It runs last, over the assembled artifact, so coverage is a
+        // membership test against the concrete collections that actually shipped.
+        artifact.captured_region_residuals =
+            unexplained_captured_visual_regions(evidence_ir, &artifact.cited_provenance_ids());
+        Ok(artifact)
+    }
+
+    /// Provenance identifiers cited by the record collections a captured visual region can reach.
+    ///
+    /// Membership is decided over concrete records, never by scanning the artifact text: a region
+    /// counts as explained only when a canonical record names it in its own provenance list. The
+    /// collections below are exactly the ones a visual region reaches — the four projections of
+    /// `extract_records_from_vlm_observations` (`timing_constraints`, `signal_constraints`,
+    /// `regular_states`, `state_transitions`), the figure-region contracts
+    /// `mine_verified_figure_contracts` mines, and the records derived from them
+    /// (`temporal_rules`, `temporal_conflicts`, `actor_contracts`). `conditional_rules` is
+    /// included because it is the fourth member of the same grounded-projection family and a
+    /// future visual producer would land there rather than in a new collection.
+    ///
+    /// Statement-mediated links are deliberately *not* coverage. An `EvidenceIR` statement may be
+    /// related to a visual region because it is that region's caption; a caption reaching a
+    /// canonical carrier says nothing about whether the region's own content did.
+    fn cited_provenance_ids(&self) -> HashSet<&str> {
+        fn borrow(ids: &[String]) -> impl Iterator<Item = &str> {
+            ids.iter().map(String::as_str)
+        }
+
+        let mut cited: HashSet<&str> = HashSet::new();
+        for record in &self.timing_constraints {
+            cited.extend(borrow(&record.supporting_statement_ids));
+        }
+        for record in &self.signal_constraints {
+            cited.extend(borrow(&record.supporting_statement_ids));
+        }
+        for record in &self.conditional_rules {
+            cited.extend(borrow(&record.supporting_statement_ids));
+        }
+        for record in &self.regular_states {
+            cited.extend(borrow(&record.supporting_statement_ids));
+        }
+        for record in &self.state_transitions {
+            cited.extend(borrow(&record.supporting_statement_ids));
+        }
+        for record in &self.temporal_rules {
+            cited.extend(borrow(&record.supporting_statement_ids));
+        }
+        for record in &self.temporal_conflicts {
+            cited.extend(borrow(&record.supporting_statement_ids));
+        }
+        for contract in &self.actor_contracts {
+            cited.extend(borrow(&contract.provenance.supporting_statement_ids));
+        }
+        cited
     }
 
     fn public_field_values(&self) -> DerivationResult<BTreeMap<String, serde_json::Value>> {
@@ -981,6 +1046,7 @@ impl SemanticIr {
         insert_field!(fidelity_findings);
         insert_field!(temporal_conflicts);
         insert_field!(residual_decisions);
+        insert_field!(captured_region_residuals);
         insert_field!(validation_reports);
         if fields.len() != SEMANTIC_RULE_FIELDS.len() {
             return Err(DerivationError::new(
@@ -10904,6 +10970,95 @@ fn extract_records_from_vlm_observations(
     )
 }
 
+/// Operator route for a captured region that reached no canonical carrier.
+///
+/// Names the one action that can change the outcome (attempt typed visual observations, then
+/// rebuild the same stage) and states plainly when the residual is instead terminal, so a reviewer
+/// is never left guessing whether the record is a to-do or a conclusion.
+const CAPTURED_REGION_RESIDUAL_REPLAY: &str = "Run `specforge enrich` on this document to attempt \
+typed visual observations for this region, then rebuild SemanticIR from the same EvidenceIR. If no \
+canonical carrier family applies to the region's content, this residual is its terminal \
+disposition.";
+
+/// SPEC-TO-INTENT-ALIGNMENT.8c — the figure-side sibling of the table-side region accounting in
+/// `crate::ir::completeness::unexplained_intent_bearing_tables`.
+///
+/// A captured visual region that no canonical record cites reached no carrier, so it earns exactly
+/// one typed residual rather than disappearing. Authority is entirely structural: the region's own
+/// captured kind, its `EvidenceIR` identity, and provenance membership over the artifact's concrete
+/// record collections. No document, vendor, protocol, or review label participates, and the record
+/// asserts only the absence of a carrier — never a canonical value in its place.
+fn unexplained_captured_visual_regions(
+    evidence_ir: &EvidenceIr,
+    cited_provenance_ids: &HashSet<&str>,
+) -> Vec<CapturedRegionResidualRecord> {
+    evidence_ir
+        .visual_evidence
+        .iter()
+        .filter_map(|item| {
+            let region_kind = residual_accountable_region_kind(item.asset_kind)?;
+            let figure_provenance_id =
+                crate::ir::waveform::figure_region_provenance_id(&item.asset_id);
+            let explained = cited_provenance_ids.contains(item.evidence_id.as_str())
+                || cited_provenance_ids.contains(figure_provenance_id.as_str());
+            if explained {
+                return None;
+            }
+            Some(CapturedRegionResidualRecord {
+                region_id: item.asset_id.clone(),
+                region_kind,
+                supporting_evidence_ids: vec![item.evidence_id.clone()],
+                cause: CapturedRegionResidualCause::NoCanonicalCarrierForCapturedRegion,
+                reason: captured_region_residual_reason(region_kind),
+                first_failing_stage: CapturedRegionBoundary::EvidenceToSemanticIr,
+                replay: CAPTURED_REGION_RESIDUAL_REPLAY.to_string(),
+            })
+        })
+        .collect()
+}
+
+/// Which captured visual kinds this accounting owns.
+///
+/// `TableRegion` is excluded because a table region already reaches canonical carriers through the
+/// register, signal, and timing paths; a residual for one would duplicate a promoted fact, which
+/// is exactly the self-contradiction the residual contract forbids. `Unknown` is excluded for the
+/// same reason the table-side sibling skips unclassified table kinds: capture never established
+/// the region as intent-bearing, so accounting it would assert a region the classifier did not
+/// find. The match is exhaustive so a new visual kind cannot join silently on either side.
+fn residual_accountable_region_kind(kind: VisualAssetKind) -> Option<VisualAssetKind> {
+    match kind {
+        VisualAssetKind::Figure
+        | VisualAssetKind::Diagram
+        | VisualAssetKind::Chart
+        | VisualAssetKind::FormulaRegion
+        | VisualAssetKind::Screenshot => Some(kind),
+        VisualAssetKind::TableRegion | VisualAssetKind::Unknown => None,
+    }
+}
+
+/// The residual's reviewer-facing cause sentence, built only from the closed region vocabulary.
+fn captured_region_residual_reason(kind: VisualAssetKind) -> String {
+    format!(
+        "The captured {} region reached EvidenceIR, but no canonical SemanticIR record cites it: \
+SemanticIR declares no carrier family for this region's content.",
+        captured_region_kind_phrase(kind)
+    )
+}
+
+/// The reviewer-facing noun for a captured region kind, chosen so the sentence above reads as one
+/// noun phrase for every variant. Exhaustive, so a new visual kind cannot ship unnamed.
+fn captured_region_kind_phrase(kind: VisualAssetKind) -> &'static str {
+    match kind {
+        VisualAssetKind::Figure => "figure",
+        VisualAssetKind::Diagram => "diagram",
+        VisualAssetKind::Chart => "chart",
+        VisualAssetKind::FormulaRegion => "formula",
+        VisualAssetKind::Screenshot => "screenshot",
+        VisualAssetKind::TableRegion => "table",
+        VisualAssetKind::Unknown => "unclassified visual",
+    }
+}
+
 fn mine_verified_figure_contracts(
     evidence_ir: &EvidenceIr,
     known_signal_names: &HashSet<String>,
@@ -12408,6 +12563,209 @@ mod tests {
                 .artifact_layout
                 .semantic_ir_path
                 .ends_with("generated/semantic_ir/control/semantic_ir.json")
+        );
+
+        Ok(())
+    }
+
+    /// Build one document that captures a figure region, a diagram region, and a table region,
+    /// then return its `EvidenceIR` plus the `SemanticIR` built from it. The three kinds exercise
+    /// both sides of the accounting gate on a single real artifact.
+    fn captured_region_fixture(
+        tempdir: &std::path::Path,
+    ) -> Result<(EvidenceIr, SemanticIr, std::path::PathBuf)> {
+        let source = tempdir.join("topology.md");
+        let source_artifact_base = tempdir.join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.join("generated").join("semantic_ir");
+        let assets = tempdir.join("assets");
+        fs::create_dir_all(&assets)?;
+        for name in ["picture-0001.png", "picture-0002.png", "table-0001.png"] {
+            fs::write(assets.join(name), b"png")?;
+        }
+        fs::write(
+            &source,
+            "# Topology\nFigure 1: Component topology.\n\n![Image](assets/picture-0001.png)\n\nThe topology is shown in Figure 1.\n",
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        for (asset_id, kind, file) in [
+            ("picture_0001", VisualAssetKind::Figure, "picture-0001.png"),
+            ("picture_0002", VisualAssetKind::Diagram, "picture-0002.png"),
+            ("table_0001", VisualAssetKind::TableRegion, "table-0001.png"),
+        ] {
+            source_ir.visual_assets.push(VisualAsset {
+                asset_id: asset_id.to_string(),
+                asset_kind: kind,
+                page_id: Some("page_0001".to_string()),
+                image_path: Some(assets.join(file)),
+                caption_text: None,
+                caption_source_path: None,
+                source_ref: None,
+                placeholder_text: None,
+                note: None,
+                diagram_kind: crate::ir::source::DiagramKind::default(),
+            });
+        }
+        source_ir.write_test_fixture_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        Ok((evidence_ir, semantic_ir, semantic_artifact_base))
+    }
+
+    fn captured_region_evidence_id(evidence_ir: &EvidenceIr, asset_id: &str) -> String {
+        evidence_ir
+            .visual_evidence
+            .iter()
+            .find(|item| item.asset_id == asset_id)
+            .unwrap_or_else(|| panic!("{asset_id} should be captured as visual evidence"))
+            .evidence_id
+            .clone()
+    }
+
+    #[test]
+    fn captured_figure_regions_without_a_canonical_carrier_earn_one_typed_residual() -> Result<()> {
+        let tempdir = tempdir()?;
+        let (evidence_ir, semantic_ir, _) = captured_region_fixture(tempdir.path())?;
+
+        let regions: Vec<&str> = semantic_ir
+            .captured_region_residuals
+            .iter()
+            .map(|residual| residual.region_id.as_str())
+            .collect();
+        assert_eq!(
+            regions,
+            vec!["picture_0001", "picture_0002"],
+            "exactly the figure-kind regions are accounted, in capture order"
+        );
+
+        let figure = semantic_ir
+            .captured_region_residuals
+            .first()
+            .expect("the figure region earns a residual");
+        assert_eq!(figure.region_kind, VisualAssetKind::Figure);
+        assert_eq!(
+            figure.supporting_evidence_ids,
+            vec![captured_region_evidence_id(&evidence_ir, "picture_0001")],
+            "the residual carries the exact EvidenceIR identity of the region it explains"
+        );
+        assert_eq!(
+            figure.cause,
+            super::CapturedRegionResidualCause::NoCanonicalCarrierForCapturedRegion
+        );
+        assert_eq!(
+            figure.first_failing_stage,
+            super::CapturedRegionBoundary::EvidenceToSemanticIr
+        );
+        assert!(!figure.reason.is_empty() && !figure.replay.is_empty());
+        assert_eq!(
+            semantic_ir.captured_region_residuals[1].region_kind,
+            VisualAssetKind::Diagram,
+            "each residual reports the region's own captured kind"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn a_captured_region_a_canonical_record_cites_earns_no_residual() -> Result<()> {
+        let tempdir = tempdir()?;
+        let (evidence_ir, _, _) = captured_region_fixture(tempdir.path())?;
+        let figure_evidence_id = captured_region_evidence_id(&evidence_ir, "picture_0001");
+        let figure_provenance_id = crate::ir::waveform::figure_region_provenance_id("picture_0001");
+
+        let accounted = |cited: &[&str]| -> Vec<String> {
+            let cited: HashSet<&str> = cited.iter().copied().collect();
+            super::unexplained_captured_visual_regions(&evidence_ir, &cited)
+                .into_iter()
+                .map(|residual| residual.region_id)
+                .collect()
+        };
+
+        assert_eq!(
+            accounted(&[]),
+            vec!["picture_0001".to_string(), "picture_0002".to_string()],
+            "no citation leaves both figure regions unexplained"
+        );
+        assert_eq!(
+            accounted(&[figure_evidence_id.as_str()]),
+            vec!["picture_0002".to_string()],
+            "a record citing the region's evidence id explains it"
+        );
+        assert_eq!(
+            accounted(&[figure_provenance_id.as_str()]),
+            vec!["picture_0002".to_string()],
+            "a figure-region contract citing the region explains it too"
+        );
+        assert_eq!(
+            accounted(&["visual_9999", "figure:picture_9999"]),
+            vec!["picture_0001".to_string(), "picture_0002".to_string()],
+            "citing some other region explains nothing here"
+        );
+        assert_eq!(
+            accounted(&[captured_region_evidence_id(&evidence_ir, "table_0001").as_str()]),
+            vec!["picture_0001".to_string(), "picture_0002".to_string()],
+            "table regions are never accounted, cited or not"
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn captured_region_residuals_never_duplicate_a_cited_region() -> Result<()> {
+        let tempdir = tempdir()?;
+        let (_, semantic_ir, _) = captured_region_fixture(tempdir.path())?;
+
+        let cited = semantic_ir.cited_provenance_ids();
+        for residual in &semantic_ir.captured_region_residuals {
+            for evidence_id in &residual.supporting_evidence_ids {
+                assert!(
+                    !cited.contains(evidence_id.as_str()),
+                    "{evidence_id} is both promoted and residualized"
+                );
+            }
+            assert!(
+                !cited.contains(
+                    crate::ir::waveform::figure_region_provenance_id(&residual.region_id).as_str()
+                ),
+                "{} is both promoted and residualized",
+                residual.region_id
+            );
+            assert!(
+                !residual.supporting_evidence_ids.is_empty(),
+                "an unprovenanced residual cannot be reviewed or replayed"
+            );
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn captured_region_residuals_are_carried_unchanged_into_intent_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let (_, semantic_ir, semantic_artifact_base) = captured_region_fixture(tempdir.path())?;
+        semantic_ir.write_to_disk()?;
+        assert!(!semantic_ir.captured_region_residuals.is_empty());
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &semantic_artifact_base
+                .parent()
+                .expect("generated root")
+                .join("intent_ir"),
+        )?;
+        assert_eq!(
+            intent_ir.captured_region_residuals,
+            semantic_ir.captured_region_residuals,
+            "the region never gains a carrier at this boundary, so its explanation is carried"
         );
 
         Ok(())
@@ -25025,7 +25383,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 49);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 50);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()

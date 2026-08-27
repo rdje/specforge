@@ -329,9 +329,18 @@ fn capped_confidence(c: AutomationConfidence) -> AutomationConfidence {
     }
 }
 
+/// The provenance identifier a figure-region contract cites for its originating visual asset.
+///
+/// One construction site for both the producer below and the SemanticIR captured-region
+/// accounting that reads it, so the two cannot drift into disagreeing about what "this figure
+/// reached a canonical carrier" looks like.
+pub fn figure_region_provenance_id(figure_id: &str) -> String {
+    format!("figure:{figure_id}")
+}
+
 fn provenance(figure_id: &str, annotation: &str) -> ContractProvenance {
     ContractProvenance {
-        supporting_statement_ids: vec![format!("figure:{figure_id}")],
+        supporting_statement_ids: vec![figure_region_provenance_id(figure_id)],
         source_text: annotation.to_string(),
         modality: EvidenceModality::Figure,
     }

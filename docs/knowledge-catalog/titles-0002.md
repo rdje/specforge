@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md) | 2026-08-12 | `current` | CorpusMemory schema 7 cannot route extraction by document identity |
 | [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md) | 2026-06-09 | `current` | Cross-PDF pattern reuse via a DERIVED vendor/layout fingerprint — extend CorpusMemory, advisory + honest |
 | [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md) | 2026-08-09 | `current` | Corpus current-binary refresh completion is independent of normalized-cache retention |
 | [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md) | 2026-08-11 | `current` | The corpus refresh frontier derives the cohort and gates an exact root-neutral lifecycle partition |
@@ -60,4 +61,3 @@
 | [ingest-ram-guard](../knowledge/ingest-ram-guard.md) | 2026-06-14 | `current` | ingest has a built-in autonomous RAM guard that aborts cleanly before the host crosses a danger ceiling |
 | [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | Introducing CoreSight refresh is portable and its apparent relation topology is unauthoritative |
 | [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md) | 2026-06-23 | `current` | The `.isf` emitter drops an enum whose member value is a bare binary-looking token (only `0`/`1` digits, leng… |
-| [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md) | 2026-06-07 | `current` | ISF CAN describe a state machine — proven idiom is storage-var + switch + select + rule-trigger (FSMGen low… |

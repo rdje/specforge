@@ -42,6 +42,7 @@
 | [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md) | 2026-08-08 | `current` | Query-only canonical collections have complete bounded membership catalogs |
 | [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md) | 2026-06-15 | `current` | Promote a doc's constraint surface onto canonical WITHOUT re-ingest (the CANONICAL-PROMOTION-SWEEP per-doc pr… |
 | [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md) | 2026-06-15 | `current` | specforge stage commands write outputs to the canonical path from the artifact's recorded artifact_layout, NO… |
+| [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-08-27 | `current` | Captured visual regions that reach no carrier become typed SemanticIR/IntentIR residuals |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
 | [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md) | 2026-08-12 | `current` | FSMGen a51dcdad0 now has bounded static actor-network metadata and actor/pin handoffs, so cat-3 topology need… |
 | [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md) | 2026-06-23 | `superseded` | Cat-3 (platform/system-IP topology) ISF-lowering decision (DOC-INTENT-TAXONOMY.4c) — topology IS captured (… |
@@ -60,4 +61,3 @@
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
 | [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |
 | [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |
-| [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md) | 2026-08-12 | `current` | CorpusMemory schema 7 cannot route extraction by document identity |

@@ -2,6 +2,50 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why is a multi-caller named drive kept without actor priority
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > why is a retained bundle count not the same as corpus refresh progress
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > why is a sentence containing when not necessarily a semantic gate
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > why is a stable span after tick zero residual
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why is an ambiguous derived id pairing a fail rather than an invalid alpha transform
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > why is an emitted-ISF count from an earlier refresh slice not the current number
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why is an exact archive alone insufficient for the active corpus task
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why is bus not a valid parenthetical single-wire head
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > why is channel membership metadata-only and not lowered to .isf
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why is conformal calibration still blocked at CHI scale
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > why is corpus coverage refresh 34 blocked before ingest
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why is current binary replay coverage 1 of 12
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why is my rebuilt chain stale even though the content matches
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why is page_image_path null / None for a large document
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is plural-rejection unsafe for phase names (access ends in ss)
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > why is repeating the same check not independent verification
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why is residual actionability only 4 of 16 in the current reviewed result
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)

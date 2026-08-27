@@ -54,41 +54,17 @@
   470/168/1,365/4 green, Clippy is clean, and all five genericity components pass`
   Commit: `SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations`
 
-- ID: `SPEC-TO-INTENT-ALIGNMENT.8c`
-  State: `pending`
-  Goal: emit the bounded typed, source-linked, actionable residual family across SemanticIR and IntentIR
-  Acceptance: a structurally gated producer emits one typed residual for a captured source region of the
-  selected family that reaches no canonical carrier, carrying its exact region and evidence provenance, typed
-  cause, first failing stage, and operator replay route; authority is document structure and closed grammar
-  only, never document, vendor, protocol, or review-label identity; a region with a canonical carrier emits no
-  residual, and no residual duplicates a promoted canonical key; focused positive/refusal tests, the full core
-  suite, warning-denied Clippy, and all production-genericity components pass; every proof-affected retained
-  chain is rebuilt to zero stale and every public field change is exactly an intended new residual record, with
-  no other field moving
-  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.8b`
-  Verification: `pending`
-  Commit: `pending`
-
-- ID: `SPEC-TO-INTENT-ALIGNMENT.8d`
-  State: `pending`
-  Goal: replay the complete reviewed population and publish comparable residual-actionability closure
-  Acceptance: all 12 reviewed sources and all 48 isolated stages replay from clean production under the frozen
-  oracle; exact canonical, provenance, conservation, residual, disposition, category, and controller deltas are
-  attributed; no reviewed canonical true positive is lost and no fabrication or unexplained drop appears;
-  tracked replay, result, controller-input, and report authorities reproduce byte-for-byte; selected CI, mdBook,
-  retrieval truth, task parents, cleanup, and residue census agree
-  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.8c`
-  Prerequisite-input: `the owner supplied all eight authorized external read-only sources on 2026-08-27; every
-  one is digest-identical to the reviewed lock and the orchestrator's map, basename, volume, and coverage
-  preconditions pass`
-  Verification: `pending`
-  Commit: `pending`
+`.8c` and `.8d` are owned by [residual carrier](residual-carrier.md), which was split from this part at that
+task boundary when the combined part reached its declared line-count rollover milestone. Their decisions,
+verification, and commit records stay below so the `.8` program keeps one chronology.
 
 ## Current Frontier
 
-Active frontier: `SPEC-TO-INTENT-ALIGNMENT.8c`. The rule is frozen and the evaluator now agrees with it, so the
-published gap is the twelve genuinely required observations; the next slice emits the bounded typed carrier for
-`static_component_topology` before `.8d` replays and publishes.
+Active frontier: `SPEC-TO-INTENT-ALIGNMENT.8d`. The rule is frozen, the evaluator agrees with it, and the
+bounded typed carrier now ships: every captured figure-kind region that no canonical `SemanticIR` record cites
+earns exactly one typed residual, carried unchanged into `IntentIR`. `.8d` owns replaying the complete reviewed
+population and publishing the comparable residual-actionability result; its external-source input is present and
+digest-identical to the reviewed lock.
 
 ## Localized residual-actionability gap (`.8`)
 
@@ -251,76 +227,6 @@ The trajectory composer keeps an independent cross-check rather than calling the
 required denominator from the canonical stage false negatives, a different field than the evaluator's
 matched-key path.
 
-## Reviewed-source availability (`.8d`)
-
-`crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json` records the
-provenance of every reviewed source. Four are repository sources under `corpus/`: APB, I2S, AMD IOMMU, and Arm
-Debug. The other eight are `external_read_only` inputs whose only tracked identity is a portable id and digest;
-their working copies lived under the `.7c.ii` replay root and were removed with it.
-
-The owner supplied all eight on `2026-08-27` from the sibling `chipdoc` repository on the same filesystem
-volume. Each was located by exact SHA-256 rather than by filename, copied into the repository-derived,
-git-ignored path `.project-data/tmp/spec-to-intent-external-sources/`, and re-verified after the copy. All eight
-digests and byte counts match the reviewed lock exactly:
-
-| Portable id | Bytes | SHA-256 (reviewed = copied) |
-| --- | ---: | --- |
-| `DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf` | 557,071 | `afcac68f…d7ec` |
-| `DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf` | 165,891 | `c4a5f342…a66d` |
-| `1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf` | 1,051,915 | `be2134b4…2b8e` |
-| `1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf` | 827,669 | `2d359579…c7a8` |
-| `OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf` | 748,724 | `0e0c8afc…ce12` |
-| `OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf` | 855,025 | `d3eb19fc…38be` |
-| `PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf` | 637,434 | `8358c5ae…3a22` |
-| `198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf` | 1,571,128 | `5358701e…7e97` |
-
-The runtime map is `.project-data/tmp/spec-to-intent-8d-external-source-map.json`. Executing the orchestrator's
-own predicates against it — repository-relative map path below `.project-data/tmp`, absolute source paths,
-basename equal to the portable id, same device as the repository root, and exact coverage of the required
-external set — passes for all eight with no missing and no extra entry. `.8d` is therefore no longer blocked on
-an input; it waits only on `.8c`.
-
-The sources stay git-ignored rather than tracked under `corpus/`. The reviewed dataset is review-locked and
-classifies these eight as `external_read_only`; promoting them to repository sources would change frozen
-selection authority, the source-PDF registry, and every digest pinned to that dataset. The table above plus the
-sibling repository keep the copy reproducible, so the artifact-cleanup doctrine can still reclaim the bytes
-without losing the ability to replay.
-
-The `.8c` chain-currency baseline is green at this boundary: 24 replayed / 24 current / zero stale at
-EvidenceIR, SemanticIR, IntentIR, and the ISF adapter, with 54 explicitly unmeasurable legacy chains, 24
-blocked/no-file adapter states, and exactly the declared retained bundle set on disk.
-
-## Frozen carrier design (`.8c`, before implementation)
-
-The structural gate is the figure-side sibling of the existing table-side region accounting in
-`crates/specforge/src/ir/completeness.rs#unexplained_intent_bearing_tables`: coverage is resolved through
-existing provenance and nothing is fabricated. A captured `VisualEvidenceItem` whose `asset_kind` is a
-figure-kind region, and whose `evidence_id` no SemanticIR record cites in its provenance, reaches no canonical
-carrier and earns exactly one typed residual. Table-kind visual assets are excluded because they already have
-canonical carriers through the register, signal, and timing paths. `extract_records_from_vlm_observations`
-threads `visual_item.evidence_id` into every record it projects, so coverage is a provenance membership test
-over concrete collections rather than a text scan.
-
-The record is a new shared type carrying `region_id` (the item's `asset_id`), `region_kind`,
-`supporting_evidence_ids` (the item's `evidence_id`), the typed cause
-`no_canonical_carrier_for_captured_region`, a `reason`, the boundary `evidence_to_semantic_ir`, and an operator
-`replay` route. It lands on `SemanticIr` and is carried unchanged to `IntentIr`, matching the frozen `.8a`
-record grammar.
-
-Registration is data-driven and already has a home. `semantic.residual` and `intent.residual` exist in
-`doctrine/production_genericity/claim_family_inventory.tsv` with `symbol_capability: residual` and
-`alpha_obligation: residual_topology_invariant`. Adding the new field to both families' `top_level_fields` and
-to the `SEMANTIC_RULE_FIELDS` / intent field tables expands the registry from 168 to 170 field rules; the
-inventory-bound qualification test in `crates/specforge/src/ir/mod.rs` and the proof-context `insert_field!`
-sites move with it.
-
-A real reviewed document already witnesses the family without any external source. `den0068_2018_07_23_coresight_base_system_architecture`
-is one of the 24 retained measurable chains, and its persisted EvidenceIR holds 19 visual items: 12 table
-regions, all of whose asset ids SemanticIR cites, and seven figure regions, none of whose evidence ids SemanticIR
-cites anywhere. The first of those seven is `visual_0008` on `picture_0001` — exactly the region, evidence id,
-and fact key the review expects for the selected family. The RISC-V IOMMU document is not in the retained set,
-so its chain stays explicitly unmeasurable until the external source returns.
-
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8` activation
 
 - [x] **REPRODUCE / MEASURE** — the tracked `.7c.ii` result decomposes exactly into 4 actionable, 8 not-required,
@@ -441,21 +347,49 @@ so its chain stays explicitly unmeasurable until the external source returns.
 - `2026-08-27`: keep the supplied sources git-ignored under a repository-derived path instead of tracking them
   under `corpus/`. Promoting them to repository sources would rewrite review-locked selection authority and the
   digests pinned to it; the recorded portable id, byte count, and digest keep the copy reproducible.
+- `2026-08-27`: widen `.8c` coverage to accept the `figure:<asset_id>` citation the figure-region contract
+  producer emits, not only the item's evidence id. The frozen design named one citation form, but a second
+  production path from a figure to a canonical carrier exists; residualizing a region it covered would assert
+  something false, which the contract's own no-fabrication rule forbids. The change only removes false positives.
+- `2026-08-27`: refuse statement-mediated coverage. A caption that reaches a canonical carrier does not mean the
+  figure's content did, and admitting it would mark 466 of 1,089 captured regions explained — including the
+  reviewed `picture_0001`, whose only mediating statement is its own caption.
+- `2026-08-27`: exclude `Unknown` visual kinds as well as table kinds. The table-side sibling already skips
+  unclassified kinds because capture never established them as intent-bearing; accounting them here would assert
+  a region the classifier did not find.
+- `2026-08-27`: record the shipped carrier in the frozen `.8a` contract and make the checker prove it. Leaving
+  `existing_carrier: null` after shipping would publish a falsehood; trusting the new value would reintroduce
+  exactly the "claim shipped coverage" failure `.8a` guarded against, so a named carrier must now resolve to a
+  real production declaration in both directions.
+- `2026-08-27`: register the IntentIR field under `intent.residual` rather than as an exact carry. The value is
+  a byte-identical clone, but the residual family's `current_only` rule requires the current implementation to
+  rebuild and compare it instead of matching an upstream claim — the stricter obligation for a record whose
+  whole meaning is that no carrier accepted the region.
+- `2026-08-27`: interleave build and validate when rebuilding a retained chain, and record the rule where the
+  failure message leads. A first rebuild pass built every stage and validated afterwards; `specforge validate`
+  back-annotates as a registered mutation, so each IntentIR pinned the pre-validation SemanticIR ledger and
+  failed closed on the exact-prefix check. The gate behaved correctly and the book already stated the rule, so
+  the durable fix is a Knowledge Map card (`retained-chain-rebuild-order`) rather than a production change.
+- `2026-08-27`: leave the fixture-side projection and the published `4/16` ratio to `.8d`. The evaluator reads
+  the reviewed population's replayed stage snapshots, so moving the ratio requires the population replay `.8d`
+  owns; publishing a projection change here would report movement no replay had measured.
 
 ## Open Questions
 
-- None. The rule is frozen, the evaluator agrees with it, and `.8c` owns the first bounded production carrier.
+- None. The rule is frozen, the evaluator agrees with it, and the bounded production carrier ships; `.8d`
+  owns the population replay that measures it.
 
 ## Blockers
 
 - None. The `.8d` external-source blocker is cleared: all eight authorized sources are present, digest-identical
   to the reviewed lock, and accepted by the orchestrator's own map, basename, volume, and coverage predicates.
-  `.8d` now waits only on `.8c`.
+  Its `.8c` prerequisite ships, so `.8d` is runnable.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8c` captured-region carrier | the producer emits one typed residual per captured figure-kind region no canonical record cites; the reviewed CoreSight chain carries `picture_0001` / `visual_0008` / `no_canonical_carrier_for_captured_region` / `evidence_to_semantic_ir`; two pre-change chains compared field-by-field differ only in `captured_region_residuals` (I2S 20, I2C 103) at both SemanticIR and IntentIR; the registry is 170 rules over 50 SemanticIR and 50 IntentIR fields; four focused positive/refusal tests, the workspace suite, Clippy, all five genericity components, and the 24/24 contract self-test pass |
 | `2026-08-27` | `.8d` input supplied | all eight authorized external sources are located by exact SHA-256 in the sibling repository, copied to a repository-derived path on the same volume, and re-verified: eight of eight digests and byte counts match the reviewed lock, and the orchestrator's own map-path, absolute-path, basename, same-volume, and coverage predicates pass with zero missing and zero extra entries |
 | `2026-08-27` | `.8c` contract correction and `.8d` boundary | the chain-currency baseline is 24 replayed / 24 current / zero stale at all four stages with exactly the declared retained bundles; `.8c` acceptance replaces an unsatisfiable zero-public-delta clause with zero stale plus intended-record-only change; `.8d` is blocked because eight reviewed sources, including both selected static-topology documents, are absent external read-only inputs |
 | `2026-08-27` | `.8b` corrected accounting | the pinned current result moves 4/24 to 4/16 and the frozen first result 0/24 to 0/82 with no other global or per-cell change; four fail-closed controls plus a direct partial-explanation case pass; the published global block is gated as a current summary of its own cells; the re-summarization is recorded with both digests; the controller republishes 4 of 16 over an affected population of 12; the workspace suite, Clippy, all five genericity components, and the 21/21 contract self-test pass |
@@ -466,6 +400,7 @@ so its chain stays explicitly unmeasurable until the external source returns.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8c` | `SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier` | ship the typed captured-region residual on SemanticIR and IntentIR, prove the carrier claim in the frozen contract, and rebuild every retained chain to zero stale |
 | `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — correct the carrier contract and record the replay blocker` | make `.8c`'s acceptance satisfiable, publish the chain-currency baseline, and block `.8d` on the absent external source map |
 | `.8b` | `SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations` | make the evaluator's denominator the frozen required-residual rule, keep every missing canonical key required and unmet, and republish the result, replay-evidence, and controller authorities |
 | `.8a` | `SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract` | freeze the executable required-residual rule, typed record grammar, closed case matrix, and selected family, and repair the silent-green reproduction command structurally |

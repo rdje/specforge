@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how are per-instance indexed signals (PSELx HSELx) referenced in prose handled
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how are per-state actions captured
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > how are project rescan working directories kept portable
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -80,6 +84,8 @@
   > how do I measure the extraction-quality gauge before and after a canonical promotion
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > how do I rebuild every retained chain after a production change
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -292,9 +298,3 @@
   > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > how does specforge split a coordinated X and Y relation subject into both agents

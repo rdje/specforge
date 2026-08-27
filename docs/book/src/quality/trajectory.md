@@ -373,12 +373,20 @@ remains is the real gap: twelve required observations across six cells — two p
 table-of-contents region, one packed programming structure, and two static-topology figures — that receive no
 residual record at either promoted stage. Those six cells are the complete current hard-failure set.
 
-Production owns exactly one typed residual carrier today: a non-applicable scalar timing row keeps its physical
-value, typed cause, first failing stage, and replay route, which is why both OpenCAPI analog cells pass. No
-equivalent carrier exists for a captured prose statement, table region, or visual region that reaches no
-canonical `IntentIR` surface, which is why those regions still disappear without an explanatory record. `.8c`
-implements the first bounded carrier, for static component topology: the only single family whose closure can
-move a reviewed category to `supported`.
+Production now owns two typed residual carriers. A non-applicable scalar timing row keeps its physical value,
+typed cause, first failing stage, and replay route, which is why both OpenCAPI analog cells pass. `.8c` added
+the second: a captured *visual region* that no canonical `SemanticIR` record cites now keeps its exact region
+identity, evidence provenance, typed cause `no_canonical_carrier_for_captured_region`, boundary, and replay
+route, and that record is carried into `IntentIR`. It is the carrier the two static-topology figures need — the
+only single family whose closure can move a reviewed category to `supported`. Captured prose statements and
+table regions that reach no canonical surface still have no equivalent carrier.
+
+The published residual-actionability ratio does not move on this leaf. Its queries read the reviewed
+population's replayed stage snapshots, and `.8d` owns replaying that population and publishing the comparable
+result. What `.8c` establishes is that the record now exists in production and reproduces from the current
+binary: the reviewed CoreSight document is one of the 24 retained measurable chains, and its rebuilt
+`SemanticIR` carries the residual for region `picture_0001` with provenance `visual_0008` — exactly the region,
+evidence id, and disposition the review expects.
 
 A published gap now has to be reproducible. The snapshot composer derives which package owns a test filter from
 the conformance crate's own module declarations and refuses to compose a gap whose reproduction command is not

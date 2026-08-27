@@ -51,7 +51,7 @@
       {
         "cause_id": "no_canonical_carrier_for_captured_region",
         "definition": "The region is captured and intent-bearing, but the target IR declares no carrier family for its content.",
-        "existing_carrier": null
+        "existing_carrier": "CapturedRegionResidualRecord"
       },
       {
         "cause_id": "non_contract_region",

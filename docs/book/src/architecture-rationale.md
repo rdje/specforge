@@ -212,10 +212,10 @@ raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary
 authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
-dependency/schema/rule/flow faults and joins every one of the 168 runtime descriptors to its independently
-inventoried structural alpha contract. Final structural qualification covers 15 committed slices and 120
-proof-bearing artifacts: the 24 current chain ledgers contain all 168 rule ids and 148,708 cumulative claims,
-while exact comparison finds zero non-proof/non-validation or residual delta. The other 54 chains remain
+dependency/schema/rule/flow faults and joins every one of the 170 runtime descriptors to its independently
+inventoried structural alpha contract. Final structural qualification covered 15 committed slices and 120
+proof-bearing artifacts, and its exact comparison found zero non-proof/non-validation or residual delta. Those
+same 24 chain ledgers now contain all 170 rule ids and 150,942 cumulative claims. The other 54 chains remain
 explicitly proof-unmeasurable.
 
 Population behavioral qualification is active under `.6d.ii.f` and is deliberately relational rather than one

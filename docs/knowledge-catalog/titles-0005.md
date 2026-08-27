@@ -5,6 +5,8 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md) | 2026-08-10 | `current` | Scalar timing rows require independent source-cell geometry for parameter and populated value roles |
+| [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md) | 2026-08-10 | `current` | Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max… |
 | [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md) | 2026-06-09 | `current` | Timing-table data rows trapped in header_rows (row-label cell is_header=true) are recovered structurally, not… |
 | [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md) | 2026-08-12 | `current` | The trajectory engine keeps nine exact dimensions and can only propose task-tree-owned work |
 | [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md) | 2026-06-17 | `current` | The transaction ISF BODY is faithfully complete — a value-free `(sample S)` membership body is FSMGen-ACCEP… |

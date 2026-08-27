@@ -17,6 +17,7 @@
   timings
 - carried conflicts
 - carried residual decisions
+- carried captured-region residuals
 
 This is the stage the rest of the project is trying to reach.
 Everything earlier exists to make this artifact strong, inspectable, and reusable.
@@ -29,11 +30,17 @@ the complete cumulative SemanticIR proof, independently rebuild IntentIR with th
 implementation, replay any closed mutations, and compare every public field exactly.
 
 The ledger preserves the verified cumulative SemanticIR ledger as an exact ordered prefix, then appends root and
-per-record claims for all 49 public fields across nine rule families. Every IntentIR claim depends on an exact
+per-record claims for all 50 public fields across nine rule families. Every IntentIR claim depends on an exact
 registered replay over the entire upstream claim graph. Thirty fields are byte-for-byte SemanticIR carries: the
 actor/interface graph except for the filtered `actors` collection, plus the semantic collections except for
 `actor_contracts`. Every root and record on those exact-carry surfaces also cites a direct SemanticIR claim with
 identical conclusion bytes.
+
+`captured_region_residuals` is a byte-identical clone of the SemanticIR collection, but it is registered in the
+`intent.residual` family rather than as an exact carry. That is deliberate and stricter, not looser: a carry rule
+is satisfied by matching an upstream claim, while a residual rule requires the current implementation to rebuild
+the field and compare it. The region reaches no carrier at this boundary either, so its explanation has to be
+re-established here rather than inherited.
 
 The remaining fields are typed projections, not weaker unnamed carries. `actors` is filtered to remove
 unsupported inferred phantoms. Identities, summaries, behaviors, constraints, assumptions, transactions, actor

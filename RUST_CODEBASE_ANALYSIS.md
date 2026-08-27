@@ -4,6 +4,27 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-27 — captured-region residual carrier; `SPEC-TO-INTENT-ALIGNMENT.8c`)
+
+- The IR gains its second typed residual carrier and its first at the region level. `CapturedRegionResidualRecord`
+  joins `TimingIntentDisposition::NonApplicable` in `crate::ir::source`, with closed
+  `CapturedRegionResidualCause` and `CapturedRegionBoundary` grammars, and lands as
+  `captured_region_residuals` on both `SemanticIr` and `IntentIr`.
+- The producer runs last in `SemanticIr::from_evidence_ir`, over the assembled artifact, so coverage is a
+  provenance membership test against the collections that actually shipped rather than a text scan. It reads
+  `timing_constraints`, `signal_constraints`, `conditional_rules`, `regular_states`, `state_transitions`,
+  `temporal_rules`, `temporal_conflicts`, and `actor_contracts` — the surfaces a visual region can reach.
+- Two production paths lead from a figure to a canonical carrier and they cite it differently:
+  `extract_records_from_vlm_observations` threads the item's `evidence_id`, `mine_verified_figure_contracts`
+  cites `figure:<asset_id>`. `waveform::figure_region_provenance_id` is now the single construction site both the
+  producer and the accounting read, so the two forms cannot drift into disagreement.
+- Registration reused `semantic.residual` and `intent.residual` rather than minting families, taking the compiled
+  boundary to 79 modules / 41 claim families / 170 fields / 141 rows and 50 public fields at each of the two
+  stages. The IntentIR field stays out of `INTENT_CARRIED_FIELDS` on purpose: the residual family's `current_only`
+  rule rebuilds and compares it instead of matching an upstream claim.
+- Current flow is 2,370 functions / 14,681 helper edges / 12,656 decision sites / 1,464 semantic macros across
+  120 rule roots, and all five production-genericity components pass after the change.
+
 ## Session update (2026-08-16 — canonical recovery publication; `SPEC-TO-INTENT-ALIGNMENT.7c.ii`)
 
 - Production code is unchanged from `.7c.i`; this slice exercises the conformance-owned 12-source/48-stage replay

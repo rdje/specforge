@@ -17,6 +17,7 @@
 - semantic candidates
 - semantic arbitration
 - residual decisions
+- captured-region residuals — the captured visual regions that reached no canonical carrier at all
 
 This is the stage where the pipeline begins to act like a protocol compiler rather than a document extractor.
 
@@ -26,7 +27,7 @@ Current SemanticIR is schema 2. A JSON object matching that schema is not author
 load, serialization, persistence, and IntentIR construction first verify the complete cumulative EvidenceIR
 ledger, rebuild SemanticIR with the current registered implementation, and compare every public field exactly.
 
-The proof covers all 49 public fields across 12 families. Every field has a root claim, including absent optional
+The proof covers all 50 public fields across 12 families. Every field has a root claim, including absent optional
 values and empty collections; every populated collection also has stable per-record claims. The upstream
 EvidenceIR ledger is retained as an exact ordered prefix. A registered stage-replay node depends on every
 upstream claim, and every SemanticIR claim depends on its exact field or record replay. This represents the full
@@ -320,6 +321,55 @@ the prose alone.
 Reading the packet is also the fastest way to find a document whose **signal catalog was never captured**. If
 the names it lists look like real wires rather than boilerplate, the gap is upstream in signal extraction, not
 in this filter.
+
+## Captured regions that reach no carrier
+
+A residual packet explains a record the pipeline **refused**. It cannot explain a source region the pipeline
+never turned into a record in the first place — and that is the more dangerous silence, because there is nothing
+left in the artifact to notice. A block diagram showing four trace units feeding a funnel is real design
+content, but `SemanticIR` has no collection that can hold "this component sits here and connects there". Before
+this surface existed, such a figure simply stopped at `EvidenceIR` and left no trace downstream.
+
+`SemanticIR.captured_region_residuals` closes that hole. Every captured visual region that **no canonical record
+cites** earns exactly one typed record:
+
+```json
+{
+  "region_id": "picture_0001",
+  "region_kind": "figure",
+  "supporting_evidence_ids": ["visual_0008"],
+  "cause": "no_canonical_carrier_for_captured_region",
+  "reason": "The captured figure region reached EvidenceIR, but no canonical SemanticIR record cites it: SemanticIR declares no carrier family for this region's content.",
+  "first_failing_stage": "evidence_to_semantic_ir",
+  "replay": "Run `specforge enrich` on this document to attempt typed visual observations for this region, then rebuild SemanticIR from the same EvidenceIR. If no canonical carrier family applies to the region's content, this residual is its terminal disposition."
+}
+```
+
+Four properties make the record trustworthy rather than decorative.
+
+**Coverage is provenance, not prose.** A region counts as explained only when a concrete record — a timing
+constraint, signal constraint, conditional rule, state, transition, temporal rule, temporal conflict, or actor
+contract — names it in its own provenance list. The check reads those collections; it never scans the artifact
+for the region's name.
+
+**A caption is not the figure.** `EvidenceIR` may relate a statement to a visual region because the statement
+*is* that region's caption. If caption-mediated links counted as coverage, 466 of the corpus's 1,089 captured
+figures would look explained while none of their actual content had reached anything. They are deliberately not
+coverage.
+
+**Table regions are excluded.** A `table_region` visual already reaches canonical carriers through the register,
+signal, and timing paths. A residual for one would claim that a fact both did and did not reach `IntentIR` — the
+self-contradiction the residual contract exists to forbid. Unclassified regions are excluded too, for the same
+reason the [table-side sibling](evidenceir.md#completeness-region-accounting--flag-intent-bearing-tables-that-produced-nothing)
+skips unclassified table kinds: capture never established them as intent-bearing.
+
+**Nothing is invented.** The record asserts only the *absence* of a carrier. It never states what the region
+said, so it cannot become a fabricated fact by another name.
+
+The record is carried unchanged into `IntentIR`, because the region gains no carrier at that boundary either.
+
+*Authoritative tracking:* `SPEC-TO-INTENT-ALIGNMENT.8c`, under
+[`docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md`](../../tasks/SPEC-TO-INTENT-ALIGNMENT.md).
 
 ## What this stage is trying to resolve
 

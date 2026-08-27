@@ -93,10 +93,10 @@ actionability. Its activation decomposed the published ratio into observations t
 that no correct pipeline can satisfy because their canonical facts are already promoted, and the genuinely
 required observations that no residual record explains; `.8a`–`.8d` own the contract, the fail-closed accounting
 correction, the bounded typed carrier, and the population replay. Genericity and behavioral `.f.v` signoff remain complete.
-Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 168
+Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 170
 runtime rules, compiled information-flow doctrine, and 27 adversarial controls cover all five stages. The 24
-current chains carry 148,708 cumulative claims across 120 artifacts with zero public migration delta; 54 legacy
-chains remain explicitly unmeasurable. The task tree and structural report own the detailed implementation graph.
+current chains now carry 150,942 cumulative claims across 120 artifacts under one adapter ruleset, and its
+migration comparison closed with zero public delta; 54 legacy chains remain explicitly unmeasurable. The task tree and structural report own the detailed implementation graph.
 A finite forbidden-vocabulary list remains diagnostic, not proof. Behavioral `.f` is closed: the frozen 24-row
 population, its identity/alpha/paraphrase/negative controls, and the corrected identity-disjoint holdout finish at
 35 pass / zero fail / 16 honestly unmeasurable / zero invalid, after `.f.iii.a` removed real production

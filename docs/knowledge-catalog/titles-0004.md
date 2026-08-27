@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md) | 2026-06-08 | `current` | Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule |
 | [prose-signal-capture](../knowledge/prose-signal-capture.md) | 2026-06-08 | `current` | Signals introduced in PROSE (not tables) are captured — pin appositive + parenthetical abbreviation, as a s… |
 | [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md) | 2026-08-16 | `current` | The a4a0 canonical-recovery replay is the current 40/0/0 reviewed population |
 | [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md) | 2026-06-22 | `current` | Register bit-field ISF lowering (DOC-INTENT-TAXONOMY.4a Gap A) — bit-field intent is fully captured + carri… |
@@ -18,6 +19,7 @@
 | [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md) | 2026-08-08 | `current` | Repository-local temp exposes a Docling test root-discovery and mutex-poison cascade |
 | [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |
 | [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md) | 2026-08-27 | `current` | Residual actionability counts required residuals, not declared residual queries |
+| [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md) | 2026-08-27 | `current` | A retained chain must be validated stage by stage as it is rebuilt, not at the end |
 | [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
 | [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md) | 2026-08-15 | `current` | Fresh reviewed replay carrier gaps are repaired and clean publication is complete |
 | [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md) | 2026-08-08 | `current` | The roadmap has a bounded current view and exact history capsule |
@@ -59,5 +61,3 @@
 | [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md) | 2026-06-04 | `current` | Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs |
 | [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md) | 2026-08-12 | `current` | Timing constraints preserve explicit caption units and direct structured-table provenance |
 | [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md) | 2026-08-11 | `current` | Production timing observations now reach verified figure contracts through an optional typed EvidenceIR Figur… |
-| [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md) | 2026-08-10 | `current` | Scalar timing rows require independent source-cell geometry for parameter and populated value roles |
-| [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md) | 2026-08-10 | `current` | Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max… |

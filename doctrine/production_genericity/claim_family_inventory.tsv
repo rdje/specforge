@@ -25,7 +25,7 @@ semantic.transactions	semantic_ir	transaction_anchors,transaction_phases,signal_
 semantic.carried_evidence	semantic_ir	serial_frame_fields,protocol_operations,protocol_states,interface_edge_timings,register_records	exact EvidenceIR carry	lossless_carry	e.iv
 semantic.evidence_projection	semantic_ir	timing_constraints,signal_constraints,conditional_rules	grounded filtering plus typed visual-evidence projection	registered_inference	e.iv
 semantic.temporal_contract	semantic_ir	temporal_rules,actor_contracts,constrained_extraction_stats,protocol_graph,fidelity_findings,temporal_conflicts	mixed carry, inference, and verification	lossless_carry_or_registered_inference	e.iv
-semantic.residual	semantic_ir	residual_decisions	explicit unsupported or conflicted semantics	residual_derivation	e.iii
+semantic.residual	semantic_ir	residual_decisions,captured_region_residuals	explicit unsupported or conflicted semantics	residual_derivation	e.iii
 semantic.validation	semantic_ir	validation_reports	post-build measurement	evaluation_attestation	e.ii
 intent.envelope	intent_ir	schema_version,stage,semantic_ir_path,artifact_layout,document_identity,intent_identity	operational identity and summary metadata	integrity_attestation_or_registered_summary	e.iii
 intent.actor_projection	intent_ir	actors	filtered actor projection from SemanticIR	registered_inference	e.iv
@@ -34,7 +34,7 @@ intent.carried_semantics	intent_ir	serial_frame_fields,protocol_operations,proto
 intent.contract_projection	intent_ir	actor_contracts	SemanticIR contract carry subject to typed conservative NLI demotion	registered_inference	e.iv
 intent.product_summary	intent_ir	behaviors,constraints,assumptions	canonical synthesis from SemanticIR records	registered_inference	e.iv
 intent.behavioral_relations	intent_ir	transactions,actor_drive_relations,actor_sample_relations,actor_trigger_relations,actor_temporal_dependencies,temporal_invariants	canonical behavioral synthesis	registered_inference	e.iv
-intent.residual	intent_ir	residual_decisions	explicit unsupported or conflicted intent	residual_derivation	e.iii
+intent.residual	intent_ir	residual_decisions,captured_region_residuals	explicit unsupported or conflicted intent	residual_derivation	e.iii
 intent.validation	intent_ir	validation_reports	post-build measurement	evaluation_attestation	e.ii
 adapter.envelope	isf_adapter	stage,schema_version,target,required_input_stage,intent_ir_path,artifact_layout,adapter_identity,document_identity	operational and provenance metadata	integrity_attestation	e.iii
 adapter.lowering	isf_adapter	lowering_status,isf	typed IntentIR to ISF conversion	registered_lowering	e.iv

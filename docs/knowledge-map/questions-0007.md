@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > is the USB4 Inter-Domain Service corpus refresh complete
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > is the WIRE-BASED-100.5a AHB 0.364 baseline real
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > is the a4a0 reviewed result current after inference antecedent recovery
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > is the b977 reviewed result current for the latest production revision
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > is the canonical SWD normalized bundle path portable
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the canonical intent_ir stale relative to its evidence_ir
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > is the cat-3 platform/system-IP topology capture faithful enough to lower to ISF (NO — measured 0.355 signal_connectivity edges/actor over 380 actors / 15 docs, only 24% of edges have both a producer AND a consumer, 0/10 infrastructure_signals have a resolved source; lowering it would synthesize an unfaithful sliver)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > is the cat-3 topology capture good enough to lower (NO — sparse + noisy: CoreSight SoC-600 has 6 signal_connectivity edges across 60 actors, GIC-600 66 edges / 2 infra; None/escaped actor names; a capture-recall measurement .4c.i must precede any lowering)
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -280,21 +298,3 @@
   > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what did KG-ISF-TRANSACTIONS.2l measure / decide
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what did KG-ISF-TRANSACTIONS.2n measure / decide
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b publish
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.7c.ii publish
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what did real filenames expose in adversarial identity comparison
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > what did refresh 50 change in the OpenCAPI data link chain
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > what did running nli-verify on a real spec find

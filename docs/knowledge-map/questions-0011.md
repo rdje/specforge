@@ -2,6 +2,38 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > where is coordinated-object actor-signal relation extraction implemented
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > where is current binary replay evidence stored
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > where is legal administrative prose filtered
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > where is normalized staging removed from Docling metadata
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > where is parenthetical single-wire authority enforced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > where is register level access stored in RegisterRecord
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > where is the 12 document current replay manifest
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > where is the I2C signal gold seed
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > where is the LTL renderer for temporal rules
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where is the SpecForge FSMGen feedback or handoff channel
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > where is the SpecForge trajectory controller engine
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > where is the U+F0B7 signal integrity panic in evidence extraction
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > where is the acceptance checklist a code change must satisfy
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
@@ -116,6 +148,8 @@
   > which caption grammar can supply a unit to every timing row
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > which claim family owns captured_region_residuals
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > which collection order changes may the behavioral comparator normalize
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -264,36 +298,3 @@
   > why are conditional_rules excluded from the document-class decision
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > why are determiners (All Managers) NOT rejected by the .1a agent gate
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > why are existing decision records not moved into partitions
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why are extracted signal names truncated at the underscore
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why are held-out alpha failures not yet production name-coupling evidence
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why are message fields not part of the document_class decision
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > why are modal verbs must shall should may not flagged as ambiguous
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why are prior candidate fixture names not joined into one long Markdown line
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > why are rustup and cargo allowed on the boot volume
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest
-  > residuals)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > why are some retained CCIX decibel timing records still canonical
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why are some section-heading registers held as a residual instead of emitted
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why are stability obligations residuals
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why are table-row sources exempt from the pre-bind constraint subject rule
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)

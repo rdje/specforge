@@ -77,6 +77,28 @@ EXPECTED_CASE_FIELDS = {
     "expected_met_observations",
 }
 EXPECTED_RECORD_FIELDS = {"fact_key", "source_ids", "reason", "first_failing_stage", "replay"}
+# Which typed causes a production carrier already exists for, and what that carrier is called.
+# `None` means the cause is declared but not yet built. SPEC-TO-INTENT-ALIGNMENT.8c shipped the
+# captured-region carrier, so its entry moved from `None` to the type it ships.
+EXPECTED_TYPED_CAUSE_CARRIERS = {
+    "outside_executable_digital_domain": "TimingIntentDisposition::NonApplicable",
+    "no_canonical_carrier_for_captured_region": "CapturedRegionResidualRecord",
+    "non_contract_region": None,
+    "unresolved_grounding": None,
+}
+# A claimed carrier has to be findable in production source, so "a carrier exists" is a checked
+# fact rather than a sentence in a JSON file — in both directions. A slice cannot claim coverage it
+# never built, and a later slice cannot delete a shipped carrier while the contract still cites it.
+CARRIER_DECLARATIONS = {
+    "TimingIntentDisposition::NonApplicable": (
+        "crates/specforge/src/ir/source.rs",
+        "pub enum TimingIntentDisposition",
+    ),
+    "CapturedRegionResidualRecord": (
+        "crates/specforge/src/ir/source.rs",
+        "pub struct CapturedRegionResidualRecord",
+    ),
+}
 EXPECTED_PROMOTED_STAGES = ["semantic_ir", "intent_ir"]
 EXPECTED_ACTIONABILITY_FIELDS = ["/reason", "/first_failing_stage", "/replay"]
 EXPECTED_BOUNDARIES = [
@@ -243,11 +265,26 @@ def validate_rule_and_grammar(contract: dict[str, Any], errors: list[str]) -> No
         for cause in causes
         if isinstance(cause, dict)
     }
-    if carriers.get("outside_executable_digital_domain") != "TimingIntentDisposition::NonApplicable":
-        errors.append("the analog domain must remain bound to the existing typed timing carrier")
-    for cause_id in set(EXPECTED_TYPED_CAUSES) - {"outside_executable_digital_domain"}:
-        if carriers.get(cause_id) is not None:
-            errors.append(f"typed cause {cause_id} must declare that no carrier exists yet")
+    for cause_id, expected_carrier in EXPECTED_TYPED_CAUSE_CARRIERS.items():
+        declared = carriers.get(cause_id)
+        if declared != expected_carrier:
+            errors.append(
+                f"typed cause {cause_id} must declare carrier {expected_carrier!r}, not {declared!r}"
+            )
+            continue
+        if declared is None:
+            continue
+        declaration = CARRIER_DECLARATIONS.get(declared)
+        if declaration is None:
+            errors.append(f"typed cause {cause_id} names an unknown carrier {declared!r}")
+            continue
+        path, signature = declaration
+        source = ROOT / path
+        if not source.is_file() or signature not in source.read_text(encoding="utf-8"):
+            errors.append(
+                f"typed cause {cause_id} claims carrier {declared!r}, "
+                f"but {signature!r} is absent from {path}"
+            )
 
 
 def validate_cases(contract: dict[str, Any], errors: list[str]) -> tuple[int, int, int]:
@@ -670,6 +707,32 @@ def run_self_test() -> int:
         "claimed-missing-carrier",
         lambda value: value["record_grammar"]["typed_causes"][0].update(
             {"existing_carrier": "AlreadyShipped"}
+        ),
+    )
+
+    def carrier_by_id(value: dict[str, Any], cause_id: str) -> dict[str, Any]:
+        return next(
+            cause
+            for cause in value["record_grammar"]["typed_causes"]
+            if cause["cause_id"] == cause_id
+        )
+
+    mutate(
+        "claimed-carrier-for-unbuilt-cause",
+        lambda value: carrier_by_id(value, "non_contract_region").update(
+            {"existing_carrier": "CapturedRegionResidualRecord"}
+        ),
+    )
+    mutate(
+        "renamed-shipped-carrier",
+        lambda value: carrier_by_id(value, "no_canonical_carrier_for_captured_region").update(
+            {"existing_carrier": "CapturedRegionResidual"}
+        ),
+    )
+    mutate(
+        "disowned-shipped-carrier",
+        lambda value: carrier_by_id(value, "no_canonical_carrier_for_captured_region").update(
+            {"existing_carrier": None}
         ),
     )
     mutate("missing-control", lambda value: value["cases"].pop())

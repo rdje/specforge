@@ -2,6 +2,44 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why does DTI (ihi0088) have zero message_field_records
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > why does Docling re-ingest fail on Apple Silicon
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > why does EvidenceIR schema 2 clear old protocol records
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why does GIC 400 emit fifteen registers with missing access
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why does I2S SD remain a signal
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why does Instruction group not count as an ns unit and why does SMIN not count as min
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > why does OpenCAPI Discovery Configuration no longer emit ISF
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why does ROADMAP.md have per-section line bounds
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > why does SpecForge keep normalized bundles instead of reclaiming them
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does USB 3.2 declare no signals
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -174,6 +212,8 @@
   > why does the tracked validation snapshot differ from current generated IntentIR reports
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why does validate fail with cumulative proof ledger does not retain the exact verified upstream prefix
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
   > why does workflow-standard capacity become 21
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -250,51 +290,11 @@
   > why is a fact-card aggregate ceiling the file bound times the per-file bound
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > why is a field name accepted or rejected from a description cell
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why is a figure caption not coverage for the figure
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > why is a file-level line ceiling not enough for a bounded snapshot
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > why is a gerund after while/when not a condition (action coordination)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why is a multi-caller named drive kept without actor priority
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > why is a retained bundle count not the same as corpus refresh progress
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > why is a sentence containing when not necessarily a semantic gate
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > why is a stable span after tick zero residual
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why is an ambiguous derived id pairing a fail rather than an invalid alpha transform
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why is an emitted-ISF count from an earlier refresh slice not the current number
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why is an exact archive alone insufficient for the active corpus task
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why is bus not a valid parenthetical single-wire head
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is channel membership metadata-only and not lowered to .isf
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > why is conformal calibration still blocked at CHI scale
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > why is corpus coverage refresh 34 blocked before ingest
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > why is current binary replay coverage 1 of 12
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why is page_image_path null / None for a large document
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is plural-rejection unsafe for phase names (access ends in ss)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > why is repeating the same check not independent verification

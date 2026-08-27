@@ -289,7 +289,10 @@ false canonical facts instead of a non-applicable disposition. The two platform 
 regions are captured, but their required residuals never appear in SemanticIR or IntentIR.
 
 The evidence-ranked next constraint is therefore upstream source-to-evidence fact formation plus explicit
-residualization. This result demonstrates no ISF/FSMGen expressiveness blocker: it ends at IntentIR and contains
+residualization. The visual half of that residualization now ships: a captured region that no canonical
+`SemanticIR` record cites earns a typed
+[captured-region residual](pipeline/semanticir.md#captured-regions-that-reach-no-carrier) carrying its region
+identity, evidence provenance, typed cause, first failing boundary, and replay route. This result demonstrates no ISF/FSMGen expressiveness blocker: it ends at IntentIR and contains
 no reviewed value that is correct and fully provenanced through IntentIR but fails only at adapter lowering.
 
 ## Current status

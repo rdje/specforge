@@ -97,7 +97,7 @@ compiles the generic capture, IR, extraction, semantic, intent, and adapter surf
 reviewed snapshots, named fixtures, and behavioral transform/comparison evidence. The `specforge` application composes both and preserves the existing public
 module paths. Dependency mutations prove that a reverse edge, application cycle, or oracle-module reinsertion is
 rejected. The frozen pre-migration denominator remains 71 modules. The live inventory is now 79 modules, 41 claim
-families, and 168 top-level fields; the latest module is the core clarification planner. Its boundary is declared
+families, and 170 top-level fields; the latest module is the core clarification planner. Its boundary is declared
 non-authoritative, so it changes neither the package direction nor the claim/field denominator.
 
 The kernel's compiler-visible contract is now concrete. Source-order opaque symbol and document atoms expose only
@@ -142,7 +142,7 @@ together as the unconditional `PRODUCTION-GENERICITY` doctrine. The contract clo
 full-PDF versus normalized-text input planes, six transform relations, five proof-bearing comparison stages,
 7-row calibration/17-row prospective holdout split, and pass/fail/unmeasurable/invalid evidence states. CI adds
 27 structural controls, eight contract mutations, legal display/provenance/test controls, and an exact
-inventory-to-runtime join that executes the structural alpha obligation of all 168 rules. The contract does not
+inventory-to-runtime join that executes the structural alpha obligation of all 170 rules. The contract does not
 pretend whole-population replay already passes: that qualification remains mandatory before
 SpecForge can claim production-genericity signoff. The executable behavioral slices now present in conformance
 are deterministic normalized-text alpha, unchanged-PDF, byte-identical adversarial PDF identity, reviewed
@@ -187,8 +187,8 @@ derived graph closes syntax/module/currentness discovery, and the flow layer clo
 helper/raw-text/identity/promotion boundary. Cargo compilation/privacy and executable proof replay remain the
 independent type and semantic-authority layers; this is intentionally not an AST-only claim.
 
-That migration now has an exact checked contract. The 41 claim families expand to 168 current top-level-field
-rules and cover 117 reviewed producer/mutator entrypoints plus 53 canonical seams. One cumulative ledger starts
+That migration now has an exact checked contract. The 41 claim families expand to 170 current top-level-field
+rules and cover 118 reviewed producer/mutator entrypoints plus 53 canonical seams. One cumulative ledger starts
 from exact SourceIR capture, is verified and retained as an ordered prefix at every downstream stage, and gains
 field-root proofs (including empty fields) plus stable per-record proofs. Canonical load, serialization, write,
 downstream build, and ISF lowering require a complete current ledger; post-build mutation invalidates authority
@@ -219,21 +219,25 @@ benchmarks measure progress; they do not redefine the architecture.
 
 ### Structural qualification snapshot
 
-The complete structural program spans 15 committed slices. Its final persisted boundary is exact:
+The complete structural program spans 15 committed slices. Its persisted boundary, re-measured on the current
+binary, is exact:
 
 | Stage | Current / legacy | Registered families / fields | Stage-local claims in the 24 final ledgers | Public migration delta |
 | --- | ---: | ---: | ---: | ---: |
 | SourceIR | 24 / 54 | 5 / 19 | 31,382 | 0 |
-| EvidenceIR | 24 / 54 | 11 / 39 | 89,758 | 0 |
-| SemanticIR | 24 / 54 | 12 / 49 | 12,399 | 0 |
-| IntentIR | 24 / 54 | 9 / 49 | 14,288 | 0 |
-| ISF adapter | 24 / 54 | 4 / 12 | 881 | 0 |
+| EvidenceIR | 24 / 54 | 11 / 39 | 89,766 | 0 |
+| SemanticIR | 24 / 54 | 12 / 50 | 13,520 | 0 |
+| IntentIR | 24 / 54 | 9 / 50 | 15,409 | 0 |
+| ISF adapter | 24 / 54 | 4 / 12 | 865 | 0 |
 
 The same 24 retained document keys are current at every stage. Their final cumulative adapter ledgers contain
-148,708 claims under one ruleset and exercise all 168 registered rules. Exact migration comparisons excluded
+150,942 claims under one ruleset and exercise all 170 registered rules. Exact migration comparisons excluded
 only proof context, proof ledger, and validation reports, so the zero public delta also proves zero residual
 delta. The current residual surfaces contain 0 SourceIR, 3 SemanticIR, 8 IntentIR, and 62 adapter objects; all 24
-adapters are honestly blocked with zero current emitted files. The 54 legacy chains remain inspectable but
+adapters are honestly blocked with zero current emitted files. Claim totals are re-measured, not fixed: every
+production slice that adds or removes a canonical record moves them, so the
+[structural qualification report](../../../research/production-genericity-structural-qualification.md) pins its
+own dated boundary rather than a standing invariant. The 54 legacy chains remain inspectable but
 cannot feed canonical authority. The [structural qualification report](../../../research/production-genericity-structural-qualification.md)
 publishes the per-chain ledger and residual counts.
 

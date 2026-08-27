@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is PDF-VARIANT-DIGESTION.12a
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is PDF-VARIANT-DIGESTION.12b
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what is PDF-VARIANT-DIGESTION.3 prose entity capture
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > what is ProtocolStateRecord / protocol_states / DBGTAPSM
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what is SWD's actual intent / protocol (from the spec)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > what is SerialFrameField / serial_frame_fields / SerialFramePhase
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > what is SpecForge doing in academic or research terms
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
@@ -18,6 +42,8 @@
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is capture_signal_presence_rows and who shares it
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is captured_region_residuals
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -48,6 +74,8 @@
   > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is figure_region_provenance_id for
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > what is in seed_swd_derivation.json
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -269,31 +297,3 @@
   > what is the presence-matrix structural gate and how many tables fire it
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > what is the present blocking point on the specification-to-executable-intent path
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the register-field eval surface (EvalTask::RegisterField)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > what is the registers.section_header_field strategy
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what is the rolling ledger archive protocol
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > what is the semantic_ungrounded_records_not_promoted residual packet
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > what is the size-immunity binding constraint for source_ir.json at extreme page counts
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what is the source-to-IntentIR completeness contract
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is the standing per-doc quality report wired into converge/CI
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is the table-kind precision estimate and the flagged-mismatch list
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > what is the transaction phase qualifier authority rule
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)

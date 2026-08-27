@@ -15,6 +15,7 @@
 - [Behavioral qualification](behavioral-qualification.md)
 - [Canonical recovery](canonical-recovery.md)
 - [Residual actionability](residual-actionability.md)
+- [Residual carrier](residual-carrier.md)
 
 ## Primary leaf routes
 
@@ -95,8 +96,8 @@
 | `SPEC-TO-INTENT-ALIGNMENT.8` | [Residual actionability](residual-actionability.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.8a` | [Residual actionability](residual-actionability.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.8b` | [Residual actionability](residual-actionability.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.8c` | [Residual actionability](residual-actionability.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.8d` | [Residual actionability](residual-actionability.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.8c` | [Residual carrier](residual-carrier.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.8d` | [Residual carrier](residual-carrier.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9` | [Current and future](current-and-future.md) |
 
 ## Exact provenance

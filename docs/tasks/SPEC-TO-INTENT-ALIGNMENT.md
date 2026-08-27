@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: extraction quality and breadth
 - Created: `2026-08-11`
-- Last updated: `2026-08-16`
+- Last updated: `2026-08-27`
 - Owner: project owner and repo-local workflow
 
 ## Goal
@@ -30,7 +30,7 @@ expressiveness as the bottleneck.
   coupling and published clean-revision held-out closure; `.f.iv.a` restored the structural carriers and
   `.f.iv.b` published their clean 12-source proof. `.f.iv` and final signoff `.f.v` are complete.
 - `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7` and children `.7a` through `.7c` are complete;
-  `.8` is active with children `.8a`, `.8b`, `.8c`, and `.8d`, and `.9` is pending.
+  `.8` is active with `.8a`, `.8b`, and `.8c` complete and `.8d` the remaining child, and `.9` is pending.
 
 ## Current Frontier
 
@@ -53,11 +53,13 @@ and five met observations over 18 closed cases and 19 control classes, and repai
 reproduction command structurally. `.8b` made the evaluator agree with that rule: the published ratio is now
 4/16 with an affected population of twelve, the frozen first result re-derives as 0/82, and no per-cell score or
 other global dimension moved. A missing canonical key still adds a required observation and is met only by an
-exact, provenanced, actionable residual for that key. `.8c` implements the bounded `static_component_topology`
-carrier against a green 24-current / zero-stale chain baseline. `.8d`'s input blocker is cleared: the owner
-supplied all eight authorized external reviewed sources, each located by exact SHA-256, copied to a
-repository-derived path on the same volume, and re-verified against the reviewed lock, and the orchestrator's
-own map, basename, volume, and coverage predicates pass. `.8d` now waits only on `.8c`.
+exact, provenanced, actionable residual for that key. `.8c` shipped the bounded carrier: a captured figure-kind region that
+no canonical `SemanticIR` record cites now earns exactly one typed residual carrying its region identity,
+evidence provenance, closed cause `no_canonical_carrier_for_captured_region`, boundary, and operator replay
+route, and that record is carried unchanged into `IntentIR`. The registry expanded from 168 to 170 field rules,
+two pre-change chains differ only in the new collection at both stages, and all 24 retained chains rebuild to
+zero stale. `.8d` is the remaining child: its external-source input is present and digest-identical to the
+reviewed lock, so it owns the 12-source / 48-stage population replay and the comparable published result.
 
 ## Detailed task evidence
 
@@ -152,6 +154,7 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8c` captured-region carrier | one typed residual per uncited captured figure region, carried into IntentIR; two pre-change chains differ only in the new collection; 170 rules over 50/50 fields; all gates pass |
 | `2026-08-27` | `.8d` input supplied | eight of eight authorized external reviewed sources are located by exact SHA-256, copied to a repository-derived same-volume path, and re-verified digest- and byte-identical to the reviewed lock; the orchestrator's map, basename, volume, and coverage predicates pass with zero missing and zero extra |
 | `2026-08-27` | `.8c` contract correction and `.8d` boundary | the chain baseline is 24 replayed / 24 current / zero stale at all four stages with exactly the declared retained bundles; `.8c` acceptance now requires zero stale plus intended-record-only public change; `.8d` is blocked on the absent external source map covering eight reviewed sources |
 | `2026-08-27` | `.8b` corrected accounting | the evaluator now counts only required residual observations; the pinned current result moves 4/24 to 4/16 and the frozen first result 0/24 to 0/82 with no other global or per-cell change; fail-closed, duplicate, provenance, and partial-explanation controls pass, the re-summarization records both digests, and the workspace suite, Clippy, genericity, and the 21/21 contract self-test pass |
@@ -181,6 +184,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8c` | `SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier` | ship the typed captured-region residual across SemanticIR and IntentIR, prove the carrier claim in the frozen contract, and rebuild every retained chain to zero stale |
 | `.8d` | `SPEC-TO-INTENT-ALIGNMENT.8d — admit the supplied external reviewed sources` | verify and record the eight owner-supplied sources by exact digest and clear the population-replay input blocker |
 | `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — correct the carrier contract and record the replay blocker` | make `.8c`'s acceptance satisfiable, publish the chain baseline, and block `.8d` on the absent external source map |
 | `.8b` | `SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations` | make the denominator the frozen rule, keep every missing canonical key required and unmet, and republish the result, replay-evidence, and controller authorities |

@@ -26,6 +26,8 @@
   > does a blocked adapter remove a previously emitted isf
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > does a figure that produced waveform contracts get a residual
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -131,6 +133,8 @@
   > does specforge handle coordinated drive/read objects (X drives A and B)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > does specforge handle passive voice for actor-signal relations (X is driven by Y)
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > does specforge validate change the artifact it validates
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does specforge validate modify the artifact passed on the command line
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -293,7 +297,3 @@
   > how are multi-word field names like Validation Bits or FRU ID recovered
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how are offset-suffixed bit cells like 31:28 +04 extracted
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how are per-instance indexed signals (PSELx HSELx) referenced in prose handled
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how are per-state actions captured

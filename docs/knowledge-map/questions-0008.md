@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what did KG-ISF-TRANSACTIONS.2n measure / decide
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b publish
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.7c.ii publish
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what did real filenames expose in adversarial identity comparison
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > what did refresh 50 change in the OpenCAPI data link chain
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > what did running nli-verify on a real spec find
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > what did statement 0114 say in the stale OpenCAPI Ready evidence
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -110,6 +128,8 @@
   > what does lead_binds_value do in evidence.rs
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > what does mandatory rollover pressure mean for the fact-card landing
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what does no_canonical_carrier_for_captured_region mean
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > what does opaque identifier mean in SpecForge
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -196,6 +216,8 @@
   > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > what happens if someone runs clean --scope source-normalized on a declared document
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what happens to a figure that reaches no canonical carrier
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > what happens to a page sidecar path when page images are not persisted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -258,6 +280,8 @@
   > what is AppError::IngestTerminatedBySignal
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is CapturedRegionResidualRecord
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -274,27 +298,3 @@
   > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is PDF-VARIANT-DIGESTION.12a
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is PDF-VARIANT-DIGESTION.12b
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what is PDF-VARIANT-DIGESTION.3 prose entity capture
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > what is ProtocolStateRecord / protocol_states / DBGTAPSM
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what is SWD's actual intent / protocol (from the spec)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > what is SerialFrameField / serial_frame_fields / SerialFramePhase

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > how many fact cards can SpecForge hold
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how many fact cards can SpecForge hold now
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how many falsification controls are cited by verified SpecForge claims
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > how many generated SourceIR records still name the old livework checkout
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > how many generated artifacts still mention the deleted boot-volume repository
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
@@ -10,6 +20,10 @@
   > how many page objects does a /Type/Page regex report vs pdfinfo
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > how many pages elements and normalized files does the OpenCAPI data link ingest produce
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many production rules does the registry declare
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many public fields do SemanticIR and IntentIR declare
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how many quantitative prose candidates are in the SpecForge book
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -134,6 +148,8 @@
   > how will the oversized SpecForge roadmap be made bounded without losing its history
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how will the shared rolling ledger archive index be partitioned
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > in what order do I rebuild a retained corpus chain
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is 'X, which connects to Y, drives Z and W' clause distribution handled
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -190,6 +206,8 @@
   > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > is canonical recovery complete in the current reviewed population
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > is captured_region_residuals an exact IntentIR carry
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > is collect_known_signal_names UTF-8 safe
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -279,21 +297,3 @@
   > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > is the USB4 Connection Manager current-binary refresh complete
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > is the USB4 Inter-Domain Service corpus refresh complete
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > is the WIRE-BASED-100.5a AHB 0.364 baseline real
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is the a4a0 reviewed result current after inference antecedent recovery
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is the b977 reviewed result current for the latest production revision
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > is the canonical SWD normalized bundle path portable
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is the canonical intent_ir stale relative to its evidence_ir
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > is the cat-3 platform/system-IP topology capture faithful enough to lower to ISF (NO — measured 0.355 signal_connectivity edges/actor over 380 actors / 15 docs, only 24% of edges have both a producer AND a consumer, 0/10 infrastructure_signals have a resolved source; lowering it would synthesize an unfaithful sliver)

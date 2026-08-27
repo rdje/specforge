@@ -2,6 +2,41 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why are existing decision records not moved into partitions
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why are extracted signal names truncated at the underscore
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why are held-out alpha failures not yet production name-coupling evidence
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > why are message fields not part of the document_class decision
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > why are modal verbs must shall should may not flagged as ambiguous
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > why are prior candidate fixture names not joined into one long Markdown line
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > why are rustup and cargo allowed on the boot volume
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest
+  > residuals)
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > why are some retained CCIX decibel timing records still canonical
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why are some section-heading registers held as a residual instead of emitted
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why are stability obligations residuals
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why are table regions excluded from captured-region residuals
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why are table-row sources exempt from the pre-bind constraint subject rule
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > why are the AHB gold negatives for statements 0561 and 0678 there
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -78,6 +113,8 @@
   > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > why did ISF renderability fall from 44 to 17
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why did IntentIR proof verification fail after I validated SemanticIR
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did LTI unexplained tables go UP from 5 to 6
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -260,41 +297,3 @@
   > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why does DTI (ihi0088) have zero message_field_records
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > why does Docling re-ingest fail on Apple Silicon
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > why does EvidenceIR schema 2 clear old protocol records
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why does GIC 400 emit fifteen registers with missing access
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why does I2S SD remain a signal
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why does Instruction group not count as an ns unit and why does SMIN not count as min
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > why does OpenCAPI Discovery Configuration no longer emit ISF
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > why does ROADMAP.md have per-section line bounds
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > why does SpecForge keep normalized bundles instead of reclaiming them
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does USB 3.2 declare no signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals

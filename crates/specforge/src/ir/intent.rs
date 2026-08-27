@@ -27,8 +27,9 @@ use crate::ir::semantic::{
     TransactionAnchorRecord,
 };
 use crate::ir::source::{
-    ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
-    ResidualDecisionPacket, SignalConstraintKind, ValidationReportRecord, document_key,
+    ActorSignalRelation, AutomationConfidence, CandidateInterpretation,
+    CapturedRegionResidualRecord, RelationKind, ResidualDecisionPacket, SignalConstraintKind,
+    ValidationReportRecord, document_key,
 };
 use crate::persisted_path::{
     PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
@@ -250,6 +251,11 @@ pub struct IntentIr {
     #[serde(default)]
     pub temporal_invariants: Vec<TemporalInvariantRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
+    /// SPEC-TO-INTENT-ALIGNMENT.8c: captured visual regions that reached no canonical carrier,
+    /// carried unchanged from `SemanticIR`. The region never gains a carrier at this boundary, so
+    /// the explanation has to survive to the product boundary with it. Serde-skipped while empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub captured_region_residuals: Vec<CapturedRegionResidualRecord>,
     #[serde(default)]
     pub validation_reports: Vec<ValidationReportRecord>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -310,6 +316,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("actor_temporal_dependencies", "intent.behavioral_relations"),
     ("temporal_invariants", "intent.behavioral_relations"),
     ("residual_decisions", "intent.residual"),
+    ("captured_region_residuals", "intent.residual"),
     ("validation_reports", "intent.validation"),
 ];
 
@@ -721,6 +728,7 @@ impl IntentIr {
             actor_temporal_dependencies,
             temporal_invariants,
             residual_decisions,
+            captured_region_residuals: semantic_ir.captured_region_residuals.clone(),
             validation_reports: Vec::new(),
             proof_context: None,
             proof_ledger: None,
@@ -790,6 +798,7 @@ impl IntentIr {
         insert_field!(actor_temporal_dependencies);
         insert_field!(temporal_invariants);
         insert_field!(residual_decisions);
+        insert_field!(captured_region_residuals);
         insert_field!(validation_reports);
         if fields.len() != INTENT_RULE_FIELDS.len() {
             return Err(DerivationError::new(
@@ -1366,6 +1375,7 @@ impl IntentIr {
             actor_temporal_dependencies: Vec::new(),
             temporal_invariants: Vec::new(),
             residual_decisions: Vec::new(),
+            captured_region_residuals: Vec::new(),
             validation_reports: Vec::new(),
             proof_context: None,
             proof_ledger: None,
@@ -6419,7 +6429,7 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 49);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 50);
         assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 30);
         assert_eq!(
             super::INTENT_RULE_FIELDS

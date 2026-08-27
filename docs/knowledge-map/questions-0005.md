@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > how does specforge split a coordinated X and Y relation subject into both agents
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -92,6 +98,8 @@
   > how is a CI-tier doctrine registered without slowing down the pre-commit hook
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > how is a Reg.Field cross-reference distinguished from a real constraint subject
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how is a captured visual region proven covered or uncovered
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how is a claim's grounding checked beyond a string match
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -231,6 +239,8 @@
   > how many administrative workflow statements were measured
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how many alignment task owners and routes survive migration
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many captured figure regions does the retained corpus hold
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -287,13 +297,3 @@
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > how many evidence artifacts have no validation report
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > how many fact cards can SpecForge hold
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > how many fact cards can SpecForge hold now
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how many falsification controls are cited by verified SpecForge claims
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > how many generated SourceIR records still name the old livework checkout

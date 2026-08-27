@@ -136,7 +136,7 @@ keeps full-PDF capture separate from the lossy text projection. Missing source/p
 unmeasurable rather than passed. Its checker contains no document/vendor/protocol labels; those remain data.
 
 CI adds `--self-test`: 27 controlled dependency/schema/rule/flow faults, legal display/provenance/test-only uses,
-the exact 168-rule structural alpha join, and 17 behavioral-contract/evidence faults covering population or
+the exact 170-rule structural alpha join, and 17 behavioral-contract/evidence faults covering population or
 attempt omission, unsafe authority, hash/tool drift, reviewed-label leakage, split overlap, state laundering,
 interval drift, absolute paths, vacuity laundering, and partial relation/stage assertions.
 This gates the behavioral oracle's currency. The conformance harness now implements and calibrates full-PDF
