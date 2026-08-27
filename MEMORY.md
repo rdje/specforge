@@ -17,26 +17,26 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SOURCE-IR-REPRODUCIBILITY.2` is the next child; `.0` and `.1` are done and `.4`/`.5` are new.
-  Tracking-only: `SPEC-TO-INTENT-ALIGNMENT.9`, `PROVIDER-MODEL-STORE-LOCALITY.1`, `STATUS-LEDGER-ROLLOVER.2`,
-  `TASK-PART-SEAL-REACHABILITY.0`, `CLAIM-VERIFICATION-ADOPTION.1a`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.1` censused every persisted `generated/source_ir/*` artifact at `085582c0`. The 78 partition
-  into 24 live (schema 3 — exactly the chain-currency retained-bundle set) and 54 legacy that no current ingest
-  can reproduce at all. All 24 live sources resolved on the repository volume, so the whole live stratum was
-  re-ingested with no sampling inside it: 11 reproduce exactly and 13 do not, and the 13 hold 11,379 of the live
-  population's 22,088 persisted content elements. Drift adds 1,804 elements (1,802 `body_text`, all
-  figure-interior text) and drops 31 — 28 re-segmentation, 3 emitted nowhere. The decisive cost is captions:
-  bindings fall 1,191 to 1,152, so re-ingesting is a trade, not a refresh. Not noise — the largest drift
-  reproduced identically in two further runs. Producer self-test is 14/14 with two observed RED perturbations,
-  nothing under `generated/` was written, and the book's over-broad reproducibility claim is corrected.
-  `SOURCE-IR-REPRODUCIBILITY.5` now owns the re-ingest-versus-retain decision, which is the director's call.
+- Active unit: `SCRATCH-RESIDUE-CONTAINMENT.1` and `SOURCE-IR-REPRODUCIBILITY.2` are both next; `.0` of the
+  former and `.0`/`.1` of the latter are done. Tracking-only: `SPEC-TO-INTENT-ALIGNMENT.9`,
+  `PROVIDER-MODEL-STORE-LOCALITY.1`, `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
+  `CLAIM-VERIFICATION-ADOPTION.1a`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
+- Current state: `SOURCE-IR-REPRODUCIBILITY.1` censused all 78 persisted `generated/source_ir/*` artifacts at
+  `085582c0` — 24 live (schema 3, exactly the chain-currency retained-bundle set) and 54 legacy no ingest can
+  reproduce. All 24 live sources resolved on the repository volume, so the whole stratum was re-ingested: 11
+  reproduce exactly and 13 do not, holding 11,379 of 22,088 persisted content elements. Drift adds 1,804
+  elements (all figure-interior) and drops 31 — 28 re-segmentation, 3 emitted nowhere — and caption bindings
+  fall 1,191 to 1,152, so re-ingesting is a trade, not a refresh (`.5` owns that call). Not noise: the largest
+  drift reproduced identically twice more. `SCRATCH-RESIDUE-CONTAINMENT.0` then established named-or-chained
+  scratch reachability and reclaimed 5,290 files / 2.55 GiB with an empty residue, retaining the two
+  chain-bearing behavioral-holdout roots (14.1 GiB) for `.1` to decide rather than deleting them on a sweep.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
 - Next action: run `SOURCE-IR-REPRODUCIBILITY.2` — make reviewed source anchors resolve by content identity
   rather than ordinal position, with a RED control proving an anchor that no longer matches its excerpt still
-  fails closed. `.1` measured why this is now urgent rather than hypothetical: 13 live documents have moved
-  ordinals, so every fixture pinned to an `elem_NNNNN` is a latent scoring failure. `.3` (chain-currency blind
-  spot) and `.4` (bundle reproducibility fingerprint) follow; `.5` needs a decision, not a capability.
+  fails closed; 13 live documents have moved ordinals, so every `elem_NNNNN` pin is a latent scoring failure.
+  `SCRATCH-RESIDUE-CONTAINMENT.1` (retain-or-reclaim the 14.1 GiB of holdout evidence) is the cheaper
+  alternative pick and needs a decision rather than a capability.
 - In-flight uncommitted: none after this commit; no background job is running.
 - Blockers: none.

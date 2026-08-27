@@ -1,3 +1,20 @@
+### SCRATCH-RESIDUE-CONTAINMENT.0 — reclaim the scratch nothing can reach
+
+- Made scratch cleanup a reachability question instead of a periodic guess. A root under
+  `.project-data/tmp/` is reachable if a Git-tracked file names it, or if the behavioral holdout's
+  `ultimate_retained_artifact_output_root` can walk to it along `retained_evidence_path` links — a
+  root can be load-bearing with no tracked file naming it at all, which is exactly the case that
+  makes an unqualified sweep unsafe.
+- Traced the chain rather than assuming it. `doctrine/production_genericity/behavioral_holdout_evidence.json`
+  reaches `spec-to-intent-f-iii-heldout` in one hop and stops there, so that root is the retained
+  artifact store; its declared `retained_evidence_sha256` matches the file on disk exactly.
+- Reclaimed only the provably unreachable: 12 paths, 5,290 files, 2,669,876 KiB (2.55 GiB), with an
+  empty residue census and all four retained roots identical in file count and bytes before and
+  after. The four superseded `5dd1302a` chain links were safe precisely because the successor run
+  links directly to the chain terminus and cannot reach them.
+- Left the two chain-bearing holdout roots (14.1 GiB) to `.1`. Deleting the evidence behind a
+  published signoff is a decision, not a sweep's call.
+
 ### SOURCE-IR-REPRODUCIBILITY.1 — census the standing SourceIR drift across the live corpus
 
 - Measured what `.0` could only localize. `scripts/measure_source_ir_reproducibility.py` partitions every
