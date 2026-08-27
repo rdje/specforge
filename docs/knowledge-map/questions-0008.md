@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what blocks a Rust code change from committing in specforge
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what caused the I2C symbol alpha production failure
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > what causes actor_signal_relations / extracted_statements to differ run-to-run
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > what changed between stale and current OpenCAPI Certified Definition artifacts
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > what changed between stale and current OpenCAPI Ready Definition artifacts
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > what changed between the persisted source_ir and a fresh ingest
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > what confidence axis correlates with extracted-constraint correctness
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -282,19 +298,3 @@
   > what is ADR 0043
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > what is ADR 0044
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what is AppError::IngestAbortedForDisk
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is AppError::IngestAbortedForMemory
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what is AppError::IngestTerminatedBySignal
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is CapturedRegionResidualRecord
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > what is DOC-INTENT-TAXONOMY.4c.ii
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is EvidenceIr.extraction_quality_gauge and who writes it

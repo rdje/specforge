@@ -1,3 +1,41 @@
+### SOURCE-IR-REPRODUCIBILITY.1 — census the standing SourceIR drift across the live corpus
+
+- Measured what `.0` could only localize. `scripts/measure_source_ir_reproducibility.py` partitions every
+  persisted `generated/source_ir/*` artifact into exactly one stratum — 24 live (SourceIR schema 3), 0 live but
+  unmeasurable, 54 legacy that no current ingest can reproduce at all — and the live stratum turns out to be
+  exactly the membership of `doctrine/chain_currency/retained_bundles.json`. The census frame is therefore
+  precisely the population whose chains report current today.
+- Re-ingested the whole live stratum with no sampling inside it, because every recorded source resolved on the
+  repository volume. **11 of 24 reproduce exactly; 13 do not.** The 13 hold 11,379 of the live population's
+  22,088 persisted content elements, so slightly over half the persisted SourceIR content stands on an ingest
+  the current toolchain no longer produces while all 24 chains report current at every stage the chain-currency
+  oracle can see.
+- Characterized the drift rather than counting it. Ingest adds 1,804 content elements across the 13 documents —
+  1,802 `body_text`, one `section_header`, one `caption` — and the text is unambiguously figure interior
+  (`Core`, `External Debugger +`, `Referenced to`, `Ideal Clock`, `requency (GHZ)`, `MSb LSD`). Of 31 dropped
+  elements, 28 are re-segmentation whose text still appears in the replayed stream and exactly three are
+  content the current toolchain emits nowhere. No collection but `content_elements` changes cardinality, and
+  `proof_ledger.ruleset_sha256` is identical for all 24.
+- Found the result that inverts the obvious remedy. Caption bindings on tables and visual assets fall from
+  1,191 to 1,152: seven documents lose bindings and one gains two, and a captured caption becomes a loose
+  interior text element — `structured_tables[1].caption_text` is `Figure 5-1: External debugger and core
+  handshake sequence` persisted and `null` replayed. Re-ingesting is a trade, not a refresh, so it is a
+  decision and now has an owning leaf.
+- Separated drift from noise. The largest proportional drift was ingested twice more into separate roots; all
+  three replays produce the same 347 elements and the same `+81 / -0`, and differ only in `proof_ledger`.
+  Comparing two same-input replays isolates that to each claim's `scope` and `conclusion_sha256` with the
+  ruleset digest and all 448 addresses equal, which is why excluding the proof surface is structurally
+  necessary rather than merely conventional.
+- Kept "reproduced" from being a default answer. The producer carries 14 controlled cases under `--self-test`,
+  and two were observed going RED under real perturbations: widening the migration-note exemption to notes as a
+  class (12/13) and counting re-segmentation as content loss (13/14).
+- Corrected the book. `docs/book/src/pipeline/sourceir.md` claimed the same machine always ingests the same
+  way; that is true of SpecForge's own batching and false of the pipeline, and the chapter now says what ingest
+  does not promise, why element ids move, and how to run the census.
+- Opened `.4` (a reproducibility fingerprint in the normalized bundle) and `.5` (the re-ingest-versus-retain
+  decision), and left `generated/` untouched — the census refuses to run with a modified `crates/` tree and
+  writes only below `.project-data/tmp`.
+
 ### SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure
 
 - Replayed all 12 reviewed sources through all 48 isolated stages from clean production at `483e525d` under

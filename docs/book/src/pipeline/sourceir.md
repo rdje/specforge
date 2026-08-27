@@ -249,10 +249,10 @@ is running on**, automatically.
 
 The signal it uses is the host's **total physical RAM** — deliberately *not* the momentary free
 memory. Total RAM is a fixed property of the machine, so the chosen batch size is the same on every
-run: the *same machine always ingests the same way*, which keeps results reproducible. (Reacting to
+run: SpecForge's own contribution to how a document is cut up does not wobble. (Reacting to
 moment-to-moment free memory would make the batching — and so the exact output at batch boundaries —
 wobble from run to run; transient pressure from other programs is instead handled by the memory
-safeguard above.)
+safeguard above.) That stability is SpecForge's half of the story; the other half is below.
 
 The sizing is a simple, conservative ladder, chosen to keep a batch's peak memory near a safe
 fraction of RAM:
@@ -535,3 +535,59 @@ that supports it. A defensive fallback keeps ingest running even if a future
 Docling version reshapes these options. Verified end-to-end: a fresh ingest with
 no environment variables converts cleanly where it previously failed on page one.
 *Authoritative tracking:* `docs/tasks/DOCLING-DEVICE-CPU-DEFAULT.md`.
+
+## What ingest does not promise: the same PDF, later
+
+Everything above is about SpecForge's own behaviour, and SpecForge's own behaviour is stable. The
+part of ingest SpecForge does *not* own is the PDF-to-structure conversion itself: that is done by
+Docling, an upstream dependency running upstream models. SpecForge reads Docling's output and builds
+`SourceIR` from it deterministically — but it cannot make Docling's output a fixed function of the
+PDF.
+
+**And measurement says it is not one.** Re-ingesting the corpus's current documents through an
+unchanged Docling install, with unchanged model files and an unchanged binary, reproduces the
+persisted `SourceIR` exactly for many of them and *not* for the rest. Where it differs, the
+difference is overwhelmingly **text recovered from inside figures** — labels and fragments in a block
+diagram that an earlier run left alone and a later run picks up. It is mostly gain rather than loss:
+elements appear, and only a handful of documents lose any.
+
+Three practical consequences, in the order you are likely to meet them:
+
+- **A persisted artifact is a record, not a promise.** Everything under `generated/` says what ingest
+  produced *when it ran*. It is not a claim about what the same command produces today.
+- **Element ids are ordinal, so they move.** `elem_00219` means "the two-hundred-and-nineteenth
+  content element", not a stable name for a paragraph. If you pin a location — in a fixture, a
+  review, a script — pin it by content and let the id be looked up. A fixture that pins an ordinal
+  will one day point at the wrong paragraph, or, if it is written to fail closed, at nothing.
+- **A current chain does not certify ingest.** The chain-currency doctrine replays each stage from
+  its persisted input, so it starts at `EvidenceIR` and proves everything downstream of ingest. It
+  is silent about `SourceIR` itself, by construction.
+
+You can measure this for yourself. The census re-ingests each document whose source is available into
+scratch, compares against the persisted artifact, and states every document it could not measure and
+why — it never writes to `generated/`:
+
+```bash
+# Review the frame and the declared sample without spending any compute
+python3 scripts/measure_source_ir_reproducibility.py \
+  --output-root .project-data/tmp/<census-id> \
+  --census-id <census-id> --owner <owning-leaf> --plan-only
+
+# Run it, then re-derive the comparison later without re-ingesting
+python3 scripts/measure_source_ir_reproducibility.py \
+  --output-root .project-data/tmp/<census-id> \
+  --census-id <census-id> --owner <owning-leaf>
+python3 scripts/measure_source_ir_reproducibility.py \
+  --output-root .project-data/tmp/<census-id> \
+  --census-id <census-id> --owner <owning-leaf> --compare-only
+
+# The controls that keep "reproduced" from being a default answer
+python3 scripts/measure_source_ir_reproducibility.py --self-test
+```
+
+A document whose source PDF is not on the repository volume is supplied through an untracked runtime
+map with `--external-source-map`, exactly as the population replay does; without one, those documents
+are reported unmeasurable rather than skipped silently.
+
+*Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md`, with the measured result in
+`docs/research/source-ir-reproducibility-census.md`.

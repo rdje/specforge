@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > how many documents carry unfiltered conditional rules and signal constraints
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > how many documents lost promoted records when the empty-catalog special case was deleted
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -24,6 +28,8 @@
   > how many page objects does a /Type/Page regex report vs pdfinfo
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > how many pages elements and normalized files does the OpenCAPI data link ingest produce
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > how many persisted SourceIR artifacts are stale
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many production rules does the registry declare
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -94,6 +100,8 @@
   > how much memory did the guarded USB4 Connection Manager ingest use
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how much memory did the guarded USB4 Inter-Domain ingest use
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > how much of the corpus does the ingest drift affect
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > how much of the reviewed trajectory population has current binary replay evidence
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
@@ -196,6 +204,8 @@
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > is a better VLM needed to read register bit-layout diagrams
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > is a fresh ingest better than the persisted SourceIR
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > is a greater than 500 page threshold sufficient for bounded PDF ingestion
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -287,13 +297,3 @@
   > is the NLP-SHALLOW-PARSE build frontier exhausted
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > is the OpenCAPI 3.0 Certified Definition refresh complete
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > is the OpenCAPI 3.0 Ready Definition refresh complete
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > is the OpenCAPI AFU Address Space Usage refresh complete
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > is the PDF-VARIANT-DIGESTION current frontier internally consistent

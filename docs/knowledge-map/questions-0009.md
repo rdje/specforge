@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is AppError::IngestAbortedForDisk
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is AppError::IngestAbortedForMemory
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what is AppError::IngestTerminatedBySignal
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is CapturedRegionResidualRecord
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > what is DOC-INTENT-TAXONOMY.4c.ii
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -281,19 +297,3 @@
   > what is the measured peak day for workflow standards
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > what is the message_field_catalog_dump measurement harness
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > what is the message_fields.section_header_field strategy
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is the model-misspelled-subject / phantom-subject defect class
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the must_be_value + VALID typed convention
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > what is the next big PDF-variant digestion lever after the serial class
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum

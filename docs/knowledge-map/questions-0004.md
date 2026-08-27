@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > how are model proposed signal names grounded
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are multi-word field names like Validation Bits or FRU ID recovered
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -296,5 +298,3 @@
   > how does specforge read free disk space without a new dependency
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how does specforge read system memory without a new dependency
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how does specforge read total physical RAM without a new dependency

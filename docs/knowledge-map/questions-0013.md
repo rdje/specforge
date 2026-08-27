@@ -2,6 +2,32 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > why do message fields prevent a wire or register category completeness claim
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > why do only 36 of 79 ingested docs reach IntentIR / .isf
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > why do plain English words like Address or Vector become field names under the bracket frame
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why do replayed SourceIR digests always differ between replay roots
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why do source derived ids need field aware alpha normalization
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > why do the CCIX specs extract almost no register fields
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > why do two constraints with different conditions not merge
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -114,6 +140,8 @@
   > why does an incidental 'can' in a source block not drop its other constraints
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > why does caption_text disappear on re-ingest
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -270,31 +298,3 @@
   > why is APB PSEL asserted missing from the current reviewed population
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why is DTI DOWNSTREAM not preserved as a heuristic only wire
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why is Reset value not a semantic phase
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why is SWD per-signal phase membership degenerate / empty
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why is SWD/ADI hard / different from APB AHB AXI
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is SWIO not captured as a third SWP signal
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > why is SpecForge called forward specification mining

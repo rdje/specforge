@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > is the OpenCAPI 3.0 Ready Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > is the OpenCAPI AFU Address Space Usage refresh complete
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > is the PDF-VARIANT-DIGESTION current frontier internally consistent
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -65,6 +75,10 @@
   > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > is the ingest drift purely additive
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > is the ingest drift run-to-run noise
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > is the jesd235 HBM artifact a truncated ingest
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -147,6 +161,8 @@
   > should specforge record an adapter residual for rules whose subject is not a declared signal
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > should the drifted SourceIR documents be re-ingested
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > temporal rule eval false positives root cause
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -282,19 +298,3 @@
   > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what blocks a Rust code change from committing in specforge
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what caused the I2C symbol alpha production failure
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > what causes actor_signal_relations / extracted_statements to differ run-to-run
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > what changed between stale and current OpenCAPI Certified Definition artifacts
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > what changed between stale and current OpenCAPI Ready Definition artifacts
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > what changed between the persisted source_ir and a fresh ingest

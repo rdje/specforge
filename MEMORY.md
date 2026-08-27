@@ -17,27 +17,26 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.9` is the next root child; `.8` is complete with `.8a`–`.8d` all done.
-  Tracking-only: `SOURCE-IR-REPRODUCIBILITY` and `PROVIDER-MODEL-STORE-LOCALITY` (both new, `.1` runnable),
-  `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, `CLAIM-VERIFICATION-ADOPTION.1a`,
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.8d` replayed all 12 reviewed sources through all 48 isolated stages from clean production at
-  `483e525d` and published the comparable result. Residual actionability is 8/16, source-region disposition
-  10/14, required-modality accounting 8/12, provenance closure 45/45; conservation stays 120/120, IntentIR stays
-  40/0/0, fabrication and unexplained drops stay zero, and `platform-system-ip` is the third supported category.
-  A control leg re-projecting the same replayed artifacts with the frozen pre-change builder reproduces 4/16
-  exactly, so the whole delta is the fixture projection's and `.8c` moved no reviewed metric. The frozen `.8a`
-  contract gained a closed `state` on its selected family (28/28 RED). The replay surfaced one unrelated
-  regression — reviewed cells anchor on ordinal SourceIR element ids and ingest is not reproducible across time,
-  so exact source regions are 13/14 — now owned by `SOURCE-IR-REPRODUCIBILITY`.
+- Active unit: `SOURCE-IR-REPRODUCIBILITY.2` is the next child; `.0` and `.1` are done and `.4`/`.5` are new.
+  Tracking-only: `SPEC-TO-INTENT-ALIGNMENT.9`, `PROVIDER-MODEL-STORE-LOCALITY.1`, `STATUS-LEDGER-ROLLOVER.2`,
+  `TASK-PART-SEAL-REACHABILITY.0`, `CLAIM-VERIFICATION-ADOPTION.1a`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
+- Current state: `.1` censused every persisted `generated/source_ir/*` artifact at `085582c0`. The 78 partition
+  into 24 live (schema 3 — exactly the chain-currency retained-bundle set) and 54 legacy that no current ingest
+  can reproduce at all. All 24 live sources resolved on the repository volume, so the whole live stratum was
+  re-ingested with no sampling inside it: 11 reproduce exactly and 13 do not, and the 13 hold 11,379 of the live
+  population's 22,088 persisted content elements. Drift adds 1,804 elements (1,802 `body_text`, all
+  figure-interior text) and drops 31 — 28 re-segmentation, 3 emitted nowhere. The decisive cost is captions:
+  bindings fall 1,191 to 1,152, so re-ingesting is a trade, not a refresh. Not noise — the largest drift
+  reproduced identically in two further runs. Producer self-test is 14/14 with two observed RED perturbations,
+  nothing under `generated/` was written, and the book's over-broad reproducibility claim is corrected.
+  `SOURCE-IR-REPRODUCIBILITY.5` now owns the re-ingest-versus-retain decision, which is the director's call.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: run `SOURCE-IR-REPRODUCIBILITY.1` — the bounded read-only census of standing `SourceIR` drift
-  across the persisted corpus. Decided ahead of `SPEC-TO-INTENT-ALIGNMENT.9`: `.8d` proved at the ingest
-  boundary that Docling's output for an unchanged PDF changed (22 added markdown lines, all figure-interior
-  text, becoming 11 extra content elements), and `check_chain_currency.sh` treats `source_ir.json` as input,
-  never output — so an unknown share of every persisted chain may be stale while all gates read green. Breadth
-  measured on that foundation would have to be re-measured. `.9` follows the census.
+- Next action: run `SOURCE-IR-REPRODUCIBILITY.2` — make reviewed source anchors resolve by content identity
+  rather than ordinal position, with a RED control proving an anchor that no longer matches its excerpt still
+  fails closed. `.1` measured why this is now urgent rather than hypothetical: 13 live documents have moved
+  ordinals, so every fixture pinned to an `elem_NNNNN` is a latent scoring failure. `.3` (chain-currency blind
+  spot) and `.4` (bundle reproducibility fingerprint) follow; `.5` needs a decision, not a capability.
 - In-flight uncommitted: none after this commit; no background job is running.
 - Blockers: none.

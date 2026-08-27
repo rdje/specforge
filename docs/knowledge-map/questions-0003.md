@@ -82,6 +82,8 @@
   > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
   > does corpus prior memory only accrete
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > does current Docling lose captions
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -295,5 +297,3 @@
   > how are message-field tables distinguished from register-field tables
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
   > how are missing stale vacuous ambiguous or partial behavioral attempts classified
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > how are model proposed signal names grounded

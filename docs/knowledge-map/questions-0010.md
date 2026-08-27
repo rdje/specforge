@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > what is the message_fields.section_header_field strategy
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is the model-misspelled-subject / phantom-subject defect class
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the must_be_value + VALID typed convention
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > what is the next big PDF-variant digestion lever after the serial class
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -46,6 +62,8 @@
   > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > what kind of content does the ingest drift add
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > what kind of extractor actually needs the cross-document cluster mechanism
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
@@ -157,6 +175,8 @@
   > what was the must_be_value recall gap and how was it closed
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what were the initial 17-document held-out relation outcomes
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > what would re-ingesting the corpus cost
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > when do I run specforge validate during a chain rebuild
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -277,23 +297,3 @@
   > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > where does the NLI gate route a not-entailed contract
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > where does the SpecForge chipdoc source route currently resolve
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > where does the first reviewed source-to-IntentIR population fail
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > where does the specforge chipdoc host library symlink currently resolve
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > where is FigureRegion stored in EvidenceIR

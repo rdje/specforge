@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which task tree crossed its live-document byte warning
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > which three legs must an actionable current claim name
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > which topology contains the active corpus coverage task
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > which tree owns the empty-catalog grounding filter defect
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > which units mark a timing record as decibel domain
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > which validate metrics/finding surface channel membership
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > who reads and writes docs tasks CORPUS-COVERAGE md
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads or writes the active PDF task tree
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why a parallel field-constraint surface instead of a subject-kind discriminator
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > why are 58 corpus documents not currency-measurable
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -147,6 +171,8 @@
   > why did TL disappear from the OpenCAPI Ready Definition
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > why did USB 3.2 produce 918 interfaces and 556 adapter signals
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > why did a figure caption become null after re-ingest
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > why did a fresh ingest expose normalized staging in persisted metadata
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
@@ -271,29 +297,3 @@
   > why do generated IR files contain the old SpecForge repository path
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > why do message fields prevent a wire or register category completeness claim
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > why do only 36 of 79 ingested docs reach IntentIR / .isf
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > why do plain English words like Address or Vector become field names under the bracket frame
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why do replayed SourceIR digests always differ between replay roots
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why do source derived ids need field aware alpha normalization
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why do the CCIX specs extract almost no register fields

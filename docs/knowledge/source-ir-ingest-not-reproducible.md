@@ -14,10 +14,14 @@ answers:
   - "why does docling now extract text from inside a figure"
   - "which task owns the SourceIR reproducibility gap"
   - "why are reviewed fixture anchors fragile"
+  - "how many persisted SourceIR artifacts are stale"
+  - "how much of the corpus does the ingest drift affect"
+  - "which documents no longer reproduce their persisted SourceIR"
+  - "is the ingest drift run-to-run noise"
 date: 2026-08-27
 status: current
 tags: [source-ir, ingest, reproducibility, chain-currency, measurement-integrity, docling]
-evidence: docs/tasks/SOURCE-IR-REPRODUCIBILITY.md; docs/tasks/spec-to-intent-alignment/residual-carrier.md; scripts/check_chain_currency.sh; crates/specforge/test_data/source_to_intent_vertical/build_fixture.py
+evidence: docs/tasks/SOURCE-IR-REPRODUCIBILITY.md; docs/research/source-ir-reproducibility-census.md; scripts/measure_source_ir_reproducibility.py; scripts/check_chain_currency.sh; crates/specforge/test_data/source_to_intent_vertical/build_fixture.py
 reverify: "python3 -c \"import json; d=json.load(open('generated/source_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/source_ir.json')); n='it is recommended that GPR registers be filled/spilled to the VPR'; print(len(d['content_elements']), [i['element_id'] for i in d['content_elements'] if n in i['text']])\""
 ---
 
@@ -74,5 +78,14 @@ anchor exists to detect — so `.8d` published 13/14 instead.
 
 [[source-to-intent-vertical-evaluator]] owns the oracle and
 [[required-residual-actionability-denominator]] owns the residual rule this replay was measuring.
-`SOURCE-IR-REPRODUCIBILITY` owns the census of standing drift, content-addressed reviewed anchors, and the
-chain-currency blind spot at the ingest boundary.
+`SOURCE-IR-REPRODUCIBILITY.1` has since measured the whole live population rather than the one cell. All 78
+persisted artifacts partition into 24 live (schema 3, the stratum the chain-currency doctrine retains bundles
+for) and 54 legacy that no current ingest can reproduce at all. Every live source resolved on the repository
+volume, so all 24 were re-ingested: **11 reproduce exactly and 13 do not**, and the 13 hold 11,379 of the live
+population's 22,088 persisted content elements. The result is not noise — the largest proportional drift was
+re-ingested twice more and reproduced identically both times. See
+[[source-ir-reingest-trades-captions-for-figure-text]] for what re-ingesting would actually cost.
+
+`SOURCE-IR-REPRODUCIBILITY` owns the remaining work: content-addressed reviewed anchors (`.2`), the
+chain-currency blind spot at the ingest boundary (`.3`), a reproducibility fingerprint in the normalized bundle
+(`.4`), and the re-ingest-versus-retain decision (`.5`).

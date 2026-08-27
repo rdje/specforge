@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > how does specforge read total physical RAM without a new dependency
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -243,6 +245,8 @@
   > how many administrative workflow statements were measured
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how many alignment task owners and routes survive migration
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > how many caption bindings does the corpus lose on re-ingest
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many captured figure regions does the retained corpus hold
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -293,7 +297,3 @@
   > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > how many docs reach evidence vs semantic vs intent vs isf
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > how many documents carry unfiltered conditional rules and signal constraints
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > how many documents lost promoted records when the empty-catalog special case was deleted
