@@ -4,7 +4,7 @@
       "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8",
       "literal" : "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.8`.",
       "mode" : "eligible",
-      "part_id" : "current-and-future"
+      "part_id" : "residual-actionability"
    },
    "current_path" : "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md",
    "index_path" : "docs/tasks/spec-to-intent-alignment/INDEX.md",
@@ -421,9 +421,28 @@
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8",
-         "origin" : "structural",
-         "part_id" : "current-and-future",
-         "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.8"
+         "origin" : "post_migration",
+         "part_id" : "residual-actionability"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8a",
+         "origin" : "post_migration",
+         "part_id" : "residual-actionability"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8b",
+         "origin" : "post_migration",
+         "part_id" : "residual-actionability"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8c",
+         "origin" : "post_migration",
+         "part_id" : "residual-actionability"
+      },
+      {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.8d",
+         "origin" : "post_migration",
+         "part_id" : "residual-actionability"
       },
       {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.9",
@@ -522,10 +541,10 @@
       },
       {
          "heading" : "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
-      "metrics" : {
-        "bytes" : 53600,
-        "line_bytes" : 439,
-        "lines" : 536
+         "metrics" : {
+            "bytes" : 53600,
+            "line_bytes" : 439,
+            "lines" : 536
          },
          "part_id" : "behavioral-qualification",
          "path" : "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
@@ -542,6 +561,18 @@
          "part_id" : "canonical-recovery",
          "path" : "docs/tasks/spec-to-intent-alignment/canonical-recovery.md",
          "sha256" : "ba7ca436975f7812abb6b3243e462aded635a4682091dac58b35123893e43be2",
+         "state" : "active"
+      },
+      {
+         "heading" : "# SPEC-TO-INTENT-ALIGNMENT — residual actionability",
+         "metrics" : {
+            "bytes" : 14327,
+            "line_bytes" : 386,
+            "lines" : 215
+         },
+         "part_id" : "residual-actionability",
+         "path" : "docs/tasks/spec-to-intent-alignment/residual-actionability.md",
+         "sha256" : "b21f59c2823d9301e7f7e531783f9880de9a338d641f226c4ffb2bf5cbf0aefc",
          "state" : "active"
       }
    ],

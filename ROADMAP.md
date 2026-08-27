@@ -88,28 +88,24 @@ Its reviewed 12/12 current replay and access/provenance correction ship. Generic
 physical applicability, and register carriers now have clean whole-population qualification: current IntentIR is
 40/0/0 TP/FP/FN at every reviewed stage with complete 43/43 provenance and 120/120 conservation; wire-protocol and
 physical-link are supported. All controller hard gates pass; `.6e` is superseded, `.7` canonical recovery is
-complete without catalog widening or fabrication, and `.8` is the ranked next product gap for required residual actionability. Genericity and behavioral `.f.v` signoff remain complete.
+complete without catalog widening or fabrication, and controller-ranked `.8` is now active for required residual
+actionability. Its activation decomposed the published ratio into observations that are actionable, observations
+that no correct pipeline can satisfy because their canonical facts are already promoted, and the genuinely
+required observations that no residual record explains; `.8a`–`.8d` own the contract, the fail-closed accounting
+correction, the bounded typed carrier, and the population replay. Genericity and behavioral `.f.v` signoff remain complete.
 Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 168
 runtime rules, compiled information-flow doctrine, and 27 adversarial controls cover all five stages. The 24
 current chains carry 148,708 cumulative claims across 120 artifacts with zero public migration delta; 54 legacy
 chains remain explicitly unmeasurable. The task tree and structural report own the detailed implementation graph.
-A finite forbidden-vocabulary list remains diagnostic, not proof. `.f.i` freezes the 24-row behavioral
-population, PDF/text input planes, six relations, five-stage comparison, and 7-calibration/17-prospective split;
-23 text projections are non-vacuous and one is unmeasurable. `.f.ii` now closes deterministic PDF identity,
-text alpha, reviewed paraphrase/layout, semantic-negative sensitivity, and typed attempt handling. `.f.iii` has
-qualified the frozen identity-disjoint holdout after correcting its oracle: unchanged and adversarial-identity
-replay pass 17/17, 16 alpha rows are honestly unmeasurable, and the sole measurable I2C alpha pair exposed real
-production spelling/order coupling. `.f.iii.a` has localized and removed that production coupling; the exact
-pair and the final clean-revision held-out refresh now pass: 35 completed relations are fresh under revision
-`2cdcd131`, 16 alpha rows remain honestly unmeasurable, and no failure or invalid attempt remains. ADR 0025
-reconciliation restores 24/24 current with zero stale at every replayed persisted stage. The first clean `.f.iv`
-full-PDF replay then exposed one qualified-header truth loss and one incomplete register-access carrier. `.f.iv.a`
-now closes both with neutral structural grammar, real-PDF target proof, and exact 24-chain currency; `.f.iv.b`
-publishes the repaired 39/0/1 population and zero-hard-gate controller. `.f.v` composes structural and behavioral
-production-genericity signoff. The claim is one specification-instance-neutral production core, not perfect
+A finite forbidden-vocabulary list remains diagnostic, not proof. Behavioral `.f` is closed: the frozen 24-row
+population, its identity/alpha/paraphrase/negative controls, and the corrected identity-disjoint holdout finish at
+35 pass / zero fail / 16 honestly unmeasurable / zero invalid, after `.f.iii.a` removed real production
+spelling/order coupling and `.f.iv.a`/`.f.iv.b` restored and republished the register carriers. `.f.v` composes
+structural and behavioral signoff. The claim is one specification-instance-neutral production core, not perfect
 recovery or a complete PDF-to-ISF product: 16 alpha strata remain honestly unmeasurable, coverage/accounting gaps
-remain published, and trajectory history is insufficient. Controller-ranked `.7` is now eligible. Resource-sized bounded
-activation, fail-closed page counting, typed signal status, and four-stage fidelity remain part of the gate.
+remain published, and trajectory history is insufficient. Resource-sized bounded activation, fail-closed page
+counting, typed signal status, and four-stage fidelity remain part of the gate; the owning task tree and
+structural report keep the per-leaf detail.
 
 Five active program groups support that north star:
 

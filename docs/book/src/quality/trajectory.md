@@ -350,3 +350,31 @@ The corrected held-out result is
 [`docs/research/behavioral-held-out-qualification.md`](../../../research/behavioral-held-out-qualification.md).
 The detailed trajectory design and literature mapping live in
 [`docs/research/specforge-trajectory-control.md`](../../../research/specforge-trajectory-control.md).
+
+## What the residual-actionability ratio counts
+
+The `4/24` residual actionability published with the pinned `.7c.ii` result is a *declared* denominator, and
+reading it as 20 outstanding production defects overstates the gap. `SPEC-TO-INTENT-ALIGNMENT.8` activation
+decomposed that exact result. Twelve of the 14 reviewed cells declare residual queries, and each declaring cell
+contributes two observations, one at SemanticIR and one at IntentIR:
+
+- Four observations are actionable today. Both OpenCAPI `analog_channel_loss` cells emit typed residuals through
+  the existing non-applicable timing-disposition carrier.
+- Eight observations belong to four canonical cells that are already exact at all three promoted stages. Their
+  review declares the same keys as canonical gold and as residual gold, so the residual query is the
+  conservation fallback that explains a canonical key only if it is ever lost. While those facts are correctly
+  promoted there is nothing to residualize, and emitting a residual for them would assert that the same fact
+  both reached and did not reach `IntentIR`.
+- Twelve observations are genuinely required and absent. Six cells — two prose non-contract regions, one
+  table-of-contents region, one packed programming structure, and two static-topology figures — receive no
+  residual record at either promoted stage. Those six cells are the complete current hard-failure set.
+
+Production owns exactly one typed residual carrier today: a non-applicable scalar timing row keeps its physical
+value, typed cause, first failing stage, and replay route. No equivalent carrier exists for a captured prose
+statement, table region, or visual region that reaches no canonical `IntentIR` surface, which is why those
+regions disappear without an explanatory record.
+
+`.8` therefore has two legs. `.8b` counts only required residuals while still adding — and failing — a required
+observation for every canonical key that goes missing, so the correction can never turn a recall loss into
+residual success. `.8c` then implements the first bounded production carrier, for static component topology:
+the only single family whose closure can move a reviewed category to `supported`.

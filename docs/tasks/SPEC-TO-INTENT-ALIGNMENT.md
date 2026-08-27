@@ -30,47 +30,29 @@ expressiveness as the bottleneck.
   coupling and published clean-revision held-out closure; `.f.iv.a` restored the structural carriers and
   `.f.iv.b` published their clean 12-source proof. `.f.iv` and final signoff `.f.v` are complete.
 - `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7` and children `.7a` through `.7c` are complete;
-  `.8` is next and `.9` is pending.
+  `.8` is active with children `.8a`, `.8b`, `.8c`, and `.8d`, and `.9` is pending.
 
 ## Current Frontier
 
 Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.8`.
 
-The behavioral population and oracle are frozen: 24 current rows, 23 non-vacuous text projections, seven
-reviewed calibration rows, and 17 prospective holdouts under six relations and a complete five-stage comparison.
-`.f.ii.a` implements deterministic PDF identity and normalized-text alpha evidence. `.f.ii.b` adds digest-pinned
-review authority plus one sentence and four harmless layout variants without widening the rich-capture
-exclusions. `.f.ii.c` proves one real semantic/proof delta plus all nine sensitivity classes and closes typed
-invalid/unmeasurable attempt handling. `.f.iii` qualifies the frozen prospective holdout.
-Its initial 51-attempt execution exposed two conformance-oracle defects and remains in Git history. The corrected
-pre-remediation matrix was 34 pass / one fail / 16 unmeasurable / zero invalid: both PDF relations passed 17/17,
-while the sole eligible I2C alpha pair failed below SourceIR after a valid six-signal rename. `.f.iii.a` keeps
-opaque underscore identifiers atomic, uses source occurrence rather than symbol spelling for generated order,
-excludes declared aliases from section-topic grammar, and normalizes only measured representation surfaces in
-conformance. The final clean-revision matrix is 35 pass / zero fail / 16 unmeasurable / zero invalid; all 35
-completed attempts are fresh under `2cdcd131`. Exact ADR 0025 reconciliation leaves all 24 measurable chains
-current and zero stale through the adapter. The first `.f.iv` clean full-PDF replay found one truth-loss and one
-incomplete carrier family. `.f.iv.a` restores both under closed structural grammar and leaves all 24 retained
-chains current; `.f.iv.b` publishes 39/0/1 TP/FP/FN with zero fabrications and routes final signoff to `.f.v`.
-`.f.v` composes the unconditional 168-rule structural boundary, its 27 adversarial controls, and the governed
-behavioral evidence: 35 completed held-out relations pass, 16 unavailable alpha relations remain explicitly
-unmeasurable, and the selected full repository signoff passes. Production is specification-instance-neutral
-within that governed boundary; this does not claim perfect recovery or complete PDF-to-ISF product behavior.
-Controller-ranked `.7` is active for the sole canonical APB source-to-EvidenceIR loss. The current artifacts and
-an existing consequence-precision control localize the missing `PSEL|must_be_asserted|<missing>` fact to a compound
-inference sentence: the extractor correctly prevents the antecedent signal from inheriting the consequent's
-`VALID` value, but no separate path preserves the antecedent's own explicit `asserted` state. `.7a` now freezes
-that generic repair boundary as an executable 7-positive/13-negative contract with exact polarity,
-chain-currency, and replay obligations. The exact span's appositive establishes source-local `PSEL`; distinct
-declared `PSELX` remains opaque, and suffix spelling is a refusal case rather than alias authority. With no
-resolved polarity, asserted stays symbolic and HIGH/LOW are forbidden. `.7b` now implements that sibling
-producer and has reconciled every proof-affected retained chain with zero public delta and zero stale stages.
-The first `.7c` complete replay closes APB at EvidenceIR and localizes the remaining loss to the exact record's
-SemanticIR grounding. `.7c.i` replays the closed inference/appositive grammar into a record-scoped grounding
-index, carries only an exact source/support/subject/kind match, creates no interface or alias, and keeps all 24
-retained chains current with zero public delta. `.7c.ii` independently replays all 12 sources/48 stages and
-publishes 40/0/0 at EvidenceIR, SemanticIR, and IntentIR, 43/43 provenance, 120/120 conservation, zero fabrication
-or unexplained drops, and a controller that ranks `.8`; wire-protocol and physical-link are supported.
+Structural and behavioral production-genericity signoff is complete, and canonical recovery is closed: the
+clean `.7c.ii` replay of all 12 reviewed sources and 48 isolated stages publishes 40/0/0 TP/FP/FN at EvidenceIR,
+SemanticIR, and IntentIR with 43/43 provenance, 120/120 conservation, and zero fabrication or unexplained drops.
+Wire-protocol joins physical-link as a supported reviewed category. The frozen behavioral oracle, its held-out
+matrix, and the exact recovery grammar stay in the behavioral-qualification and canonical-recovery parts; that
+signoff claims one specification-instance-neutral production core, not perfect recovery or a complete
+PDF-to-ISF product.
+
+Controller-ranked `.8` is now active for the remaining persistent residual. Its published 4/24 residual
+actionability is a *declared* denominator: two OpenCAPI analog cells supply the four actionable observations,
+four canonical cells that are already exact at every stage contribute eight observations that no correct
+pipeline can satisfy, and six cells supply the 12 genuinely required observations that no residual record
+explains. Those six cells are the complete current hard-failure set. `.8a` freezes the required-residual
+contract and typed grammar, `.8b` corrects the denominator without excusing a missing canonical fact, `.8c`
+implements the bounded `static_component_topology` carrier, and `.8d` replays and publishes. Activation also
+found that this gap's published reproduction command names the wrong crate and therefore runs zero tests at
+exit zero; `.8a` owns that repair.
 
 ## Detailed task evidence
 
@@ -155,12 +137,17 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7c.i`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.7c.ii`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.8a`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.8b`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.8c`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.8d`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9`
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8` activation | the tracked `.7c.ii` result decomposes into 4 actionable / 8 not-required / 12 required-and-absent residual observations; the six hard-failing cells, the selected bounded family, and a published reproduction command that runs zero tests at exit zero are exact; all nine gate-tier doctrines pass without production change |
 | `2026-08-16` | `.7c.ii` canonical recovery closure | clean 12-source/48-stage replay publishes 40/0/0 at all reviewed stages, 43/43 provenance, 120/120 conservation, zero fabrication/drops, byte-current authorities, `.8` ranking, and exact residue-free cleanup |
 | `2026-08-16` | `.7c.i` source-local carry | exact local inference records cross Layer D without interface/declaration/alias widening; seven focused, full core, Clippy, genericity, and 24-chain currency checks pass |
 | `2026-08-16` | `.7b` inference-antecedent recovery | frozen 7/13 matrix and exact full build pass; complete core/Clippy/genericity checks pass; all 24 retained chains are current with zero stale and zero public delta; `.7c` is next |
@@ -185,6 +172,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — activate required residual actionability` | localize the declared-versus-required denominator defect and the absent typed residual carrier and route `.8a`–`.8d` |
 | `.7c.ii` | `SPEC-TO-INTENT-ALIGNMENT.7c.ii — publish canonical recovery closure` | publish clean all-stage canonical closure and route `.8` |
 | `.7c.i` | `SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding` | revalidate exact local inference records across Layer D without widening document signal authority |
 | `.7b` | `SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state` | ship the source-grounded sibling producer and exact proof-chain reconciliation |

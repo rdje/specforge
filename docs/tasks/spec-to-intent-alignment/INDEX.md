@@ -14,6 +14,7 @@
 - [Commit and chronology](commit-and-chronology.md)
 - [Behavioral qualification](behavioral-qualification.md)
 - [Canonical recovery](canonical-recovery.md)
+- [Residual actionability](residual-actionability.md)
 
 ## Primary leaf routes
 
@@ -91,7 +92,11 @@
 | `SPEC-TO-INTENT-ALIGNMENT.7c` | [Canonical recovery](canonical-recovery.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.7c.i` | [Canonical recovery](canonical-recovery.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.7c.ii` | [Canonical recovery](canonical-recovery.md) |
-| `SPEC-TO-INTENT-ALIGNMENT.8` | [Current and future](current-and-future.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.8` | [Residual actionability](residual-actionability.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.8a` | [Residual actionability](residual-actionability.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.8b` | [Residual actionability](residual-actionability.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.8c` | [Residual actionability](residual-actionability.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.8d` | [Residual actionability](residual-actionability.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9` | [Current and future](current-and-future.md) |
 
 ## Exact provenance
