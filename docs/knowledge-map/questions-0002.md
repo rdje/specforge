@@ -133,6 +133,8 @@
   > can the downstream corpus chain be rebuilt without re-ingesting documents
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > can the reviewed dataset source_region predicates be edited
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > can the subject snap fabricate or rewrite a signal name
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -295,5 +297,3 @@
   > does SpecForge delete non-applicable physical timing records
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > does SpecForge detect implementation-defined or TBD or and/or
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > does SpecForge emit register bit-fields to ISF now (YES — DOC-INTENT-TAXONOMY.4a.ii: the storage var carries a (fields (field …)) block; 6,570 fields / 2,531 registers / 24 docs, was 0; 4 wire golds byte-identical; 0 new fsmgen --strict diagnostics)

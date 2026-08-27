@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how does specforge read free disk space without a new dependency
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how does specforge read system memory without a new dependency
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how does specforge read total physical RAM without a new dependency
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -293,7 +297,3 @@
   > how many current governed Markdown surfaces are in the claim census
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > how many docs reach evidence vs semantic vs intent vs isf

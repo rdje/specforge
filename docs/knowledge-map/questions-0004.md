@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > how are missing stale vacuous ambiguous or partial behavioral attempts classified
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > how are model proposed signal names grounded
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -78,6 +80,8 @@
   > how do I add a new enforced doctrine / doctrine check
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how do I add fact-card capacity
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > how do I change the reviewed source-to-intent fixture projection
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -294,7 +298,3 @@
   > how does specforge model the JTAG TAP / SWD state machine (FSM)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how does specforge model the SWD serial frame / packet
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does specforge read free disk space without a new dependency
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does specforge read system memory without a new dependency

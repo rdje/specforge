@@ -36,7 +36,10 @@
 - Next action: run `SOURCE-IR-REPRODUCIBILITY.2` — make reviewed source anchors resolve by content identity
   rather than ordinal position, with a RED control proving an anchor that no longer matches its excerpt still
   fails closed; 13 live documents have moved ordinals, so every `elem_NNNNN` pin is a latent scoring failure.
-  `SCRATCH-RESIDUE-CONTAINMENT.1` (retain-or-reclaim the 14.1 GiB of holdout evidence) is the cheaper
-  alternative pick and needs a decision rather than a capability.
+  Scoped before starting: it is a three-way digest lockstep (`build_fixture.py`, `REPLAY_PROJECTION_SHA256`,
+  the published replay record) over a review-locked dataset, so change the resolver, never the recorded anchor
+  — the tree's `.2` node and [[reviewed-fixture-projection-digest-lockstep]] carry the exact constraint.
+  `SCRATCH-RESIDUE-CONTAINMENT.1` (retain-or-reclaim 14.1 GiB of holdout evidence) is the cheaper alternative
+  pick and needs a decision rather than a capability.
 - In-flight uncommitted: none after this commit; no background job is running.
 - Blockers: none.

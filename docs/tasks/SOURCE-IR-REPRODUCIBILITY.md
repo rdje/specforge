@@ -147,6 +147,14 @@ Full result, method, controls, and per-document table:
   dataset re-derives without changing any reviewed fact, and a RED control proves an anchor that no longer
   matches its excerpt still fails closed
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.1`
+  Constraint (measured `2026-08-27`, before implementation): this is a three-way lockstep, not a one-file edit.
+  `build_fixture.py`'s SHA-256 is pinned by `REPLAY_PROJECTION_SHA256` in
+  `crates/specforge/src/test_support/trajectory_snapshot.rs` and by `tools.projection.sha256` in
+  `crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json`, and the
+  snapshot validator rejects any mismatch. The reviewed dataset is a separate, review-locked digest whose
+  `source_region` predicate values must not move — so the change belongs in how `source_record` *resolves* a
+  region (match the element carrying the reviewed excerpt; fail closed on zero or multiple matches), never in
+  the recorded anchor. See [[reviewed-fixture-projection-digest-lockstep]].
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.3`
   State: `pending`

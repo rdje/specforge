@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > how many docs reach evidence vs semantic vs intent vs isf
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > how many documents carry unfiltered conditional rules and signal constraints
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -293,7 +297,3 @@
   > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > is the LLM/VLM provider missing or not wired up
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is the NLP-SHALLOW-PARSE build frontier exhausted
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > is the OpenCAPI 3.0 Certified Definition refresh complete
