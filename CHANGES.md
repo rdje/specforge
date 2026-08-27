@@ -1,3 +1,35 @@
+### SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract
+
+- Froze the required-residual rule as an executable machine contract at
+  `doctrine/spec_to_intent/residual_actionability_contract.json`. Its checker implements the rule and re-derives
+  every case's counts rather than trusting declared numbers: 18 closed cases derive 17 required and five met
+  observations across 19 control classes.
+- Fixed the counting unit. A `residual` or `non_applicable` cell requires one observation at each promoted
+  stage; a `canonical` cell requires one per reviewed key that stage does not promote and none when it promotes
+  them all. A missing canonical key always adds a required observation and is met only by an exact, provenanced,
+  actionable residual for that exact key, so a recall loss can never leave the denominator.
+- Refused credit for contradiction. A residual whose fact key duplicates a key the same stage promotes never
+  satisfies an observation, and a stage carrying one is credited with nothing.
+- Froze the typed record grammar: the reviewed `/residuals` collection, region/family/fact-key identity, nonempty
+  `/source_ids`, and the three actionability fields `/reason`, `/first_failing_stage`, and `/replay` over three
+  declared boundaries. Four closed typed causes are declared and the three without a carrier must say so, so a
+  later slice cannot claim shipped coverage by renaming an existing one.
+- Re-derived the frozen decomposition and the selected `static_component_topology` family from the pinned
+  current result instead of restating them, and required the selected family to be the only residual gap left in
+  its reviewed category.
+- Repaired a silent green structurally. The gap's published reproduction named the facade package, so it matched
+  zero tests and exited zero. The composer now derives conformance-owned test roots from that crate's own module
+  declarations, resolves a filter's owning package, and fails controller-input composition for any published
+  reproduction that is not an executable form for its owning package. Both tracked authorities changed only that
+  one field, in three places.
+- Twenty-one contract mutations reject, including relabeling a missing canonical fact as residual success,
+  dropping a missing key from the denominator, crediting a duplicate or inactionable residual, relaxing the
+  fail-closed or duplicate rule, widening the boundary vocabulary or typed causes, and reverting the repair.
+- The workspace suite passes 470 / 165 / 1,365 / 4 with zero failures and eight ignored, warning-denied Clippy is
+  clean, and all five production-genericity components pass. The derived flow oracle is refreshed to 2,363
+  functions / 14,639 helper edges / 12,631 decision sites / 1,462 macros; graph derivation and production
+  behavior are unchanged.
+
 ### SPEC-TO-INTENT-ALIGNMENT.8 — activate required residual actionability
 
 - Decomposed the published 4/24 residual actionability at the pinned `.7c.ii` result. Twelve of the 14 reviewed

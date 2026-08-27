@@ -18,7 +18,7 @@
   Children: `.8a`, `.8b`, `.8c`, `.8d`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8a`
-  State: `pending`
+  State: `done`
   Goal: freeze the required-residual contract, typed record grammar, refusal matrix, and replay obligations
   Acceptance: a machine contract defines when a residual is *required* at SemanticIR and at IntentIR for each
   reviewed disposition, including the fail-closed rule that every canonical key missing at a stage requires one
@@ -26,8 +26,13 @@
   provenance ids, typed cause, first failing stage, and operator replay route; the bounded family, exact witness,
   positive/refusal cases, affected-chain scope, and 48-stage publication obligation are fixed before any
   production or evaluator change; the published reproduction command for this gap executes real tests
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the machine contract executes the required-residual rule over 18 closed cases deriving 17
+  required and five met observations across 19 control classes, re-derives the 4/8/12 decomposition and the
+  selected family from the pinned current result, binds the four typed causes and the three actionability
+  fields, and joins the repaired reproduction command to both published authorities; 21/21 mutations reject,
+  three new Rust controls plus the byte-current snapshot pass, warning-denied Clippy and all five
+  production-genericity components pass, and the workspace suite is 470/165/1,365/4 with zero failures`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8b`
   State: `pending`
@@ -71,8 +76,9 @@
 
 ## Current Frontier
 
-Active frontier: `SPEC-TO-INTENT-ALIGNMENT.8a`. It freezes the required-residual contract and typed grammar
-before `.8b` corrects accounting, `.8c` changes production, and `.8d` replays and publishes.
+Active frontier: `SPEC-TO-INTENT-ALIGNMENT.8b`. The contract, typed grammar, and executable rule are frozen, so
+the next slice makes the vertical evaluator agree with them before `.8c` changes production and `.8d` replays
+and publishes.
 
 ## Localized residual-actionability gap (`.8`)
 
@@ -151,6 +157,60 @@ report is told the gap reproduces when nothing executed. The same wrong crate is
 `crates/specforge/src/test_support/trajectory_snapshot.rs`. `.8a` owns the repair and a control that rejects a
 composed reproduction command which selects zero tests.
 
+## Frozen required-residual contract (`.8a`)
+
+Machine authority is `doctrine/spec_to_intent/residual_actionability_contract.json`; its independent checker is
+`python3 -B scripts/validate_residual_actionability_contract.py --check`. The contract is executable rather than
+declarative: the checker implements the required-residual rule and re-derives every case's required and met
+counts instead of trusting the declared numbers.
+
+The rule counts one observation per reviewed cell per promoted stage per required residual. A `residual` or
+`non_applicable` cell requires exactly one observation at SemanticIR and one at IntentIR. A `canonical` cell
+requires one observation at a promoted stage for each reviewed canonical key that stage does not promote, and
+none when the stage promotes every reviewed key. A missing canonical key therefore always *adds* a required
+observation and can never leave the denominator: it is met only by an exact, provenanced, actionable residual
+that explains that exact key. A residual whose fact key duplicates a key the same stage already promotes never
+satisfies an observation, and a stage carrying one is credited with nothing. SemanticIR and IntentIR are counted
+independently.
+
+The typed record grammar keeps the reviewed `/residuals` collection, `region_id`/`family`/`fact_key` identity,
+nonempty `/source_ids` provenance, and the three required actionability fields `/reason`,
+`/first_failing_stage`, and `/replay`. A boundary value must be one of the three source-to-intent promotions.
+Four closed typed causes are declared: `outside_executable_digital_domain`, which is already carried by
+`TimingIntentDisposition::NonApplicable`; `no_canonical_carrier_for_captured_region`; `non_contract_region`;
+and `unresolved_grounding`. The contract requires the other three to declare that no carrier exists yet, so a
+future slice cannot silently claim shipped coverage. Authority is current-document structure and closed grammar
+only; document, vendor, protocol, and review-label identity are never production selectors.
+
+Eighteen closed cases derive 17 required and five met observations and cover 19 control classes: both
+non-canonical dispositions at both stages, an exact canonical stage that requires nothing, one and two missing
+canonical keys, an explained and an unexplained miss in the same cell, each missing actionability field, an
+undeclared boundary value, absent provenance, partial and extra residual key sets, and a residual duplicating a
+promoted canonical key. The self-test rejects 21 mutations, including relabeling a missing canonical fact as
+residual success, dropping a missing key from the denominator, crediting a duplicate or inactionable residual,
+relaxing the fail-closed or duplicate rule, widening the boundary vocabulary or typed causes, claiming a carrier
+that does not exist, shrinking the witness, widening the selected family, and reverting the reproduction repair.
+A final control mutates the current result so no residual is missing and requires the frozen witness to reject
+it, so the witness cannot go quietly green.
+
+`.8b` must make `summarize_global` agree with this rule; `.8c` must emit the typed record for the selected
+family; `.8d` must replay all 12 reviewed sources through the 48 isolated stages before publication.
+
+## Repaired reproduction command (`.8a`)
+
+The gap's published reproduction was `cargo test -p specforge --lib ir::source_to_intent_eval`. The evaluator
+module lives in `specforge-conformance` and reaches `specforge` only through the `specforge::ir` compatibility
+facade, so that command selected zero tests and exited zero — a silent green on this leaf's own evidence path.
+The repaired command is `cargo test -p specforge-conformance --lib ir::source_to_intent_eval`, which runs 14.
+
+The repair is now structural rather than a corrected literal. `crates/specforge/src/test_support/trajectory_snapshot.rs`
+derives the conformance-owned test roots from that crate's own `pub mod` declarations through `include_str!`,
+resolves the owning package for a composed filter, and fails controller-input composition when any published gap
+reproduction is not an executable `cargo test -p <package> --lib <filter>` form for its owning package. Three
+tests cover it: the derived-root check, the whole-snapshot check that every published gap reproduction selects
+real tests, and a RED matrix that rejects the exact facade-package defect plus four unsupported command shapes.
+Both tracked authorities were regenerated; their only change is that one field in three places.
+
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8` activation
 
 - [x] **REPRODUCE / MEASURE** — the tracked `.7c.ii` result decomposes exactly into 4 actionable, 8 not-required,
@@ -172,6 +232,32 @@ composed reproduction command which selects zero tests.
 - [x] **LOCKSTEP** — the task root, roadmap, live status, resume pointer, mdBook trajectory chapter, and
   Knowledge Map publish the same decomposition and route `.8a` next.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8a`
+
+- [x] **REPRODUCE / MEASURE** — `cargo test -p specforge --lib ir::source_to_intent_eval` reports
+  `test result: ok. 0 passed; 0 failed; ...; 470 filtered out` and exits `0`, while
+  `cargo test -p specforge-conformance --lib ir::source_to_intent_eval` reports `14 passed`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/test_support/trajectory_snapshot.rs:1234` and
+  `:1260` composed `-p specforge` for filters rooted at `ir::source_to_intent_eval`, whose module is declared in
+  `crates/specforge-conformance/src/ir.rs` and only re-exported by `crates/specforge/src/lib.rs:9`; the
+  `specforge` `--lib` binary therefore contains 470 tests and none of the evaluator's 14.
+- [x] **ADDRESSED (verified)** — the composer now derives conformance-owned roots from the downstream crate and
+  rejects a non-executable reproduction before composition; both published authorities change from
+  `cargo test -p specforge --lib ir::source_to_intent_eval` to
+  `cargo test -p specforge-conformance --lib ir::source_to_intent_eval` in three places and nothing else. The
+  contract checker reports `12 declaring cells / 24 declared = 4 actionable + 8 not-required + 12
+  required-absent; corrected 4/16; 18 rule cases derive 17 required / 5 met` and its self-test reports `21/21`.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib` is 470 / 165 / 1,365 / 4 passing with zero failures and
+  eight ignored; `cargo clippy --workspace --all-targets --all-features -- -D warnings` is clean; all five
+  production-genericity components pass; `persisted_controller_input_and_report_are_byte_current` passes after
+  regeneration; the derived flow oracle is refreshed to 2,363 functions / 14,639 helper edges / 12,631 decision
+  sites / 1,462 macros with graph derivation and production behavior unchanged.
+- [x] **GENERICITY (ADR 0006 / ADR 0037)** — the contract's authority rule forbids document, vendor, protocol,
+  and review-label identity as production selectors, its typed causes are structural, and the new control reads
+  crate module wiring rather than any document or protocol name.
+- [x] **LOCKSTEP** — the contract, checker, composer, both published authorities, this part, the bounded root,
+  the resume pointer, and the live status agree that `.8b` is next.
+
 ## Decisions
 
 - `2026-08-27`: treat the published 4/24 as a *declared* denominator, not a required one. The contract's
@@ -187,10 +273,19 @@ composed reproduction command which selects zero tests.
   published, so an explicit residual is the correct terminal outcome rather than a placeholder.
 - `2026-08-27`: own the broken reproduction command inside `.8a` rather than reporting it. A published command
   that exits zero without running a test is a measurement-integrity defect on this leaf's own evidence path.
+- `2026-08-27`: make the contract executable. The checker implements the required-residual rule and re-derives
+  each case's counts, so `.8b` has one machine definition to satisfy instead of prose to interpret.
+- `2026-08-27`: refuse credit for a whole stage that carries a residual duplicating a promoted canonical key.
+  A per-record rule would still let an internally contradictory artifact earn partial credit.
+- `2026-08-27`: require the three not-yet-built typed causes to declare `existing_carrier: null`. This keeps a
+  later slice from claiming shipped coverage by renaming an existing carrier.
+- `2026-08-27`: repair the reproduction command structurally. Deriving the owning package from the conformance
+  crate's own module declarations makes the whole silent-green class fail closed, not just this one literal.
 
 ## Open Questions
 
-- None. The gap is localized, the denominator defect is exact, and the bounded family is selected.
+- None. The gap is localized, the rule and record grammar are frozen and executable, and `.8b` owns the
+  evaluator change that must agree with them.
 
 ## Blockers
 
@@ -200,12 +295,14 @@ composed reproduction command which selects zero tests.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8a` contract freeze | the executable contract derives 17 required / five met across 18 cases and 19 control classes, re-derives the 4/8/12 decomposition and the selected family from the pinned current result, and joins the repaired reproduction command to both authorities; 21/21 mutations reject, three new controls and the byte-current snapshot pass, Clippy and all five genericity components pass, and the workspace suite is green with the refreshed 2,363 / 14,639 / 12,631 / 1,462 flow oracle |
 | `2026-08-27` | `.8` activation | the tracked `.7c.ii` result decomposes into 4 actionable / 8 not-required / 12 required-and-absent residual observations across 12 declaring cells; the six hard-failing cells and their extra failures are exact; the published gap reproduction runs zero tests at exit zero while the conformance-crate command runs 14; all nine gate-tier doctrines pass |
 
 ## Commit Log
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8a` | `SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract` | freeze the executable required-residual rule, typed record grammar, closed case matrix, and selected family, and repair the silent-green reproduction command structurally |
 | `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — activate required residual actionability` | localize the declared-versus-required denominator defect and the absent typed residual carrier, select the bounded family, and route `.8a`–`.8d` |
 
 ## Update protocol

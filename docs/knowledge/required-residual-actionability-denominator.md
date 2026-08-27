@@ -11,6 +11,8 @@ answers:
   - "which production carrier already emits typed actionable residuals"
   - "why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests"
   - "which crate owns the source-to-intent vertical evaluator tests"
+  - "how does SpecForge stop a published gap reproduction from silently running no test"
+  - "where is the required-residual rule frozen"
 date: 2026-08-27
 status: current
 tags: [spec-to-intent-alignment, evaluation, residuals, stage-conservation, measurement-integrity]
@@ -51,9 +53,16 @@ a stage still *adds* a required observation and fails it unless an exact actiona
 implements the first bounded production carrier for `static_component_topology` in `.8c`, the only single
 family whose closure can move a reviewed category to `supported`.
 
-One measurement-integrity defect travels with this gap. The controller composes its reproduction command as
-`cargo test -p specforge --lib ir::source_to_intent_eval`, but `ir::source_to_intent_eval` lives in
-`specforge-conformance` and is only re-exported through the `specforge::ir` compatibility facade. That command
-matches zero tests and exits zero; `cargo test -p specforge-conformance --lib ir::source_to_intent_eval` runs
-the real 14. The same wrong crate is composed for the `.7` gap in
-`crates/specforge/src/test_support/trajectory_snapshot.rs`.
+One measurement-integrity defect travelled with this gap and is now closed. The controller composed its
+reproduction command as `cargo test -p specforge --lib ir::source_to_intent_eval`, but
+`ir::source_to_intent_eval` lives in `specforge-conformance` and is only re-exported through the `specforge::ir`
+compatibility facade, so that command matched zero tests and exited zero;
+`cargo test -p specforge-conformance --lib ir::source_to_intent_eval` runs the real 14. `.8a` repaired the whole
+class structurally rather than the literal: `crates/specforge/src/test_support/trajectory_snapshot.rs` derives
+the conformance-owned test roots from that crate's own `pub mod` declarations, resolves the owning package for a
+composed filter, and fails controller-input composition when a published reproduction is not an executable
+`cargo test -p <package> --lib <filter>` form for its owning package.
+
+`.8a` also freezes the rule itself in `doctrine/spec_to_intent/residual_actionability_contract.json`, whose
+checker executes it over 18 closed cases and rejects 21 mutations, including relabeling a missing canonical fact
+as residual success.

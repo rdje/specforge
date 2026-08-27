@@ -1,0 +1,831 @@
+{
+  "schema_version": 1,
+  "contract_id": "spec-to-intent-residual-actionability-v1",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.8a",
+  "decision": "Count a residual observation only where the review requires a residual, keep every missing canonical key required and fail-closed, and make each required residual a typed, source-linked, replayable record.",
+  "authorities": {
+    "reviewed_dataset": "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
+    "current_result": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+    "retained_chains": "doctrine/chain_currency/retained_bundles.json",
+    "population_replay": "scripts/replay_source_to_intent_population.py",
+    "controller_input": "crates/specforge/test_data/trajectory/controller_input.json",
+    "controller_report": "crates/specforge/test_data/trajectory/trajectory_report.json"
+  },
+  "requirement_rule": {
+    "observation_unit": "one residual observation per reviewed cell per promoted stage per required residual",
+    "promoted_stages": [
+      "semantic_ir",
+      "intent_ir"
+    ],
+    "residual_disposition_rule": "a reviewed cell whose expected disposition is residual or non_applicable requires exactly one residual observation at each promoted stage",
+    "canonical_disposition_rule": "a reviewed cell whose expected disposition is canonical requires one residual observation at a promoted stage for each reviewed canonical key that stage does not promote, and none when the stage promotes every reviewed key",
+    "fail_closed_rule": "a canonical key missing at a promoted stage always adds a required observation; the observation is met only by an exact actionable residual that explains that exact key, so a recall loss can never leave the denominator",
+    "duplicate_rule": "a residual whose fact key duplicates a key the same stage promotes canonically never satisfies an observation, and a stage whose residual set contains one is credited with no met observation at that stage; one artifact cannot assert that the same fact both reached and did not reach IntentIR",
+    "met_rule": "an observation is met only when the reviewed residual query is exact for the required keys, every matched record carries nonempty provenance, and every required actionability field is populated with a declared value",
+    "stage_independence": "SemanticIR and IntentIR observations are counted separately and never substitute for each other"
+  },
+  "record_grammar": {
+    "collection_pointer": "/residuals",
+    "identity_fields": [
+      "/region_id",
+      "/family",
+      "/fact_key"
+    ],
+    "provenance_field": "/source_ids",
+    "required_actionability_fields": [
+      "/reason",
+      "/first_failing_stage",
+      "/replay"
+    ],
+    "first_failing_stage_values": [
+      "source_to_evidence_ir",
+      "evidence_to_semantic_ir",
+      "semantic_to_intent_ir"
+    ],
+    "typed_causes": [
+      {
+        "cause_id": "outside_executable_digital_domain",
+        "definition": "The captured quantity is physical or analog rather than executable digital intent.",
+        "existing_carrier": "TimingIntentDisposition::NonApplicable"
+      },
+      {
+        "cause_id": "no_canonical_carrier_for_captured_region",
+        "definition": "The region is captured and intent-bearing, but the target IR declares no carrier family for its content.",
+        "existing_carrier": null
+      },
+      {
+        "cause_id": "non_contract_region",
+        "definition": "The region is navigational, informational, or advisory and states no implementable obligation.",
+        "existing_carrier": null
+      },
+      {
+        "cause_id": "unresolved_grounding",
+        "definition": "A typed record exists upstream but its subject could not be grounded in the current document without fabrication.",
+        "existing_carrier": null
+      }
+    ],
+    "authority_rule": "a residual is produced from current-document structure and closed grammar only; document, vendor, protocol, and review-label identity are never production selectors",
+    "no_fabrication_rule": "a residual records that a captured region did not reach a canonical carrier and never asserts a canonical value in its place"
+  },
+  "witness": {
+    "current_result_sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+    "declared_cells": 12,
+    "declared_observations": 24,
+    "actionable_observations": 4,
+    "not_required_observations": 8,
+    "required_and_absent_observations": 12,
+    "corrected_required_observations": 16,
+    "corrected_met_observations": 4,
+    "actionable_cells": [
+      {
+        "document_key": "opencapi_25gbps_phy_signaling_spec_1_0",
+        "cell_id": "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss",
+        "category": "physical-link",
+        "semantic_family": "analog_channel_loss",
+        "modality": "table",
+        "expected_disposition": "non_applicable",
+        "reviewed_residual_keys": [
+          "IL(f)|max=21|unit=dB",
+          "ILD(f)|max=0.45|unit=dB_RMS"
+        ]
+      },
+      {
+        "document_key": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020",
+        "cell_id": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss",
+        "category": "physical-link",
+        "semantic_family": "analog_channel_loss",
+        "modality": "table",
+        "expected_disposition": "non_applicable",
+        "reviewed_residual_keys": [
+          "IL(f)|max=30|unit=dB"
+        ]
+      }
+    ],
+    "not_required_cells": [
+      {
+        "document_key": "ddi0471_a_2011_06_23_gic_400_technical_reference_manual",
+        "cell_id": "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary",
+        "category": "register-ip",
+        "semantic_family": "register_summary",
+        "modality": "table",
+        "expected_disposition": "canonical",
+        "reviewed_residual_keys": [
+          "GICC_ABPR|access=RW|offset=0x001C",
+          "GICC_AEOIR|access=WO|offset=0x0024",
+          "GICC_AHPPIR|access=RO|offset=0x0028",
+          "GICC_AIAR|access=RO|offset=0x0020",
+          "GICC_APR0|access=RW|offset=0x00D0",
+          "GICC_BPR|access=RW|offset=0x0008",
+          "GICC_CTLR|access=RW|offset=0x0000",
+          "GICC_DIR|access=WO|offset=0x1000",
+          "GICC_EOIR|access=WO|offset=0x0010",
+          "GICC_HPPIR|access=RO|offset=0x0018",
+          "GICC_IAR|access=RO|offset=0x000C",
+          "GICC_IIDR|access=RO|offset=0x00FC",
+          "GICC_NSAPR0|access=RW|offset=0x00E0",
+          "GICC_PMR|access=RW|offset=0x0004",
+          "GICC_RPR|access=RO|offset=0x0014"
+        ],
+        "canonical_exact_at_every_promoted_stage": true
+      },
+      {
+        "document_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+        "cell_id": "ihi0024_e_2023_02_amba_5_apb_protocol_specification__01_setup_signal_state",
+        "category": "wire-protocol",
+        "semantic_family": "setup_signal_state",
+        "modality": "prose",
+        "expected_disposition": "canonical",
+        "reviewed_residual_keys": [
+          "PSEL|must_be_asserted|<missing>"
+        ],
+        "canonical_exact_at_every_promoted_stage": true
+      },
+      {
+        "document_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+        "cell_id": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification__01_debug_register_summary",
+        "category": "cpu-isa",
+        "semantic_family": "debug_register_summary",
+        "modality": "table",
+        "expected_disposition": "canonical",
+        "reviewed_residual_keys": [
+          "BASEPTR0|access=RO",
+          "BASEPTR1|access=RO",
+          "CTRL/STAT|access=RW",
+          "DLCR|access=RW",
+          "DLPIDR|access=RO",
+          "DPIDR1|access=RO",
+          "DPIDR|access=RO",
+          "EVENTSTAT|access=RO",
+          "RDBUFF|access=RO",
+          "SELECT1|access=WO b",
+          "SELECT|access=WO b",
+          "TARGETID|access=RO"
+        ],
+        "canonical_exact_at_every_promoted_stage": true
+      },
+      {
+        "document_key": "um11732_v3_2022_02_17_i2s_bus_specification",
+        "cell_id": "um11732_v3_2022_02_17_i2s_bus_specification__01_receiver_timing",
+        "category": "wire-protocol",
+        "semantic_family": "receiver_timing",
+        "modality": "table",
+        "expected_disposition": "canonical",
+        "reviewed_residual_keys": [
+          "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+          "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+          "clock period T|min=360|typ=400|max=440|unit=ns",
+          "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+          "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+        ],
+        "canonical_exact_at_every_promoted_stage": true
+      }
+    ],
+    "required_and_absent_cells": [
+      {
+        "document_key": "198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide",
+        "cell_id": "198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide__01_informational_disclaimer",
+        "category": "methodology-guide",
+        "semantic_family": "informational_disclaimer",
+        "modality": "prose",
+        "expected_disposition": "non_applicable",
+        "reviewed_residual_keys": [
+          "elem_00017|informational_non_contract"
+        ],
+        "hard_failures": [
+          "required_residual_missing_or_inactionable",
+          "source_region_disposition_unaccounted"
+        ]
+      },
+      {
+        "document_key": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification",
+        "cell_id": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification__01_static_component_topology",
+        "category": "platform-system-ip",
+        "semantic_family": "static_component_topology",
+        "modality": "figure",
+        "expected_disposition": "residual",
+        "reviewed_residual_keys": [
+          "picture_0008|static_component_topology"
+        ],
+        "hard_failures": [
+          "required_residual_missing_or_inactionable",
+          "source_region_disposition_unaccounted"
+        ]
+      },
+      {
+        "document_key": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture",
+        "cell_id": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture__01_table_of_contents",
+        "category": "cpu-isa",
+        "semantic_family": "table_of_contents",
+        "modality": "table",
+        "expected_disposition": "non_applicable",
+        "reviewed_residual_keys": [
+          "table_0004|toc_non_contract"
+        ],
+        "hard_failures": [
+          "required_modality_capture_failed",
+          "required_residual_missing_or_inactionable",
+          "source_region_disposition_unaccounted"
+        ]
+      },
+      {
+        "document_key": "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification",
+        "cell_id": "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry",
+        "category": "register-ip",
+        "semantic_family": "packed_page_table_entry",
+        "modality": "table",
+        "expected_disposition": "residual",
+        "reviewed_residual_keys": [
+          "table_0067|packed_page_table_entry"
+        ],
+        "hard_failures": [
+          "required_modality_capture_failed",
+          "required_residual_missing_or_inactionable",
+          "source_region_disposition_unaccounted"
+        ]
+      },
+      {
+        "document_key": "den0068_2018_07_23_coresight_base_system_architecture",
+        "cell_id": "den0068_2018_07_23_coresight_base_system_architecture__01_static_component_topology",
+        "category": "platform-system-ip",
+        "semantic_family": "static_component_topology",
+        "modality": "figure",
+        "expected_disposition": "residual",
+        "reviewed_residual_keys": [
+          "picture_0001|static_component_topology"
+        ],
+        "hard_failures": [
+          "required_residual_missing_or_inactionable",
+          "source_region_disposition_unaccounted"
+        ]
+      },
+      {
+        "document_key": "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide",
+        "cell_id": "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance",
+        "category": "methodology-guide",
+        "semantic_family": "software_guidance",
+        "modality": "prose",
+        "expected_disposition": "non_applicable",
+        "reviewed_residual_keys": [
+          "elem_00219|software_guidance"
+        ],
+        "hard_failures": [
+          "required_residual_missing_or_inactionable",
+          "source_region_disposition_unaccounted"
+        ]
+      }
+    ],
+    "selected_family": {
+      "semantic_family": "static_component_topology",
+      "modality": "figure",
+      "category": "platform-system-ip",
+      "cells": 2,
+      "observations": 4,
+      "typed_cause": "no_canonical_carrier_for_captured_region",
+      "selection_reason": "the only single family whose closure clears every remaining hard failure in a whole reviewed category",
+      "owner": "SPEC-TO-INTENT-ALIGNMENT.8c"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "residual_cell_semantic_met",
+      "control_classes": [
+        "required:residual_cell",
+        "stage:semantic_ir"
+      ],
+      "expected_disposition": "residual",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "picture_0001|static_component_topology"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "picture_0001|static_component_topology",
+          "source_ids": [
+            "visual_0008"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 1
+    },
+    {
+      "case_id": "residual_cell_intent_met",
+      "control_classes": [
+        "required:residual_cell",
+        "stage:intent_ir"
+      ],
+      "expected_disposition": "residual",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "picture_0001|static_component_topology"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "picture_0001|static_component_topology",
+          "source_ids": [
+            "visual_0008"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 1
+    },
+    {
+      "case_id": "residual_cell_absent_unmet",
+      "control_classes": [
+        "required:residual_cell",
+        "unmet:absent_residual",
+        "witness:required_and_absent_cell"
+      ],
+      "expected_disposition": "residual",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "picture_0008|static_component_topology"
+      ],
+      "residual_records": [],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "non_applicable_cell_met",
+      "control_classes": [
+        "required:non_applicable_cell",
+        "stage:intent_ir"
+      ],
+      "expected_disposition": "non_applicable",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "elem_00017|informational_non_contract"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "elem_00017|informational_non_contract",
+          "source_ids": [
+            "statement_0013"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 1
+    },
+    {
+      "case_id": "non_applicable_cell_absent_unmet",
+      "control_classes": [
+        "required:non_applicable_cell",
+        "unmet:absent_residual",
+        "witness:required_and_absent_cell"
+      ],
+      "expected_disposition": "non_applicable",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "elem_00219|software_guidance"
+      ],
+      "residual_records": [],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "canonical_stage_exact_requires_nothing",
+      "control_classes": [
+        "not_required:canonical_stage_exact",
+        "witness:not_required_canonical_cell"
+      ],
+      "expected_disposition": "canonical",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [
+        "A|must_be_asserted|<missing>"
+      ],
+      "canonical_promoted_keys": [
+        "A|must_be_asserted|<missing>"
+      ],
+      "residual_expected_keys": [
+        "A|must_be_asserted|<missing>"
+      ],
+      "residual_records": [],
+      "expected_required_observations": 0,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "canonical_stage_exact_multi_key_requires_nothing",
+      "control_classes": [
+        "not_required:canonical_stage_exact"
+      ],
+      "expected_disposition": "canonical",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [
+        "R1|access=RO",
+        "R2|access=RW",
+        "R3|access=WO"
+      ],
+      "canonical_promoted_keys": [
+        "R1|access=RO",
+        "R2|access=RW",
+        "R3|access=WO"
+      ],
+      "residual_expected_keys": [
+        "R1|access=RO",
+        "R2|access=RW",
+        "R3|access=WO"
+      ],
+      "residual_records": [],
+      "expected_required_observations": 0,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "canonical_missing_key_without_residual_is_unmet",
+      "control_classes": [
+        "required:canonical_missing_key",
+        "unmet:canonical_missing_without_residual"
+      ],
+      "expected_disposition": "canonical",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [
+        "R1|access=RO",
+        "R2|access=RW"
+      ],
+      "canonical_promoted_keys": [
+        "R1|access=RO"
+      ],
+      "residual_expected_keys": [
+        "R1|access=RO",
+        "R2|access=RW"
+      ],
+      "residual_records": [],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "canonical_missing_key_with_actionable_residual_is_met",
+      "control_classes": [
+        "met:canonical_missing_with_actionable_residual",
+        "required:canonical_missing_key"
+      ],
+      "expected_disposition": "canonical",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [
+        "R1|access=RO",
+        "R2|access=RW"
+      ],
+      "canonical_promoted_keys": [
+        "R1|access=RO"
+      ],
+      "residual_expected_keys": [
+        "R1|access=RO",
+        "R2|access=RW"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "R2|access=RW",
+          "source_ids": [
+            "table_0014"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 1
+    },
+    {
+      "case_id": "canonical_two_missing_keys_one_explained",
+      "control_classes": [
+        "met:canonical_missing_with_actionable_residual",
+        "required:canonical_missing_key",
+        "unmet:canonical_missing_without_residual"
+      ],
+      "expected_disposition": "canonical",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [
+        "R1|access=RO",
+        "R2|access=RW",
+        "R3|access=WO"
+      ],
+      "canonical_promoted_keys": [
+        "R1|access=RO"
+      ],
+      "residual_expected_keys": [
+        "R1|access=RO",
+        "R2|access=RW",
+        "R3|access=WO"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "R2|access=RW",
+          "source_ids": [
+            "table_0014"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 2,
+      "expected_met_observations": 1
+    },
+    {
+      "case_id": "residual_missing_reason_is_unmet",
+      "control_classes": [
+        "required:residual_cell",
+        "unmet:missing_reason"
+      ],
+      "expected_disposition": "residual",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "table_0067|packed_page_table_entry"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "table_0067|packed_page_table_entry",
+          "source_ids": [
+            "table_0067"
+          ],
+          "reason": "",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "residual_missing_first_failing_stage_is_unmet",
+      "control_classes": [
+        "required:residual_cell",
+        "unmet:missing_first_failing_stage"
+      ],
+      "expected_disposition": "residual",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "table_0067|packed_page_table_entry"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "table_0067|packed_page_table_entry",
+          "source_ids": [
+            "table_0067"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "residual_missing_replay_is_unmet",
+      "control_classes": [
+        "required:residual_cell",
+        "unmet:missing_replay"
+      ],
+      "expected_disposition": "residual",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "table_0067|packed_page_table_entry"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "table_0067|packed_page_table_entry",
+          "source_ids": [
+            "table_0067"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": ""
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "residual_unknown_first_failing_stage_is_unmet",
+      "control_classes": [
+        "required:residual_cell",
+        "unmet:unknown_first_failing_stage"
+      ],
+      "expected_disposition": "residual",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "table_0067|packed_page_table_entry"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "table_0067|packed_page_table_entry",
+          "source_ids": [
+            "table_0067"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "adapter_lowering",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "residual_without_provenance_is_unmet",
+      "control_classes": [
+        "required:non_applicable_cell",
+        "unmet:missing_provenance"
+      ],
+      "expected_disposition": "non_applicable",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "table_0004|toc_non_contract"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "table_0004|toc_non_contract",
+          "source_ids": [],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "partial_residual_key_set_is_unmet",
+      "control_classes": [
+        "required:non_applicable_cell",
+        "unmet:partial_residual_keys"
+      ],
+      "expected_disposition": "non_applicable",
+      "stage": "semantic_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "IL(f)|max=21|unit=dB",
+        "ILD(f)|max=0.45|unit=dB_RMS"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "IL(f)|max=21|unit=dB",
+          "source_ids": [
+            "table_0008"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "extra_residual_key_is_unmet",
+      "control_classes": [
+        "required:non_applicable_cell",
+        "unmet:extra_residual_key"
+      ],
+      "expected_disposition": "non_applicable",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [],
+      "canonical_promoted_keys": [],
+      "residual_expected_keys": [
+        "IL(f)|max=30|unit=dB"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "IL(f)|max=30|unit=dB",
+          "source_ids": [
+            "table_0009"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        },
+        {
+          "fact_key": "IL(f)|max=99|unit=dB",
+          "source_ids": [
+            "table_0009"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    },
+    {
+      "case_id": "residual_duplicating_promoted_canonical_is_refused",
+      "control_classes": [
+        "refuse:duplicate_of_promoted_canonical",
+        "required:canonical_missing_key"
+      ],
+      "expected_disposition": "canonical",
+      "stage": "intent_ir",
+      "canonical_reviewed_keys": [
+        "R1|access=RO",
+        "R2|access=RW"
+      ],
+      "canonical_promoted_keys": [
+        "R1|access=RO"
+      ],
+      "residual_expected_keys": [
+        "R1|access=RO",
+        "R2|access=RW"
+      ],
+      "residual_records": [
+        {
+          "fact_key": "R1|access=RO",
+          "source_ids": [
+            "table_0014"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        },
+        {
+          "fact_key": "R2|access=RW",
+          "source_ids": [
+            "table_0014"
+          ],
+          "reason": "A captured source region reached no canonical carrier at this stage.",
+          "first_failing_stage": "evidence_to_semantic_ir",
+          "replay": "Re-run the promoted stage from the same upstream artifact and inspect this source-linked disposition."
+        }
+      ],
+      "expected_required_observations": 1,
+      "expected_met_observations": 0
+    }
+  ],
+  "reproduction": {
+    "gap_id": "non-actionable-required-residuals",
+    "defective_command": "cargo test -p specforge --lib ir::source_to_intent_eval",
+    "repaired_command": "cargo test -p specforge-conformance --lib ir::source_to_intent_eval",
+    "defect": "the evaluator module lives in specforge-conformance and is only re-exported through the specforge::ir compatibility facade, so the published command selects zero tests and still exits zero",
+    "control_producer": "crates/specforge/src/test_support/trajectory_snapshot.rs",
+    "control_tests": [
+      "test_support::trajectory_snapshot::tests::conformance_owned_roots_derive_from_the_downstream_crate_wiring",
+      "test_support::trajectory_snapshot::tests::every_published_gap_reproduction_selects_real_tests",
+      "test_support::trajectory_snapshot::tests::reproduction_command_control_rejects_silent_green_and_unsupported_forms"
+    ],
+    "published_authorities": [
+      "crates/specforge/test_data/trajectory/controller_input.json",
+      "crates/specforge/test_data/trajectory/trajectory_report.json"
+    ]
+  },
+  "reconciliation": {
+    "affected_chain_contract": "doctrine/chain_currency/retained_bundles.json",
+    "affected_chain_count": 24,
+    "affected_chain_ids_sha256": "f3f3d87564d5664bfd6831f9e1e164a84e9c394abffee1f49eb84571239cfbb8",
+    "affected_stages": [
+      "semantic_ir",
+      "intent_ir",
+      "isf_adapter"
+    ],
+    "currency_requirement": "rebuild every affected retained chain and require zero stale measurable stages before the production commit",
+    "reviewed_population_documents": 12,
+    "reviewed_replay_stages": [
+      "source_ir",
+      "evidence_ir",
+      "semantic_ir",
+      "intent_ir"
+    ],
+    "reviewed_replay_attempts": 48,
+    "reviewed_replay_requirement": "replay every reviewed source through all four isolated stages under unchanged reviewed authority before publication",
+    "measurement_owner": "SPEC-TO-INTENT-ALIGNMENT.8b",
+    "production_owner": "SPEC-TO-INTENT-ALIGNMENT.8c",
+    "publication_owner": "SPEC-TO-INTENT-ALIGNMENT.8d",
+    "publication_invariants": [
+      "every residual observation counted is one the review requires",
+      "every canonical key missing at a promoted stage stays required and unmet until an exact actionable residual explains it",
+      "no residual duplicates a canonical key the same stage promotes",
+      "reviewed canonical true positives, provenance closure, and fabrication counts do not regress",
+      "the complete 12-source result and comparable trajectory snapshot are refreshed together"
+    ]
+  }
+}

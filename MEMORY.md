@@ -17,23 +17,21 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.8a` is the frontier under active `.8`. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.8b` is the frontier under active `.8`. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, `CLAIM-VERIFICATION-ADOPTION.1a`, and
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.8` activation decomposed the published 4/24 residual actionability at pinned `.7c.ii`. Four
-  observations are actionable through the existing non-applicable timing carrier; eight belong to four canonical
-  cells already exact at every promoted stage, so no residual is required and emitting one would contradict the
-  promoted fact; twelve are genuinely required and absent across the six cells that are the whole current
-  hard-failure set. Production owns one typed residual carrier and none for captured prose, table, or visual
-  regions with no canonical carrier. Activation also found this gap's published reproduction command names the
-  wrong crate and runs zero tests at exit zero. No production, evaluator, fixture, result, or controller
-  authority changed.
+- Current state: `.8a` froze the required-residual rule as an executable contract
+  (`doctrine/spec_to_intent/residual_actionability_contract.json`). It derives 17 required and five met
+  observations over 18 closed cases and 19 control classes, re-derives the 4/8/12 decomposition and the selected
+  `static_component_topology` family from the pinned result, binds four typed causes and three actionability
+  fields, and rejects 21 mutations. It also repaired the silent-green reproduction command structurally: the
+  composer now derives a filter's owning package from the conformance crate's module declarations and refuses a
+  non-executable reproduction. The evaluator itself is unchanged, so the published ratio is still 4/24.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: execute `.8a` — freeze when a residual is required at each promoted stage, the typed
-  source/cause/stage/replay grammar, the refusal matrix, chain and replay obligations, and the reproduction-command
-  repair, before `.8b` touches accounting or `.8c` touches production.
-- In-flight uncommitted: none after the `.8` activation commit; the change ledger was rolled to
-  `segment-0012-2026-08-27` in the same transaction and no background job is running.
+- Next action: execute `.8b` — make `summarize_global` in the vertical evaluator count only required residuals
+  under the frozen rule, keep every missing canonical key required and unmet without an exact actionable
+  residual, add the controlled mutations, and republish the result and controller authorities.
+- In-flight uncommitted: none after the `.8a` commit; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

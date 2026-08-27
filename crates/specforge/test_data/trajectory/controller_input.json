@@ -630,7 +630,7 @@
       "reversible_slice": "medium",
       "uncertainty": "exact",
       "estimated_impact": "make promotion losses operable without disguising missing canonical facts",
-      "reproduction": "cargo test -p specforge --lib ir::source_to_intent_eval",
+      "reproduction": "cargo test -p specforge-conformance --lib ir::source_to_intent_eval",
       "owner": {
         "task_id": "SPEC-TO-INTENT-ALIGNMENT.8",
         "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md"

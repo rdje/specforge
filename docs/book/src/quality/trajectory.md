@@ -378,3 +378,9 @@ regions disappear without an explanatory record.
 observation for every canonical key that goes missing, so the correction can never turn a recall loss into
 residual success. `.8c` then implements the first bounded production carrier, for static component topology:
 the only single family whose closure can move a reviewed category to `supported`.
+
+A published gap now has to be reproducible. The snapshot composer derives which package owns a test filter from
+the conformance crate's own module declarations and refuses to compose a gap whose reproduction command is not
+an executable `cargo test -p <package> --lib <filter>` form for that package. This closes a real silent green:
+the residual gap previously published a command against the facade package, which selected no test at all and
+still exited zero, so a reviewer following the report was told the gap reproduced when nothing had run.

@@ -50,9 +50,12 @@ four canonical cells that are already exact at every stage contribute eight obse
 pipeline can satisfy, and six cells supply the 12 genuinely required observations that no residual record
 explains. Those six cells are the complete current hard-failure set. `.8a` freezes the required-residual
 contract and typed grammar, `.8b` corrects the denominator without excusing a missing canonical fact, `.8c`
-implements the bounded `static_component_topology` carrier, and `.8d` replays and publishes. Activation also
-found that this gap's published reproduction command names the wrong crate and therefore runs zero tests at
-exit zero; `.8a` owns that repair.
+implements the bounded `static_component_topology` carrier, and `.8d` replays and publishes. `.8a` is complete:
+its executable contract derives 17 required and five met observations across 18 closed cases and 19 control
+classes, re-derives the decomposition and the selected family from the pinned result, and rejects 21 mutations.
+It also repaired the silent-green reproduction command structurally — the composer now derives each filter's
+owning package from the conformance crate's own module declarations and refuses a reproduction that would
+select no test.
 
 ## Detailed task evidence
 
@@ -147,6 +150,7 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8a` contract freeze | the executable required-residual rule derives 17 required / five met across 18 cases and 19 control classes, the frozen decomposition and selected family re-derive from the pinned result, and the repaired reproduction command binds to both published authorities; 21/21 mutations reject and the workspace suite, Clippy, and all five genericity components pass |
 | `2026-08-27` | `.8` activation | the tracked `.7c.ii` result decomposes into 4 actionable / 8 not-required / 12 required-and-absent residual observations; the six hard-failing cells, the selected bounded family, and a published reproduction command that runs zero tests at exit zero are exact; all nine gate-tier doctrines pass without production change |
 | `2026-08-16` | `.7c.ii` canonical recovery closure | clean 12-source/48-stage replay publishes 40/0/0 at all reviewed stages, 43/43 provenance, 120/120 conservation, zero fabrication/drops, byte-current authorities, `.8` ranking, and exact residue-free cleanup |
 | `2026-08-16` | `.7c.i` source-local carry | exact local inference records cross Layer D without interface/declaration/alias widening; seven focused, full core, Clippy, genericity, and 24-chain currency checks pass |
@@ -172,6 +176,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8a` | `SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract` | freeze the executable rule, typed record grammar, closed case matrix, and selected family, and repair the silent-green reproduction command |
 | `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — activate required residual actionability` | localize the declared-versus-required denominator defect and the absent typed residual carrier and route `.8a`–`.8d` |
 | `.7c.ii` | `SPEC-TO-INTENT-ALIGNMENT.7c.ii — publish canonical recovery closure` | publish clean all-stage canonical closure and route `.8` |
 | `.7c.i` | `SPEC-TO-INTENT-ALIGNMENT.7c.i — carry source-local constraint grounding` | revalidate exact local inference records across Layer D without widening document signal authority |

@@ -1231,7 +1231,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             ReversibleSliceSize::Medium,
             GapUncertainty::Exact,
             "recover the sole remaining measured canonical loss at the first failing boundary",
-            "cargo test -p specforge --lib ir::source_to_intent_eval::tests::reviewed_result_snapshot_is_current_and_names_the_upstream_loss_boundary",
+            "cargo test -p specforge-conformance --lib ir::source_to_intent_eval::tests::reviewed_result_snapshot_is_current_and_names_the_upstream_loss_boundary",
             "SPEC-TO-INTENT-ALIGNMENT.7",
             std::slice::from_ref(&result_evidence),
         ));
@@ -1257,7 +1257,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             ReversibleSliceSize::Medium,
             GapUncertainty::Exact,
             "make promotion losses operable without disguising missing canonical facts",
-            "cargo test -p specforge --lib ir::source_to_intent_eval",
+            "cargo test -p specforge-conformance --lib ir::source_to_intent_eval",
             "SPEC-TO-INTENT-ALIGNMENT.8",
             std::slice::from_ref(&result_evidence),
         ),
@@ -1281,6 +1281,13 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             std::slice::from_ref(&capability_evidence),
         ),
     ]);
+
+    validate_gap_reproductions(&gaps).map_err(|problems| {
+        AppError::InvalidStageArtifact(format!(
+            "composed trajectory gap reproduction is not executable: {}",
+            problems.join("; ")
+        ))
+    })?;
 
     Ok(TrajectoryControllerInput {
         schema_version: 1,
@@ -1322,6 +1329,87 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             task_tree_review_required: true,
         },
     })
+}
+
+/// Root modules the downstream conformance crate owns, derived from its own module wiring.
+///
+/// `specforge::ir` re-exports these, but the `specforge` `--lib` test binary does not contain
+/// their tests. A composed reproduction command naming the wrong package therefore selects zero
+/// tests and still exits zero, which reads as a reproduced gap when nothing ran.
+fn conformance_owned_test_roots() -> (BTreeSet<String>, BTreeSet<String>) {
+    fn declared_modules(source: &str) -> BTreeSet<String> {
+        source
+            .lines()
+            .filter_map(|line| line.trim().strip_prefix("pub mod "))
+            .filter_map(|rest| rest.strip_suffix(';'))
+            .map(str::to_string)
+            .collect()
+    }
+    let mut crate_roots = declared_modules(include_str!("../../../specforge-conformance/src/lib.rs"));
+    crate_roots.remove("ir");
+    let ir_roots = declared_modules(include_str!("../../../specforge-conformance/src/ir.rs"));
+    (crate_roots, ir_roots)
+}
+
+/// Name the package whose `--lib` test binary actually contains `filter`'s tests.
+fn owning_test_package(filter: &str) -> &'static str {
+    let (crate_roots, ir_roots) = conformance_owned_test_roots();
+    let mut segments = filter.split("::");
+    let root = segments.next().unwrap_or_default();
+    let owned = if root == "ir" {
+        segments
+            .next()
+            .is_some_and(|module| ir_roots.contains(module))
+    } else {
+        crate_roots.contains(root)
+    };
+    if owned { "specforge-conformance" } else { "specforge" }
+}
+
+/// Reject a composed reproduction command that cannot select the tests it names.
+fn reproduction_command_problem(label: &str, command: &str) -> Option<String> {
+    let tokens: Vec<&str> = command.split_whitespace().collect();
+    let unsupported = || {
+        Some(format!(
+            "{label} reproduction command is not an executable `cargo test -p <package> --lib <filter>` form: {command}"
+        ))
+    };
+    if tokens.first() != Some(&"cargo") || tokens.get(1) != Some(&"test") {
+        return unsupported();
+    }
+    let package_at = tokens.iter().position(|token| *token == "-p")?;
+    let Some(package) = tokens.get(package_at + 1) else {
+        return unsupported();
+    };
+    if !tokens.contains(&"--lib") {
+        return unsupported();
+    }
+    let Some(filter) = tokens.last().filter(|token| token.contains("::")) else {
+        return unsupported();
+    };
+    let expected = owning_test_package(filter);
+    if *package == expected {
+        return None;
+    }
+    Some(format!(
+        "{label} reproduction command names package '{package}', but '{filter}' lives in \
+'{expected}'; the named command would select zero tests and exit zero"
+    ))
+}
+
+/// Fail composition when any published gap reproduction cannot run the tests it claims.
+fn validate_gap_reproductions(gaps: &[TrajectoryGap]) -> std::result::Result<(), Vec<String>> {
+    let problems: Vec<String> = gaps
+        .iter()
+        .filter_map(|gap| {
+            reproduction_command_problem(&format!("gap '{}'", gap.gap_id), &gap.reproduction)
+        })
+        .collect();
+    if problems.is_empty() {
+        Ok(())
+    } else {
+        Err(problems)
+    }
 }
 
 /// Evaluate the qualified reviewed snapshot with the generic `.5a` controller.
@@ -1705,6 +1793,86 @@ mod tests {
     #[test]
     fn persisted_controller_input_and_report_are_byte_current() -> Result<()> {
         check_current_trajectory_artifacts()
+    }
+
+    #[test]
+    fn every_published_gap_reproduction_selects_real_tests() -> Result<()> {
+        let input = build_current_controller_input()?;
+        assert!(!input.gaps.is_empty(), "the snapshot must publish gaps");
+        for gap in &input.gaps {
+            assert_eq!(
+                reproduction_command_problem("case", &gap.reproduction),
+                None,
+                "gap '{}' publishes an unrunnable reproduction",
+                gap.gap_id
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn reproduction_command_control_rejects_silent_green_and_unsupported_forms() {
+        // The exact `.8` defect: the evaluator module is re-exported through the `specforge`
+        // facade, so this command exits zero after selecting no test at all.
+        let wrong_package =
+            reproduction_command_problem("case", "cargo test -p specforge --lib ir::source_to_intent_eval")
+                .expect("a facade-only package must be rejected");
+        assert!(wrong_package.contains("specforge-conformance"), "{wrong_package}");
+        assert!(wrong_package.contains("zero tests"), "{wrong_package}");
+
+        assert_eq!(
+            reproduction_command_problem(
+                "case",
+                "cargo test -p specforge-conformance --lib ir::source_to_intent_eval"
+            ),
+            None
+        );
+        assert_eq!(
+            reproduction_command_problem(
+                "case",
+                "cargo test -p specforge --lib commands::converge::tests::provider_free_capability_report_names_every_current_capability_island"
+            ),
+            None
+        );
+        // A conformance-owned root outside `ir` still resolves to the conformance package.
+        assert!(
+            reproduction_command_problem(
+                "case",
+                "cargo test -p specforge --lib test_support::trajectory_snapshot"
+            )
+            .is_some()
+        );
+        for unsupported in [
+            "",
+            "bash scripts/check_doctrines.sh",
+            "cargo test -p specforge-conformance ir::source_to_intent_eval",
+            "cargo test -p specforge-conformance --lib",
+        ] {
+            assert!(
+                reproduction_command_problem("case", unsupported).is_some(),
+                "unsupported form accepted: {unsupported}"
+            );
+        }
+    }
+
+    #[test]
+    fn conformance_owned_roots_derive_from_the_downstream_crate_wiring() {
+        let (crate_roots, ir_roots) = conformance_owned_test_roots();
+        assert!(!crate_roots.contains("ir"), "the facade module is not a leaf root");
+        for expected in ["behavioral_genericity", "eval", "test_support"] {
+            assert!(crate_roots.contains(expected), "missing crate root {expected}");
+        }
+        for expected in [
+            "completeness",
+            "source_to_intent_eval",
+            "source_to_intent_replay",
+            "trajectory",
+        ] {
+            assert!(ir_roots.contains(expected), "missing ir root {expected}");
+        }
+        assert_eq!(owning_test_package("ir::source_to_intent_eval"), "specforge-conformance");
+        assert_eq!(owning_test_package("ir::source"), "specforge");
+        assert_eq!(owning_test_package("commands::converge"), "specforge");
     }
 
     #[test]
