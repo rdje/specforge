@@ -155,37 +155,38 @@ cargo run --quiet -p specforge --example trajectory_controller -- \
 ```
 
 The state is `unmeasurable`, while `history_status` is `insufficient_history`. All three hard gates now pass:
-replay currency is 12/12, fabricated canonical facts are zero, and provenance closes 43/43. Missing comparable
+replay currency is 12/12, fabricated canonical facts are zero, and provenance closes 45/45. Missing comparable
 history prevents the controller from claiming a trend or stall even though the current quality snapshot is
-materially better. The `.4c` counts remain the retrospective baseline; the `.7c.ii` replay from clean production
-revision `a4a08cd4` is the current product authority.
+materially better. The `.4c` counts remain the retrospective baseline; the `.8d` replay from clean production
+revision `483e525d` is the current product authority.
 
 | Dimension | First exact observation | Status |
 | --- | --- | --- |
-| Source capture | source regions 14/14; required-modality captures 12/14 | capture deficit |
+| Source capture | source regions 13/14; required-modality captures 12/14 | capture deficit |
 | Semantic correctness | canonical IntentIR precision 40/40 | meets target |
-| Semantic completeness | recall 40/40; supported categories 2/6 | recall target met; category deficit |
+| Semantic completeness | recall 40/40; supported categories 3/6 | recall target met; category deficit |
 | Stage conservation | conserved or residualized crossings 120/120 | meets target |
-| Provenance/honesty | closure 43/43; fabricated-fact rate 0/40 | meets target |
+| Provenance/honesty | closure 45/45; fabricated-fact rate 0/40 | meets target |
 | Production participation | accounted 17/17; integrated or scheduled 12/17 | deficit, fully reported |
 | Generalization/robustness | reviewed category-oracle coverage 6/6 | meets target |
 | Operational confidence | complete review 12/12; current replay 12/12; provider-free execution 5/10 | replay target met; execution deficit |
-| Executable readiness | required-modality document accounting 6/12 | deficit |
+| Executable readiness | required-modality document accounting 8/12 | deficit |
 
 The current replay, fabrication, and provenance hard gates all have zero violations. Canonical stage drops are
-fully conserved, and four of 16 required residual observations are actionable. The metric controller ranks the
+fully conserved, and eight of 16 required residual observations are actionable. The metric controller ranks the
 remaining leaves as follows:
 
-1. `.8` — make the remaining 12/16 required residual observations actionable (`persistent_residual`); and
+1. `.8` — make the remaining 8/16 required residual observations actionable (`persistent_residual`); and
 2. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
 
-The metric recommendation is `.8`. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
+The metric recommendation is `.8`. Its four `.8a`–`.8d` children are complete: the remaining eight observations
+belong to four cells whose typed cause, `non_contract_region`, has no production carrier yet. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
 and `.f.iv.b` supplied its whole-population proof. Final behavioral `.f.v` remains a release-signoff invariant.
 All task IDs exist in the task tree, the complete metric ordering remains in the report, and canonical recovery
 is closed.
 
-The word “current” above is revision-bound. The published 40/0/0 result is valid for its pinned `a4a08cd4`
-production revision and complete `.7c.ii` population replay.
+The word “current” above is revision-bound. The published 40/0/0 result is valid for its pinned `483e525d`
+production revision and complete `.8d` population replay.
 The first clean `.f.iv` full-PDF replay at `0d218116` therefore remains an unpublished diagnostic. It completed all
 12 sources and 48 stages, but Arm Debug lost 12 correct register/access facts and GIC-400 emitted 15 source-named
 registers without access. AMD's former packed-layout false register correctly disappeared. Actual execution
@@ -365,28 +366,37 @@ recall loss can never be relabelled as residual success. A residual whose key du
 still promotes credits nothing at that stage.
 
 `SPEC-TO-INTENT-ALIGNMENT.8a` froze that rule as an executable contract and `.8b` made the evaluator agree with
-it. Against the pinned `.7c.ii` cell results the published ratio moves from `4/24` to `4/16`, and every other
-global dimension is unchanged. The earlier denominator counted two observations for every reviewed cell that
+it. Against the pinned `.7c.ii` cell results the published ratio moved from `4/24` to `4/16`, and every other
+global dimension was unchanged. The earlier denominator counted two observations for every reviewed cell that
 merely *declared* residual queries, so it included eight observations belonging to four canonical cells that
 were already exact at all three promoted stages — observations no correct pipeline could ever satisfy. What
-remains is the real gap: twelve required observations across six cells — two prose non-contract regions, one
-table-of-contents region, one packed programming structure, and two static-topology figures — that receive no
-residual record at either promoted stage. Those six cells are the complete current hard-failure set.
+remained was the real gap: twelve required observations across six cells — two prose non-contract regions, one
+table-of-contents region, one packed programming structure, and two static-topology figures — receiving no
+residual record at either promoted stage.
 
 Production now owns two typed residual carriers. A non-applicable scalar timing row keeps its physical value,
 typed cause, first failing stage, and replay route, which is why both OpenCAPI analog cells pass. `.8c` added
 the second: a captured *visual region* that no canonical `SemanticIR` record cites now keeps its exact region
 identity, evidence provenance, typed cause `no_canonical_carrier_for_captured_region`, boundary, and replay
-route, and that record is carried into `IntentIR`. It is the carrier the two static-topology figures need — the
-only single family whose closure can move a reviewed category to `supported`. Captured prose statements and
-table regions that reach no canonical surface still have no equivalent carrier.
+route, and that record is carried into `IntentIR`. Captured prose statements and table regions that reach no
+canonical surface still have no equivalent carrier.
 
-The published residual-actionability ratio does not move on this leaf. Its queries read the reviewed
-population's replayed stage snapshots, and `.8d` owns replaying that population and publishing the comparable
-result. What `.8c` establishes is that the record now exists in production and reproduces from the current
-binary: the reviewed CoreSight document is one of the 24 retained measurable chains, and its rebuilt
-`SemanticIR` carries the residual for region `picture_0001` with provenance `visual_0008` — exactly the region,
-evidence id, and disposition the review expects.
+`.8d` then replayed the whole reviewed population — 12 sources, 48 isolated stages — from clean production and
+published the comparable result. **The ratio is now `8/16`.** Both static-topology figures score 1/1 exact,
+provenanced, and actionable at SemanticIR and IntentIR, so `platform-system-ip` becomes the third supported
+reviewed category alongside wire-protocol and physical-link. Source-region disposition moves to 10/14,
+required-modality accounting to 8/12, and provenance closure to 45/45, while conservation stays 120/120 and
+IntentIR stays 40/0/0 with zero fabricated facts.
+
+That movement is attributed rather than assumed. A control leg re-projected the *same* replayed stage artifacts
+with the frozen pre-change fixture builder and reproduced the previous 4/16 baseline exactly, so the production
+carrier moved no reviewed metric and every difference belongs to the fixture projection that finally reads it.
+Exactly two cells changed.
+
+The remaining eight observations belong to four cells — two prose non-contract regions, one table-of-contents
+region, and one packed programming structure. All four need a carrier for the typed cause
+`non_contract_region`, which the frozen contract still declares unbuilt. That is why the ratio is `8/16` and
+not higher: the rule refuses to credit an observation no production record explains.
 
 A published gap now has to be reproducible. The snapshot composer derives which package owns a test filter from
 the conformance crate's own module declarations and refuses to compose a gap whose reproduction command is not

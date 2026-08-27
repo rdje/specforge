@@ -52,6 +52,8 @@
   > does cargo test need TMPDIR set manually
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > does changing a source path mean a corpus document was refreshed
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > does check_chain_currency re-run ingest
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > does claim verification replace task trees or doctrine enforcement
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -295,5 +297,3 @@
   > how are model proposed signal names grounded
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are multi-word field names like Validation Bits or FRU ID recovered
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how are offset-suffixed bit cells like 31:28 +04 extracted

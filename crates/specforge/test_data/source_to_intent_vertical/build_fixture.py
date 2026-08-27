@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[4]
 FIXTURE = Path("crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json")
 SELECTION_COMMIT = "a3e9757d63ca5499a2393864fb503d6537de0035"
 MISSING = "<missing>"
+ACTIONABILITY_FIELDS = ("reason", "first_failing_stage", "replay")
 
 
 def external(portable_id: str, sha256: str, necessity: str) -> dict:
@@ -621,10 +622,21 @@ def project_canonical(stage: dict, spec: dict) -> list[dict]:
 
 
 def project_residuals(stage: dict, spec: dict) -> list[dict]:
-    region_id = spec["region"][1]
+    """Project every production residual carrier that can explain this reviewed region.
+
+    Each carrier owns its own applicability test instead of sharing one priority chain, so a region
+    two carriers could explain is projected by both rather than silently by whichever branch is
+    written first.
+    """
+    projected = project_non_applicable_timing(stage, spec) + project_captured_regions(stage, spec)
+    return sorted(projected, key=lambda item: (item["family"], item["fact_key"]))
+
+
+def project_non_applicable_timing(stage: dict, spec: dict) -> list[dict]:
+    """Project the scalar timing carrier: rows production placed outside digital intent."""
     if spec["projection"] != "physical_timing":
         return []
-
+    region_id = spec["region"][1]
     projected = []
     for item in stage["timing_constraints"]:
         if not item["constraint_id"].startswith(f"timing_{region_id}_"):
@@ -638,10 +650,39 @@ def project_residuals(stage: dict, spec: dict) -> list[dict]:
             timing_key(item, False),
             source_ids(item),
         )
-        for field in ("reason", "first_failing_stage", "replay"):
+        for field in ACTIONABILITY_FIELDS:
             record[field] = disposition.get(field, "")
         projected.append(record)
-    return sorted(projected, key=lambda item: (item["family"], item["fact_key"]))
+    return projected
+
+
+def project_captured_regions(stage: dict, spec: dict) -> list[dict]:
+    """Project the captured-region carrier: a captured visual region no canonical record cites.
+
+    The carrier is region-scoped rather than fact-scoped, which is exactly the question a reviewed
+    figure cell asks — was this region's disposition accounted for. The reviewed family names the
+    key; region identity, `EvidenceIR` provenance, and the three actionability fields are carried
+    verbatim from the production record. A region a canonical record does cite earns no carrier and
+    therefore projects nothing, so an explained region can never read as an accounted one.
+    """
+    if spec["region"][0] != "figure":
+        return []
+    region_id = spec["region"][1]
+    projected = []
+    for item in stage.get("captured_region_residuals", []):
+        if item["region_id"] != region_id:
+            continue
+        for cell in spec["cells"]:
+            record = fact(
+                region_id,
+                cell["family"],
+                f'{region_id}|{cell["family"]}',
+                sorted(set(item["supporting_evidence_ids"])),
+            )
+            for field in ACTIONABILITY_FIELDS:
+                record[field] = item.get(field, "")
+            projected.append(record)
+    return projected
 
 
 def fact(region_id: str, family: str, key: str, provenance: list[str]) -> dict:

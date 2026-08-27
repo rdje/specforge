@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "dataset_id": "source-to-intent-reviewed-current-r4",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.7c.ii",
+  "dataset_id": "source-to-intent-reviewed-current-r5",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.8d",
   "selection_boundary_commit": "a3e9757d63ca5499a2393864fb503d6537de0035",
   "selection_claim": "Current-binary replay of the unchanged review-locked population; source bytes and all four replayed stage identities are re-verified without mutating the frozen baseline.",
   "minimum_documents_per_category": 2,
@@ -196,7 +196,7 @@
       },
       "review_scope_complete": true,
       "present_modalities": 1,
-      "accounted_modalities": 0,
+      "accounted_modalities": 1,
       "cells": [
         {
           "cell_id": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification__01_static_component_topology",
@@ -287,37 +287,45 @@
           },
           "residual": {
             "semantic_ir": {
-              "actual_keys": [],
+              "actual_keys": [
+                "picture_0008|static_component_topology"
+              ],
               "expected_keys": [
                 "picture_0008|static_component_topology"
               ],
-              "matched_keys": [],
-              "actual_total": 0,
+              "matched_keys": [
+                "picture_0008|static_component_topology"
+              ],
+              "actual_total": 1,
               "expected_total": 1,
-              "true_positives": 0,
+              "true_positives": 1,
               "false_positives": 0,
-              "false_negatives": 1,
-              "precision": null,
-              "recall": 0.0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
             "intent_ir": {
-              "actual_keys": [],
+              "actual_keys": [
+                "picture_0008|static_component_topology"
+              ],
               "expected_keys": [
                 "picture_0008|static_component_topology"
               ],
-              "matched_keys": [],
-              "actual_total": 0,
+              "matched_keys": [
+                "picture_0008|static_component_topology"
+              ],
+              "actual_total": 1,
               "expected_total": 1,
-              "true_positives": 0,
+              "true_positives": 1,
               "false_positives": 0,
-              "false_negatives": 1,
-              "precision": null,
-              "recall": 0.0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
-            "semantic_actionable": false,
-            "intent_actionable": false
+            "semantic_actionable": true,
+            "intent_actionable": true
           },
           "boundaries": [
             {
@@ -339,18 +347,12 @@
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "evidence_to_semantic_ir",
-          "hard_failures": [
-            "required_residual_missing_or_inactionable",
-            "source_region_disposition_unaccounted"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         }
       ],
-      "hard_failures": [
-        "1_0_1_2026_02_22_risc_v_iommu_architecture_specification__01_static_component_topology:required_residual_missing_or_inactionable",
-        "1_0_1_2026_02_22_risc_v_iommu_architecture_specification__01_static_component_topology:source_region_disposition_unaccounted"
-      ]
+      "hard_failures": []
     },
     {
       "document_key": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture",
@@ -1049,7 +1051,7 @@
       },
       "review_scope_complete": true,
       "present_modalities": 1,
-      "accounted_modalities": 0,
+      "accounted_modalities": 1,
       "cells": [
         {
           "cell_id": "den0068_2018_07_23_coresight_base_system_architecture__01_static_component_topology",
@@ -1140,37 +1142,45 @@
           },
           "residual": {
             "semantic_ir": {
-              "actual_keys": [],
+              "actual_keys": [
+                "picture_0001|static_component_topology"
+              ],
               "expected_keys": [
                 "picture_0001|static_component_topology"
               ],
-              "matched_keys": [],
-              "actual_total": 0,
+              "matched_keys": [
+                "picture_0001|static_component_topology"
+              ],
+              "actual_total": 1,
               "expected_total": 1,
-              "true_positives": 0,
+              "true_positives": 1,
               "false_positives": 0,
-              "false_negatives": 1,
-              "precision": null,
-              "recall": 0.0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
             "intent_ir": {
-              "actual_keys": [],
+              "actual_keys": [
+                "picture_0001|static_component_topology"
+              ],
               "expected_keys": [
                 "picture_0001|static_component_topology"
               ],
-              "matched_keys": [],
-              "actual_total": 0,
+              "matched_keys": [
+                "picture_0001|static_component_topology"
+              ],
+              "actual_total": 1,
               "expected_total": 1,
-              "true_positives": 0,
+              "true_positives": 1,
               "false_positives": 0,
-              "false_negatives": 1,
-              "precision": null,
-              "recall": 0.0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
-            "semantic_actionable": false,
-            "intent_actionable": false
+            "semantic_actionable": true,
+            "intent_actionable": true
           },
           "boundaries": [
             {
@@ -1192,18 +1202,12 @@
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "evidence_to_semantic_ir",
-          "hard_failures": [
-            "required_residual_missing_or_inactionable",
-            "source_region_disposition_unaccounted"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         }
       ],
-      "hard_failures": [
-        "den0068_2018_07_23_coresight_base_system_architecture__01_static_component_topology:required_residual_missing_or_inactionable",
-        "den0068_2018_07_23_coresight_base_system_architecture__01_static_component_topology:source_region_disposition_unaccounted"
-      ]
+      "hard_failures": []
     },
     {
       "document_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
@@ -2383,22 +2387,18 @@
           "expected_disposition": "non_applicable",
           "complete_gold": true,
           "source_region": {
-            "actual_keys": [
-              "elem_00219"
-            ],
+            "actual_keys": [],
             "expected_keys": [
               "elem_00219"
             ],
-            "matched_keys": [
-              "elem_00219"
-            ],
-            "actual_total": 1,
+            "matched_keys": [],
+            "actual_total": 0,
             "expected_total": 1,
-            "true_positives": 1,
+            "true_positives": 0,
             "false_positives": 0,
-            "false_negatives": 0,
-            "precision": 1.0,
-            "recall": 1.0,
+            "false_negatives": 1,
+            "precision": null,
+            "recall": 0.0,
             "unprovenanced_records": 0
           },
           "evidence_capture": {
@@ -2516,16 +2516,18 @@
             }
           ],
           "disposition_accounted": false,
-          "first_failing_stage": "evidence_to_semantic_ir",
+          "first_failing_stage": "source_ir",
           "hard_failures": [
             "required_residual_missing_or_inactionable",
-            "source_region_disposition_unaccounted"
+            "source_region_disposition_unaccounted",
+            "source_region_missing_or_ambiguous"
           ]
         }
       ],
       "hard_failures": [
         "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance:required_residual_missing_or_inactionable",
-        "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance:source_region_disposition_unaccounted"
+        "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance:source_region_disposition_unaccounted",
+        "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance:source_region_missing_or_ambiguous"
       ]
     },
     {
@@ -2776,8 +2778,8 @@
       "category": "platform-system-ip",
       "document_count": 2,
       "cell_count": 2,
-      "hard_failure_count": 4,
-      "status": "incomplete"
+      "hard_failure_count": 0,
+      "status": "supported"
     },
     {
       "category": "cpu-isa",
@@ -2797,24 +2799,24 @@
       "category": "methodology-guide",
       "document_count": 2,
       "cell_count": 2,
-      "hard_failure_count": 4,
+      "hard_failure_count": 5,
       "status": "incomplete"
     }
   ],
   "global": {
     "intent_bearing_source_region_disposition": {
-      "met": 8,
+      "met": 10,
       "total": 14,
-      "ratio": 0.5714285714285714
+      "ratio": 0.7142857142857143
     },
     "required_modality_accounting": {
-      "met": 6,
+      "met": 8,
       "total": 12,
-      "ratio": 0.5
+      "ratio": 0.6666666666666666
     },
     "canonical_provenance_closure": {
-      "met": 43,
-      "total": 43,
+      "met": 45,
+      "total": 45,
       "ratio": 1.0
     },
     "stage_conservation_or_residual": {
@@ -2823,9 +2825,9 @@
       "ratio": 1.0
     },
     "residual_actionability": {
-      "met": 4,
+      "met": 8,
       "total": 16,
-      "ratio": 0.25
+      "ratio": 0.5
     },
     "fabricated_canonical_facts": 0,
     "unexplained_stage_drops": 0

@@ -99,6 +99,22 @@ CARRIER_DECLARATIONS = {
         "pub struct CapturedRegionResidualRecord",
     ),
 }
+# The bounded family block describes one selected residual family across its whole life: `open`
+# while it is still a gap, `closed` once its carrier ships and the reviewed cells are met. The
+# state is not a relaxation — it selects which derived bucket the family must be found in, so a
+# family can neither go quietly green nor stay declared as a gap it no longer is.
+EXPECTED_SELECTED_FAMILY_FIELDS = {
+    "semantic_family",
+    "modality",
+    "category",
+    "cells",
+    "observations",
+    "typed_cause",
+    "selection_reason",
+    "owner",
+    "state",
+}
+EXPECTED_SELECTED_FAMILY_STATES = ("open", "closed")
 EXPECTED_PROMOTED_STAGES = ["semantic_ir", "intent_ir"]
 EXPECTED_ACTIONABILITY_FIELDS = ["/reason", "/first_failing_stage", "/replay"]
 EXPECTED_BOUNDARIES = [
@@ -466,25 +482,26 @@ def validate_witness(contract: dict[str, Any], current: dict[str, Any], errors: 
         errors.append("a not-required cell must not carry a hard failure")
 
     family = witness.get("selected_family")
-    if not isinstance(family, dict) or set(family) != {
-        "semantic_family",
-        "modality",
-        "category",
-        "cells",
-        "observations",
-        "typed_cause",
-        "selection_reason",
-        "owner",
-    }:
+    if not isinstance(family, dict) or set(family) != EXPECTED_SELECTED_FAMILY_FIELDS:
         errors.append("selected_family must declare the closed selection schema")
         return
+    state = family.get("state")
+    if state not in EXPECTED_SELECTED_FAMILY_STATES:
+        errors.append("selected_family state must be open or closed")
+        return
+    # An open family is still a gap, so its cells must be the required-and-absent ones; a closed
+    # family shipped its carrier, so its cells must be the actionable ones. Reading the bucket the
+    # state names is what keeps both directions honest.
+    bucket = "required_absent" if state == "open" else "actionable"
     selected = [
         row
-        for row in buckets["required_absent"]
+        for row in buckets[bucket]
         if row["semantic_family"] == family.get("semantic_family")
     ]
     if len(selected) != family.get("cells") or 2 * len(selected) != family.get("observations"):
-        errors.append("selected family cell/observation counts differ from the current result")
+        errors.append(
+            f"selected family cell/observation counts differ from the current result's {bucket} cells"
+        )
     if any(row["modality"] != family.get("modality") for row in selected):
         errors.append("selected family spans more than its declared modality")
     if any(row["category"] != family.get("category") for row in selected):
@@ -493,11 +510,15 @@ def validate_witness(contract: dict[str, Any], current: dict[str, Any], errors: 
         errors.append("selected family must name a declared typed cause")
     if family.get("owner") != "SPEC-TO-INTENT-ALIGNMENT.8c":
         errors.append("the bounded production family must be owned by .8c")
-    category_cells = [
+    if state == "closed" and EXPECTED_TYPED_CAUSE_CARRIERS.get(family.get("typed_cause")) is None:
+        errors.append("a closed selected family must name a typed cause whose carrier ships")
+    # The family accounts for its whole category in both states: an open one is the only gap left
+    # there, and a closed one leaves none behind.
+    category_gaps = [
         row for row in buckets["required_absent"] if row["category"] == family.get("category")
     ]
-    if len(category_cells) != len(selected):
-        errors.append("the selected family must be the only residual gap left in its category")
+    if len(category_gaps) != (len(selected) if state == "open" else 0):
+        errors.append("the selected family must account for every residual gap in its category")
 
 
 def validate_reproduction(contract: dict[str, Any], errors: list[str]) -> None:
@@ -751,6 +772,22 @@ def run_self_test() -> int:
         "widened-selected-family",
         lambda value: value["witness"]["selected_family"].update({"cells": 6, "observations": 12}),
     )
+    # The family state is not decoration: it names which derived bucket the family must be found
+    # in, so both directions of a wrong state have to fail.
+    mutate(
+        "family-declared-open-after-shipping",
+        lambda value: value["witness"]["selected_family"].update({"state": "open"}),
+    )
+    mutate(
+        "family-state-outside-vocabulary",
+        lambda value: value["witness"]["selected_family"].update({"state": "partial"}),
+    )
+    mutate(
+        "closed-family-names-unshipped-carrier",
+        lambda value: value["witness"]["selected_family"].update(
+            {"typed_cause": "non_contract_region"}
+        ),
+    )
     mutate(
         "unrepaired-reproduction",
         lambda value: value["reproduction"].update(
@@ -774,6 +811,31 @@ def run_self_test() -> int:
                 residual["semantic_actionable"] = True
                 residual["intent_actionable"] = True
     mutations.append(("witness-no-longer-red", contract, mutated_current, retained))
+
+    # A closed family may not leave a residual gap behind in its own category. Regress exactly one
+    # of its reviewed cells and require the `closed` declaration to be refused.
+    family_name = contract["witness"]["selected_family"]["semantic_family"]
+    regressed_current = copy.deepcopy(current)
+    regressed = False
+    for document in regressed_current["documents"]:
+        for cell in document["cells"]:
+            if regressed or cell.get("semantic_family") != family_name:
+                continue
+            residual = cell.get("residual")
+            if not residual:
+                continue
+            for stage in EXPECTED_PROMOTED_STAGES:
+                residual[stage]["false_negatives"] = 1
+                residual[f"{stage.split('_')[0]}_actionable"] = False
+            cell["hard_failures"] = sorted(
+                set(cell.get("hard_failures", []))
+                | {"required_residual_missing_or_inactionable"}
+            )
+            regressed = True
+    if not regressed:
+        print("residual-actionability-contract: FAIL self-test could not build the category-gap case")
+        return 1
+    mutations.append(("closed-family-leaves-category-gap", contract, regressed_current, retained))
 
     failures = [
         name

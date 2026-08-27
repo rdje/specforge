@@ -60,11 +60,12 @@ verification, and commit records stay below so the `.8` program keeps one chrono
 
 ## Current Frontier
 
-Active frontier: `SPEC-TO-INTENT-ALIGNMENT.8d`. The rule is frozen, the evaluator agrees with it, and the
-bounded typed carrier now ships: every captured figure-kind region that no canonical `SemanticIR` record cites
-earns exactly one typed residual, carried unchanged into `IntentIR`. `.8d` owns replaying the complete reviewed
-population and publishing the comparable residual-actionability result; its external-source input is present and
-digest-identical to the reviewed lock.
+`SPEC-TO-INTENT-ALIGNMENT.8` is complete. The rule is frozen (`.8a`), the evaluator agrees with it (`.8b`), the
+bounded typed carrier ships (`.8c`), and `.8d` has replayed the complete reviewed population and published the
+comparable result: residual actionability is **8/16**, source-region disposition 10/14, required-modality
+accounting 8/12, and provenance closure 45/45, with conservation 120/120, IntentIR 40/0/0, and zero fabrication
+or unexplained drops. `platform-system-ip` is the third supported reviewed category. The measured closure and
+its attribution live in [residual carrier](residual-carrier.md); the next root child is `.9`.
 
 ## Localized residual-actionability gap (`.8`)
 
@@ -375,22 +376,49 @@ matched-key path.
 - `2026-08-27`: leave the fixture-side projection and the published `4/16` ratio to `.8d`. The evaluator reads
   the reviewed population's replayed stage snapshots, so moving the ratio requires the population replay `.8d`
   owns; publishing a projection change here would report movement no replay had measured.
+- `2026-08-27`: give every production residual carrier its own projector in the reviewed fixture instead of one
+  priority chain. A region two carriers could explain is then projected by both rather than silently by
+  whichever branch is written first, and each projector states its own applicability.
+- `2026-08-27`: attribute the `.8d` delta with a control leg rather than by comparing against the previous
+  publication. Re-projecting the *same* replayed artifacts with the frozen pre-change builder separates what the
+  fresh replay changed from what the projection changed; without it, `.8c`'s production carrier and `.8d`'s
+  projection would be indistinguishable in the published movement.
+- `2026-08-27`: publish the replay's own evaluator output byte for byte instead of re-summarizing it. `.8b` had
+  to record two digests because it re-summarized a pinned result; `.8d` measures and publishes in one step, so
+  the published result and its replay output are the same bytes and the evidence needs no second identity.
+- `2026-08-27`: add a closed `state` to the frozen contract's selected family rather than deleting the block or
+  loosening its check. The block describes one family across its whole life, and the state names which derived
+  bucket the family must be found in — so a family can neither go quietly green nor stay declared as a gap it
+  no longer is. Four new RED cases cover both wrong directions, an out-of-vocabulary state, and a closed family
+  naming a cause whose carrier does not ship.
+- `2026-08-27`: publish the Cortex-A76 source-region regression rather than re-anchoring the reviewed cell to
+  make it pass. The reviewed anchor is a frozen review identity; silently moving it to `elem_00230` would make
+  the fixture agree with whatever ingest currently emits, which is exactly the drift the anchor exists to
+  detect. The honest result is 13/14 with an owning task.
+- `2026-08-27`: retain the eight owner-supplied external sources while reclaiming the population and diagnostic
+  scratch. They are 6.3 MiB against 3.0 GiB reclaimed, git-ignored, digest-pinned in the part, and they are what
+  makes this leaf's own measurement re-runnable.
 
 ## Open Questions
 
-- None. The rule is frozen, the evaluator agrees with it, and the bounded production carrier ships; `.8d`
-  owns the population replay that measures it.
+- None for `.8`. The rule is frozen, the evaluator agrees with it, the bounded production carrier ships, and the
+  population replay has measured it at 8/16. The four remaining required-and-absent cells — two prose
+  non-contract regions, one table-of-contents region, and one packed programming structure — need carriers for
+  the `non_contract_region` cause, which no leaf owns yet and which the frozen contract still declares
+  unbuilt.
 
 ## Blockers
 
-- None. The `.8d` external-source blocker is cleared: all eight authorized sources are present, digest-identical
-  to the reviewed lock, and accepted by the orchestrator's own map, basename, volume, and coverage predicates.
-  Its `.8c` prerequisite ships, so `.8d` is runnable.
+- None. Every `.8` child is complete. The replay did surface one condition outside this program's scope:
+  reviewed cells are anchored on ordinal SourceIR element ids, and ingest is not reproducible across time, so
+  the Cortex-A76 cell's anchor no longer resolves and exact source regions are 13/14.
+  [`SOURCE-IR-REPRODUCIBILITY`](../SOURCE-IR-REPRODUCIBILITY.md) owns it.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8d` published population closure | all 12 reviewed sources and all 48 isolated stages replay from clean production at `483e525d` under unchanged reviewed authority; residual actionability moves 4/16 to 8/16, disposition 8/14 to 10/14, modality accounting 6/12 to 8/12, provenance 43/43 to 45/45, and `platform-system-ip` becomes the third supported category, while conservation stays 120/120, IntentIR stays 40/0/0, and fabrication and unexplained drops stay zero; a control leg re-projecting the same artifacts with the frozen pre-change builder reproduces 4/16 exactly, so exactly two cells moved and the whole delta is the projection's; the published result is the replay's own output byte for byte; the contract self-test is 28/28, the workspace suite is 470/168/1,369/4, Clippy is clean, all nine gate-tier doctrines pass, and 3,095 files / 1,158,476 KiB of population scratch plus 4,192 files / 1,903,200 KiB of diagnostic scratch are removed residue-free; the replay surfaced a reviewed-anchor regression (exact source regions 13/14) routed to `SOURCE-IR-REPRODUCIBILITY` |
 | `2026-08-27` | `.8c` captured-region carrier | the producer emits one typed residual per captured figure-kind region no canonical record cites; the reviewed CoreSight chain carries `picture_0001` / `visual_0008` / `no_canonical_carrier_for_captured_region` / `evidence_to_semantic_ir`; two pre-change chains compared field-by-field differ only in `captured_region_residuals` (I2S 20, I2C 103) at both SemanticIR and IntentIR; the registry is 170 rules over 50 SemanticIR and 50 IntentIR fields; four focused positive/refusal tests, the workspace suite, Clippy, all five genericity components, and the 24/24 contract self-test pass |
 | `2026-08-27` | `.8d` input supplied | all eight authorized external sources are located by exact SHA-256 in the sibling repository, copied to a repository-derived path on the same volume, and re-verified: eight of eight digests and byte counts match the reviewed lock, and the orchestrator's own map-path, absolute-path, basename, same-volume, and coverage predicates pass with zero missing and zero extra entries |
 | `2026-08-27` | `.8c` contract correction and `.8d` boundary | the chain-currency baseline is 24 replayed / 24 current / zero stale at all four stages with exactly the declared retained bundles; `.8c` acceptance replaces an unsatisfiable zero-public-delta clause with zero stale plus intended-record-only change; `.8d` is blocked because eight reviewed sources, including both selected static-topology documents, are absent external read-only inputs |
@@ -402,6 +430,7 @@ matched-key path.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8d` | `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure` | replay all 12 reviewed sources through all 48 isolated stages, attribute the whole delta with a frozen-projection control leg, and publish 8/16 with `platform-system-ip` supported |
 | `.8c` | `SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier` | ship the typed captured-region residual on SemanticIR and IntentIR, prove the carrier claim in the frozen contract, and rebuild every retained chain to zero stale |
 | `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — correct the carrier contract and record the replay blocker` | make `.8c`'s acceptance satisfiable, publish the chain-currency baseline, and block `.8d` on the absent external source map |
 | `.8b` | `SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations` | make the evaluator's denominator the frozen required-residual rule, keep every missing canonical key required and unmet, and republish the result, replay-evidence, and controller authorities |

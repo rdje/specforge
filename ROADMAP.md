@@ -91,8 +91,9 @@ physical-link are supported. All controller hard gates pass; `.6e` is superseded
 complete without catalog widening or fabrication, and controller-ranked `.8` is now active for required residual
 actionability. Its activation decomposed the published ratio into observations that are actionable, observations
 that no correct pipeline can satisfy because their canonical facts are already promoted, and the genuinely
-required observations that no residual record explains; `.8a`–`.8d` own the contract, the fail-closed accounting
-correction, the bounded typed carrier, and the population replay. Genericity and behavioral `.f.v` signoff remain complete.
+required observations that no residual record explains; `.8a`–`.8d` delivered the contract, the accounting
+correction, the bounded typed carrier, and the population replay, and `.8` is complete at 8/16 residual
+actionability with platform-system-ip supported. Genericity and behavioral `.f.v` signoff remain complete.
 Structural `.e` is complete: ADR 0038's compiler-visible core/conformance boundary, sealed proof kernel, 170
 runtime rules, compiled information-flow doctrine, and 27 adversarial controls cover all five stages. The 24
 current chains now carry 150,942 cumulative claims across 120 artifacts under one adapter ruleset, and its
@@ -120,7 +121,8 @@ Five active program groups support that north star:
 - learning, arbitration, and corpus synthesis: the open R15c–R15g lanes remain owned by
   [`R15C-R15G-LEARNING-PLANE-BACKFILL`](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md);
 - repository durability and portability: measured artifact currency is owned by
-  [`CORPUS-CHAIN-CURRENCY`](docs/tasks/CORPUS-CHAIN-CURRENCY.md), and live-document containment by
+  [`CORPUS-CHAIN-CURRENCY`](docs/tasks/CORPUS-CHAIN-CURRENCY.md) with the ingest boundary it cannot reach owned
+  by [`SOURCE-IR-REPRODUCIBILITY`](docs/tasks/SOURCE-IR-REPRODUCIBILITY.md), and live-document containment by
   [`LIVE-DOC-STOP-RISK`](docs/tasks/LIVE-DOC-STOP-RISK.md), under the rule that a bound a surface can
   actually reach must have a remedy compliant work can take.
 

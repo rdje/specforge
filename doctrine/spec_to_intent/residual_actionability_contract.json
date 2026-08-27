@@ -68,15 +68,37 @@
     "no_fabrication_rule": "a residual records that a captured region did not reach a canonical carrier and never asserts a canonical value in its place"
   },
   "witness": {
-    "current_result_sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
+    "current_result_sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
     "declared_cells": 12,
     "declared_observations": 24,
-    "actionable_observations": 4,
+    "actionable_observations": 8,
     "not_required_observations": 8,
-    "required_and_absent_observations": 12,
+    "required_and_absent_observations": 8,
     "corrected_required_observations": 16,
-    "corrected_met_observations": 4,
+    "corrected_met_observations": 8,
     "actionable_cells": [
+      {
+        "document_key": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification",
+        "cell_id": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification__01_static_component_topology",
+        "category": "platform-system-ip",
+        "semantic_family": "static_component_topology",
+        "modality": "figure",
+        "expected_disposition": "residual",
+        "reviewed_residual_keys": [
+          "picture_0008|static_component_topology"
+        ]
+      },
+      {
+        "document_key": "den0068_2018_07_23_coresight_base_system_architecture",
+        "cell_id": "den0068_2018_07_23_coresight_base_system_architecture__01_static_component_topology",
+        "category": "platform-system-ip",
+        "semantic_family": "static_component_topology",
+        "modality": "figure",
+        "expected_disposition": "residual",
+        "reviewed_residual_keys": [
+          "picture_0001|static_component_topology"
+        ]
+      },
       {
         "document_key": "opencapi_25gbps_phy_signaling_spec_1_0",
         "cell_id": "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss",
@@ -197,21 +219,6 @@
         ]
       },
       {
-        "document_key": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification",
-        "cell_id": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification__01_static_component_topology",
-        "category": "platform-system-ip",
-        "semantic_family": "static_component_topology",
-        "modality": "figure",
-        "expected_disposition": "residual",
-        "reviewed_residual_keys": [
-          "picture_0008|static_component_topology"
-        ],
-        "hard_failures": [
-          "required_residual_missing_or_inactionable",
-          "source_region_disposition_unaccounted"
-        ]
-      },
-      {
         "document_key": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture",
         "cell_id": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture__01_table_of_contents",
         "category": "cpu-isa",
@@ -244,21 +251,6 @@
         ]
       },
       {
-        "document_key": "den0068_2018_07_23_coresight_base_system_architecture",
-        "cell_id": "den0068_2018_07_23_coresight_base_system_architecture__01_static_component_topology",
-        "category": "platform-system-ip",
-        "semantic_family": "static_component_topology",
-        "modality": "figure",
-        "expected_disposition": "residual",
-        "reviewed_residual_keys": [
-          "picture_0001|static_component_topology"
-        ],
-        "hard_failures": [
-          "required_residual_missing_or_inactionable",
-          "source_region_disposition_unaccounted"
-        ]
-      },
-      {
         "document_key": "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide",
         "cell_id": "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance",
         "category": "methodology-guide",
@@ -270,7 +262,8 @@
         ],
         "hard_failures": [
           "required_residual_missing_or_inactionable",
-          "source_region_disposition_unaccounted"
+          "source_region_disposition_unaccounted",
+          "source_region_missing_or_ambiguous"
         ]
       }
     ],
@@ -281,8 +274,9 @@
       "cells": 2,
       "observations": 4,
       "typed_cause": "no_canonical_carrier_for_captured_region",
-      "selection_reason": "the only single family whose closure clears every remaining hard failure in a whole reviewed category",
-      "owner": "SPEC-TO-INTENT-ALIGNMENT.8c"
+      "selection_reason": "the only single family whose closure clears every remaining hard failure in a whole reviewed category; SPEC-TO-INTENT-ALIGNMENT.8d measured that closure and platform-system-ip is now supported",
+      "owner": "SPEC-TO-INTENT-ALIGNMENT.8c",
+      "state": "closed"
     }
   },
   "cases": [

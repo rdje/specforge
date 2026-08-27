@@ -1,3 +1,37 @@
+### SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure
+
+- Replayed all 12 reviewed sources through all 48 isolated stages from clean production at `483e525d` under
+  unchanged reviewed authority — the reviewed dataset, prior memory, and orchestrator digests are identical to
+  the `.7c.ii` run, and every source is digest-equal to the reviewed lock.
+- Published the comparable result. Residual actionability moves **4/16 to 8/16**, source-region disposition
+  8/14 to 10/14, required-modality accounting 6/12 to 8/12, and canonical provenance closure 43/43 to 45/45,
+  while stage conservation stays 120/120, IntentIR stays 40/0/0 TP/FP/FN, and fabricated facts and unexplained
+  drops stay zero. `platform-system-ip` becomes the third supported reviewed category — the whole-category
+  closure `.8c`'s bounded family was selected to deliver. The published snapshot is the replay's own evaluator
+  output byte for byte; nothing was re-summarized.
+- Taught the reviewed fixture to read the carrier `.8c` shipped. `project_residuals` dispatched only on
+  `physical_timing`, so the production `captured_region_residuals` reached the reviewed `/residuals` collection
+  for no cell. Each production carrier now owns its own projector, and the captured-region projector carries
+  region identity, `EvidenceIR` provenance, and the three actionability fields verbatim.
+- Attributed the delta instead of assuming it. A control leg re-projected the *same* replayed stage artifacts
+  with the frozen pre-change builder and reproduced the previous 4/16 baseline exactly, so `.8c`'s production
+  carrier moved no reviewed metric and every difference belongs to the projection. Cell-level comparison shows
+  exactly two cells changed, both `static_component_topology`, each 0/1 to 1/1 exact, provenanced, and
+  actionable at both promoted stages.
+- Gave the frozen `.8a` contract's selected family a closed `state`, so a shipped family is validated against
+  the actionable cells and an open one against the required-and-absent cells. Four new RED cases cover both
+  wrong directions, an out-of-vocabulary state, and a closed family naming a cause whose carrier does not ship;
+  the self-test is 28/28.
+- Reported, rather than absorbed, one regression the replay surfaced. Reviewed cells anchor on ordinal SourceIR
+  element ids, and the Cortex-A76 reviewed prose has moved from `elem_00219` to `elem_00230` (249 to 260
+  content elements, identical table, visual, and page counts), so exact source regions are 13/14. Input digest,
+  production revision, Docling and model versions, batching, and run-to-run noise are each excluded by direct
+  measurement, and `check_chain_currency.sh` starts from the persisted `source_ir.json`, so the ingest boundary
+  is outside its oracle. Both facts are owned by the new `SOURCE-IR-REPRODUCIBILITY` tree.
+- Reclaimed 3,095 files / 1,158,476 KiB of population scratch and 4,192 files / 1,903,200 KiB of diagnostic
+  scratch with an empty residue census, and retained the eight owner-supplied external sources (6.3 MiB,
+  git-ignored, digest-pinned) because they are what makes this measurement re-runnable.
+
 ### SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier
 
 - Shipped the second typed residual carrier in production. A captured visual region that no canonical

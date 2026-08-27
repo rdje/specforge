@@ -33,7 +33,7 @@ combined part reached its declared line-count rollover milestone.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8d`
-  State: `pending`
+  State: `done`
   Goal: replay the complete reviewed population and publish comparable residual-actionability closure
   Acceptance: all 12 reviewed sources and all 48 isolated stages replay from clean production under the frozen
   oracle; exact canonical, provenance, conservation, residual, disposition, category, and controller deltas are
@@ -44,8 +44,18 @@ combined part reached its declared line-count rollover milestone.
   Prerequisite-input: `the owner supplied all eight authorized external read-only sources on 2026-08-27; every
   one is digest-identical to the reviewed lock and the orchestrator's map, basename, volume, and coverage
   preconditions pass`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `all 12 reviewed sources replayed through all 48 isolated stages from clean production at
+  483e525d; residual actionability moves 4/16 to 8/16, disposition 8/14 to 10/14, modality accounting 6/12 to
+  8/12, and provenance closure 43/43 to 45/45, while conservation stays 120/120, IntentIR stays 40/0/0, and
+  fabrication and unexplained drops stay zero. platform-system-ip becomes the third supported category. A
+  control leg re-projecting the same replayed artifacts with the frozen pre-change builder (edf0a871)
+  reproduces the published 4/16 baseline exactly, so the whole measured delta is attributable to the projection
+  and .8c disturbed no reviewed metric. The replay surfaced one unrelated regression: the Cortex-A76 reviewed
+  prose region is no longer at elem_00219, so exact source regions are 13/14 (routed to
+  SOURCE-IR-REPRODUCIBILITY). Contract self-test 28/28, workspace suite 470/168/1,369/4, Clippy clean, all nine
+  gate-tier doctrines pass, and 3,095 files / 1,158,476 KiB of population scratch plus 4,192 files /
+  1,903,200 KiB of diagnostic scratch are removed with an empty residue census`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure`
 
 ## Reviewed-source availability (`.8d`)
 
@@ -73,8 +83,9 @@ digests and byte counts match the reviewed lock exactly:
 The runtime map is `.project-data/tmp/spec-to-intent-8d-external-source-map.json`. Executing the orchestrator's
 own predicates against it — repository-relative map path below `.project-data/tmp`, absolute source paths,
 basename equal to the portable id, same device as the repository root, and exact coverage of the required
-external set — passes for all eight with no missing and no extra entry. `.8d` is therefore no longer blocked on
-an input; it waits only on `.8c`.
+external set — passed for all eight with no missing and no extra entry. `.8d` consumed exactly that map; the
+map itself is removed with the population scratch, and regenerating it from the retained sources is the only
+step a re-run needs.
 
 The sources stay git-ignored rather than tracked under `corpus/`. The reviewed dataset is review-locked and
 classifies these eight as `external_read_only`; promoting them to repository sources would change frozen
@@ -185,6 +196,92 @@ of SemanticIR and IntentIR, so +2,226. The residual +8 net is pre-existing drift
 slices left unrepublished: +8 at EvidenceIR, carried as +8 through SemanticIR and +8 through IntentIR, against
 −16 at the adapter. Stage-local totals are therefore 31,382 / 89,766 / 13,520 / 15,409 / 865.
 
+## Published population closure (`.8d`)
+
+The complete reviewed population replayed from clean production at `483e525d` — all 12 sources, all 48 isolated
+stages — under unchanged reviewed authority: the reviewed dataset (`c743bcda`), prior memory (`a416cc8b`), and
+orchestrator (`55c81520`) digests are identical to the `.7c.ii` run, and every source is digest-equal to the
+reviewed lock. The published result is the replay's own evaluator output, byte for byte; nothing was
+re-summarized.
+
+| Dimension | `.7c.ii` / `.8b` | `.8d` |
+| --- | --- | --- |
+| residual actionability | 4 / 16 | **8 / 16** |
+| source-region disposition | 8 / 14 | **10 / 14** |
+| required-modality accounting | 6 / 12 | **8 / 12** |
+| canonical provenance closure | 43 / 43 | **45 / 45** |
+| stage conservation or residual | 120 / 120 | 120 / 120 |
+| IntentIR canonical TP/FP/FN | 40 / 0 / 0 | 40 / 0 / 0 |
+| fabricated facts, unexplained drops | 0, 0 | 0, 0 |
+| supported categories | 2 / 6 | **3 / 6** |
+| exact source regions | 14 / 14 | **13 / 14** |
+
+`platform-system-ip` becomes the third supported category, exactly as the `.8c` family selection predicted: both
+its documents lose every hard failure once their captured figures earn an actionable residual.
+
+The delta is attributed rather than assumed. A control leg re-projected the *same* replayed stage artifacts with
+the frozen pre-change builder (`edf0a871`, the digest `.7c.ii` pinned) and reproduced the published baseline
+exactly — 4/16, 8/14, 6/12, 43/43, 120/120, two supported categories. So the `.8c` production carrier moved no
+reviewed metric, and every difference above is attributable to the `.8d` projection. Cell-level comparison
+confirms it: exactly two cells changed, both `static_component_topology`, each from 0/1 with no actionable
+record to 1/1 exact, provenanced, and actionable at SemanticIR and IntentIR. No canonical score, boundary score,
+category other than `platform-system-ip`, or other document moved.
+
+### Reviewed anchor drift found by this replay (`.8d`)
+
+The control leg also surfaced one regression that has nothing to do with this leaf's change. The Cortex-A76
+guide's reviewed prose region is anchored on the *ordinal* id `elem_00219`, and the current binary places that
+prose at `elem_00230`: ingest now emits 260 content elements where the persisted chain holds 249, an
+11-element shift with identical table (68), visual (71), and page (46) counts. The reviewed cell therefore
+gains `source_region_missing_or_ambiguous` and exact source regions fall to 13/14. It is reported, not
+absorbed: no hard gate regressed, and the fixture failed closed rather than matching the wrong element.
+
+The cause is not this repository's code. The same PDF bytes (`8358c5ae`, unchanged since April), the same
+Docling 2.84.0, and the same model blobs produce 260 elements at both `483e525d` and `3d04bde0` — the commit
+*before* the only revision in range that touched `docling_backend.rs` — batched and unbatched alike, and two
+back-to-back runs agree byte for byte after normalizing the replay root. The persisted 249-element chain was
+built from a normalized bundle cached before that, so SourceIR ingest is not reproducible across time in this
+environment. Nothing gates it: `scripts/check_chain_currency.sh` replays evidence through the adapter from the
+*persisted* `source_ir.json` and never re-runs ingest, so a 24/24 current chain says nothing about SourceIR.
+[`SOURCE-IR-REPRODUCIBILITY`](../SOURCE-IR-REPRODUCIBILITY.md) owns both the reproducibility gap and the
+ordinal-anchor fragility that turns it into a reviewed-cell failure.
+
+### Scratch reclaimed (`.8d`)
+
+The population root and its runtime source map are removed with an empty residue census: 3,095 files /
+1,158,476 KiB. The diagnostic roots this leaf created to attribute the delta — the control projection, five
+ingest-determinism replays, and one detached worktree at `3d04bde0` — are removed too: 4,192 files /
+1,903,200 KiB, also residue-free. The eight owner-supplied external sources are deliberately retained under
+`.project-data/tmp/spec-to-intent-external-sources/`: they are 6.3 MiB, git-ignored, digest-pinned in the table
+above, and they are what makes this leaf's own measurement re-runnable.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8d`
+
+- [x] **REPRODUCE / MEASURE** — the tracked `.7c.ii`/`.8b` authority published residual actionability 4/16,
+  disposition 8/14, modality accounting 6/12, and provenance 43/43, with `platform-system-ip` incomplete on
+  four hard failures. Both `static_component_topology` cells scored 0/1 at SemanticIR and IntentIR with no
+  actionable record.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `project_residuals` in
+  `crates/specforge/test_data/source_to_intent_vertical/build_fixture.py` returned `[]` for every projection
+  except `physical_timing`, so `.8c`'s shipped `captured_region_residuals` reached the reviewed `/residuals`
+  collection for no cell. The production carrier existed; nothing projected it into the measurement.
+- [x] **ADDRESSED (verified)** — the projection now dispatches to one projector per production carrier, and
+  `project_captured_regions` carries region identity, `EvidenceIR` provenance, and the three actionability
+  fields verbatim. Measured over the fresh 12-source replay: 4/16 → 8/16, 8/14 → 10/14, 6/12 → 8/12,
+  43/43 → 45/45, and `platform-system-ip` incomplete → supported.
+- [x] **NO REGRESSION** — conservation stays 120/120, IntentIR stays 40/0/0, fabrication and unexplained drops
+  stay zero, and the control leg proves no non-projected metric moved. `cargo test --workspace --lib` is
+  470 / 168 / 1,369 / 4 with zero failures; `cargo clippy --workspace --all-targets --all-features -- -D warnings`
+  is clean; the `.8a` contract self-test rejects 28/28 mutations; all nine gate-tier doctrines pass.
+- [x] **GENERICITY (ADR 0006 / ADR 0037)** — the change is fixture-side only. The reviewed family label
+  `static_component_topology` names the projected key inside the conformance fixture, exactly where `.8c`
+  placed it; the projector gates on the reviewed region's structural kind and reads only `region_id`,
+  `supporting_evidence_ids`, and the three actionability fields from the production record. No production
+  source changed.
+- [x] **LOCKSTEP** — the published result, replay evidence, controller input and report, the frozen `.8a`
+  contract and its checker, the mdBook trajectory and contract chapters, this part, the bounded root, the
+  resume pointer, the live status, and the Knowledge Map agree on 8/16 and on the three supported categories.
+
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8c`
 
 - [x] **REPRODUCE / MEASURE** — before the change, the reviewed `den0068_2018_07_23_coresight_base_system_architecture`
@@ -216,7 +313,7 @@ slices left unrepublished: +8 at EvidenceIR, carried as +8 through SemanticIR an
 
 ## Update protocol
 
-`.8d` updates this part and the bounded root together. A measured-metric or route change also updates the
-containment contract, index, and manifest in the same commit. Decisions, verification, and commit records for
-the whole `.8` program stay in [residual actionability](residual-actionability.md) so the program keeps one
-chronology.
+Both owned leaves are complete, so this part is closed to new leaves; `.8` itself is done and `.9` is the next
+root child. A correction to a published metric or route here updates the containment contract, index, and
+manifest in the same commit. Decisions, verification, and commit records for the whole `.8` program stay in
+[residual actionability](residual-actionability.md) so the program keeps one chronology.

@@ -1,10 +1,10 @@
 {
   "contract_id": "spec-to-intent-alignment-active-task-evidence",
   "current_frontier": {
-    "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8",
-    "literal": "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.8`.",
+    "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9",
+    "literal": "Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.9`.",
     "mode": "eligible",
-    "part_id": "residual-actionability"
+    "part_id": "current-and-future"
   },
   "current_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md",
   "index_path": "docs/tasks/spec-to-intent-alignment/INDEX.md",
@@ -566,25 +566,25 @@
     {
       "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual actionability",
       "metrics": {
-        "bytes": 36247,
-        "line_bytes": 634,
-        "lines": 415
+        "bytes": 40355,
+        "line_bytes": 1099,
+        "lines": 444
       },
       "part_id": "residual-actionability",
       "path": "docs/tasks/spec-to-intent-alignment/residual-actionability.md",
-      "sha256": "d0b5612acf082ce274f33e1f35bbd0703a112a6286f16fdb7824a9016900104f",
+      "sha256": "31ba07568250cd9e4b919fe4a147da790ac6900368944e7a95814010e34ea390",
       "state": "active"
     },
     {
       "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual carrier",
       "metrics": {
-        "bytes": 17731,
+        "bytes": 25716,
         "line_bytes": 138,
-        "lines": 222
+        "lines": 319
       },
       "part_id": "residual-carrier",
       "path": "docs/tasks/spec-to-intent-alignment/residual-carrier.md",
-      "sha256": "b276668d34e994f7908107fca1dd1df0a09571b117c405fafbb601b2041d7cdc",
+      "sha256": "84755b801cfe64bfd291af1415fe27570b570e7399d680f9a7b58fd09c549096",
       "state": "active"
     }
   ],

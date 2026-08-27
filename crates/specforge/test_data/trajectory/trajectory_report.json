@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "snapshot_id": "specforge-source-to-intent-reviewed-v8",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.7c.ii",
+  "snapshot_id": "specforge-source-to-intent-reviewed-v9",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.8d",
   "reviewed_revision": "03e89b66cf87fcc1ec0bf342f47a147261a8d739",
   "objective_contract": {
     "path": "doctrine/spec_to_intent_category_contract.json",
@@ -22,7 +22,7 @@
         {
           "metric_id": "exact_source_region_capture",
           "measure": {
-            "numerator": 14,
+            "numerator": 13,
             "denominator": 14
           },
           "target": {
@@ -32,7 +32,7 @@
               "denominator": 1
             }
           },
-          "target_met": true,
+          "target_met": false,
           "hard": false,
           "required": true,
           "oracle": "complete bounded source-region gold",
@@ -43,8 +43,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         },
@@ -72,8 +72,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         }
@@ -108,8 +108,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         }
@@ -144,15 +144,15 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         },
         {
           "metric_id": "supported_reviewed_categories",
           "measure": {
-            "numerator": 2,
+            "numerator": 3,
             "denominator": 6
           },
           "target": {
@@ -173,8 +173,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         }
@@ -209,8 +209,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         }
@@ -224,8 +224,8 @@
         {
           "metric_id": "canonical_provenance_closure",
           "measure": {
-            "numerator": 43,
-            "denominator": 43
+            "numerator": 45,
+            "denominator": 45
           },
           "target": {
             "operator": "equal",
@@ -245,8 +245,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         },
@@ -274,8 +274,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         }
@@ -375,8 +375,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         }
@@ -411,8 +411,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         },
@@ -440,8 +440,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json",
-              "sha256": "cb45bc93ff50bb9b092bb120936bc2a1160118eb83f5fe91a9159c97a10c0b61",
-              "role": "isolated .7c.ii current-binary replay of all 12 reviewed documents"
+              "sha256": "13e1247029bc371788f910d96654b4157634b015a1e2ca3e190be2275e64f633",
+              "role": "isolated .8d current-binary replay of all 12 reviewed documents"
             }
           ]
         },
@@ -484,7 +484,7 @@
         {
           "metric_id": "required_modality_document_accounting",
           "measure": {
-            "numerator": 6,
+            "numerator": 8,
             "denominator": 12
           },
           "target": {
@@ -505,8 +505,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-              "role": "qualified .7c.ii current-binary reviewed vertical result"
+              "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+              "role": "qualified .8d current-binary reviewed vertical result"
             }
           ]
         }
@@ -522,8 +522,8 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json",
-          "sha256": "cb45bc93ff50bb9b092bb120936bc2a1160118eb83f5fe91a9159c97a10c0b61",
-          "role": "isolated .7c.ii current-binary replay of all 12 reviewed documents"
+          "sha256": "13e1247029bc371788f910d96654b4157634b015a1e2ca3e190be2275e64f633",
+          "role": "isolated .8d current-binary replay of all 12 reviewed documents"
         }
       ]
     },
@@ -535,8 +535,8 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-          "role": "qualified .7c.ii current-binary reviewed vertical result"
+          "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+          "role": "qualified .8d current-binary reviewed vertical result"
         }
       ]
     },
@@ -548,8 +548,8 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-          "role": "qualified .7c.ii current-binary reviewed vertical result"
+          "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+          "role": "qualified .8d current-binary reviewed vertical result"
         }
       ]
     }
@@ -559,10 +559,10 @@
       "gap_id": "non-actionable-required-residuals",
       "objective_id": "stage_conservation",
       "tier": "persistent_residual",
-      "observed": "4 of 16 required residual observations are actionable",
+      "observed": "8 of 16 required residual observations are actionable",
       "target": "every required residual is typed, source-linked, and actionable",
       "first_failing_stage": "evidence_to_semantic_ir",
-      "affected_population": 12,
+      "affected_population": 8,
       "causal_confidence": "high",
       "reversible_slice": "medium",
       "uncertainty": "exact",
@@ -575,8 +575,8 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
-          "role": "qualified .7c.ii current-binary reviewed vertical result"
+          "sha256": "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49",
+          "role": "qualified .8d current-binary reviewed vertical result"
         }
       ]
     },
@@ -610,7 +610,7 @@
     "task_id": "SPEC-TO-INTENT-ALIGNMENT.8",
     "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md",
     "gap_id": "non-actionable-required-residuals",
-    "rationale": "tier PersistentResidual; affects 12 reviewed units; first failure evidence_to_semantic_ir; causal confidence High",
+    "rationale": "tier PersistentResidual; affects 8 reviewed units; first failure evidence_to_semantic_ir; causal confidence High",
     "reproduction": "cargo test -p specforge-conformance --lib ir::source_to_intent_eval",
     "review_required": true
   },

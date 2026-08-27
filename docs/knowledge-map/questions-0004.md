@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how are offset-suffixed bit cells like 31:28 +04 extracted
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > how are per-instance indexed signals (PSELx HSELx) referenced in prose handled
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
@@ -296,5 +298,3 @@
   > how does specforge read total physical RAM without a new dependency
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)

@@ -289,16 +289,28 @@ false canonical facts instead of a non-applicable disposition. The two platform 
 regions are captured, but their required residuals never appear in SemanticIR or IntentIR.
 
 The evidence-ranked next constraint is therefore upstream source-to-evidence fact formation plus explicit
-residualization. The visual half of that residualization now ships: a captured region that no canonical
-`SemanticIR` record cites earns a typed
+residualization. The visual half of that residualization now ships and is measured: a captured region that no
+canonical `SemanticIR` record cites earns a typed
 [captured-region residual](pipeline/semanticir.md#captured-regions-that-reach-no-carrier) carrying its region
-identity, evidence provenance, typed cause, first failing boundary, and replay route. This result demonstrates no ISF/FSMGen expressiveness blocker: it ends at IntentIR and contains
-no reviewed value that is correct and fully provenanced through IntentIR but fails only at adapter lowering.
+identity, evidence provenance, typed cause, first failing boundary, and replay route. On the current 12-source
+replay both reviewed static-topology figures are explained by that record, residual actionability is 8/16, and
+`platform-system-ip` joins wire-protocol and physical-link as a supported category. The prose and table halves
+have no carrier yet, which is what the remaining eight required observations measure. This result demonstrates
+no ISF/FSMGen expressiveness blocker: it ends at IntentIR and contains no reviewed value that is correct and
+fully provenanced through IntentIR but fails only at adapter lowering.
 
 ## Current status
 
-The strict contract, evaluator, frozen reviewed population, and first product result now ship. The result does
-not mean every unreviewed region has the same rates, and it does not claim the retrospective population was
-historically unseen. It does establish a reproducible baseline and a first-failing-stage direction without
-extractor tuning. `SPEC-TO-INTENT-ALIGNMENT.5` is next: turn these exact dimensions into reviewable automatic
-trajectory state and task proposals without allowing one aggregate score to hide a hard failure.
+The strict contract, evaluator, frozen reviewed population, and the automatic trajectory state built on them all
+ship. The frozen table above remains the *first* product result and the retrospective baseline; the current
+product authority is the `SPEC-TO-INTENT-ALIGNMENT.8d` replay of all 12 reviewed sources through all 48 isolated
+stages, which publishes 40/0/0 canonical TP/FP/FN, 45/45 provenance closure, 120/120 stage conservation, 8/16
+residual actionability, and three supported categories, with zero fabricated facts and zero unexplained drops.
+See [Trajectory And Automatic Steering](quality/trajectory.md) for the composed snapshot and its hard gates.
+
+Neither result means every unreviewed region has the same rates, and neither claims the retrospective population
+was historically unseen. Both establish a reproducible baseline and a first-failing-stage direction without
+extractor tuning. Two limits are current and published rather than implied: the remaining eight required
+residual observations need a carrier for the `non_contract_region` cause that production has not built, and one
+reviewed source region no longer resolves because reviewed cells are anchored on ordinal `SourceIR` element ids
+while ingest is not reproducible across time, which is why exact source-region capture reads 13/14.
