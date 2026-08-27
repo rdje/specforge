@@ -163,13 +163,25 @@ A concrete instance: `structured_tables[1].caption_text` is
 `Figure 5-1: External debugger and core handshake sequence` in the persisted artifact and `null` in
 the replay.
 
-What is lost is the **binding**, not the text. In the persisted Arm external-debug artifact all eight
-bound captions also exist as standalone `content_elements`, so a caption is normally carried twice —
-once as text in the reading order and once as an association to the table or figure it captions. A
-re-ingest that drops `caption_text` therefore loses the association while the words stay in the
-document. That is narrower than "the caption disappears", and it is the accurate reading: anything
-that resolves a figure's caption *through the binding* — which is what caption-mediated coverage
-does — stops finding it, while a text search still would.
+What is lost is the **binding**, not the text, and the mechanism is measured on both sides. SpecForge
+computes no captions: `docling_backend.rs` calls Docling's own `element.caption_text(doc)`, which
+resolves the item's `captions` list of references into the document's `texts`, and `normalize_text`
+maps the empty string to `None` — so an empty `captions` list *is* the `null`.
+
+Comparing the persisted and re-ingested Docling documents for the Arm external-debug guide, the
+layout model is not mislabelling anything: both runs label the same seven texts `caption`, none lost
+and none gained. The **assignment** is what breaks — items carrying a caption reference fall from
+seven to five, with `pictures/4` losing `Figure 3-1: Debug state entry and exit` and `tables/1`
+losing `Figure 5-1: External debugger and core handshake sequence`, while both captions still exist
+and are still labelled `caption`.
+
+The trigger sits in the same comparison: `texts` rises 373 → 469 and the entire +96 lands in
+`label: text`, the figure-interior fragments. Docling assigns captions by proximity and containment,
+so extra text regions detected around a figure can displace that assignment.
+
+**The census's two results are therefore one cause with two consequences**, not two findings. More
+figure-interior regions detected produces both the added elements and the lost bindings — which is
+why `.5` may be choosing between coupled outcomes rather than picking the best of each.
 
 This is the census's most consequential result, and it inverts the obvious remedy. Re-ingesting the
 corpus would not simply refresh a stale artifact: it would trade thirty-nine caption bindings — which

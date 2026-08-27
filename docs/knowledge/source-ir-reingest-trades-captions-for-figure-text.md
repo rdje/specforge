@@ -36,11 +36,28 @@ drops from eight to five; USB 3.2 from 482 to 458. The mechanism is visible in a
 `structured_tables[1].caption_text` is `Figure 5-1: External debugger and core handshake sequence` in the
 persisted artifact and `null` in the replay.
 
-**What is lost is the binding, not the text.** In the persisted artifact all eight bound captions also exist as
-standalone `content_elements`, so a caption is normally carried twice: once as text in the reading order, once
-as an association to the table or figure. A re-ingest that drops `caption_text` loses the association while the
-words stay in the document. Consumers that resolve a caption *through the binding* — caption-mediated coverage
-is the one that matters here — stop finding it; a text search still would.
+**What is lost is the binding, not the text**, and the mechanism is measured rather than inferred.
+
+SpecForge computes no captions of its own. `docling_backend.rs` calls Docling's own accessor,
+`normalize_text(element.caption_text(doc))`, which resolves the item's `captions` list of `$ref` pointers into
+the document's `texts` array; `normalize_text` maps the empty string to `None`, so an empty `captions` list is
+exactly the `caption_text: null` that appears in `SourceIR`.
+
+Comparing the persisted and re-ingested Docling documents for the Arm external-debug guide shows the layout
+model is **not** mislabelling captions. Both runs label the same seven texts `caption` — none lost, none
+gained. What breaks is the **assignment**: items carrying a caption reference fall from seven to five.
+`pictures/4` loses `Figure 3-1: Debug state entry and exit` and `tables/1` loses
+`Figure 5-1: External debugger and core handshake sequence`, while both captions still exist, still labelled
+`caption`, attached to nothing.
+
+The trigger is visible in the same comparison: `texts` rises 373 → 469, and the entire +96 lands in
+`label: text` — the figure-interior fragments. Docling assigns a caption to a figure by proximity and
+containment, so additional text regions detected around a figure can displace or defeat that assignment.
+
+**So the census's two results are one cause, not two.** The same upstream change — more text regions detected
+inside figures — produces both the added content elements and the lost caption bindings. That matters for
+`.5`: the trade may be *intrinsic* rather than incidental, so "take the new elements and keep the old
+bindings" may not be an available option.
 
 That is a real regression for this pipeline specifically. SpecForge's roadmap treats captions as first-class
 evidence rather than decoration, and caption-mediated coverage is a measured surface

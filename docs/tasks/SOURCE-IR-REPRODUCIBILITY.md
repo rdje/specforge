@@ -106,8 +106,12 @@ still present and exactly three are content the current toolchain emits nowhere.
 `Figure 5-1: External debugger and core handshake sequence` persisted and `null` replayed. What is lost is the
 **binding, not the text**: in the persisted Arm external-debug artifact all eight bound captions also exist as
 standalone `content_elements`, so a caption is carried twice and a re-ingest drops only the association.
-Re-ingesting is therefore a trade — newer figure-interior text for 39 caption bindings and three paragraphs —
-which inverts the obvious remedy and is why `.5` exists.
+The mechanism is measured, not inferred: SpecForge calls Docling's own `element.caption_text(doc)`, and
+comparing both Docling documents shows the layout model still labels the same seven texts `caption` while the
+count of items *carrying* a caption reference falls seven to five. `texts` rises 373 to 469 in the same
+comparison, all of it `label: text` figure-interior fragments, and Docling assigns captions by proximity — so
+**the added elements and the lost bindings are one cause, not two**. Re-ingesting is therefore a trade whose
+two sides may be coupled, which inverts the obvious remedy and is why `.5` exists.
 
 The result is not run-to-run noise. The largest proportional drift was ingested twice more into separate
 roots; all three replays produce the same 347 elements and the same `+81 / -0`, and differ from each other
