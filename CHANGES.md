@@ -1,3 +1,19 @@
+### SPEC-TO-INTENT-ALIGNMENT.8 — correct the carrier contract and record the replay blocker
+
+- Verified the chain-currency baseline before the production slice: 24 replayed / 24 current / zero stale at
+  EvidenceIR, SemanticIR, IntentIR, and the ISF adapter, with 54 explicitly unmeasurable legacy chains, 24
+  blocked/no-file adapter states, zero emitted `.isf` files, and exactly the declared retained bundle set on
+  disk. The `.8`, `.8a`, and `.8b` slices changed no persisted corpus artifact.
+- Corrected `.8c`'s acceptance before writing its code. A producer that adds records cannot also leave zero
+  public field delta, so the clause now requires zero stale chains and no public field change other than the
+  intended new residual records.
+- Recorded a real replay blocker. Only four of the twelve reviewed sources are repository files; the other eight
+  are authorized `external_read_only` inputs whose working copies lived under the `.7c.ii` replay root and were
+  removed with it. Both documents in the selected `static_component_topology` family are among the absent eight,
+  so the 12-source / 48-stage population replay cannot run and no partial replay may be published as a
+  population result. `.8d` is now `blocked` on that authorized runtime input rather than on repository work;
+  `.8c` remains fully runnable against the retained corpus and synthetic fixtures.
+
 ### SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations
 
 - Replaced the residual-actionability denominator in `summarize_global`. A new

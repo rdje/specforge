@@ -63,13 +63,14 @@
   only, never document, vendor, protocol, or review-label identity; a region with a canonical carrier emits no
   residual, and no residual duplicates a promoted canonical key; focused positive/refusal tests, the full core
   suite, warning-denied Clippy, and all production-genericity components pass; every proof-affected retained
-  chain is rebuilt to zero stale with zero public field delta
+  chain is rebuilt to zero stale and every public field change is exactly an intended new residual record, with
+  no other field moving
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.8b`
   Verification: `pending`
   Commit: `pending`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8d`
-  State: `pending`
+  State: `blocked`
   Goal: replay the complete reviewed population and publish comparable residual-actionability closure
   Acceptance: all 12 reviewed sources and all 48 isolated stages replay from clean production under the frozen
   oracle; exact canonical, provenance, conservation, residual, disposition, category, and controller deltas are
@@ -77,6 +78,9 @@
   tracked replay, result, controller-input, and report authorities reproduce byte-for-byte; selected CI, mdBook,
   retrieval truth, task parents, cleanup, and residue census agree
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.8c`
+  Blocker: `eight of the twelve reviewed sources are authorized external read-only inputs whose working copies
+  were removed after .7c.ii; both selected static-topology documents are among them, so the population replay
+  cannot run until the external source map is supplied again`
   Verification: `pending`
   Commit: `pending`
 
@@ -247,6 +251,24 @@ The trajectory composer keeps an independent cross-check rather than calling the
 required denominator from the canonical stage false negatives, a different field than the evaluator's
 matched-key path.
 
+## Reviewed-source availability boundary (`.8d`)
+
+`crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json` records the
+provenance of every reviewed source. Four are repository sources and are present: APB, I2S, AMD IOMMU, and Arm
+Debug. The other eight are `external_read_only` inputs whose only tracked identity is a portable id and digest;
+their working copies lived under the `.7c.ii` replay root and were removed with it, so none is on disk.
+
+Both documents in the selected `static_component_topology` family — the RISC-V IOMMU architecture specification
+and the CoreSight base system architecture — are external and absent. `.8c` can therefore implement, control,
+and reconcile the producer against the retained corpus and synthetic fixtures, but the review-level effect of
+the selected family cannot be measured until the external source map is supplied again. `.8d` is `blocked` on
+that authorized runtime input rather than on any repository work, and no partial replay may be published as a
+population result.
+
+The `.8c` chain-currency baseline is green at this boundary: 24 replayed / 24 current / zero stale at
+EvidenceIR, SemanticIR, IntentIR, and the ISF adapter, with 54 explicitly unmeasurable legacy chains, 24
+blocked/no-file adapter states, and exactly the declared retained bundle set on disk.
+
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8` activation
 
 - [x] **REPRODUCE / MEASURE** — the tracked `.7c.ii` result decomposes exactly into 4 actionable, 8 not-required,
@@ -349,6 +371,12 @@ matched-key path.
   attested identity would erase the fact that the artifact is no longer byte-identical to its replay output.
 - `2026-08-27`: republish the frozen `.4b` first result and correct its book row rather than leaving a stale
   historical number that the current evaluator no longer reproduces. The unit change is stated on the page.
+- `2026-08-27`: correct `.8c`'s acceptance before writing its code. A producer that adds records cannot also
+  leave zero public field delta; the honest requirement is zero stale chains and no field change other than the
+  intended new residual records.
+- `2026-08-27`: mark `.8d` blocked rather than pending. Eight reviewed sources, including both selected
+  static-topology documents, are authorized external read-only inputs that are not on disk, so a population
+  replay is not runnable and a partial replay must not be published as a population result.
 
 ## Open Questions
 
@@ -356,12 +384,16 @@ matched-key path.
 
 ## Blockers
 
-- None. The activation changes no production or measurement authority.
+- `SPEC-TO-INTENT-ALIGNMENT.8d` is blocked on the authorized external source map. Eight of the twelve reviewed
+  sources — including both selected static-topology documents — are external read-only inputs whose working
+  copies were removed after `.7c.ii`, so the 12-source / 48-stage population replay cannot run. Repository work
+  through `.8c` is unaffected.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8c` contract correction and `.8d` boundary | the chain-currency baseline is 24 replayed / 24 current / zero stale at all four stages with exactly the declared retained bundles; `.8c` acceptance replaces an unsatisfiable zero-public-delta clause with zero stale plus intended-record-only change; `.8d` is blocked because eight reviewed sources, including both selected static-topology documents, are absent external read-only inputs |
 | `2026-08-27` | `.8b` corrected accounting | the pinned current result moves 4/24 to 4/16 and the frozen first result 0/24 to 0/82 with no other global or per-cell change; four fail-closed controls plus a direct partial-explanation case pass; the published global block is gated as a current summary of its own cells; the re-summarization is recorded with both digests; the controller republishes 4 of 16 over an affected population of 12; the workspace suite, Clippy, all five genericity components, and the 21/21 contract self-test pass |
 | `2026-08-27` | `.8a` contract freeze | the executable contract derives 17 required / five met across 18 cases and 19 control classes, re-derives the 4/8/12 decomposition and the selected family from the pinned current result, and joins the repaired reproduction command to both authorities; 21/21 mutations reject, three new controls and the byte-current snapshot pass, Clippy and all five genericity components pass, and the workspace suite is green with the refreshed 2,363 / 14,639 / 12,631 / 1,462 flow oracle |
 | `2026-08-27` | `.8` activation | the tracked `.7c.ii` result decomposes into 4 actionable / 8 not-required / 12 required-and-absent residual observations across 12 declaring cells; the six hard-failing cells and their extra failures are exact; the published gap reproduction runs zero tests at exit zero while the conformance-crate command runs 14; all nine gate-tier doctrines pass |
@@ -370,6 +402,7 @@ matched-key path.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — correct the carrier contract and record the replay blocker` | make `.8c`'s acceptance satisfiable, publish the chain-currency baseline, and block `.8d` on the absent external source map |
 | `.8b` | `SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations` | make the evaluator's denominator the frozen required-residual rule, keep every missing canonical key required and unmet, and republish the result, replay-evidence, and controller authorities |
 | `.8a` | `SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract` | freeze the executable required-residual rule, typed record grammar, closed case matrix, and selected family, and repair the silent-green reproduction command structurally |
 | `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — activate required residual actionability` | localize the declared-versus-required denominator defect and the absent typed residual carrier, select the bounded family, and route `.8a`–`.8d` |

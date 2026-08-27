@@ -17,20 +17,21 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.8c` is the frontier under active `.8`. Tracking-only:
-  `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, `CLAIM-VERIFICATION-ADOPTION.1a`, and
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.8a` froze the required-residual rule as an executable contract and `.8b` made the evaluator
-  agree with it. The published ratio is now 4/16 with an affected population of twelve; the frozen first result
-  re-derives as 0/82; no per-cell score or other global dimension moved. A missing canonical key still adds a
-  required observation and is met only by an exact, provenanced, actionable residual for that key, and a
-  residual duplicating a promoted key credits nothing. The published current result was re-summarized in place
-  and the replay evidence records both digests. Production still owns only the non-applicable timing carrier.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.8c` is the frontier under active `.8`; `.8d` is blocked on an external
+  input. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
+  `CLAIM-VERIFICATION-ADOPTION.1a`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
+- Current state: `.8a` froze the required-residual rule and `.8b` made the evaluator agree with it, so the
+  published ratio is 4/16 over an affected population of twelve and the frozen first result re-derives as 0/82.
+  The chain baseline is 24 replayed / 24 current / zero stale at all four stages with exactly the declared
+  retained bundles. `.8c`'s acceptance now requires zero stale plus intended-record-only public change instead
+  of an unsatisfiable zero public delta. Production still owns only the non-applicable timing carrier.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: execute `.8c` — emit the typed, source-linked, actionable residual for captured
-  `static_component_topology` figure regions at SemanticIR and IntentIR under closed structural grammar, then
-  rebuild every proof-affected retained chain to zero stale with zero public field delta.
-- In-flight uncommitted: none after the `.8b` commit; no background job is running.
-- Blockers: none. The user-owned `.claude/settings.json` is untouched.
+- Next action: execute `.8c` — add the typed captured-region residual to SemanticIR and IntentIR under closed
+  structural grammar, register its families and field rules, prove positives and refusals, then rebuild every
+  proof-affected retained chain to zero stale.
+- In-flight uncommitted: none after this commit; no background job is running.
+- Blockers: `.8d` cannot replay the reviewed population. Eight of the twelve reviewed sources, including both
+  selected static-topology documents, are authorized external read-only inputs that are not on disk; the
+  external source map must be supplied again before publication.
