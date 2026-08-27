@@ -70,7 +70,7 @@
   Commit: `pending`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8d`
-  State: `blocked`
+  State: `pending`
   Goal: replay the complete reviewed population and publish comparable residual-actionability closure
   Acceptance: all 12 reviewed sources and all 48 isolated stages replay from clean production under the frozen
   oracle; exact canonical, provenance, conservation, residual, disposition, category, and controller deltas are
@@ -78,9 +78,9 @@
   tracked replay, result, controller-input, and report authorities reproduce byte-for-byte; selected CI, mdBook,
   retrieval truth, task parents, cleanup, and residue census agree
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.8c`
-  Blocker: `eight of the twelve reviewed sources are authorized external read-only inputs whose working copies
-  were removed after .7c.ii; both selected static-topology documents are among them, so the population replay
-  cannot run until the external source map is supplied again`
+  Prerequisite-input: `the owner supplied all eight authorized external read-only sources on 2026-08-27; every
+  one is digest-identical to the reviewed lock and the orchestrator's map, basename, volume, and coverage
+  preconditions pass`
   Verification: `pending`
   Commit: `pending`
 
@@ -251,19 +251,40 @@ The trajectory composer keeps an independent cross-check rather than calling the
 required denominator from the canonical stage false negatives, a different field than the evaluator's
 matched-key path.
 
-## Reviewed-source availability boundary (`.8d`)
+## Reviewed-source availability (`.8d`)
 
 `crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json` records the
-provenance of every reviewed source. Four are repository sources and are present: APB, I2S, AMD IOMMU, and Arm
+provenance of every reviewed source. Four are repository sources under `corpus/`: APB, I2S, AMD IOMMU, and Arm
 Debug. The other eight are `external_read_only` inputs whose only tracked identity is a portable id and digest;
-their working copies lived under the `.7c.ii` replay root and were removed with it, so none is on disk.
+their working copies lived under the `.7c.ii` replay root and were removed with it.
 
-Both documents in the selected `static_component_topology` family — the RISC-V IOMMU architecture specification
-and the CoreSight base system architecture — are external and absent. `.8c` can therefore implement, control,
-and reconcile the producer against the retained corpus and synthetic fixtures, but the review-level effect of
-the selected family cannot be measured until the external source map is supplied again. `.8d` is `blocked` on
-that authorized runtime input rather than on any repository work, and no partial replay may be published as a
-population result.
+The owner supplied all eight on `2026-08-27` from the sibling `chipdoc` repository on the same filesystem
+volume. Each was located by exact SHA-256 rather than by filename, copied into the repository-derived,
+git-ignored path `.project-data/tmp/spec-to-intent-external-sources/`, and re-verified after the copy. All eight
+digests and byte counts match the reviewed lock exactly:
+
+| Portable id | Bytes | SHA-256 (reviewed = copied) |
+| --- | ---: | --- |
+| `DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf` | 557,071 | `afcac68f…d7ec` |
+| `DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf` | 165,891 | `c4a5f342…a66d` |
+| `1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf` | 1,051,915 | `be2134b4…2b8e` |
+| `1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf` | 827,669 | `2d359579…c7a8` |
+| `OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf` | 748,724 | `0e0c8afc…ce12` |
+| `OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf` | 855,025 | `d3eb19fc…38be` |
+| `PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf` | 637,434 | `8358c5ae…3a22` |
+| `198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf` | 1,571,128 | `5358701e…7e97` |
+
+The runtime map is `.project-data/tmp/spec-to-intent-8d-external-source-map.json`. Executing the orchestrator's
+own predicates against it — repository-relative map path below `.project-data/tmp`, absolute source paths,
+basename equal to the portable id, same device as the repository root, and exact coverage of the required
+external set — passes for all eight with no missing and no extra entry. `.8d` is therefore no longer blocked on
+an input; it waits only on `.8c`.
+
+The sources stay git-ignored rather than tracked under `corpus/`. The reviewed dataset is review-locked and
+classifies these eight as `external_read_only`; promoting them to repository sources would change frozen
+selection authority, the source-PDF registry, and every digest pinned to that dataset. The table above plus the
+sibling repository keep the copy reproducible, so the artifact-cleanup doctrine can still reclaim the bytes
+without losing the ability to replay.
 
 The `.8c` chain-currency baseline is green at this boundary: 24 replayed / 24 current / zero stale at
 EvidenceIR, SemanticIR, IntentIR, and the ISF adapter, with 54 explicitly unmeasurable legacy chains, 24
@@ -415,6 +436,11 @@ so its chain stays explicitly unmeasurable until the external source returns.
   the register, signal, and timing paths, and a residual for them would duplicate a promoted fact.
 - `2026-08-27`: host the new field in the existing `semantic.residual` and `intent.residual` claim families
   rather than minting new ones. Their residual capability and topology obligation already describe it exactly.
+- `2026-08-27`: locate the supplied external sources by exact SHA-256 rather than by filename. Digest identity
+  is what the review locked; a name match would not prove the replay reads the reviewed bytes.
+- `2026-08-27`: keep the supplied sources git-ignored under a repository-derived path instead of tracking them
+  under `corpus/`. Promoting them to repository sources would rewrite review-locked selection authority and the
+  digests pinned to it; the recorded portable id, byte count, and digest keep the copy reproducible.
 
 ## Open Questions
 
@@ -422,15 +448,15 @@ so its chain stays explicitly unmeasurable until the external source returns.
 
 ## Blockers
 
-- `SPEC-TO-INTENT-ALIGNMENT.8d` is blocked on the authorized external source map. Eight of the twelve reviewed
-  sources — including both selected static-topology documents — are external read-only inputs whose working
-  copies were removed after `.7c.ii`, so the 12-source / 48-stage population replay cannot run. Repository work
-  through `.8c` is unaffected.
+- None. The `.8d` external-source blocker is cleared: all eight authorized sources are present, digest-identical
+  to the reviewed lock, and accepted by the orchestrator's own map, basename, volume, and coverage predicates.
+  `.8d` now waits only on `.8c`.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8d` input supplied | all eight authorized external sources are located by exact SHA-256 in the sibling repository, copied to a repository-derived path on the same volume, and re-verified: eight of eight digests and byte counts match the reviewed lock, and the orchestrator's own map-path, absolute-path, basename, same-volume, and coverage predicates pass with zero missing and zero extra entries |
 | `2026-08-27` | `.8c` contract correction and `.8d` boundary | the chain-currency baseline is 24 replayed / 24 current / zero stale at all four stages with exactly the declared retained bundles; `.8c` acceptance replaces an unsatisfiable zero-public-delta clause with zero stale plus intended-record-only change; `.8d` is blocked because eight reviewed sources, including both selected static-topology documents, are absent external read-only inputs |
 | `2026-08-27` | `.8b` corrected accounting | the pinned current result moves 4/24 to 4/16 and the frozen first result 0/24 to 0/82 with no other global or per-cell change; four fail-closed controls plus a direct partial-explanation case pass; the published global block is gated as a current summary of its own cells; the re-summarization is recorded with both digests; the controller republishes 4 of 16 over an affected population of 12; the workspace suite, Clippy, all five genericity components, and the 21/21 contract self-test pass |
 | `2026-08-27` | `.8a` contract freeze | the executable contract derives 17 required / five met across 18 cases and 19 control classes, re-derives the 4/8/12 decomposition and the selected family from the pinned current result, and joins the repaired reproduction command to both authorities; 21/21 mutations reject, three new controls and the byte-current snapshot pass, Clippy and all five genericity components pass, and the workspace suite is green with the refreshed 2,363 / 14,639 / 12,631 / 1,462 flow oracle |

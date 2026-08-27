@@ -1,3 +1,21 @@
+### SPEC-TO-INTENT-ALIGNMENT.8d — admit the supplied external reviewed sources
+
+- The owner supplied all eight authorized `external_read_only` reviewed sources from the sibling `chipdoc`
+  repository on the same filesystem volume. Each was located by exact SHA-256 rather than by filename, because
+  digest identity is what the review locked and a name match would not prove the replay reads the reviewed bytes.
+- Copied them into the repository-derived, git-ignored path
+  `.project-data/tmp/spec-to-intent-external-sources/` and re-verified after the copy: eight of eight digests and
+  byte counts are identical to the reviewed lock, so the population authority is byte-exact.
+- Wrote the runtime map `.project-data/tmp/spec-to-intent-8d-external-source-map.json` and executed the
+  orchestrator's own predicates against it — repository-relative map path below `.project-data/tmp`, absolute
+  source paths, basename equal to the portable id, same device as the repository root, and exact coverage of the
+  required external set. All pass with zero missing and zero extra entries.
+- Kept the sources git-ignored rather than tracked under `corpus/`. The reviewed dataset is review-locked and
+  classifies these eight as external; promoting them to repository sources would rewrite frozen selection
+  authority, the source-PDF registry, and every digest pinned to that dataset. The leaf records portable id,
+  byte count, and digest for each, so the copy is reproducible if artifact cleanup reclaims the bytes.
+- `.8d` is no longer blocked on an input; it waits only on `.8c`. The git tree is unchanged by the copy.
+
 ### SPEC-TO-INTENT-ALIGNMENT.8c — freeze the captured-region carrier design
 
 - Froze the structural gate before writing production code. A captured `VisualEvidenceItem` whose `asset_kind`

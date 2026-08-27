@@ -66,8 +66,8 @@
 ## Highest-priority remaining gap
 - `SPEC-TO-INTENT-ALIGNMENT.8c`: emit the typed, source-linked, actionable residual for captured regions
   that reach no canonical carrier, starting with static component topology, and rebuild every proof-affected
-  retained chain to zero stale. `.8d` is blocked: eight reviewed sources, including both selected
-  static-topology documents, are authorized external read-only inputs that are not on disk.
+  retained chain to zero stale. `.8d` now waits only on `.8c`: all eight authorized external reviewed
+  sources are present and digest-identical to the reviewed lock.
 - Preserve the completed structural/behavioral genericity boundary while following the controller-ranked
   SourceIR-to-EvidenceIR loss; ISF/FSMGen expansion still waits for a populated, source-grounded IntentIR value
   to demonstrate a concrete language gap.

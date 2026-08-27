@@ -54,9 +54,10 @@ reproduction command structurally. `.8b` made the evaluator agree with that rule
 4/16 with an affected population of twelve, the frozen first result re-derives as 0/82, and no per-cell score or
 other global dimension moved. A missing canonical key still adds a required observation and is met only by an
 exact, provenanced, actionable residual for that key. `.8c` implements the bounded `static_component_topology`
-carrier against a green 24-current / zero-stale chain baseline. `.8d` is blocked: eight of the twelve reviewed
-sources, including both selected static-topology documents, are authorized external read-only inputs whose
-working copies were removed after `.7c.ii`, so the population replay cannot run until that source map returns.
+carrier against a green 24-current / zero-stale chain baseline. `.8d`'s input blocker is cleared: the owner
+supplied all eight authorized external reviewed sources, each located by exact SHA-256, copied to a
+repository-derived path on the same volume, and re-verified against the reviewed lock, and the orchestrator's
+own map, basename, volume, and coverage predicates pass. `.8d` now waits only on `.8c`.
 
 ## Detailed task evidence
 
@@ -151,6 +152,7 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8d` input supplied | eight of eight authorized external reviewed sources are located by exact SHA-256, copied to a repository-derived same-volume path, and re-verified digest- and byte-identical to the reviewed lock; the orchestrator's map, basename, volume, and coverage predicates pass with zero missing and zero extra |
 | `2026-08-27` | `.8c` contract correction and `.8d` boundary | the chain baseline is 24 replayed / 24 current / zero stale at all four stages with exactly the declared retained bundles; `.8c` acceptance now requires zero stale plus intended-record-only public change; `.8d` is blocked on the absent external source map covering eight reviewed sources |
 | `2026-08-27` | `.8b` corrected accounting | the evaluator now counts only required residual observations; the pinned current result moves 4/24 to 4/16 and the frozen first result 0/24 to 0/82 with no other global or per-cell change; fail-closed, duplicate, provenance, and partial-explanation controls pass, the re-summarization records both digests, and the workspace suite, Clippy, genericity, and the 21/21 contract self-test pass |
 | `2026-08-27` | `.8a` contract freeze | the executable required-residual rule derives 17 required / five met across 18 cases and 19 control classes, the frozen decomposition and selected family re-derive from the pinned result, and the repaired reproduction command binds to both published authorities; 21/21 mutations reject and the workspace suite, Clippy, and all five genericity components pass |
@@ -179,6 +181,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8d` | `SPEC-TO-INTENT-ALIGNMENT.8d — admit the supplied external reviewed sources` | verify and record the eight owner-supplied sources by exact digest and clear the population-replay input blocker |
 | `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — correct the carrier contract and record the replay blocker` | make `.8c`'s acceptance satisfiable, publish the chain baseline, and block `.8d` on the absent external source map |
 | `.8b` | `SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations` | make the denominator the frozen rule, keep every missing canonical key required and unmet, and republish the result, replay-evidence, and controller authorities |
 | `.8a` | `SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract` | freeze the executable rule, typed record grammar, closed case matrix, and selected family, and repair the silent-green reproduction command |
