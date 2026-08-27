@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.1` measured; `.2`–`.5` pending)
+- Status: `active` (`.0`–`.1` measured; `.2`–`.7` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
-- Last updated: `2026-08-27`
+- Last updated: `2026-08-28`
 - Owner: repo-local workflow
 
 ## Goal
@@ -14,6 +14,17 @@
 Make "the persisted `SourceIR` reflects what the current toolchain produces from the same PDF" a **measured,
 gated** property, and stop reviewed fixtures from anchoring on identifiers that a segmentation change silently
 invalidates.
+
+**Ingest must not drop information that is present in the source PDF** (owner directive, `2026-08-28`). This is
+not a new constraint: the roadmap already treats text, layout, figures, captions, tables, and charts as
+first-class evidence rather than decoration, the doctrine already requires an unresolved thing to become an
+explicit residual instead of disappearing, and the programme goal is zero remaining defect. A caption binding
+that vanishes with no residual and no gate breaches all three. `.1` briefly framed the consequence as a
+re-ingest-versus-retain *decision*; that framing is **withdrawn**. Both of its branches are defective — one
+retains artifacts the toolchain cannot reproduce, the other drops source content — and neither is a choice
+this tree may offer. Note also that the persisted corpus is not the clean baseline it appeared to be: it is
+missing the 1,804 figure-interior elements a current ingest recovers. Neither capture is complete, so the
+target is to capture both.
 
 `CORPUS-CHAIN-CURRENCY` proves the rest of the chain: for every persisted artifact, replaying the owning stage
 at the **fixed persisted input** must reproduce it. That oracle starts from the persisted `source_ir.json` and
@@ -181,13 +192,34 @@ Full result, method, controls, and per-document table:
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.5`
   State: `pending`
-  Goal: decide what to do about the thirteen documents whose persisted SourceIR no longer reproduces
-  Acceptance: a decision record weighs re-ingest against retention on measured evidence, not on the assumption
-  that newer is better — re-ingesting costs 39 caption bindings and three paragraphs and moves every published
-  measurement pinned to the current artifacts, while retaining leaves a chain that reports current on an
-  artifact the toolchain no longer produces; whichever is chosen is executed under an explicit re-measurement
-  plan for every affected published claim
+  Goal: settle whether any source content is unrecoverably lost, or only unlinked
+  Acceptance: for each of the three content elements the census found absent from a re-ingest — one each in the
+  USB4 Connection Manager guide, USB 3.2, and Wishbone — state whether the text is absent from Docling's own
+  document or present there and dropped by SpecForge's element construction, with the deciding field named in
+  both artifacts. This is the gating measurement for the whole preservation question: SpecForge-dropped is
+  repairable here, Docling-absent is an upstream boundary that must be declared rather than assumed away
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.1`
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.6`
+  State: `pending`
+  Goal: recover a caption binding the converter emitted but did not attach
+  Acceptance: `.1` measured that no caption text is lost — both runs label the same seven texts `caption`, and
+  only the figure-to-caption reference disappears — so the information needed to rebuild the link is already in
+  the Docling document SpecForge receives. A deterministic, document-neutral rule re-associates an unreferenced
+  `caption`-labelled text with an unbound figure or table using page and geometry only, never document
+  vocabulary; it fails closed and emits a typed residual when the association is ambiguous rather than guessing;
+  and a RED control proves an ambiguous pair is refused instead of bound
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.7`
+  State: `pending`
+  Goal: gate PDF-to-SourceIR fidelity, the one boundary with no conservation check
+  Acceptance: the pipeline already conserves downstream — stage conservation is 120/120 — but nothing measures
+  what ingest carries over from the PDF, because there is no upstream artifact to conserve against, which is why
+  a lossy ingest passes every green gate. A check compares the converter's own document against the `SourceIR`
+  built from it and fails when a text item, caption label, or caption association present in the converter
+  output reaches no `SourceIR` record and earns no residual; a RED control proves a dropped item is observed
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
 
 ## Open Questions
 
@@ -214,7 +246,7 @@ Full result, method, controls, and per-document table:
 
 ## Blockers
 
-- None. `.2`–`.5` are all runnable; `.5` needs a decision, not a capability.
+- None. `.2`–`.7` are all runnable; `.5` is the gating measurement for `.6` and `.7`.
 
 ## Verification Log
 
