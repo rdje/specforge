@@ -125,6 +125,7 @@ The author template is linked separately and is never classified as active work.
 | `PER-EXTRACTOR-FACT-TAGGING` | `done` | record which extractor found each fact (recall-gauge precondition) | [open](tasks/PER-EXTRACTOR-FACT-TAGGING.md) |
 | `PRIOR-DECAY` | `done` | detect & flag contested priors (revision-on-contradiction for CorpusMemory) | [open](tasks/PRIOR-DECAY.md) |
 | `PROVENANCE-HARDENING` | `done` | Test Assertion Coverage For Provenance-Like IR Fields | [open](tasks/PROVENANCE-HARDENING.md) |
+| `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](tasks/PURE-NLP-INTENT-EXTRACTION.md) |
 | `R1-R5-FOUNDATION-BACKFILL` | `done` | own + audit the foundational pipeline milestones (delivered pre-task-tree-system) | [open](tasks/R1-R5-FOUNDATION-BACKFILL.md) |
 | `R14-SIGNAL-RESOLVE` | `done` | Tier-3 LLM `signal_relation` extraction (the `signal-resolve` command) | [open](tasks/R14-SIGNAL-RESOLVE.md) |

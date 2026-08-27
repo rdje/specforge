@@ -18,8 +18,9 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: `SPEC-TO-INTENT-ALIGNMENT.9` is the next root child; `.8` is complete with `.8a`–`.8d` all done.
-  Tracking-only: `SOURCE-IR-REPRODUCIBILITY` (new, `.1` runnable), `STATUS-LEDGER-ROLLOVER.2`,
-  `TASK-PART-SEAL-REACHABILITY.0`, `CLAIM-VERIFICATION-ADOPTION.1a`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
+  Tracking-only: `SOURCE-IR-REPRODUCIBILITY` and `PROVIDER-MODEL-STORE-LOCALITY` (both new, `.1` runnable),
+  `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`, `CLAIM-VERIFICATION-ADOPTION.1a`,
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
 - Current state: `.8d` replayed all 12 reviewed sources through all 48 isolated stages from clean production at
   `483e525d` and published the comparable result. Residual actionability is 8/16, source-region disposition
   10/14, required-modality accounting 8/12, provenance closure 45/45; conservation stays 120/120, IntentIR stays
