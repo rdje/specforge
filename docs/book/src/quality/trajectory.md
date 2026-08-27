@@ -173,10 +173,10 @@ revision `a4a08cd4` is the current product authority.
 | Executable readiness | required-modality document accounting 6/12 | deficit |
 
 The current replay, fabrication, and provenance hard gates all have zero violations. Canonical stage drops are
-fully conserved, and four of 24 required residual observations are actionable. The metric controller ranks the
+fully conserved, and four of 16 required residual observations are actionable. The metric controller ranks the
 remaining leaves as follows:
 
-1. `.8` — make the remaining 20/24 required residual observations actionable (`persistent_residual`); and
+1. `.8` — make the remaining 12/16 required residual observations actionable (`persistent_residual`); and
 2. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
 
 The metric recommendation is `.8`. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
@@ -353,31 +353,32 @@ The detailed trajectory design and literature mapping live in
 
 ## What the residual-actionability ratio counts
 
-The `4/24` residual actionability published with the pinned `.7c.ii` result is a *declared* denominator, and
-reading it as 20 outstanding production defects overstates the gap. `SPEC-TO-INTENT-ALIGNMENT.8` activation
-decomposed that exact result. Twelve of the 14 reviewed cells declare residual queries, and each declaring cell
-contributes two observations, one at SemanticIR and one at IntentIR:
+The residual-actionability denominator counts one observation per *required* residual: one at SemanticIR and
+one at IntentIR for every reviewed cell whose disposition is residual or non-applicable, and one per reviewed
+canonical key a promoted stage fails to promote. A canonical cell that promotes every reviewed key at a stage
+requires nothing there, because a correctly promoted fact has no residual to describe and emitting one would
+assert that the same fact both reached and did not reach `IntentIR`.
 
-- Four observations are actionable today. Both OpenCAPI `analog_channel_loss` cells emit typed residuals through
-  the existing non-applicable timing-disposition carrier.
-- Eight observations belong to four canonical cells that are already exact at all three promoted stages. Their
-  review declares the same keys as canonical gold and as residual gold, so the residual query is the
-  conservation fallback that explains a canonical key only if it is ever lost. While those facts are correctly
-  promoted there is nothing to residualize, and emitting a residual for them would assert that the same fact
-  both reached and did not reach `IntentIR`.
-- Twelve observations are genuinely required and absent. Six cells — two prose non-contract regions, one
-  table-of-contents region, one packed programming structure, and two static-topology figures — receive no
-  residual record at either promoted stage. Those six cells are the complete current hard-failure set.
+The rule is fail-closed in the direction that matters. A canonical key that goes missing always *adds* a
+required observation and is met only by an exact, provenanced, actionable residual for that same key, so a
+recall loss can never be relabelled as residual success. A residual whose key duplicates a key the same stage
+still promotes credits nothing at that stage.
+
+`SPEC-TO-INTENT-ALIGNMENT.8a` froze that rule as an executable contract and `.8b` made the evaluator agree with
+it. Against the pinned `.7c.ii` cell results the published ratio moves from `4/24` to `4/16`, and every other
+global dimension is unchanged. The earlier denominator counted two observations for every reviewed cell that
+merely *declared* residual queries, so it included eight observations belonging to four canonical cells that
+were already exact at all three promoted stages — observations no correct pipeline could ever satisfy. What
+remains is the real gap: twelve required observations across six cells — two prose non-contract regions, one
+table-of-contents region, one packed programming structure, and two static-topology figures — that receive no
+residual record at either promoted stage. Those six cells are the complete current hard-failure set.
 
 Production owns exactly one typed residual carrier today: a non-applicable scalar timing row keeps its physical
-value, typed cause, first failing stage, and replay route. No equivalent carrier exists for a captured prose
-statement, table region, or visual region that reaches no canonical `IntentIR` surface, which is why those
-regions disappear without an explanatory record.
-
-`.8` therefore has two legs. `.8b` counts only required residuals while still adding — and failing — a required
-observation for every canonical key that goes missing, so the correction can never turn a recall loss into
-residual success. `.8c` then implements the first bounded production carrier, for static component topology:
-the only single family whose closure can move a reviewed category to `supported`.
+value, typed cause, first failing stage, and replay route, which is why both OpenCAPI analog cells pass. No
+equivalent carrier exists for a captured prose statement, table region, or visual region that reaches no
+canonical `IntentIR` surface, which is why those regions still disappear without an explanatory record. `.8c`
+implements the first bounded carrier, for static component topology: the only single family whose closure can
+move a reviewed category to `supported`.
 
 A published gap now has to be reproducible. The snapshot composer derives which package owns a test filter from
 the conformance crate's own module declarations and refuses to compose a gap whose reproduction command is not

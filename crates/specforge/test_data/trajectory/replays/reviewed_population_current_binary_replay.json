@@ -478,8 +478,10 @@
   "current_result": {
     "path": ".project-data/tmp/spec-to-intent-7c-population-r2/current_result.json",
     "published_path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-    "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
-    "byte_count": 103672
+    "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
+    "byte_count": 103657,
+    "replay_sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+    "resummarized_by": "SPEC-TO-INTENT-ALIGNMENT.8b"
   },
   "cleanup": {
     "external_source_map": ".project-data/tmp/spec-to-intent-7c-external-source-map.json",

@@ -1,8 +1,9 @@
 ---
 id: required-residual-actionability-denominator
-title: Residual actionability counts declared residual queries, so eight of its 24 observations cannot be satisfied
+title: Residual actionability counts required residuals, not declared residual queries
 answers:
-  - "why is residual actionability only 4 of 24 in the current reviewed result"
+  - "why is residual actionability only 4 of 16 in the current reviewed result"
+  - "why did the residual actionability denominator change from 24 to 16"
   - "what does the residual actionability denominator actually count"
   - "why can a canonical cell never satisfy its residual actionability observations"
   - "which reviewed cells still need a typed actionable residual"
@@ -20,13 +21,14 @@ evidence: crates/specforge/src/ir/source_to_intent_eval.rs; crates/specforge/tes
 reverify: "cargo test --offline -p specforge-conformance --lib ir::source_to_intent_eval && python3 -c \"import json; d=json.load(open('crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json')); print(d['global']['residual_actionability'])\""
 ---
 
-`summarize_global` in `crates/specforge/src/ir/source_to_intent_eval.rs` adds `residual_total += 2` for every
-cell that *declares* residual queries — one observation for SemanticIR and one for IntentIR — and never asks
-whether the review actually requires a residual there. The published `.7c.ii` result therefore reports 4/24,
-and the trajectory controller repeats it as "20 of 24 required residual observations". Twenty is not the number
-of production defects.
+`summarize_global` in `crates/specforge/src/ir/source_to_intent_eval.rs` used to add `residual_total += 2` for
+every cell that merely *declared* residual queries — one observation for SemanticIR and one for IntentIR —
+without asking whether the review required a residual there. The published `.7c.ii` result therefore reported
+4/24 and the controller repeated it as "20 of 24 required residual observations". Twenty was never the number of
+production defects. `SPEC-TO-INTENT-ALIGNMENT.8b` replaced that denominator with
+`required_residual_observations`, and the published ratio is now 4/16 over an affected population of twelve.
 
-The 24 observations decompose exactly three ways. Four are actionable: both OpenCAPI `analog_channel_loss`
+The 24 declared observations decompose exactly three ways. Four are actionable: both OpenCAPI `analog_channel_loss`
 cells emit typed residuals. Eight belong to four `canonical` cells — APB `setup_signal_state`, I2S
 `receiver_timing`, GIC-400 `register_summary`, and Arm Debug `debug_register_summary` — whose review declares
 the same keys as canonical gold and as residual gold, so the residual query is only the conservation fallback
@@ -39,7 +41,14 @@ genuinely required and absent, across the six cells that are the complete curren
 
 `boundary_scores` confirms the fallback reading: for a canonical cell, matched residual keys are only used to
 explain canonical keys that are *missing* at a boundary, so a residual duplicating a promoted key adds nothing
-to conservation. The denominator, not the pipeline, is what makes those eight observations unmeetable.
+to conservation. The denominator, not the pipeline, was what made those eight observations unmeetable.
+
+The corrected rule counts one observation per *required* residual: one per promoted stage for a residual or
+non-applicable cell, and one per reviewed canonical key a promoted stage fails to promote. It is fail-closed in
+the direction that matters — a missing canonical key always adds a required observation and is met only by an
+exact, provenanced, actionable residual for that same key — and a stage whose residual set duplicates a promoted
+key credits nothing. Applied to the frozen `.4b` first result the denominator grows from 24 to 82, because a
+canonical cell losing fifteen keys owes fifteen explanations rather than one.
 
 Production owns exactly one typed residual carrier today. `TimingIntentDisposition::NonApplicable` in
 `crates/specforge-core/src/ir/source.rs` keeps `quantity_domain`, `reason`, `first_failing_stage`, and `replay`
@@ -48,10 +57,8 @@ statement, table region, or visual region that reaches no canonical `IntentIR` s
 
 [[source-to-intent-vertical-evaluator]] owns the oracle and [[spec-to-intent-category-contract]] owns the
 acceptance floor, whose denominator is "all residuals" rather than all declared residual queries.
-`SPEC-TO-INTENT-ALIGNMENT.8` therefore corrects the accounting fail-closed in `.8b` — a canonical key missing at
-a stage still *adds* a required observation and fails it unless an exact actionable residual explains it — and
-implements the first bounded production carrier for `static_component_topology` in `.8c`, the only single
-family whose closure can move a reviewed category to `supported`.
+`SPEC-TO-INTENT-ALIGNMENT.8b` shipped that correction; `.8c` implements the first bounded production carrier for
+`static_component_topology`, the only single family whose closure can move a reviewed category to `supported`.
 
 One measurement-integrity defect travelled with this gap and is now closed. The controller composed its
 reproduction command as `cargo test -p specforge --lib ir::source_to_intent_eval`, but

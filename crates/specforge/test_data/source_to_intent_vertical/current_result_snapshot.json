@@ -2824,8 +2824,8 @@
     },
     "residual_actionability": {
       "met": 4,
-      "total": 24,
-      "ratio": 0.16666666666666666
+      "total": 16,
+      "ratio": 0.25
     },
     "fabricated_canonical_facts": 0,
     "unexplained_stage_drops": 0

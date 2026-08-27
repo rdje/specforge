@@ -16,7 +16,9 @@ use crate::error::{AppError, Result};
 use crate::ir::source::TableKind;
 #[cfg(test)]
 use crate::ir::source_to_intent_eval::VerticalCategory;
-use crate::ir::source_to_intent_eval::{CategoryStatus, QueryScore, VerticalEvalReport};
+use crate::ir::source_to_intent_eval::{
+    CategoryStatus, ExpectedDisposition, QueryScore, VerticalEvalReport,
+};
 use crate::ir::trajectory::{
     CausalConfidence, ControllerAuthority, ControllerMode, DimensionObservation, EvidenceRef,
     Fraction, GapPriorityTier, GapUncertainty, HardGateObservation, ImprovementDirection,
@@ -53,7 +55,7 @@ const CAPABILITY_OBSERVATION_SHA256: &str =
 const POPULATION_REPLAY_EVIDENCE_SHA256: &str =
     "cb45bc93ff50bb9b092bb120936bc2a1160118eb83f5fe91a9159c97a10c0b61";
 const REPLAY_VERTICAL_RESULT_SHA256: &str =
-    "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1";
+    "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda";
 const REVIEWED_DATASET_SHA256: &str =
     "c743bcda27e4d08c322efc55ccf2f3465e9b53bb8339e83ee90c946e4ad39185";
 const POPULATION_REPLAY_ORCHESTRATOR_SHA256: &str =
@@ -299,6 +301,13 @@ struct PublishedReplayResultIdentity {
     published_path: String,
     sha256: String,
     byte_count: u64,
+    /// Digest this replay itself produced, present only when a later slice re-summarized the
+    /// published report's derived aggregates without changing any per-cell result. Keeping both
+    /// digests makes that rewrite auditable instead of a silent identity swap.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    replay_sha256: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    resummarized_by: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -742,6 +751,28 @@ fn validate_population_replay_evidence(
         ));
     }
 
+    match (
+        replay.current_result.replay_sha256.as_deref(),
+        replay.current_result.resummarized_by.as_deref(),
+    ) {
+        (None, None) => {}
+        (Some(replay_digest), Some(owner)) => {
+            if !is_sha256_digest(replay_digest)
+                || replay_digest == replay.current_result.sha256
+                || owner.trim().is_empty()
+            {
+                problems.push(
+                    "a re-summarized published result must record a distinct replay digest and its owner"
+                        .to_string(),
+                );
+            }
+        }
+        _ => problems.push(
+            "a re-summarized published result must record both the replay digest and its owner"
+                .to_string(),
+        ),
+    }
+
     let dataset_prefix = format!("{}/", cleanup.population_root);
     if !replay.current_dataset.path.starts_with(&dataset_prefix)
         || !is_sha256_digest(&replay.current_dataset.sha256)
@@ -752,7 +783,7 @@ fn validate_population_replay_evidence(
     if !replay.current_result.path.starts_with(&dataset_prefix)
         || replay.current_result.published_path != CURRENT_REPLAY_VERTICAL_RESULT_PATH
         || replay.current_result.sha256 != REPLAY_VERTICAL_RESULT_SHA256
-        || replay.current_result.byte_count != 103_672
+        || replay.current_result.byte_count != 103_657
     {
         problems.push("published current replay result identity is invalid".to_string());
     }
@@ -822,7 +853,21 @@ fn validate_replay_vertical_result(
             usize::from(residual.semantic_actionable) + usize::from(residual.intent_actionable)
         })
         .sum::<usize>();
-    let residual_actionability_total = residuals.len() * 2;
+    // Independently derive the required-residual denominator from a different field than the
+    // evaluator uses: a canonical cell owes one observation per stage false negative, and a
+    // residual or non-applicable cell owes exactly one per promoted stage.
+    let residual_actionability_total = cells
+        .iter()
+        .filter(|cell| cell.residual.is_some())
+        .map(|cell| match cell.expected_disposition {
+            ExpectedDisposition::Canonical => cell
+                .canonical
+                .as_ref()
+                .map(|scores| scores.semantic_ir.false_negatives + scores.intent_ir.false_negatives)
+                .unwrap_or_default(),
+            _ => 2,
+        })
+        .sum::<usize>();
     let supported_categories = result
         .categories
         .iter()
@@ -859,7 +904,7 @@ fn validate_replay_vertical_result(
         || global.stage_conservation_or_residual.met != 120
         || global.stage_conservation_or_residual.total != 120
         || global.residual_actionability.met != 4
-        || global.residual_actionability.total != 24
+        || global.residual_actionability.total != 16
         || global.residual_actionability.met != residual_actionability_met
         || global.residual_actionability.total != residual_actionability_total
         || global.fabricated_canonical_facts != 0

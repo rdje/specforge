@@ -1,3 +1,34 @@
+### SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations
+
+- Replaced the residual-actionability denominator in `summarize_global`. A new
+  `required_residual_observations` helper applies the frozen rule per cell per promoted stage: one observation
+  for a residual or non-applicable cell, and one per reviewed canonical key the stage fails to promote for a
+  canonical cell. A stage credits an observation only when its residual query is exact for the required keys,
+  carries the reviewed provenance, is actionable, and duplicates no key the same stage already promotes.
+- Confined the change to the aggregate. Regenerating the frozen first result changes exactly one line — its
+  residual denominator moves from 24 to 82 — while every per-cell score, boundary, hard failure, and every other
+  global dimension stays byte-identical. The pinned current result moves from 4/24 to 4/16 by the same isolated
+  mechanism.
+- Republished the controller from the corrected evaluator. The published gap now reads `4 of 16 required
+  residual observations are actionable` with an affected population of twelve rather than twenty, so the
+  ranked gap is the real production deficit instead of a measurement artifact.
+- Made the in-place re-summarization auditable. The population replay evidence now keeps the digest the replay
+  itself produced alongside the published digest and names the re-summarizing leaf, the composer refuses a
+  re-summarized result that records only one of the two, and a new gate fails whenever the published global
+  block stops being a current summary of its own cell results.
+- Added four fail-closed controls plus a direct partial-explanation case: an exact canonical stage requires
+  nothing; losing that canonical fact adds a required observation no residual explains; only an exact,
+  provenanced, actionable residual for the same key meets it; duplicate or unprovenanced residual sets credit
+  nothing; and a canonical cell losing two of three keys at both stages requires four observations and meets two.
+- Kept the trajectory composer's cross-check independent: it derives the required denominator from the canonical
+  stage false negatives, a different field than the evaluator's matched-key path.
+- Corrected the mdBook in the same slice. The frozen first-result table now reports the re-derived `0 / 82` with
+  an explicit note that the unit changed, and the trajectory chapter explains the rule, the corrected ratio, and
+  what the twelve remaining required observations are.
+- The workspace suite passes 470 / 168 / 1,365 / 4 with zero failures, warning-denied Clippy is clean, all five
+  production-genericity components pass, and the frozen `.8a` contract still rejects 21/21 mutations. The derived
+  flow oracle is refreshed to 2,364 functions / 14,642 helper edges / 12,643 decision sites / 1,462 macros.
+
 ### SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract
 
 - Froze the required-residual rule as an executable machine contract at

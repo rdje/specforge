@@ -124,13 +124,13 @@
          {
             "heading" : "# SPEC-TO-INTENT-ALIGNMENT — residual actionability",
             "metrics" : {
-               "bytes" : 23590,
-               "line_bytes" : 517,
-               "lines" : 312
+               "bytes" : 30550,
+               "line_bytes" : 541,
+               "lines" : 381
             },
             "part_id" : "residual-actionability",
             "path" : "docs/tasks/spec-to-intent-alignment/residual-actionability.md",
-            "sha256" : "501efd9a215f9a6fad9a48658459b67ff8b26bf146243d7b64b9d3e670c42a65",
+            "sha256" : "996cf8568a72343b64a1f5f334a169bd181e42cc899c80f7f402919f5a87d15c",
             "state" : "active"
          }
       ],

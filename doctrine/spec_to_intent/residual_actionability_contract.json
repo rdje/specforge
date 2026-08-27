@@ -68,7 +68,7 @@
     "no_fabrication_rule": "a residual records that a captured region did not reach a canonical carrier and never asserts a canonical value in its place"
   },
   "witness": {
-    "current_result_sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+    "current_result_sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
     "declared_cells": 12,
     "declared_observations": 24,
     "actionable_observations": 4,

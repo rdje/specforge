@@ -35,7 +35,7 @@
   Commit: `SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8b`
-  State: `pending`
+  State: `done`
   Goal: count only required residuals in residual actionability without excusing a missing canonical fact
   Acceptance: the vertical evaluator's residual-actionability denominator admits a residual observation only
   where the review requires one — every stage of a residual or non-applicable cell, and every canonical key
@@ -45,8 +45,14 @@
   counted as success; conservation, provenance, disposition, fabrication, and drop metrics are unchanged; the
   tracked result and controller authorities are republished byte-exact from the corrected evaluator
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.8a`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the corrected evaluator moves the pinned current result from 4/24 to 4/16 and changes no other
+  global dimension and no per-cell field; the frozen .4b first result moves 0/24 to 0/82 with one changed line;
+  three new controls prove an exact canonical stage requires nothing, a lost canonical fact adds a required and
+  unmet observation, only an exact provenanced actionable residual meets it, and duplicate or unprovenanced
+  residual sets credit nothing; the published global block is now gated as a current summary of its own cells;
+  the controller republishes 4 of 16 with an affected population of 12; the workspace suite is
+  470/168/1,365/4 green, Clippy is clean, and all five genericity components pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8c`
   State: `pending`
@@ -76,15 +82,15 @@
 
 ## Current Frontier
 
-Active frontier: `SPEC-TO-INTENT-ALIGNMENT.8b`. The contract, typed grammar, and executable rule are frozen, so
-the next slice makes the vertical evaluator agree with them before `.8c` changes production and `.8d` replays
-and publishes.
+Active frontier: `SPEC-TO-INTENT-ALIGNMENT.8c`. The rule is frozen and the evaluator now agrees with it, so the
+published gap is the twelve genuinely required observations; the next slice emits the bounded typed carrier for
+`static_component_topology` before `.8d` replays and publishes.
 
 ## Localized residual-actionability gap (`.8`)
 
 The published `.7c.ii` authority is
 `crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json`, SHA-256
-`167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1`. Twelve of its 14 reviewed cells declare
+`43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda`. Twelve of its 14 reviewed cells declare
 residual queries, and the evaluator adds two observations per declaring cell, so the published denominator is
 24. That denominator is *declared*, not *required*, and it decomposes exactly three ways.
 
@@ -211,6 +217,36 @@ tests cover it: the derived-root check, the whole-snapshot check that every publ
 real tests, and a RED matrix that rejects the exact facade-package defect plus four unsupported command shapes.
 Both tracked authorities were regenerated; their only change is that one field in three places.
 
+## Corrected required-residual accounting (`.8b`)
+
+`summarize_global` no longer adds two observations for every cell that *declares* residual queries. A new
+`required_residual_observations` helper applies the frozen rule per cell per promoted stage: one observation for
+a residual or non-applicable cell, and one per reviewed canonical key the stage fails to promote for a canonical
+cell. A stage credits an observation only when its residual query is exact for the required keys, carries the
+reviewed provenance, is actionable, and does not duplicate a key the same stage already promotes.
+
+The change is confined to the aggregate. Regenerating the frozen `.4b` first result changes exactly one line —
+its residual denominator moves from 24 to 82 — while every per-cell score, boundary, hard failure, and every
+other global dimension stays byte-identical. The pinned `.7c.ii` current result moves from 4/24 to 4/16 by the
+same isolated mechanism, and the controller now publishes `4 of 16 required residual observations are
+actionable` with an affected population of twelve rather than twenty.
+
+Because the published report is a derived aggregate over its own cell results, it was re-summarized in place
+rather than replayed. That rewrite is auditable, not silent: the `.7c.ii` population replay evidence now keeps
+the digest the replay itself produced alongside the published digest and names `.8b` as the re-summarizer, and
+the composer refuses a re-summarized result that does not record both. A new gate also fails whenever the
+published global block stops being a current summary of its own cells.
+
+Four controls hold the accounting honest. A canonical cell exact at a stage contributes nothing. Losing that
+canonical fact adds a required observation that no residual explains, so the loss cannot leave the denominator.
+Only an exact, provenanced, actionable residual for that same key meets it. A residual set that duplicates a
+promoted key, or that carries no reviewed provenance, credits nothing at that stage. A direct unit case also
+proves partial explanation: four required observations across two stages with two explained.
+
+The trajectory composer keeps an independent cross-check rather than calling the evaluator: it derives the
+required denominator from the canonical stage false negatives, a different field than the evaluator's
+matched-key path.
+
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8` activation
 
 - [x] **REPRODUCE / MEASURE** — the tracked `.7c.ii` result decomposes exactly into 4 actionable, 8 not-required,
@@ -258,6 +294,31 @@ Both tracked authorities were regenerated; their only change is that one field i
 - [x] **LOCKSTEP** — the contract, checker, composer, both published authorities, this part, the bounded root,
   the resume pointer, and the live status agree that `.8b` is next.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8b`
+
+- [x] **REPRODUCE / MEASURE** — before the change the published result reported
+  `residual_actionability { met: 4, total: 24 }` while the frozen `.4b` result reported `0 / 24`; the frozen
+  `.8a` contract independently derived the corrected `4 / 16`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `summarize_global` in
+  `crates/specforge/src/ir/source_to_intent_eval.rs` executed `residual_total += 2` for every cell that declared
+  residual queries, so four canonical cells exact at all three promoted stages contributed eight permanently
+  unmet observations, and a canonical cell losing fifteen keys contributed the same two as one losing one.
+- [x] **ADDRESSED (verified)** — `required_residual_observations` now derives the denominator from the frozen
+  rule. Regenerating the frozen `.4b` result changes exactly one line (`"total": 24` → `"total": 82`) and the
+  pinned current result changes two (`24` → `16`, ratio `0.1666…` → `0.25`); no per-cell field moves in either.
+  The controller republishes `4 of 16 required residual observations are actionable` with
+  `affected_population: 12`, and `python3 -B scripts/validate_residual_actionability_contract.py --check` still
+  derives the same decomposition against the re-summarized authority.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib` is 470 / 168 / 1,365 / 4 passing with zero failures;
+  `cargo clippy --workspace --all-targets --all-features -- -D warnings` is clean; all five
+  production-genericity components pass; the `.8a` contract self-test still rejects 21/21 mutations; the derived
+  flow oracle is refreshed to 2,364 functions / 14,642 helper edges / 12,643 decision sites / 1,462 macros.
+- [x] **GENERICITY (ADR 0006 / ADR 0037)** — the new helper reads only reviewed disposition, canonical stage
+  scores, and residual query scores; it names no document, vendor, protocol, family, or modality.
+- [x] **LOCKSTEP** — the evaluator, both result authorities, the replay evidence, both controller authorities,
+  the frozen contract, the mdBook contract and trajectory chapters, this part, the bounded root, the resume
+  pointer, and the live status agree that the published ratio is `4/16` and that `.8c` is next.
+
 ## Decisions
 
 - `2026-08-27`: treat the published 4/24 as a *declared* denominator, not a required one. The contract's
@@ -281,11 +342,17 @@ Both tracked authorities were regenerated; their only change is that one field i
   later slice from claiming shipped coverage by renaming an existing carrier.
 - `2026-08-27`: repair the reproduction command structurally. Deriving the owning package from the conformance
   crate's own module declarations makes the whole silent-green class fail closed, not just this one literal.
+- `2026-08-27`: re-summarize the published current result in place rather than replaying the population. Its
+  per-cell scores are the measurement and did not move; only the derived aggregate did, and a full replay needs
+  external sources this slice does not touch.
+- `2026-08-27`: record both digests in the replay evidence. A re-summarized publication that silently swaps the
+  attested identity would erase the fact that the artifact is no longer byte-identical to its replay output.
+- `2026-08-27`: republish the frozen `.4b` first result and correct its book row rather than leaving a stale
+  historical number that the current evaluator no longer reproduces. The unit change is stated on the page.
 
 ## Open Questions
 
-- None. The gap is localized, the rule and record grammar are frozen and executable, and `.8b` owns the
-  evaluator change that must agree with them.
+- None. The rule is frozen, the evaluator agrees with it, and `.8c` owns the first bounded production carrier.
 
 ## Blockers
 
@@ -295,6 +362,7 @@ Both tracked authorities were regenerated; their only change is that one field i
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-27` | `.8b` corrected accounting | the pinned current result moves 4/24 to 4/16 and the frozen first result 0/24 to 0/82 with no other global or per-cell change; four fail-closed controls plus a direct partial-explanation case pass; the published global block is gated as a current summary of its own cells; the re-summarization is recorded with both digests; the controller republishes 4 of 16 over an affected population of 12; the workspace suite, Clippy, all five genericity components, and the 21/21 contract self-test pass |
 | `2026-08-27` | `.8a` contract freeze | the executable contract derives 17 required / five met across 18 cases and 19 control classes, re-derives the 4/8/12 decomposition and the selected family from the pinned current result, and joins the repaired reproduction command to both authorities; 21/21 mutations reject, three new controls and the byte-current snapshot pass, Clippy and all five genericity components pass, and the workspace suite is green with the refreshed 2,363 / 14,639 / 12,631 / 1,462 flow oracle |
 | `2026-08-27` | `.8` activation | the tracked `.7c.ii` result decomposes into 4 actionable / 8 not-required / 12 required-and-absent residual observations across 12 declaring cells; the six hard-failing cells and their extra failures are exact; the published gap reproduction runs zero tests at exit zero while the conformance-crate command runs 14; all nine gate-tier doctrines pass |
 
@@ -302,6 +370,7 @@ Both tracked authorities were regenerated; their only change is that one field i
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8b` | `SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations` | make the evaluator's denominator the frozen required-residual rule, keep every missing canonical key required and unmet, and republish the result, replay-evidence, and controller authorities |
 | `.8a` | `SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract` | freeze the executable required-residual rule, typed record grammar, closed case matrix, and selected family, and repair the silent-green reproduction command structurally |
 | `.8` | `SPEC-TO-INTENT-ALIGNMENT.8 — activate required residual actionability` | localize the declared-versus-required denominator defect and the absent typed residual carrier, select the bounded family, and route `.8a`–`.8d` |
 

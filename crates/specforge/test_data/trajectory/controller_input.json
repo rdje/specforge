@@ -43,7 +43,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -77,7 +77,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -117,7 +117,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -157,7 +157,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -191,7 +191,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -231,7 +231,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -271,7 +271,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -305,7 +305,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -419,7 +419,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -459,7 +459,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -567,7 +567,7 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+              "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
               "role": "qualified .7c.ii current-binary reviewed vertical result"
             }
           ]
@@ -597,7 +597,7 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+          "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
           "role": "qualified .7c.ii current-binary reviewed vertical result"
         }
       ]
@@ -610,7 +610,7 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+          "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
           "role": "qualified .7c.ii current-binary reviewed vertical result"
         }
       ]
@@ -622,10 +622,10 @@
       "gap_id": "non-actionable-required-residuals",
       "objective_id": "stage_conservation",
       "tier": "persistent_residual",
-      "observed": "4 of 24 required residual observations are actionable",
+      "observed": "4 of 16 required residual observations are actionable",
       "target": "every required residual is typed, source-linked, and actionable",
       "first_failing_stage": "evidence_to_semantic_ir",
-      "affected_population": 20,
+      "affected_population": 12,
       "causal_confidence": "high",
       "reversible_slice": "medium",
       "uncertainty": "exact",
@@ -638,7 +638,7 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "167980b369df71e67f068a3354f8881d66a7c303a3480c8ff01ac2194fd481e1",
+          "sha256": "43603bbb3dde77c95929e26e1adf25709aec400ca3b9ae737e49e2fe1d07ceda",
           "role": "qualified .7c.ii current-binary reviewed vertical result"
         }
       ]

@@ -981,10 +981,9 @@ fn summarize_global(documents: &[DocumentResult]) -> GlobalMetrics {
                 .intent_ir
                 .actual_total
                 .saturating_sub(residual.intent_ir.unprovenanced_records);
-            residual_total += 2;
-            residual_met +=
-                usize::from(residual.semantic_actionable && residual.semantic_ir.exact());
-            residual_met += usize::from(residual.intent_actionable && residual.intent_ir.exact());
+            let (required, met) = required_residual_observations(cell, residual);
+            residual_total += required;
+            residual_met += met;
         }
         for boundary in &cell.boundaries {
             boundary_total += boundary.expected;
@@ -1001,6 +1000,51 @@ fn summarize_global(documents: &[DocumentResult]) -> GlobalMetrics {
         fabricated_canonical_facts: fabricated,
         unexplained_stage_drops: unexplained,
     }
+}
+
+/// Count the residual observations the review actually requires, and how many are met.
+///
+/// A residual or non-applicable cell requires exactly one observation at each promoted stage. A
+/// canonical cell requires one observation per reviewed canonical key that stage does not promote,
+/// and none when the stage promotes every reviewed key: a correctly promoted fact has no residual to
+/// describe, and emitting one would assert that the same fact both reached and did not reach
+/// `IntentIR`. A missing canonical key therefore never leaves the denominator — it is met only by an
+/// exact, provenanced, actionable residual for that same key — so a recall loss can never be
+/// relabelled as residual success. A stage whose residual set duplicates a key it already promotes
+/// is credited with nothing.
+fn required_residual_observations(cell: &CellResult, residual: &ResidualScores) -> (usize, usize) {
+    let canonical = cell.canonical.as_ref();
+    let stages = [
+        (
+            &residual.semantic_ir,
+            residual.semantic_actionable,
+            canonical.map(|scores| &scores.semantic_ir),
+        ),
+        (
+            &residual.intent_ir,
+            residual.intent_actionable,
+            canonical.map(|scores| &scores.intent_ir),
+        ),
+    ];
+    let mut required = 0;
+    let mut met = 0;
+    for (score, actionable, promoted) in stages {
+        let promoted_keys = promoted.map(|scores| scores.matched_keys.as_slice()).unwrap_or(&[]);
+        let duplicated = multiset_intersection_count(&score.actual_keys, promoted_keys) > 0;
+        let usable = actionable && !duplicated && score.unprovenanced_records == 0;
+        if cell.expected_disposition != ExpectedDisposition::Canonical {
+            required += 1;
+            met += usize::from(usable && score.exact());
+            continue;
+        }
+        let Some(promoted) = promoted else { continue };
+        let missing = missing_keys(promoted);
+        required += missing.len();
+        if usable {
+            met += multiset_intersection_count(&missing, &score.matched_keys);
+        }
+    }
+    (required, met)
 }
 
 fn score_query(snapshot: &Value, query: &RecordQuery) -> std::result::Result<QueryScore, String> {
@@ -1632,6 +1676,216 @@ mod tests {
         let report = evaluate(&dataset);
         assert_eq!(report.categories[0].status, CategoryStatus::Unmeasurable);
         assert!(!report.documents[0].hard_failures.is_empty());
+    }
+
+    const CURRENT_RESULT_PATH: &str =
+        "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json";
+
+    fn repository_relative(path: &str) -> std::path::PathBuf {
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .join(path)
+    }
+
+    #[test]
+    fn published_current_result_global_is_a_current_summary_of_its_own_cells() {
+        let bytes = std::fs::read(repository_relative(CURRENT_RESULT_PATH))
+            .expect("published current result must be readable");
+        let report: VerticalEvalReport =
+            serde_json::from_slice(&bytes).expect("published current result must deserialize");
+        assert_eq!(
+            report.global,
+            summarize_global(&report.documents),
+            "the published global block is stale against its own cell results"
+        );
+    }
+
+    #[test]
+    #[ignore = "explicit maintenance operation that re-summarizes the tracked current result"]
+    fn resummarize_published_current_result_on_explicit_request() {
+        let path = repository_relative(CURRENT_RESULT_PATH);
+        let bytes = std::fs::read(&path).expect("published current result must be readable");
+        let mut report: VerticalEvalReport =
+            serde_json::from_slice(&bytes).expect("published current result must deserialize");
+        report.global = summarize_global(&report.documents);
+        let mut rendered = serde_json::to_vec_pretty(&report).expect("serialize current result");
+        rendered.push(b'\n');
+        std::fs::write(&path, rendered).expect("rewrite published current result");
+    }
+
+    #[test]
+    fn required_residual_observations_are_counted_only_where_the_review_requires_them() {
+        let mut dataset = baseline_dataset();
+        let document = &mut dataset.documents[0];
+        let residual = json!({
+            "key": "A",
+            "scope": "s1",
+            "source_ids": ["s1"],
+            "reason": "no canonical carrier for the captured region",
+            "first_failing_stage": "evidence_to_semantic_ir",
+            "replay": "re-run the promoted stage and inspect this disposition"
+        });
+        document.cells[0].residual = Some(ResidualQueries {
+            semantic_ir: query("/residuals", "s1", &["A"], true),
+            intent_ir: query("/residuals", "s1", &["A"], true),
+            required_actionability_fields: vec![
+                "/reason".to_string(),
+                "/first_failing_stage".to_string(),
+                "/replay".to_string(),
+            ],
+        });
+
+        // A canonical cell that promotes every reviewed key requires no residual observation at all.
+        let exact = evaluate(&dataset);
+        assert_eq!(exact.global.residual_actionability.total, 0);
+        assert_eq!(exact.global.residual_actionability.met, 0);
+
+        // Losing the canonical fact at IntentIR adds a required observation that no residual explains.
+        let mut lost = dataset.clone();
+        lost.documents[0].stages.intent_ir.snapshot["facts"] = json!([]);
+        let lost_report = evaluate(&lost);
+        assert_eq!(lost_report.global.residual_actionability.total, 1);
+        assert_eq!(lost_report.global.residual_actionability.met, 0);
+
+        // Only an exact, provenanced, actionable residual for that same key meets it.
+        let mut explained = lost.clone();
+        explained.documents[0].stages.intent_ir.snapshot["residuals"] = json!([residual.clone()]);
+        let explained_report = evaluate(&explained);
+        assert_eq!(explained_report.global.residual_actionability.total, 1);
+        assert_eq!(explained_report.global.residual_actionability.met, 1);
+
+        // An inactionable residual for the same key does not.
+        let mut inactionable = explained.clone();
+        inactionable.documents[0].stages.intent_ir.snapshot["residuals"][0]["replay"] = json!("");
+        let inactionable_report = evaluate(&inactionable);
+        assert_eq!(inactionable_report.global.residual_actionability.total, 1);
+        assert_eq!(inactionable_report.global.residual_actionability.met, 0);
+
+        // Neither does a residual that carries no reviewed provenance.
+        let mut unprovenanced = explained;
+        unprovenanced.documents[0].stages.intent_ir.snapshot["residuals"][0]["source_ids"] =
+            json!([]);
+        let unprovenanced_report = evaluate(&unprovenanced);
+        assert_eq!(unprovenanced_report.global.residual_actionability.total, 1);
+        assert_eq!(unprovenanced_report.global.residual_actionability.met, 0);
+    }
+
+    fn stage_score(expected: &[&str], actual: &[&str], unprovenanced: usize) -> QueryScore {
+        let expected_keys: Vec<String> = expected.iter().map(|key| (*key).to_string()).collect();
+        let actual_keys: Vec<String> = actual.iter().map(|key| (*key).to_string()).collect();
+        let matched_keys = {
+            let expected_counts = multiset(&expected_keys);
+            let actual_counts = multiset(&actual_keys);
+            let mut matched = Vec::new();
+            for (key, count) in &expected_counts {
+                let shared = (*count).min(*actual_counts.get(key).unwrap_or(&0));
+                matched.extend(std::iter::repeat_n(key.clone(), shared));
+            }
+            matched
+        };
+        let true_positives = matched_keys.len();
+        QueryScore {
+            actual_total: actual_keys.len(),
+            expected_total: expected_keys.len(),
+            false_positives: actual_keys.len().saturating_sub(true_positives),
+            false_negatives: expected_keys.len().saturating_sub(true_positives),
+            precision: None,
+            recall: None,
+            unprovenanced_records: unprovenanced,
+            true_positives,
+            matched_keys,
+            actual_keys,
+            expected_keys,
+        }
+    }
+
+    fn residual_cell(
+        disposition: ExpectedDisposition,
+        canonical: Option<CanonicalStageScores>,
+        residual: ResidualScores,
+    ) -> CellResult {
+        CellResult {
+            cell_id: "case".to_string(),
+            semantic_family: "family".to_string(),
+            modality: "table".to_string(),
+            oracle: "oracle".to_string(),
+            review_scope: "scope".to_string(),
+            expected_disposition: disposition,
+            complete_gold: true,
+            source_region: stage_score(&["s1"], &["s1"], 0),
+            evidence_capture: stage_score(&["s1"], &["s1"], 0),
+            canonical,
+            residual: Some(residual),
+            boundaries: Vec::new(),
+            disposition_accounted: false,
+            first_failing_stage: None,
+            hard_failures: Vec::new(),
+        }
+    }
+
+    #[test]
+    fn a_canonical_cell_requires_one_observation_per_key_it_fails_to_promote() {
+        let promoted = |keys: &[&str]| CanonicalStageScores {
+            evidence_ir: stage_score(&["R1", "R2", "R3"], keys, 0),
+            semantic_ir: stage_score(&["R1", "R2", "R3"], keys, 0),
+            intent_ir: stage_score(&["R1", "R2", "R3"], keys, 0),
+        };
+
+        // Two of three reviewed keys are lost at both stages and only one is explained.
+        let partial = residual_cell(
+            ExpectedDisposition::Canonical,
+            Some(promoted(&["R1"])),
+            ResidualScores {
+                semantic_ir: stage_score(&["R1", "R2", "R3"], &["R2"], 0),
+                intent_ir: stage_score(&["R1", "R2", "R3"], &["R2"], 0),
+                semantic_actionable: true,
+                intent_actionable: true,
+            },
+        );
+        let scores = partial.residual.clone().expect("residual scores");
+        assert_eq!(required_residual_observations(&partial, &scores), (4, 2));
+
+        // A residual that duplicates a key the same stage promotes credits nothing at that stage.
+        let duplicated = residual_cell(
+            ExpectedDisposition::Canonical,
+            Some(promoted(&["R1"])),
+            ResidualScores {
+                semantic_ir: stage_score(&["R1", "R2", "R3"], &["R1", "R2"], 0),
+                intent_ir: stage_score(&["R1", "R2", "R3"], &["R2"], 0),
+                semantic_actionable: true,
+                intent_actionable: true,
+            },
+        );
+        let scores = duplicated.residual.clone().expect("residual scores");
+        assert_eq!(required_residual_observations(&duplicated, &scores), (4, 1));
+
+        // An unprovenanced residual set credits nothing at that stage either.
+        let unprovenanced = residual_cell(
+            ExpectedDisposition::Canonical,
+            Some(promoted(&["R1"])),
+            ResidualScores {
+                semantic_ir: stage_score(&["R1", "R2", "R3"], &["R2"], 1),
+                intent_ir: stage_score(&["R1", "R2", "R3"], &["R2"], 0),
+                semantic_actionable: true,
+                intent_actionable: true,
+            },
+        );
+        let scores = unprovenanced.residual.clone().expect("residual scores");
+        assert_eq!(required_residual_observations(&unprovenanced, &scores), (4, 1));
+
+        // A cell with no canonical scores at all still requires one observation per stage.
+        let non_canonical = residual_cell(
+            ExpectedDisposition::NonApplicable,
+            None,
+            ResidualScores {
+                semantic_ir: stage_score(&["A"], &["A"], 0),
+                intent_ir: stage_score(&["A"], &[], 0),
+                semantic_actionable: true,
+                intent_actionable: false,
+            },
+        );
+        let scores = non_canonical.residual.clone().expect("residual scores");
+        assert_eq!(required_residual_observations(&non_canonical, &scores), (2, 1));
     }
 
     #[test]

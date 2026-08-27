@@ -268,9 +268,13 @@ correct typed EvidenceIR facts or an explicit non-applicable/residual dispositio
 | source-region disposition | 0 / 14 = 0% |
 | required-modality accounting | 0 / 12 = 0% |
 | stage conservation or residual | 21 / 54 = 38.8889% |
-| residual actionability | 0 / 24 = 0% |
+| residual actionability | 0 / 82 = 0% |
 | fabricated canonical facts | 41 |
 | unexplained stage drops | 33 |
+
+The residual-actionability denominator counts one observation per required residual rather than one per
+reviewed cell. `SPEC-TO-INTENT-ALIGNMENT.8b` corrected that unit, so this frozen row re-derives as 0 / 82
+under the current evaluator; every other value on this page is unchanged.
 
 The stage split localizes the constraint. SourceIR → EvidenceIR conserves 7 of 40 reviewed canonical facts and
 owns all 33 unexplained drops. Those seven true positives then remain 7/7 through EvidenceIR → SemanticIR and
