@@ -140,10 +140,14 @@ Coverage is a membership test over the artifact's own record collections — `ti
 `temporal_conflicts`, and `actor_contracts` — never a text scan. Statement-mediated links are deliberately
 excluded: `EvidenceIR` relates a statement to a visual region when that statement *is* the region's caption, and
 a caption reaching a canonical carrier says nothing about the region's content. The measurement is decisive
-rather than stylistic — admitting caption-mediated coverage would mark 466 of the corpus's 1,089 captured
-figure-kind regions as explained, including the reviewed `picture_0001`, whose only mediating statement is the
-literal caption `Figure 1: Example 1, with a shared ETB`. That would have failed the reviewed cell while
-reporting success.
+rather than stylistic, and its size depends on how far the mediation is taken. Over the retained corpus's 1,089
+captured figure-kind regions, admitting statement-mediated coverage explains 110 of them when the mediation is
+applied only to the collections above, and 466 when it is applied to every SemanticIR collection carrying
+`supporting_statement_ids` — the shape a naive implementation takes. The reviewed `picture_0001` is in the
+second set and not the first: its only mediating statement is the literal caption
+`Figure 1: Example 1, with a shared ETB`, cited through the statement-lift collections rather than the
+grounded-projection ones. The looser reading is therefore the one that would have reported success on a cell
+the review requires to fail, which is why neither reading is coverage.
 
 `TableRegion` is excluded because it already reaches canonical carriers through the register, signal, and timing
 paths; a residual there would duplicate a promoted key. `Unknown` is excluded for the reason the table-side
@@ -174,6 +178,12 @@ IntentIR — exactly the 1,089 captured `figure` and `diagram` regions the 24 ch
 `table_region` ones. The 24 final adapter ledgers still share one ruleset, now carry 150,942 cumulative claims
 across the same 120 artifacts, and reference all 170 rule ids; `residual_decisions` stays 0 / 3 / 8 / 62 across
 Source, Semantic, Intent, and adapter, and all 24 adapters remain blocked with zero emitted `.isf` files.
+
+The claim total moved from the `2026-08-14` structural-qualification figure of 148,708 by +2,234, and the
+attribution is exact rather than assumed. This leaf contributes 24 field-root plus 1,089 record claims at each
+of SemanticIR and IntentIR, so +2,226. The residual +8 net is pre-existing drift the intervening `.7b`/`.7c.i`
+slices left unrepublished: +8 at EvidenceIR, carried as +8 through SemanticIR and +8 through IntentIR, against
+−16 at the adapter. Stage-local totals are therefore 31,382 / 89,766 / 13,520 / 15,409 / 865.
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8c`
 

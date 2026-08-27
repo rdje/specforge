@@ -124,25 +124,25 @@
       {
         "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual actionability",
         "metrics": {
-          "bytes": 36012,
+          "bytes": 36247,
           "line_bytes": 634,
-          "lines": 413
+          "lines": 415
         },
         "part_id": "residual-actionability",
         "path": "docs/tasks/spec-to-intent-alignment/residual-actionability.md",
-        "sha256": "d5b61d8d14d9a5c15ad141e7240bf736678e40d050fdb797ecc2d8c29f83da1b",
+        "sha256": "d0b5612acf082ce274f33e1f35bbd0703a112a6286f16fdb7824a9016900104f",
         "state": "active"
       },
       {
         "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual carrier",
         "metrics": {
-          "bytes": 16735,
+          "bytes": 17731,
           "line_bytes": 138,
-          "lines": 212
+          "lines": 222
         },
         "part_id": "residual-carrier",
         "path": "docs/tasks/spec-to-intent-alignment/residual-carrier.md",
-        "sha256": "319e11aa960371f225bcb568006b390adb6d2756194b369f6df45f86054f729d",
+        "sha256": "b276668d34e994f7908107fca1dd1df0a09571b117c405fafbb601b2041d7cdc",
         "state": "active"
       }
     ],

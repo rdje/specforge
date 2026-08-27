@@ -351,9 +351,11 @@ matched-key path.
   producer emits, not only the item's evidence id. The frozen design named one citation form, but a second
   production path from a figure to a canonical carrier exists; residualizing a region it covered would assert
   something false, which the contract's own no-fabrication rule forbids. The change only removes false positives.
-- `2026-08-27`: refuse statement-mediated coverage. A caption that reaches a canonical carrier does not mean the
-  figure's content did, and admitting it would mark 466 of 1,089 captured regions explained — including the
-  reviewed `picture_0001`, whose only mediating statement is its own caption.
+- `2026-08-27`: refuse statement-mediated coverage under either reading. A caption that reaches a canonical
+  carrier does not mean the figure's content did. Admitting the mediation explains 110 of 1,089 captured regions
+  when applied to the collections coverage already reads and 466 when applied to every collection carrying
+  `supporting_statement_ids`; the reviewed `picture_0001` appears only in the second, so the reading a naive
+  implementation would pick is the one that reports success on a cell the review requires to fail.
 - `2026-08-27`: exclude `Unknown` visual kinds as well as table kinds. The table-side sibling already skips
   unclassified kinds because capture never established them as intent-bearing; accounting them here would assert
   a region the classifier did not find.

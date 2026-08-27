@@ -353,9 +353,11 @@ contract — names it in its own provenance list. The check reads those collecti
 for the region's name.
 
 **A caption is not the figure.** `EvidenceIR` may relate a statement to a visual region because the statement
-*is* that region's caption. If caption-mediated links counted as coverage, 466 of the corpus's 1,089 captured
-figures would look explained while none of their actual content had reached anything. They are deliberately not
-coverage.
+*is* that region's caption. Counting those links would explain regions whose content reached nothing: over the
+retained corpus's 1,089 captured figures, 110 would look explained if mediation were applied only to the
+collections above, and 466 if applied to every collection carrying `supporting_statement_ids` — the shape a
+naive implementation takes. The reviewed `picture_0001` falls in the second set, so the looser reading is the
+one that would have reported success on a cell the review requires to fail. They are deliberately not coverage.
 
 **Table regions are excluded.** A `table_region` visual already reaches canonical carriers through the register,
 signal, and timing paths. A residual for one would claim that a fact both did and did not reach `IntentIR` — the

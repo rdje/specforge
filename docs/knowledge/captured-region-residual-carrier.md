@@ -21,7 +21,7 @@ date: 2026-08-27
 status: current
 tags: [spec-to-intent-alignment, residual, semantic-ir, intent-ir, visual-evidence, proof-rules, genericity]
 evidence: crates/specforge/src/ir/source.rs (CapturedRegionResidualRecord); crates/specforge/src/ir/semantic.rs (unexplained_captured_visual_regions, cited_provenance_ids); crates/specforge/src/ir/waveform.rs (figure_region_provenance_id); doctrine/production_genericity/claim_family_inventory.tsv; doctrine/spec_to_intent/residual_actionability_contract.json; docs/tasks/spec-to-intent-alignment/residual-actionability.md (.8c)
-reverify: "Run `cargo test -p specforge-core --lib ir::semantic::tests::captured` and `ir::semantic::tests::a_captured`, `bash scripts/check_production_genericity.sh`, and `python3 -B scripts/validate_residual_actionability_contract.py --self-test`; then rebuild any retained chain with `specforge semantic` and confirm its `captured_region_residuals` count equals its captured non-table, non-unknown visual-evidence count."
+reverify: "Run `cargo test -p specforge-core --lib ir::semantic::tests::captured` and `ir::semantic::tests::a_captured`, `bash scripts/check_production_genericity.sh`, and `python3 -B scripts/validate_residual_actionability_contract.py --self-test`; then rebuild any retained chain with `specforge semantic` and confirm its `captured_region_residuals` count equals its captured non-table, non-unknown visual-evidence count. For the 110/466 counterfactual, run `python3 scripts/measure_caption_mediated_coverage.py`, which re-derives both readings and the CoreSight membership over the retained chains."
 ---
 
 **Established `2026-08-27` (`SPEC-TO-INTENT-ALIGNMENT.8c`).** `residual_decisions` explains a record the
@@ -47,10 +47,14 @@ the second form, so producer and accounting cannot drift.
 
 Statement-mediated links are deliberately **not** coverage. `EvidenceIR` relates a statement to a visual region
 when that statement *is* the region's caption, and a caption reaching a canonical carrier says nothing about the
-region's content. The measurement is decisive: admitting caption links would mark 466 of the retained corpus's
-1,089 captured figure-kind regions as explained, including the reviewed `picture_0001` in
-`den0068_2018_07_23_coresight_base_system_architecture`, whose only mediating statement is the literal caption
-`Figure 1: Example 1, with a shared ETB`.
+region's content. How much that would explain depends on how far the mediation is taken. Over the retained
+corpus's 1,089 captured figure-kind regions it explains **110** when applied only to the collections coverage
+already reads, and **466** when applied to every SemanticIR collection carrying `supporting_statement_ids` —
+the shape a naive implementation takes. The reviewed `picture_0001` in
+`den0068_2018_07_23_coresight_base_system_architecture` appears **only in the second set**: its one mediating
+statement is the literal caption `Figure 1: Example 1, with a shared ETB`, reached through the statement-lift
+collections rather than the grounded-projection ones. The looser reading is therefore the one that would report
+success on a cell the review requires to fail, which is why neither reading is coverage.
 
 `VisualAssetKind::TableRegion` is excluded because a table region already reaches canonical carriers through the
 register, signal, and timing paths, so a residual there would duplicate a promoted key — the self-contradiction

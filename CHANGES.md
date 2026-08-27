@@ -13,11 +13,13 @@
   cites the region as `figure:<asset_id>`. Coverage now accepts either form, so a figure that produced verified
   waveform contracts is never handed a residual claiming it reached nothing. `waveform::figure_region_provenance_id`
   is the single construction site both sides read.
-- Refused statement-mediated coverage deliberately. `EvidenceIR` relates a statement to a visual region when the
-  statement *is* that region's caption; admitting those links would mark 466 of the corpus's 1,089 captured
-  figure-kind regions as explained, including the reviewed `picture_0001` whose only mediating statement is its
-  own caption. Table-kind and unclassified regions stay excluded — the first already has canonical carriers, and
-  the second was never established as intent-bearing.
+- Refused statement-mediated coverage deliberately, under either reading of it. `EvidenceIR` relates a
+  statement to a visual region when the statement *is* that region's caption. Admitting those links explains 110
+  of the corpus's 1,089 captured figure-kind regions when the mediation is applied only to the collections
+  coverage reads, and 466 when applied to every collection carrying `supporting_statement_ids`. The reviewed
+  `picture_0001` appears only in the second set, so the reading a naive implementation would pick is the one
+  that reports success on a cell the review requires to fail. Table-kind and unclassified regions stay excluded
+  — the first already has canonical carriers, and the second was never established as intent-bearing.
 - Registered the field in the existing `semantic.residual` and `intent.residual` families, expanding the runtime
   registry from 168 to 170 rules over 50 SemanticIR and 50 IntentIR public fields. It is deliberately not an
   exact IntentIR carry: the residual family's `current_only` rule rebuilds and compares the field instead of

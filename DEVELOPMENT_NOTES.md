@@ -18,10 +18,13 @@ demonstrably produced verified waveform contracts — a false statement in a pub
 what the contract's no-fabrication rule forbids. Both citation forms now count, through one shared constructor.
 
 The refusal that mattered most was statement-mediated coverage. `EvidenceIR` relates a statement to a visual
-region when the statement *is* its caption. Counting that would have marked 466 of the corpus's 1,089 captured
-figure-kind regions explained — including the reviewed `picture_0001`, whose only mediating statement is the
-literal caption `Figure 1: Example 1, with a shared ETB`. The reviewed cell would have failed while the run
-reported success.
+region when the statement *is* its caption, and how much that would have explained depends on how far the
+mediation is taken. Over the retained corpus's 1,089 captured figure-kind regions it explains 110 when applied
+only to the collections coverage already reads, and 466 when applied to every collection carrying
+`supporting_statement_ids`. The reviewed `picture_0001` sits only in the second set — its one mediating
+statement is the literal caption `Figure 1: Example 1, with a shared ETB`, cited through the statement-lift
+collections rather than the grounded-projection ones. So the reading a naive implementation would reach for is
+exactly the one that reports success on a cell the review requires to fail.
 
 The field lives in the existing residual claim families rather than new ones, taking the registry from 168 to
 170 rules over 50 public fields at each stage. It is deliberately not an `INTENT_CARRIED_FIELDS` entry even
