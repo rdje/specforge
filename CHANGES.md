@@ -1,3 +1,21 @@
+### SPEC-TO-INTENT-ALIGNMENT.8c — freeze the captured-region carrier design
+
+- Froze the structural gate before writing production code. A captured `VisualEvidenceItem` whose `asset_kind`
+  is a figure-kind region, and whose `evidence_id` no SemanticIR record cites in its provenance, reaches no
+  canonical carrier and earns exactly one typed residual. Table-kind visual assets are excluded because they
+  already reach canonical carriers through the register, signal, and timing paths, so a residual for them would
+  duplicate a promoted fact.
+- Reused the established shape rather than inventing one: the gate is the figure-side sibling of
+  `completeness::unexplained_intent_bearing_tables`, where coverage is resolved through existing provenance and
+  nothing is fabricated. `extract_records_from_vlm_observations` already threads each visual item's evidence id
+  into every record it projects, so coverage is a provenance membership test over concrete collections.
+- Placed the new field in the existing `semantic.residual` and `intent.residual` claim families, whose residual
+  capability and topology obligation already describe it, expanding the registry from 168 to 170 field rules.
+- Confirmed a real-document witness that needs no external source. `den0068_2018_07_23_coresight_base_system_architecture`
+  is a retained measurable chain whose persisted EvidenceIR holds 19 visual items: 12 table regions whose asset
+  ids SemanticIR cites, and seven figure regions whose evidence ids it never cites. The first is `visual_0008`
+  on `picture_0001` — exactly the region, evidence id, and fact key the review expects for the selected family.
+
 ### SPEC-TO-INTENT-ALIGNMENT.8 — correct the carrier contract and record the replay blocker
 
 - Verified the chain-currency baseline before the production slice: 24 replayed / 24 current / zero stale at

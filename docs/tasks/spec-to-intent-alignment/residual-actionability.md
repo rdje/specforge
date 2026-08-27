@@ -269,6 +269,37 @@ The `.8c` chain-currency baseline is green at this boundary: 24 replayed / 24 cu
 EvidenceIR, SemanticIR, IntentIR, and the ISF adapter, with 54 explicitly unmeasurable legacy chains, 24
 blocked/no-file adapter states, and exactly the declared retained bundle set on disk.
 
+## Frozen carrier design (`.8c`, before implementation)
+
+The structural gate is the figure-side sibling of the existing table-side region accounting in
+`crates/specforge/src/ir/completeness.rs#unexplained_intent_bearing_tables`: coverage is resolved through
+existing provenance and nothing is fabricated. A captured `VisualEvidenceItem` whose `asset_kind` is a
+figure-kind region, and whose `evidence_id` no SemanticIR record cites in its provenance, reaches no canonical
+carrier and earns exactly one typed residual. Table-kind visual assets are excluded because they already have
+canonical carriers through the register, signal, and timing paths. `extract_records_from_vlm_observations`
+threads `visual_item.evidence_id` into every record it projects, so coverage is a provenance membership test
+over concrete collections rather than a text scan.
+
+The record is a new shared type carrying `region_id` (the item's `asset_id`), `region_kind`,
+`supporting_evidence_ids` (the item's `evidence_id`), the typed cause
+`no_canonical_carrier_for_captured_region`, a `reason`, the boundary `evidence_to_semantic_ir`, and an operator
+`replay` route. It lands on `SemanticIr` and is carried unchanged to `IntentIr`, matching the frozen `.8a`
+record grammar.
+
+Registration is data-driven and already has a home. `semantic.residual` and `intent.residual` exist in
+`doctrine/production_genericity/claim_family_inventory.tsv` with `symbol_capability: residual` and
+`alpha_obligation: residual_topology_invariant`. Adding the new field to both families' `top_level_fields` and
+to the `SEMANTIC_RULE_FIELDS` / intent field tables expands the registry from 168 to 170 field rules; the
+inventory-bound qualification test in `crates/specforge/src/ir/mod.rs` and the proof-context `insert_field!`
+sites move with it.
+
+A real reviewed document already witnesses the family without any external source. `den0068_2018_07_23_coresight_base_system_architecture`
+is one of the 24 retained measurable chains, and its persisted EvidenceIR holds 19 visual items: 12 table
+regions, all of whose asset ids SemanticIR cites, and seven figure regions, none of whose evidence ids SemanticIR
+cites anywhere. The first of those seven is `visual_0008` on `picture_0001` — exactly the region, evidence id,
+and fact key the review expects for the selected family. The RISC-V IOMMU document is not in the retained set,
+so its chain stays explicitly unmeasurable until the external source returns.
+
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8` activation
 
 - [x] **REPRODUCE / MEASURE** — the tracked `.7c.ii` result decomposes exactly into 4 actionable, 8 not-required,
@@ -377,6 +408,13 @@ blocked/no-file adapter states, and exactly the declared retained bundle set on 
 - `2026-08-27`: mark `.8d` blocked rather than pending. Eight reviewed sources, including both selected
   static-topology documents, are authorized external read-only inputs that are not on disk, so a population
   replay is not runnable and a partial replay must not be published as a population result.
+- `2026-08-27`: build the `.8c` gate as the figure-side sibling of the existing table region accounting rather
+  than a new mechanism. Coverage stays a provenance membership test over concrete collections, so the producer
+  cannot fabricate and cannot key on any document, vendor, protocol, or review label.
+- `2026-08-27`: exclude table-kind visual assets from the carrier. They already reach canonical carriers through
+  the register, signal, and timing paths, and a residual for them would duplicate a promoted fact.
+- `2026-08-27`: host the new field in the existing `semantic.residual` and `intent.residual` claim families
+  rather than minting new ones. Their residual capability and topology obligation already describe it exactly.
 
 ## Open Questions
 
