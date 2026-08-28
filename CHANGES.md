@@ -1,3 +1,45 @@
+### CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts
+
+- Re-derived every count `TOOLBOX.md` publishes for the three claim doctrines — **11 counts, 8 confirmed,
+  3 stale** — rather than patching only the one that was noticed. A partial sweep would leave the surface
+  exactly as untrustworthy as it was.
+- Found that two of the three were **per-commit counters rather than constants**. The census unit total and
+  its excluded count rise by exactly one for every slice that prepends a rolling-ledger head — measured
+  56 → 57 → 58 → 59 → 60 across `50775894`, `e6f5012d`, `f9e785ca`, `fdda3c53`, and this commit. Re-carrying
+  them is stale on landing: the first attempt wrote 59/35 and this very commit made them 60/36. Both are
+  **withdrawn** from the prose and the reader is routed to `--report`.
+- Corrected the one genuinely stale constant: the mdBook contract's incomplete assertion regions 75 → **89**.
+  Confirmed unchanged: 11 derived, 7 identity-gated, 6 registered, 0 incomplete, 86 produced anchors, 51 exact
+  evidence keys, 35 registered annotations, 0 unresolved, and the 7 cited controls / 7 exact RED regions /
+  6 governed producers / 0 ignored / 0 untracked audit.
+- Attributed each drift per revision from Git instead of assuming: census units were 56 at `50775894` — correct
+  when written — then 57 at `e6f5012d` (`SOURCE-IR-REPRODUCIBILITY.5`), 58 at `f9e785ca` (`.11`), 59 at
+  `fdda3c53` (`.12`); mdBook incomplete was 75 at `50775894` and 89 from `e6f5012d` onward. `.5` started both
+  drifts and `.11`/`.12` widened one, every one of them under a fully green doctrine gate.
+- Named the mechanism rather than patching the symptom. The census closes a `[claim: <id>]`-annotated region on
+  the **presence** of the annotation — TOOLBOX's counts are three of the 35 `registered_annotations`, never
+  among the 51 `exact_evidence` keys — and `claim-provenance-gate-active` digest-binds `TOOLBOX.md` only as a
+  file that has not changed. Neither leg reads a number in a sentence, which is exactly how three published
+  counts went stale while every gate stayed green. The same drift was found and repaired inside a claim record
+  itself during `.11`: `mdbook-quantitative-census-frozen`'s assertion said 318 regions while its own pinned
+  rederive marker said 319.
+- Opened `.7` to gate it: bind each published count in a claim-annotated region to its producer command and the
+  exact report field, re-derive and compare, and report an unmapped count rather than ignoring it.
+
+### CHANGES-LEDGER-ROLLOVER.2 — seal eighteen records so the ledger accepts its next append
+
+- Rolled `CHANGES.md` because `CLAIM-VERIFICATION-ADOPTION.6`'s record crossed the mandatory 90-percent line
+  signal: the committed root was 1,608 lines (89.3% of the 1,800-line health target) and the record took it to
+  1,636 (90.9%). The protocol refuses the append unless the same change performs the declared rollover.
+- Sealed the eighteen oldest opening post-migration records into
+  `docs/archive/rolling-ledgers/changes/segment-0013-2026-08-28.md` (259 lines, 21,230 bytes) under a plan
+  pinning boundary commit `fdda3c53` and its exact opening blob. Two records were the minimal line-safe cut and
+  would have returned the ledger to the signal within one slice; eighteen leaves 1,348 lines (74.9%) and holds
+  for several ordinary slices.
+- No record was edited, reordered, or reflowed, no limit or milestone moved, and the retained 75-record
+  migration suffix was not touched. Dry run green before the applied run; segment, manifest, index, and
+  chronology chain validate and older members stay byte-identical.
+
 ### SOURCE-IR-REPRODUCIBILITY.12 — lead the conservation figure with the defect, not the non-carry rate
 
 - Corrected a presentation defect in a published claim. `.5` headlined "8,648 of 18,870 converter text
@@ -292,266 +334,6 @@
 - The workspace suite passes 470 / 168 / 1,365 / 4 with zero failures, warning-denied Clippy is clean, all five
   production-genericity components pass, and the frozen `.8a` contract still rejects 21/21 mutations. The derived
   flow oracle is refreshed to 2,364 functions / 14,642 helper edges / 12,643 decision sites / 1,462 macros.
-
-### SPEC-TO-INTENT-ALIGNMENT.8a — freeze the required residual contract
-
-- Froze the required-residual rule as an executable machine contract at
-  `doctrine/spec_to_intent/residual_actionability_contract.json`. Its checker implements the rule and re-derives
-  every case's counts rather than trusting declared numbers: 18 closed cases derive 17 required and five met
-  observations across 19 control classes.
-- Fixed the counting unit. A `residual` or `non_applicable` cell requires one observation at each promoted
-  stage; a `canonical` cell requires one per reviewed key that stage does not promote and none when it promotes
-  them all. A missing canonical key always adds a required observation and is met only by an exact, provenanced,
-  actionable residual for that exact key, so a recall loss can never leave the denominator.
-- Refused credit for contradiction. A residual whose fact key duplicates a key the same stage promotes never
-  satisfies an observation, and a stage carrying one is credited with nothing.
-- Froze the typed record grammar: the reviewed `/residuals` collection, region/family/fact-key identity, nonempty
-  `/source_ids`, and the three actionability fields `/reason`, `/first_failing_stage`, and `/replay` over three
-  declared boundaries. Four closed typed causes are declared and the three without a carrier must say so, so a
-  later slice cannot claim shipped coverage by renaming an existing one.
-- Re-derived the frozen decomposition and the selected `static_component_topology` family from the pinned
-  current result instead of restating them, and required the selected family to be the only residual gap left in
-  its reviewed category.
-- Repaired a silent green structurally. The gap's published reproduction named the facade package, so it matched
-  zero tests and exited zero. The composer now derives conformance-owned test roots from that crate's own module
-  declarations, resolves a filter's owning package, and fails controller-input composition for any published
-  reproduction that is not an executable form for its owning package. Both tracked authorities changed only that
-  one field, in three places.
-- Twenty-one contract mutations reject, including relabeling a missing canonical fact as residual success,
-  dropping a missing key from the denominator, crediting a duplicate or inactionable residual, relaxing the
-  fail-closed or duplicate rule, widening the boundary vocabulary or typed causes, and reverting the repair.
-- The workspace suite passes 470 / 165 / 1,365 / 4 with zero failures and eight ignored, warning-denied Clippy is
-  clean, and all five production-genericity components pass. The derived flow oracle is refreshed to 2,363
-  functions / 14,639 helper edges / 12,631 decision sites / 1,462 macros; graph derivation and production
-  behavior are unchanged.
-
-### SPEC-TO-INTENT-ALIGNMENT.8 — activate required residual actionability
-
-- Decomposed the published 4/24 residual actionability at the pinned `.7c.ii` result. Twelve of the 14 reviewed
-  cells declare residual queries and each declaring cell contributes two observations: four are actionable
-  through the existing non-applicable timing carrier, eight belong to four canonical cells that are already
-  exact at every promoted stage, and twelve are genuinely required and absent.
-- Localized the eight unmeetable observations to `summarize_global`, which adds two observations for every cell
-  that *declares* residual queries rather than for every residual the review requires. `boundary_scores` uses a
-  matched residual key only to explain a canonical key missing at a boundary, so a residual duplicating a
-  promoted key adds nothing to conservation and asserting one would contradict the promoted fact.
-- Enumerated the twelve required-and-absent observations as the complete current hard-failure set: two prose
-  non-contract regions, one table-of-contents region, one packed programming structure, and two static-topology
-  figures. Production owns exactly one typed residual carrier — non-applicable scalar timing rows — and none for
-  a captured prose statement, table region, or visual region that reaches no canonical `IntentIR` surface.
-- Selected `static_component_topology` as the first bounded production family: one family, one modality, two
-  documents, and the only single family whose closure can clear a whole reviewed category.
-- Found and owned a measurement-integrity defect. The controller publishes this gap's reproduction as
-  `cargo test -p specforge --lib ir::source_to_intent_eval`, which matches zero tests and exits zero because the
-  evaluator module lives in `specforge-conformance` and is only re-exported through the `specforge::ir` facade;
-  the conformance-crate command runs 14 tests. `.8a` owns the repair and a control against silent-green
-  reproduction commands.
-- Changed no production, evaluator, fixture, result, or controller authority. `.8a` freezes the required-residual
-  contract and typed grammar, `.8b` corrects the denominator fail-closed, `.8c` implements the bounded carrier,
-  and `.8d` replays the reviewed population and publishes.
-- Rolled the change ledger in the same transaction: this record crosses the mandatory 90-percent line rollover
-  signal, so the oldest opening post-migration records are sealed into a new archive segment.
-
-### SPEC-TO-INTENT-ALIGNMENT.7c — close canonical recovery
-
-- Refactored the inference-antecedent recognizer into one shared parser that returns the exact subject, symbolic
-  state, and whether same-clause appositive authority was required. EvidenceIR production behavior and ordering
-  remain unchanged; the existing polarity pass is still the sole level authority.
-- Added a document-local SemanticIR grounding index that admits only the exact provenance-bearing record recreated
-  from one uniquely identified source statement. Matching requires subject, kind, target, condition, negation,
-  source, support, and confidence; it creates no interface signal, declaration, alias, or subject-wide exemption.
-- Proved the APB-shaped local `PSEL` record reaches SemanticIR and IntentIR while source- and support-altered
-  impostors remain residual and distinct globally declared `PSELX` remains unchanged.
-- Seven focused tests, the 1,365-pass/5-ignore/0-fail core suite, warning-denied Clippy, and all five production-
-  genericity components pass. All 24 retained chains are current; an independent 192-file rollback comparison
-  found 96 proof-only changes, zero public changes, and zero validation changes. Its exact rollback was removed.
-
-- Completed the first production-revision replay of all 12 reviewed sources and 48 isolated stages. APB's exact
-  provenance-bearing inference-antecedent fact now closes EvidenceIR at 40/0/0 with zero fabrication; every other
-  reviewed cell remains unchanged.
-- Localized the remaining loss to SemanticIR's declared-interface partition: source-local `PSEL` is correctly
-  absent from the global catalog, so the recovered record enters `semantic_ungrounded_records_not_promoted` and
-  SemanticIR/IntentIR remain 39/0/1. The attempt is retained only as diagnostic scratch, not published authority.
-- Split the repair from the clean publication retry. `.7c.i` owns exact record-scoped source/statement/subject/
-  appositive revalidation without adding an interface, declaration, alias, or general Layer-D exemption;
-  `.7c.ii` owns complete replay, controller refresh, publication, cleanup, and signoff.
-- Replayed all 12 review-locked sources and 48 isolated stages independently at production revision `a4a08cd4`.
-  EvidenceIR, SemanticIR, and IntentIR each publish 40/0/0 TP/FP/FN, provenance closes at 43/43, conservation
-  closes at 120/120, and fabrication plus unexplained drops are zero.
-- Published strict byte-current replay, result, controller-input, and controller-report authorities. Source/
-  evidence capture remain 14/14 and 12/14, residual actionability remains 4/24, wire-protocol joins physical-link
-  as supported, every hard gate passes, and insufficient comparable history keeps state honestly unmeasurable
-  while ranking `.8` first.
-- Removed both exact same-volume replay roots and the runtime source map after publication: 6,189 files /
-  2,294,248 KiB total, with all three paths absent and no shared cache touched.
-- The complete workspace suite independently caught and closed a stale production-graph test oracle after the
-  replay-composer refactor added 12 test-support functions. The refreshed derived boundary is 2,359 functions /
-  14,629 helper edges / 12,618 decision sites / 1,462 macros; graph derivation and production behavior are unchanged.
-- The scheduled artifact census removed the exact rebuildable `target/debug/incremental` tree: 6,531 files /
-  6,280,800 KiB, with residue absent; no dependency, durable evidence, or tracked artifact was removed.
-
-### SPEC-TO-INTENT-ALIGNMENT.7b — recover inference antecedent state
-
-- Added a production sibling inside the normative signal-constraint family that extracts one independently
-  explicit `is asserted` or `is deasserted` state from the prefix of a bounded inference sentence. It requires
-  exactly one supported marker, state, and declared prefix signal; ambiguity, negation, trailing qualification,
-  missing authority, case-fold collision, and another statement class fail closed.
-- Added clause-local authority for the complete descriptive appositive `... signal, ID, ...` without mutating
-  the document catalog or aliasing identifier shape. Exact declarations win, one unique ASCII-case-insensitive
-  declaration may resolve, and distinct suffix spellings remain opaque.
-- Preserved the existing consequence producer and pattern/dynamic ordering. The shared polarity post-pass remains
-  sole level authority, and only sibling-appended semantic duplicates are removed after refinement.
-- Executed all 20 frozen cases directly from the `.7a` contract and added a complete synthetic EvidenceIR build
-  of the APB witness. The build emits polarity-neutral `PSEL|must_be_asserted|<missing>` plus the three unchanged
-  validity facts while forbidding PSEL/PSELX HIGH, LOW, or borrowed VALID.
-- Rebuilt all 24 proof-affected retained chains through four stages. A 192-file / 856,132-KiB rollback showed 96
-  proof/validation-only changes and zero public deltas; independent currency is 24 current / zero stale at every
-  stage, exact retention passes, and the rollback is removed without residue. The published 39/0/1 population
-  remains unchanged until `.7c` performs the complete 12-source/48-stage replay.
-
-### SPEC-TO-INTENT-ALIGNMENT.7a — freeze antecedent recovery contract
-
-- Added an executable design authority that joins the exact APB first-boundary witness to a closed,
-  source-grounded inference-prefix grammar without changing production extraction.
-- Froze seven positive and thirteen refusal cases across every supported marker, asserted/deasserted state,
-  active-high/active-low/unknown polarity, ambiguity, consequence-borrowing, and deduplication boundary.
-- Corrected a foundational identity premise before mutation: the witness grounds source-local `PSEL` through
-  its same-clause signal appositive; the separately declared `PSELX` remains opaque, and suffix spelling is
-  explicitly a negative control rather than alias authority.
-- Corrected the paired polarity premise: no reviewed evidence resolves `PSEL` active-high or active-low, so the
-  oracle now expects polarity-neutral `must_be_asserted`; explicit HIGH, LOW, and borrowed VALID are all
-  forbidden. The exact population remains 39/0/1 because the same single fact is still missing.
-- Bound `.7b` to all 24 proof-affected retained chains and `.7c` to the complete 12-source/48-stage replay;
-  the independent checker passes and all eleven controlled contract mutations go RED.
-
-### SPEC-TO-INTENT-ALIGNMENT.7 — activate canonical recovery
-
-- Activated the controller-ranked canonical-recovery program and decomposed it into `.7a` contract freeze,
-  `.7b` generic implementation plus retained-chain reconciliation, and `.7c` complete replay/signoff.
-- Localized the sole current APB loss without changing production: the consequence extractor correctly keeps
-  `PSEL` out of the three `must be valid` subjects, but no companion path preserves the antecedent's independently
-  explicit `is asserted` state. The repair contract therefore forbids borrowing consequence kind or value.
-- Added a bounded `canonical-recovery` task-evidence part, moved `.7` to its post-migration primary route, and
-  synchronized root, index, manifest, containment, live status, roadmap, mdBook, retrieval, and resume truth.
-
-### CLAIM-VERIFICATION-ADOPTION.5 — close three-leg claim verification adoption
-
-- Added the complete mdBook author/reviewer walk-through: scope classification, runnable source/control replay,
-  honest missing-leg records, stochastic intervals, and the auditor's asymmetric disagreement workflow.
-- Published the five-architecture composition fact and final public status, and corrected the stale public
-  priority from the completed genericity program to controller-ranked `SPEC-TO-INTENT-ALIGNMENT.7`.
-- Closing full CI exposed and repaired a stale production-graph test oracle left by the clarification planner's
-  one-module/one-boundary expansion; all seven exact expectations now match the independently derived live graph.
-- Closed the independent current/manual audit, all-tier doctrines, selected full CI, mdBook, and project-local
-  residue boundary; removed 12,097 rebuildable incremental files (about 9.6 GiB) and two empty temp logs. `[claim: claim-provenance-gate-active]`
-
-### CLAIM-VERIFICATION-ADOPTION.4 — prove tracked producers and falsifying controls
-
-- Bound all seven cited falsification controls to named perturbations, expected diagnostics, and exact tracked
-  producer regions; the independent catalog-feasibility probe now observes a controlled sub-ceiling RED result.
-- Added a derived six-producer census that rejects producer-shaped ignored or untracked files under every
-  governed source root. The current result is 7 controls / 7 exact RED regions / 6 producers / 0 ignored /
-  0 untracked. `[claim: claim-provenance-gate-active]`
-- Expanded the claim-gate fixtures from 22 to 27 cases for missing, stale, or misdirected RED evidence and both
-  scratch-producer classes.
-
-### CLAIM-VERIFICATION-ADOPTION.3c — close the current-claim sweep
-
-- Added a fail-closed reverse join from every produced current-census candidate to exact frozen evidence or a
-  current registered annotation. Final lockstep replay closes 79 candidates as 51 exact + 28 registered +
-  0 unresolved; the three-candidate increase is the visible effect of publishing this closure in governed files.
-- Expanded the census controls from 15 derived-heavy cases to 27 cases that positively instantiate and drive RED
-  all five outcome families plus every surface/view/path/region/source/identity coverage boundary.
-- Independently preserved the repaired 56-unit vector and 304-region book result, including all 75 narrower
-  incompletes, and closed `.3`. `[claim: current-claim-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3b.4 — close current-claim repairs
-
-- Re-froze the outer current-claim census at 56 exact units: 11 derived, 7 identity-gated, 6 registered,
-  0 incomplete, and 32 excluded. Semantic comparison preserves all 46 non-frontier outcomes while exact
-  lockstep-publication identities rotate visibly.
-- Replaced only the five broad incomplete title anchors with explicit identity dispositions plus their exact
-  README/fact-card/FSMGen route, workflow-capacity, or mdBook-mapping authorities. The narrower 75 incomplete
-  mdBook assertion regions remain unverified.
-- Closed `.3b` with synchronized claim durability, retrieval truth, task/memory/toolbox, and mdBook guidance.
-  `[claim: current-claim-census-frozen]` `[claim: mdbook-quantitative-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3b.3.3 — freeze mdBook quantitative authorities
-
-- Registered `mdbook-quantitative-census-frozen` with executable result replay, the nineteen-case controlled
-  falsification suite, and digest-complete durability over the contract, sources, lockstep publications, fact
-  card/catalog, and retained task evidence.
-- Added the routed Knowledge Map fact card and bounded catalog/projection updates. The verified claim freezes the
-  exact 8 registered / 75 incomplete / 221 excluded map; it does not promote any incomplete underlying assertion.
-  `[claim: mdbook-quantitative-census-frozen]`
-- Closed `.3b.3` and left the outer five-key census unchanged for `.3b.4`'s atomic rewrite.
-  `[claim: current-claim-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3b.3.2 — adjudicate mdBook quantitative assertions
-
-- Adjudicated all 304 prose candidates with exact single-line regions: eight join the verified workflow-capacity
-  claim, 75 current actionable assertions name all three evidence legs missing, and 221 have exact authored,
-  example/identity, or dated-boundary scope.
-- Repaired a frozen-result defect that applied the field-array cap to the JSONL record list; record and nested-
-  array bounds are now dimensionally separate and a nineteenth controlled case prevents recurrence.
-- Independent classification diff and current-language/past-tense challenge scans found no missing, overlap,
-  stale, or broadened exclusion. The outer frozen census remains unchanged.
-  `[claim: current-claim-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3b.3.1 — implement the mdBook quantitative census
-
-- Added a self-bounded inventory contract and deterministic checker that derive governed book membership,
-  exclude fenced examples, emit stable prose candidates, and validate exact-once region authority fail closed.
-- The executable replay corrected the unreproducible design estimate from 301 to 304 stable candidates across
-  the same 21 files; eighteen controlled cases cover fence, region, authority, source, schema, and bound failures.
-- The inventory deliberately contains no semantic regions. `.3b.3.2` owns adjudication, and the outer frozen
-  census remains unchanged.
-  `[claim: current-claim-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3b.3.0 — freeze the mdBook quantitative census design
-
-- Froze a prose-only candidate grammar, exact non-overlapping region coverage, closed actionable/excluded
-  outcomes, tracked verifier/claim joins, and portable JSONL bounds before implementing the mdBook sweep.
-- Separated inventory, semantic adjudication, and result freeze so the candidate grammar cannot move while its
-  own findings are classified. No book assertion or outer census outcome changed.
-  `[claim: current-claim-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3b.2 — bind the workflow baseline authority
-
-- Separated authored workflow identity from the actionable capacity paragraph and bound the latter to the
-  existing `workflow-standard-capacity-profile` authority; no duplicate claim or hand-carried value was added.
-  `[claim: workflow-standard-capacity-profile]`
-- Reproduced the tracked derivation, strict-boundary controls, and independent catalog-feasibility probe while
-  preserving the frozen census for its atomic closing leaf. `[claim: current-claim-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3b.1 — bind maintained-reference authorities
-
-- Proved that the existing README policy, fact-card route, and canonical collection producers already derive
-  exact maintained-reference membership and exercise controlled RED cases for missing, drifted, unsafe, residue,
-  and bounded states.
-- Froze their later census binding without adding a redundant checker or treating navigation identity as truth
-  of member prose. The 51 frozen outcomes remain unchanged until `.3b.4`.
-  `[claim: current-claim-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3b.0 — freeze the current-claim repair map
-
-- Decomposed the five frozen incomplete title anchors by authority before any source or census repair: three
-  maintained-reference routes, one authored-policy / registered-capacity split, and one exact-region mdBook
-  quantitative contract, followed by a single atomic result re-freeze.
-- Preserved all 51 census outcomes and every source assertion. The sequence prevents a broad title or selective
-  currentness check from being cited as evidence for uninspected member prose.
-  `[claim: current-claim-census-frozen]`
-
-### CLAIM-VERIFICATION-ADOPTION.3a.2 — freeze current-claim census findings
-
-- Corrected the first result pass before freeze: candidate identity now includes semantic view, and frozen
-  validation requires evidence for every included surface and all five views.
-- Froze 51 exact tracked-region outcomes: 11 derived, four identity-gated, four registered, five incomplete, and
-  27 excluded. Fifteen source/identity verifiers execute from the frozen records.
-- The five incomplete keys are the README maintained-reference, mdBook quantitative, workflow-doctrine baseline,
-  knowledge-card reference, and FSMGen issue-packet reference surfaces. They are the complete `.3b` repair
-  frontier; this result slice changes no source assertion.
-  `[claim: current-claim-census-frozen]`
 
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
 

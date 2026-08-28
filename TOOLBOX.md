@@ -88,11 +88,15 @@ control also binds one exact known-bad source region. The report exposes 7 cited
 6 governed producers / 0 ignored / 0 untracked producer candidates. `[claim: claim-provenance-gate-active]`
 
 For the current-surface authority sweep, use `perl scripts/check_current_claim_census.pl --check`, `--report`,
-`--produce`, and `--self-test`. The repaired report has 56 exact units—11 derived, 7 identity-gated, 6 registered,
-0 incomplete, and 32 excluded—and retains every non-frontier outcome. Candidate closure separately reports
+`--produce`, and `--self-test`. Its stable partition is 11 derived, 7 identity-gated, 6 registered, and
+0 incomplete, and it retains every non-frontier outcome. The **excluded count and the unit total are not
+constants and are deliberately not published here**: every slice that prepends a rolling-ledger head earns
+exactly one more excluded unit, measured 56 → 57 → 58 → 59 → 60 across `50775894`, `e6f5012d`, `f9e785ca`,
+`fdda3c53`, and this commit. A number that increments once per commit is stale the moment it is written, so
+read it from `--report`. Candidate closure separately reports
 86 produced anchors = 51 exact evidence keys + 35 current registered annotations + 0 unresolved; the 27-case
 self-test instantiates every outcome family and challenges all coverage joins. Zero outer incomplete does not
-certify the 75 incomplete assertion regions exposed by the narrower mdBook contract.
+certify the 89 incomplete assertion regions exposed by the narrower mdBook contract.
 `[claim: current-claim-census-frozen]`
 
 For manual-wide quantitative review, use `perl scripts/check_book_quantitative_claims.pl --check` to derive the
@@ -102,6 +106,13 @@ source-identity, and portable-bound fault matrix. Inventory output is a review d
 authority is accepted only from exact non-overlapping regions in frozen phase. The current report keeps authored,
 example/identity, and dated scope separate from registered authority and honest missing evidence legs. The
 `mdbook-quantitative-census-frozen` claim verifies that mapping only; an `incomplete` region remains unverified.
+
+Every count in this section is re-derived from those three `--report` commands, not carried. That is not a
+style preference: a `[claim: <id>]` annotation closes its region on the **presence** of the annotation, and the
+digest gate proves only that a governed file has not changed — neither reads the numbers in the sentence. Three
+counts here drifted under a fully green gate before `CLAIM-VERIFICATION-ADOPTION.6` re-derived them; two of
+those were per-commit counters that no maintenance discipline could have kept current, so `.6` withdrew them
+rather than re-carrying them. `.7` owns making the remaining ones re-derive mechanically.
 
 ## How to run the SpecForge CLI
 

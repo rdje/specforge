@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `done`
+- Status: `active` (`.0`–`.6` done; `.7` owns the gate that would have observed `.6`'s defect)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
-- Last updated: `2026-08-15`
+- Last updated: `2026-08-28`
 - Owner: repo-local workflow
 - Owner directive: adopt `/Volumes/SSD/Documents/github/pgen/docs/CLAIM_VERIFICATION.md` if SpecForge has not
   already adopted it.
@@ -287,6 +287,53 @@ the workflow through the mdBook and repository review path.
   artifacts are cleaned or retained by policy
   Verification: mdBook test/build, catalogs, full CI, final doctrine and locality gates
   Commit: `CLAIM-VERIFICATION-ADOPTION.5 — close three-leg claim verification adoption`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.6`
+  Status: `done` (`2026-08-28`)
+  Goal: correct the claim-annotated prose counts that have drifted from their own producers, and name the
+  mechanism that let them
+  Acceptance: this tree's own review surface publishes counts that no longer hold. `TOOLBOX.md` states the
+  census has "56 exact units … 32 excluded" where `check_current_claim_census.pl --report` now derives 59 and
+  35, and "the 75 incomplete assertion regions exposed by the narrower mdBook contract" where
+  `check_book_quantitative_claims.pl --report` derives 89. Each is re-derived from its named producer, each
+  drift is attributed to the commit that caused it, and every remaining count in the same section is
+  re-derived and either confirmed or corrected — a partial sweep would leave the surface exactly as
+  untrustworthy as it is now. The measured cause must be stated rather than the symptom patched:
+  `TOOLBOX.md` is digest-bound as a `canonical_input` of `claim-provenance-gate-active`, so the gate proves
+  the file has not changed *without knowing what its sentences claim*, and a claim's own `assertion` prose is
+  outside the join too — the same drift was found and repaired inside
+  `mdbook-quantitative-census-frozen`, whose assertion said 318 regions while its pinned rederive marker
+  said 319. `.7` owns the gate; `.6` owns the correction and the attribution
+  Verification: producer reports re-derived at HEAD, per-revision attribution from Git, doctrine gate
+  Evidence: all **11** counts the section publishes were re-derived from their named producers; **8 confirmed,
+  3 stale**. Two of the three turned out to be **per-commit counters**, not constants: the census unit total and
+  its excluded count rise by exactly one for every slice that prepends a rolling-ledger head, measured
+  56 → 57 → 58 → 59 → 60 across `50775894`, `e6f5012d`, `f9e785ca`, `fdda3c53`, and this commit. Re-carrying
+  them would have been stale on landing — the first attempt at this leaf wrote 59/35 and the very commit
+  publishing it made them 60/36 — so `.6` **withdraws** both from the prose and routes the reader to
+  `--report`. The one genuinely stale constant is corrected: mdBook incomplete regions 75 → **89**. Confirmed
+  unchanged: 11 derived, 7 identity-gated, 6 registered, 0 incomplete, 86 produced
+  anchors, 51 exact evidence keys, 35 registered annotations, 0 unresolved. Attribution is per revision, from
+  Git rather than assumed — census units 56 at `50775894` (correct when written), 57 at `e6f5012d` (`.5`),
+  58 at `f9e785ca` (`.11`), 59 at `fdda3c53` (`.12`); mdBook incomplete 75 at `50775894`, 89 from `e6f5012d`
+  onward. So `.5` started both drifts and this tree's own `.11`/`.12` widened one of them, each under a fully
+  green gate. Cause measured, not inferred: the census closes a `[claim: <id>]`-annotated region on the
+  **presence** of the annotation — TOOLBOX's counts are 3 of the 35 `registered_annotations`, never among the
+  51 `exact_evidence` keys — and `claim-provenance-gate-active` digest-binds `TOOLBOX.md` only as an unchanged
+  file. Neither leg reads a number
+  Commit: `CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.7`
+  Status: `pending`
+  Goal: make a claim-annotated prose count re-derive against its producer, so this drift is observed
+  Acceptance: a digest-bound live document proves only that it has not changed, which is why three published
+  counts went stale under a fully green gate — and two of them went stale *because of* commits that the gate
+  passed on the way past. A bounded, declared map binds each published count in a claim-annotated prose
+  region to its producer command and the exact field of that producer's report, and the checker re-derives
+  and compares rather than pattern-matching numbers out of prose; an unlisted count in a governed region is
+  reported rather than ignored, so the map cannot silently shrink. RED controls prove a drifted count, a
+  count bound to the wrong field, and an unmapped count in a governed region are each observed
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.6`
 
 ## Current Frontier
 

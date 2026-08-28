@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `CHANGES-LEDGER-ROLLOVER`
-- Status: `done`
+- Status: `active` (`.0`/`.1` done; `.2` rolls the ledger again at the same signal)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-11`
-- Last updated: `2026-08-11`
+- Last updated: `2026-08-28`
 - Owner: repo-local workflow
 
 ## Goal
@@ -69,6 +69,26 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   Acceptance: `the root is below the 80% warning on every dimension after this leaf's own ledger entry lands; older members including segment-0005 stay byte-identical; no limit, milestone, or ceiling moves; the gate passes`
   Verification: `segment-0006-2026-08-11.md seals four more post-capsule records (55 lines / 4,713 bytes, SHA-256 72af06cd…a2f7), leaving the root at 92 records / 1,385 lines / 200,226 bytes; with this leaf's own 14-line entry the ledger is ~77% of its line health target, against 80.1% after .0; dry run exact on the first attempt; git diff proves segment-0005 and every earlier member byte-identical; scripts/check_doctrines.sh 6/6 with no change_history warning`
   Commit: `CHANGES-LEDGER-ROLLOVER.1 — size a rollover cut to include the record it must itself write`
+
+- ID: `CHANGES-LEDGER-ROLLOVER.2`
+  Status: `done` (`2026-08-28`)
+  Goal: seal eighteen records so the ledger accepts `CLAIM-VERIFICATION-ADOPTION.6`'s append
+  Acceptance: the committed root at `fdda3c53` is 1,608 lines — 89.3% of the 1,800-line health target — and
+  `.6`'s record takes it to 1,636 (90.9%), past the mandatory 90% signal. The protocol's own rule is that the
+  next ordinary append is refused *unless the same change performs the declared rollover*, so this leaf is the
+  blocking prerequisite of that commit rather than an independent slice, and both land together with the
+  rollover named in the body. A plan pins boundary commit `fdda3c53` and its exact opening blob; the dry run is
+  green before the applied run; no record is edited, reordered, or reflowed; no limit, milestone, or ceiling
+  moves; the retained 75-record migration suffix is untouched; and the resulting root is below the 80% warning
+  on every dimension with the segment, manifest, index, and chronology chain validating
+  Evidence: sealed 18 records / 259 lines / 21,230 bytes into
+  `docs/archive/rolling-ledgers/changes/segment-0013-2026-08-28.md`, leaving a 1,348-line root (74.9%) that
+  is 1,390 lines (**77.2%**) after this slice's two records. Cut sized deliberately, not minimally: two records
+  were the minimal line-safe cut and would have returned the ledger to the signal within one ordinary slice.
+  Dry run exact and warning-safe before the applied run; `check_rolling_ledger_protocol.pl` reports all 4
+  ledgers satisfying the lossless live-window/archive protocol afterwards
+  Plan: [`docs/research/claim-verification-adoption-6-changes-rollover-plan.jsonl`](../research/claim-verification-adoption-6-changes-rollover-plan.jsonl)
+  Commit: `CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts`
 
 ## Current Frontier
 
