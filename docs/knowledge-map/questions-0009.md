@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what happened to the four signal two enum Introducing CoreSight adapter
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > what happened to the original Introducing CoreSight rollback
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what happened to the stale 83 interfaces in the GIC Overview Guide
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > what happens if someone runs clean --scope source-normalized on a declared document
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what happens to a figure that reaches no canonical carrier
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > what happens to a page sidecar path when page images are not persisted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > what happens to a register-worded caption that grounds no identifier
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -30,6 +46,8 @@
   > what identifies the canonical inputs to generated Knowledge Map shards
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > what inputs define corpus KB managed block currentness
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > what is 64 in the status ledger
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is ADR 0019
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
@@ -279,21 +297,3 @@
   > what is the canonical knowledge-map architecture path
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > what is the claim verification registry schema
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > what is the complete parenthetical data-head declaration census
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what is the completeness gauge over-counting on APB
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the condition-read-as-obligation error class and its gate
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > what is the constraint-subject-must-be-declared filter
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what is the corpus impact of the authority empty interface fallback
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what is the corpus task evidence writer transaction after migration

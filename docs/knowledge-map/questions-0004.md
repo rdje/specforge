@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > how are external reviewed PDFs replayed without persisting host paths
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -70,6 +72,8 @@
   > how are unknown tables reclassified by the VLM
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how big does source_ir.json get / how does it scale with page count
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how big may one LIVE_ACHIEVEMENT_STATUS record be
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how can I browse every SpecForge knowledge fact card by id or title
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -96,6 +100,8 @@
   > how do I add fact-card capacity
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I change the reviewed source-to-intent fixture projection
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how do I count the records in the status ledger
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -292,9 +298,3 @@
   > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge currently capture transactions and why is it thin
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how does specforge declare a signal mentioned only in prose

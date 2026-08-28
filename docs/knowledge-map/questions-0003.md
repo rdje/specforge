@@ -58,6 +58,8 @@
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > does an explicit timing row unit override a caption unit
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > does any command report the live record count of a rolling ledger
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -295,5 +297,3 @@
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how are external held-out PDFs identified without absolute host paths
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > how are external reviewed PDFs replayed without persisting host paths

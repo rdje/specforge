@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Certified Definition
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Discovery
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Ready Definition
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after USB4 Connection Manager
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -66,6 +72,8 @@
   > how many public fields do SemanticIR and IntentIR declare
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how many quantitative prose candidates are in the SpecForge book
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how many records does LIVE_ACHIEVEMENT_STATUS.md hold
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -108,6 +116,8 @@
   > how much disk do the retained normalized bundles cost
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how much fact-card catalog index headroom remains
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how much fixed overhead does the status ledger live view carry
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how much headroom remains in the corpus coverage task file
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
@@ -200,6 +210,8 @@
   > is 'X, which connects to Y, drives Z and W' clause distribution handled
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > is 64 the status ledger record count
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > is AArch64 External Debug a methodology guide or under-extracted architecture
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -282,17 +294,7 @@
   > is lower recall acceptable when removing protocol-specific shortcuts
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > is mdbook test part of the canonical SpecForge CI gate
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > is planned_live the current live window
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > is qwen2.5:14b-instruct good enough for NLI
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is relation-completeness the right bar dimension for register / command / coherency protocols
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > is signal direction faithful to the document now or still defaulted to output
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > is source_ir.json bounded in size for very large PDFs
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is subject coordination (Actor1 and Actor2 drive X) handled / worth building

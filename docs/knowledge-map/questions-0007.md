@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is relation-completeness the right bar dimension for register / command / coherency protocols
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > is signal direction faithful to the document now or still defaulted to output
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > is source_ir.json bounded in size for very large PDFs
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the .5.ii enum member-quality gate landed (yes, LANDED 2026-06-24: is_prose_fragment_member_name + PROSE_SENTENCE_SPINE_WORDS in ir/evidence.rs gate the member loop in synthesize_encoding_declarations_for_enum, one seam for both call paths; AXI manager.isf now emits (BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7)) recovering
   > codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)
@@ -286,15 +298,3 @@
   > what are the blocked clean replay source to IntentIR counts
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > what are the canonical SWD protocol surface counts
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what are the corrected 17-document behavioral held-out outcomes
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > what are the current AArch64 External Debug artifact hashes
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what are the current CoreSight Base System artifact hashes
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what are the current Introducing CoreSight artifact hashes
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > what are the current OpenCAPI AFU address note artifact hashes
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > what are the current OpenCAPI Certified Definition artifact hashes

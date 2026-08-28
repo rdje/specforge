@@ -1,3 +1,51 @@
+### STATUS-LEDGER-ROLLOVER.4a — re-derive the status-ledger measurement `.3` and `.4` were sized on
+
+- Re-derived the live root instead of trusting the row that had just been published. `.4`'s own decision
+  paragraph asserted a live window of "102,748 bytes across **64** records — a **1,605-byte mean**", from
+  which it derived a 71-record capacity bound. `LIVE_ACHIEVEMENT_STATUS.md` holds **70** records / 95,877
+  record bytes / a **1,369.7-byte** record mean, and `.3`'s row attributed the byte figure to `5fe81128`,
+  where the root was 101,547 bytes across 69 records.
+- Named where `64` came from, because a wrong count with a plausible provenance is worse than an obvious
+  one. `64` is this surface's record **warning threshold** — `live_limits.records` 80 x `warning_pct` 80 —
+  published as an observed count; `102,748 / 64` then manufactured both the 1,605-byte mean and the
+  71-record bound. A threshold and a measurement are indistinguishable once they are prose.
+- Corrected the budget itself, not only the count. The naive `115,000 / 80` = 1,437.5 bytes per record
+  cannot be met by any ledger, because the live view also charges a 46-byte prologue and a 6,825-byte
+  validation-projection trailer to the same target. The honest budget is
+  `(health_bytes - live_view_overhead) / live_limits.records` = **1,351.6 bytes**.
+- Kept the conclusion that survives and narrowed the one that did not. The declared 80-record window and
+  115,000-byte health target remain mutually unsatisfiable at current record sizes — capacity is **78**
+  records, not 71 — so the byte dimension still binds first and a rollover only resets the clock. The
+  driver is sharper than the tree stated: the newest ten records average **2,085.6 bytes**, 1.54x the
+  budget, which alone caps the window at 51; the pinned migration suffix averages 1,496.2.
+- Found the structural reason the error was publishable, which is the finding that matters. **No tracked
+  producer reports a rolling ledger's live record count.** `check_live_document_size.pl --report` emits
+  bytes, lines, and line bytes; `check_rolling_ledger_protocol.pl --report` emits the registry's frozen
+  `planned_live` migration boundary. The record dimension is bounded, sits at 87.5% of its bound, and is
+  unreported, so nothing in the repository could contradict the number. `.4` now owns publishing it.
+- Falsified rather than re-checked. The competing hypothesis — that continuation bullets inflate a shell
+  count — is separated by the tracked checker's own `current_snapshot_bullets_v1` parser, probed through
+  rollover-plan boundary arithmetic: `opening_records: 71` goes RED with `has fewer records than its
+  opening boundary` and `70` does not. Two independent producers agree at exactly 70. The durability leg
+  is explicitly **missing** and is `.4`'s deliverable.
+- Repaired a second stale published claim the mandatory alignment review turned up, because a known
+  current-facing contradiction is a `COMMIT.md` blocker. `current-claim-census-frozen`'s own **assertion**
+  carried "56 exact evidence units" and "86 produced candidates close through 51 exact evidence keys and 35
+  current registered annotations"; the producer reports 61 units and 72/50/22. Attributed exactly rather
+  than merely refreshed: `CLAIM-VERIFICATION-ADOPTION.6` measured those counts **before** applying its own
+  `CHANGES.md` rollover in the same commit, and that rollover moved **14** claim-annotated regions out of the
+  live window into `segment-0013`, which is not a current census surface. 86 - 14 = 72. A commit falsified
+  its own published claim, under a green gate, inside one transaction. The counters are withdrawn from the
+  assertion and the reader is routed to `--report`, which is `.6`'s own remedy applied one surface further
+  out; `CLAIM-VERIFICATION-ADOPTION.7` keeps the gate open, now scoped to claim assertions as well as prose.
+- Opened `CLAIM-VERIFICATION-ADOPTION.8` for a capacity stop the same review measured.
+  `doctrine/claim_verification/current_claim_census.jsonl` declares `max_records: 128` and holds **109**,
+  growing by exactly one record per slice that prepends a rolling-ledger head — 105 / 105 / 105 / 106 / 107 /
+  107 / 108 / 109 across the last eight commits. About **19 slices** of headroom, and the growth is pure
+  accumulation, since a row for a former head stops being a candidate and nothing retires it.
+- Docs-only; no product status changed, and appending a status record would itself have forced the
+  rollover `.3` owns, so `LIVE_ACHIEVEMENT_STATUS.md` is deliberately untouched.
+
 ### SOURCE-IR-REPRODUCIBILITY.2 — resolve a reviewed region by content, not by ordinal position
 
 - Fixed the anchor fragility `.0` found. `build_fixture.py:source_record` selected a reviewed region by

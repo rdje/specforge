@@ -3,7 +3,8 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6` done; `.7` owns the gate that would have observed `.6`'s defect)
+- Status: `active` (`.0`–`.6` done; `.7` owns the gate that would have observed `.6`'s defect; `.8` tracks
+  the census registry's own capacity)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
 - Last updated: `2026-08-28`
@@ -334,6 +335,32 @@ the workflow through the mdBook and repository review path.
   reported rather than ignored, so the map cannot silently shrink. RED controls prove a drifted count, a
   count bound to the wrong field, and an unmapped count in a governed region are each observed
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.6`
+  Fourth instance (`2026-08-28`, found by `STATUS-LEDGER-ROLLOVER.4a`'s alignment review, repaired in that
+  commit as a `COMMIT.md` blocker): the drift `.6` corrected in `TOOLBOX.md` was also inside the claim
+  registry itself. `current-claim-census-frozen`'s own **assertion** carried "56 exact evidence units",
+  "11 derived, seven identity-gated, six registered, ... 32 excluded", and "86 produced candidates close
+  through 51 exact evidence keys and 35 current registered annotations". The producer now reports 61 units,
+  11/7/5/38, and 72/50/22. The cause is exactly `.6`'s own finding, one surface further out: the counts were
+  measured before `.6` applied its own `CHANGES.md` rollover, and that rollover moved **14** claim-annotated
+  regions out of the live window into `segment-0013`, which is not a current census surface — 86 - 14 = 72,
+  exactly. So a commit made its own published claim false, under a green gate, in the same transaction. The
+  repair applies `.6`'s remedy to the registry: the per-commit counters are withdrawn from the assertion and
+  the reader is routed to `--report`. This is repair, not closure — `.7` still owns the gate that would have
+  observed it, and it must reach claim *assertions*, not only claim-annotated prose
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.8`
+  Status: `pending` (tracking-only)
+  Goal: give `current_claim_census.jsonl` a lifecycle before it reaches its own bound
+  Acceptance: the census registry declares `max_records: 128` and holds **109** (`2026-08-28`). It grows by
+  **exactly one record per slice that prepends a rolling-ledger head**, because the first non-blank line of
+  `CHANGES.md` is a produced candidate and each new head needs its own evidence row; measured 105 -> 105 ->
+  105 -> 106 -> 107 -> 107 -> 108 -> 109 across `d94f11a3`, `f676c889`, `e6f5012d`, `f9e785ca`, `fdda3c53`,
+  `5fe81128`, `245b3b60`, and `STATUS-LEDGER-ROLLOVER.4a`. That is roughly **19 slices** before the bounded
+  registry refuses the append, and the growth is pure accumulation: a row for a former head is no longer a
+  candidate and is retained only because nothing retires it. Decide the lifecycle — retire a row when its
+  region stops being a produced candidate, or roll the registry the way its ledgers roll — and prove the
+  retained evidence still resolves. Do not raise the bound to postpone it
+  Prerequisite: none; it blocks nothing today
 
 ## Current Frontier
 
@@ -720,8 +747,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Blockers
 
-- None. The adoption tree is closed; after the clean `.5` commit, PNT activates controller-ranked
-  `SPEC-TO-INTENT-ALIGNMENT.7`.
+- None. `.7` and `.8` are open and block nothing today; `.8`'s capacity stop is roughly 19 slices out.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.5`
 
@@ -1115,6 +1141,12 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-28`: `.7` gained its fourth instance and its repair, and `.8` was opened. `STATUS-LEDGER-ROLLOVER.4a`
+  found `current-claim-census-frozen`'s own assertion stale and attributed it exactly: `.6` measured 86/51/35
+  before applying its own `CHANGES.md` rollover, and that rollover moved 14 claim-annotated regions into an
+  archive segment that is not a current surface. The volatile counters are withdrawn from the assertion. The
+  same review measured that the census registry grows one record per ledger-prepending slice against a
+  declared 128-record bound, which `.8` now owns.
 - `2026-08-15`: Created from the owner's explicit adoption directive after confirming that SpecForge has no
   local claim-verification standard, claim registry/checker, or dedicated task tree.
 - `2026-08-15`: `.0` maps the source checklist onto existing exact-currentness and mutation infrastructure,

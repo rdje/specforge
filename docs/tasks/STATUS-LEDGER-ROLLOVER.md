@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-11`
-- Last updated: `2026-08-11`
+- Last updated: `2026-08-28`
 - Owner: repo-local workflow
 
 ## Goal
@@ -63,7 +63,7 @@ pressure axis here, because one status record is one line.
   Status: `active`
   Goal: the status ledger is back inside its warning band through its declared transaction, with no record
   edited and no bound moved, and the structural reason it keeps returning is measured
-  Children: `STATUS-LEDGER-ROLLOVER.0`, `.1`, `.2`
+  Children: `STATUS-LEDGER-ROLLOVER.0`, `.1`, `.2`, `.3`, `.4`, `.4a`
 
 - ID: `STATUS-LEDGER-ROLLOVER.0`
   Status: `done`
@@ -95,9 +95,13 @@ pressure axis here, because one status record is one line.
 - ID: `STATUS-LEDGER-ROLLOVER.3`
   Status: `pending`
   Goal: roll the status ledger before the next product record, and record how its plan is actually built
-  Acceptance: measured `2026-08-28` at `5fe81128`, `LIVE_ACHIEVEMENT_STATUS.md` is **102,748 bytes = 89.3%**
-  of its 115,000-byte health target, so the next ordinary record crosses the mandatory 90% signal and the
-  protocol refuses the append unless the same change performs the declared rollover. Two things must be
+  Acceptance: measured `2026-08-28` at `3b3ea863` (`.4a`; the root is unchanged since `245b3b60`),
+  `LIVE_ACHIEVEMENT_STATUS.md` is **102,748 bytes = 89.35%** of its 115,000-byte health target across
+  **70 records = 87.5%** of its 80-record window. Only a record of 751 bytes or less keeps the root under the
+  103,500-byte mandatory signal, and no record that size has been written in months, so the next ordinary
+  record crosses it and the protocol refuses the append unless the same change performs the declared
+  rollover. (`.4a` corrected this row: the revision was `5fe81128`, where the root was 101,547 bytes across
+  69 records, and the byte figure belongs to `245b3b60`.) Two things must be
   carried into that plan, both learned the hard way in `SOURCE-IR-REPRODUCIBILITY.2`:
   (1) **this ledger's plan cannot be hand-modelled the way `CHANGES.md`'s can.** Its grammar is
   `current_snapshot_bullets_v1` with `## Current snapshot` / `## Highest-priority remaining gap` markers and
@@ -119,18 +123,36 @@ pressure axis here, because one status record is one line.
   already their canonical homes; a status record that narrates them is duplicating a surface, not
   projecting status.
   This is not a style preference, and the measurement is what settles it. The ledger declares an
-  **80-record** live window and a **115,000-byte** health target, which together imply a mean of
-  **1,437 bytes per record** (1,638 at the 131,072-byte ceiling). Measured `2026-08-28`: the live window is
-  102,748 bytes across 64 records — a **1,605-byte mean**, so the byte dimension binds at **71 records** and
-  the declared 80-record window **can never be reached**. Records near 2.6 KiB bind it at roughly 44. Two
-  declared limits are therefore mutually unsatisfiable at current record sizes, which is the real cause of
-  the rollover treadmill; a rollover alone only resets the clock.
+  **80-record** live window and a **115,000-byte** health target. The live view is not only records: a
+  46-byte prologue and a 6,825-byte validation-projection trailer are charged to the same budget, so the
+  honest per-record budget is `(115,000 - 6,871) / 80` = **1,351.6 bytes**, not the naive `115,000 / 80`
+  = 1,437.5. Re-derived `2026-08-28` by `.4a` at `3b3ea863`: the live window is 102,748 bytes across
+  **70** records — 95,877 record bytes, a **1,369.7-byte record mean** — so capacity is **78 records** and
+  the declared 80-record window **cannot be reached**. Records near 2.6 KiB bind it at **40**. Two declared
+  limits are therefore mutually unsatisfiable at current record sizes, which is the real cause of the
+  rollover treadmill; a rollover alone only resets the clock.
+  The corrected margin is narrower than the one this leaf opened with (78 against 80, not 71), and the
+  driver is sharper: the **newest ten** records average **2,085.6 bytes**, 1.54x the budget, which alone
+  caps the window at **51**. The oldest 40 — the pinned migration suffix — average 1,496.2. Record size is
+  growing, and it is the recent records that spend the budget.
   Acceptance: the derived budget (`health_bytes / live_limits.records`) is checked rather than remembered —
   a record exceeding it, or a live-window mean exceeding it, is reported against the ledger the same way a
   size ceiling is, with a RED control proving an oversized record is observed. The check must derive the
   budget from the registry rather than carrying a literal, so it cannot go stale the way the counts
-  `CLAIM-VERIFICATION-ADOPTION.6` corrected did
-  Prerequisite: `STATUS-LEDGER-ROLLOVER.3`
+  `CLAIM-VERIFICATION-ADOPTION.6` corrected did. `.4a` also measured *why* the wrong count survived
+  publication: **no tracked producer reports this root's live record count.**
+  `perl scripts/check_live_document_size.pl --report` emits bytes, lines, and line bytes only, and
+  `perl scripts/check_rolling_ledger_protocol.pl --report` emits the registry's frozen `planned_live`
+  migration boundary, not the live window. The record dimension is bounded, is at 87.5% of its bound, and
+  is unreported — so this gate must publish the count as well as the budget
+  Prerequisite: `STATUS-LEDGER-ROLLOVER.3`, `STATUS-LEDGER-ROLLOVER.4a`
+
+- ID: `STATUS-LEDGER-ROLLOVER.4a`
+  Status: `done`
+  Goal: re-derive the ledger measurement `.3` and `.4` were sized on, after it failed an independent count
+  Acceptance: `every figure .3 and .4 publish about the live root is re-derived from the tracked root by an exact repository-relative command; a dimensionally different oracle confirms or refutes the record count; each corrected figure is restated with the conclusion that survives it; and the reason the error was publishable is named rather than treated as a slip`
+  Verification: `re-derivation at 3b3ea863 - LC_ALL=C awk '/^## Current snapshot$/{f=1;next} /^## Highest-priority remaining gap$/{f=0} f' LIVE_ACHIEVEMENT_STATUS.md | LC_ALL=C awk '{n++; b+=length($0)+1} END{printf "%d records, %d record bytes, mean %.1f\n", n, b, b/n}' reports 70 records / 95,877 record bytes / 1,369.7 mean, against wc -c = 102,748; falsification by the tracked checker's own current_snapshot_bullets_v1 parser, probed through rollover-plan boundary arithmetic - opening_records 71 goes RED with "has fewer records than its opening boundary" and 70 does not, so parse_snapshot and the marker extraction agree at exactly 70; root cause: 64 is this surface's record WARNING THRESHOLD (80 x 80%) and was published as an observed count, after which 102,748/64 produced the 1,605-byte mean and the 71-record bound; durability leg MISSING - no tracked producer reports the live record count, which is what STATUS-LEDGER-ROLLOVER.4 must add`
+  Commit: `STATUS-LEDGER-ROLLOVER.4a — re-derive the status-ledger measurement .3 and .4 were sized on`
 
 ## Current Frontier
 
@@ -138,7 +160,10 @@ pressure axis here, because one status record is one line.
 | --- | --- | --- | --- |
 | 1 | `STATUS-LEDGER-ROLLOVER.0` | `done` | the mandatory transaction; it unblocks the next product-status record |
 | 2 | `STATUS-LEDGER-ROLLOVER.1` | `done` | its alignment review was a blocker, so it landed in the same commit |
-| 3 | `STATUS-LEDGER-ROLLOVER.2` | `pending` | tracking only; it blocks nothing, and no ledger is at a stop today |
+| 3 | `STATUS-LEDGER-ROLLOVER.4a` | `done` | `.3` and `.4` were both sized on a wrong record count; nothing downstream could be built until it was re-derived |
+| 4 | `STATUS-LEDGER-ROLLOVER.3` | `pending` | the mandatory transaction; any next status record crosses the 90% byte signal |
+| 5 | `STATUS-LEDGER-ROLLOVER.4` | `pending` | the budget and the unreported record count that let `.4a`'s error through |
+| 6 | `STATUS-LEDGER-ROLLOVER.2` | `pending` | tracking only; it blocks nothing, and no ledger is at a stop today |
 
 ## Decisions
 
@@ -175,6 +200,9 @@ pressure axis here, because one status record is one line.
 | `2026-08-11` | `.0` gate | `bash scripts/check_doctrines.sh` | 6/6 PASS, `CHAIN-CURRENCY` DEFER as registered; the `achievement_status` warning lines are gone from the pressure report |
 | `2026-08-11` | `.1` drift scan | compared every current-state number in the book's rolling-ledger chapter with the live roots | four of four "current root" sentences were false; the migration-boundary sentences were correct, because they name an exact capture boundary |
 | `2026-08-11` | `.1` book gate | `mdbook build docs/book`, `scripts/check_book_current_truth.sh` via the doctrine driver, fresh aggregate authority | build exit 0; the five pinned live-docs literals are untouched; aggregate 36 files / 14,140 lines / 881,809 bytes matches baseline + delta exactly |
+| `2026-08-28` | `.4a` re-derivation | counted the live window from the tracked root with its registered grammar markers, and measured the fixed prologue/trailer overhead the byte budget also pays | 70 records / 95,877 record bytes / 6,871 bytes of non-record overhead against 102,748 total; record mean 1,369.7, whole-window mean 1,467.8; the published `64 records` and `1,605-byte mean` are both wrong |
+| `2026-08-28` | `.4a` falsification | probed the tracked checker's own `current_snapshot_bullets_v1` parser through rollover-plan boundary arithmetic, an independent producer from the marker extraction | `opening_records: 71` RED (`has fewer records than its opening boundary`); `opening_records: 70` not RED — both producers agree at exactly 70, so the competing hypothesis that continuation bullets inflate the shell count is refuted |
+| `2026-08-28` | `.4a` root cause | asked where `64` could have come from, and which producer should have caught it | `64` is this surface's record warning threshold (80 x 80%), published as an observed count; `102,748 / 64` then yields the 1,605-byte mean and the 71-record bound. No tracked producer reports the live record count — `check_live_document_size.pl --report` emits bytes/lines/line_bytes and `check_rolling_ledger_protocol.pl --report` emits the frozen `planned_live` boundary — so nothing could contradict it |
 | `2026-08-11` | `.2` finding | measured the pinned migration suffix against each ledger's health target | it is immovable under the current registry and dominant everywhere: changes 170,695 B (66.9%), development-notes 155,662 B (62.3%), live-achievement-status 68,133 B (59.2%), rust-codebase-analysis 84,380 B (46.9%). After a maximal cut the usable live capacity left is 387 / 464 / 24-records / 79 lines respectively |
 
 ## Commit Log
@@ -183,6 +211,7 @@ pressure axis here, because one status record is one line.
 | --- | --- | --- |
 | `STATUS-LEDGER-ROLLOVER.0` | `STATUS-LEDGER-ROLLOVER.0 — seal segment-0007 and give the status ledger real headroom` | 21 records sealed; older members byte-identical; root at 62.5% records / 70.1% bytes |
 | `STATUS-LEDGER-ROLLOVER.1` | same commit | four false current-root claims removed from the book; a known current-facing contradiction is a `COMMIT.md` blocker, so it could not wait for its own slice |
+| `STATUS-LEDGER-ROLLOVER.4a` | `STATUS-LEDGER-ROLLOVER.4a — re-derive the status-ledger measurement .3 and .4 were sized on` | 64 records -> 70; 1,605-byte mean -> 1,369.7; binds at 71 -> 78; the unsatisfiable-limits conclusion survives with a narrower margin |
 
 ## Changelog
 
@@ -194,6 +223,14 @@ pressure axis here, because one status record is one line.
 - `2026-08-11`: `.1` added and closed. `.0`'s alignment review found the book asserting four current live-root
   sizes, all false. The repair is not "refresh the numbers" — a number that every commit invalidates must be
   derived on read, so the book now states the shape and names the command.
+- `2026-08-28`: `.4a` added and closed. `.4`'s own decision paragraph published `64 records` and a
+  `1,605-byte mean` for a root that holds 70 records at a 1,369.7-byte mean; `64` is this surface's record
+  warning threshold, not a count, and every figure derived by dividing by it was wrong. The conclusion
+  survives — the 80-record window and the 115,000-byte target remain mutually unsatisfiable — but by 2
+  records, not 9, and the honest budget is 1,351.6 bytes once the 6,871-byte prologue/trailer overhead is
+  charged. The finding that matters for `.4` is not the arithmetic: the record dimension is bounded, sits at
+  87.5% of its bound, and **no producer reports it**, so nothing in the repository could have contradicted
+  the published number.
 - `2026-08-11`: `.2` opened as tracking-only. Root-causing why this ledger returns to its threshold so fast
   found a structural answer that is not specific to this ledger, so it is measured and recorded rather than
   fixed inside a rollover slice.

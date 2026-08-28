@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge currently capture transactions and why is it thin
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how does specforge declare a signal mentioned only in prose
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > how does specforge drop a zero-evidence phantom actor like controller or agent
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -291,9 +297,3 @@
   > how many corpus refreshes remain after Introducing CoreSight
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Certified Definition
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Discovery
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Ready Definition
