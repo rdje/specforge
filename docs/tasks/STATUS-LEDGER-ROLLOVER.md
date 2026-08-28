@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `STATUS-LEDGER-ROLLOVER`
-- Status: `active`
+- Status: `active` (`.0`/`.1`/`.3`/`.4`/`.4a` done; `.2` tracking-only)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-11`
 - Last updated: `2026-08-28`
@@ -141,7 +141,7 @@ pressure axis here, because one status record is one line.
   `.4`'s point.
 
 - ID: `STATUS-LEDGER-ROLLOVER.4`
-  Status: `pending`
+  Status: `done` (`2026-08-28`)
   Goal: gate the per-record budget this surface's own limits already imply
   Decision (`2026-08-28`, owner-delegated): a status record states the **delivered status delta** — which
   metric moved, to what value, and whether the product claim changed — and **not the method**. Method,
@@ -172,6 +172,28 @@ pressure axis here, because one status record is one line.
   migration boundary, not the live window. The record dimension is bounded, is at 87.5% of its bound, and
   is unreported — so this gate must publish the count as well as the budget
   Prerequisite: `STATUS-LEDGER-ROLLOVER.3`, `STATUS-LEDGER-ROLLOVER.4a`
+  Reported as pressure, not as corruption (decided `2026-08-28`, on measurement): the records already on
+  every surface are sealed evidence that no compliant change may shrink, and all four ledgers carry records
+  above their derived budget today — 62/91, 38/83, 20/44, 17/56. A `problem()` would therefore be a stop
+  with no exit, which is the anti-pattern `LIVE-DOC-STOP-RISK` exists to prevent. The check reports the way
+  the generic live-size gate reports an approaching ceiling: a named, quantified, non-fatal line, with the
+  derivation shown inline so a reader can recompute it.
+  Evidence (`2026-08-28`): `scripts/check_rolling_ledger_protocol.pl` gains `measure_record_budget` and
+  `validate_record_budget`. The budget is
+  `int((health_targets.bytes_each - live-view overhead) / live_limits.records)`, read from
+  `doctrine/live_document_size/surfaces.jsonl` and `rolling_ledgers.jsonl` with no literal anywhere, and the
+  overhead is measured as `live bytes - sum(record bytes)` rather than assumed zero. `--report` now emits a
+  `live` object per migrated ledger — records, declared_records, record_bytes, overhead_bytes, health_bytes,
+  record_budget_bytes, record_mean_bytes, max_record_bytes, max_record_ordinal, oversized_records,
+  reachable_records — which is the first producer to publish a rolling ledger's live record count at all.
+  Measured across all four ledgers, and the finding generalizes beyond this one: **two of four declared
+  windows are unreachable** — `changes` holds 109 records against a declared 128 at its 2,328-byte mean, and
+  `live-achievement-status` holds 68 against 80 at 1,588. `development-notes` (101 vs 96) and
+  `rust-codebase-analysis` (109 vs 96) are reachable. Self-test 35 -> **41**, with **seven observed RED
+  perturbations**, each isolating one leg: overhead not charged, budget carried as a literal, oversized
+  records never reported, unreachable window never reported, the size comparison loosened, the declared
+  window ignored, and the health target ignored. A sixth control proves a live view whose overhead exceeds
+  its own health target is a hard failure rather than a negative budget.
 
 - ID: `STATUS-LEDGER-ROLLOVER.4a`
   Status: `done`
@@ -188,7 +210,7 @@ pressure axis here, because one status record is one line.
 | 2 | `STATUS-LEDGER-ROLLOVER.1` | `done` | its alignment review was a blocker, so it landed in the same commit |
 | 3 | `STATUS-LEDGER-ROLLOVER.4a` | `done` | `.3` and `.4` were both sized on a wrong record count; nothing downstream could be built until it was re-derived |
 | 4 | `STATUS-LEDGER-ROLLOVER.3` | `done` | the mandatory transaction; the root is back to 66.75% bytes / 55.00% records |
-| 5 | `STATUS-LEDGER-ROLLOVER.4` | `pending` | the budget and the unreported record count that let `.4a`'s error through |
+| 5 | `STATUS-LEDGER-ROLLOVER.4` | `done` | the budget and the record count are derived, published, and controlled |
 | 6 | `STATUS-LEDGER-ROLLOVER.2` | `pending` | tracking only; it blocks nothing, and no ledger is at a stop today |
 
 ## Decisions
@@ -232,6 +254,9 @@ pressure axis here, because one status record is one line.
 | `2026-08-28` | `.3` transaction | `--rollover-plan` dry run, then `--apply-rollover`; `git diff` over every prior archive member; live-size gate | dry run "exact and warning-safe" on the second attempt (the first carried deliberate placeholders to harvest actuals); applied root-last; all ten older segments and the source capsule byte-identical; the `achievement_status` warning lines are gone from the pressure report |
 | `2026-08-28` | `.3` cross-check | predicted the resulting root bytes by hand from the per-record size table before running the checker | 76,758 predicted, 76,758 reported — the two figures a planner can model (`keep + records == post_migration_records`, and root bytes) both agree, so the harvested metrics are not merely self-consistent |
 | `2026-08-28` | `.3` record-count corroboration | read the dry run's own `resulting_live.records` against the plan's cut | 44 = 70 - 26, an independent third confirmation of `.4a`'s corrected 70-record count, this time from the checker's transaction path rather than its boundary arithmetic |
+| `2026-08-28` | `.4` derivation | read the budget from the registry pair rather than a literal, and charged the live view's prologue/trailer to it | `int((bytes_each - overhead) / live_limits.records)`; four ledgers derive 1,992 / 2,603 / 1,351 / 1,872 bytes with 0 / 20 / 6,871 / 269 bytes of overhead |
+| `2026-08-28` | `.4` population | ran the new report over all four ledgers | two declared windows are unreachable — `changes` 109 of 128, `live-achievement-status` 68 of 80 — and every ledger carries records above budget (62/91, 38/83, 20/44, 17/56) |
+| `2026-08-28` | `.4` controls | `--self-test`, then seven targeted perturbations of the production code, each restored after observation | 35 -> 41 checks; every perturbation observed RED and named the specific leg it broke; no perturbation left the suite green |
 | `2026-08-11` | `.2` finding | measured the pinned migration suffix against each ledger's health target | it is immovable under the current registry and dominant everywhere: changes 170,695 B (66.9%), development-notes 155,662 B (62.3%), live-achievement-status 68,133 B (59.2%), rust-codebase-analysis 84,380 B (46.9%). After a maximal cut the usable live capacity left is 387 / 464 / 24-records / 79 lines respectively |
 
 ## Commit Log
@@ -242,6 +267,7 @@ pressure axis here, because one status record is one line.
 | `STATUS-LEDGER-ROLLOVER.1` | same commit | four false current-root claims removed from the book; a known current-facing contradiction is a `COMMIT.md` blocker, so it could not wait for its own slice |
 | `STATUS-LEDGER-ROLLOVER.4a` | `STATUS-LEDGER-ROLLOVER.4a — re-derive the status-ledger measurement .3 and .4 were sized on` | 64 records -> 70; 1,605-byte mean -> 1,369.7; binds at 71 -> 78; the unsatisfiable-limits conclusion survives with a narrower margin |
 | `STATUS-LEDGER-ROLLOVER.3` | `STATUS-LEDGER-ROLLOVER.3 — roll the status ledger, and record how its plan is actually built` | 26 records sealed as segment-0011; root 70 -> 44 records / 102,748 -> 76,758 bytes; older members byte-identical |
+| `STATUS-LEDGER-ROLLOVER.4` | `STATUS-LEDGER-ROLLOVER.4 — derive, publish, and control the per-record budget` | budget derived from the registry; live record count published for the first time; self-test 35 -> 41 with seven observed RED perturbations |
 
 ## Changelog
 
@@ -261,6 +287,12 @@ pressure axis here, because one status record is one line.
   charged. The finding that matters for `.4` is not the arithmetic: the record dimension is bounded, sits at
   87.5% of its bound, and **no producer reports it**, so nothing in the repository could have contradicted
   the published number.
+- `2026-08-28`: `.4` closed, and its finding is wider than the leaf that opened it. The per-record budget
+  the declared limits imply is now derived from the registry and checked, the live record count is published
+  for the first time by any producer, and the same measurement over all four root ledgers shows **two**
+  mutually unsatisfiable windows, not one: `changes` reaches 109 of a declared 128. Reported as pressure
+  rather than as a violation, because sealed records cannot be shrunk and a stop with no compliant exit is
+  the failure mode `LIVE-DOC-STOP-RISK` owns. The tree's remaining leaf is `.2`, which is tracking-only.
 - `2026-08-28`: `.3` closed. The transaction ran as declared and no code changed. Two things are now durable
   that were not: the plan is built by harvesting the dry run's `actual` values rather than hand-modelling a
   grammar the checker re-renders, and the cut is sized against `.4a`'s overhead-net per-record budget instead

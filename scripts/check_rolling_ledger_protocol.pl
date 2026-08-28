@@ -55,6 +55,7 @@ usage() if $apply_rollover && !defined($rollover_plan_rel);
 usage() if defined($rollover_plan_rel) && ($report || $self_test || defined($emit_id) || defined($output_rel));
 
 my @errors;
+my @notices;
 my %surface_by_source;
 my %planned_rollover_ids;
 my $post_apply_validation = 0;
@@ -86,6 +87,8 @@ validate_archive_landings($meta, $ledgers);
 emit_planned_view() if defined $emit_id && !@errors;
 run_rollover_transaction($rollover_plan, $ledgers, $meta) if defined($rollover_plan) && !@errors;
 
+print "rolling-ledger: warning: $_\n" for @notices;
+
 if (@errors) {
     print STDERR "rolling-ledger: $_\n" for @errors;
     print STDERR "rolling-ledger: FAILED with ", scalar(@errors), " violation(s).\n";
@@ -110,6 +113,14 @@ sub absolute {
 sub problem {
     my ($message) = @_;
     push @errors, $message;
+}
+
+# A budget breach is pressure, not corruption: the records already on the surface are sealed evidence
+# that no compliant change may shrink, so a hard failure would be a stop with no exit. Report it the way
+# the generic live-size gate reports an approaching ceiling — named, quantified, and non-fatal.
+sub notice {
+    my ($message) = @_;
+    push @notices, $message;
 }
 
 sub read_registry {
@@ -448,6 +459,7 @@ sub validate_ledger {
         source_sha256 => $ledger->{measurement}{sha256} // '',
     };
 
+    my $live_report;
     if ($state eq 'migrated') {
         my $live_bytes = slurp(absolute($source), "ledger '$id' live source");
         if (defined $live_bytes) {
@@ -459,6 +471,9 @@ sub validate_ledger {
                 $live_metrics->{records} = scalar @{ $live->{records} };
                 validate_limits($ledger->{live_limits}, $surface, $live_metrics, $id, 'live source');
                 validate_retained_suffix($live->{records}, $selected, $id);
+                my $budget = measure_record_budget($live, $live_bytes, $ledger->{live_limits}, $surface, $id);
+                validate_record_budget($budget, $id);
+                $live_report = { %$live_metrics, %{ $budget // {} } };
             }
         }
     }
@@ -475,6 +490,9 @@ sub validate_ledger {
             planned_live => $planned_metrics,
             archived_records => $metrics->{records} - $planned_metrics->{records},
             first_archived_sha256 => sha256_hex($first_archived->{bytes}),
+            # The live window is the one dimension no other surface reports: the generic size gate measures
+            # bytes, lines, and line bytes, and `planned_live` above is the frozen migration boundary.
+            defined($live_report) ? (live => $live_report) : (),
         }), "\n";
     }
 }
@@ -1259,6 +1277,69 @@ sub validate_limits {
     }
 }
 
+# The declared live window is a pair, not two independent bounds: `live_limits.records` records must fit
+# inside the surface's `bytes_each` health target. The live view is not only records — a rolling ledger
+# also carries a stable prologue and trailer that spend the same target — so the budget one record may
+# occupy is derived net of that overhead. Every input is read from the registry; nothing is carried.
+sub measure_record_budget {
+    my ($parsed, $bytes, $limits, $surface, $id) = @_;
+    return if ref($limits) ne 'HASH' || ref($surface) ne 'HASH' || ref($parsed) ne 'HASH';
+    my $window = $limits->{records};
+    my $health = ref($surface->{health_targets}) eq 'HASH' ? $surface->{health_targets}{bytes_each} : undef;
+    return if !defined($window) || ref($window) || $window !~ /\A\d+\z/ || $window < 1;
+    return if !defined($health) || ref($health) || $health !~ /\A\d+\z/ || $health < 1;
+    my @records = @{ $parsed->{records} // [] };
+    return if !@records;
+    my $record_bytes = 0;
+    $record_bytes += length($_->{bytes}) for @records;
+    my $overhead = length($bytes) - $record_bytes;
+    if ($overhead < 0 || $overhead >= $health) {
+        problem("ledger '$id' live-view overhead $overhead is not below its ${health}-byte health target");
+        return;
+    }
+    my $available = $health - $overhead;
+    my $budget = int($available / $window);
+    return if $budget < 1;
+    my ($widest, $widest_ordinal) = (0, 0);
+    my $oversized = 0;
+    for my $record (@records) {
+        my $size = length($record->{bytes});
+        $oversized++ if $size > $budget;
+        ($widest, $widest_ordinal) = ($size, $record->{ordinal}) if $size > $widest;
+    }
+    my $mean = int($record_bytes / @records);
+    return {
+        records => scalar @records,
+        declared_records => $window,
+        record_bytes => $record_bytes,
+        overhead_bytes => $overhead,
+        health_bytes => $health,
+        record_budget_bytes => $budget,
+        record_mean_bytes => $mean,
+        max_record_bytes => $widest,
+        max_record_ordinal => $widest_ordinal,
+        oversized_records => $oversized,
+        reachable_records => int($available / ($record_bytes / @records)),
+    };
+}
+
+sub validate_record_budget {
+    my ($measure, $id) = @_;
+    return if ref($measure) ne 'HASH';
+    if ($measure->{reachable_records} < $measure->{declared_records}) {
+        notice("ledger '$id' cannot reach its declared $measure->{declared_records}-record window: at the"
+            . " measured $measure->{record_mean_bytes}-byte record mean the $measure->{health_bytes}-byte"
+            . " health target holds $measure->{reachable_records} records, so the byte dimension binds first"
+            . " and a rollover only resets the clock");
+    }
+    if ($measure->{oversized_records}) {
+        notice("ledger '$id' has $measure->{oversized_records} of $measure->{records} live records above its"
+            . " derived $measure->{record_budget_bytes}-byte record budget"
+            . " (($measure->{health_bytes} - $measure->{overhead_bytes}) / $measure->{declared_records});"
+            . " the widest is record $measure->{max_record_ordinal} at $measure->{max_record_bytes} bytes");
+    }
+}
+
 sub validate_archive_contract {
     my ($archive, $id, $state, $source, $metrics, $parsed, $grammar) = @_;
     if (ref($archive) ne 'HASH') {
@@ -1817,7 +1898,9 @@ sub run_self_test {
     my @failures;
     my $checks = 0;
     my @saved_errors = @errors;
+    my @saved_notices = @notices;
     @errors = ();
+    @notices = ();
     my @cases = (
         [
             'changes',
@@ -2092,7 +2175,89 @@ sub run_self_test {
     push @failures, 'a retired manifest residue was accepted' if !@errors;
     $checks++;
 
+    # Record-budget controls. Each one perturbs exactly one input and must be observed going RED, so the
+    # budget cannot be satisfied by a literal, by ignoring the live view's overhead, or by never firing.
+    my $budget_parsed = sub {
+        my ($sizes, $prologue, $trailer) = @_;
+        my @records;
+        for my $index (0 .. $#$sizes) {
+            push @records, {
+                ordinal => $index + 1,
+                title => "record $index",
+                bytes => ('r' x ($sizes->[$index] - 1)) . "\n",
+            };
+        }
+        my $parsed = { prologue => $prologue, records => \@records, trailer => $trailer };
+        return ($parsed, reconstruct($parsed));
+    };
+    my $budget_limits = { records => 10, lines => 100, bytes => 4000, line_bytes => 500,
+        warning_pct => 80, rollover_pct => 90 };
+    my $budget_surface = { health_targets => { lines_each => 100, bytes_each => 2000, line_bytes_each => 500 } };
+
+    @errors = (); @notices = ();
+    my ($compliant, $compliant_bytes) = $budget_parsed->([100, 100, 100], '', '');
+    my $compliant_measure = measure_record_budget(
+        $compliant, $compliant_bytes, $budget_limits, $budget_surface, 'self-test budget');
+    validate_record_budget($compliant_measure, 'self-test budget');
+    push @failures, 'a compliant record budget was not derived'
+        if !$compliant_measure || $compliant_measure->{record_budget_bytes} != 200;
+    push @failures, 'a compliant ledger produced a record-budget warning' if @notices || @errors;
+    $checks++;
+
+    @errors = (); @notices = ();
+    my ($oversized, $oversized_bytes) = $budget_parsed->([100, 100, 400], '', '');
+    validate_record_budget(measure_record_budget(
+        $oversized, $oversized_bytes, $budget_limits, $budget_surface, 'self-test budget'), 'self-test budget');
+    push @failures, 'a record above the derived budget was accepted'
+        if !grep { /above its derived 200-byte record budget/ && /record 3 at 400 bytes/ } @notices;
+    push @failures, 'an oversized record was reported as a fatal violation' if @errors;
+    $checks++;
+
+    @errors = (); @notices = ();
+    my ($unreachable, $unreachable_bytes) = $budget_parsed->([300, 300, 300], '', '');
+    validate_record_budget(measure_record_budget(
+        $unreachable, $unreachable_bytes, $budget_limits, $budget_surface, 'self-test budget'), 'self-test budget');
+    push @failures, 'an unreachable declared record window was accepted'
+        if !grep { /cannot reach its declared 10-record window/ && /holds 6 records/ } @notices;
+    $checks++;
+
+    # The overhead leg: identical records, but a prologue and trailer that spend the same byte target.
+    # A budget that ignored them would stay at 200 and would not fire.
+    @errors = (); @notices = ();
+    my ($charged, $charged_bytes) = $budget_parsed->([100, 100, 100], 'p' x 600, 't' x 600);
+    my $charged_measure = measure_record_budget(
+        $charged, $charged_bytes, $budget_limits, $budget_surface, 'self-test budget');
+    push @failures, 'the live view prologue and trailer were not charged to the record budget'
+        if !$charged_measure || $charged_measure->{overhead_bytes} != 1200
+        || $charged_measure->{record_budget_bytes} != 80;
+    validate_record_budget($charged_measure, 'self-test budget');
+    push @failures, 'an overhead-charged budget breach was accepted'
+        if !grep { /above its derived 80-byte record budget/ } @notices;
+    $checks++;
+
+    # The derivation leg: the same records under a different declared window must move the budget. A
+    # carried literal would report 200 for both.
+    @errors = (); @notices = ();
+    my $wider = measure_record_budget($compliant, $compliant_bytes,
+        { %$budget_limits, records => 4 }, $budget_surface, 'self-test budget');
+    push @failures, 'the record budget did not follow the declared window'
+        if !$wider || $wider->{record_budget_bytes} != 500;
+    my $leaner = measure_record_budget($compliant, $compliant_bytes, $budget_limits,
+        { health_targets => { lines_each => 100, bytes_each => 1000, line_bytes_each => 500 } },
+        'self-test budget');
+    push @failures, 'the record budget did not follow the health target'
+        if !$leaner || $leaner->{record_budget_bytes} != 100;
+    $checks++;
+
+    @errors = (); @notices = ();
+    measure_record_budget($charged, $charged_bytes, $budget_limits,
+        { health_targets => { lines_each => 100, bytes_each => 900, line_bytes_each => 500 } },
+        'self-test budget');
+    push @failures, 'a live view whose overhead exceeds its health target was accepted' if !@errors;
+    $checks++;
+
     @errors = @saved_errors;
+    @notices = @saved_notices;
     die "rolling-ledger self-test: $_\n" for @failures;
     print "rolling-ledger: $checks parser/control self-tests pass.\n";
 }

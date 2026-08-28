@@ -426,12 +426,44 @@ Two figures *can* be modelled by hand, and checking them guards against a harves
 self-consistent: `keep_opening_prefix_records + records` must equal `post_migration_records`, and the
 resulting root's byte size is the committed root minus the summed byte size of the cut records.
 
-Size the cut against the per-record budget the surface's own limits imply, not against the committed root.
-A live window declares both a record count and a byte target, and the byte target also pays for the root's
-prologue and trailer — so the budget one record may spend is
-`(health_bytes - live-view overhead) / live_limits.records`, and a retained migration suffix spends that
-budget permanently. When the two declared limits are not simultaneously satisfiable at current record
-sizes, the byte dimension binds first and a rollover only resets the clock.
+#### The per-record budget, and the live record count
+
+A rolling ledger declares its live window as a *pair*: `live_limits.records` records that must fit inside
+the surface's `health_targets.bytes_each`. The two are usually read as independent bounds, and they are not.
+The live view is more than its records — it also carries a stable prologue and, for
+`LIVE_ACHIEVEMENT_STATUS.md`, the whole gap section and generated validation trailer — and that material
+spends the same byte target. So the budget one record may occupy is
+
+```text
+record budget = (health_targets.bytes_each - live-view overhead) / live_limits.records
+```
+
+`perl scripts/check_rolling_ledger_protocol.pl --check` derives that budget for each ledger from the
+registry — never from a stored constant — and reports two kinds of pressure as non-fatal warnings:
+
+- records above the budget, with the count, the widest record, and the derivation shown inline;
+- a **declared record window that cannot be reached**, when the measured record mean means the byte target
+  fills first. Two of the four root ledgers are in that state today.
+
+These are warnings rather than violations on purpose. The records already on a surface are sealed evidence
+that no compliant change may shrink, so failing the build for them would be a stop with no exit — the exact
+condition the containment doctrine requires a remedy for. The remedy is on the *next* record: write a
+smaller one, or accept that the window is unreachable and change the declared pair deliberately.
+
+`--report` publishes the underlying measurement per migrated ledger, in a `live` object:
+
+```sh
+perl scripts/check_rolling_ledger_protocol.pl --report
+```
+
+It carries `records`, `declared_records`, `record_bytes`, `overhead_bytes`, `health_bytes`,
+`record_budget_bytes`, `record_mean_bytes`, `max_record_bytes`, `max_record_ordinal`, `oversized_records`,
+and `reachable_records`. This is the only place a rolling ledger's **live record count** is published: the
+generic live-size gate measures bytes, lines, and line widths, and this checker's `planned_live` block is
+the frozen migration boundary, not the current window. Size a rollover cut against this measurement, not
+against the committed root — a retained migration suffix spends the budget permanently, and when the two
+declared limits are not simultaneously satisfiable the byte dimension binds first and a rollover only
+resets the clock.
 
 Each initial migration copied the exact pre-migration file into an immutable, repository-local source
 capsule before shortening the stable root. The capsule manifest records its digest and dimensions; a

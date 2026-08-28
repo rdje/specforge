@@ -1,3 +1,35 @@
+### STATUS-LEDGER-ROLLOVER.4 — derive, publish, and control the per-record budget
+
+- Made the budget a derivation rather than a memory. `measure_record_budget` computes
+  `int((health_targets.bytes_each - live-view overhead) / live_limits.records)` from
+  `doctrine/live_document_size/surfaces.jsonl` and `rolling_ledgers.jsonl`, with no literal anywhere, and
+  measures the overhead as `live bytes - sum(record bytes)` instead of assuming it is zero. That last part
+  is the whole correction: the naive `bytes_each / records` reading is a budget no ledger can meet, because
+  a live view also carries a prologue and — for `LIVE_ACHIEVEMENT_STATUS.md` — a 6,871-byte gap section and
+  validation trailer that spend the same target.
+- Published the live record count, which no producer reported before. `--report` now carries a `live` object
+  per migrated ledger: records, declared_records, record_bytes, overhead_bytes, health_bytes,
+  record_budget_bytes, record_mean_bytes, max_record_bytes, max_record_ordinal, oversized_records, and
+  reachable_records. This is the gap that let `STATUS-LEDGER-ROLLOVER.4a`'s wrong count survive review — the
+  generic size gate measures bytes/lines/line widths, and `planned_live` is the frozen migration boundary.
+- The finding is wider than the leaf that opened it. Measured across all four root ledgers, **two declared
+  windows are unreachable**: `changes` holds **109** records against a declared **128** at its 2,328-byte
+  mean, and `live-achievement-status` holds **68** against **80** at 1,588. `development-notes` (101 vs 96)
+  and `rust-codebase-analysis` (109 vs 96) are reachable. Every ledger carries records above its budget:
+  62/91, 38/83, 20/44, 17/56.
+- Reported as pressure, not corruption, and the measurement is why. The records on a surface are sealed
+  evidence no compliant change may shrink, so a `problem()` would be a stop with no exit — the anti-pattern
+  `LIVE-DOC-STOP-RISK` exists to prevent. The checker gains a non-fatal notice channel that reports the way
+  the generic live-size gate reports an approaching ceiling: named, quantified, derivation shown inline.
+- Controls that can actually fail. Self-test 35 -> **41**, with **seven observed RED perturbations** of the
+  production code, each restored after observation and each naming the one leg it broke: overhead not
+  charged, budget carried as a literal, oversized records never reported, unreachable window never reported,
+  the size comparison loosened, the declared window ignored, and the health target ignored. A further
+  control proves a live view whose overhead exceeds its own health target is a hard failure rather than a
+  silently negative budget.
+- Book updated: the live-docs chapter now states the budget formula, why the overhead is charged, why the
+  two kinds of pressure are warnings rather than violations, and what `--report`'s `live` object carries.
+
 ### STATUS-LEDGER-ROLLOVER.3 — roll the status ledger, and record how its plan is actually built
 
 - Performed the declared transaction before it could block a product slice. At 102,748 bytes the status
