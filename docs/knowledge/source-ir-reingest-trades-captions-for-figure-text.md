@@ -12,10 +12,12 @@ answers:
   - "is the ingest drift purely additive"
   - "how many caption bindings does the corpus lose on re-ingest"
   - "which task owns the re-ingest decision"
-date: 2026-08-27
+  - "does re-ingesting lose three paragraphs"
+  - "did the ingest drift lose any content"
+date: 2026-08-28
 status: current
 tags: [source-ir, ingest, docling, captions, evidence-quality, measurement-integrity]
-evidence: docs/research/source-ir-reproducibility-census.md; docs/tasks/SOURCE-IR-REPRODUCIBILITY.md; scripts/measure_source_ir_reproducibility.py
+evidence: docs/research/source-ir-reproducibility-census.md; docs/research/ingest-content-loss-adjudication.md; docs/tasks/SOURCE-IR-REPRODUCIBILITY.md; scripts/measure_source_ir_reproducibility.py
 reverify: "python3 -c \"import json;d=json.load(open('generated/source_ir/102196_0100_01_2022_05_05_aarch64_external_debug_guide/source_ir.json'));print(sum(1 for x in d['structured_tables']+d['visual_assets'] if x.get('caption_text')))\""
 ---
 
@@ -64,20 +66,17 @@ evidence rather than decoration, and caption-mediated coverage is a measured sur
 (`scripts/measure_caption_mediated_coverage.py`). Trading a bound caption for an unbound text fragment costs
 the binding that made it evidence.
 
-A re-ingest also loses three paragraphs outright — one each in the USB4 Connection Manager guide, USB 3.2, and
-the Wishbone specification. These are distinguished from the other 28 dropped elements, which are
-re-segmentation: their text still appears somewhere in the replayed element stream, merged or split
-differently. Only text absent from the whole replayed stream counts as lost, and the census reports the two
-separately for exactly this reason.
+**A re-ingest does not lose any paragraph.** `.1` reported three elements — one each in the USB4 Connection
+Manager guide, USB 3.2, and Wishbone — as content the toolchain emits nowhere, distinguishing them from the
+other 28 dropped elements, which are re-segmentation. `SOURCE-IR-REPRODUCIBILITY.5` re-measured those three
+against the converter's own document and **withdrew that finding**: every word of all three is still present,
+in order, each interrupted by an inserted figure fragment (6, 5, and 35 tokens). `.1`'s test asks whether the
+persisted text is a substring of the joined replayed element stream, and a sentence with something spliced
+into it is not. All 31 dropped elements are re-segmentation and the measured content loss is **zero**
+([[ingest-drops-figure-interior-text]]).
 
-So the decision is genuinely two-sided, and it is not a cleanup task:
-
-- **Re-ingest** — the persisted artifacts match the toolchain again, at the cost of 39 caption bindings, three
-  paragraphs, and the re-measurement of every published claim pinned to the current artifacts (the reviewed
-  population, conservation totals, provenance closure, and the residual-actionability ratios all anchor there).
-- **Retain** — the corpus keeps the better caption capture, and 13 chains keep reporting current on an artifact
-  the toolchain no longer produces. That is honest only if the exclusion is declared and measured rather than
-  invisible, which is what `SOURCE-IR-REPRODUCIBILITY.3` owns.
-
-`SOURCE-IR-REPRODUCIBILITY.5` owns the decision itself and requires it to be made on this measured evidence
-rather than on the assumption that a newer converter is a better one.
+So the caption-binding delta is the whole cost, and it is not a decision this tree may offer: the owning tree
+withdrew the re-ingest-versus-retain framing on `2026-08-28` because both branches are defective — one retains
+artifacts the toolchain cannot reproduce, the other degrades caption evidence — and a defect is not an option.
+`SOURCE-IR-REPRODUCIBILITY.6` owns rebuilding the binding deterministically, and `.3` owns declaring the
+chain-currency exclusion while it stands.

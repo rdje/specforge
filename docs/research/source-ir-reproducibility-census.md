@@ -146,10 +146,18 @@ text is unambiguously **figure interior** — `Core`, `External Debugger +`, `AP
 Docling reads text out of diagram and plot regions that the earlier run left alone.
 
 Of the 31 dropped elements, 28 are **re-segmentation**: the text still appears in the replayed
-element stream, split or merged differently. Exactly **three** are content the current toolchain does
-not emit anywhere — one paragraph each in the USB4 Connection Manager guide, USB 3.2, and Wishbone.
-That distinction matters, and it is what separates "ingest rearranged the document" from "ingest lost
-part of it".
+element stream, split or merged differently. Exactly **three** are content this census's containment
+test finds nowhere in the replayed stream — one paragraph each in the USB4 Connection Manager guide,
+USB 3.2, and Wishbone.
+
+> **Corrected by `SOURCE-IR-REPRODUCIBILITY.5` (`2026-08-28`).** Those three are **not lost**. This
+> census asks whether the persisted text appears as a substring of the joined replayed element
+> stream, which can see neither a paragraph the converter split nor one it interrupted by splicing a
+> figure fragment into the middle of a sentence. A token alignment against the converter's own
+> document finds every word of all three still present, in order, with 6, 5, and 35 tokens inserted
+> between them. All 31 dropped elements are re-segmentation and the measured content loss is
+> **zero**. Every "three paragraphs lost" statement below is superseded by
+> [`ingest-content-loss-adjudication.md`](ingest-content-loss-adjudication.md).
 
 No collection other than `content_elements` changes cardinality anywhere: `structured_tables`,
 `page_artifacts`, `visual_assets`, and `document_sections` keep their exact counts in all twenty-four
@@ -183,11 +191,14 @@ so extra text regions detected around a figure can displace that assignment.
 figure-interior regions detected produces both the added elements and the lost bindings — which is
 why `.5` may be choosing between coupled outcomes rather than picking the best of each.
 
-This is the census's most consequential result, and it inverts the obvious remedy. Re-ingesting the
-corpus would not simply refresh a stale artifact: it would trade thirty-nine caption bindings — which
-this pipeline treats as first-class evidence, not decoration — for figure-interior fragments, and lose
-three paragraphs. Newer is not better here. `SOURCE-IR-REPRODUCIBILITY.5` owns that decision, and it
-is a decision, not a cleanup.
+This is the census's most consequential result. Re-ingesting the corpus would not simply refresh a
+stale artifact: it would trade thirty-nine caption bindings — which this pipeline treats as
+first-class evidence, not decoration — for figure-interior fragments. Newer is not better here.
+
+> **Framing corrected (`2026-08-28`).** This section originally presented that trade as a *decision*
+> for `SOURCE-IR-REPRODUCIBILITY.5` to make. The owning tree withdrew that framing: both branches are
+> defective, so neither was a choice to offer. `.5` re-scoped to the measurement above, and its
+> paragraph-loss leg came back clean.
 
 ## This is not run-to-run noise
 
@@ -264,9 +275,10 @@ it.
   toolchain does not reproduce.
 - `SOURCE-IR-REPRODUCIBILITY.4` — a reproducibility fingerprint in the normalized bundle, so the next
   drift is attributable instead of archaeological.
-- `SOURCE-IR-REPRODUCIBILITY.5` — the remediation decision. Re-ingesting is not obviously the repair:
-  it costs thirty-nine caption bindings and three paragraphs, and it would move every published
-  measurement pinned to the current artifacts.
+- `SOURCE-IR-REPRODUCIBILITY.5` — **complete (`2026-08-28`)**, and it withdrew this section's loss
+  finding. No content is lost; what it found instead is that 46% of the text items the converter
+  emits reach no `SourceIR` record at all, in the persisted artifacts as much as in a re-ingest.
+  See [`ingest-content-loss-adjudication.md`](ingest-content-loss-adjudication.md).
 
 Reproduce with:
 

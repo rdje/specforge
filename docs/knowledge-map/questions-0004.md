@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how are human corpus KB notes preserved during refresh
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how are incomplete gold and product failure distinguished
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > how are live-document ceiling increases and immutable debt baselines tested
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how are message fields written as section headings extracted
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how are message-field tables distinguished from register-field tables
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
   > how are missing stale vacuous ambiguous or partial behavioral attempts classified
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -288,13 +298,3 @@
   > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > how does specforge fold an X interface relation subject onto the bare agent X
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how does specforge handle a signal table whose name column is not first
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how does specforge model the JTAG TAP / SWD state machine (FSM)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how does specforge model the SWD serial frame / packet

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how does specforge handle a signal table whose name column is not first
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how does specforge model the JTAG TAP / SWD state machine (FSM)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > how does specforge model the SWD serial frame / packet
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > how does specforge read free disk space without a new dependency
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -251,6 +261,8 @@
   > how many alignment task owners and routes survive migration
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > how many caption bindings does the corpus lose on re-ingest
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how many captions does ingest discard
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many captured figure regions does the retained corpus hold
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -285,15 +297,3 @@
   > how many corpus refreshes remain after the OpenCAPI Ready note
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current claim census candidates join exact evidence or registered annotations
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current claim evidence units are derived registered incomplete or excluded
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > how many current documents are behaviorally measurable
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current governed Markdown surfaces are in the claim census
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)

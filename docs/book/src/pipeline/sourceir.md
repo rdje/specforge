@@ -548,8 +548,20 @@ PDF.
 unchanged Docling install, with unchanged model files and an unchanged binary, reproduces the
 persisted `SourceIR` exactly for many of them and *not* for the rest. Where it differs, the
 difference is overwhelmingly **text recovered from inside figures** — labels and fragments in a block
-diagram that an earlier run left alone and a later run picks up. It is mostly gain rather than loss:
-elements appear, and only a handful of documents lose any.
+diagram that an earlier run left alone and a later run picks up.
+
+**No content is lost across that drift.** Every persisted element a re-ingest no longer emits is
+still present in the converter's own output, word for word — the census that first reported three
+lost paragraphs was asking whether the persisted text was still one contiguous string, and a
+sentence stays whole even when the converter splits it or splices a figure label into the middle of
+it. A token-level alignment finds all of them intact.
+
+That second case is worth knowing about, because it is a **faithfulness** problem rather than a
+completeness one. Where a newly detected figure fragment lands inside a paragraph, `SourceIR` ends
+up carrying a sentence the specification never wrote — for example
+`… by reading the USB4 Host Enhanced SS Host Controller ROUTER_CS_6. Gen T Full Connectivity Support
+field …`, where six words of a figure label sit in the middle of a register reference. Nothing was
+dropped, so no conservation check can see it.
 
 Three practical consequences, in the order you are likely to meet them:
 
@@ -591,3 +603,60 @@ are reported unmeasurable rather than skipped silently.
 
 *Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md`, with the measured result in
 `docs/research/source-ir-reproducibility-census.md`.
+
+## What ingest carries over from the PDF, and what it does not
+
+Reproducibility asks whether two runs agree. A separate question is how much of what the converter
+produced reaches `SourceIR` at all — and until it was measured, nothing in the pipeline answered it.
+Stage conservation covers `EvidenceIR` onward, but ingest has no upstream artifact to conserve
+against, so a lossy ingest passes every green gate.
+
+Measured `2026-08-28` across three documents: **8,648 of 18,870 converter text items — 46% — reach
+no `SourceIR` record and earn no residual.** Every one is attributable to a named rule; there is no
+unexplained remainder:
+
+| Reason | Items | Intended? |
+| --- | ---: | --- |
+| text the converter placed **inside a figure** | 5,896 | **no** |
+| running headers and footers (the converter's own `furniture` layer) | 2,722 | yes |
+| `formula` items with no text | 30 | yes |
+
+The first row is the one that matters. SpecForge reads Docling's document with
+`iterate_items(traverse_pictures=False)`, which skips every child of a figure except the texts that
+figure lists as its own captions — and the skip is at the boundary, so a list nested inside a
+diagram is skipped along with it. Most of what that discards is diagram furniture (`Tx_0`,
+`Router A`), but not all: it also discards 9 captions, 8 footnotes, and 4 section headers across
+those three documents.
+
+**This is not drift, and it is not new.** The same census runs against the persisted artifacts with
+no ingest at all. The persisted I2C specification — which reproduces byte-for-byte — discards 1,372
+figure-interior items, 39 of them captions. A document can be perfectly reproducible and still stand
+on an ingest that left a third of the converter's output behind: reproducibility and conservation
+are independent properties. It is also document-dependent — the Arm external-debug guide discards
+nothing to figures, because its converter document places no text inside them.
+
+The fix is not to promote figure labels into prose; that is exactly how a figure fragment ends up
+spliced into a sentence. It is that SpecForge's own doctrine requires an unresolved thing to become
+an explicit residual rather than disappear, and today these items disappear.
+
+Measure it yourself, with or without a source PDF:
+
+```bash
+# Re-ingest and adjudicate (needs the source documents)
+python3 scripts/measure_ingest_content_loss.py   --output-root .project-data/tmp/<census-id> --census-id <census-id>   --owner <owning-leaf> --external-source-map .project-data/tmp/<runtime-map>.json
+
+# Census the persisted artifacts and their retained bundles — no ingest, no source needed
+python3 scripts/measure_ingest_content_loss.py   --output-root .project-data/tmp/<census-id> --census-id <census-id>   --owner <owning-leaf> --persisted   --document um10204_rev7_0_2021_i2c_bus_specification
+
+# The controls that keep "nothing was lost" from being a default answer
+python3 scripts/measure_ingest_content_loss.py --self-test
+```
+
+One related caveat for anyone reading `source_ref`: under bounded-memory ingest it does **not**
+identify a single converter item. A batched conversion writes one converter document per page range
+and Docling's `self_ref` restarts at zero in each range, so the Arm Debug guide's 6,784 content
+elements carry only 2,252 distinct `source_ref` values. Use `element_id` or `reading_order` when you
+need a unique handle.
+
+*Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md` (`.5` measured, `.6`–`.10`
+open), with the measured result in `docs/research/ingest-content-loss-adjudication.md`.

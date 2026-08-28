@@ -1,3 +1,37 @@
+### SOURCE-IR-REPRODUCIBILITY.5 — adjudicate the three absent elements, and census what ingest never carries
+
+- Withdrew `.1`'s three-paragraph loss finding. `scripts/measure_ingest_content_loss.py` re-ingests each
+  named document, reads the `SourceIR` and the converter's own document from the **same run**, and aligns
+  each flagged text token by token instead of asking whether it survived as one contiguous string. All
+  three elements `.1` reported as emitted nowhere are **retained**: zero persisted tokens missing, with 6 /
+  5 / 35 tokens *inserted* between them (`USB4 Host Enhanced SS Host Controller`; `Disabled Stall, Error,
+  or SetFeature`; footnote 14 plus `Sampled · 4.0g`), and every covering converter item carrying a
+  `SourceIR` record. All 31 dropped elements are re-segmentation and re-ingest content loss is **zero**.
+- Published the measurement that replaces it, which is larger. Across the three documents **8,648 of
+  18,870 converter text items — 46% — reach no `SourceIR` record and earn no residual**: 5,896 figure
+  interior (5,875 `text`, 9 `caption`, 8 `footnote`, 4 `section_header`), 2,722 furniture-layer
+  headers/footers, 30 empty formulas, `unexplained` empty. Named in both artifacts: `docling_backend.rs`
+  iterates with `traverse_pictures=False`, so `iterate_items` skips every child of a `PictureItem` except
+  its own caption refs, and the skip takes every descendant of the blocked child with it.
+- Showed the gap is standing rather than drift. `--persisted` mode censuses the artifacts with no ingest at
+  all: the I2C specification, which `.1` scores as reproducing **byte-for-byte**, discards **1,372**
+  figure-interior items including **39 captions**, while the Arm external-debug guide discards none. A
+  fourth re-ingest, of the repository-owned I2S specification that also reproduces exactly, reaches 349 of
+  464 converter items with no record.
+  Reproducibility and conservation are independent properties and only the first was measured.
+- Opened three owned children rather than reporting three defects. `.8` — figure-interior text must reach a
+  typed carrier or an explicit residual, and must not be promoted into prose. `.9` — `source_ref` does not
+  identify one converter item under bounded-memory ingest (Arm Debug: 6,784 elements, 2,252 distinct refs,
+  1,883 reused; USB 3.2 is nine batches), which blocks `.7`'s join. `.10` — preservation and faithfulness
+  have come apart: the spliced fragments make sentences the specification never wrote, and no conservation
+  check can see that because nothing was lost.
+- Scope-corrected `.6` and `.7` on the new evidence. `.6` must target unbound captions as a population, not
+  the seven the drift exposed, because a caption never bound in either run is invisible to a two-run
+  comparison. `.7`'s comparison now exists and runs; turning it into a gate must follow `.8` and `.9`.
+- Read-only and controlled: nothing under `generated/` written or removed, the producer refuses a modified
+  `crates/` tree, `--self-test` is **18/18** with **six observed RED perturbations** — the first being
+  `.1`'s own whole-string test, which reproduces `.1`'s answer.
+
 ### SCRATCH-RESIDUE-CONTAINMENT.0 — reclaim the scratch nothing can reach
 
 - Made scratch cleanup a reachability question instead of a periodic guess. A root under

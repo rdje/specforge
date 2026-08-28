@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.1` measured; `.2`–`.7` pending)
+- Status: `active` (`.0`–`.1`, `.5` measured; `.2`–`.4`, `.6`–`.10` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
 - Last updated: `2026-08-28`
@@ -25,6 +25,15 @@ retains artifacts the toolchain cannot reproduce, the other drops source content
 this tree may offer. Note also that the persisted corpus is not the clean baseline it appeared to be: it is
 missing the 1,804 figure-interior elements a current ingest recovers. Neither capture is complete, so the
 target is to capture both.
+
+`.5` then measured the loss side and found it is **not where this tree thought it was**. None of the three
+paragraphs `.1` reported as emitted nowhere is lost: all three are present word for word in the converter's
+own document, interrupted by a spliced-in figure fragment. The corpus-wide content loss from a re-ingest is
+**zero elements**. What `.5` found instead is a standing, undrifted gap at the same boundary — **46% of the
+text items the converter emits reach no `SourceIR` record and earn no residual**, 5,896 of them because
+SpecForge never traverses inside a figure — and a faithfulness failure the preservation question does not
+cover: the spliced fragments make sentences the specification never wrote. `.8`, `.9`, and `.10` own what
+that opened.
 
 `CORPUS-CHAIN-CURRENCY` proves the rest of the chain: for every persisted artifact, replaying the owning stage
 at the **fixed persisted input** must reproduce it. That oracle starts from the persisted `source_ir.json` and
@@ -108,8 +117,10 @@ repository volume, so the whole live population is measured with no sampling.
 **Eleven of twenty-four reproduce exactly; thirteen do not.** The thirteen hold 11,379 of the live
 population's 22,088 persisted content elements. Ingest adds 1,804 elements across them — all but two are
 `body_text`, and the text is unambiguously figure interior (`Core`, `External Debugger +`, `Referenced to`,
-`Ideal Clock`, `requency (GHZ)`, `MSb LSD`). Of 31 dropped elements, 28 are re-segmentation with the text
-still present and exactly three are content the current toolchain emits nowhere. No collection other than
+`Ideal Clock`, `requency (GHZ)`, `MSb LSD`). Of 31 dropped elements, `.1` classified 28 as re-segmentation
+with the text still present and three as content the current toolchain emits nowhere; `.5` re-measured those
+three token by token and all 31 are re-segmentation — the three "lost" paragraphs are present in full,
+interrupted by inserted figure text that the whole-string test could not see. No collection other than
 `content_elements` changes cardinality anywhere, and `proof_ledger.ruleset_sha256` is identical for all 24.
 
 **The decisive result is the captions.** Caption bindings on tables and visual assets fall from 1,191 to
@@ -191,7 +202,7 @@ Full result, method, controls, and per-document table:
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.1`
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.5`
-  State: `pending`
+  State: `done` (`2026-08-28`)
   Goal: settle whether any source content is unrecoverably lost, or only unlinked
   Acceptance: for each of the three content elements the census found absent from a re-ingest — one each in the
   USB4 Connection Manager guide, USB 3.2, and Wishbone — state whether the text is absent from Docling's own
@@ -199,6 +210,16 @@ Full result, method, controls, and per-document table:
   both artifacts. This is the gating measurement for the whole preservation question: SpecForge-dropped is
   repairable here, Docling-absent is an upstream boundary that must be declared rather than assumed away
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.1`
+  Evidence: `scripts/measure_ingest_content_loss.py` re-ingests all three, reads the `SourceIR` and the
+  converter document from the same run, and aligns each flagged text token by token. **All three are
+  `retained`**: zero persisted tokens missing, with 6, 5, and 35 tokens inserted between them
+  (`USB4 Host Enhanced SS Host Controller`; `Disabled Stall, Error, or SetFeature`; footnote 14 plus
+  `Sampled · 4.0g`), and every covering converter item carries a `SourceIR` record. Neither branch of the
+  acceptance applies, because the premise was wrong: `.1`'s whole-string containment test cannot see a
+  sentence interrupted by an insertion. Self-test 18/18 with **six observed RED perturbations**, the first
+  being `.1`'s own test, which reproduces `.1`'s answer. The same run censuses conservation: 18,870 converter
+  text items, 8,648 reaching no `SourceIR` record, with an empty `unexplained` bucket
+  Report: [`docs/research/ingest-content-loss-adjudication.md`](../research/ingest-content-loss-adjudication.md)
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.6`
   State: `pending`
@@ -209,7 +230,12 @@ Full result, method, controls, and per-document table:
   `caption`-labelled text with an unbound figure or table using page and geometry only, never document
   vocabulary; it fails closed and emits a typed residual when the association is ambiguous rather than guessing;
   and a RED control proves an ambiguous pair is refused instead of bound
-  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5` (met)
+  Scope correction (`.5`, `2026-08-28`): the unattached-caption population is larger than the binding delta `.1`
+  could see, because `.1` compares two runs and only observes bindings that *changed*. An unreferenced
+  `caption`-labelled text that was never bound in either run is invisible to it and is discarded silently today:
+  the persisted I2C specification alone drops 39 of them, and the three re-ingested documents drop nine. `.6`
+  must be scoped to unbound captions as a population, not to the seven the drift exposed
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.7`
   State: `pending`
@@ -219,6 +245,49 @@ Full result, method, controls, and per-document table:
   a lossy ingest passes every green gate. A check compares the converter's own document against the `SourceIR`
   built from it and fails when a text item, caption label, or caption association present in the converter
   output reaches no `SourceIR` record and earns no residual; a RED control proves a dropped item is observed
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5` (met)
+  Measured baseline (`.5`, `2026-08-28`): the comparison exists and runs —
+  `measure_ingest_content_loss.py`'s conservation census, in both re-ingest and `--persisted` mode. Across the
+  three externally sourced re-ingested documents 8,648 of 18,870 converter text items (46%) reach no record and earn no residual,
+  every one attributable to a named predicate with an empty `unexplained` bucket. Turning that census into a
+  gate is what remains, and it must land after `.8` and `.9`, because a gate at today's numbers would fail
+  closed on every document
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.8`
+  State: `pending`
+  Goal: stop discarding the text the converter found inside a figure
+  Acceptance: `.5` measured that SpecForge iterates with `traverse_pictures=False`, so
+  `DoclingDocument.iterate_items` skips every child of a `PictureItem` except the refs in that picture's own
+  `captions` list, and the skip takes every descendant of the blocked child with it. Across the three
+  re-ingested documents that discards 5,896 text items with no record and no residual — 5,875 `text`, 9
+  `caption`, 8 `footnote`, 4 `section_header` — and the persisted artifacts carry the same gap, so it is a
+  standing defect rather than drift. Figure-interior text must reach a typed carrier or an explicit residual;
+  it must **not** be promoted into `content_elements` as prose, because `.10` shows that is how figure labels
+  end up spliced into sentences. A RED control proves a discarded interior item is observed
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.9`
+  State: `pending`
+  Goal: make `source_ref` identify one converter item under bounded-memory ingest
+  Acceptance: a batched ingest converts page ranges and writes one converter document per range, and Docling's
+  `self_ref` restarts at zero in each range, so the `source_ref` SpecForge records is ambiguous across batches.
+  Measured `2026-08-28`: the Arm Debug guide's 6,784 content elements carry only 2,252 distinct `source_ref`
+  values with 1,883 used more than once; USB 3.2 is nine batches. Provenance must resolve to exactly one
+  converter item — a batch-qualified ref, or an equivalent — and a RED control proves a colliding ref is not
+  silently credited to the wrong item. `.7`'s gate depends on this: a conservation check joins converter items
+  to `SourceIR` records, and today that join is ambiguous for every batched document
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.10`
+  State: `pending`
+  Goal: observe a sentence the converter corrupted, not merely one it preserved
+  Acceptance: `.5` proved preservation and, in the same measurement, disproved faithfulness. All three
+  adjudicated paragraphs survive word for word *because* the words are all still there — but each now contains
+  an inserted figure fragment, so `SourceIR` carries `… by reading the USB4 Host Enhanced SS Host Controller
+  ROUTER_CS_6. Gen T Full Connectivity Support field …`, which is not a sentence the specification contains.
+  A conservation gate cannot see this: nothing was lost. Ingest must detect a body-text element assembled from
+  disjoint source regions and either keep them separate or mark the element, with the decision made on layout
+  geometry rather than document vocabulary; a RED control proves an interleaved element is observed
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
 
 ## Open Questions
@@ -246,12 +315,15 @@ Full result, method, controls, and per-document table:
 
 ## Blockers
 
-- None. `.2`–`.7` are all runnable; `.5` is the gating measurement for `.6` and `.7`.
+- None. `.2`–`.4` and `.6`–`.10` are all runnable. `.5` is complete, so `.6`–`.10` are unblocked; `.7`'s gate
+  should land after `.8` and `.9`, because a conservation gate at today's numbers fails closed everywhere and
+  its join is ambiguous for every batched document.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-28` | `.5` content-loss adjudication | all three elements `.1` reported as emitted nowhere are **retained**: zero persisted tokens missing, 6 / 5 / 35 tokens inserted between them, and every covering converter item carries a `SourceIR` record — so re-ingest content loss is zero and all 31 dropped elements are re-segmentation. Conservation censused in the same run: 18,870 converter text items across the three, 8,648 (46%) reaching no record and earning no residual — 5,896 figure interior (5,875 `text`, 9 `caption`, 8 `footnote`, 4 `section_header`), 2,722 furniture layer, 30 empty formulas, `unexplained` empty. `--persisted` mode shows the same gap without any ingest: I2C 1,372 figure-interior items discarded (39 of them captions) on an artifact `.1` scores as reproducing exactly, while the Arm external-debug guide discards none. A fourth re-ingest of the repository-owned I2S bus specification — which `.1` scores as reproducing exactly, 115 → 115 — reaches 349 of 464 converter items with no record (75%), 255 figure interior. Producer self-test 18/18 with six observed RED perturbations, the first being `.1`'s own whole-string test, which reproduces `.1`'s answer |
 | `2026-08-27` | `.1` population census | 78 persisted artifacts partition into 24 live-measured / 0 live-unmeasurable / 54 legacy-unmeasurable; the live stratum equals the chain-currency retained-bundle declaration exactly; 11 reproduce and 13 drift, adding 1,804 content elements (1,802 `body_text`, all figure-interior text) and dropping 31, of which 28 are re-segmentation and three are content emitted nowhere; caption bindings fall 1,191 to 1,152; no collection but `content_elements` changes cardinality and `proof_ledger.ruleset_sha256` is identical for all 24; two further ingests of the largest proportional drift reproduce it exactly, and a two-replay comparison isolates the cross-root ledger difference to `scope`/`conclusion_sha256` with all 448 addresses equal; producer self-test 14/14 with two observed RED perturbations |
 | `2026-08-27` | `.0` reproduction and exclusion | the reviewed Cortex-A76 prose moves `elem_00219` to `elem_00230` (249 to 260 content elements, identical table/visual/page counts); the drift is localized to Docling's own promoted markdown (168,210 to 168,359 bytes; 22 added lines, all text from inside a block diagram) with input digest, production revision, installed Docling and model versions, batching, device, and run-to-run noise each excluded by direct measurement; `check_chain_currency.sh` is shown to start from the persisted `source_ir.json`, so the ingest boundary is outside its oracle |
 
@@ -259,6 +331,7 @@ Full result, method, controls, and per-document table:
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.5` | `SOURCE-IR-REPRODUCIBILITY.5 — adjudicate the three absent elements, and census what ingest never carries` | withdraw the three-paragraph loss finding, publish the 46% PDF-to-SourceIR conservation gap, and open `.8`/`.9`/`.10` |
 | `.0` | `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure` | route the SourceIR reproducibility gap and reviewed-anchor fragility surfaced by the `.8d` replay into an owning tree |
 | `.1` | `SOURCE-IR-REPRODUCIBILITY.1 — census the standing SourceIR drift across the live corpus` | measure the whole live population, publish 11 reproduced / 13 drifted with the caption-binding loss, correct the book's reproducibility claim, and open `.4`/`.5` |
 
