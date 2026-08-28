@@ -12529,6 +12529,7 @@ mod tests {
             caption_text: Some("Figure 1: Controller block diagram.".to_string()),
             caption_source_path: None,
             source_ref: Some("#/pictures/0".to_string()),
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::BlockDiagram,
@@ -12602,6 +12603,7 @@ mod tests {
                 caption_text: None,
                 caption_source_path: None,
                 source_ref: None,
+                source_batch: None,
                 placeholder_text: None,
                 note: None,
                 diagram_kind: crate::ir::source::DiagramKind::default(),
@@ -13764,6 +13766,7 @@ mod tests {
             caption_text: Some("Figure 3-1 Read transfer timing".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T1\",\"state\":\"HIGH\"}]},{\"name\":\"transfer\",\"values\":[{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"tSU = 2 ns\",\"tHD = 1 ns\"]}"
@@ -13901,6 +13904,7 @@ mod tests {
             caption_text: Some("Figure 5-1 Transfer state machine".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":true},{\"name\":\"BUSY\",\"is_initial\":false}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"HTRANS_NONSEQ\"}]}"
@@ -13970,6 +13974,7 @@ mod tests {
             caption_text: Some("Figure 5-4 Duplicate state marker".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":false},{\"name\":\"BUSY\",\"is_initial\":false},{\"name\":\"IDLE\",\"is_initial\":true}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"}]}"
@@ -14047,6 +14052,7 @@ mod tests {
             caption_text: Some("Figure 5-3 Partial transfer state machine".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":true},{\"name\":\"BUSY\",\"is_initial\":false}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"BUSY\",\"to\":\"DONE\",\"guard\":\"PREADY = 1\"},{\"from\":\"RESET\",\"to\":\"IDLE\",\"guard\":\"PREADY = 1\"}]}"
@@ -14127,6 +14133,7 @@ mod tests {
             caption_text: Some("Figure 5-2 Noisy transfer state machine".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_state_machine_extraction: {\"states\":[{\"name\":\"IDLE\",\"is_initial\":true},{\"name\":\"IDLE state\",\"is_initial\":false},{\"name\":\"BUSY\",\"is_initial\":false},{\"name\":\"ACCESS phase\",\"is_initial\":false}],\"transitions\":[{\"from\":\"IDLE\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"IDLE state\",\"to\":\"BUSY\",\"guard\":\"PREADY = 1\"},{\"from\":\"BUSY\",\"to\":\"ACCESS phase\",\"guard\":\"PREADY = 1\"}]}"
@@ -14208,6 +14215,7 @@ mod tests {
             caption_text: Some("Figure 3-2 Write transfer with wait states".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [\n    {\n      \"name\": \"PCLK\",\n      \"values\": [\n        {\"cycle\": \"T4\", \"state\": \"HIGH\"}\n      ]\n    }\n  ],\n  \"annotations\": [\n    \"setup time of data signal during T4\",\n    \"hold time of data signal during T4\"\n  ]\n}\n```\nThe waveform also highlights the transfer boundary around T4."
@@ -14271,6 +14279,7 @@ mod tests {
             caption_text: Some("Figure 3-3 Transfer timing".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ\",\"XREQ HIGH\",\"XREQ LOW\",\"XREQ asserted\",\"XREQ deasserted\",\"T0\",\"Addr 1\",\"Cycle 2\",\"Burst 1\",\"Packet 2\",\"Frame 3\",\"Transaction 4\",\"Txn 5\",\"Burst1\",\"Packet2\",\"Frame3\",\"Transaction4\",\"Txn5\",\"Phase1\",\"Transfer2\",\"Channel 1 Phase 2\",\"Lane 0 Slot 1\",\"D0\",\"A1\",\"DATA0\",\"0xAA\",\"D[0]\",\"A[1]\",\"DATA[3]\",\"ADDR[7]\",\"XREQ[0]\",\"XREQ<1>\",\"XREQ[3:0]\"]}"
@@ -14319,6 +14328,7 @@ mod tests {
             caption_text: Some("Figure 3-3b Transfer timing".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ[0] HIGH\",\"XREQ<1> LOW\",\"XREQ[3:0] asserted\",\"XREQ[7:4] deasserted\"]}"
@@ -14395,6 +14405,7 @@ mod tests {
             caption_text: Some("Figure 3-3c Transfer timing".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"LOW\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"}]}],\"annotations\":[\"XREQ HIGH at T1\",\"XREQ LOW during T0\",\"XREQ asserted on T1\",\"XREQ deasserted in T0\"]}"
@@ -14469,6 +14480,7 @@ mod tests {
             caption_text: Some("Figure 3-4 Request waveform motion".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"T0\",\"state\":\"rising\"},{\"cycle\":\"T1\",\"state\":\"HIGH\"},{\"cycle\":\"T2\",\"state\":\"stable\"},{\"cycle\":\"T3\",\"state\":\"falling\"},{\"cycle\":\"T4\",\"state\":\"UNCHANGED\"},{\"cycle\":\"T5\",\"state\":\"RISING_EDGE\"},{\"cycle\":\"T6\",\"state\":\"LOW_TO_HIGH\"},{\"cycle\":\"T7\",\"state\":\"HIGH_TO_LOW\"},{\"cycle\":\"T8\",\"state\":\"POS_EDGE\"},{\"cycle\":\"T9\",\"state\":\"NEG_EDGE\"},{\"cycle\":\"T10\",\"state\":\"risingedge\"},{\"cycle\":\"T11\",\"state\":\"LOW2HIGH\"},{\"cycle\":\"T12\",\"state\":\"HIGH2LOW\"}]}],\"annotations\":[\"XREQ rises, stays stable, then falls\"]}"
@@ -14538,6 +14550,7 @@ mod tests {
             caption_text: Some("Figure 4-1 State diagram".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_state_machine_extraction: ```json\n{\n  \"states\": [\n    {\"name\": \"IDLE\", \"is_initial\": true},\n    {\"name\": \"SETUP\"},\n    {\"name\": \"ACCESS\"}\n  ],\n  \"transitions\": [\n    {\"from\": \"IDLE\", \"to\": \"SETUP\", \"guard\": \"Transfer\"},\n    {\"from\": \"SETUP\", \"to\": \"ACCESS\", \"guard\": \"PREADY = 1 and transfer\"}\n  ]\n}\n```\nThis state diagram highlights the ACCESS phase."
@@ -14721,6 +14734,7 @@ mod tests {
             heading_level: 2,
             page_id: Some("page_0001".to_string()),
             source_ref: None,
+            source_batch: None,
             reading_order: 1,
             section_kind: SectionKind::SignalDescription,
         });
@@ -14730,6 +14744,7 @@ mod tests {
             heading_level: 2,
             page_id: Some("page_0002".to_string()),
             source_ref: None,
+            source_batch: None,
             reading_order: 10,
             section_kind: SectionKind::SignalDescription,
         });
@@ -14747,6 +14762,7 @@ mod tests {
             page_id: Some("page_0001".to_string()),
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_cell("Name", true),
@@ -14781,6 +14797,7 @@ mod tests {
             page_id: Some("page_0002".to_string()),
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_cell("Name", true),
@@ -15055,6 +15072,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15161,6 +15179,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15265,6 +15284,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15494,6 +15514,7 @@ mod tests {
             caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -15504,6 +15525,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15729,6 +15751,7 @@ mod tests {
             caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -15739,6 +15762,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15853,6 +15877,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Primary handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15874,6 +15899,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Secondary handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -19102,6 +19128,7 @@ mod tests {
             heading_level: 2,
             page_id: None,
             source_ref: None,
+            source_batch: None,
             reading_order: 1,
             section_kind: SectionKind::SignalDescription,
         });
@@ -19117,6 +19144,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_cell("Signal", true),
@@ -19274,6 +19302,7 @@ mod tests {
             heading_level: 2,
             page_id: None,
             source_ref: None,
+            source_batch: None,
             reading_order: 1,
             section_kind: SectionKind::SignalDescription,
         });
@@ -19289,6 +19318,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_cell("Signal", true),
@@ -19417,6 +19447,7 @@ mod tests {
             caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -19429,6 +19460,7 @@ mod tests {
             caption_text: Some("Figure 2: XACK ready timing.".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -21104,6 +21136,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Role-grounded signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -22822,6 +22855,7 @@ mod tests {
             caption_text: Some("Figure D-1 State machine".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_state_machine_extraction: {\"states\":[{\"name\":\"run\",\"is_initial\":true},{\"name\":\"done\"},{\"name\":\"waiting\"}],\"transitions\":[{\"from\":\"run\",\"to\":\"done\",\"guard\":\"clk\"},{\"from\":\"run\",\"to\":\"waiting\",\"guard\":\"\"}]}"
@@ -25256,6 +25290,7 @@ mod tests {
                     .expect("fixture source ref must be a string")
                     .to_string(),
             ),
+            source_batch: None,
             placeholder_text: None,
             note: Some(format!(
                 "vlm_timing_diagram_extraction: {}",

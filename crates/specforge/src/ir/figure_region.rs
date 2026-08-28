@@ -667,6 +667,7 @@ mod tests {
             ),
             caption_source_path: None,
             source_ref: Some("#/pictures/4".to_string()),
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,

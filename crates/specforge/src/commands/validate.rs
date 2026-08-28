@@ -8067,6 +8067,7 @@ mod tests {
             caption_text: Some("XREQ timing".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::TimingDiagram,
@@ -8143,6 +8144,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -8465,6 +8467,7 @@ mod tests {
             page_id: None,
             caption_text: Some("phantom signal table".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![],
             body_rows: vec![],
@@ -8575,6 +8578,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -8641,6 +8645,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Protocol signal description".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -8755,6 +8760,7 @@ mod tests {
             page_id: Some("page_0004".to_string()),
             caption_text: Some("Table 3: Summary of signal presence".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![
                 vec![
@@ -8839,6 +8845,7 @@ mod tests {
             page_id: Some("page_0010".to_string()),
             caption_text: Some("Table 9: Widget Entry Fields".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("Bits", true),
@@ -9021,6 +9028,7 @@ mod tests {
             caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -9033,6 +9041,7 @@ mod tests {
             caption_text: Some("Figure 2: Transfer timing".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [{\"name\": \"XACK\", \"values\": [{\"cycle\": \"T1\", \"state\": \"HIGH\"}]}],\n  \"annotations\": [\n    \"XACK indicates that the subordinate can accept the transfer.\"\n  ]\n}\n```"
@@ -9189,6 +9198,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -9319,6 +9329,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -9393,6 +9404,7 @@ mod tests {
             caption_text: Some("XREQ cycle trace".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::Unknown,
@@ -9448,6 +9460,7 @@ mod tests {
                 caption_text: Some("XREQ explicit cycle trace".to_string()),
                 caption_source_path: None,
                 source_ref: None,
+                source_batch: None,
                 placeholder_text: None,
                 note: Some(
                     "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":0,\"state\":\"LOW\"},{\"cycle\":1,\"state\":\"LOW\"}]}],\"annotations\":[]}".to_string(),
@@ -9462,6 +9475,7 @@ mod tests {
                 caption_text: Some("XREQ unaddressed trace".to_string()),
                 caption_source_path: None,
                 source_ref: None,
+                source_batch: None,
                 placeholder_text: None,
                 note: Some(
                     "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"address phase\",\"state\":\"HIGH\"}]}],\"annotations\":[]}".to_string(),
@@ -9537,6 +9551,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -9627,6 +9642,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -9732,6 +9748,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -9863,6 +9880,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Protocol signal description".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -9964,6 +9982,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -10161,6 +10180,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -10255,6 +10275,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -14057,6 +14078,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -14173,6 +14195,7 @@ mod tests {
             caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -14183,6 +14206,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -14485,6 +14509,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Primary handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -14506,6 +14531,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Secondary handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -14619,6 +14645,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -14744,6 +14771,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -14856,6 +14884,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -14964,6 +14993,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15302,6 +15332,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15378,6 +15409,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -15479,6 +15511,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -16077,6 +16110,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -16157,6 +16191,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),

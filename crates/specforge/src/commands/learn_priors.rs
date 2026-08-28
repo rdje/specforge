@@ -2294,6 +2294,7 @@ mod tests {
             page_id: Some("page_0001".to_string()),
             caption_text: Some("Table 1 Interface signals".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 StructuredTableCellRecord {
@@ -2360,6 +2361,7 @@ mod tests {
             caption_text: Some("XREQ timing diagram".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::TimingDiagram,

@@ -2586,6 +2586,7 @@ mod tests {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 StructuredTableCellRecord {

@@ -674,11 +674,36 @@ python3 scripts/measure_ingest_content_loss.py   --output-root .project-data/tmp
 python3 scripts/measure_ingest_content_loss.py --self-test
 ```
 
-One related caveat for anyone reading `source_ref`: under bounded-memory ingest it does **not**
-identify a single converter item. A batched conversion writes one converter document per page range
-and Docling's `self_ref` restarts at zero in each range, so the Arm Debug guide's 6,784 content
-elements carry only 2,252 distinct `source_ref` values. Use `element_id` or `reading_order` when you
-need a unique handle.
+### Addressing one converter item: `source_ref` and `source_batch`
 
-*Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md` (`.5` measured, `.6`–`.10`
-open), with the measured result in `docs/research/ingest-content-loss-adjudication.md`.
+`source_ref` is Docling's own `self_ref` for the item a record came from. On a **batched** ingest it
+does not identify a single converter item: a bounded-memory run converts one page range at a time and
+`self_ref` restarts at zero in every converted document, so the same `#/texts/0` names a different
+item in every batch, and a large specification can hold several times more content elements than it
+has distinct refs. The owning task tree carries the measured population; this chapter explains the
+field.
+
+`source_batch` is the missing coordinate. Records written by a batched run carry it, and it indexes
+`documents[i]` in the batched raw-backend envelope, so `(source_batch, source_ref)` addresses exactly
+one converter item:
+
+```json
+{ "element_id": "elem_00219", "kind": "body_text", "source_ref": "#/texts/0", "source_batch": 3 }
+```
+
+Two properties are worth knowing before you join on it:
+
+- **It appears only when the run was batched.** A single-pass conversion produces one converter
+  document, where `source_ref` is already unique, so no coordinate is written and the record is
+  byte-identical to what earlier versions produced. Absence means "one document", not "unknown".
+- **An artifact written before the coordinate existed cannot gain one after the fact.** Those records
+  carry no `source_batch`, and no key can recover which batch they came from; they need a re-ingest.
+  A consumer should say which key it is using rather than treat both as exact —
+  `measure_ingest_content_loss.py` reports this as `source_ref_identity` alongside `converter_refs`,
+  `converter_distinct_refs`, and `converter_refs_reused`.
+
+`element_id` and `reading_order` remain unique within an artifact regardless, and stay the right
+handle when you only need to address a record rather than the converter item behind it.
+
+*Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md` (`.5` and `.9` done, `.6`–`.8`
+and `.10` open), with the measured result in `docs/research/ingest-content-loss-adjudication.md`.

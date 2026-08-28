@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.2`, `.5`, `.11`–`.12` measured; `.3`, `.4`, `.6`–`.10`, `.13` pending)
+- Status: `active` (`.0`–`.2`, `.5`, `.9`, `.11`–`.12` done; `.3`, `.4`, `.6`–`.8`, `.9a`, `.10`, `.13` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
 - Last updated: `2026-08-28`
@@ -310,7 +310,7 @@ Full result, method, controls, and per-document table:
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.9`
-  State: `pending`
+  State: `done` (`2026-08-28`)
   Goal: make `source_ref` identify one converter item under bounded-memory ingest
   Acceptance: a batched ingest converts page ranges and writes one converter document per range, and Docling's
   `self_ref` restarts at zero in each range, so the `source_ref` SpecForge records is ambiguous across batches.
@@ -320,6 +320,67 @@ Full result, method, controls, and per-document table:
   silently credited to the wrong item. `.7`'s gate depends on this: a conservation check joins converter items
   to `SourceIR` records, and today that join is ambiguous for every batched document
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+  Design (`2026-08-28`): add the missing **coordinate**, do not redefine the existing field.
+  `source_ref` is Docling's `self_ref` and is documented as such; overloading it into
+  `batch2:#/texts/7` would change the meaning of a value already carried through EvidenceIR,
+  SemanticIR, and IntentIR, and would make every persisted artifact disagree with a re-ingest for a
+  reason unrelated to ingest. Instead each of the four record kinds that carries `source_ref`
+  (`content_elements`, `document_sections`, `structured_tables`, `visual_assets`) gains
+  `source_batch: Option<u32>`, which addresses `documents[i]` in the batched raw-backend envelope
+  SpecForge already writes. It is emitted **only when the run is actually batched**: a single-pass run
+  produces one converter document where `source_ref` is already unique, and writing a constant zero
+  there would change every unbatched artifact for no gained identity. `#[serde(default,
+  skip_serializing_if = "Option::is_none")]` therefore keeps an unbatched serialization byte-identical
+  and lets every artifact already on disk deserialize with `None` rather than defaulting to batch zero,
+  which would itself be a claim.
+  Population (`2026-08-28`, all 78 persisted artifacts, read-only): **14** carry a bare `source_ref`
+  that does not identify one content element; 64 do not. Across those 14, 111,861 content elements
+  resolve to only **28,599** distinct refs — 22,467 refs are used more than once, and **83,262** records
+  (74.4%) cannot be addressed by a bare ref. The Arm Debug guide reproduces this tree's published figure
+  exactly: 6,784 elements, 2,252 distinct refs, 1,883 used more than once.
+  Falsification (`2026-08-28`): the competing hypothesis is that the reuse is a producer defect emitting
+  duplicate refs rather than batching. It is separated by the retained converter bundles, an independent
+  artifact: of the 24 artifacts whose bundle survives, **22 are unambiguous and unbatched and 2 are
+  ambiguous and batched** (7 and 9 converter documents), with **zero disagreements in either direction**.
+  The remaining 54 have no retained bundle, so their batching is not confirmable from the artifact and is
+  not asserted. A correction belongs here too: pooling `content_elements` with `document_sections` makes
+  all 78 look ambiguous, because a section header is recorded in both collections under the same ref —
+  1,011 of 1,011 for the Arm Debug guide. That is a legitimate shared ref, not a collision, and the
+  population above counts `content_elements` alone.
+  Evidence: `crates/specforge/src/ir/source.rs` gains the field on four records with one focused test
+  (`source_batch_addresses_one_converter_item_without_disturbing_unbatched_artifacts`) proving all three
+  properties together — a pre-coordinate record deserializes to `None`, an unbatched record serializes
+  without the key, and a coordinate-bearing record round-trips and is distinct from its colliding twin.
+  Two observed RED perturbations: removing `skip_serializing_if` makes an unbatched record gain
+  `"source_batch":null`, and removing `default` makes a pre-coordinate record fail to deserialize.
+  `docling_backend.rs` sets the coordinate from `_IngestAccumulator.batch_ref()`, which returns `None`
+  unless `len(page_batches) > 1`. `scripts/measure_ingest_content_loss.py` consumes it: a
+  coordinate-bearing record is matched **exclusively** by `batch{n}:{ref}` and never also by the
+  `(source_ref, text)` pair, or the fallback would re-admit the collision it fixes. Self-test 32 -> 33
+  with **seven observed RED perturbations** — the coordinate record also entering the pair index, the
+  exact address never consulted, a boolean accepted as a coordinate, a mixed artifact reported as exact,
+  the batch not passed through the production join, the ref-reuse count reported as zero, and the
+  addresses not batch-qualified. The conservation census now publishes `source_ref_identity`,
+  `converter_refs`, `converter_distinct_refs`, `converter_refs_reused`, and
+  `converter_distinct_addresses`, so the ambiguity is reported rather than worked around silently.
+  What this does **not** do: it cannot repair an artifact already on disk. The 14 ambiguous artifacts
+  stay ambiguous until they are re-ingested; the coordinate is recorded from this revision forward, and
+  the consumer states which key each artifact supports rather than treating both as exact.
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.9a`
+  State: `pending` (tracking-only)
+  Goal: scope the producer's clean-tree guard to the mode it governs
+  Acceptance: `measure_ingest_content_loss.py` refuses to run when `git diff --quiet -- crates` fails,
+  with the message "production Rust sources must be unmodified while this producer **ingests**". The
+  guard is correct for the re-ingest path and is exempted for `--compare-only`, but it also fires for
+  `--persisted`, which performs no ingest at all — it reads a persisted artifact and its retained
+  converter bundle. Found `2026-08-28` while `.9` needed the standing-ambiguity population and could not
+  take it from a working tree that necessarily had `crates/` modified. The measurement was taken by a
+  direct read of the artifacts instead, so this blocked nothing, but the guard should state and enforce
+  exactly one rule: what the drop model shares with production, and which modes depend on it. Note that
+  `--persisted` is not simply guard-free — its drop-reason model mirrors production's traversal — so the
+  fix is to scope the guard, not to remove it
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.9`
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.10`
   State: `pending`
@@ -388,6 +449,41 @@ Full result, method, controls, and per-document table:
   own entry instead, because that ledger is append-only and rewriting a past slice's record to match a later
   presentation decision is a worse defect than the one being fixed. No measurement changed and no number was
   withdrawn
+
+## Acceptance Checklist (enforced) — `SOURCE-IR-REPRODUCIBILITY.9`
+
+- [x] **REPRODUCE / MEASURE** — a direct read of all 78 persisted `generated/source_ir/*/source_ir.json`
+  artifacts: **14** carry a bare `source_ref` that does not identify one content element, 64 do not.
+  Across those 14, 111,861 content elements resolve to 28,599 distinct refs; 22,467 refs are used more
+  than once and 83,262 records (74.4%) cannot be addressed by a bare ref. The Arm Debug guide reproduces
+  this tree's published figure exactly — 6,784 / 2,252 / 1,883.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source/docling_backend.rs` records
+  `source_ref = getattr(element, "self_ref", None)` inside `process_converted_document`, which runs once
+  per converted document. Bounded-memory ingest calls `converter.convert(..., page_range=...)` once per
+  page range and Docling's `self_ref` restarts at zero in each, so the recorded ref is unique only within
+  its batch. The falsification leg separates this from a duplicate-emitting producer bug: of the 24
+  artifacts whose converter bundle is retained, 22 are unambiguous and unbatched and 2 are ambiguous and
+  batched, with zero disagreements in either direction.
+- [x] **ADDRESSED (verified)** — the four record kinds that carry `source_ref` gain
+  `source_batch: Option<u32>`, set from `_IngestAccumulator.batch_ref()` and emitted only when
+  `len(page_batches) > 1`. `measure_ingest_content_loss.py` matches a coordinate-bearing record
+  **exclusively** by `batch{n}:{ref}`, so the `(source_ref, text)` fallback cannot re-admit the collision:
+  its end-to-end control feeds a two-batch fixture where `#/texts/0` carries the identical text in both
+  batches and only batch 1 was recorded, and the census resolves it 1 reached / 1 dropped rather than 2
+  reached. The conservation census now publishes `source_ref_identity`, `converter_refs`,
+  `converter_distinct_refs`, `converter_refs_reused`, and `converter_distinct_addresses`.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib` **470 / 168 / 1,370 passed, 0 failed, 9 ignored**;
+  `cargo clippy --workspace --all-targets -- -D warnings` clean; `measure_ingest_content_loss.py
+  --self-test` **33/33** (was 32/32) with seven observed RED perturbations; the new focused Rust test
+  observed RED twice. Unbatched artifacts are unaffected by construction, and the Rust test proves it: a
+  record with no coordinate serializes without the key, so a single-pass ingest writes the bytes it wrote
+  before this change.
+- [x] **GENERICITY (ADR 0006)** — the coordinate is the index of a converter document within one run. No
+  document, vendor, or protocol identity participates, and no value depends on the content of any
+  specification.
+- [x] **LOCKSTEP** — the SourceIR book chapter documents the field and when it appears; this leaf and
+  `[[ingest-drops-figure-interior-text]]` carry the corrected population; `.7`'s prerequisite is
+  discharged.
 
 ## Acceptance Checklist (enforced) — `SOURCE-IR-REPRODUCIBILITY.2`
 
@@ -470,6 +566,7 @@ Full result, method, controls, and per-document table:
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-28` | `.9` batch-qualified provenance | population: 78 persisted artifacts, **14** whose bare `source_ref` does not identify one content element and 64 that do; 111,861 elements over 28,599 distinct refs across the 14, 22,467 refs used more than once, 83,262 records (74.4%) unaddressable — Arm Debug 6,784 / 2,252 / 1,883 reproduces this tree's published figure. Falsified against the retained converter bundles, an independent artifact: 22 unambiguous+unbatched, 2 ambiguous+batched, **0 disagreements in either direction** across the 24 whose bundle survives; the 54 without one are not asserted. A first pass reporting all 78 as ambiguous was wrong and is corrected here — pooling `content_elements` with `document_sections` double-counts a section header, legitimately recorded in both under one ref (1,011 of 1,011 for Arm Debug). Producer self-test 32/32 -> **33/33** with seven observed RED perturbations, plus two on the Rust schema test; `cargo test --workspace --lib` 470 / 168 / 1,370 passed / 0 failed; clippy `-D warnings` clean |
 | `2026-08-28` | `.12` published-figure correction | the defect rate leads on every current-facing surface — 5,896 of 18,870 (31%) dropped as a defect, with the raw 8,648 (46%) following as decomposed context; the fact card's title carried the 46% too. No measurement changed; `CHANGES.md` keeps `.5`'s entry byte-exact by decision |
 | `2026-08-28` | `.11` traversal oracle | the drop model that carries `.5`'s largest number is confirmed against docling-core's own `iterate_items` on **all 24** persisted artifacts whose converter document was retained, with no sampling: 43,614 converter text items, **22,127 yielded and 22,127 predicted, 0 disagreements** in both directions, per document and per batch, across unbatched and 7-/9-range batched bundles. Every document round-trips through its own `export_to_dict`, so the oracle observes the document ingest traversed rather than a re-derived one. The residue closes: 39 empty `formula` items plus exactly the 22,088 content elements the live population holds, `unexplained` 0 everywhere. `--self-test` 27/27 with six observed RED perturbations; the run exits non-zero unless every document was measured, agreed, and round-tripped |
 | `2026-08-28` | `.5` content-loss adjudication | all three elements `.1` reported as emitted nowhere are **retained**: zero persisted tokens missing, 6 / 5 / 35 tokens inserted between them, and every covering converter item carries a `SourceIR` record — so re-ingest content loss is zero and all 31 dropped elements are re-segmentation. Conservation censused in the same run: 18,870 converter text items across the three, 8,648 (46%) reaching no record and earning no residual — 5,896 figure interior (5,875 `text`, 9 `caption`, 8 `footnote`, 4 `section_header`), 2,722 furniture layer, 30 empty formulas, `unexplained` empty. `--persisted` mode shows the same gap without any ingest: I2C 1,372 figure-interior items discarded (39 of them captions) on an artifact `.1` scores as reproducing exactly, while the Arm external-debug guide discards none. A fourth re-ingest of the repository-owned I2S bus specification — which `.1` scores as reproducing exactly, 115 → 115 — reaches 349 of 464 converter items with no record (75%), 255 figure interior. Producer self-test 18/18 with six observed RED perturbations, the first being `.1`'s own whole-string test, which reproduces `.1`'s answer |
@@ -480,6 +577,7 @@ Full result, method, controls, and per-document table:
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.9` | `SOURCE-IR-REPRODUCIBILITY.9 — give provenance the batch coordinate it was missing` | `source_batch` on the four `source_ref`-bearing records, emitted only for a batched run; the consumer keys on it exclusively; the standing ambiguity is measured (14 of 78) and published rather than worked around |
 | `.12` | `SOURCE-IR-REPRODUCIBILITY.12 — lead the conservation figure with the defect, not the non-carry rate` | make the published headline the actionable 31%, not the 46% that bundles intended exclusions with it |
 | `.11` | `SOURCE-IR-REPRODUCIBILITY.11 — measure the traversal the census had only read` | turn `.5`'s inferred drop mechanism into a re-runnable control: 24/24 documents, 0 disagreements, residue closed, six observed RED perturbations |
 | `.5` | `SOURCE-IR-REPRODUCIBILITY.5 — adjudicate the three absent elements, and census what ingest never carries` | withdraw the three-paragraph loss finding, publish the 46% PDF-to-SourceIR conservation gap, and open `.8`/`.9`/`.10` |

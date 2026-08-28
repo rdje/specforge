@@ -402,6 +402,7 @@ mod tests {
             page_id: Some("p1".to_string()),
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: kind,
             header_rows: vec![header.iter().map(|h| cell(h, true)).collect()],
             body_rows: vec![],

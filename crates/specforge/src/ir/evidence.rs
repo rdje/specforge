@@ -17105,6 +17105,7 @@ mod tests {
             page_id: None,
             caption_text: Some(caption.to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: Vec::new(),
             body_rows: Vec::new(),
@@ -17774,6 +17775,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Register access summary".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::RegisterMap,
             header_rows: vec![vec![
                 make_table_cell("Register", true),
@@ -17801,6 +17803,7 @@ mod tests {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::RegisterMap,
             header_rows: vec![vec![
                 make_table_cell("Register", true),
@@ -17819,6 +17822,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Register summary".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::RegisterMap,
             header_rows: vec![vec![
                 make_table_cell("Offset", true),
@@ -17846,6 +17850,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Register summary".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::RegisterMap,
             header_rows: vec![vec![
                 make_table_cell("Name", true),
@@ -17873,6 +17878,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Register summary".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::RegisterMap,
             header_rows: vec![vec![
                 make_table_cell("Offset", true),
@@ -17990,6 +17996,7 @@ mod tests {
                 "Table 6-1: XDVS Header Register fields at Byte Offset 04h".to_string(),
             ),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("Bit Location", true),
@@ -18031,6 +18038,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table 7-6: XPER Error Type Structure".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("Byte Location", true),
@@ -18092,6 +18100,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table 6.1: DTMControl register fields".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![],
             body_rows: vec![
@@ -18154,6 +18163,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Target receiver timing (all values in ns)".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::TimingParameter,
             // The real column header (blank leading cell; value labels are `is_header=true`) plus two
             // data rows whose label cell is `is_header=true` and whose value cells are `is_header=false`.
@@ -18246,6 +18256,7 @@ mod tests {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![
                 vec![
@@ -18286,6 +18297,7 @@ mod tests {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![vec![
                 make_table_cell("Symbol", true),
@@ -18339,6 +18351,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Channel requirements".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![vec![
                 make_table_cell("Symbol", true),
@@ -18454,6 +18467,7 @@ mod tests {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![
                 vec![
@@ -18498,6 +18512,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Timing limits (all values in ps)".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![vec![
                 make_table_cell("Symbol", true),
@@ -18541,6 +18556,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Receiver timing limits".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![vec![
                 make_table_cell("Symbol", true),
@@ -18582,6 +18598,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Timing limits (all values in ps)".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![vec![
                 make_table_cell("Symbol", true),
@@ -18669,6 +18686,7 @@ mod tests {
                 page_id: None,
                 caption_text: (!caption.is_empty()).then(|| caption.to_string()),
                 source_ref: None,
+                source_batch: None,
                 table_kind: kind,
                 header_rows: vec![headers.iter().map(|h| make_table_cell(h, true)).collect()],
                 body_rows: vec![],
@@ -18761,6 +18779,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table G2-3 Signal matrix".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             // Column header row, then data rows trapped by the header-marked label cell.
             header_rows: vec![
@@ -18823,6 +18842,7 @@ mod tests {
                 "Table B2.2: Summary of signal presence for each interface class".to_string(),
             ),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![
                 vec![
@@ -18875,6 +18895,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table G9-1: Signal matrix".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![header(&["Signal", "Width", "Source"])],
             body_rows: vec![],
@@ -18887,6 +18908,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table G9-1 Continued from previous page".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![
                 header(&["Signal", "Width", "Source"]),
@@ -18942,6 +18964,7 @@ mod tests {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows,
             body_rows: body
@@ -19376,6 +19399,7 @@ mod tests {
                 page_id: None,
                 caption_text: Some(caption.to_string()),
                 source_ref: None,
+                source_batch: None,
                 table_kind: TableKind::Unknown,
                 header_rows: vec![header.iter().map(|c| make_table_cell(c, true)).collect()],
                 body_rows: rows
@@ -19634,6 +19658,7 @@ mod tests {
                     page_id: Some(page.to_string()),
                     caption_text: caption.map(|c| c.to_string()),
                     source_ref: None,
+                    source_batch: None,
                     table_kind: kind,
                     header_rows: vec![vec![
                         make_table_cell("Bits", true),
@@ -19899,6 +19924,7 @@ mod tests {
                 page_id: Some(page.to_string()),
                 caption_text: caption.map(|c| c.to_string()),
                 source_ref: None,
+                source_batch: None,
                 table_kind: kind,
                 header_rows: vec![vec![
                     make_table_cell("Byte Location", true),
@@ -20151,6 +20177,7 @@ mod tests {
                 page_id: Some(page.to_string()),
                 caption_text: caption.map(|c| c.to_string()),
                 source_ref: None,
+                source_batch: None,
                 table_kind: TableKind::Unknown,
                 header_rows: vec![vec![
                     make_table_cell("Bits", true),
@@ -20312,6 +20339,7 @@ mod tests {
                 page_id: Some(page.to_string()),
                 caption_text: caption.map(|c| c.to_string()),
                 source_ref: None,
+                source_batch: None,
                 table_kind: TableKind::Unknown,
                 header_rows: vec![vec![
                     make_table_cell("Bits", true),
@@ -20438,6 +20466,7 @@ mod tests {
                 page_id: Some(page.to_string()),
                 caption_text: caption.map(|c| c.to_string()),
                 source_ref: None,
+                source_batch: None,
                 table_kind: TableKind::Unknown,
                 header_rows: vec![vec![
                     make_table_cell("Bits", true),
@@ -20534,6 +20563,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table 2.1: Request message fields".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("Field", true),
@@ -20917,6 +20947,7 @@ mod tests {
                     heading_level: 1,
                     page_id: Some("page_0001".to_string()),
                     source_ref: None,
+                    source_batch: None,
                     reading_order: i as u32 + 1,
                     section_kind: SectionKind::Unknown,
                 });
@@ -21522,6 +21553,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table 9: Command message fields".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("Field", true),
@@ -21544,6 +21576,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table B13.2: REQ channel interface signals".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -21583,6 +21616,7 @@ mod tests {
             page_id: None,
             caption_text: Some("CONTROL".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("Bits", true),
@@ -21640,6 +21674,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Offset 0h: CAP".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("Bits", true),
@@ -21796,6 +21831,7 @@ mod tests {
                 heading_level: 3,
                 page_id: Some("page_0033".to_string()),
                 source_ref: None,
+                source_batch: None,
                 reading_order: 1,
                 section_kind: SectionKind::Unknown,
             });
@@ -21805,6 +21841,7 @@ mod tests {
             page_id: Some("page_0033".to_string()),
             caption_text: None, // RISC-V field tables carry no caption — the name is in the heading
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("Field", true),
@@ -21838,6 +21875,7 @@ mod tests {
                 heading_level: 2,
                 page_id: Some("page_0033".to_string()),
                 source_ref: None,
+                source_batch: None,
                 reading_order: 1,
                 section_kind: SectionKind::Unknown,
             });
@@ -21920,6 +21958,7 @@ mod tests {
             page_id: None,
             caption_text: cap.map(String::from),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![],
             body_rows: rows
@@ -21972,6 +22011,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -22010,6 +22050,7 @@ mod tests {
             page_id: None,
             caption_text: caption.map(str::to_string),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: if headers.is_empty() {
                 vec![]
@@ -22133,6 +22174,7 @@ mod tests {
                 "Table 10-2. Downstream USB Standard-A Port VBUS Requirements".to_string(),
             ),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Hub Upstream Port Connection Status", true),
@@ -22210,6 +22252,7 @@ mod tests {
             page_id: None,
             caption_text: Some(caption.to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Encoding,
             header_rows: vec![headers.iter().map(|h| make_table_cell(h, true)).collect()],
             body_rows: vec![vec![
@@ -22354,6 +22397,7 @@ mod tests {
             page_id: None,
             caption_text: Some(caption.to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Encoding,
             header_rows: vec![headers.iter().map(|h| make_table_cell(h, true)).collect()],
             body_rows: rows
@@ -23204,6 +23248,7 @@ mod tests {
             caption_text: Some("Figure 3-1 Read transfer timing".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             // Simulate what `specforge enrich --vlm-provider ollama` would write.
             note: Some(
@@ -24476,6 +24521,7 @@ mod tests {
             page_id: None,
             caption_text: Some("AMBA-style signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -24575,6 +24621,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Destination-oriented signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -24623,6 +24670,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Global signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -24724,6 +24772,7 @@ mod tests {
             page_id: Some("page_0001".to_string()),
             caption_text: Some("Table B1.13: Interface control signals".to_string()),
             source_ref: Some("#/tables/0".to_string()),
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Name", true),
@@ -24834,6 +24883,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Table B13.2: REQ channel interface signals".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -24934,6 +24984,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Source-oriented signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -25003,6 +25054,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Ambiguous source-oriented signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -25078,6 +25130,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Source-oriented signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -25120,6 +25173,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Parity check signals".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Check Signal", true),
@@ -25268,6 +25322,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Producer and consumer signals".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -25357,6 +25412,7 @@ mod tests {
                 heading_level: 1,
                 page_id: Some("page_0001".to_string()),
                 source_ref: None,
+                source_batch: None,
                 reading_order: 1,
                 section_kind: SectionKind::SignalDescription,
             });
@@ -25366,6 +25422,7 @@ mod tests {
             page_id: Some("page_0001".to_string()),
             caption_text: Some("Section-guided signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -25497,6 +25554,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Interface signals".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -25521,6 +25579,7 @@ mod tests {
             caption_text: Some("XREQ cycle trace".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::Unknown,
@@ -25601,6 +25660,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal fields".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Bits", true),
@@ -25681,6 +25741,7 @@ mod tests {
             page_id: None,
             caption_text: Some("DVM message fields".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Name", true),
@@ -25775,6 +25836,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Credited channel signals".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Name", true),
@@ -25852,6 +25914,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -25874,6 +25937,7 @@ mod tests {
             page_id: None,
             caption_text: Some("HTRANS encodings".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![vec![
                 make_table_cell("HTRANS[1:0]", true),
@@ -26301,6 +26365,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -26358,6 +26423,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Reset signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -26435,6 +26501,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -26509,6 +26576,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Handshake signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -26675,6 +26743,7 @@ mod tests {
             page_id: None,
             caption_text: Some("DVM response handshake".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -26914,6 +26983,7 @@ mod tests {
             caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -26926,6 +26996,7 @@ mod tests {
             caption_text: Some("Figure 2: XACK ready timing.".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -26997,6 +27068,7 @@ mod tests {
             ),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
@@ -27057,6 +27129,7 @@ mod tests {
             caption_text: Some("Figure 3: Transfer timing".to_string()),
             caption_source_path: None,
             source_ref: None,
+            source_batch: None,
             placeholder_text: None,
             note: Some(
                 "vlm_timing_diagram_extraction: ```json\n{\n  \"signals\": [{\"name\": \"XACK\", \"values\": [{\"cycle\": \"T1\", \"state\": \"HIGH\"}]}],\n  \"annotations\": [\n    \"XACK indicates that the subordinate can accept the transfer.\"\n  ]\n}\n```"
@@ -27111,6 +27184,7 @@ mod tests {
             page_id: None,
             caption_text: Some("Control signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 make_table_cell("Signal", true),
@@ -27532,6 +27606,7 @@ mod tests {
             caption_text: Some("Figure 1: VALID/READY timing behavior.".to_string()),
             caption_source_path: None,
             source_ref: Some("#/pictures/0".to_string()),
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::Unknown,
@@ -28634,6 +28709,7 @@ mod wire_based_100_5h {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![row(&["Name", "Destination", "Width", "Description"])],
             body_rows: vec![
@@ -28684,6 +28760,7 @@ mod wire_based_100_5h {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![row(&["Signal", "Source", "Width", "Description"])],
             body_rows: vec![
@@ -29531,6 +29608,7 @@ mod extractor_architecture_9b {
             page_id: None,
             caption_text: Some("Signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![cell("Signal", true), cell("Description", true)]],
             body_rows: vec![
@@ -29716,6 +29794,7 @@ mod extractor_architecture_9c {
             page_id: None,
             caption_text: Some("Check signal descriptions".to_string()),
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::SignalDescription,
             header_rows: vec![vec![
                 cell("Check Signal", true),

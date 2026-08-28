@@ -17,6 +17,10 @@ answers:
   - "why is source_ref ambiguous"
   - "does source_ref identify one Docling item"
   - "what happens to self_ref under batched ingest"
+  - "what is source_batch in SourceIR"
+  - "how do I address exactly one converter item"
+  - "why does source_batch not appear on my artifact"
+  - "how many persisted artifacts have an ambiguous source_ref"
   - "why did a paragraph gain words after re-ingest"
   - "can a SourceIR element contain text from two places"
   - "which task owns the ingest conservation gap"
@@ -79,11 +83,18 @@ construction.
 
 Two related facts fell out of the same measurement:
 
-- **`source_ref` does not identify one converter item under bounded-memory ingest.** A batched conversion
-  writes one converter document per page range and Docling's `self_ref` restarts at zero in each, so the
-  recorded ref is ambiguous. The Arm Debug guide's 6,784 content elements carry only 2,252 distinct
-  `source_ref` values, 1,883 used more than once; USB 3.2 is nine batches. Any conservation gate has to join
-  converter items to `SourceIR` records, so this blocks the gate (`SOURCE-IR-REPRODUCIBILITY.9`).
+- **`source_ref` did not identify one converter item under bounded-memory ingest, and now `source_batch`
+  does.** A batched conversion writes one converter document per page range and Docling's `self_ref`
+  restarts at zero in each, so the bare ref is ambiguous: measured over all 78 persisted artifacts, **14**
+  are in that state, holding 111,861 content elements over 28,599 distinct refs — the Arm Debug guide's
+  6,784 elements carry 2,252 refs with 1,883 used more than once, and USB 3.2 is nine batches.
+  `SOURCE-IR-REPRODUCIBILITY.9` added `source_batch` to the four `source_ref`-bearing record kinds,
+  written only when the run is actually batched, so `(source_batch, source_ref)` is exact from that
+  revision forward. Artifacts already on disk carry no coordinate and cannot gain one after the fact;
+  the consumer reports which key each artifact supports. That the ambiguity is batching and not a
+  duplicate-emitting producer is settled by the retained converter bundles: across the 24 artifacts whose
+  bundle survives, 22 are unambiguous and unbatched and 2 are ambiguous and batched, with zero
+  disagreements either way.
 - **Preservation and faithfulness have come apart.** The three paragraphs `.1` called lost are all present
   word for word — because current Docling spliced a figure fragment into the middle of each. `SourceIR` now
   carries `… by reading the USB4 Host Enhanced SS Host Controller ROUTER_CS_6. Gen T Full Connectivity Support

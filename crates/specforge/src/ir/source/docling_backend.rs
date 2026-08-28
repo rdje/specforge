@@ -550,6 +550,18 @@ class _IngestAccumulator:
         self.table_counter = 0
         self.element_reading_order = 0
         self.document_title = None
+        # SOURCE-IR-REPRODUCIBILITY.9: Docling's `self_ref` restarts at zero in every converted
+        # document, so on a batched run `source_ref` alone does not identify one converter item.
+        # `batch_index` is the missing coordinate and addresses `documents[i]` in the batched raw
+        # backend envelope. It is recorded ONLY when the run is actually batched: a single-pass run
+        # produces one converter document, where `source_ref` is already unique, and emitting a
+        # constant zero there would change every unbatched artifact for no gained identity.
+        self.batch_index = 0
+        self.batched = False
+
+    def batch_ref(self):
+        """The batch coordinate to record on a source record, or None for a single-pass run."""
+        return self.batch_index if self.batched else None
 
 
 def process_converted_document(
@@ -653,6 +665,7 @@ def process_converted_document(
                 "caption_text": caption_text,
                 "caption_source_path": as_posix(backend_raw_output_path),
                 "source_ref": source_ref,
+                "source_batch": acc.batch_ref(),
                 "placeholder_text": None,
                 "note": None,
                 "diagram_kind": classify_diagram_kind(caption_text, asset_kind_str),
@@ -675,6 +688,7 @@ def process_converted_document(
                 "caption_text": caption_text,
                 "caption_source_path": as_posix(backend_raw_output_path),
                 "source_ref": source_ref,
+                "source_batch": acc.batch_ref(),
                 "placeholder_text": None,
                 "note": None,
                 "diagram_kind": "unknown",
@@ -693,6 +707,7 @@ def process_converted_document(
                 "page_id": page_id,
                 "caption_text": caption_text,
                 "source_ref": source_ref,
+                "source_batch": acc.batch_ref(),
                 "table_kind": table_kind,
                 "header_rows": header_rows,
                 "body_rows": body_rows,
@@ -737,6 +752,7 @@ def process_converted_document(
                 "heading_level": heading_level,
                 "page_id": page_id,
                 "source_ref": source_ref,
+                "source_batch": acc.batch_ref(),
                 "reading_order": acc.element_reading_order,
             })
 
@@ -755,6 +771,7 @@ def process_converted_document(
                     "heading_level": heading_level or 1,
                     "page_id": page_id,
                     "source_ref": source_ref,
+                    "source_batch": acc.batch_ref(),
                     "reading_order": acc.element_reading_order,
                     "section_kind": classify_section(text),
                 })
@@ -867,9 +884,13 @@ def main():
         )
 
     acc = _IngestAccumulator()
+    # Only a run that produces more than one converter document needs the batch coordinate; see
+    # `_IngestAccumulator.batch_ref` (SOURCE-IR-REPRODUCIBILITY.9).
+    acc.batched = len(page_batches) > 1
     markdown_parts = []
     raw_batches = []
-    for _page_batch in page_batches:
+    for batch_index, _page_batch in enumerate(page_batches):
+        acc.batch_index = batch_index
         if _page_batch is None:
             result = converter.convert(str(input_path))
         else:

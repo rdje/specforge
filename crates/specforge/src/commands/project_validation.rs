@@ -6833,6 +6833,7 @@ mod tests {
                 page_id: Some("page_0001".to_string()),
                 caption_text: Some("Reset signal descriptions".to_string()),
                 source_ref: None,
+                source_batch: None,
                 table_kind: crate::ir::source::TableKind::SignalDescription,
                 header_rows: vec![vec![
                     crate::ir::source::StructuredTableCellRecord {
@@ -6977,6 +6978,7 @@ mod tests {
                 page_id: Some("page_0001".to_string()),
                 caption_text: Some("Control signal descriptions".to_string()),
                 source_ref: None,
+                source_batch: None,
                 table_kind: crate::ir::source::TableKind::SignalDescription,
                 header_rows: vec![vec![
                     crate::ir::source::StructuredTableCellRecord {

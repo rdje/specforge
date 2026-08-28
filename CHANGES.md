@@ -1,3 +1,46 @@
+### SOURCE-IR-REPRODUCIBILITY.9 — give provenance the batch coordinate it was missing
+
+- Added the coordinate rather than redefining the field. `source_ref` is Docling's `self_ref` and is
+  carried unchanged through EvidenceIR, SemanticIR, and IntentIR; overloading it into `batch2:#/texts/7`
+  would change the meaning of a value four stages already depend on. The four record kinds that carry it —
+  `content_elements`, `document_sections`, `structured_tables`, `visual_assets` — gain
+  `source_batch: Option<u32>`, which indexes `documents[i]` in the batched raw-backend envelope SpecForge
+  already writes, so `(source_batch, source_ref)` addresses exactly one converter item.
+- Wrote it only where it means something. `_IngestAccumulator.batch_ref()` returns `None` unless
+  `len(page_batches) > 1`, and the field is `#[serde(default, skip_serializing_if = "Option::is_none")]`,
+  so a single-pass ingest writes the bytes it wrote before this change and every artifact already on disk
+  deserializes with `None` rather than defaulting to batch zero — which would be a claim, not a default.
+- Measured the standing ambiguity across the whole persisted corpus instead of quoting one document.
+  **14 of 78** artifacts carry a bare `source_ref` that does not identify one content element; 64 do not.
+  Across the 14, 111,861 content elements resolve to **28,599** distinct refs, 22,467 refs are used more
+  than once, and **83,262 records (74.4%)** cannot be addressed by a bare ref. The Arm Debug guide
+  reproduces this tree's published figure exactly: 6,784 / 2,252 / 1,883.
+- Falsified the obvious competing reading. "The reuse is a producer bug emitting duplicate refs" is
+  separated by the retained converter bundles, an independent artifact: of the 24 artifacts whose bundle
+  survives, **22 are unambiguous and unbatched and 2 are ambiguous and batched**, with zero disagreements
+  in either direction. The other 54 have no retained bundle, so their batching is not confirmable from the
+  artifact and is not asserted.
+- Corrected a first measurement that was wrong, in the record. A first pass reported **all 78** artifacts
+  as ambiguous. It pooled `content_elements` with `document_sections`, and a section header is legitimately
+  recorded in both under one ref — 1,011 of 1,011 for the Arm Debug guide. That is a shared ref, not a
+  collision; the population counts `content_elements` alone.
+- Made the consumer key on it exclusively. In `measure_ingest_content_loss.py` a coordinate-bearing record
+  is matched only by `batch{n}:{ref}` and never also by the `(source_ref, text)` pair, or the fallback
+  would re-admit the collision it fixes. The census now publishes `source_ref_identity`, `converter_refs`,
+  `converter_distinct_refs`, `converter_refs_reused`, and `converter_distinct_addresses`, so the ambiguity
+  is reported rather than silently worked around.
+- Controls: producer self-test **32/32 -> 33/33** with seven observed RED perturbations — the coordinate
+  record also entering the pair index, the exact address never consulted, a boolean accepted as a
+  coordinate, a mixed artifact reported as exact, the batch not passed through the production join, the
+  ref-reuse count reported as zero, and the addresses not batch-qualified. One focused Rust test proves the
+  three schema properties together and was observed RED twice.
+- Gates: `cargo test --workspace --lib` **470 / 168 / 1,370 passed, 0 failed, 9 ignored**; `cargo clippy
+  --workspace --all-targets -- -D warnings` clean; `mdbook build` exit 0.
+- Opened `.9a` (tracking-only): the producer's clean-tree guard fires for `--persisted`, which performs no
+  ingest, so a read-only population measurement cannot be taken from a working tree. It blocked nothing
+  here — the population was read directly from the artifacts — but the guard should govern exactly the
+  modes that depend on production code.
+
 ### STATUS-LEDGER-ROLLOVER.4 — derive, publish, and control the per-record budget
 
 - Made the budget a derivation rather than a memory. `measure_record_budget` computes

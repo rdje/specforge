@@ -328,21 +328,41 @@ class ConverterDocument:
 class SourceIrIndex:
     """What one `SourceIR` artifact carries, indexed for the question "did this item reach it?".
 
-    A batched ingest makes `source_ref` ambiguous — the Arm Debug guide's 6,784 content elements
-    share 2,252 distinct refs — so reachability is keyed on the `(source_ref, text)` pair. That is
-    exact for an unbatched document and the strongest available join for a batched one.
+    Identity depends on what the artifact records. Docling's `self_ref` restarts at zero in every
+    converted document, so on a batched ingest `source_ref` alone addresses one item per batch — the
+    Arm Debug guide's 6,784 content elements share 2,252 distinct refs. `SOURCE-IR-REPRODUCIBILITY.9`
+    added the missing coordinate, so a record written by a batched run carries `source_batch` and
+    `(source_batch, source_ref)` is exact.
+
+    An artifact written before that change carries no coordinate, and no key can recover it after the
+    fact. There the index falls back to the `(source_ref, text)` pair, which is exact for an unbatched
+    document and the strongest available join for a batched one. The two keys are never mixed: a
+    coordinate-bearing record is only ever matched exactly, so a colliding ref cannot be credited to
+    an item in another batch that happens to carry the same text.
     """
 
     def __init__(self, artifact: dict):
         self.pairs: set[tuple[str, str]] = set()
-        for record in artifact.get("content_elements") or []:
-            ref = reference(record.get("source_ref"))
-            if ref is not None:
-                self.pairs.add((ref, normalize(record.get("text"))))
-        for record in artifact.get("document_sections") or []:
-            ref = reference(record.get("source_ref"))
-            if ref is not None:
-                self.pairs.add((ref, normalize(record.get("title"))))
+        self.addresses: set[str] = set()
+        self.coordinate_records = 0
+        self.ref_records = 0
+        for collection, text_field in (
+            ("content_elements", "text"),
+            ("document_sections", "title"),
+        ):
+            for record in artifact.get(collection) or []:
+                ref = reference(record.get("source_ref"))
+                if ref is None:
+                    continue
+                self.ref_records += 1
+                batch = record.get("source_batch")
+                if isinstance(batch, int) and not isinstance(batch, bool):
+                    # Exact, and exclusively so: a coordinate-bearing record never also enters the
+                    # pair index, or the fallback would re-admit the very collision it fixes.
+                    self.coordinate_records += 1
+                    self.addresses.add(f"batch{batch}:{ref}")
+                else:
+                    self.pairs.add((ref, normalize(record.get(text_field))))
         # A caption reaches SourceIR through the bound `caption_text` on its table or figure even
         # when its own text item carries no record, so counting it as dropped would overstate the
         # gap. Matching on text alone can only over-credit, which keeps the census conservative.
@@ -360,12 +380,23 @@ class SourceIrIndex:
                     if text:
                         self.residual_texts.add(text)
 
-    def reached(self, item: dict) -> bool:
+    def reached(self, item: dict, batch: "Batch | None" = None) -> bool:
         ref = reference(item.get("self_ref"))
         text = normalize(item.get("text"))
-        if ref is not None and (ref, text) in self.pairs:
-            return True
+        if ref is not None:
+            if batch is not None and f"batch{batch.index}:{ref}" in self.addresses:
+                return True
+            if (ref, text) in self.pairs:
+                return True
         return bool(text) and (text in self.caption_texts or text in self.residual_texts)
+
+    def identity(self) -> str:
+        """Which key this artifact supports: exact, or the pre-coordinate pair."""
+        if self.coordinate_records and self.coordinate_records == self.ref_records:
+            return "batch_qualified_ref"
+        if self.coordinate_records:
+            return "mixed"
+        return "ref_text_pair"
 
 
 def absent_elements(persisted: dict, replayed: dict) -> list[dict]:
@@ -559,7 +590,7 @@ def adjudicate(element: dict, document: ConverterDocument, index: SourceIrIndex)
 
     dropped: list[dict] = []
     for batch, item in location["covering"]:
-        reached = index.reached(item)
+        reached = index.reached(item, batch)
         provenance = (item.get("prov") or [{}])[0]
         summary = {
             "address": document.address(batch, item),
@@ -616,7 +647,7 @@ def conservation_census(document: ConverterDocument, index: SourceIrIndex) -> di
     kept = 0
     buckets: dict[str, dict] = {}
     for batch, item in document.items:
-        if index.reached(item):
+        if index.reached(item, batch):
             kept += 1
             continue
         drop = batch.drop_reason(item)
@@ -632,12 +663,25 @@ def conservation_census(document: ConverterDocument, index: SourceIrIndex) -> di
             bucket["text_samples"].append(text[:80])
     for bucket in buckets.values():
         bucket["labels"] = dict(sorted(bucket["labels"].items()))
+    refs = [reference(item.get("self_ref")) for _batch, item in document.items]
+    addresses = {
+        f"batch{batch.index}:{reference(item.get('self_ref'))}" for batch, item in document.items
+    }
+    present = [ref for ref in refs if ref is not None]
     return {
         "batched": document.batched,
         "converter_batches": len(document.batches),
         "converter_text_items": len(document.items),
         "reached_source_ir": kept,
         "reached_no_source_ir_record": len(document.items) - kept,
+        # How provenance is keyed for this artifact, and how ambiguous the bare ref actually is.
+        # `converter_refs_reused` is the number of items a bare `source_ref` cannot address on its
+        # own; `source_ref_identity` says whether the artifact carries the coordinate that fixes it.
+        "source_ref_identity": index.identity(),
+        "converter_refs": len(present),
+        "converter_distinct_refs": len(set(present)),
+        "converter_refs_reused": len(present) - len(set(present)),
+        "converter_distinct_addresses": len(addresses),
         "by_reason": dict(sorted(buckets.items())),
     }
 
@@ -955,6 +999,92 @@ class _FixtureDocument(ConverterDocument):
 def run_self_test() -> int:
     """Each control fixes one reading the adjudication must not default to."""
     checks: list[tuple[bool, str]] = []
+
+    # ── Batch-qualified provenance identity (SOURCE-IR-REPRODUCIBILITY.9) ──────────────────────
+    # A batched conversion writes one converter document per page range and Docling's `self_ref`
+    # restarts at zero in each, so `#/texts/0` names a different item in every batch. The collision
+    # that matters is the one the pre-coordinate `(source_ref, text)` key cannot see: the same ref
+    # carrying the SAME text in two batches — repeated boilerplate is exactly that — where the pair
+    # would credit an unrecorded item because its twin in another batch was recorded.
+    collision_doc = _FixtureDocument(
+        {"texts": [_text("#/texts/0", "Reserved")]},
+        {"texts": [_text("#/texts/0", "Reserved")]},
+        batched=True,
+    )
+    coordinate_index = SourceIrIndex(
+        {"content_elements": [{"source_ref": "#/texts/0", "source_batch": 1, "text": "Reserved"}]}
+    )
+    batch_zero, item_zero = collision_doc.items[0]
+    batch_one, item_one = collision_doc.items[1]
+    checks.append(
+        (
+            coordinate_index.reached(item_one, batch_one)
+            and not coordinate_index.reached(item_zero, batch_zero),
+            "a colliding ref must resolve to the batch that recorded it, and must not credit the "
+            "identical item in another batch",
+        )
+    )
+    checks.append(
+        (
+            coordinate_index.identity() == "batch_qualified_ref",
+            "an artifact whose records all carry the batch coordinate must report the exact key",
+        )
+    )
+    # The same collision under a pre-coordinate artifact. This is the reading `.9` replaced, kept as
+    # a control so the fallback is a stated limitation rather than an unnoticed one: it credits both.
+    legacy_index = SourceIrIndex(
+        {"content_elements": [{"source_ref": "#/texts/0", "text": "Reserved"}]}
+    )
+    checks.append(
+        (
+            legacy_index.reached(item_zero, batch_zero)
+            and legacy_index.identity() == "ref_text_pair",
+            "an artifact written before the coordinate must still resolve through the pair, and "
+            "must say which key it is using",
+        )
+    )
+    # Mixed artifacts must not be reported as exact: a half-migrated bundle is not an exact join.
+    mixed_index = SourceIrIndex(
+        {
+            "content_elements": [
+                {"source_ref": "#/texts/0", "source_batch": 0, "text": "Reserved"},
+                {"source_ref": "#/texts/1", "text": "alpha"},
+            ]
+        }
+    )
+    checks.append(
+        (
+            mixed_index.identity() == "mixed",
+            "an artifact carrying the coordinate on only some records must not claim the exact key",
+        )
+    )
+    # The join must carry the coordinate through the production path, not only through `reached`.
+    # Without this control a caller could drop the batch argument and every direct-call control above
+    # would still pass.
+    collision_census = conservation_census(collision_doc, coordinate_index)
+    checks.append(
+        (
+            collision_census["reached_source_ir"] == 1
+            and collision_census["reached_no_source_ir_record"] == 1
+            and collision_census["source_ref_identity"] == "batch_qualified_ref"
+            and collision_census["converter_refs_reused"] == 1
+            and collision_census["converter_distinct_addresses"] == 2,
+            "the conservation census must key on the batch coordinate end to end, and must publish "
+            "how ambiguous the bare ref is",
+        )
+    )
+
+    # A boolean is not a batch index. Python would otherwise index `batch{True}` and silently key on
+    # a value no converter ever produced.
+    boolean_index = SourceIrIndex(
+        {"content_elements": [{"source_ref": "#/texts/0", "source_batch": True, "text": "Reserved"}]}
+    )
+    checks.append(
+        (
+            boolean_index.identity() == "ref_text_pair",
+            "a boolean must not be accepted as a batch coordinate",
+        )
+    )
 
     kept_doc = _FixtureDocument({"texts": [_text("#/texts/0", "alpha beta")]})
     kept = adjudicate(

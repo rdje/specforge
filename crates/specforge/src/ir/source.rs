@@ -247,6 +247,14 @@ pub struct StructuredTableRecord {
     pub page_id: Option<String>,
     pub caption_text: Option<String>,
     pub source_ref: Option<String>,
+    /// Index of the converter document this record came from, when bounded-memory ingest converted
+    /// the PDF as more than one page-range batch. Docling's `self_ref` restarts at zero in every
+    /// converted document, so `source_ref` alone does not identify one converter item on a batched
+    /// run; `(source_batch, source_ref)` does, and the index addresses `documents[i]` in the batched
+    /// raw-backend envelope. `None` means the run produced a single converter document, where
+    /// `source_ref` is already unique (`SOURCE-IR-REPRODUCIBILITY.9`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_batch: Option<u32>,
     /// Purpose of this table as proven by generic structural roles at ingest time.
     #[serde(default)]
     pub table_kind: TableKind,
@@ -294,6 +302,14 @@ pub struct ContentElementRecord {
     pub heading_level: Option<u8>,
     pub page_id: Option<String>,
     pub source_ref: Option<String>,
+    /// Index of the converter document this record came from, when bounded-memory ingest converted
+    /// the PDF as more than one page-range batch. Docling's `self_ref` restarts at zero in every
+    /// converted document, so `source_ref` alone does not identify one converter item on a batched
+    /// run; `(source_batch, source_ref)` does, and the index addresses `documents[i]` in the batched
+    /// raw-backend envelope. `None` means the run produced a single converter document, where
+    /// `source_ref` is already unique (`SOURCE-IR-REPRODUCIBILITY.9`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_batch: Option<u32>,
     /// Position of this element in Docling's reading-order traversal.
     pub reading_order: u32,
 }
@@ -656,6 +672,14 @@ pub struct ContentSectionRecord {
     pub heading_level: u8,
     pub page_id: Option<String>,
     pub source_ref: Option<String>,
+    /// Index of the converter document this record came from, when bounded-memory ingest converted
+    /// the PDF as more than one page-range batch. Docling's `self_ref` restarts at zero in every
+    /// converted document, so `source_ref` alone does not identify one converter item on a batched
+    /// run; `(source_batch, source_ref)` does, and the index addresses `documents[i]` in the batched
+    /// raw-backend envelope. `None` means the run produced a single converter document, where
+    /// `source_ref` is already unique (`SOURCE-IR-REPRODUCIBILITY.9`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_batch: Option<u32>,
     pub reading_order: u32,
     /// Section kind proven by the document-independent heading grammar.
     pub section_kind: SectionKind,
@@ -3641,6 +3665,14 @@ pub struct VisualAsset {
     pub caption_text: Option<String>,
     pub caption_source_path: Option<PathBuf>,
     pub source_ref: Option<String>,
+    /// Index of the converter document this record came from, when bounded-memory ingest converted
+    /// the PDF as more than one page-range batch. Docling's `self_ref` restarts at zero in every
+    /// converted document, so `source_ref` alone does not identify one converter item on a batched
+    /// run; `(source_batch, source_ref)` does, and the index addresses `documents[i]` in the batched
+    /// raw-backend envelope. `None` means the run produced a single converter document, where
+    /// `source_ref` is already unique (`SOURCE-IR-REPRODUCIBILITY.9`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_batch: Option<u32>,
     pub placeholder_text: Option<String>,
     pub note: Option<String>,
     /// Semantic diagram kind proven by an explicit generic caption form at ingest time.
@@ -3863,6 +3895,7 @@ mod tests {
             page_id: None,
             caption_text: caption.map(str::to_string),
             source_ref: None,
+            source_batch: None,
             table_kind: kind,
             header_rows,
             body_rows: Vec::new(),
@@ -3878,6 +3911,7 @@ mod tests {
             page_id: None,
             caption_text: None,
             source_ref: None,
+            source_batch: None,
             table_kind: TableKind::Unknown,
             header_rows: vec![headers.iter().map(|text| table_cell(text, true)).collect()],
             body_rows: body
@@ -4223,6 +4257,7 @@ mod tests {
             caption_text: Some("Timing diagram".to_string()),
             caption_source_path: None,
             source_ref: Some("line-1".to_string()),
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::TimingDiagram,
@@ -4281,6 +4316,7 @@ mod tests {
             caption_text: Some("Timing diagram".to_string()),
             caption_source_path: None,
             source_ref: Some("line-1".to_string()),
+            source_batch: None,
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::TimingDiagram,
@@ -5204,5 +5240,52 @@ exit 7
         assert_eq!(source_ir.automation_confidence, AutomationConfidence::High);
 
         Ok(())
+    }
+
+    /// `SOURCE-IR-REPRODUCIBILITY.9`: the batch coordinate is what makes provenance address one
+    /// converter item. Three properties have to hold together, and the third is the one that keeps
+    /// this change from invalidating every artifact already on disk.
+    #[test]
+    fn source_batch_addresses_one_converter_item_without_disturbing_unbatched_artifacts() {
+        use super::ContentElementRecord;
+
+        // 1. An artifact written before the coordinate existed still deserializes, and says so by
+        //    carrying `None` rather than defaulting to batch zero — which would be a claim.
+        // `r##"…"##`: the payload contains `"#` (a Docling `self_ref`), which would close `r#"…"#`.
+        let legacy: ContentElementRecord = serde_json::from_str(
+            r##"{"element_id":"elem_00001","kind":"body_text","text":"Reserved",
+                "page_id":"page_0001","source_ref":"#/texts/0","reading_order":1}"##,
+        )
+        .expect("a pre-coordinate record must still deserialize");
+        assert_eq!(legacy.source_batch, None);
+
+        // 2. A record with no coordinate serializes without the key, so a single-pass ingest writes
+        //    exactly the bytes it wrote before this change.
+        let unbatched = serde_json::to_string(&legacy).expect("serialize");
+        assert!(
+            !unbatched.contains("source_batch"),
+            "an unbatched record must not gain a key: {unbatched}"
+        );
+
+        // 3. The coordinate round-trips, and two records that collide on `source_ref` are distinct
+        //    exactly when their batches differ.
+        let batched = ContentElementRecord {
+            source_batch: Some(3),
+            ..legacy.clone()
+        };
+        let encoded = serde_json::to_string(&batched).expect("serialize");
+        assert!(encoded.contains("\"source_batch\":3"), "{encoded}");
+        let decoded: ContentElementRecord =
+            serde_json::from_str(&encoded).expect("a coordinate-bearing record must round-trip");
+        assert_eq!(decoded, batched);
+        assert_eq!(decoded.source_ref, legacy.source_ref);
+        assert_ne!(decoded, legacy);
+        assert_eq!(
+            ContentElementRecord {
+                source_batch: Some(3),
+                ..legacy.clone()
+            },
+            batched
+        );
     }
 }
