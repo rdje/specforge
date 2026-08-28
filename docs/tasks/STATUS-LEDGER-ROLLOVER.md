@@ -110,6 +110,28 @@ pressure axis here, because one status record is one line.
   without a rollover at all. A cut that does not also address record size buys one or two slices
   Prerequisite: none; it blocks the next status-bearing commit
 
+- ID: `STATUS-LEDGER-ROLLOVER.4`
+  Status: `pending`
+  Goal: gate the per-record budget this surface's own limits already imply
+  Decision (`2026-08-28`, owner-delegated): a status record states the **delivered status delta** — which
+  metric moved, to what value, and whether the product claim changed — and **not the method**. Method,
+  controls, attribution, and per-leg evidence belong to `CHANGES.md` and the owning task leaf, which are
+  already their canonical homes; a status record that narrates them is duplicating a surface, not
+  projecting status.
+  This is not a style preference, and the measurement is what settles it. The ledger declares an
+  **80-record** live window and a **115,000-byte** health target, which together imply a mean of
+  **1,437 bytes per record** (1,638 at the 131,072-byte ceiling). Measured `2026-08-28`: the live window is
+  102,748 bytes across 64 records — a **1,605-byte mean**, so the byte dimension binds at **71 records** and
+  the declared 80-record window **can never be reached**. Records near 2.6 KiB bind it at roughly 44. Two
+  declared limits are therefore mutually unsatisfiable at current record sizes, which is the real cause of
+  the rollover treadmill; a rollover alone only resets the clock.
+  Acceptance: the derived budget (`health_bytes / live_limits.records`) is checked rather than remembered —
+  a record exceeding it, or a live-window mean exceeding it, is reported against the ledger the same way a
+  size ceiling is, with a RED control proving an oversized record is observed. The check must derive the
+  budget from the registry rather than carrying a literal, so it cannot go stale the way the counts
+  `CLAIM-VERIFICATION-ADOPTION.6` corrected did
+  Prerequisite: `STATUS-LEDGER-ROLLOVER.3`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
