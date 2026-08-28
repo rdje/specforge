@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > where do the APB signal declarations come from (which table)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -286,15 +298,3 @@
   > which mdBook quantitative assertions still lack claim authority
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > which metrics govern specification-to-executable-intent progress
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > which nine semantic negative fault classes are tested
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > which persisted evidence docs carry message_field_records
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which persisted paths must exist and which may be historical references
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which production carrier already emits typed actionable residuals
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > which project rescan string fields are treated as filesystem paths
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)

@@ -2,6 +2,15 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what are the current source to IntentIR precision recall and provenance counts
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what are the deeper enum member-quality residual classes after .5.ii / what did the .5.iii measurement find (measured 2026-06-24 read-only, reproducer scripts/measure_enum_width_leak.py: of the 5 deferred classes — glossary SEE…, front-matter/ToC, section-caption B2_3_1_…, _WIDTH parameter leaks, value-restart-of-clean — most are SUBSUMED by .5.i (47/54 _WIDTH members
+  > and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > what are the exact migrated alignment task evidence metrics
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what are the exact source-to-IntentIR precision recall and stage-loss totals
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what are the extraction_quality_* validate metrics and when do they read n/a
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
@@ -208,6 +217,8 @@
   > what does the corpus frontier refreshed list mean
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > what does the declared_signal_names.is_empty() branch in semantic.rs do
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does the ingest traversal oracle check
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > what does the residual actionability denominator actually count
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -286,15 +297,3 @@
   > what happens when SemanticIR has no authoritative signal declarations
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > what happens when SemanticIR has no authoritative signal names
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > what happens when a roadmap section grows too long
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what happens when a timing observation has no explicit tick-addressed samples
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what happens when document intent category is unresolved
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what happens when ingest cannot count PDF pages
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what happens when old identity-scoped prior memory is loaded
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what happens when the NLI provider is down

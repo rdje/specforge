@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > which nine semantic negative fault classes are tested
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > which persisted evidence docs carry message_field_records
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which persisted paths must exist and which may be historical references
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which production carrier already emits typed actionable residuals
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > which project rescan string fields are treated as filesystem paths
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > which register-table family stays residual (byte location size tables)
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -285,15 +297,3 @@
   > why did the canonical SWD relation count change from 25 to 21
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > why did the corpus KB size warning appear and how was it removed
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why did the corpus task-evidence index verify the PDF contract
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why did the emitted ISF count drop from 57 to 44
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did the host actor disappear from AArch64 External Debug
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why did the initial prospective behavioral held-out run fail
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > why did the moved Python virtual environments still access the old repository
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)

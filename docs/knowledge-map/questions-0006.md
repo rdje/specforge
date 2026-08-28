@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many corpus refreshes remain after the OpenCAPI Certified note
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many corpus refreshes remain after the OpenCAPI Ready note
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > how many corpus task ids and source regions must containment preserve
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current claim census candidates join exact evidence or registered annotations
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -291,9 +297,3 @@
   > is the APB PSTRB must be LOW constraint extracted
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > is the APB signal catalog extracted
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > is the CoreSight Base System Architecture current-binary refresh complete
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > is the CoreSight Base System Architecture fully extracted

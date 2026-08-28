@@ -1,3 +1,31 @@
+### SOURCE-IR-REPRODUCIBILITY.11 — measure the traversal the census had only read
+
+- Removed the one inference `.5`'s largest number rested on. The conservation census attributes 5,896
+  dropped items to `iterate_items(traverse_pictures=False)` by **reimplementing** two docling-core
+  predicates read out of that library's source. `--oracle` now asks the library instead: it loads each
+  retained converter document through `DoclingDocument.model_validate` in `.venv-docling` and calls
+  `doc.iterate_items()` with no arguments, exactly as the embedded backend helper does, so the defaults
+  under test are production's rather than a restatement of them.
+- Confirmed the model on the whole retained population with no sampling. All **24** persisted artifacts
+  whose converter document was retained: 43,614 converter text items, **22,127 yielded by the library,
+  22,127 predicted by the model, 0 disagreements** — reported in both directions and never netted, per
+  document and per batch, including the two batched bundles (Arm Debug 7 page ranges, USB 3.2 9) where
+  `self_ref` restarts in every range.
+- Kept one definition of the traversal. The census reaches it through `drop_reason`, which needs the named
+  reason, and the oracle through `traversal_yields`, which needs only the verdict; both come from the new
+  `Batch.traversal_exclusion`, so the oracle cannot confirm a second copy that has drifted from the one the
+  census uses.
+- Closed the account instead of stopping at a matching count. Every document round-trips through its own
+  `export_to_dict`, so the oracle observes the document ingest traversed rather than a re-derived one; and
+  the residue between the yielded set and the artifacts is 39 empty `formula` items plus exactly the
+  **22,088** content elements the live population holds, with `unexplained` **0** for every document.
+- Made the control able to fail. `--self-test` is **27/27** with **six observed RED perturbations**:
+  netting the two directions, dropping the batch qualifier from an address, accepting a probe that covers
+  fewer batches than the bundle holds, confirming without the round-trip proof, dropping the empty-text
+  attribution, and confirming while a document was skipped. The run exits non-zero unless every document in
+  the frame was measured, agreed, and round-tripped, so it is usable as a gate and not only as a report.
+- Read-only: no ingest, no source PDF, nothing under `generated/` written or removed, no Rust change.
+
 ### SOURCE-IR-REPRODUCIBILITY.5 — adjudicate the three absent elements, and census what ingest never carries
 
 - Withdrew `.1`'s three-paragraph loss finding. `scripts/measure_ingest_content_loss.py` re-ingests each

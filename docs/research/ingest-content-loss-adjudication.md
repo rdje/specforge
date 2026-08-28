@@ -207,6 +207,65 @@ python3 scripts/measure_ingest_content_loss.py \
   --document um11732_v3_2022_02_17_i2s_bus_specification
 ```
 
+## The mechanism, measured rather than read (`SOURCE-IR-REPRODUCIBILITY.11`)
+
+The 5,896 above is the largest number in this report and every leaf it opened cites it — yet it
+rested on a *reading*. This producer reimplements two docling-core predicates (the body-layer test,
+and the picture-boundary skip with its descendant closure) from that library's source. A careful
+reading of someone else's traversal is exactly the kind of thing that can be wrong in one direction
+while looking right, and nothing here would have noticed.
+
+`--oracle` replaces the reading with a measurement. It loads each persisted converter document back
+through `DoclingDocument.model_validate` in the project's own docling environment, calls
+`doc.iterate_items()` with no arguments — exactly as the embedded backend helper does, so the
+defaults under test are production's rather than a restatement of them — and compares the text items
+the library actually yields against the set the model predicts. The census and the oracle share one
+predicate (`Batch.traversal_exclusion`), so the oracle cannot end up confirming a second copy that
+has drifted from the one the census uses.
+
+The frame is every persisted artifact whose converter document was retained: all 24, no sampling.
+
+| | |
+| --- | ---: |
+| Documents measured | 24 |
+| Converter text items | 43,614 |
+| Yielded by `iterate_items` | 22,127 |
+| Predicted by the drop model | 22,127 |
+| **Disagreements** | **0** |
+
+Zero in both directions, per document and per batch — including the two batched bundles (Arm Debug,
+7 page ranges; USB 3.2, 9) where `self_ref` restarts in every range. The directions are reported
+separately and never netted, because an item the model wrongly excludes must not be cancelled by one
+it wrongly includes.
+
+Two further checks close the account instead of leaving it at a matching count:
+
+- **The document under the oracle is the document ingest traversed.** The probe re-exports each
+  validated document and compares it to the bundle it read; all 24 round-trip exactly. Without that,
+  a green result would be evidence about `export_to_dict`, not about ingest.
+- **The residue reaches zero.** Of the 22,127 items the library yields, 39 are `formula` items with
+  empty text that the backend helper drops — and the remaining **22,088 are exactly the content
+  elements the persisted artifacts hold**, the same 22,088 the `.1` census counts across the live
+  population. `unexplained` is 0 for every document. No body-layer `page_header` or `page_footer`
+  exists anywhere in the frame, so that filter never fires.
+
+What keeps this from being agreement by construction is that the comparator was driven with
+observations docling-core did not produce. Six perturbations each turn exactly one control red:
+netting the two directions, dropping the batch qualifier from an address, accepting a probe that
+covers fewer batches than the bundle holds, confirming without the round-trip proof, dropping the
+empty-text attribution, and confirming while a document was skipped. `--self-test` is 27/27.
+
+```bash
+python3 scripts/measure_ingest_content_loss.py \
+  --output-root .project-data/tmp/<census-id> --census-id <census-id> \
+  --owner SOURCE-IR-REPRODUCIBILITY.11 --oracle
+```
+
+It needs no source PDF and no ingest, and it exits non-zero unless every document in the frame was
+measured, agreed, and round-tripped — so it is usable as a gate rather than only as a report.
+`SPECFORGE_DOCLING_PYTHON` selects the interpreter, defaulting to `.venv-docling/bin/python` exactly
+as production resolves it; the observed run used docling-core `2.78.0`.
+
 ## What this does not say
 
 It does not extend the conservation figure to the corpus. Four re-ingested documents and four

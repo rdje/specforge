@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture current-binary refresh complete
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture fully extracted
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -117,6 +123,8 @@
   > is the reviewed source-to-intent dataset historically unseen
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > is the traverse_pictures mechanism measured or only read from source
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > is the whole renderable corpus FSMGen --strict clean now (yes — 70/70 current-emit .isf after .2a.vi; the ISF-emit strict-FAIL frontier is closed: Levers A/B/C/F + .2a.vi)
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -289,12 +297,3 @@
   > what are the current USB4 Inter-Domain artifact hashes
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > what are the current corpus KB live-document size metrics
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what are the current source to IntentIR precision recall and provenance counts
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what are the deeper enum member-quality residual classes after .5.ii / what did the .5.iii measurement find (measured 2026-06-24 read-only, reproducer scripts/measure_enum_width_leak.py: of the 5 deferred classes — glossary SEE…, front-matter/ToC, section-caption B2_3_1_…, _WIDTH parameter leaks, value-restart-of-clean — most are SUBSUMED by .5.i (47/54 _WIDTH members
-  > and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > what are the exact migrated alignment task evidence metrics
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > what are the exact source-to-IntentIR precision recall and stage-loss totals

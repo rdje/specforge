@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > what is the difference between validate persistence and stage write_to_disk
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the exact CORPUS-COVERAGE task evidence boundary
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the exact active PDF task evidence baseline
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what is the exact pre-containment ROADMAP source identity
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > what is the executable currentness authority for VALIDATION_SNAPSHOT
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -285,15 +297,3 @@
   > where do interface_edge_timings stop in the pipeline
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > where do live-document checker test fixtures create temporary files
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > where do the APB signal declarations come from (which table)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged

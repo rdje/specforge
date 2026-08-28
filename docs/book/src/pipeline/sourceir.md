@@ -639,6 +639,17 @@ The fix is not to promote figure labels into prose; that is exactly how a figure
 spliced into a sentence. It is that SpecForge's own doctrine requires an unresolved thing to become
 an explicit residual rather than disappear, and today these items disappear.
 
+**The mechanism above is measured, not read off Docling's source.** The census reimplements two of
+Docling's own traversal rules, so an oracle asks the library itself: it loads each retained converter
+document back through `DoclingDocument.model_validate`, calls `iterate_items()` exactly as ingest
+does, and compares what Docling yields against what the census predicts — in both directions, per
+page range, never netted. Measured `2026-08-28` across all 24 artifacts whose converter document was
+retained: 43,614 converter text items, **22,127 yielded and 22,127 predicted, zero disagreements**,
+every document
+round-tripping through its own serialization, and the remainder closing exactly on the 22,088
+content elements those artifacts hold. If a future Docling changes how it walks a figure, this is
+the check that says so.
+
 Measure it yourself, with or without a source PDF:
 
 ```bash
@@ -647,6 +658,9 @@ python3 scripts/measure_ingest_content_loss.py   --output-root .project-data/tmp
 
 # Census the persisted artifacts and their retained bundles — no ingest, no source needed
 python3 scripts/measure_ingest_content_loss.py   --output-root .project-data/tmp/<census-id> --census-id <census-id>   --owner <owning-leaf> --persisted   --document um10204_rev7_0_2021_i2c_bus_specification
+
+# Check the traversal model against Docling's own iterate_items — exits non-zero on any disagreement
+python3 scripts/measure_ingest_content_loss.py   --output-root .project-data/tmp/<census-id> --census-id <census-id>   --owner <owning-leaf> --oracle
 
 # The controls that keep "nothing was lost" from being a default answer
 python3 scripts/measure_ingest_content_loss.py --self-test

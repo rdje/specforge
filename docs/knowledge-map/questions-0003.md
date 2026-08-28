@@ -191,6 +191,8 @@
   > does the current SWD chain come from the tracked ADI PDF
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > does the drop model agree with docling iterate_items
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does the emitted .isf signal direction affect FSMGen downstream correctness
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
@@ -295,5 +297,3 @@
   > how are external reviewed PDFs replayed without persisting host paths
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > how are generic SemanticIR phases different from transaction_phases

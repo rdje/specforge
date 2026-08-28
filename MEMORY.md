@@ -17,27 +17,28 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SOURCE-IR-REPRODUCIBILITY.2` is the next child; `.0`/`.1`/`.5` are done and `.8`/`.9`/`.10` are
-  new. Tracking-only: `SCRATCH-RESIDUE-CONTAINMENT.1`, `SPEC-TO-INTENT-ALIGNMENT.9`,
+- Active unit: `SOURCE-IR-REPRODUCIBILITY.12` is the next child; `.0`/`.1`/`.5`/`.11` are done and `.2`–`.4`,
+  `.6`–`.10` remain. Tracking-only: `SCRATCH-RESIDUE-CONTAINMENT.1`, `SPEC-TO-INTENT-ALIGNMENT.9`,
   `PROVIDER-MODEL-STORE-LOCALITY.1`, `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.5` withdrew `.1`'s three-paragraph loss finding. All three elements `.1` called absent are
-  **retained** — every persisted token present in order, with 6 / 5 / 35 tokens *inserted* between them — so all
-  31 dropped elements are re-segmentation and re-ingest content loss is **zero**. `.1`'s whole-string test
-  cannot see a sentence the converter split or spliced into. The measurement that replaces it is larger and
-  standing rather than drift: **8,648 of 18,870 converter text items (46%) reach no `SourceIR` record and earn
-  no residual**, 5,896 of them because ingest never traverses inside a figure (`traverse_pictures=False`), and
-  the persisted artifacts carry the same gap — the I2C specification reproduces byte-for-byte and still
-  discards 1,372 figure-interior items including 39 captions. Two further defects are now owned: `source_ref`
-  is ambiguous under batched ingest, and preservation has come apart from faithfulness (spliced figure text
-  makes sentences the specification never wrote).
+- Current state: `.11` closed the one inference the tree's largest number rested on. `.5` attributes 5,896
+  dropped items to `iterate_items(traverse_pictures=False)` by reimplementing two docling-core predicates read
+  from that library's source; `--oracle` now asks the library itself on **all 24** retained converter documents
+  — 43,614 text items, **22,127 yielded, 22,127 predicted, 0 disagreements** in both directions, per document
+  and per batch, every document round-tripping through its own serialization, and the residue closing on 39
+  empty formulas plus exactly the 22,088 content elements the live population holds. `--self-test` 27/27 with
+  six observed RED perturbations. The standing defect is unchanged and unfixed: figure-interior text reaches
+  no record and no residual, `source_ref` is ambiguous under batched ingest, and preservation has come apart
+  from faithfulness.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: run `SOURCE-IR-REPRODUCIBILITY.2` — make a reviewed source region resolve by content identity
-  rather than ordinal position, changing how `source_record` *resolves* a region and never the recorded anchor,
-  under the three-way digest lockstep already scoped in [[reviewed-fixture-projection-digest-lockstep]].
-  `.8` (a carrier or residual for figure-interior text) and `.9` (batch-qualified `source_ref`) are the
-  prerequisites for `.7`'s conservation gate and can be taken in either order.
+- Next action: run `SOURCE-IR-REPRODUCIBILITY.12` — make the published conservation figure lead with the
+  defect (5,896 / 31%) rather than the raw non-carry rate (8,648 / 46%), which bundles the intended
+  furniture-layer and empty-formula exclusions with it, across the research report, the book chapter,
+  `LIVE_ACHIEVEMENT_STATUS.md`, `CHANGES.md`, and [[ingest-drops-figure-interior-text]]. No measurement
+  changes. Then `.2` — make a reviewed source region resolve by content identity rather than ordinal
+  position, changing how `source_record` *resolves* a region and never the recorded anchor, under the
+  three-way digest lockstep in [[reviewed-fixture-projection-digest-lockstep]].
 - In-flight uncommitted: none after this commit; no background job is running.
 - Blockers: none.

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > what happens when a roadmap section grows too long
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what happens when a timing observation has no explicit tick-addressed samples
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what happens when document intent category is unresolved
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what happens when ingest cannot count PDF pages
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what happens when old identity-scoped prior memory is loaded
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what happens when the NLI provider is down
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > what identifies the canonical inputs to generated Knowledge Map shards
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
@@ -285,15 +297,3 @@
   > what is the difference between ingest batch activation and adaptive batch size
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > what is the difference between phases and transaction_phases
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > what is the difference between validate persistence and stage write_to_disk
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what is the exact CORPUS-COVERAGE task evidence boundary
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact active PDF task evidence baseline
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what is the exact pre-containment ROADMAP source identity

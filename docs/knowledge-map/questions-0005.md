@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > how does specforge fold an X interface relation subject onto the bare agent X
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -205,6 +207,8 @@
   > how is the decision-record file bound derived
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how is the figure-interior drop mechanism verified
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -267,6 +271,8 @@
   > how many captured figure regions does the retained corpus hold
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how many converter text items does iterate_items yield across the corpus
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > how many corpus documents carry markdown-escaped underscores in their statements
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -291,9 +297,3 @@
   > how many corpus refreshes remain after USB4 Inter-Domain
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after the GIC Overview Guide
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many corpus refreshes remain after the OpenCAPI Certified note
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many corpus refreshes remain after the OpenCAPI Ready note
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how many corpus task ids and source regions must containment preserve

@@ -18,11 +18,16 @@ answers:
   - "why did a paragraph gain words after re-ingest"
   - "can a SourceIR element contain text from two places"
   - "which task owns the ingest conservation gap"
+  - "is the traverse_pictures mechanism measured or only read from source"
+  - "does the drop model agree with docling iterate_items"
+  - "how is the figure-interior drop mechanism verified"
+  - "what does the ingest traversal oracle check"
+  - "how many converter text items does iterate_items yield across the corpus"
 date: 2026-08-28
 status: current
 tags: [source-ir, ingest, docling, conservation, captions, measurement-integrity, provenance]
 evidence: docs/research/ingest-content-loss-adjudication.md; docs/tasks/SOURCE-IR-REPRODUCIBILITY.md; scripts/measure_ingest_content_loss.py; crates/specforge/src/ir/source/docling_backend.rs
-reverify: "python3 scripts/measure_ingest_content_loss.py --output-root .project-data/tmp/reverify-figure-interior --census-id reverify-figure-interior --owner SOURCE-IR-REPRODUCIBILITY.5 --persisted --document um10204_rev7_0_2021_i2c_bus_specification"
+reverify: "python3 scripts/measure_ingest_content_loss.py --output-root .project-data/tmp/reverify-figure-interior --census-id reverify-figure-interior --owner SOURCE-IR-REPRODUCIBILITY.11 --oracle --document um10204_rev7_0_2021_i2c_bus_specification"
 ---
 
 SpecForge's Docling helper builds `content_elements` from `doc.iterate_items()`, called with the default
@@ -54,6 +59,18 @@ Most of the 5,896 is diagram furniture (`Tx_0`, `Router A`, `Back to TOC`), but 
 conservation are independent properties, and only the first was measured before now. The gap is also
 document-dependent: the Arm external-debug guide discards none, because its converter document places no text
 inside figures at all.
+
+**The mechanism is measured, not inferred.** The paragraph above describes docling-core's traversal;
+`SOURCE-IR-REPRODUCIBILITY.11` stopped it from resting on a reading of that library's source. The
+producer's `--oracle` mode loads each persisted converter document back through
+`DoclingDocument.model_validate` and calls `doc.iterate_items()` with production's own arguments, then
+compares what the library yields against what the drop model predicts — both directions, never netted,
+per batch. Across **all 24** persisted artifacts whose converter document was retained: 43,614
+converter text items, **22,127 yielded and 22,127 predicted, 0 disagreements**, every document
+round-tripping through its own serialization. The residue closes too — 39 empty `formula` items the
+backend helper drops, leaving exactly the 22,088 content elements the live population holds, with
+`unexplained` 0 everywhere. Six observed RED perturbations keep the comparator from agreeing by
+construction.
 
 Two related facts fell out of the same measurement:
 

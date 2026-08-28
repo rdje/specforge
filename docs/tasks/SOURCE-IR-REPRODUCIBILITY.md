@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.1`, `.5` measured; `.2`–`.4`, `.6`–`.10` pending)
+- Status: `active` (`.0`–`.1`, `.5`, `.11` measured; `.2`–`.4`, `.6`–`.10`, `.12` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
 - Last updated: `2026-08-28`
@@ -290,6 +290,54 @@ Full result, method, controls, and per-document table:
   geometry rather than document vocabulary; a RED control proves an interleaved element is observed
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
 
+- ID: `SOURCE-IR-REPRODUCIBILITY.11`
+  State: `done` (`2026-08-28`)
+  Goal: make the traversal drop model a re-runnable control instead of a reading of upstream source
+  Acceptance: `.5`'s largest published number — 5,896 converter text items discarded because
+  `iterate_items(traverse_pictures=False)` never yields them — rests on a drop model that *reimplements* two
+  docling-core predicates (`content_layer` membership, and the picture-boundary skip with its descendant
+  closure). Those predicates were inferred by reading that library's source, so the claim is one careful
+  reading away from being wrong, and every downstream leaf cites it. An `--oracle` mode must load each
+  persisted converter bundle through `DoclingDocument.model_validate` in the project's own docling
+  environment, call `doc.iterate_items()` with production's arguments, and compare the set of text items the
+  library actually yields against the set the model predicts — disagreements reported in both directions,
+  never a single agreement count that hides an offsetting pair. The census and the oracle must share **one**
+  traversal predicate, so the oracle cannot end up validating a copy of the model. The residue between the
+  yielded set and the artifact's own `content_elements` must be attributed to the backend helper's remaining
+  filters with an explicit unexplained bucket. A RED control proves a disagreement is reported rather than
+  absorbed
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+  Evidence: `--oracle` loads each retained converter document through `DoclingDocument.model_validate`
+  in `.venv-docling` and calls `doc.iterate_items()` with no arguments, as the embedded backend helper
+  does. Frame: **all 24** persisted artifacts whose converter document was retained, no sampling.
+  43,614 converter text items; **22,127 yielded by the library, 22,127 predicted by the model, 0
+  disagreements** in both directions, per document and per batch — including the two batched bundles
+  (Arm Debug 7 ranges, USB 3.2 9) where `self_ref` restarts in each. The census and the oracle share
+  one predicate, `Batch.traversal_exclusion`. Two checks close the account rather than leaving it at a
+  matching count: every document round-trips through its own `export_to_dict`, so the oracle observes
+  the document ingest traversed; and the residue is 39 empty `formula` items plus exactly the 22,088
+  content elements the live population holds, with `unexplained` 0 for every document. `--self-test`
+  **27/27** with **six observed RED perturbations** — netting the two directions, dropping the batch
+  qualifier, accepting a probe covering fewer batches, confirming without the round-trip proof,
+  dropping the empty-text attribution, and confirming while a document was skipped. The run exits
+  non-zero unless every document in the frame was measured, agreed, and round-tripped
+  Report: [`docs/research/ingest-content-loss-adjudication.md`](../research/ingest-content-loss-adjudication.md)
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.12`
+  State: `pending`
+  Goal: lead the published conservation figure with the defect, not the raw non-carry rate
+  Acceptance: `.5` headlines "8,648 of 18,870 converter text items — 46% — reach no `SourceIR` record and
+  earn no residual". The statement is true and every surface decomposes it in the next sentence, but the
+  headline bundles ~2,722 *intended* exclusions (running headers and footers on the `furniture` layer, which
+  ingest is right to skip) and 30 empty formulas together with the 5,896 items that are the actual defect —
+  and the headline number is the one that propagates into other surfaces and later leaves. The defect rate
+  must lead and the raw non-carry rate must follow as context, on every surface that publishes it:
+  `docs/research/ingest-content-loss-adjudication.md`, `docs/book/src/pipeline/sourceir.md`,
+  `LIVE_ACHIEVEMENT_STATUS.md`, `CHANGES.md`, and the fact card
+  [[ingest-drops-figure-interior-text]]. No measurement changes and no number is withdrawn; this is a
+  presentation defect in a published claim, not a correction of one
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+
 ## Open Questions
 
 - What changed inside Docling between the `2026-08-09`–`2026-08-11` bundles and now? `.1` strengthens the
@@ -315,7 +363,7 @@ Full result, method, controls, and per-document table:
 
 ## Blockers
 
-- None. `.2`–`.4` and `.6`–`.10` are all runnable. `.5` is complete, so `.6`–`.10` are unblocked; `.7`'s gate
+- None. `.2`–`.4`, `.6`–`.10`, and `.12` are all runnable. `.5` is complete, so `.6`–`.10` are unblocked; `.7`'s gate
   should land after `.8` and `.9`, because a conservation gate at today's numbers fails closed everywhere and
   its join is ambiguous for every batched document.
 
@@ -323,6 +371,7 @@ Full result, method, controls, and per-document table:
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-28` | `.11` traversal oracle | the drop model that carries `.5`'s largest number is confirmed against docling-core's own `iterate_items` on **all 24** persisted artifacts whose converter document was retained, with no sampling: 43,614 converter text items, **22,127 yielded and 22,127 predicted, 0 disagreements** in both directions, per document and per batch, across unbatched and 7-/9-range batched bundles. Every document round-trips through its own `export_to_dict`, so the oracle observes the document ingest traversed rather than a re-derived one. The residue closes: 39 empty `formula` items plus exactly the 22,088 content elements the live population holds, `unexplained` 0 everywhere. `--self-test` 27/27 with six observed RED perturbations; the run exits non-zero unless every document was measured, agreed, and round-tripped |
 | `2026-08-28` | `.5` content-loss adjudication | all three elements `.1` reported as emitted nowhere are **retained**: zero persisted tokens missing, 6 / 5 / 35 tokens inserted between them, and every covering converter item carries a `SourceIR` record — so re-ingest content loss is zero and all 31 dropped elements are re-segmentation. Conservation censused in the same run: 18,870 converter text items across the three, 8,648 (46%) reaching no record and earning no residual — 5,896 figure interior (5,875 `text`, 9 `caption`, 8 `footnote`, 4 `section_header`), 2,722 furniture layer, 30 empty formulas, `unexplained` empty. `--persisted` mode shows the same gap without any ingest: I2C 1,372 figure-interior items discarded (39 of them captions) on an artifact `.1` scores as reproducing exactly, while the Arm external-debug guide discards none. A fourth re-ingest of the repository-owned I2S bus specification — which `.1` scores as reproducing exactly, 115 → 115 — reaches 349 of 464 converter items with no record (75%), 255 figure interior. Producer self-test 18/18 with six observed RED perturbations, the first being `.1`'s own whole-string test, which reproduces `.1`'s answer |
 | `2026-08-27` | `.1` population census | 78 persisted artifacts partition into 24 live-measured / 0 live-unmeasurable / 54 legacy-unmeasurable; the live stratum equals the chain-currency retained-bundle declaration exactly; 11 reproduce and 13 drift, adding 1,804 content elements (1,802 `body_text`, all figure-interior text) and dropping 31, of which 28 are re-segmentation and three are content emitted nowhere; caption bindings fall 1,191 to 1,152; no collection but `content_elements` changes cardinality and `proof_ledger.ruleset_sha256` is identical for all 24; two further ingests of the largest proportional drift reproduce it exactly, and a two-replay comparison isolates the cross-root ledger difference to `scope`/`conclusion_sha256` with all 448 addresses equal; producer self-test 14/14 with two observed RED perturbations |
 | `2026-08-27` | `.0` reproduction and exclusion | the reviewed Cortex-A76 prose moves `elem_00219` to `elem_00230` (249 to 260 content elements, identical table/visual/page counts); the drift is localized to Docling's own promoted markdown (168,210 to 168,359 bytes; 22 added lines, all text from inside a block diagram) with input digest, production revision, installed Docling and model versions, batching, device, and run-to-run noise each excluded by direct measurement; `check_chain_currency.sh` is shown to start from the persisted `source_ir.json`, so the ingest boundary is outside its oracle |
@@ -331,6 +380,7 @@ Full result, method, controls, and per-document table:
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.11` | `SOURCE-IR-REPRODUCIBILITY.11 — measure the traversal the census had only read` | turn `.5`'s inferred drop mechanism into a re-runnable control: 24/24 documents, 0 disagreements, residue closed, six observed RED perturbations |
 | `.5` | `SOURCE-IR-REPRODUCIBILITY.5 — adjudicate the three absent elements, and census what ingest never carries` | withdraw the three-paragraph loss finding, publish the 46% PDF-to-SourceIR conservation gap, and open `.8`/`.9`/`.10` |
 | `.0` | `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure` | route the SourceIR reproducibility gap and reviewed-anchor fragility surfaced by the `.8d` replay into an owning tree |
 | `.1` | `SOURCE-IR-REPRODUCIBILITY.1 — census the standing SourceIR drift across the live corpus` | measure the whole live population, publish 11 reproduced / 13 drifted with the caption-binding loss, correct the book's reproducibility claim, and open `.4`/`.5` |

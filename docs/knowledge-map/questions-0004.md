@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > how are generic SemanticIR phases different from transaction_phases
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how are human corpus KB notes preserved during refresh
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
@@ -296,5 +298,3 @@
   > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > how does specforge fold an X interface relation subject onto the bare agent X

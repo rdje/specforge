@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why did the corpus task-evidence index verify the PDF contract
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > why did the emitted ISF count drop from 57 to 44
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did the host actor disappear from AArch64 External Debug
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why did the initial prospective behavioral held-out run fail
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > why did the moved Python virtual environments still access the old repository
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > why did the register-at-offset placement-map hypothesis get overturned
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -286,15 +298,3 @@
   > why does the fact-card landing have one line per card
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > why does the feedback protocol self test block derived state closure
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why does the live-document report show lines below the ceiling
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > why does the pre-commit hook run check_doctrines.sh
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does the project README get spurious ahb_transfer/apb_transfer transactions
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why does the live-document report show lines below the ceiling
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > why does the pre-commit hook run check_doctrines.sh
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does the project README get spurious ahb_transfer/apb_transfer transactions
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > why does the reviewed prose sit at elem_00230 instead of elem_00219
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
@@ -286,15 +298,3 @@
   > why was corpus task maximum line width corrected from 4747 to 4746
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > why was nearest-heading anchoring rejected for capless table adoption
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why was the Arm Debug replay killed at 400 pages
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > why was the ISF explicit-FSM feature request withdrawn
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why was the at least timing paraphrase rejected
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > why was the spike's 'manager Reads ARID' direction error not in production

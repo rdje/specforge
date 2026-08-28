@@ -22,6 +22,11 @@ boundary: every converter text item that reaches no `SourceIR` record and earns 
 is present in the persisted artifacts too — it is not drift — and it is the population
 `SOURCE-IR-REPRODUCIBILITY.7` must gate.
 
+`SOURCE-IR-REPRODUCIBILITY.11` adds `--oracle`, which stops the largest of those buckets from
+resting on a reading of upstream source. The drop model reimplements two docling-core predicates;
+the oracle asks docling-core itself which items `iterate_items` yields, on the same serialized
+document the artifact was built from, and reports every disagreement in both directions.
+
 READ-ONLY with respect to the tracked tree and `generated/`: it re-ingests into a fresh
 `.project-data/tmp` root and writes only there.
 """
@@ -31,6 +36,7 @@ from __future__ import annotations
 import argparse
 import difflib
 import json
+import os
 from pathlib import Path
 import shlex
 import subprocess
@@ -175,12 +181,14 @@ class Batch:
             if current is None:
                 return None
 
-    def drop_reason(self, item: dict) -> dict:
-        """Name the field that decides an item never becomes a `content_element`.
+    def traversal_exclusion(self, item: dict) -> dict | None:
+        """Name the predicate that stops `DoclingDocument.iterate_items` from yielding this item.
 
-        Each branch mirrors one predicate on the ingest path — the first two in
-        `DoclingDocument.iterate_items` (docling-core), the last two in the embedded backend helper
-        in `crates/specforge/src/ir/source/docling_backend.rs`.
+        This is the **single** definition of the library's traversal in this producer. The
+        conservation census reaches it through `drop_reason`, which needs the named reason; the
+        `--oracle` control reaches it through `traversal_yields`, which needs only the verdict.
+        Keeping one definition is what makes the oracle a test of the model rather than a test of a
+        second copy of it that could drift from the one the census actually uses.
         """
         self_ref = str(reference(item.get("self_ref")))
         layer = item.get("content_layer")
@@ -208,6 +216,23 @@ class Batch:
                     "the skip takes every descendant of the blocked child with it"
                 ),
             }
+        return None
+
+    def traversal_yields(self, item: dict) -> bool:
+        """Predict whether `doc.iterate_items()` yields this text item, as production calls it."""
+        return self.traversal_exclusion(item) is None
+
+    def drop_reason(self, item: dict) -> dict:
+        """Name the field that decides an item never becomes a `content_element`.
+
+        Each branch mirrors one predicate on the ingest path — the first two in
+        `DoclingDocument.iterate_items` (docling-core), the last two in the embedded backend helper
+        in `crates/specforge/src/ir/source/docling_backend.rs`.
+        """
+        excluded = self.traversal_exclusion(item)
+        if excluded is not None:
+            return excluded
+        self_ref = str(reference(item.get("self_ref")))
         kind = docling_label_to_kind(item.get("label"))
         if kind in ("page_header", "page_footer"):
             return {
@@ -618,6 +643,274 @@ def conservation_census(document: ConverterDocument, index: SourceIrIndex) -> di
 
 
 # --------------------------------------------------------------------------------------------
+# Traversal oracle
+# --------------------------------------------------------------------------------------------
+#
+# The conservation census's largest bucket rests on this producer's own reimplementation of two
+# docling-core predicates, read out of that library's source. A reading is not a measurement. The
+# oracle replaces it with one: it asks the library itself which items `iterate_items` yields, on the
+# same serialized document ingest built its elements from, and compares that against the model.
+
+
+# Resolved the way production resolves it (`DOCLING_PYTHON_ENV` / `DEFAULT_DOCLING_VENV_DIR` in
+# `crates/specforge/src/ir/source/docling_backend.rs`), so the oracle observes the same interpreter
+# and the same installed docling-core that built the artifacts.
+DOCLING_PYTHON_ENV = "SPECFORGE_DOCLING_PYTHON"
+DEFAULT_DOCLING_PYTHON = Path(".venv-docling/bin/python")
+
+# Runs inside that interpreter, because `DoclingDocument` is a pydantic model only there. It calls
+# `iterate_items()` with no arguments — exactly as the embedded backend helper does — so the
+# defaults under test (`traverse_pictures=False`, body-only content layers) are production's, not a
+# restatement of them. It also re-exports the validated document and compares it to the input,
+# which is what licenses reading a serialized bundle as the document ingest actually traversed.
+TRAVERSAL_PROBE = r"""
+import json
+import sys
+from importlib.metadata import version
+
+from docling_core.types.doc.document import DoclingDocument
+
+bundle = json.load(open(sys.argv[1], encoding="utf-8"))
+documents = bundle["documents"] if bundle.get("batched") else [bundle]
+
+batches = []
+for index, raw in enumerate(documents):
+    document = DoclingDocument.model_validate(raw)
+    yielded = []
+    by_collection = {}
+    for item, _level in document.iterate_items():
+        ref = getattr(item, "self_ref", None)
+        if not isinstance(ref, str):
+            continue
+        collection = ref.split("/")[1] if ref.startswith("#/") and "/" in ref[2:] else "?"
+        by_collection[collection] = by_collection.get(collection, 0) + 1
+        if collection == "texts":
+            yielded.append(ref)
+    batches.append(
+        {
+            "batch": index,
+            "yielded_text_refs": yielded,
+            "yielded_by_collection": dict(sorted(by_collection.items())),
+            "round_trips": document.export_to_dict() == raw,
+        }
+    )
+
+json.dump(
+    {"docling_core": version("docling-core"), "batches": batches}, sys.stdout, ensure_ascii=False
+)
+"""
+
+
+def resolve_docling_python() -> Path:
+    """Resolve the interpreter production would use, and refuse rather than fall back to this one.
+
+    Silently running the probe under the producer's own interpreter would import whatever
+    docling-core happens to be on the system path, or none, and an oracle observing a different
+    library than the one that built the artifacts is worse than no oracle.
+    """
+    override = os.environ.get(DOCLING_PYTHON_ENV)
+    candidate = Path(override) if override else ROOT / DEFAULT_DOCLING_PYTHON
+    if not candidate.is_file():
+        raise ValueError(
+            f"no docling interpreter at {candidate}; set {DOCLING_PYTHON_ENV} to the interpreter "
+            f"that has docling-core installed"
+        )
+    return candidate
+
+
+def observe_traversal(bundle: Path) -> dict:
+    """Ask docling-core itself which text items `iterate_items` yields for this bundle."""
+    python = resolve_docling_python()
+    completed = subprocess.run(
+        [str(python), "-c", TRAVERSAL_PROBE, str(bundle)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if completed.returncode != 0:
+        raise ValueError(
+            f"traversal probe failed for {bundle.name} with return code {completed.returncode}: "
+            + " ".join((completed.stderr or "").split())[-400:]
+        )
+    observation = json.loads(completed.stdout)
+    observation["interpreter"] = (
+        python.relative_to(ROOT).as_posix() if python.is_relative_to(ROOT) else python.as_posix()
+    )
+    return observation
+
+
+def traversal_oracle(document: ConverterDocument, observation: dict, artifact: dict) -> dict:
+    """Compare the library's own traversal against the drop model's prediction, batch by batch.
+
+    Both directions are reported separately and never netted. A single agreement count would let an
+    item the model wrongly excludes cancel an item it wrongly includes, and that pair is exactly the
+    error a hand-written reimplementation of someone else's traversal makes.
+
+    The comparison is per batch because a bounded-memory ingest writes one document per page range
+    and `self_ref` restarts at zero in each, so pooling the refs would let batch 1 vouch for an item
+    batch 0 never yielded.
+    """
+    observed_batches = observation.get("batches") or []
+    if len(observed_batches) != len(document.batches):
+        raise ValueError(
+            f"traversal probe reported {len(observed_batches)} batches but the bundle has "
+            f"{len(document.batches)}; a partial comparison would read as agreement"
+        )
+
+    per_batch: list[dict] = []
+    predicted_not_yielded: list[str] = []
+    yielded_not_predicted: list[str] = []
+    unknown_refs: list[str] = []
+    duplicate_refs: list[str] = []
+    predicted_total = 0
+    yielded_total = 0
+    filtered_by_kind: dict[str, int] = {}
+    filtered_empty_text: dict[str, int] = {}
+    reachable = 0
+    round_trips = True
+    by_collection: dict[str, int] = {}
+
+    for batch, observed in zip(document.batches, observed_batches):
+        refs = list(observed.get("yielded_text_refs") or [])
+        observed_set = set(refs)
+        round_trips = round_trips and bool(observed.get("round_trips"))
+        for collection, count in (observed.get("yielded_by_collection") or {}).items():
+            by_collection[collection] = by_collection.get(collection, 0) + count
+        address = f"batch{batch.index}:" if document.batched else ""
+        if len(refs) != len(observed_set):
+            seen: set[str] = set()
+            for ref in refs:
+                if ref in seen:
+                    duplicate_refs.append(address + ref)
+                seen.add(ref)
+
+        known = {reference(item.get("self_ref")) for item in batch.texts}
+        unknown_refs.extend(address + ref for ref in sorted(observed_set - known))
+
+        predicted_set = set()
+        for item in batch.texts:
+            ref = reference(item.get("self_ref"))
+            if ref is not None and batch.traversal_yields(item):
+                predicted_set.add(ref)
+
+        missing = sorted(predicted_set - observed_set)
+        extra = sorted(observed_set - predicted_set)
+        predicted_not_yielded.extend(address + ref for ref in missing)
+        yielded_not_predicted.extend(address + ref for ref in extra)
+        predicted_total += len(predicted_set)
+        yielded_total += len(observed_set)
+
+        # The residue is measured against what the library actually yielded, not against what the
+        # model predicted, so a model error cannot also distort the element accounting.
+        for item in batch.texts:
+            if reference(item.get("self_ref")) not in observed_set:
+                continue
+            label = str(item.get("label"))
+            kind = docling_label_to_kind(label)
+            if kind in ("page_header", "page_footer"):
+                filtered_by_kind[label] = filtered_by_kind.get(label, 0) + 1
+                continue
+            if not normalize(item.get("text")):
+                filtered_empty_text[label] = filtered_empty_text.get(label, 0) + 1
+                continue
+            reachable += 1
+
+        per_batch.append(
+            {
+                "batch": batch.index,
+                "converter_text_items": len(batch.texts),
+                "library_yielded": len(observed_set),
+                "model_predicted_yield": len(predicted_set),
+                "predicted_not_yielded": len(missing),
+                "yielded_not_predicted": len(extra),
+            }
+        )
+
+    content_elements = len(artifact.get("content_elements") or [])
+    disagreements = {
+        "predicted_not_yielded": {
+            "count": len(predicted_not_yielded),
+            "meaning": "the model predicts iterate_items yields this item; the library did not",
+            "samples": predicted_not_yielded[:20],
+        },
+        "yielded_not_predicted": {
+            "count": len(yielded_not_predicted),
+            "meaning": "the library yielded this item; the model predicts it is excluded",
+            "samples": yielded_not_predicted[:20],
+        },
+        "yielded_ref_absent_from_bundle": {
+            "count": len(unknown_refs),
+            "meaning": (
+                "the library yielded a text ref this bundle's texts collection does not hold"
+            ),
+            "samples": unknown_refs[:20],
+        },
+        "duplicate_yields": {
+            "count": len(duplicate_refs),
+            "meaning": "the library yielded the same ref twice within one batch",
+            "samples": duplicate_refs[:20],
+        },
+    }
+    disagreement_count = sum(entry["count"] for entry in disagreements.values())
+    return {
+        "docling_core": observation.get("docling_core"),
+        "interpreter": observation.get("interpreter"),
+        "serialized_document_round_trips": round_trips,
+        "batched": document.batched,
+        "converter_batches": len(document.batches),
+        "converter_text_items": len(document.items),
+        "library_yielded_text_items": yielded_total,
+        "model_predicted_yield": predicted_total,
+        "library_yielded_by_collection": dict(sorted(by_collection.items())),
+        "disagreements": disagreements,
+        "disagreement_count": disagreement_count,
+        "agrees": disagreement_count == 0,
+        "element_residue": {
+            "library_yielded_text_items": yielded_total,
+            "filtered_skipped_by_kind": dict(sorted(filtered_by_kind.items())),
+            "filtered_empty_text": dict(sorted(filtered_empty_text.items())),
+            "expected_content_elements": reachable,
+            "artifact_content_elements": content_elements,
+            "unexplained": content_elements - reachable,
+        },
+        "per_batch": per_batch,
+    }
+
+
+def oracle_result(records: list[dict]) -> dict:
+    """Summarise an oracle run: the model is confirmed only when nothing disagrees anywhere.
+
+    A document the probe could not read is a hole in the frame, not a neutral omission — the run
+    exits on this verdict, so confirming while a document was skipped would make the gate green for
+    the wrong reason.
+    """
+    measured = [record for record in records if "traversal_oracle" in record]
+    unmeasurable = [record for record in records if "traversal_oracle" not in record]
+    oracles = [record["traversal_oracle"] for record in measured]
+    return {
+        "documents_measured": len(measured),
+        "documents_unmeasurable": len(unmeasurable),
+        "unmeasurable": [
+            {"document_key": record["document_key"], "reason": record.get("reason")}
+            for record in unmeasurable
+        ],
+        "converter_text_items": sum(o["converter_text_items"] for o in oracles),
+        "library_yielded_text_items": sum(o["library_yielded_text_items"] for o in oracles),
+        "model_predicted_yield": sum(o["model_predicted_yield"] for o in oracles),
+        "disagreements": sum(o["disagreement_count"] for o in oracles),
+        "serialized_documents_round_trip": all(
+            o["serialized_document_round_trips"] for o in oracles
+        ),
+        "unexplained_content_elements": sum(
+            o["element_residue"]["unexplained"] for o in oracles
+        ),
+        "model_confirmed": bool(oracles)
+        and not unmeasurable
+        and all(o["agrees"] and o["serialized_document_round_trips"] for o in oracles),
+    }
+
+
+# --------------------------------------------------------------------------------------------
 # Controls
 # --------------------------------------------------------------------------------------------
 
@@ -964,6 +1257,166 @@ def run_self_test() -> int:
         (refused, "an unrecognized converter bundle must be refused, never read as zero items")
     )
 
+    # ── Traversal oracle ──────────────────────────────────────────────────────────────────────
+    # The oracle's own failure mode is agreeing by construction. Each control below drives the
+    # comparator with an observation the library did NOT produce, so a comparator that cannot fail
+    # is caught here rather than in a run whose green result would mean nothing.
+
+    def _oracle_fixture() -> tuple[_FixtureDocument, dict]:
+        """One body text, one figure-interior text, one empty formula the library still yields."""
+        document = _FixtureDocument(
+            {
+                "texts": [
+                    _text("#/texts/0", "kept"),
+                    _text("#/texts/1", "interior", parent={"$ref": "#/pictures/0"}),
+                    _text("#/texts/2", "", label="formula"),
+                ],
+                "pictures": [{"self_ref": "#/pictures/0", "captions": []}],
+            }
+        )
+        artifact = {"content_elements": [{"source_ref": "#/texts/0", "text": "kept"}]}
+        return document, artifact
+
+    def _observation(*batches: list[str], round_trips: bool = True) -> dict:
+        return {
+            "docling_core": "fixture",
+            "batches": [
+                {
+                    "batch": index,
+                    "yielded_text_refs": refs,
+                    "yielded_by_collection": {"texts": len(refs)},
+                    "round_trips": round_trips,
+                }
+                for index, refs in enumerate(batches)
+            ],
+        }
+
+    oracle_doc, oracle_artifact = _oracle_fixture()
+    agreeing = traversal_oracle(
+        oracle_doc, _observation(["#/texts/0", "#/texts/2"]), oracle_artifact
+    )
+    checks.append(
+        (
+            agreeing["agrees"]
+            and agreeing["disagreement_count"] == 0
+            and agreeing["model_predicted_yield"] == 2,
+            "the oracle must confirm the model when the library yields exactly the predicted set",
+        )
+    )
+    checks.append(
+        (
+            agreeing["element_residue"]["filtered_empty_text"] == {"formula": 1}
+            and agreeing["element_residue"]["expected_content_elements"] == 1
+            and agreeing["element_residue"]["unexplained"] == 0,
+            "an empty formula the library yields must be attributed to the backend helper's own "
+            "filter, not left in the unexplained residue",
+        )
+    )
+
+    # RED: the library yields an item the model predicts is hidden inside a figure.
+    extra = traversal_oracle(
+        oracle_doc,
+        _observation(["#/texts/0", "#/texts/1", "#/texts/2"]),
+        oracle_artifact,
+    )
+    checks.append(
+        (
+            not extra["agrees"]
+            and extra["disagreements"]["yielded_not_predicted"]["count"] == 1
+            and extra["disagreements"]["yielded_not_predicted"]["samples"] == ["#/texts/1"],
+            "a figure-interior item the library actually yields must be reported against the "
+            "model, because that is the direction that would overstate the published gap",
+        )
+    )
+
+    # RED: the library does not yield an item the model predicts it does.
+    missing = traversal_oracle(oracle_doc, _observation(["#/texts/2"]), oracle_artifact)
+    checks.append(
+        (
+            not missing["agrees"]
+            and missing["disagreements"]["predicted_not_yielded"]["count"] == 1
+            and missing["disagreements"]["predicted_not_yielded"]["samples"] == ["#/texts/0"],
+            "an item the model predicts but the library never yields must be reported, because "
+            "that is the direction that would understate the published gap",
+        )
+    )
+
+    # RED: one error of each kind, which a single agreement count would net to zero.
+    offsetting = traversal_oracle(
+        oracle_doc, _observation(["#/texts/1", "#/texts/2"]), oracle_artifact
+    )
+    checks.append(
+        (
+            not offsetting["agrees"]
+            and offsetting["library_yielded_text_items"] == offsetting["model_predicted_yield"]
+            and offsetting["disagreements"]["predicted_not_yielded"]["count"] == 1
+            and offsetting["disagreements"]["yielded_not_predicted"]["count"] == 1,
+            "two offsetting errors must both be reported; an equal yield count is not agreement",
+        )
+    )
+
+    # RED: a batched bundle must be compared per batch, not on a pooled ref set.
+    batched_oracle_doc = _FixtureDocument(
+        {"texts": [_text("#/texts/0", "first range")]},
+        {"texts": [_text("#/texts/0", "second range", parent={"$ref": "#/pictures/0"})],
+         "pictures": [{"self_ref": "#/pictures/0", "captions": []}]},
+        batched=True,
+    )
+    pooled = traversal_oracle(
+        batched_oracle_doc,
+        _observation(["#/texts/0"], ["#/texts/0"]),
+        {"content_elements": [{"source_ref": "#/texts/0", "text": "first range"}]},
+    )
+    checks.append(
+        (
+            not pooled["agrees"]
+            and pooled["disagreements"]["yielded_not_predicted"]["samples"] == ["batch1:#/texts/0"],
+            "a colliding self_ref in another page range must not let one batch vouch for an item "
+            "the model excludes in the other",
+        )
+    )
+
+    # RED: a probe that reported fewer batches than the bundle holds must stop the comparison.
+    try:
+        traversal_oracle(batched_oracle_doc, _observation(["#/texts/0"]), {})
+        truncated_refused = False
+    except ValueError:
+        truncated_refused = True
+    checks.append(
+        (
+            truncated_refused,
+            "a probe covering fewer batches than the bundle must be refused, never compared as a "
+            "prefix that reads as agreement",
+        )
+    )
+
+    # RED: a document that does not survive its own serialization is not evidence about ingest.
+    lossy = traversal_oracle(
+        oracle_doc,
+        _observation(["#/texts/0", "#/texts/2"], round_trips=False),
+        oracle_artifact,
+    )
+    checks.append(
+        (
+            lossy["agrees"] and not oracle_result([{"traversal_oracle": lossy}])["model_confirmed"],
+            "a serialized document that does not round-trip must withhold confirmation even when "
+            "every yielded ref agrees",
+        )
+    )
+
+    checks.append(
+        (
+            not oracle_result(
+                [
+                    {"traversal_oracle": agreeing},
+                    {"document_key": "unreadable", "reason": "probe failed"},
+                ]
+            )["model_confirmed"],
+            "a document the probe could not read must withhold confirmation, because the run's "
+            "exit code is the gate and a skipped document is a hole in the frame",
+        )
+    )
+
     failures = [message for ok, message in checks if not ok]
     for ok, message in checks:
         print(f"{'PASS' if ok else 'FAIL'}  {message}", file=sys.stderr)
@@ -986,8 +1439,12 @@ def main() -> int:
     parser.add_argument("--plan-only", action="store_true")
     parser.add_argument("--compare-only", action="store_true")
     parser.add_argument("--persisted", action="store_true")
+    parser.add_argument("--oracle", action="store_true")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
+
+    if args.oracle and args.persisted:
+        raise ValueError("--oracle and --persisted are separate measurements; run one at a time")
 
     if args.self_test:
         if args.output_root or args.census_id or args.owner or args.documents:
@@ -1013,8 +1470,22 @@ def main() -> int:
         external_sources = census.load_external_map(map_absolute)
         external_map_path = args.external_source_map.as_posix()
 
-    wanted = tuple(args.documents) if args.documents else DECLARED_DOCUMENTS
     available = dict(census.persisted_documents())
+    if args.documents:
+        wanted = tuple(args.documents)
+    elif args.oracle:
+        # The oracle's frame is not the three documents `.1` flagged: the predicate under test is
+        # document-neutral code, so the strongest frame is every persisted artifact whose converter
+        # document was retained, with no sampling inside it.
+        wanted = tuple(
+            key
+            for key in available
+            if (
+                ROOT / census.PERSISTED_SOURCE_ROOT / key / "normalized" / f"{key}.backend.json"
+            ).is_file()
+        )
+    else:
+        wanted = DECLARED_DOCUMENTS
     unknown = [key for key in wanted if key not in available]
     if unknown:
         raise ValueError(f"no persisted SourceIR artifact for: {', '.join(unknown)}")
@@ -1041,10 +1512,19 @@ def main() -> int:
         "output_root": args.output_root.as_posix(),
         "external_source_map": external_map_path,
         "selection_rule": (
-            "the documents SOURCE-IR-REPRODUCIBILITY.1 reported as losing content the current "
+            "every persisted artifact whose converter document was retained, with no sampling "
+            "inside that frame, because the traversal predicate under test is document-neutral"
+            if args.oracle and not args.documents
+            else "the documents SOURCE-IR-REPRODUCIBILITY.1 reported as losing content the current "
             "toolchain emits nowhere, or the explicit --document list. Within a document there is "
             "no selection: every persisted element the census's own absent test flags is "
             "adjudicated, and the conservation census covers every converter text item."
+        ),
+        "oracle_rule": (
+            "the drop model's two traversal predicates are compared against docling-core's own "
+            "iterate_items, called with production's arguments on the same serialized document the "
+            "artifact was built from; disagreements are reported in both directions and never "
+            "netted, per batch because self_ref restarts in each page range"
         ),
         "adjudication_rule": {
             "whole_item": "some converter text item equals the persisted text after whitespace collapse",
@@ -1093,6 +1573,46 @@ def main() -> int:
         output_absolute.mkdir(parents=True)
 
     measurable = [record for record in records if record["stratum"] == "live_measured"]
+
+    if args.oracle:
+        # The oracle needs no ingest: it re-reads the exact serialized document each persisted
+        # artifact was built from and asks docling-core which items its own traversal yields.
+        for record in records:
+            record.pop("stage_source", None)
+            key = record["document_key"]
+            bundle = (
+                ROOT / census.PERSISTED_SOURCE_ROOT / key / "normalized" / f"{key}.backend.json"
+            )
+            if not bundle.is_file():
+                record["stratum"] = "live_unmeasurable"
+                record["reason"] = (
+                    "no retained normalized bundle, so the converter document this artifact was "
+                    f"built from is not available: {bundle.relative_to(ROOT).as_posix()}"
+                )
+                continue
+            print(f"observing traversal of {key}", file=sys.stderr, flush=True)
+            record["converter_bundle"] = bundle.relative_to(ROOT).as_posix()
+            # The probe runs to completion before this process loads the same bundle. Both hold the
+            # whole converter document in memory and the largest is 300 MiB on disk, so overlapping
+            # them would double a peak the observation itself does not need: what comes back is a
+            # list of refs.
+            try:
+                observation = observe_traversal(bundle)
+            except ValueError as error:
+                record["stratum"] = "live_unmeasurable"
+                record["reason"] = str(error)
+                continue
+            persisted = census.read_json(ROOT / Path(record["persisted_artifact"]))
+            record["traversal_oracle"] = traversal_oracle(
+                ConverterDocument(bundle), observation, persisted
+            )
+        report["mode"] = "oracle"
+        report["result"] = oracle_result(records)
+        report_path = output_absolute / "ingest_traversal_oracle.json"
+        report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+        json.dump(report["result"], sys.stdout, indent=2)
+        sys.stdout.write(f"\nreport: {(args.output_root / report_path.name).as_posix()}\n")
+        return 0 if report["result"]["model_confirmed"] else 1
 
     if args.persisted:
         # The conservation census is defined on a (converter document, SourceIR) pair, and the
