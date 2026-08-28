@@ -360,6 +360,13 @@ the workflow through the mdBook and repository review path.
   candidate and is retained only because nothing retires it. Decide the lifecycle — retire a row when its
   region stops being a produced candidate, or roll the registry the way its ledgers roll — and prove the
   retained evidence still resolves. Do not raise the bound to postpone it
+  First retirement observed (`2026-08-28`, during `LIVE-DOCUMENT-PRESSURE-HEADROOM.5`'s `CHANGES.md`
+  rollover): the accumulation is worse than "harmless rows". Two dead rows had drifted onto **blank
+  lines** — region SHA-256 `01ba4719…546b`, which is the digest of a bare newline — and the rollover made
+  them collide on one `evidence_id`, failing the gate outright. A region pinned to a newline addresses
+  nothing; both were retired, taking the registry 114 -> 112. So a rollover is the natural retirement
+  moment, and the rule `.8` needs is concrete: retire an evidence row when the record head it was created
+  for leaves the live window, rather than relocating it onto whatever line now sits at its offset
   Prerequisite: none; it blocks nothing today
 
 ## Current Frontier

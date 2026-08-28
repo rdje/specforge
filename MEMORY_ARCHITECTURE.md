@@ -141,6 +141,16 @@ lazily — when a durable fact is established or archaeology is caught.
   maximum of **32,768 bytes (`32 * 1024 B`)** so the whole pointer remains a safe one-read
   input. If it exceeds either cap, information is in the wrong layer; move it down to B
   or C. *(Both caps are mechanically enforced — §9.)*
+- **The fixed half may not spend the mutable half's budget** — the line cap is shared between prose
+  that never changes and the "Current state" block that carries the entire resume signal, and left
+  ungoverned the fixed half wins. Measured `2026-08-28`, the standing preamble was **19 of 50 lines in
+  every one of the last 30 commits** while the mutable block grew 17 → 28, i.e. 90% of what remained.
+  The fixed region — everything above and including the `## Current state` marker — is therefore capped
+  at a **derived** share of the line cap (`MEMORY_POINTER_LINE_CAP / 4` = 12), so the mutable half always
+  keeps the rest. The remedy for a breach is to **route** the prose to `AGENTS.md` (bootstrap order,
+  doctrine, gates, retrieval) or to this file (the layer contract) — never to raise the cap. Every route
+  a resume pointer would otherwise restate is already reached before it: a harness reads `AGENTS.md`
+  first, and `MEMORY.md` is step 4. *(Mechanically enforced — §9.)*
 - **Overwrite, don't append** — it always describes *now*, never the journey.
 - **No history** — that's git (D) and the task-tree logs (B).
 - **Prefer derived over hand-written** — a small script can regenerate the

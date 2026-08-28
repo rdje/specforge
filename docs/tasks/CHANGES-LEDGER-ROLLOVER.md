@@ -137,6 +137,19 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
 
 ## Changelog
 
+- `2026-08-28`: a third post-migration rollover, executed inside `LIVE-DOCUMENT-PRESSURE-HEADROOM.5`
+  because the line dimension crossed its mandatory 90% signal at 1,639 of 1,800 and the protocol refuses
+  the append otherwise. Plan `docs/research/changes-ledger-rollover-2026-08-28b-plan.jsonl` pins boundary
+  commit `943381c8` and opening blob `84d2daff…2284`; 14 records sealed as `segment-0014-2026-08-28.md`
+  (371 lines / 33,716 bytes / SHA-256 `6da102b1…c831`); root 95 -> 81 records / 1,639 -> 1,267 lines
+  (70.4%) / 223,990 -> 190,273 bytes (74.6%); all 13 older segments and the capsule byte-identical. Two
+  things are worth carrying forward. The plan had to be re-harvested once: `opening_records` must be the
+  count in the **committed** blob (94), not the working tree (95), or the boundary check fails with
+  "committed opening blob differs from reconstructed boundary" — the uncommitted record is a
+  `future_prepend`, not part of the opening. And this rollover is `STATUS-LEDGER-ROLLOVER.4`'s prediction
+  arriving on schedule: this ledger's declared 128-record window is unreachable at 108, so a size
+  dimension always binds first, and it was lines.
+
 - `2026-08-11`: Created because `LIVE-DOC-STOP-RISK`'s four entries moved the ledger from 81.4% to 89.1% of its
   line health target, leaving the next ordinary append one entry from refusal.
 - `2026-08-11`: `.0` closed and with it the tree. The declared transaction ran unmodified; the only code change

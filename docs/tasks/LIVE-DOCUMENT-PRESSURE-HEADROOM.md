@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0` done; `.1`–`.5` pending — `.4` re-ranked `2026-08-28` to a reachable stop)
+- Status: `active` (`.0`/`.5` done; `.1`–`.4` pending — `.4` re-ranked `2026-08-28` to a reachable stop)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-28`
@@ -116,7 +116,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `pending`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.5`
-  Status: `pending`
+  Status: `done` (`2026-08-28`)
   Goal: give the resume pointer a band it can live in
   Acceptance: `MEMORY.md` is the `active_resume` surface, and its `health_targets` and
   `enforcement_ceilings` are **identical** — 50 lines, 32,768 bytes, 160-byte lines. A surface whose health
@@ -130,8 +130,38 @@ repeatable rollover/remedy paths and remain under their existing owners.
   which would give the mutable half of the file twice its current room without moving a bound. Do not raise
   the ceiling to buy space that a routing change already provides
   Prerequisite: none; it blocks nothing today
-  Verification: `pending`
-  Commit: `pending`
+  Decided and delivered (`2026-08-28`, owner-delegated, "it's your call but it has to be signoff"): the
+  history settles it and authoring discipline does not. Across the **last 30 commits that touched
+  `MEMORY.md` the preamble is 19 lines in every single one** — a constant, never varying — while the
+  mutable block grew 17 -> 28 against the 31 lines that leaves, i.e. **90% of its real budget already
+  spent**. The growth is in the half that is supposed to grow, so the remedy is routing, not tighter
+  prose. Every route the preamble stated is already reached *before* the pointer is read: a harness reads
+  `AGENTS.md` first and `MEMORY.md` is step 4, and all eight of its tokens resolve upstream
+  (`git rev-parse HEAD`, the no-shadow rule, `DOCTRINE_ENFORCEMENT.md`, `docs/TASK_TREE.md`, `COMMIT.md`,
+  ADR 0003, `check_doctrines.sh`, `KNOWLEDGE_MAP.md`) — verified token by token before deleting a line.
+  Nothing unique was moved and nothing was lost; this is deduplication.
+  Delivered: fixed region **19 -> 8 lines**, so the mutable budget goes **31 -> 42** (+35%) with no bound
+  moved. The four fields `check_memory_architecture.sh` requires are untouched.
+  Gated, because an ungoverned split just drifts back: the checker now derives
+  `MEMORY_POINTER_LINE_CAP / MEMORY_POINTER_FIXED_SHARE_DIVISOR` = 50/4 = **12 lines** for everything
+  above and including the `## Current state` marker, reports the remaining mutable room on every run, and
+  names routing as the remedy rather than a bigger cap. The bound is derived from the existing cap, so it
+  cannot go stale the way a carried literal does.
+  Correction caught by the gate, not by me (`2026-08-28`): the token-presence check above was necessary
+  and **not sufficient**. One routed line was also a *registered* anchor — the derived-state contract
+  `active_resume_repository_revision` pinned the exact heading `## How to resume (any AI, any harness)`
+  as its `field_marker`, and the current-claim census pinned an evidence region on the same line. Route
+  resolution says nothing about registry pins, so both broke and `check_doctrines.sh` refused the commit.
+  Repaired by repointing both at the surviving declaration rather than restoring a heading to satisfy a
+  literal: the contract now anchors on ``on read: revision from `git rev-parse HEAD` `` — the declaration
+  itself, which is what the contract exists to pin — and the census evidence moves to that line with its
+  identity re-derived. Verified after: derived-state 14 contracts / 47 self-test checks green, census 39
+  surfaces / 66 evidence units, zero unresolved. **The lesson is the general one:** before routing a line
+  out of a governed surface, check the registries that pin it by exact literal, not only the routes it
+  states.
+  Acceptance: `the fixed region is measured and capped at a derived share of the pointer cap; the mutable marker is required; the four resume fields still validate; every routed line is proven to resolve upstream; a known-bad pointer is observed RED; every registry pin on a routed line is repointed at surviving content, not restored as a literal`
+  Verification: `fixed region 19 -> 8 lines, mutable budget 31 -> 42; four RED/boundary cases observed — the exact pre-change pointer at HEAD fails at 19 > 12 (a control observed failing on real shipped content, not a fixture), a missing '## Current state' marker fails as "no overwritable resume signal", 13 lines fails and exactly 12 passes; check_memory_architecture.sh green after; the eight preamble tokens each verified present in AGENTS.md or MEMORY_ARCHITECTURE.md before removal`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.5 — stop the resume pointer spending its budget on prose that never changes`
 
 ## Current Frontier
 
@@ -141,13 +171,18 @@ repeatable rollover/remedy paths and remain under their existing owners.
 | 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` | `pending` | the task plane is already at its 90% file milestone |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | re-ranked `2026-08-28`: `docs/research/*.md` is 63 of a 64-file ceiling with no warning band and no rollover, and two active trees write research records |
-| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `pending` | the resume pointer has no band either, and this session hand-compressed it three times |
+| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
 
 ## Decisions
 
 - `2026-08-14`: open one pressure-frontier tree rather than one task per warning. The surfaces need distinct
   remediation transactions, but one bounded owner can preserve the exact measured ordering without consuming
   several more task-file slots at the already-triggered collection milestone.
+- `2026-08-28`: `.5` closed. The decision was delegated with one condition — signoff quality — so it was
+  taken on measurement rather than taste: the preamble is a 19-line constant in all 30 sampled commits and
+  the mutable half had spent 90% of what remained, which rules out authoring discipline as the remedy.
+  Every routed line was proven to resolve upstream before deletion, and the split is now a derived,
+  RED-controlled bound rather than a convention, so it cannot creep back.
 - `2026-08-28`: re-measured while running an unrelated slice, and two axes are worse than the opening
   boundary recorded. `docs/research/*.md` is 63 of 64 files and 639 of 640 lines on its widest member, with
   `health_targets.files == enforcement_ceilings.files`, so there is no warning band and no declared

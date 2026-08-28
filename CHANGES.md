@@ -1,3 +1,55 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.5 — stop the resume pointer spending its budget on prose that never changes
+
+- Took the decision on measurement rather than taste. Across the **last 30 commits that touched
+  `MEMORY.md` the preamble is 19 lines in every single one** — a constant — while the mutable
+  "Current state" block grew 17 -> 28 against the 31 lines that leaves it, **90% of its real budget**.
+  The growth is in the half that is supposed to grow, so tighter authoring is not the remedy: 38% of a
+  50-line bound was being spent on prose that is byte-identical in every commit.
+- Proved nothing unique was being deleted before deleting it. All eight routes the preamble stated
+  resolve upstream — `git rev-parse HEAD` and the no-HEAD-shadow rule in `MEMORY_ARCHITECTURE.md`,
+  and `DOCTRINE_ENFORCEMENT.md`, `docs/TASK_TREE.md`, `COMMIT.md`, ADR 0003, `check_doctrines.sh`,
+  `KNOWLEDGE_MAP.md` in `AGENTS.md` — and a harness reads `AGENTS.md` first, with `MEMORY.md` as step 4.
+  The pointer was restating a bootstrap that necessarily precedes it. This is deduplication.
+- Fixed region **19 -> 8 lines**; mutable budget **31 -> 42** (+35%) with **no bound moved**. The four
+  fields `check_memory_architecture.sh` requires are untouched.
+- Gated it, because an ungoverned split drifts back. The checker now derives
+  `MEMORY_POINTER_LINE_CAP / MEMORY_POINTER_FIXED_SHARE_DIVISOR` = 50/4 = **12 lines** for everything
+  above and including the `## Current state` marker, prints the remaining mutable room on every run, and
+  names routing as the remedy rather than a bigger cap. Derived from the existing cap, so it cannot go
+  stale the way a carried literal does — the lesson `STATUS-LEDGER-ROLLOVER.4a` paid for.
+- Four observed cases, one of them on real shipped content rather than a fixture: **the pointer exactly
+  as it stood at HEAD now fails**, 19 > 12; a pointer with no `## Current state` marker fails as "no
+  overwritable resume signal"; 13 lines fails and exactly 12 passes.
+- The gate caught a gap in that verification, which is worth recording because it generalizes. Token
+  presence proves a *route* survives; it says nothing about a **registry pin**. One routed line was both:
+  the derived-state contract `active_resume_repository_revision` pinned the exact heading
+  `## How to resume (any AI, any harness)` as its `field_marker`, and the current-claim census pinned an
+  evidence region on it. Both broke and `check_doctrines.sh` refused the commit. Repaired by repointing
+  each at the surviving declaration — ``on read: revision from `git rev-parse HEAD` ``, which is what the
+  contract exists to anchor — rather than restoring a heading to satisfy a literal. Verified after:
+  derived-state 14 contracts / 47 self-test checks, census 39 surfaces / 66 evidence units, 0 unresolved.
+- `MEMORY_ARCHITECTURE.md` §6 carries the rule, the measurement behind it, and the routing remedy.
+
+- Performed the declared `CHANGES.md` rollover in the same commit, owned by `CHANGES-LEDGER-ROLLOVER.2`.
+  This session's records took the ledger to **1,639 of a 1,800-line health target (91.1%)**, past the
+  mandatory 90% signal, and the protocol refuses the append unless the same change performs the rollover
+  — which is `STATUS-LEDGER-ROLLOVER.4`'s finding arriving on schedule: this ledger's declared 128-record
+  window is unreachable at 108, so a size dimension always binds first and it was lines. Sealed the 14
+  oldest opening post-migration records into
+  `docs/archive/rolling-ledgers/changes/segment-0014-2026-08-28.md` (14 records / 371 lines / 33,716
+  bytes / SHA-256 `6da102b1…c831`) under a plan pinning boundary commit `943381c8` and its exact opening
+  blob `84d2daff…2284`. Dry run "exact and warning-safe" before the applied run, installed root-last, all
+  13 older segments and the source capsule byte-identical. Root is **81 records / 1,267 lines (70.4%) /
+  190,273 bytes (74.6%)**; no record edited, reordered, or reflowed and no limit, milestone, or ceiling
+  moved. The hand-modellable cross-check agreed: 1,219 lines and 185,668 bytes predicted for the opening
+  root before the first dry run, reported exactly.
+- The rollover also produced `CLAIM-VERIFICATION-ADOPTION.8`'s first concrete retirement rule. Two dead
+  census evidence rows had drifted onto **blank lines** — region SHA-256 `01ba4719…546b`, the digest of a
+  bare newline — and the cut made them collide on one `evidence_id`, failing the gate. A region pinned to
+  a newline addresses nothing, so both were retired (registry 114 -> 112). `.8` now records the rule that
+  follows: retire an evidence row when the record head it was created for leaves the live window, rather
+  than relocating it onto whatever line now sits at its offset.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.4/.5 — record two reachable stops the opening boundary could not have seen
 
 - Re-measured the pressure frontier while running an unrelated slice, and two axes are worse than the
@@ -179,378 +231,6 @@
   accumulation, since a row for a former head stops being a candidate and nothing retires it.
 - Docs-only; no product status changed, and appending a status record would itself have forced the
   rollover `.3` owns, so `LIVE_ACHIEVEMENT_STATUS.md` is deliberately untouched.
-
-### SOURCE-IR-REPRODUCIBILITY.2 — resolve a reviewed region by content, not by ordinal position
-
-- Fixed the anchor fragility `.0` found. `build_fixture.py:source_record` selected a reviewed region by
-  `element_id == region_id` — an ordinal position — so when Docling moved the Cortex-A76 prose from
-  `elem_00219` to `elem_00230`, the fixture failed closed and an ingest question surfaced as a scoring
-  failure in an unrelated program.
-- Measured the obvious remedy before writing it, and rejected it. "Find the element containing the reviewed
-  excerpt" resolves only 8 of 12 reviewed regions and leaves 4 ambiguous, because matching
-  `json.dumps(record)` lets any contents or index table that mentions the phrase claim the anchor:
-  `all values in ns` hits three I2S tables, `Channel requirements` three OpenCAPI tables,
-  `CPU interface register summary` three GIC tables. Shipping it would have traded one broken cell for four.
-- Shipped a precedence over the region's own natural-language surface, never its serialization: element text
-  for prose, caption then caption-plus-cells for a table, caption for a figure, failing closed on zero or
-  multiple matches at the deciding tier. Two excerpts were strengthened to longer literals from the same
-  reviewed regions' own captions -- tightening an identity, not re-pointing an anchor. All 12 reviewed
-  regions resolve uniquely to exactly the region the ordinal selects today.
-- Attributed the result with one replay and two projections of the same artifacts, so the resolver's effect
-  is not confounded with the ingest drift this tree measured. Control (frozen builder) reproduces the
-  published **13/14** exact source regions; treatment reaches **14/14**; every other global metric is
-  identical (10/14 disposition, 8/12 modality, 45/45 provenance, 120/120 conservation, 8/16 residual
-  actionability, 0 fabricated, 0 unexplained drops). Exactly one cell changed, `actual_keys`
-  `[] -> ["elem_00219"]`, and its two unrelated hard failures still stand.
-- Made the controls able to fail, then made them able to fail for the right reason. `--self-test` is
-  **11/11** with six observed RED perturbations. Two of the first eight controls were rewritten after a
-  perturbation left them green: an ambiguous-tier fall-through is provably a no-op because a later tier is a
-  superset, and the first figure fixture could not tell caption matching from serialization matching. The
-  replacement states the property directly: an ordinal id must not resolve a region.
-- Discharged a lockstep four times wider than documented. Eight pinned surfaces moved, not the two the fact
-  card named -- including the compiled `exact_source_regions != 13` literal, so the metric this slice
-  improves could not move without the gate noticing. `.8d`'s published record was **not** re-stamped: `.2`
-  publishes its own replay `source-ir-repro-2-population-r1` at revision `5fe81128`, under a current-replay
-  dataset id distinct from the review-locked dataset's own id.
-- Gates: `cargo test --workspace` 470 / 168 / 1,369 / 4 passed with 0 failed, clippy `-D warnings` clean,
-  `mdbook build` green; 3,604 files / 1,331,419 KiB of replay scratch removed with an empty residue census.
-
-### CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts
-
-- Re-derived every count `TOOLBOX.md` publishes for the three claim doctrines — **11 counts, 8 confirmed,
-  3 stale** — rather than patching only the one that was noticed. A partial sweep would leave the surface
-  exactly as untrustworthy as it was.
-- Found that two of the three were **per-commit counters rather than constants**. The census unit total and
-  its excluded count rise by exactly one for every slice that prepends a rolling-ledger head — measured
-  56 → 57 → 58 → 59 → 60 across `50775894`, `e6f5012d`, `f9e785ca`, `fdda3c53`, and this commit. Re-carrying
-  them is stale on landing: the first attempt wrote 59/35 and this very commit made them 60/36. Both are
-  **withdrawn** from the prose and the reader is routed to `--report`.
-- Corrected the one genuinely stale constant: the mdBook contract's incomplete assertion regions 75 → **89**.
-  Confirmed unchanged: 11 derived, 7 identity-gated, 6 registered, 0 incomplete, 86 produced anchors, 51 exact
-  evidence keys, 35 registered annotations, 0 unresolved, and the 7 cited controls / 7 exact RED regions /
-  6 governed producers / 0 ignored / 0 untracked audit.
-- Attributed each drift per revision from Git instead of assuming: census units were 56 at `50775894` — correct
-  when written — then 57 at `e6f5012d` (`SOURCE-IR-REPRODUCIBILITY.5`), 58 at `f9e785ca` (`.11`), 59 at
-  `fdda3c53` (`.12`); mdBook incomplete was 75 at `50775894` and 89 from `e6f5012d` onward. `.5` started both
-  drifts and `.11`/`.12` widened one, every one of them under a fully green doctrine gate.
-- Named the mechanism rather than patching the symptom. The census closes a `[claim: <id>]`-annotated region on
-  the **presence** of the annotation — TOOLBOX's counts are three of the 35 `registered_annotations`, never
-  among the 51 `exact_evidence` keys — and `claim-provenance-gate-active` digest-binds `TOOLBOX.md` only as a
-  file that has not changed. Neither leg reads a number in a sentence, which is exactly how three published
-  counts went stale while every gate stayed green. The same drift was found and repaired inside a claim record
-  itself during `.11`: `mdbook-quantitative-census-frozen`'s assertion said 318 regions while its own pinned
-  rederive marker said 319.
-- Opened `.7` to gate it: bind each published count in a claim-annotated region to its producer command and the
-  exact report field, re-derive and compare, and report an unmapped count rather than ignoring it.
-
-### CHANGES-LEDGER-ROLLOVER.2 — seal eighteen records so the ledger accepts its next append
-
-- Rolled `CHANGES.md` because `CLAIM-VERIFICATION-ADOPTION.6`'s record crossed the mandatory 90-percent line
-  signal: the committed root was 1,608 lines (89.3% of the 1,800-line health target) and the record took it to
-  1,636 (90.9%). The protocol refuses the append unless the same change performs the declared rollover.
-- Sealed the eighteen oldest opening post-migration records into
-  `docs/archive/rolling-ledgers/changes/segment-0013-2026-08-28.md` (259 lines, 21,230 bytes) under a plan
-  pinning boundary commit `fdda3c53` and its exact opening blob. Two records were the minimal line-safe cut and
-  would have returned the ledger to the signal within one slice; eighteen leaves 1,348 lines (74.9%) and holds
-  for several ordinary slices.
-- No record was edited, reordered, or reflowed, no limit or milestone moved, and the retained 75-record
-  migration suffix was not touched. Dry run green before the applied run; segment, manifest, index, and
-  chronology chain validate and older members stay byte-identical.
-
-### SOURCE-IR-REPRODUCIBILITY.12 — lead the conservation figure with the defect, not the non-carry rate
-
-- Corrected a presentation defect in a published claim. `.5` headlined "8,648 of 18,870 converter text
-  items — 46% — reach no `SourceIR` record and earn no residual". The statement is true and every surface
-  decomposed it in the next sentence, but the headline bundles 2,722 running headers and footers on the
-  converter's own `furniture` layer and 30 empty formulas — exclusions ingest is **right** to make — with
-  the 5,896 items that are the actual defect. A headline is the part that propagates, and this one
-  overstates the fault by half again while making it harder to act on, because closing it is not the goal.
-- The defect rate now leads on every current-facing surface: **5,896 of 18,870 — 31% — dropped as a
-  defect**, with the raw non-carry rate following as decomposed context. Changed in
-  `docs/research/ingest-content-loss-adjudication.md`, `docs/book/src/pipeline/sourceir.md`,
-  `LIVE_ACHIEVEMENT_STATUS.md`, and the fact card `[[ingest-drops-figure-interior-text]]`, whose title
-  carried the 46% too.
-- No measurement changes and no number is withdrawn. Every figure `.5` published still holds and is still
-  published; only which one leads has changed. `.5`'s own ledger entry is left byte-exact — this ledger is
-  append-only, and rewriting the record of a past slice to match a later presentation decision is a
-  different and worse defect than the one being fixed.
-
-### SOURCE-IR-REPRODUCIBILITY.11 — measure the traversal the census had only read
-
-- Removed the one inference `.5`'s largest number rested on. The conservation census attributes 5,896
-  dropped items to `iterate_items(traverse_pictures=False)` by **reimplementing** two docling-core
-  predicates read out of that library's source. `--oracle` now asks the library instead: it loads each
-  retained converter document through `DoclingDocument.model_validate` in `.venv-docling` and calls
-  `doc.iterate_items()` with no arguments, exactly as the embedded backend helper does, so the defaults
-  under test are production's rather than a restatement of them.
-- Confirmed the model on the whole retained population with no sampling. All **24** persisted artifacts
-  whose converter document was retained: 43,614 converter text items, **22,127 yielded by the library,
-  22,127 predicted by the model, 0 disagreements** — reported in both directions and never netted, per
-  document and per batch, including the two batched bundles (Arm Debug 7 page ranges, USB 3.2 9) where
-  `self_ref` restarts in every range.
-- Kept one definition of the traversal. The census reaches it through `drop_reason`, which needs the named
-  reason, and the oracle through `traversal_yields`, which needs only the verdict; both come from the new
-  `Batch.traversal_exclusion`, so the oracle cannot confirm a second copy that has drifted from the one the
-  census uses.
-- Closed the account instead of stopping at a matching count. Every document round-trips through its own
-  `export_to_dict`, so the oracle observes the document ingest traversed rather than a re-derived one; and
-  the residue between the yielded set and the artifacts is 39 empty `formula` items plus exactly the
-  **22,088** content elements the live population holds, with `unexplained` **0** for every document.
-- Made the control able to fail. `--self-test` is **27/27** with **six observed RED perturbations**:
-  netting the two directions, dropping the batch qualifier from an address, accepting a probe that covers
-  fewer batches than the bundle holds, confirming without the round-trip proof, dropping the empty-text
-  attribution, and confirming while a document was skipped. The run exits non-zero unless every document in
-  the frame was measured, agreed, and round-tripped, so it is usable as a gate and not only as a report.
-- Read-only: no ingest, no source PDF, nothing under `generated/` written or removed, no Rust change.
-
-### SOURCE-IR-REPRODUCIBILITY.5 — adjudicate the three absent elements, and census what ingest never carries
-
-- Withdrew `.1`'s three-paragraph loss finding. `scripts/measure_ingest_content_loss.py` re-ingests each
-  named document, reads the `SourceIR` and the converter's own document from the **same run**, and aligns
-  each flagged text token by token instead of asking whether it survived as one contiguous string. All
-  three elements `.1` reported as emitted nowhere are **retained**: zero persisted tokens missing, with 6 /
-  5 / 35 tokens *inserted* between them (`USB4 Host Enhanced SS Host Controller`; `Disabled Stall, Error,
-  or SetFeature`; footnote 14 plus `Sampled · 4.0g`), and every covering converter item carrying a
-  `SourceIR` record. All 31 dropped elements are re-segmentation and re-ingest content loss is **zero**.
-- Published the measurement that replaces it, which is larger. Across the three documents **8,648 of
-  18,870 converter text items — 46% — reach no `SourceIR` record and earn no residual**: 5,896 figure
-  interior (5,875 `text`, 9 `caption`, 8 `footnote`, 4 `section_header`), 2,722 furniture-layer
-  headers/footers, 30 empty formulas, `unexplained` empty. Named in both artifacts: `docling_backend.rs`
-  iterates with `traverse_pictures=False`, so `iterate_items` skips every child of a `PictureItem` except
-  its own caption refs, and the skip takes every descendant of the blocked child with it.
-- Showed the gap is standing rather than drift. `--persisted` mode censuses the artifacts with no ingest at
-  all: the I2C specification, which `.1` scores as reproducing **byte-for-byte**, discards **1,372**
-  figure-interior items including **39 captions**, while the Arm external-debug guide discards none. A
-  fourth re-ingest, of the repository-owned I2S specification that also reproduces exactly, reaches 349 of
-  464 converter items with no record.
-  Reproducibility and conservation are independent properties and only the first was measured.
-- Opened three owned children rather than reporting three defects. `.8` — figure-interior text must reach a
-  typed carrier or an explicit residual, and must not be promoted into prose. `.9` — `source_ref` does not
-  identify one converter item under bounded-memory ingest (Arm Debug: 6,784 elements, 2,252 distinct refs,
-  1,883 reused; USB 3.2 is nine batches), which blocks `.7`'s join. `.10` — preservation and faithfulness
-  have come apart: the spliced fragments make sentences the specification never wrote, and no conservation
-  check can see that because nothing was lost.
-- Scope-corrected `.6` and `.7` on the new evidence. `.6` must target unbound captions as a population, not
-  the seven the drift exposed, because a caption never bound in either run is invisible to a two-run
-  comparison. `.7`'s comparison now exists and runs; turning it into a gate must follow `.8` and `.9`.
-- Read-only and controlled: nothing under `generated/` written or removed, the producer refuses a modified
-  `crates/` tree, `--self-test` is **18/18** with **six observed RED perturbations** — the first being
-  `.1`'s own whole-string test, which reproduces `.1`'s answer.
-
-### SCRATCH-RESIDUE-CONTAINMENT.0 — reclaim the scratch nothing can reach
-
-- Made scratch cleanup a reachability question instead of a periodic guess. A root under
-  `.project-data/tmp/` is reachable if a Git-tracked file names it, or if the behavioral holdout's
-  `ultimate_retained_artifact_output_root` can walk to it along `retained_evidence_path` links — a
-  root can be load-bearing with no tracked file naming it at all, which is exactly the case that
-  makes an unqualified sweep unsafe.
-- Traced the chain rather than assuming it. `doctrine/production_genericity/behavioral_holdout_evidence.json`
-  reaches `spec-to-intent-f-iii-heldout` in one hop and stops there, so that root is the retained
-  artifact store; its declared `retained_evidence_sha256` matches the file on disk exactly.
-- Reclaimed only the provably unreachable: 12 paths, 5,290 files, 2,669,876 KiB (2.55 GiB), with an
-  empty residue census and all four retained roots identical in file count and bytes before and
-  after. The four superseded `5dd1302a` chain links were safe precisely because the successor run
-  links directly to the chain terminus and cannot reach them.
-- Left the two chain-bearing holdout roots (14.1 GiB) to `.1`. Deleting the evidence behind a
-  published signoff is a decision, not a sweep's call.
-
-### SOURCE-IR-REPRODUCIBILITY.1 — census the standing SourceIR drift across the live corpus
-
-- Measured what `.0` could only localize. `scripts/measure_source_ir_reproducibility.py` partitions every
-  persisted `generated/source_ir/*` artifact into exactly one stratum — 24 live (SourceIR schema 3), 0 live but
-  unmeasurable, 54 legacy that no current ingest can reproduce at all — and the live stratum turns out to be
-  exactly the membership of `doctrine/chain_currency/retained_bundles.json`. The census frame is therefore
-  precisely the population whose chains report current today.
-- Re-ingested the whole live stratum with no sampling inside it, because every recorded source resolved on the
-  repository volume. **11 of 24 reproduce exactly; 13 do not.** The 13 hold 11,379 of the live population's
-  22,088 persisted content elements, so slightly over half the persisted SourceIR content stands on an ingest
-  the current toolchain no longer produces while all 24 chains report current at every stage the chain-currency
-  oracle can see.
-- Characterized the drift rather than counting it. Ingest adds 1,804 content elements across the 13 documents —
-  1,802 `body_text`, one `section_header`, one `caption` — and the text is unambiguously figure interior
-  (`Core`, `External Debugger +`, `Referenced to`, `Ideal Clock`, `requency (GHZ)`, `MSb LSD`). Of 31 dropped
-  elements, 28 are re-segmentation whose text still appears in the replayed stream and exactly three are
-  content the current toolchain emits nowhere. No collection but `content_elements` changes cardinality, and
-  `proof_ledger.ruleset_sha256` is identical for all 24.
-- Found the result that inverts the obvious remedy. Caption bindings on tables and visual assets fall from
-  1,191 to 1,152: seven documents lose bindings and one gains two — `structured_tables[1].caption_text` is
-  `Figure 5-1: External debugger and core handshake sequence` persisted and `null` replayed. What is lost
-  is the binding, not the text: all eight bound captions in that artifact also exist as standalone
-  `content_elements`, so a re-ingest drops the association while the words stay. `.5` owns that decision.
-- Separated drift from noise. The largest proportional drift was ingested twice more into separate roots; all
-  three replays produce the same 347 elements and the same `+81 / -0`, and differ only in `proof_ledger`.
-  Comparing two same-input replays isolates that to each claim's `scope` and `conclusion_sha256` with the
-  ruleset digest and all 448 addresses equal, which is why excluding the proof surface is structurally
-  necessary rather than merely conventional.
-- Kept "reproduced" from being a default answer. The producer carries 14 controlled cases under `--self-test`,
-  and two were observed going RED under real perturbations: widening the migration-note exemption to notes as a
-  class (12/13) and counting re-segmentation as content loss (13/14).
-- Corrected the book. `docs/book/src/pipeline/sourceir.md` claimed the same machine always ingests the same
-  way; that is true of SpecForge's own batching and false of the pipeline, and the chapter now says what ingest
-  does not promise, why element ids move, and how to run the census.
-- Opened `.4` (a reproducibility fingerprint in the normalized bundle) and `.5` (the re-ingest-versus-retain
-  decision), and left `generated/` untouched — the census refuses to run with a modified `crates/` tree and
-  writes only below `.project-data/tmp`.
-
-### SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure
-
-- Replayed all 12 reviewed sources through all 48 isolated stages from clean production at `483e525d` under
-  unchanged reviewed authority — the reviewed dataset, prior memory, and orchestrator digests are identical to
-  the `.7c.ii` run, and every source is digest-equal to the reviewed lock.
-- Published the comparable result. Residual actionability moves **4/16 to 8/16**, source-region disposition
-  8/14 to 10/14, required-modality accounting 6/12 to 8/12, and canonical provenance closure 43/43 to 45/45,
-  while stage conservation stays 120/120, IntentIR stays 40/0/0 TP/FP/FN, and fabricated facts and unexplained
-  drops stay zero. `platform-system-ip` becomes the third supported reviewed category — the whole-category
-  closure `.8c`'s bounded family was selected to deliver. The published snapshot is the replay's own evaluator
-  output byte for byte; nothing was re-summarized.
-- Taught the reviewed fixture to read the carrier `.8c` shipped. `project_residuals` dispatched only on
-  `physical_timing`, so the production `captured_region_residuals` reached the reviewed `/residuals` collection
-  for no cell. Each production carrier now owns its own projector, and the captured-region projector carries
-  region identity, `EvidenceIR` provenance, and the three actionability fields verbatim.
-- Attributed the delta instead of assuming it. A control leg re-projected the *same* replayed stage artifacts
-  with the frozen pre-change builder and reproduced the previous 4/16 baseline exactly, so `.8c`'s production
-  carrier moved no reviewed metric and every difference belongs to the projection. Cell-level comparison shows
-  exactly two cells changed, both `static_component_topology`, each 0/1 to 1/1 exact, provenanced, and
-  actionable at both promoted stages.
-- Gave the frozen `.8a` contract's selected family a closed `state`, so a shipped family is validated against
-  the actionable cells and an open one against the required-and-absent cells. Four new RED cases cover both
-  wrong directions, an out-of-vocabulary state, and a closed family naming a cause whose carrier does not ship;
-  the self-test is 28/28.
-- Reported, rather than absorbed, one regression the replay surfaced. Reviewed cells anchor on ordinal SourceIR
-  element ids, and the Cortex-A76 reviewed prose has moved from `elem_00219` to `elem_00230` (249 to 260
-  content elements, identical table, visual, and page counts), so exact source regions are 13/14. Input digest,
-  production revision, Docling and model versions, batching, and run-to-run noise are each excluded by direct
-  measurement, and `check_chain_currency.sh` starts from the persisted `source_ir.json`, so the ingest boundary
-  is outside its oracle. Both facts are owned by the new `SOURCE-IR-REPRODUCIBILITY` tree.
-- Reclaimed 3,095 files / 1,158,476 KiB of population scratch and 4,192 files / 1,903,200 KiB of diagnostic
-  scratch with an empty residue census, and retained the eight owner-supplied external sources (6.3 MiB,
-  git-ignored, digest-pinned) because they are what makes this measurement re-runnable.
-
-### SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier
-
-- Shipped the second typed residual carrier in production. A captured visual region that no canonical
-  `SemanticIR` record cites now earns exactly one `CapturedRegionResidualRecord` carrying its region id, typed
-  region kind, `EvidenceIR` provenance, the closed cause `no_canonical_carrier_for_captured_region`, a reason,
-  the boundary `evidence_to_semantic_ir`, and an operator replay route. `IntentIR` carries it unchanged, because
-  the region gains no carrier at that boundary either.
-- Made coverage a provenance membership test over concrete record collections rather than a text scan. A region
-  counts as explained only when a timing constraint, signal constraint, conditional rule, state, transition,
-  temporal rule, temporal conflict, or actor contract names it in its own provenance list.
-- Corrected the frozen design in the one place reading the code showed it was wrong. It tested only the item's
-  evidence id, but `mine_verified_figure_contracts` is a second path from a figure to a canonical carrier and
-  cites the region as `figure:<asset_id>`. Coverage now accepts either form, so a figure that produced verified
-  waveform contracts is never handed a residual claiming it reached nothing. `waveform::figure_region_provenance_id`
-  is the single construction site both sides read.
-- Refused statement-mediated coverage deliberately, under either reading of it. `EvidenceIR` relates a
-  statement to a visual region when the statement *is* that region's caption. Admitting those links explains 110
-  of the corpus's 1,089 captured figure-kind regions when the mediation is applied only to the collections
-  coverage reads, and 466 when applied to every collection carrying `supporting_statement_ids`. The reviewed
-  `picture_0001` appears only in the second set, so the reading a naive implementation would pick is the one
-  that reports success on a cell the review requires to fail. Table-kind and unclassified regions stay excluded
-  — the first already has canonical carriers, and the second was never established as intent-bearing.
-- Registered the field in the existing `semantic.residual` and `intent.residual` families, expanding the runtime
-  registry from 168 to 170 rules over 50 SemanticIR and 50 IntentIR public fields. It is deliberately not an
-  exact IntentIR carry: the residual family's `current_only` rule rebuilds and compares the field instead of
-  matching an upstream claim.
-- Updated the frozen `.8a` contract by exactly one line and made the claim checkable. The captured-region cause
-  now names `CapturedRegionResidualRecord`, and the checker resolves any named carrier to a real production
-  declaration, so claiming coverage that does not exist and deleting a carrier the contract still cites both
-  fail closed. Three new RED cases raise the self-test to 24/24.
-- Proved the public delta is exactly the intended record. Two chains snapshotted before the rebuild and compared
-  field-by-field against their rebuilds differ only in `captured_region_residuals` at both stages — I2S
-  `absent->20` over 37/40 public fields, I2C `absent->103` over 40/42.
-- Rebuilt all 24 retained chains stage by stage. The carrier emits 1,089 records at SemanticIR and 1,089 at
-  IntentIR — exactly the captured `figure` and `diagram` regions the population holds, and none of its 906
-  `table_region` ones. The 24 adapter ledgers still share one ruleset and now carry 150,942 cumulative claims
-  over the same 120 artifacts referencing all 170 rule ids, with `residual_decisions` unchanged at 0/3/8/62 and
-  every adapter still blocked with no emitted `.isf`.
-- Corrected the rebuild procedure itself. A first pass built every stage and validated afterwards; `specforge
-  validate` back-annotates as a registered mutation, so each IntentIR pinned the pre-validation SemanticIR ledger
-  and failed closed on the exact-prefix check. The gate was right and the book already stated the rule, so the
-  durable fix is the `retained-chain-rebuild-order` fact card that leads from the failure message back to it.
-
-### SPEC-TO-INTENT-ALIGNMENT.8d — admit the supplied external reviewed sources
-
-- The owner supplied all eight authorized `external_read_only` reviewed sources from the sibling `chipdoc`
-  repository on the same filesystem volume. Each was located by exact SHA-256 rather than by filename, because
-  digest identity is what the review locked and a name match would not prove the replay reads the reviewed bytes.
-- Copied them into the repository-derived, git-ignored path
-  `.project-data/tmp/spec-to-intent-external-sources/` and re-verified after the copy: eight of eight digests and
-  byte counts are identical to the reviewed lock, so the population authority is byte-exact.
-- Wrote the runtime map `.project-data/tmp/spec-to-intent-8d-external-source-map.json` and executed the
-  orchestrator's own predicates against it — repository-relative map path below `.project-data/tmp`, absolute
-  source paths, basename equal to the portable id, same device as the repository root, and exact coverage of the
-  required external set. All pass with zero missing and zero extra entries.
-- Kept the sources git-ignored rather than tracked under `corpus/`. The reviewed dataset is review-locked and
-  classifies these eight as external; promoting them to repository sources would rewrite frozen selection
-  authority, the source-PDF registry, and every digest pinned to that dataset. The leaf records portable id,
-  byte count, and digest for each, so the copy is reproducible if artifact cleanup reclaims the bytes.
-- `.8d` is no longer blocked on an input; it waits only on `.8c`. The git tree is unchanged by the copy.
-
-### SPEC-TO-INTENT-ALIGNMENT.8c — freeze the captured-region carrier design
-
-- Froze the structural gate before writing production code. A captured `VisualEvidenceItem` whose `asset_kind`
-  is a figure-kind region, and whose `evidence_id` no SemanticIR record cites in its provenance, reaches no
-  canonical carrier and earns exactly one typed residual. Table-kind visual assets are excluded because they
-  already reach canonical carriers through the register, signal, and timing paths, so a residual for them would
-  duplicate a promoted fact.
-- Reused the established shape rather than inventing one: the gate is the figure-side sibling of
-  `completeness::unexplained_intent_bearing_tables`, where coverage is resolved through existing provenance and
-  nothing is fabricated. `extract_records_from_vlm_observations` already threads each visual item's evidence id
-  into every record it projects, so coverage is a provenance membership test over concrete collections.
-- Placed the new field in the existing `semantic.residual` and `intent.residual` claim families, whose residual
-  capability and topology obligation already describe it, expanding the registry from 168 to 170 field rules.
-- Confirmed a real-document witness that needs no external source. `den0068_2018_07_23_coresight_base_system_architecture`
-  is a retained measurable chain whose persisted EvidenceIR holds 19 visual items: 12 table regions whose asset
-  ids SemanticIR cites, and seven figure regions whose evidence ids it never cites. The first is `visual_0008`
-  on `picture_0001` — exactly the region, evidence id, and fact key the review expects for the selected family.
-
-### SPEC-TO-INTENT-ALIGNMENT.8 — correct the carrier contract and record the replay blocker
-
-- Verified the chain-currency baseline before the production slice: 24 replayed / 24 current / zero stale at
-  EvidenceIR, SemanticIR, IntentIR, and the ISF adapter, with 54 explicitly unmeasurable legacy chains, 24
-  blocked/no-file adapter states, zero emitted `.isf` files, and exactly the declared retained bundle set on
-  disk. The `.8`, `.8a`, and `.8b` slices changed no persisted corpus artifact.
-- Corrected `.8c`'s acceptance before writing its code. A producer that adds records cannot also leave zero
-  public field delta, so the clause now requires zero stale chains and no public field change other than the
-  intended new residual records.
-- Recorded a real replay blocker. Only four of the twelve reviewed sources are repository files; the other eight
-  are authorized `external_read_only` inputs whose working copies lived under the `.7c.ii` replay root and were
-  removed with it. Both documents in the selected `static_component_topology` family are among the absent eight,
-  so the 12-source / 48-stage population replay cannot run and no partial replay may be published as a
-  population result. `.8d` is now `blocked` on that authorized runtime input rather than on repository work;
-  `.8c` remains fully runnable against the retained corpus and synthetic fixtures.
-
-### SPEC-TO-INTENT-ALIGNMENT.8b — count only required residual observations
-
-- Replaced the residual-actionability denominator in `summarize_global`. A new
-  `required_residual_observations` helper applies the frozen rule per cell per promoted stage: one observation
-  for a residual or non-applicable cell, and one per reviewed canonical key the stage fails to promote for a
-  canonical cell. A stage credits an observation only when its residual query is exact for the required keys,
-  carries the reviewed provenance, is actionable, and duplicates no key the same stage already promotes.
-- Confined the change to the aggregate. Regenerating the frozen first result changes exactly one line — its
-  residual denominator moves from 24 to 82 — while every per-cell score, boundary, hard failure, and every other
-  global dimension stays byte-identical. The pinned current result moves from 4/24 to 4/16 by the same isolated
-  mechanism.
-- Republished the controller from the corrected evaluator. The published gap now reads `4 of 16 required
-  residual observations are actionable` with an affected population of twelve rather than twenty, so the
-  ranked gap is the real production deficit instead of a measurement artifact.
-- Made the in-place re-summarization auditable. The population replay evidence now keeps the digest the replay
-  itself produced alongside the published digest and names the re-summarizing leaf, the composer refuses a
-  re-summarized result that records only one of the two, and a new gate fails whenever the published global
-  block stops being a current summary of its own cell results.
-- Added four fail-closed controls plus a direct partial-explanation case: an exact canonical stage requires
-  nothing; losing that canonical fact adds a required observation no residual explains; only an exact,
-  provenanced, actionable residual for the same key meets it; duplicate or unprovenanced residual sets credit
-  nothing; and a canonical cell losing two of three keys at both stages requires four observations and meets two.
-- Kept the trajectory composer's cross-check independent: it derives the required denominator from the canonical
-  stage false negatives, a different field than the evaluator's matched-key path.
-- Corrected the mdBook in the same slice. The frozen first-result table now reports the re-derived `0 / 82` with
-  an explicit note that the unit changed, and the trajectory chapter explains the rule, the corrected ratio, and
-  what the twelve remaining required observations are.
-- The workspace suite passes 470 / 168 / 1,365 / 4 with zero failures, warning-denied Clippy is clean, all five
-  production-genericity components pass, and the frozen `.8a` contract still rejects 21/21 mutations. The derived
-  flow oracle is refreshed to 2,364 functions / 14,642 helper edges / 12,643 decision sites / 1,462 macros.
 
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
 

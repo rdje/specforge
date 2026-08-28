@@ -1,20 +1,9 @@
 # MEMORY — resume pointer (layer A of `MEMORY_ARCHITECTURE.md`; overwrite-only, keep small)
 
-> This file is the bounded **resume pointer**. It describes *now*, not the journey. History lives in
-> `git log`; work state lives in the task-trees (`docs/tasks/`); durable facts/decisions live in
-> `docs/decisions/`. Do **not** append session narration — overwrite the "Current state" block.
-
-## How to resume (any AI, any harness)
-- Derive the current revision on read with `git rev-parse HEAD`; never store a latest-commit shadow.
-- Read `MEMORY_ARCHITECTURE.md` (memory system), `DOCTRINE_ENFORCEMENT.md` (doctrines are mechanically
-  gated), and `README.md` (the project).
-- All work is tracked in task-trees under `docs/tasks/` (index: `docs/TASK_TREE.md`); follow `COMMIT.md`
-  after every slice (unit id in the commit subject).
-- Non-negotiable doctrine: `docs/decisions/0003-task-tree-and-commit-doctrine.md` (no code change without
-  an owning task-tree first; signoff quality; zero ROADMAP↔code↔mdBook drift; push ~every 200 commits;
-  artifact cleanup ≥ every 24h).
-- Before committing run `scripts/check_doctrines.sh`; hooks + CI run it too. Retrieval starts at bounded
-  `KNOWLEDGE_MAP.md`, then its linked question shards.
+> The bounded **resume pointer**: it describes *now*, not the journey. Overwrite the "Current state"
+> block below; never append session narration. How to resume — bootstrap order, doctrine, gates, and
+> retrieval — is `AGENTS.md`; the layer contract is `MEMORY_ARCHITECTURE.md`. Everything else is derived
+> on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: `SOURCE-IR-REPRODUCIBILITY.8`, then `.7`. Open: `SOURCE-IR-REPRODUCIBILITY`
@@ -39,7 +28,8 @@
 - Next action: run `SOURCE-IR-REPRODUCIBILITY.8` — a typed carrier or an explicit residual for the 5,896
   figure-interior text items ingest discards, never promoted into `content_elements` as prose. It is the
   last prerequisite `.7`'s conservation gate waits on now that `.9` is done.
-- In-flight uncommitted: none after this commit; no background job is running.
+- In-flight uncommitted: none after this commit; no background job is running. The pointer's fixed prose
+  is now capped at a derived 12 lines (`MEMORY_ARCHITECTURE.md` §6), leaving 42 for this block.
 - Blockers: none. Owned, not fixed: `CLAIM-VERIFICATION-ADOPTION.7` (a published count does not
   re-derive), `.8` (census registry 109 of a declared 128, +1 per ledger-prepending slice),
   `SOURCE-IR-REPRODUCIBILITY.13` (frozen reviewed fixture not re-derivable), `docs/research/*.md` 63 of
