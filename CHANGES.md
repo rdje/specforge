@@ -1,3 +1,21 @@
+### SOURCE-IR-REPRODUCIBILITY.12 — lead the conservation figure with the defect, not the non-carry rate
+
+- Corrected a presentation defect in a published claim. `.5` headlined "8,648 of 18,870 converter text
+  items — 46% — reach no `SourceIR` record and earn no residual". The statement is true and every surface
+  decomposed it in the next sentence, but the headline bundles 2,722 running headers and footers on the
+  converter's own `furniture` layer and 30 empty formulas — exclusions ingest is **right** to make — with
+  the 5,896 items that are the actual defect. A headline is the part that propagates, and this one
+  overstates the fault by half again while making it harder to act on, because closing it is not the goal.
+- The defect rate now leads on every current-facing surface: **5,896 of 18,870 — 31% — dropped as a
+  defect**, with the raw non-carry rate following as decomposed context. Changed in
+  `docs/research/ingest-content-loss-adjudication.md`, `docs/book/src/pipeline/sourceir.md`,
+  `LIVE_ACHIEVEMENT_STATUS.md`, and the fact card `[[ingest-drops-figure-interior-text]]`, whose title
+  carried the 46% too.
+- No measurement changes and no number is withdrawn. Every figure `.5` published still holds and is still
+  published; only which one leads has changed. `.5`'s own ledger entry is left byte-exact — this ledger is
+  append-only, and rewriting the record of a past slice to match a later presentation decision is a
+  different and worse defect than the one being fixed.
+
 ### SOURCE-IR-REPRODUCIBILITY.11 — measure the traversal the census had only read
 
 - Removed the one inference `.5`'s largest number rested on. The conservation census attributes 5,896

@@ -1,9 +1,11 @@
 ---
 id: ingest-drops-figure-interior-text
-title: Ingest silently discards every text the converter put inside a figure — 46% of converter items reach no SourceIR record
+title: Ingest silently discards every text the converter put inside a figure — 31% of converter items are dropped as a defect
 answers:
   - "does SpecForge ingest lose content from the PDF"
   - "how much of the Docling document reaches SourceIR"
+  - "how much of the converter output does ingest drop as a defect"
+  - "is the 46 percent figure the defect rate"
   - "why do figure labels not appear in content_elements"
   - "what does traverse_pictures False do to SpecForge ingest"
   - "why is text inside a diagram missing from SourceIR"
@@ -41,8 +43,11 @@ nine list items sit under `#/groups/41`–`44` and `#/groups/65`–`69`, whose p
 Nothing records what is skipped. There is no `content_element`, no residual decision, and no counter.
 
 `SOURCE-IR-REPRODUCIBILITY.5` measured the size of it. Across three re-ingested documents (USB4 Connection
-Manager guide, USB 3.2, Wishbone), **8,648 of 18,870 converter text items — 46% — reach no `SourceIR` record
-and earn no residual**. Every one resolves to a named predicate, with an empty `unexplained` bucket:
+Manager guide, USB 3.2, Wishbone), **5,896 of 18,870 converter text items — 31% — are dropped as a defect**:
+they reach no `SourceIR` record, earn no residual, and should have reached one. The raw non-carry rate is
+8,648 items (46%), but it bundles in exclusions ingest is right to make, so the defect figure is the one that
+leads (`SOURCE-IR-REPRODUCIBILITY.12`). Every item resolves to a named predicate, with an empty `unexplained`
+bucket:
 
 | Reason | Items | Correct? |
 | --- | ---: | --- |

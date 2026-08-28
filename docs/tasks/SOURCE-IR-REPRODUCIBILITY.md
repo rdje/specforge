@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.1`, `.5`, `.11` measured; `.2`–`.4`, `.6`–`.10`, `.12` pending)
+- Status: `active` (`.0`–`.1`, `.5`, `.11`–`.12` measured; `.2`–`.4`, `.6`–`.10` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
 - Last updated: `2026-08-28`
@@ -324,7 +324,7 @@ Full result, method, controls, and per-document table:
   Report: [`docs/research/ingest-content-loss-adjudication.md`](../research/ingest-content-loss-adjudication.md)
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.12`
-  State: `pending`
+  State: `done` (`2026-08-28`)
   Goal: lead the published conservation figure with the defect, not the raw non-carry rate
   Acceptance: `.5` headlines "8,648 of 18,870 converter text items — 46% — reach no `SourceIR` record and
   earn no residual". The statement is true and every surface decomposes it in the next sentence, but the
@@ -337,6 +337,14 @@ Full result, method, controls, and per-document table:
   [[ingest-drops-figure-interior-text]]. No measurement changes and no number is withdrawn; this is a
   presentation defect in a published claim, not a correction of one
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+  Evidence: the defect rate now leads on every current-facing surface — **5,896 of 18,870 (31%) dropped as
+  a defect**, with the raw 8,648 (46%) following as decomposed context (2,722 furniture-layer headers and
+  footers plus 30 empty formulas are exclusions ingest is right to make). Changed in the research report,
+  the book's SourceIR chapter, `LIVE_ACHIEVEMENT_STATUS.md`, and the fact card — whose **title** carried
+  the 46% as well. Decision: `CHANGES.md` keeps `.5`'s entry byte-exact and states the correction in `.12`'s
+  own entry instead, because that ledger is append-only and rewriting a past slice's record to match a later
+  presentation decision is a worse defect than the one being fixed. No measurement changed and no number was
+  withdrawn
 
 ## Open Questions
 
@@ -363,7 +371,7 @@ Full result, method, controls, and per-document table:
 
 ## Blockers
 
-- None. `.2`–`.4`, `.6`–`.10`, and `.12` are all runnable. `.5` is complete, so `.6`–`.10` are unblocked; `.7`'s gate
+- None. `.2`–`.4` and `.6`–`.10` are all runnable. `.5` is complete, so `.6`–`.10` are unblocked; `.7`'s gate
   should land after `.8` and `.9`, because a conservation gate at today's numbers fails closed everywhere and
   its join is ambiguous for every batched document.
 
@@ -371,6 +379,7 @@ Full result, method, controls, and per-document table:
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-28` | `.12` published-figure correction | the defect rate leads on every current-facing surface — 5,896 of 18,870 (31%) dropped as a defect, with the raw 8,648 (46%) following as decomposed context; the fact card's title carried the 46% too. No measurement changed; `CHANGES.md` keeps `.5`'s entry byte-exact by decision |
 | `2026-08-28` | `.11` traversal oracle | the drop model that carries `.5`'s largest number is confirmed against docling-core's own `iterate_items` on **all 24** persisted artifacts whose converter document was retained, with no sampling: 43,614 converter text items, **22,127 yielded and 22,127 predicted, 0 disagreements** in both directions, per document and per batch, across unbatched and 7-/9-range batched bundles. Every document round-trips through its own `export_to_dict`, so the oracle observes the document ingest traversed rather than a re-derived one. The residue closes: 39 empty `formula` items plus exactly the 22,088 content elements the live population holds, `unexplained` 0 everywhere. `--self-test` 27/27 with six observed RED perturbations; the run exits non-zero unless every document was measured, agreed, and round-tripped |
 | `2026-08-28` | `.5` content-loss adjudication | all three elements `.1` reported as emitted nowhere are **retained**: zero persisted tokens missing, 6 / 5 / 35 tokens inserted between them, and every covering converter item carries a `SourceIR` record — so re-ingest content loss is zero and all 31 dropped elements are re-segmentation. Conservation censused in the same run: 18,870 converter text items across the three, 8,648 (46%) reaching no record and earning no residual — 5,896 figure interior (5,875 `text`, 9 `caption`, 8 `footnote`, 4 `section_header`), 2,722 furniture layer, 30 empty formulas, `unexplained` empty. `--persisted` mode shows the same gap without any ingest: I2C 1,372 figure-interior items discarded (39 of them captions) on an artifact `.1` scores as reproducing exactly, while the Arm external-debug guide discards none. A fourth re-ingest of the repository-owned I2S bus specification — which `.1` scores as reproducing exactly, 115 → 115 — reaches 349 of 464 converter items with no record (75%), 255 figure interior. Producer self-test 18/18 with six observed RED perturbations, the first being `.1`'s own whole-string test, which reproduces `.1`'s answer |
 | `2026-08-27` | `.1` population census | 78 persisted artifacts partition into 24 live-measured / 0 live-unmeasurable / 54 legacy-unmeasurable; the live stratum equals the chain-currency retained-bundle declaration exactly; 11 reproduce and 13 drift, adding 1,804 content elements (1,802 `body_text`, all figure-interior text) and dropping 31, of which 28 are re-segmentation and three are content emitted nowhere; caption bindings fall 1,191 to 1,152; no collection but `content_elements` changes cardinality and `proof_ledger.ruleset_sha256` is identical for all 24; two further ingests of the largest proportional drift reproduce it exactly, and a two-replay comparison isolates the cross-root ledger difference to `scope`/`conclusion_sha256` with all 448 addresses equal; producer self-test 14/14 with two observed RED perturbations |
@@ -380,6 +389,7 @@ Full result, method, controls, and per-document table:
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.12` | `SOURCE-IR-REPRODUCIBILITY.12 — lead the conservation figure with the defect, not the non-carry rate` | make the published headline the actionable 31%, not the 46% that bundles intended exclusions with it |
 | `.11` | `SOURCE-IR-REPRODUCIBILITY.11 — measure the traversal the census had only read` | turn `.5`'s inferred drop mechanism into a re-runnable control: 24/24 documents, 0 disagreements, residue closed, six observed RED perturbations |
 | `.5` | `SOURCE-IR-REPRODUCIBILITY.5 — adjudicate the three absent elements, and census what ingest never carries` | withdraw the three-paragraph loss finding, publish the 46% PDF-to-SourceIR conservation gap, and open `.8`/`.9`/`.10` |
 | `.0` | `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure` | route the SourceIR reproducibility gap and reviewed-anchor fragility surfaced by the `.8d` replay into an owning tree |

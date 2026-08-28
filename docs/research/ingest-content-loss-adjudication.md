@@ -140,9 +140,12 @@ artifact to conserve against.
 | `wbspec_b4_wishbone_b4_specification` | 4,097 | 2,126 | 1,971 |
 | **Total** | **18,870** | **10,222** | **8,648** |
 
-**Forty-six percent of the text items the converter emits reach no `SourceIR` record and earn no
-residual.** Every one resolves to a named predicate — the producer's `unexplained` bucket is empty
-across all three documents, so this is a complete account rather than a partial one:
+**Thirty-one percent of what the converter emits is dropped as a defect: 5,896 of 18,870 text items
+reach no `SourceIR` record and earn no residual when they should have reached one.** The raw
+non-carry rate is higher — 8,648 items, 46% — but that number bundles exclusions ingest is *right*
+to make, so it overstates the fault by half again. The defect is the first row below. Every item
+resolves to a named predicate, and the producer's `unexplained` bucket is empty across all three
+documents, so this is a complete account rather than a partial one:
 
 | Reason | Items | What it is |
 | --- | ---: | --- |
@@ -150,8 +153,10 @@ across all three documents, so this is a complete account rather than a partial 
 | `content_layer_excluded` | 2,722 | running headers and footers, on the `furniture` layer |
 | `empty_text` | 30 | `formula` items whose text is empty |
 
-Two of the three are correct behaviour. A running header is furniture by the converter's own
-classification and is deliberately excluded; an empty formula has no text to carry.
+Two of the three are correct behaviour, which is exactly why the 46% must not lead. A running
+header is furniture by the converter's own classification and is deliberately excluded; an empty
+formula has no text to carry. Reporting them alongside the defect makes ingest look worse than it
+is, and — more damaging — makes the number harder to act on, because closing it is not the goal.
 
 **The first is not.** `docling_backend.rs` iterates with `traverse_pictures=False`, so
 `DoclingDocument.iterate_items` skips every child of a `PictureItem` except the refs in that

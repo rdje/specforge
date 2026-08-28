@@ -17,28 +17,27 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SOURCE-IR-REPRODUCIBILITY.12` is the next child; `.0`/`.1`/`.5`/`.11` are done and `.2`–`.4`,
-  `.6`–`.10` remain. Tracking-only: `SCRATCH-RESIDUE-CONTAINMENT.1`, `SPEC-TO-INTENT-ALIGNMENT.9`,
+- Active unit: `SOURCE-IR-REPRODUCIBILITY.2` is the next child; `.0`/`.1`/`.5`/`.11`/`.12` are done and
+  `.3`/`.4`/`.6`–`.10` remain. Tracking-only: `SCRATCH-RESIDUE-CONTAINMENT.1`, `SPEC-TO-INTENT-ALIGNMENT.9`,
   `PROVIDER-MODEL-STORE-LOCALITY.1`, `STATUS-LEDGER-ROLLOVER.2`, `TASK-PART-SEAL-REACHABILITY.0`,
   `CLAIM-VERIFICATION-ADOPTION.1a`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.11` closed the one inference the tree's largest number rested on. `.5` attributes 5,896
-  dropped items to `iterate_items(traverse_pictures=False)` by reimplementing two docling-core predicates read
-  from that library's source; `--oracle` now asks the library itself on **all 24** retained converter documents
-  — 43,614 text items, **22,127 yielded, 22,127 predicted, 0 disagreements** in both directions, per document
-  and per batch, every document round-tripping through its own serialization, and the residue closing on 39
-  empty formulas plus exactly the 22,088 content elements the live population holds. `--self-test` 27/27 with
-  six observed RED perturbations. The standing defect is unchanged and unfixed: figure-interior text reaches
-  no record and no residual, `source_ref` is ambiguous under batched ingest, and preservation has come apart
-  from faithfulness.
+- Current state: `.11` closed the one inference the tree's largest number rested on — `--oracle` asks
+  docling-core itself which items `iterate_items` yields, and on **all 24** retained converter documents the
+  drop model agrees exactly: 43,614 text items, **22,127 yielded, 22,127 predicted, 0 disagreements**, every
+  document round-tripping through its own serialization, residue closing on 39 empty formulas plus exactly the
+  22,088 content elements the live population holds. `.12` then made the published headline the actionable
+  one: **5,896 of 18,870 (31%) dropped as a defect**, with the raw 8,648 (46%) following as decomposed
+  context. The standing defect is unchanged and unfixed: figure-interior text reaches no record and no
+  residual, `source_ref` is ambiguous under batched ingest, and preservation has come apart from faithfulness.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: run `SOURCE-IR-REPRODUCIBILITY.12` — make the published conservation figure lead with the
-  defect (5,896 / 31%) rather than the raw non-carry rate (8,648 / 46%), which bundles the intended
-  furniture-layer and empty-formula exclusions with it, across the research report, the book chapter,
-  `LIVE_ACHIEVEMENT_STATUS.md`, `CHANGES.md`, and [[ingest-drops-figure-interior-text]]. No measurement
-  changes. Then `.2` — make a reviewed source region resolve by content identity rather than ordinal
-  position, changing how `source_record` *resolves* a region and never the recorded anchor, under the
-  three-way digest lockstep in [[reviewed-fixture-projection-digest-lockstep]].
+- Next action: run `SOURCE-IR-REPRODUCIBILITY.2` — make a reviewed source region resolve by content identity
+  rather than ordinal position, changing how `source_record` *resolves* a region and never the recorded anchor,
+  under the three-way digest lockstep in [[reviewed-fixture-projection-digest-lockstep]]. `.8` (a carrier or
+  residual for figure-interior text) and `.9` (batch-qualified `source_ref`) are the prerequisites for `.7`'s
+  conservation gate and can be taken in either order.
 - In-flight uncommitted: none after this commit; no background job is running.
-- Blockers: none.
+- Blockers: none. Open defect found in `.11` and not yet owned: `TOOLBOX.md` publishes "75 incomplete
+  assertion regions" where the mdBook contract now reports 89 — a digest-bound live document whose prose count
+  the gate cannot see. Belongs to `CLAIM-VERIFICATION-ADOPTION`, not this tree.

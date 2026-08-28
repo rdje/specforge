@@ -611,9 +611,11 @@ produced reaches `SourceIR` at all — and until it was measured, nothing in the
 Stage conservation covers `EvidenceIR` onward, but ingest has no upstream artifact to conserve
 against, so a lossy ingest passes every green gate.
 
-Measured `2026-08-28` across three documents: **8,648 of 18,870 converter text items — 46% — reach
-no `SourceIR` record and earn no residual.** Every one is attributable to a named rule; there is no
-unexplained remainder:
+Measured `2026-08-28` across three documents: **5,896 of 18,870 converter text items — 31% — are
+dropped as a defect**, reaching no `SourceIR` record and earning no residual when they should have
+reached one. A further 2,752 are dropped on purpose, so the raw non-carry rate is 8,648 items (46%);
+that larger number is the one to quote only with this decomposition beside it. Every item is
+attributable to a named rule and there is no unexplained remainder:
 
 | Reason | Items | Intended? |
 | --- | ---: | --- |
