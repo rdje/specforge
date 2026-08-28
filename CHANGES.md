@@ -1,3 +1,23 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.4/.5 — record two reachable stops the opening boundary could not have seen
+
+- Re-measured the pressure frontier while running an unrelated slice, and two axes are worse than the
+  `2026-08-14` boundary recorded. Both share one shape the containment doctrine calls out: a surface whose
+  `health_targets` equal its `enforcement_ceilings` has **no warning band** — it reports "at or above
+  rollover" and then simply refuses.
+- `docs/research/*.md` is **63 of a 64-file ceiling** and its widest member is 639 of 640 lines. Two active
+  trees write research records as ordinary output — `SOURCE-IR-REPRODUCIBILITY` published three in two
+  days — so the next research record is the last one this collection can accept, and unlike a rolling
+  ledger there is no declared rollover transaction to release it. `.4` now owns that explicitly rather
+  than carrying it as a generic "member warning". The `.jsonl` rollover plans in the same directory do not
+  count against it: the surface targets `*.md` only.
+- `MEMORY.md` is **46 of 50 lines**, with health target and ceiling both 50. Every slice this session had
+  to hand-compress the resume pointer to stay inside it — three times — which is a workflow tax, not a
+  containment control. `.5` opens to decide the right remedy: the file carries an 18-line fixed how-to-
+  resume preamble that never changes, and routing it to `MEMORY_ARCHITECTURE.md` would nearly double the
+  room available to the mutable half without moving a bound. Raising the ceiling is explicitly not the
+  remedy.
+- Tracking-only; no bound, record, or evidence moved.
+
 ### SOURCE-IR-REPRODUCIBILITY.9 — give provenance the batch coordinate it was missing
 
 - Added the coordinate rather than redefining the field. `source_ref` is Docling's `self_ref` and is

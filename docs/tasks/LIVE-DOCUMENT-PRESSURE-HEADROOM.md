@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (tracking-only while `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT` closes)
+- Status: `active` (`.0` done; `.1`–`.5` pending — `.4` re-ranked `2026-08-28` to a reachable stop)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
-- Last updated: `2026-08-14`
+- Last updated: `2026-08-28`
 - Owner: repo-local workflow
 
 ## Goal
@@ -62,7 +62,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
   Status: `active`
   Goal: keep non-rolling current-facing canonical surfaces writable without losing evidence
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`
+  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0`
   Status: `done`
@@ -101,6 +101,35 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Goal: classify and remedy the research, validation-snapshot, and README member warnings
   Acceptance: each axis has a lifecycle-correct local remedy or a measured reason it is immutable/healthy;
   accepted transactions preserve exact evidence and no generic warning is merely suppressed
+  Re-measured (`2026-08-28`, found while running `SOURCE-IR-REPRODUCIBILITY.9`): the research axis moved
+  from a line warning to a **membership stop**, which the `2026-08-14` boundary above did not record
+  because it did not exist then. `docs/research/*.md` is **63 of a 64-file ceiling**, and for this surface
+  `health_targets.files` and `enforcement_ceilings.files` are both 64 — so there is no warning band left
+  and the *next* research record is the last one this collection can accept. The line axis is equally
+  tight at 639 of 640. Two active trees write research records as their normal output
+  (`SOURCE-IR-REPRODUCIBILITY` published three in two days), so this is reachable within a slice or two,
+  and unlike a rolling ledger this surface has **no declared rollover transaction** to release it. That is
+  the condition `LIVE-DOC-STOP-RISK` exists to prevent: a bound a surface can reach with no remedy
+  compliant work can take. Note the `.jsonl` rollover plans under the same directory do **not** count —
+  the surface targets `*.md` only.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.5`
+  Status: `pending`
+  Goal: give the resume pointer a band it can live in
+  Acceptance: `MEMORY.md` is the `active_resume` surface, and its `health_targets` and
+  `enforcement_ceilings` are **identical** — 50 lines, 32,768 bytes, 160-byte lines. A surface whose health
+  target equals its ceiling has no warning band: it reports "at or above rollover" from 45 lines onward and
+  then simply refuses. Measured `2026-08-28` it is 46 of 50 lines (92.0%), and every slice this session had
+  to hand-compress the pointer to stay inside it — three times, which is a workflow tax rather than a
+  containment control. `MEMORY_ARCHITECTURE.md` requires this file to carry one active unit, current state,
+  one next action, in-flight work, and blockers; that is five sections plus a fixed how-to-resume preamble
+  of 18 lines, leaving roughly 27 lines for all five. Decide whether the preamble belongs in the bounded
+  pointer at all — it is stable prose that never changes and could be routed to `MEMORY_ARCHITECTURE.md`,
+  which would give the mutable half of the file twice its current room without moving a bound. Do not raise
+  the ceiling to buy space that a routing change already provides
+  Prerequisite: none; it blocks nothing today
   Verification: `pending`
   Commit: `pending`
 
@@ -111,12 +140,20 @@ repeatable rollover/remedy paths and remain under their existing owners.
 | 1 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0` | `done` | exact clean pressure and owner boundaries are pinned |
 | 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` | `pending` | the task plane is already at its 90% file milestone |
+| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | re-ranked `2026-08-28`: `docs/research/*.md` is 63 of a 64-file ceiling with no warning band and no rollover, and two active trees write research records |
+| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `pending` | the resume pointer has no band either, and this session hand-compressed it three times |
 
 ## Decisions
 
 - `2026-08-14`: open one pressure-frontier tree rather than one task per warning. The surfaces need distinct
   remediation transactions, but one bounded owner can preserve the exact measured ordering without consuming
   several more task-file slots at the already-triggered collection milestone.
+- `2026-08-28`: re-measured while running an unrelated slice, and two axes are worse than the opening
+  boundary recorded. `docs/research/*.md` is 63 of 64 files and 639 of 640 lines on its widest member, with
+  `health_targets.files == enforcement_ceilings.files`, so there is no warning band and no declared
+  rollover — the next research record is the last one. `.4` now owns that explicitly. `MEMORY.md` has the
+  same shape at 46 of 50 lines, which is why every slice this session had to hand-compress it; `.5` opens
+  to decide whether the 18-line fixed preamble belongs inside the bounded pointer at all.
 - `2026-08-14`: prioritize the current knowledge card, then the task plane. The card has one line left and is a
   likely `.f` writer target; the task collection is already at 90% but still has 16 opening-boundary slots.
 - `2026-08-14`: record maintained and immutable large-member warnings without assuming they share a remedy.
