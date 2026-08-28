@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > how are generic SemanticIR phases different from transaction_phases
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
@@ -108,8 +110,12 @@
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > how do I rebuild every retained chain after a production change
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > how do I regenerate controller_input.json and trajectory_report.json
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > how do I resolve a reviewed region by content
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how do I reverify the frozen current claim census
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
@@ -292,9 +298,3 @@
   > how does specforge currently capture transactions and why is it thin
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how does specforge declare a signal mentioned only in prose
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > how does specforge drop a zero-evidence phantom actor like controller or agent
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)

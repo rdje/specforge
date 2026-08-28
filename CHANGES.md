@@ -1,3 +1,38 @@
+### SOURCE-IR-REPRODUCIBILITY.2 — resolve a reviewed region by content, not by ordinal position
+
+- Fixed the anchor fragility `.0` found. `build_fixture.py:source_record` selected a reviewed region by
+  `element_id == region_id` — an ordinal position — so when Docling moved the Cortex-A76 prose from
+  `elem_00219` to `elem_00230`, the fixture failed closed and an ingest question surfaced as a scoring
+  failure in an unrelated program.
+- Measured the obvious remedy before writing it, and rejected it. "Find the element containing the reviewed
+  excerpt" resolves only 8 of 12 reviewed regions and leaves 4 ambiguous, because matching
+  `json.dumps(record)` lets any contents or index table that mentions the phrase claim the anchor:
+  `all values in ns` hits three I2S tables, `Channel requirements` three OpenCAPI tables,
+  `CPU interface register summary` three GIC tables. Shipping it would have traded one broken cell for four.
+- Shipped a precedence over the region's own natural-language surface, never its serialization: element text
+  for prose, caption then caption-plus-cells for a table, caption for a figure, failing closed on zero or
+  multiple matches at the deciding tier. Two excerpts were strengthened to longer literals from the same
+  reviewed regions' own captions -- tightening an identity, not re-pointing an anchor. All 12 reviewed
+  regions resolve uniquely to exactly the region the ordinal selects today.
+- Attributed the result with one replay and two projections of the same artifacts, so the resolver's effect
+  is not confounded with the ingest drift this tree measured. Control (frozen builder) reproduces the
+  published **13/14** exact source regions; treatment reaches **14/14**; every other global metric is
+  identical (10/14 disposition, 8/12 modality, 45/45 provenance, 120/120 conservation, 8/16 residual
+  actionability, 0 fabricated, 0 unexplained drops). Exactly one cell changed, `actual_keys`
+  `[] -> ["elem_00219"]`, and its two unrelated hard failures still stand.
+- Made the controls able to fail, then made them able to fail for the right reason. `--self-test` is
+  **11/11** with six observed RED perturbations. Two of the first eight controls were rewritten after a
+  perturbation left them green: an ambiguous-tier fall-through is provably a no-op because a later tier is a
+  superset, and the first figure fixture could not tell caption matching from serialization matching. The
+  replacement states the property directly: an ordinal id must not resolve a region.
+- Discharged a lockstep four times wider than documented. Eight pinned surfaces moved, not the two the fact
+  card named -- including the compiled `exact_source_regions != 13` literal, so the metric this slice
+  improves could not move without the gate noticing. `.8d`'s published record was **not** re-stamped: `.2`
+  publishes its own replay `source-ir-repro-2-population-r1` at revision `5fe81128`, under a current-replay
+  dataset id distinct from the review-locked dataset's own id.
+- Gates: `cargo test --workspace` 470 / 168 / 1,369 / 4 passed with 0 failed, clippy `-D warnings` clean,
+  `mdbook build` green; 3,604 files / 1,331,419 KiB of replay scratch removed with an empty residue census.
+
 ### CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts
 
 - Re-derived every count `TOOLBOX.md` publishes for the three claim doctrines — **11 counts, 8 confirmed,

@@ -134,7 +134,9 @@ DOCS = [
             "8aa3938506131c91c696067a6d1ecd86412d6b8b8c36c799241a472cee9a44e7",
         ],
         "region": ["table", "table_0004", None],
-        "source_assert": "all values in ns",
+        # Taken from this same reviewed table's own caption. "all values in ns" appears in three
+        # I2S tables, so it identifies the document's timing tables as a class, not this region.
+        "source_assert": "Target receiver with data rate of 2.5 MHz",
         "projection": "timing_full",
         "present_modalities": ["table"],
         "cells": [
@@ -175,7 +177,9 @@ DOCS = [
             "5bf8705f8a4390b8c29f8311c705b83e12ad9a7c3e87e277230f30e9ae6e2edd",
         ],
         "region": ["table", "table_0014", None],
-        "source_assert": "CPU interface register summary",
+        # The full caption. The bare phrase is a proper substring of "Table 3-10 GIC virtual CPU
+        # interface register summary" and also appears in the register index table.
+        "source_assert": "Table 3-6 CPU interface register summary",
         "projection": "register_access_offset",
         "present_modalities": ["table"],
         "cells": [
@@ -494,32 +498,75 @@ def read_json(path: Path) -> dict:
         return json.load(stream)
 
 
+REGION_COLLECTIONS = {
+    "prose": ("content_elements", "element_id"),
+    "table": ("structured_tables", "table_id"),
+    "figure": ("visual_assets", "asset_id"),
+}
+
+
+def region_surfaces(kind: str, record: dict) -> list[str]:
+    """The region's own natural-language surfaces, most specific first.
+
+    Identity is over what the specification wrote, never over the record's serialization. A
+    serialized table also carries ids, row counts, and structure that move with segmentation, and
+    matching against it lets any contents or index table that merely mentions a phrase claim the
+    anchor -- measured: `all values in ns` matches three I2S tables that way.
+
+    Tables get two tiers because a reviewed excerpt is sometimes the caption and sometimes a body
+    cell. A caption match must win outright rather than be diluted by every table whose body
+    happens to repeat the phrase.
+    """
+    if kind == "prose":
+        return [record["text"]]
+    if kind == "table":
+        caption = record.get("caption_text") or ""
+        cells = json.dumps([record["header_rows"], record["body_rows"]], ensure_ascii=False)
+        return [caption, f"{caption} {cells}"]
+    return [record.get("caption_text") or ""]
+
+
+def resolve_region(source: dict, kind: str, assertion: str) -> dict | None:
+    """Resolve the reviewed region by content identity, failing closed when it is not decisive.
+
+    Ordinal ids are positions, not names: `elem_00219` means "the two-hundred-and-nineteenth
+    content element", so any segmentation change moves it and converts an ingest question into a
+    scoring failure in an unrelated program (SOURCE-IR-REPRODUCIBILITY.0). The reviewed excerpt is
+    the identity instead.
+
+    A broader tier is a superset of a narrower one, so once a tier matches at all, no later tier can
+    disambiguate it -- more than one match there is refused rather than resolved by picking.
+    """
+    collection, _ = REGION_COLLECTIONS[kind]
+    records = source[collection]
+    if not records:
+        return None
+    for tier in range(len(region_surfaces(kind, records[0]))):
+        matches = [item for item in records if assertion in region_surfaces(kind, item)[tier]]
+        if matches:
+            return matches[0] if len(matches) == 1 else None
+    return None
+
+
 def source_record(source: dict, spec: dict, require_reviewed_region: bool) -> dict | None:
     kind, region_id, _ = spec["region"]
+    record = resolve_region(source, kind, spec["source_assert"])
+    if record is None:
+        assert not require_reviewed_region, (
+            f"{spec['key']} reviewed source region did not resolve to exactly one "
+            f"{kind} carrying its reviewed excerpt"
+        )
+        return None
     if kind == "prose":
-        records = [
-            item for item in source["content_elements"] if item["element_id"] == region_id
-        ]
-        if len(records) != 1 or spec["source_assert"] not in records[0]["text"]:
-            assert not require_reviewed_region, f"{spec['key']} reviewed source region disappeared"
-            return None
-        excerpt = records[0]["text"]
+        excerpt = record["text"]
     elif kind == "table":
-        records = [item for item in source["structured_tables"] if item["table_id"] == region_id]
-        if len(records) != 1 or spec["source_assert"] not in json.dumps(records[0]):
-            assert not require_reviewed_region, f"{spec['key']} reviewed source region disappeared"
-            return None
         excerpt = {
-            "caption": records[0].get("caption_text"),
-            "row_count": records[0]["row_count"],
-            "col_count": records[0]["col_count"],
+            "caption": record.get("caption_text"),
+            "row_count": record["row_count"],
+            "col_count": record["col_count"],
         }
     else:
-        records = [item for item in source["visual_assets"] if item["asset_id"] == region_id]
-        if len(records) != 1 or spec["source_assert"] not in records[0]["caption_text"]:
-            assert not require_reviewed_region, f"{spec['key']} reviewed source region disappeared"
-            return None
-        excerpt = records[0]["caption_text"]
+        excerpt = record["caption_text"]
     return {
         "region_id": region_id,
         "modality": spec["present_modalities"][0],
@@ -911,17 +958,202 @@ def build(
     return (json.dumps(dataset, indent=2, ensure_ascii=False) + "\n").encode()
 
 
+# ------------------------------------------------------------------------------------------------
+# Controls for the region resolver
+# ------------------------------------------------------------------------------------------------
+#
+# Resolving a reviewed region by content is only safe if it refuses when the content is not an
+# identity. Each control drives `resolve_region` with a source the reviewed population does not
+# contain, so a resolver that cannot fail is caught here rather than in a scoring run whose green
+# result would mean nothing.
+
+
+def _prose(element_id: str, text: str) -> dict:
+    return {"element_id": element_id, "text": text}
+
+
+def _table(table_id: str, caption: str, body: list[list[str]]) -> dict:
+    return {
+        "table_id": table_id,
+        "caption_text": caption,
+        "header_rows": [],
+        "body_rows": body,
+        "row_count": len(body),
+        "col_count": len(body[0]) if body else 0,
+    }
+
+
+def run_self_test() -> int:
+    checks: list[tuple[bool, str]] = []
+
+    # The defect this resolver exists to fix: the reviewed text at a different ordinal id.
+    drifted = {"content_elements": [_prose("elem_00001", "filler"), _prose("elem_00230", "keep GPR transfers")]}
+    resolved = resolve_region(drifted, "prose", "keep GPR transfers")
+    checks.append(
+        (
+            resolved is not None and resolved["element_id"] == "elem_00230",
+            "the reviewed text must resolve after a segmentation change moved its ordinal id",
+        )
+    )
+
+    # The property this leaf exists to establish, stated directly: resolution is invariant under
+    # renaming every ordinal id. Any surface that lets an id participate in the identity fails here.
+    renamed = {
+        "content_elements": [
+            _prose("elem_90001", "filler"),
+            _prose("elem_90002", "keep GPR transfers"),
+        ]
+    }
+    before = resolve_region(drifted, "prose", "keep GPR transfers")
+    after = resolve_region(renamed, "prose", "keep GPR transfers")
+    checks.append(
+        (
+            before is not None
+            and after is not None
+            and before["text"] == after["text"]
+            and before["element_id"] != after["element_id"],
+            "resolution must be invariant under an alpha-rename of every ordinal id",
+        )
+    )
+
+    # The sharp edge of the same property: an ordinal id is a position, not content, so it must not
+    # be able to resolve anything. This fails the moment an id is admitted into a region surface.
+    checks.append(
+        (
+            resolve_region(drifted, "prose", "elem_00230") is None,
+            "an ordinal id must not resolve a region, because an id is a position and not content",
+        )
+    )
+
+    # RED: an excerpt that matches nothing must fail closed, never fall back to a position.
+    checks.append(
+        (
+            resolve_region(drifted, "prose", "text the specification does not contain") is None,
+            "an excerpt matching no region must fail closed rather than resolve by position",
+        )
+    )
+
+    # RED: two regions carrying the excerpt is not an identity; picking one would be a guess.
+    twice = {"content_elements": [_prose("elem_00001", "shared phrase"), _prose("elem_00002", "shared phrase")]}
+    checks.append(
+        (
+            resolve_region(twice, "prose", "shared phrase") is None,
+            "an excerpt carried by two regions must be refused, not resolved to the first match",
+        )
+    )
+
+    # Measured on the real population: a contents or index table repeats a caption phrase in its
+    # body. The caption tier must decide outright, or four reviewed anchors become ambiguous.
+    captioned = {
+        "structured_tables": [
+            _table("table_0001", "", [["Channel requirements", "12"]]),
+            _table("table_0008", "Table 4-1  Channel requirements", [["insertion loss", "3"]]),
+        ]
+    }
+    resolved = resolve_region(captioned, "table", "Channel requirements")
+    checks.append(
+        (
+            resolved is not None and resolved["table_id"] == "table_0008",
+            "a caption match must win outright over a table that only mentions the phrase in its body",
+        )
+    )
+
+    # The reverse case, also measured: the reviewed excerpt is a body cell and no caption carries it.
+    bodied = {
+        "structured_tables": [
+            _table("table_0001", "Unrelated caption", [["something else", "1"]]),
+            _table("table_0067", "Device Table Entry", [["Guest-Physical Page-Table Base Address", "2"]]),
+        ]
+    }
+    resolved = resolve_region(bodied, "table", "Guest-Physical Page-Table Base Address")
+    checks.append(
+        (
+            resolved is not None and resolved["table_id"] == "table_0067",
+            "an excerpt carried only by a body cell must still resolve through the second tier",
+        )
+    )
+
+    # The measured I2S case: an excerpt that names a class of tables rather than one of them.
+    ambiguous_caption = {
+        "structured_tables": [
+            _table("table_0003", "Controller transmitter (all values in ns)", [["a", "1"]]),
+            _table("table_0004", "Target receiver (all values in ns)", [["b", "2"]]),
+        ]
+    }
+    checks.append(
+        (
+            resolve_region(ambiguous_caption, "table", "all values in ns") is None,
+            "two caption matches must be refused, because the excerpt names a class of tables",
+        )
+    )
+
+    # The invariant that licenses deciding at the first tier that matches at all: a later tier is a
+    # superset of an earlier one, so widening can add matches but never remove one. Without this,
+    # returning early on an ambiguous tier could hide a narrower answer further down.
+    superset_holds = True
+    for table in ambiguous_caption["structured_tables"] + bodied["structured_tables"]:
+        tiers = region_surfaces("table", table)
+        superset_holds &= all(tiers[i] in tiers[i + 1] for i in range(len(tiers) - 1))
+    checks.append(
+        (
+            superset_holds,
+            "each table tier must contain the previous one, so a matched tier is always the decisive one",
+        )
+    )
+
+    # A figure resolves on its own caption. Matching its serialization instead would let any other
+    # field -- a note, a placeholder, a path -- claim the anchor.
+    figures = {
+        "visual_assets": [
+            {
+                "asset_id": "picture_0002",
+                "caption_text": "",
+                "note": "cross-reference to IOMMUs integration in SoC",
+            },
+            {"asset_id": "picture_0008", "caption_text": "Figure 4.2: IOMMUs integration in SoC"},
+        ]
+    }
+    resolved = resolve_region(figures, "figure", "IOMMUs integration in SoC")
+    checks.append(
+        (
+            resolved is not None and resolved["asset_id"] == "picture_0008",
+            "a figure must resolve on its caption, not on a note or any other serialized field",
+        )
+    )
+
+    # The frozen builder asserts rather than returning None, so a reviewed region that stops
+    # resolving is a hard stop and never a silently empty projection.
+    spec = {"key": "control", "region": ["prose", "elem_00219", None], "source_assert": "absent"}
+    try:
+        source_record(drifted, spec, True)
+        refused = False
+    except AssertionError:
+        refused = True
+    checks.append(
+        (refused, "a frozen build must stop when a reviewed region no longer resolves, not emit nothing")
+    )
+
+    failures = [message for ok, message in checks if not ok]
+    for ok, message in checks:
+        print(f"{'PASS' if ok else 'FAIL'}  {message}", file=sys.stderr)
+    print(f"{len(checks) - len(failures)}/{len(checks)} region-resolver controls pass", file=sys.stderr)
+    return 1 if failures else 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
     mode.add_argument("--write-replay", action="store_true")
+    mode.add_argument("--self-test", action="store_true")
     parser.add_argument("--replay-root", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--replay-dataset-id")
     parser.add_argument("--replay-owner")
     args = parser.parse_args()
+    if args.self_test:
+        return run_self_test()
     if args.write_replay:
         if (
             args.replay_root is None

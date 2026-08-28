@@ -570,7 +570,13 @@ Three practical consequences, in the order you are likely to meet them:
 - **Element ids are ordinal, so they move.** `elem_00219` means "the two-hundred-and-nineteenth
   content element", not a stable name for a paragraph. If you pin a location — in a fixture, a
   review, a script — pin it by content and let the id be looked up. A fixture that pins an ordinal
-  will one day point at the wrong paragraph, or, if it is written to fail closed, at nothing.
+  will one day point at the wrong paragraph, or, if it is written to fail closed, at nothing. The
+  reviewed fixture now does exactly this: it resolves a region by the region's own natural-language
+  surface — element text for prose, caption (then caption plus cells) for a table, caption for a
+  figure — and refuses when that matches nothing or more than one thing. Matching a *serialized*
+  record instead does not work, and the measurement says so: a phrase like `Channel requirements`
+  appears in three different tables of one specification, so any contents or index table that merely
+  mentions it would claim the anchor.
 - **A current chain does not certify ingest.** The chain-currency doctrine replays each stage from
   its persisted input, so it starts at `EvidenceIR` and proves everything downstream of ingest. It
   is silent about `SourceIR` itself, by construction.

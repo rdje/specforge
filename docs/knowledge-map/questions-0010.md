@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the current corpus refresh frontier after refresh 48
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the declared-signal eval surface / EvalTask::DeclaredSignal
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what is the difference between ingest batch activation and adaptive batch size
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -289,11 +297,3 @@
   > where do CCIX PER error structure fields land in the IR
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > where do DBID / TxnID / ReturnNID style names come from in CHI
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where do I log feedback or a suggestion to FSMGen
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > where do TimingConstraintRecord table provenance ids live
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR

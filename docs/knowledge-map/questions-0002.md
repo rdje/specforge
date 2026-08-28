@@ -64,6 +64,8 @@
   > can FigureRegion raw_image_path store an absolute path
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > can I re-stamp a published replay record
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > can ISF model an explicit state machine / FSM (proven)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -295,5 +297,3 @@
   > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > does SpecForge classify Markdown inside the FSMGen submodule
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > does SpecForge cycle-schedule the FSM (no — FSMGen does)

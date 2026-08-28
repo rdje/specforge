@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > does SpecForge cycle-schedule the FSM (no — FSMGen does)
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > does SpecForge delete non-applicable physical timing records
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -295,5 +297,3 @@
   > how are external held-out PDFs identified without absolute host paths
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > how are external reviewed PDFs replayed without persisting host paths
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)

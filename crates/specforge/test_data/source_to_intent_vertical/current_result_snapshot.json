@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "dataset_id": "source-to-intent-reviewed-current-r5",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.8d",
+  "dataset_id": "source-to-intent-reviewed-current-r6",
+  "owner": "SOURCE-IR-REPRODUCIBILITY.2",
   "selection_boundary_commit": "a3e9757d63ca5499a2393864fb503d6537de0035",
   "selection_claim": "Current-binary replay of the unchanged review-locked population; source bytes and all four replayed stage identities are re-verified without mutating the frozen baseline.",
   "minimum_documents_per_category": 2,
@@ -2387,18 +2387,22 @@
           "expected_disposition": "non_applicable",
           "complete_gold": true,
           "source_region": {
-            "actual_keys": [],
+            "actual_keys": [
+              "elem_00219"
+            ],
             "expected_keys": [
               "elem_00219"
             ],
-            "matched_keys": [],
-            "actual_total": 0,
+            "matched_keys": [
+              "elem_00219"
+            ],
+            "actual_total": 1,
             "expected_total": 1,
-            "true_positives": 0,
+            "true_positives": 1,
             "false_positives": 0,
-            "false_negatives": 1,
-            "precision": null,
-            "recall": 0.0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
             "unprovenanced_records": 0
           },
           "evidence_capture": {
@@ -2516,18 +2520,16 @@
             }
           ],
           "disposition_accounted": false,
-          "first_failing_stage": "source_ir",
+          "first_failing_stage": "evidence_to_semantic_ir",
           "hard_failures": [
             "required_residual_missing_or_inactionable",
-            "source_region_disposition_unaccounted",
-            "source_region_missing_or_ambiguous"
+            "source_region_disposition_unaccounted"
           ]
         }
       ],
       "hard_failures": [
         "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance:required_residual_missing_or_inactionable",
-        "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance:source_region_disposition_unaccounted",
-        "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance:source_region_missing_or_ambiguous"
+        "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance:source_region_disposition_unaccounted"
       ]
     },
     {
@@ -2799,7 +2801,7 @@
       "category": "methodology-guide",
       "document_count": 2,
       "cell_count": 2,
-      "hard_failure_count": 5,
+      "hard_failure_count": 4,
       "status": "incomplete"
     }
   ],

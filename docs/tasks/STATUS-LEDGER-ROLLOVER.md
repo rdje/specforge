@@ -92,6 +92,24 @@ pressure axis here, because one status record is one line.
   Verification: `pending`
   Commit: `pending`
 
+- ID: `STATUS-LEDGER-ROLLOVER.3`
+  Status: `pending`
+  Goal: roll the status ledger before the next product record, and record how its plan is actually built
+  Acceptance: measured `2026-08-28` at `5fe81128`, `LIVE_ACHIEVEMENT_STATUS.md` is **102,748 bytes = 89.3%**
+  of its 115,000-byte health target, so the next ordinary record crosses the mandatory 90% signal and the
+  protocol refuses the append unless the same change performs the declared rollover. Two things must be
+  carried into that plan, both learned the hard way in `SOURCE-IR-REPRODUCIBILITY.2`:
+  (1) **this ledger's plan cannot be hand-modelled the way `CHANGES.md`'s can.** Its grammar is
+  `current_snapshot_bullets_v1` with `## Current snapshot` / `## Highest-priority remaining gap` markers and
+  a validation-projection trailer, so the checker parses records and **re-renders a canonical live view**
+  instead of slicing raw bytes. A hand-computed cut was wrong on every field — segment 17,997 bytes against
+  an actual 14,741, root 83,550 against an actual 70,133. Build the plan by harvesting the `actual` values
+  the dry run reports, then re-run it.
+  (2) **record size is the real driver.** Status records had grown to roughly 2.6 KiB each, which returns
+  this ledger to its signal about every two slices; keeping a record near 1.2 KiB is what let `.2` land
+  without a rollover at all. A cut that does not also address record size buys one or two slices
+  Prerequisite: none; it blocks the next status-bearing commit
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |

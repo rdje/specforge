@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what are the current OpenCAPI Certified artifact hashes
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > what are the current OpenCAPI Ready Definition artifact hashes
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what are the current OpenCAPI Ready artifact hashes
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > what are the current USB4 Connection Manager artifact hashes
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > what are the current USB4 Inter-Domain artifact hashes
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -289,11 +297,3 @@
   > what happens to a figure that reaches no canonical carrier
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > what happens to a page sidecar path when page images are not persisted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > what happens to a register-worded caption that grounds no identifier
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what happens to self_ref under batched ingest
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what happens to the extraction-quality gauge when the constraint surface is replaced

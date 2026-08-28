@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.1`, `.5`, `.11`–`.12` measured; `.2`–`.4`, `.6`–`.10` pending)
+- Status: `active` (`.0`–`.2`, `.5`, `.11`–`.12` measured; `.3`, `.4`, `.6`–`.10`, `.13` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
 - Last updated: `2026-08-28`
@@ -169,7 +169,7 @@ Full result, method, controls, and per-document table:
   widened to notes as a class and at 13/14 when re-segmentation is counted as content loss
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.2`
-  State: `pending`
+  State: `done` (`2026-08-28`)
   Goal: make reviewed anchors survive segmentation change
   Acceptance: a reviewed source region resolves by content identity rather than ordinal position, the reviewed
   dataset re-derives without changing any reviewed fact, and a RED control proves an anchor that no longer
@@ -183,6 +183,49 @@ Full result, method, controls, and per-document table:
   `source_region` predicate values must not move — so the change belongs in how `source_record` *resolves* a
   region (match the element carrying the reviewed excerpt; fail closed on zero or multiple matches), never in
   the recorded anchor. See [[reviewed-fixture-projection-digest-lockstep]].
+  Design (measured `2026-08-28`, before implementing): the obvious rule — "find the element containing the
+  reviewed excerpt" — is **worse than today**, and the measurement says so. Against the persisted artifacts it
+  resolves 8 of 12 reviewed regions uniquely and leaves **4 ambiguous**, all tables, because the excerpt is
+  matched against `json.dumps(record)`: `all values in ns` hits three I2S tables, `Channel requirements` hits
+  three OpenCAPI tables, `CPU interface register summary` hits three GIC tables. Failing closed on a third of
+  the population would convert four working anchors into scoring failures. Two further measurements fix it:
+  most false matches carry the phrase only in a table *body* (a contents or index table that merely mentions
+  it) while the reviewed table carries it in its **caption**; and two reviewed anchors are the reverse, with
+  their excerpt in the body and nothing in the caption. So the rule is a **precedence over the region's own
+  natural-language surface, never its serialization**: prose matches element text; a table or figure matches
+  its caption first and, only if that is not decisive, its caption plus cell text; zero or multiple matches at
+  the deciding tier fail closed. Two excerpts also have to be **strengthened** — `all values in ns` to
+  `Target receiver with data rate of 2.5 MHz` and `CPU interface register summary` to
+  `Table 3-6 CPU interface register summary`, each taken from the same reviewed region's own caption, which
+  tightens an identity rather than re-pointing an anchor and must be shown to select the same region. Measured
+  result: **all 12 resolve uniquely to exactly the region the ordinal selects today** — 10 at the caption/text
+  tier and 2 at the caption-plus-body tier. Attribution must use one replay and two projections (frozen builder
+  as control, new builder as treatment) so the resolver's effect is not confounded with the ingest drift this
+  tree measured.
+  Evidence: `source_record` now resolves through `resolve_region`, a precedence over the region's own
+  natural-language surface. **Attribution is one replay, two projections of the same artifacts**: the
+  control leg (frozen builder) reproduces the published defect exactly at **13/14 exact source regions**,
+  the treatment leg reaches **14/14**, and every other global metric is byte-identical between them —
+  10/14 disposition, 8/12 modality, 45/45 provenance, 120/120 conservation, 8/16 residual actionability,
+  0 fabricated, 0 unexplained drops. **Exactly one cell changes**, and only by dropping
+  `source_region_missing_or_ambiguous`; its `actual_keys` moves `[] -> ["elem_00219"]`, the reviewed
+  anchor unchanged, and its two other hard failures still stand, so nothing unrelated was papered over.
+  No reviewed fact, predicate, or `expected_keys` value moved. Controls: `build_fixture.py --self-test`
+  is **11/11** with **six observed RED perturbations** — resolving ambiguity by taking the first match,
+  matching a figure against its serialization, dropping the caption tier, making the body tier disjoint
+  from the caption tier, admitting an ordinal id into a region surface, and removing the frozen-build
+  assertion. Two controls were rewritten after a perturbation left them green: an ambiguous-tier
+  fall-through is provably a no-op because a later tier is a superset, and the first figure fixture could
+  not distinguish caption matching from serialization matching
+  Lockstep discharged: the change moved **eight** pinned surfaces, not the two the fact card names —
+  `REPLAY_PROJECTION_SHA256`, `POPULATION_REPLAY_PRODUCTION_REVISION`, `REPLAY_VERTICAL_RESULT_SHA256`,
+  `POPULATION_REPLAY_EVIDENCE_SHA256`, the cleanup census, `current_dataset.byte_count`,
+  `current_result.byte_count`, and the compiled `exact_source_regions != 13` literal, plus the replay
+  authority identity and the published `current_result_snapshot.json`. `.8d`'s record was **not**
+  re-stamped: a published record must keep the digest of the tool that produced it, so `.2` publishes its
+  own replay `source-ir-repro-2-population-r1` at production revision `5fe81128`, under a distinct
+  current-replay dataset id `source-to-intent-reviewed-current-r6` rather than reusing the review-locked
+  dataset's own id. Scratch removed exactly: 3,604 files / 1,331,419 KiB with an empty residue census
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.3`
   State: `pending`
@@ -345,6 +388,54 @@ Full result, method, controls, and per-document table:
   own entry instead, because that ledger is append-only and rewriting a past slice's record to match a later
   presentation decision is a worse defect than the one being fixed. No measurement changed and no number was
   withdrawn
+
+## Acceptance Checklist (enforced) — `SOURCE-IR-REPRODUCIBILITY.2`
+
+- [x] **REPRODUCE / MEASURE** — the control leg of the population replay reproduces the published defect
+  exactly: `exact_source_regions` **13/14**, with the Cortex-A76 cell scoring
+  `source_region: {"actual_keys": [], "expected_keys": ["elem_00219"], "false_negatives": 1}` and
+  `hard_failures` carrying `source_region_missing_or_ambiguous`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `build_fixture.py:source_record` selected the region by
+  `item["element_id"] == region_id`, an **ordinal position**. `SOURCE-IR-REPRODUCIBILITY.0` measured that
+  Docling moved the same prose from `elem_00219` to `elem_00230` (249 → 260 content elements), so the
+  anchor addressed a different paragraph and the fixture failed closed. Measured before implementing: the
+  naive replacement — match the reviewed excerpt anywhere in the record — resolves only 8 of 12 reviewed
+  regions and leaves 4 ambiguous, because `json.dumps(record)` lets any contents or index table that
+  mentions the phrase claim the anchor.
+- [x] **ADDRESSED (verified)** — `resolve_region` matches the region's own natural-language surface, most
+  specific first, and fails closed on zero or multiple matches at the deciding tier. One replay, two
+  projections of the same artifacts: **13/14 → 14/14** exact source regions, every other global metric
+  byte-identical (10/14 disposition, 8/12 modality, 45/45 provenance, 120/120 conservation, 8/16 residual
+  actionability, 0 fabricated, 0 unexplained drops). Exactly one cell changed, `actual_keys`
+  `[] -> ["elem_00219"]`, with its two unrelated hard failures still standing.
+- [x] **NO REGRESSION** — `cargo test --workspace` **470 / 168 / 1,369 / 4 passed, 0 failed**;
+  `cargo clippy --workspace --all-targets -- -D warnings` clean; `build_fixture.py --self-test` **11/11**
+  with six observed RED perturbations. No reviewed fact, predicate, or `expected_keys` value moved.
+- [x] **GENERICITY (ADR 0006)** — the rule is structural: element text for prose, caption then caption+cells
+  for a table, caption for a figure. No document, vendor, or protocol vocabulary participates. The two
+  strengthened excerpts are literals taken from the reviewed regions' own captions, in review data rather
+  than in production code.
+- [x] **LOCKSTEP** — eight pinned surfaces moved together with the published replay authority and the
+  result snapshot; `[[reviewed-fixture-projection-digest-lockstep]]` corrected from two pins to eight; the
+  book's SourceIR chapter updated where it told readers to pin by content.
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.13`
+  State: `pending`
+  Goal: make the frozen reviewed fixture re-derivable, or declare that it is not
+  Acceptance: found while verifying `.2`, and pre-existing at `5fe81128` — `build_fixture.py --check` cannot
+  run at all. It asserts each document's four stage artifacts against the frozen reviewed stage-hash lock and
+  stops on the first mismatch. Measured across the population: **all 12 reviewed documents have drifted**, and
+  the drift is total from EvidenceIR onward — `source_ir` still matches for **5/12**, while `evidence_ir`,
+  `semantic_ir`, and `intent_ir` match for **0/12**. So it is *not* explained by the ingest instability this
+  tree measures: five documents whose SourceIR is byte-exact still fail. `CORPUS-CHAIN-CURRENCY` reports
+  24/24 current because it replays each stage from its **persisted input**; "does the persisted output still
+  match the reviewed frozen lock" is a different question and nothing asks it. The consequence is a
+  durability gap: `result_snapshot.json` is tracked and can be compared, but its inputs no longer exist
+  anywhere, so nothing can verify it is what those artifacts project. Either the frozen lock is re-anchored
+  to artifacts that exist — which must be a published, attributed re-derivation and not a re-stamp — or the
+  un-re-derivability is registered as a declared, measured unmeasurability with its own census, exactly as
+  `.3` requires for the ingest boundary
+  Prerequisite: none
 
 ## Open Questions
 

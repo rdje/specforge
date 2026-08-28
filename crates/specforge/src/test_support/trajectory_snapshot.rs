@@ -1,7 +1,7 @@
 //! Composition of the qualified reviewed SpecForge trajectory snapshot.
 //!
 //! This remains deliberately separate from the generic controller in [`crate::ir::trajectory`]. It
-//! authenticates the `.8d` whole-population current replay, the unchanged review-locked gold,
+//! authenticates the whole-population current replay, the unchanged review-locked gold,
 //! and the `.2` provider-free production-capability observation, then derives and evaluates the
 //! nine-dimensional input without changing any source authority.
 
@@ -53,16 +53,16 @@ const OBJECTIVE_CONTRACT_SHA256: &str =
 const CAPABILITY_OBSERVATION_SHA256: &str =
     "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e";
 const POPULATION_REPLAY_EVIDENCE_SHA256: &str =
-    "13e1247029bc371788f910d96654b4157634b015a1e2ca3e190be2275e64f633";
+    "dfec4bd523960281a892b7e5d690680fe70da5e66d45a54672a96916cee2efc3";
 const REPLAY_VERTICAL_RESULT_SHA256: &str =
-    "9f346a7387e18a4bc19c71a138f700068b8a90d2a05485c13e0b21677a93bd49";
+    "74528e5087b4c6911932a947816c2615c7c7d57747daf1f5edb91025313b625d";
 const REVIEWED_DATASET_SHA256: &str =
     "c743bcda27e4d08c322efc55ccf2f3465e9b53bb8339e83ee90c946e4ad39185";
 const POPULATION_REPLAY_ORCHESTRATOR_SHA256: &str =
     "55c8152048b9dd0f5d6754acfbd1339e0cfeeb2fbbbc72b57cc862a30eaa4569";
 const REPLAY_PROJECTION_SHA256: &str =
-    "d6f1e9f356b2cde8a3f20af636cf2cb983bf6e88fc8b67e829fb314c3190325e";
-const POPULATION_REPLAY_PRODUCTION_REVISION: &str = "483e525d70606d5ce1cb15fefa7307895af81931";
+    "4db419c9b571896645e95f87807c1744ddded4b41d8e665c0739fbe00f5a8d3d";
+const POPULATION_REPLAY_PRODUCTION_REVISION: &str = "5fe81128e1beffc30c71cd34316fe66fc26eff92";
 const REVIEWED_REVISION: &str = "03e89b66cf87fcc1ec0bf342f47a147261a8d739";
 #[cfg(test)]
 const AIA_DOCUMENT_KEY: &str = "1_0_2025_03_12_risc_v_advanced_interrupt_architecture";
@@ -575,11 +575,12 @@ fn validate_population_replay_evidence(
 ) -> std::result::Result<(), Vec<String>> {
     let mut problems = Vec::new();
     if replay.schema_version != 1
-        || replay.replay_id != "spec-to-intent-8d-population-r1"
-        || replay.owner != "SPEC-TO-INTENT-ALIGNMENT.8d"
+        || replay.replay_id != "source-ir-repro-2-population-r1"
+        || replay.owner != "SOURCE-IR-REPRODUCIBILITY.2"
     {
-        problems
-            .push("population replay identity must name the schema-1 .8d authority".to_string());
+        problems.push(
+            "population replay identity must name the schema-1 current replay authority".to_string(),
+        );
     }
     if replay.production_revision != POPULATION_REPLAY_PRODUCTION_REVISION {
         problems.push(
@@ -627,8 +628,8 @@ fn validate_population_replay_evidence(
     if !is_project_tmp_child(&cleanup.external_source_map)
         || !is_project_tmp_child(&cleanup.population_root)
         || cleanup.status != "removed_and_residue_absent"
-        || cleanup.removed_file_count != 3_095
-        || cleanup.removed_kib != 1_158_476
+        || cleanup.removed_file_count != 3_604
+        || cleanup.removed_kib != 1_331_419
     {
         problems.push(
             "population replay cleanup must retain the exact residue-free census".to_string(),
@@ -775,14 +776,14 @@ fn validate_population_replay_evidence(
     let dataset_prefix = format!("{}/", cleanup.population_root);
     if !replay.current_dataset.path.starts_with(&dataset_prefix)
         || !is_sha256_digest(&replay.current_dataset.sha256)
-        || replay.current_dataset.byte_count != 156_305
+        || replay.current_dataset.byte_count != 156_830
     {
         problems.push("current replay dataset identity is invalid".to_string());
     }
     if !replay.current_result.path.starts_with(&dataset_prefix)
         || replay.current_result.published_path != CURRENT_REPLAY_VERTICAL_RESULT_PATH
         || replay.current_result.sha256 != REPLAY_VERTICAL_RESULT_SHA256
-        || replay.current_result.byte_count != 103_484
+        || replay.current_result.byte_count != 103_394
     {
         problems.push("published current replay result identity is invalid".to_string());
     }
@@ -805,12 +806,14 @@ fn validate_replay_vertical_result(
 ) -> std::result::Result<(), Vec<String>> {
     let mut problems = Vec::new();
     if result.schema_version != 1
-        || result.dataset_id != "source-to-intent-reviewed-current-r5"
-        || result.owner != "SPEC-TO-INTENT-ALIGNMENT.8d"
+        || result.dataset_id != "source-to-intent-reviewed-current-r6"
+        || result.owner != "SOURCE-IR-REPRODUCIBILITY.2"
         || result.selection_boundary_commit != "a3e9757d63ca5499a2393864fb503d6537de0035"
         || result.minimum_documents_per_category != 2
     {
-        problems.push("current vertical result identity is not the .8d reviewed replay".to_string());
+        problems.push(
+            "current vertical result identity is not the current reviewed replay".to_string(),
+        );
     }
     let cells = result
         .documents
@@ -884,11 +887,11 @@ fn validate_replay_vertical_result(
         || intent_true_positives != 40
         || intent_false_positives != 0
         || intent_false_negatives != 0
-        || exact_source_regions != 13
+        || exact_source_regions != 14
         || exact_evidence_captures != 12
     {
         problems.push(
-            "current vertical result must retain exact 12/14/6 coverage, three supported categories, 40/0/0 intent counts, and 13/12 source/capture counts"
+            "current vertical result must retain exact 12/14/6 coverage, three supported categories, 40/0/0 intent counts, and 14/12 source/capture counts"
                 .to_string(),
         );
     }
@@ -957,7 +960,7 @@ fn is_safe_relative_path(value: &str) -> bool {
             .any(|component| matches!(component, std::path::Component::ParentDir))
 }
 
-/// Derive the current controller input from the qualified `.8d` replay and `.2` capability authority.
+/// Derive the current controller input from the qualified current replay and `.2` capability authority.
 pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let result_bytes = read_repository_relative(
         Path::new(CURRENT_REPLAY_VERTICAL_RESULT_PATH),
@@ -978,7 +981,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let result_evidence = evidence(
         CURRENT_REPLAY_VERTICAL_RESULT_PATH,
         REPLAY_VERTICAL_RESULT_SHA256,
-        "qualified .8d current-binary reviewed vertical result",
+        "qualified current-binary reviewed vertical result",
     );
     let capability_evidence = evidence(
         CURRENT_CAPABILITY_OBSERVATION_PATH,
@@ -993,7 +996,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let replay_evidence = evidence(
         CURRENT_POPULATION_REPLAY_EVIDENCE_PATH,
         POPULATION_REPLAY_EVIDENCE_SHA256,
-        "isolated .8d current-binary replay of all 12 reviewed documents",
+        "isolated current-binary replay of all 12 reviewed documents under content-addressed anchors",
     );
 
     let intent_actual = counts.intent_true_positives + counts.intent_false_positives;
@@ -1809,7 +1812,7 @@ mod tests {
                 .unwrap_or_else(|| panic!("missing exact metric: {metric_id}"))
         };
         for (metric_id, expected) in [
-            ("exact_source_region_capture", Fraction::new(13, 14)),
+            ("exact_source_region_capture", Fraction::new(14, 14)),
             ("exact_required_modality_capture", Fraction::new(12, 14)),
             ("intent_canonical_precision", Fraction::new(40, 40)),
             ("intent_canonical_recall", Fraction::new(40, 40)),

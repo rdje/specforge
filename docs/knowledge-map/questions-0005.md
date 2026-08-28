@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > how does specforge drop a zero-evidence phantom actor like controller or agent
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > how does specforge fold an X interface relation subject onto the bare agent X
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -291,9 +297,3 @@
   > how many corpus refreshes remain after OpenCAPI Discovery
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how many corpus refreshes remain after OpenCAPI Ready Definition
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Connection Manager
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Inter-Domain
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after the GIC Overview Guide

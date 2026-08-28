@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where do I log feedback or a suggestion to FSMGen
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > where do TimingConstraintRecord table provenance ids live
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > where do interface_edge_timings stop in the pipeline
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -290,11 +298,3 @@
   > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > which header signatures are unrecovered register tables
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > which held-out document has an eligible opaque alpha catalog
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > which limit binds first when adding a fact card
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local model should SpecForge use for NLI or entailment verification
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local models are pulled and what are they for
