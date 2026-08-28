@@ -4,7 +4,7 @@
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
 - Status: `active` (`.0`–`.6` done; `.7` owns the gate that would have observed `.6`'s defect; `.8` tracks
-  the census registry's own capacity; `.9` owns the book census's too-narrow candidate vocabulary)
+  the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
 - Last updated: `2026-08-28`
@@ -384,8 +384,17 @@ the workflow through the mdBook and repository review path.
   text items, 115 reaching a record before", "**370** after … **255 → 0**", "stays at **115** … 255
   diagram labels", "27 figures … the other 19" — and the frozen census reported **39 book files / 321
   candidate lines / 321 adjudicated regions and passed**, because not one of the five matches the
-  vocabulary. A census that reports full coverage of a set it defines too narrowly is worse than one
-  that reports a gap.
+  vocabulary.
+  **Premise correction (`2026-08-28`, same day):** this leaf was first written claiming the census
+  "reports full coverage of a set it defines too narrowly", which is worse than it deserves and
+  misstates an existing decision. `.3b.3.0` (`2026-08-15`) *declared* the grammar "a prose-only
+  lexical candidate grammar as a **completeness alarm, not a semantic classifier**", and `.3b.3.3`
+  states that `mdbook-quantitative-census-frozen` "verifies the census mapping, not the truth of its
+  assertions". The tool therefore does not over-claim, and 321/321 is an honest statement about the
+  mapping over its declared denominator. The finding that survives is narrower and still worth acting
+  on: the alarm's noun list has a blind spot for the nouns this pipeline actually publishes in, so an
+  editor adding five quantities to a governed chapter gets no alarm at all — which is the one job an
+  alarm has.
   The fix is not simply a longer list, and this leaf must establish that before editing one: widening
   the vocabulary reclassifies existing prose as candidates, and every newly matched line needs its own
   adjudicated region in the same commit or the gate fails closed. So the work is (1) measure how many

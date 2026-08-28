@@ -687,11 +687,18 @@ Full result, method, controls, and per-document table:
   loaded through `SourceIr::load_from_path`. The mechanism is not in doubt: a rule registration
   carries `production_semantic_implementation_digest(IrStage::SourceIr)`, so **any** edit to the
   production source module invalidates every persisted ledger until it is re-sealed, and
-  `source_proof_migrate --write` is the tool that re-seals. What is missing is the gate: the corpus
-  drifts out of seal on an ordinary source edit and no doctrine reports it, while
-  `CORPUS-CHAIN-CURRENCY` publishes a current chain. Either re-sealing becomes part of the commit
-  contract for a `source.rs` change, or the out-of-seal state becomes a measured, declared condition
-  with its own census and a gate — the same choice `.3` faces for the ingest boundary.
+  `source_proof_migrate --write` is the tool that re-seals.
+  **Correction (`2026-08-28`, same day):** an earlier draft of this leaf said "no doctrine reports it,
+  while `CORPUS-CHAIN-CURRENCY` publishes a current chain". Both halves are wrong and the measurement
+  below, taken after that sentence was written, contradicts them. `CHAIN-CURRENCY` reports it loudly,
+  refuses to be bypassed, and names the owning remedy (rebuild under `CORPUS-COVERAGE`, ADR 0025
+  decision 1); it publishes no current chain at all. What is actually absent is a **gate-tier** signal:
+  `CHAIN-CURRENCY` is registered `ci` in `scripts/check_doctrines.sh`, so an ordinary slice never runs
+  it and the seal debt is invisible until pre-push. That is a direct consequence of the CI policy that
+  deliberately moved full CI to the push boundary, not an unowned hole — so the question this leaf
+  carries is a **judgement call for the director**, not a defect to fix unilaterally: is a cheap
+  seal-only check worth adding at gate tier, or is discovering the debt at pre-push the intended cost
+  of the policy?
   Measured (`2026-08-28`): at HEAD `3833ad10`, with none of `.8`'s changes in the tree,
   `specforge validate` reports **verified 0/24, ruleset-stale 24/24, other failures 0/24** across the
   live stratum. `bash scripts/check_chain_currency.sh` fails closed and loudly — **0 replayed, 0
@@ -703,11 +710,13 @@ Full result, method, controls, and per-document table:
   `production_semantic_implementation_digest`, over the implementation, so the seal breaks on an
   ordinary source edit while the captured premises stay intact —
   `source_proof_migrate` (dry run) re-derives all 24 from their own retained capture and reports
-  `verified`. The defect is that nothing observes the transition: a `source.rs` edit silently
-  un-seals the whole corpus, and the fact only surfaces at a CI-tier gate that ordinary slices do not
-  run (`CI policy`, `DOCTRINE_ENFORCEMENT.md` §4.7). Re-sealing under `--write` is a corpus-wide
-  write and belongs to this leaf with its own before/after evidence, not to a slice that happens to
-  touch `source.rs`
+  `verified`. The cost is that nothing an ordinary slice runs observes the transition: a `source.rs`
+  edit un-seals the whole corpus, and the fact only surfaces at a CI-tier gate ordinary slices do not
+  run (`DOCTRINE_ENFORCEMENT.md` §4.7). Re-sealing under `--write` is a corpus-wide write and belongs
+  to this leaf with its own before/after evidence, not to a slice that happens to touch `source.rs`.
+  Practical consequence to record: `scripts/run_ci.sh` runs `check_doctrines.sh --all` **first** under
+  `set -euo pipefail`, so this is the first thing that blocks a push today — ahead of the formatting
+  drift noted in the verification log, which blocks at its third step
   Prerequisite: none
 
 ## Open Questions

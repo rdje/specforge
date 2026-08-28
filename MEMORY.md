@@ -30,8 +30,11 @@
 - Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.14` (measured at HEAD `3833ad10` before this
   work: `specforge validate` verified 0/24, ruleset-stale 24/24; `check_chain_currency.sh` 0 current / 24
   stale at all four stages — a stale seal, not stale content), `.13` (frozen reviewed fixture not
-  re-derivable), `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9` (`.9` new: the book quantitative census's unit
-  vocabulary cannot see `items`/`elements`/`texts`/`bundles`/`figures`, so it passes at 321/321 while five
-  new quantities go unadjudicated), and `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`. Unowned and needing a leaf:
-  `cargo fmt --all --check` fails at HEAD on `src/ir/source_to_intent_eval.rs` and
-  `src/test_support/trajectory_snapshot.rs`, blocking `scripts/run_ci.sh` before any push.
+  re-derivable), `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9` (`.9`: the book census's noun list cannot see
+  `items`/`elements`/`texts`/`bundles`/`figures`, so five new quantities raised no alarm — the tool
+  declares itself a lexical alarm, so this is a blind spot, not an over-claim), and
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`. Unowned and needing a leaf: `cargo fmt --all --check` fails on
+  `src/ir/source_to_intent_eval.rs` and `src/test_support/trajectory_snapshot.rs`, unformatted for 5+
+  commits under CI's own pinned rustc 1.95.0.
+- Two things block a push, in this order: `run_ci.sh` runs `check_doctrines.sh --all` first, so
+  `.14`'s seal debt stops it before the formatting drift does.

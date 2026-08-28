@@ -1,3 +1,33 @@
+### SOURCE-IR-REPRODUCIBILITY.14 / CLAIM-VERIFICATION-ADOPTION.9 — correct two findings the director asked me to re-verify
+
+- Re-verified all three findings from `5f568381` on request rather than restating them. One holds as
+  published, two were overstated in ways that matter, and both are corrected in their owning leaves
+  here. No measurement changed; every number in `5f568381` re-derives.
+- `.14` contradicted itself. It said "no doctrine reports it, while CORPUS-CHAIN-CURRENCY publishes a
+  current chain", then two paragraphs later recorded that `check_chain_currency.sh` fails loudly at 0
+  current / 24 stale and refuses to be bypassed. The second is right: CHAIN-CURRENCY reports the seal
+  debt, names the owning remedy (rebuild under CORPUS-COVERAGE, ADR 0025 decision 1), and publishes no
+  current chain. The first sentence was written before the check was run and never reconciled. What is
+  actually absent is a GATE-TIER signal — CHAIN-CURRENCY is registered `ci`, so an ordinary slice never
+  runs it — and that is a direct consequence of the CI policy that deliberately moved full CI to the
+  push boundary. So `.14` is reframed from "unowned hole" to a director judgement call: is a cheap
+  seal-only check worth gate tier, or is pre-push discovery the intended cost?
+- `CLAIM-VERIFICATION-ADOPTION.9` was unfair to a tool that declared its own limits. It claimed the book
+  census "reports full coverage of a set it defines too narrowly". But `.3b.3.0` (`2026-08-15`) declared
+  the grammar "a prose-only lexical candidate grammar as a COMPLETENESS ALARM, not a semantic
+  classifier", and `.3b.3.3` states the frozen claim "verifies the census mapping, not the truth of its
+  assertions". 321/321 is an honest statement about the mapping over its declared denominator. The
+  narrower finding stands and is still worth acting on: the alarm's noun list has a blind spot for the
+  nouns this pipeline publishes in, so five new quantities in a governed chapter raised no alarm.
+- The formatting finding survives and got stronger under checking. The local toolchain is rustc 1.95.0,
+  exactly the version `.github/workflows/ci.yml` pins, so it reproduces in CI; and both files have been
+  unformatted for at least five commits back, so it is standing debt rather than a fresh regression.
+- Corrected the ordering claim that went with it. `scripts/run_ci.sh` runs `check_doctrines.sh --all`
+  FIRST under `set -euo pipefail`, so chain currency — not formatting — is the first thing that blocks a
+  push today; formatting blocks at the third step.
+
+Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
+
 ### SOURCE-IR-REPRODUCIBILITY.8 — give the text inside a figure somewhere to land
 
 - Closed the defect this tree's largest published number describes. `iterate_items` is called with
