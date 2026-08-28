@@ -339,46 +339,64 @@ class SourceIrIndex:
     document and the strongest available join for a batched one. The two keys are never mixed: a
     coordinate-bearing record is only ever matched exactly, so a colliding ref cannot be credited to
     an item in another batch that happens to carry the same text.
+
+    Records live in four places, not two. `SOURCE-IR-REPRODUCIBILITY.8` carries figure-interior text
+    on the figure that contains it, so an item the traversal skips can now reach a record without
+    ever entering `content_elements` — which is the point, because promoting it there is how a
+    diagram label ends up spliced into a sentence (`.10`).
     """
 
     def __init__(self, artifact: dict):
         self.pairs: set[tuple[str, str]] = set()
         self.addresses: set[str] = set()
+        # A caption reaches SourceIR through the bound `caption_text` on its table or figure even
+        # when its own text item carries no record, so counting it as dropped would overstate the
+        # gap. Matching on text alone can only over-credit, which keeps the census conservative.
+        self.caption_texts: set[str] = set()
+        self.residual_texts: set[str] = set()
         self.coordinate_records = 0
         self.ref_records = 0
+        self.interior_records = 0
         for collection, text_field in (
             ("content_elements", "text"),
             ("document_sections", "title"),
         ):
             for record in artifact.get(collection) or []:
-                ref = reference(record.get("source_ref"))
-                if ref is None:
-                    continue
-                self.ref_records += 1
-                batch = record.get("source_batch")
-                if isinstance(batch, int) and not isinstance(batch, bool):
-                    # Exact, and exclusively so: a coordinate-bearing record never also enters the
-                    # pair index, or the fallback would re-admit the very collision it fixes.
-                    self.coordinate_records += 1
-                    self.addresses.add(f"batch{batch}:{ref}")
-                else:
-                    self.pairs.add((ref, normalize(record.get(text_field))))
-        # A caption reaches SourceIR through the bound `caption_text` on its table or figure even
-        # when its own text item carries no record, so counting it as dropped would overstate the
-        # gap. Matching on text alone can only over-credit, which keeps the census conservative.
-        self.caption_texts: set[str] = set()
+                self._index(record, record.get("source_batch"), normalize(record.get(text_field)))
+        # Figure-interior text reaches SourceIR on the figure that contains it, never in
+        # `content_elements` (`SOURCE-IR-REPRODUCIBILITY.8`). The interior record does not repeat
+        # the batch coordinate because it cannot differ from its figure's: an interior item always
+        # belongs to the converter document the figure was extracted from. Taking the coordinate
+        # from the enclosing asset is therefore exact, not an approximation.
+        for asset in artifact.get("visual_assets") or []:
+            for record in asset.get("interior_texts") or []:
+                self.interior_records += 1
+                self._index(record, asset.get("source_batch"), normalize(record.get("text")))
         for collection in ("structured_tables", "visual_assets"):
             for record in artifact.get(collection) or []:
                 text = normalize(record.get("caption_text"))
                 if text:
                     self.caption_texts.add(text)
-        self.residual_texts: set[str] = set()
         for record in artifact.get("residual_decisions") or []:
             if isinstance(record, dict):
                 for value in record.values():
                     text = normalize(value)
                     if text:
                         self.residual_texts.add(text)
+
+    def _index(self, record: dict, batch: object, text: str) -> None:
+        """Register one record under the strongest key its artifact supports."""
+        ref = reference(record.get("source_ref"))
+        if ref is None:
+            return
+        self.ref_records += 1
+        if isinstance(batch, int) and not isinstance(batch, bool):
+            # Exact, and exclusively so: a coordinate-bearing record never also enters the pair
+            # index, or the fallback would re-admit the very collision it fixes.
+            self.coordinate_records += 1
+            self.addresses.add(f"batch{batch}:{ref}")
+        else:
+            self.pairs.add((ref, text))
 
     def reached(self, item: dict, batch: "Batch | None" = None) -> bool:
         ref = reference(item.get("self_ref"))
@@ -682,6 +700,11 @@ def conservation_census(document: ConverterDocument, index: SourceIrIndex) -> di
         "converter_distinct_refs": len(set(present)),
         "converter_refs_reused": len(present) - len(set(present)),
         "converter_distinct_addresses": len(addresses),
+        # How many figure-interior texts the artifact carries on its figures
+        # (`SOURCE-IR-REPRODUCIBILITY.8`). Zero for an artifact written before the carrier existed,
+        # which is why `picture_interior_not_traversed` can still be the largest bucket below: the
+        # defect stands on disk until the document is re-ingested.
+        "carried_figure_interior_texts": index.interior_records,
         "by_reason": dict(sorted(buckets.items())),
     }
 
@@ -1083,6 +1106,131 @@ def run_self_test() -> int:
         (
             boolean_index.identity() == "ref_text_pair",
             "a boolean must not be accepted as a batch coordinate",
+        )
+    )
+
+    # ── The figure-interior carrier (SOURCE-IR-REPRODUCIBILITY.8) ──────────────────────────────
+    # `iterate_items(traverse_pictures=False)` never yields a text inside a figure, so before `.8`
+    # every such item was reported dropped. The carrier puts it on the figure that contains it, and
+    # the census must see it there — while still reporting the defect on an artifact that has none,
+    # which is every artifact written before the carrier existed.
+    # Two interior texts under ONE figure, so a count of carrying figures cannot pass for a count of
+    # carried texts, and a bound caption on the same figure gives a text-keyed index somewhere wrong
+    # to land.
+    interior_doc = _FixtureDocument(
+        {
+            "texts": [
+                _text("#/texts/0", "SCL", parent={"$ref": "#/pictures/0"}),
+                _text("#/texts/1", "SDA", parent={"$ref": "#/pictures/0"}),
+                _text("#/texts/2", "Figure 1. Bus timing", parent={"$ref": "#/body"}),
+            ],
+            "pictures": [
+                {"self_ref": "#/pictures/0", "parent": {"$ref": "#/body"}, "captions": []}
+            ],
+        }
+    )
+    interior_item = interior_doc.items[0]
+    uncarried = SourceIrIndex(
+        {
+            "content_elements": [{"source_ref": "#/texts/2", "text": "Figure 1. Bus timing"}],
+            "visual_assets": [
+                {"source_ref": "#/pictures/0", "caption_text": "Figure 1. Bus timing"}
+            ],
+        }
+    )
+    uncarried_census = conservation_census(interior_doc, uncarried)
+    checks.append(
+        (
+            uncarried_census["reached_no_source_ir_record"] == 2
+            and uncarried_census["by_reason"]["picture_interior_not_traversed"]["count"] == 2
+            and uncarried_census["carried_figure_interior_texts"] == 0,
+            "an artifact with no carrier must still report its figure-interior text as dropped",
+        )
+    )
+    carried = SourceIrIndex(
+        {
+            "content_elements": [{"source_ref": "#/texts/2", "text": "Figure 1. Bus timing"}],
+            "visual_assets": [
+                {
+                    "source_ref": "#/pictures/0",
+                    "caption_text": "Figure 1. Bus timing",
+                    "interior_texts": [
+                        {"source_ref": "#/texts/0", "kind": "body_text", "text": "SCL"},
+                        {"source_ref": "#/texts/1", "kind": "body_text", "text": "SDA"},
+                    ],
+                }
+            ],
+        }
+    )
+    carried_census = conservation_census(interior_doc, carried)
+    checks.append(
+        (
+            carried_census["reached_no_source_ir_record"] == 0
+            and carried_census["carried_figure_interior_texts"] == 2,
+            "a figure-interior text carried on its figure must count as reaching SourceIR, and the "
+            "published figure must be the number of texts, not the number of carrying figures",
+        )
+    )
+    # Attribution by caption text would pass the control above by accident: the interior text must be
+    # matched through its own `source_ref`, not because some caption happens to repeat it.
+    misattributed = SourceIrIndex(
+        {
+            "visual_assets": [
+                {
+                    "source_ref": "#/pictures/0",
+                    "caption_text": None,
+                    "interior_texts": [
+                        {"source_ref": "#/texts/9", "kind": "body_text", "text": "SCL"}
+                    ],
+                }
+            ]
+        }
+    )
+    checks.append(
+        (
+            not misattributed.reached(interior_item[1], interior_item[0]),
+            "a carried interior text must be matched by its own ref, not by its text alone",
+        )
+    )
+    # The interior record carries no coordinate of its own; it inherits the figure's. A colliding
+    # interior ref in another batch must not be credited, exactly as for a content element.
+    interior_collision = _FixtureDocument(
+        {
+            "texts": [_text("#/texts/0", "SCL", parent={"$ref": "#/pictures/0"})],
+            "pictures": [
+                {"self_ref": "#/pictures/0", "parent": {"$ref": "#/body"}, "captions": []}
+            ],
+        },
+        {
+            "texts": [_text("#/texts/0", "SCL", parent={"$ref": "#/pictures/0"})],
+            "pictures": [
+                {"self_ref": "#/pictures/0", "parent": {"$ref": "#/body"}, "captions": []}
+            ],
+        },
+        batched=True,
+    )
+    inherited = SourceIrIndex(
+        {
+            "visual_assets": [
+                {
+                    "source_ref": "#/pictures/0",
+                    "source_batch": 1,
+                    "caption_text": None,
+                    "interior_texts": [
+                        {"source_ref": "#/texts/0", "kind": "body_text", "text": "SCL"}
+                    ],
+                }
+            ]
+        }
+    )
+    first_batch, first_item = interior_collision.items[0]
+    second_batch, second_item = interior_collision.items[1]
+    checks.append(
+        (
+            inherited.reached(second_item, second_batch)
+            and not inherited.reached(first_item, first_batch)
+            and inherited.identity() == "batch_qualified_ref",
+            "a carried interior text must inherit its figure's batch coordinate exactly",
         )
     )
 

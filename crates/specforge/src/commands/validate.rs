@@ -8071,6 +8071,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
 
         let report = validate_source_ir(&source_ir, "source_vlm_gap".to_string());
@@ -9032,6 +9033,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.visual_assets.push(VisualAsset {
             asset_id: "figure_xack".to_string(),
@@ -9048,6 +9050,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -9408,6 +9411,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::Unknown,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -9466,6 +9470,7 @@ mod tests {
                     "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":0,\"state\":\"LOW\"},{\"cycle\":1,\"state\":\"LOW\"}]}],\"annotations\":[]}".to_string(),
                 ),
                 diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+                interior_texts: Vec::new(),
             },
             VisualAsset {
                 asset_id: "asset_unaddressed_trace".to_string(),
@@ -9481,6 +9486,7 @@ mod tests {
                     "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"address phase\",\"state\":\"HIGH\"}]}],\"annotations\":[]}".to_string(),
                 ),
                 diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+                interior_texts: Vec::new(),
             },
         ];
         source_ir.write_test_fixture_to_disk()?;
@@ -14199,6 +14205,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.structured_tables.push(StructuredTableRecord {
             table_id: "table_xreq_roles".to_string(),

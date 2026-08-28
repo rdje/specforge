@@ -1,6 +1,6 @@
 ---
 id: ingest-drops-figure-interior-text
-title: Ingest silently discards every text the converter put inside a figure — 31% of converter items are dropped as a defect
+title: Ingest used to discard every text the converter put inside a figure; since 2026-08-28 it carries them on the figure
 answers:
   - "does SpecForge ingest lose content from the PDF"
   - "how much of the Docling document reaches SourceIR"
@@ -29,6 +29,13 @@ answers:
   - "how is the figure-interior drop mechanism verified"
   - "what does the ingest traversal oracle check"
   - "how many converter text items does iterate_items yield across the corpus"
+  - "where does figure interior text go now"
+  - "what is interior_texts in SourceIR"
+  - "how do I read the labels inside a diagram"
+  - "does a figure label appear in content_elements"
+  - "why does my visual asset have no interior_texts key"
+  - "how many figure interior texts does the corpus hold"
+  - "does the figure carrier change artifacts already on disk"
 date: 2026-08-28
 status: current
 tags: [source-ir, ingest, docling, conservation, captions, measurement-integrity, provenance]
@@ -44,7 +51,8 @@ too — which is why detecting this needs the ancestor chain, not the direct par
 nine list items sit under `#/groups/41`–`44` and `#/groups/65`–`69`, whose parents are `#/pictures/61` and
 `#/pictures/82`.
 
-Nothing records what is skipped. There is no `content_element`, no residual decision, and no counter.
+Until `2026-08-28` nothing recorded what is skipped: no `content_element`, no residual decision, no
+counter. What follows is the size of that gap, then what now closes it.
 
 `SOURCE-IR-REPRODUCIBILITY.5` measured the size of it. Across three re-ingested documents (USB4 Connection
 Manager guide, USB 3.2, Wishbone), **5,896 of 18,870 converter text items — 31% — are dropped as a defect**:
@@ -62,7 +70,37 @@ bucket:
 Most of the 5,896 is diagram furniture (`Tx_0`, `Router A`, `Back to TOC`), but not all: it also discards
 9 `caption`, 8 `footnote`, and 4 `section_header` items.
 
-**This is standing, not drift.** The same census runs against the persisted artifacts with no ingest at all
+**Since `SOURCE-IR-REPRODUCIBILITY.8` (`2026-08-28`) they no longer disappear.** Every
+`visual_assets` record may carry `interior_texts`, a list of the text items the converter placed
+inside that figure, each with its own `source_ref`, mapped `kind`, text, and `page_id`. The membership
+rule is docling-core's own traversal differenced against itself — production already walks
+`doc.iterate_items()`, and the interior set is whatever `doc.iterate_items(traverse_pictures=True)`
+additionally yields — so there is no second predicate that could drift from the first. Attribution
+follows the item's parent chain to the enclosing figure; an item that resolves to none stops the
+ingest rather than being dropped. Across all 24 retained converter bundles the population is
+**13,506** interior texts (13,416 `text`, 52 `caption`, 12 `section_header`, 10 `list_item`,
+9 `footnote`, 6 `checkbox_unselected`, 1 `code`), every one attributable to a body-layer picture that
+becomes a `VisualAsset` — **0 orphans**. That is the persisted-bundle population and is deliberately
+not the same number as the 5,896 above, which is what a *current re-ingest* of three documents
+discards.
+
+It is carried on the figure and **not** appended to `content_elements`, which is the whole point:
+promoting a diagram label into the prose stream is how a figure fragment ends up spliced into a
+sentence. Measured on a real re-ingest of the I2S bus specification: 464 converter text items,
+115 reaching a record before and **370** after, `picture_interior_not_traversed` **255 → 0**, the
+94 remaining all furniture-layer headers and footers — and `content_elements` **115 → 115**.
+
+Two properties make the field landable on a corpus that is already sealed. It is omitted when a
+figure has none, so an artifact that gains nothing serializes exactly the bytes it serialized before
+and its `proof_ledger`'s capture premise is untouched; and it carries no `source_batch` of its own,
+because an interior item always belongs to the converter document its figure came from, so the
+enclosing asset's coordinate qualifies it exactly. **Artifacts already on disk do not gain the
+field** — the carrier records what a run finds, it cannot reconstruct what an earlier run discarded —
+so the 24 live artifacts keep their gap until re-ingested, and
+`measure_ingest_content_loss.py` publishes `carried_figure_interior_texts` beside the
+`picture_interior_not_traversed` bucket so the two states are told apart.
+
+**The gap on disk is standing, not drift.** The same census runs against the persisted artifacts with no ingest at all
 (`--persisted`). The persisted I2C specification — which the `.1` reproducibility census scores as reproducing
 **byte-for-byte** — discards 1,372 figure-interior items, 39 of them captions. Reproducibility and
 conservation are independent properties, and only the first was measured before now. The gap is also
@@ -101,9 +139,8 @@ Two related facts fell out of the same measurement:
   field …`, which is not a sentence the specification contains. A conservation check cannot see this: nothing
   was lost (`SOURCE-IR-REPRODUCIBILITY.10`).
 
-The remedy is **not** to promote figure-interior text into `content_elements` as prose — that is exactly how
-the interleaving above happens. It is that the pipeline's own doctrine requires an unresolved thing to become
-an explicit residual rather than disappear, and 5,896 items disappear.
-`SOURCE-IR-REPRODUCIBILITY.8` owns the carrier, `.6` the unbound captions, and `.7` the gate.
+The remedy was **not** to promote figure-interior text into `content_elements` as prose — that is exactly
+how the interleaving above happens — but to give it a carrier on the figure that contains it, which
+`SOURCE-IR-REPRODUCIBILITY.8` did. `.6` still owns the unbound captions and `.7` the gate.
 
 Related: [[source-ir-reingest-trades-captions-for-figure-text]], [[source-ir-ingest-not-reproducible]].

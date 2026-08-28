@@ -645,7 +645,8 @@ nothing to figures, because its converter document places no text inside them.
 
 The fix is not to promote figure labels into prose; that is exactly how a figure fragment ends up
 spliced into a sentence. It is that SpecForge's own doctrine requires an unresolved thing to become
-an explicit residual rather than disappear, and today these items disappear.
+an explicit residual rather than disappear. **Since `2026-08-28` they no longer do** — see
+[the figure's own text](#the-figures-own-text-interior_texts) below.
 
 **The mechanism above is measured, not read off Docling's source.** The census reimplements two of
 Docling's own traversal rules, so an oracle asks the library itself: it loads each retained converter
@@ -673,6 +674,65 @@ python3 scripts/measure_ingest_content_loss.py   --output-root .project-data/tmp
 # The controls that keep "nothing was lost" from being a default answer
 python3 scripts/measure_ingest_content_loss.py --self-test
 ```
+
+### The figure's own text: `interior_texts`
+
+Text the converter placed inside a figure now reaches a record, on the figure that contains it.
+Every `visual_assets` entry may carry an `interior_texts` list:
+
+```json
+{
+  "asset_id": "picture_0005",
+  "asset_kind": "figure",
+  "caption_text": "Figure 1. Simple system configurations and basic interface timing",
+  "source_ref": "#/pictures/4",
+  "interior_texts": [
+    { "source_ref": "#/texts/41", "kind": "body_text", "text": "TRANSMITTER",    "page_id": "page_0004" },
+    { "source_ref": "#/texts/42", "kind": "body_text", "text": "clock SCK",      "page_id": "page_0004" },
+    { "source_ref": "#/texts/43", "kind": "body_text", "text": "word select WS", "page_id": "page_0004" }
+  ]
+}
+```
+
+Three things about this field are deliberate:
+
+- **It is on the figure, not in `content_elements`.** A diagram label is not prose. Appending it to
+  the reading-order text stream is precisely how a figure fragment ends up spliced into a sentence
+  the specification never wrote, which is the separate defect described above. Anything that walks
+  `content_elements` sees exactly what it saw before.
+- **It appears only when the figure contains text.** A figure with none carries no key at all, so an
+  artifact that gains nothing from this field serializes exactly the bytes it serialized before —
+  which is what lets the field exist without invalidating the capture premise every persisted
+  artifact's proof ledger was sealed over.
+- **It carries no `source_batch` of its own.** An interior item always belongs to the converter
+  document its figure was extracted from, so the enclosing asset's coordinate qualifies it exactly;
+  see the next section.
+
+The membership rule is Docling's own traversal differenced against itself. Ingest already walks
+`doc.iterate_items()`; the interior set is whatever `doc.iterate_items(traverse_pictures=True)`
+additionally yields. The two calls differ only in whether figures are traversed, so the difference
+*is* the figure-interior population — there is no second predicate that could drift from the first.
+Attribution follows the item's own parent chain up to the enclosing figure, because a list nested in
+a diagram puts its items two levels down. An interior item that resolves to no figure stops the
+ingest rather than being dropped.
+
+Empty text is the one exclusion, and it is the same rule `content_elements` already applies: an item
+whose text normalizes away carries no information. Across all 24 retained converter bundles that is
+**one** item, against 13,506 carried.
+
+The example above is real. Re-ingesting the 14-page I2S bus specification closes its
+figure-interior bucket completely — 464 converter text items, 115 reaching a record before and
+**370** after, with the `picture_interior_not_traversed` bucket going **255 → 0** and the 94 that
+remain all being the furniture-layer headers and footers ingest is right to skip. `content_elements`
+stays at **115**, which is the point: 255 diagram labels were recovered without one word of them
+entering the prose stream. Eight of the document's 27 figures carry the field; the other 19 serialize
+exactly as before.
+
+**Artifacts already on disk do not gain the field.** The carrier records what a run finds; it cannot
+reconstruct what an earlier run discarded. A persisted artifact keeps its figure-interior gap until
+the document is re-ingested, and `measure_ingest_content_loss.py` reports both sides —
+`carried_figure_interior_texts` alongside the `picture_interior_not_traversed` bucket — so the
+distinction is visible rather than assumed.
 
 ### Addressing one converter item: `source_ref` and `source_batch`
 
@@ -705,5 +765,6 @@ Two properties are worth knowing before you join on it:
 `element_id` and `reading_order` remain unique within an artifact regardless, and stay the right
 handle when you only need to address a record rather than the converter item behind it.
 
-*Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md` (`.5` and `.9` done, `.6`–`.8`
-and `.10` open), with the measured result in `docs/research/ingest-content-loss-adjudication.md`.
+*Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md` (`.5`, `.8`, and `.9` done, `.6`,
+`.7`, and `.10` open), with the measured result in
+`docs/research/ingest-content-loss-adjudication.md`.

@@ -3679,6 +3679,43 @@ pub struct VisualAsset {
     /// Set to `Unknown` when classification cannot be determined from caption alone.
     #[serde(default)]
     pub diagram_kind: DiagramKind,
+    /// Text the converter placed *inside* this figure, which the document traversal does not yield.
+    ///
+    /// `DoclingDocument.iterate_items` is called with the default `traverse_pictures=False`, so every
+    /// child of a `PictureItem` is skipped except the refs in that picture's own `captions` list, and
+    /// the skip takes every descendant of a blocked child with it. Before
+    /// `SOURCE-IR-REPRODUCIBILITY.8` that text reached no record and earned no residual: it simply
+    /// disappeared. It is carried **here**, on the figure that contains it, and deliberately not in
+    /// `content_elements` — promoting a diagram label into the prose stream is how a figure fragment
+    /// ends up spliced into a sentence the specification never wrote
+    /// (`SOURCE-IR-REPRODUCIBILITY.10`).
+    ///
+    /// Empty when the figure has no interior text, which keeps an artifact written before this field
+    /// existed byte-identical on reload and re-serialization, and therefore keeps its capture digest
+    /// and proof ledger valid.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub interior_texts: Vec<FigureInteriorText>,
+}
+
+/// One text item the converter placed inside a figure, carried on that figure's [`VisualAsset`].
+///
+/// The enclosing asset supplies the coordinates this record does not repeat: an interior item always
+/// belongs to the converter document its figure was extracted from, so the asset's `source_batch`
+/// qualifies this record's `source_ref` exactly as it qualifies the asset's own.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FigureInteriorText {
+    /// Docling's `self_ref` for this interior item, qualified by the enclosing asset's
+    /// `source_batch` on a batched run (`SOURCE-IR-REPRODUCIBILITY.9`).
+    pub source_ref: Option<String>,
+    /// The converter's own label for this item, mapped through the same table `content_elements`
+    /// uses. It records what the layout model called the text; it does not promote it to prose.
+    pub kind: ContentElementKind,
+    /// Normalized text. Never empty: an item whose text normalizes away carries no information and
+    /// is excluded by the same rule the backend helper applies to `content_elements`.
+    pub text: String,
+    /// Page the item was found on, which need not be the figure's own page for a figure that spans
+    /// pages.
+    pub page_id: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct PlaceholderBinding {
@@ -4261,6 +4298,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.structured_tables.push(timing_test_table(
             TableKind::TimingParameter,
@@ -4320,6 +4358,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.refresh_canonical_proof()?;
         source_ir.apply_visual_observation(
@@ -5286,6 +5325,101 @@ exit 7
                 ..legacy.clone()
             },
             batched
+        );
+    }
+
+    /// `SOURCE-IR-REPRODUCIBILITY.8`. Figure-interior text reaches a typed carrier on the figure
+    /// that contains it. Four properties have to hold together: the carrier holds the text, it is
+    /// invisible to an artifact that has none, an artifact written before it existed still loads,
+    /// and — the one that decides whether this change is landable at all — the capture premise a
+    /// persisted proof ledger was sealed over is unchanged for every such artifact.
+    #[test]
+    fn figure_interior_text_reaches_a_carrier_without_disturbing_artifacts_already_on_disk() {
+        use super::{
+            ContentElementKind, FigureInteriorText, SOURCE_PROOF_CONTEXT_SCHEMA_VERSION,
+            SourceProofContext, VisualAsset,
+        };
+
+        // 1. An artifact written before the carrier existed still deserializes, with no interior
+        //    text rather than a failure.
+        // `r##"…"##`: the payload contains `"#` (a Docling `self_ref`), which would close `r#"…"#`.
+        let legacy: VisualAsset = serde_json::from_str(
+            r##"{"asset_id":"picture_0001","asset_kind":"figure","page_id":"page_0004",
+                "image_path":null,"caption_text":"Figure 1. Basic interface timing",
+                "caption_source_path":null,"source_ref":"#/pictures/4","placeholder_text":null,
+                "note":null,"diagram_kind":"timing_diagram"}"##,
+        )
+        .expect("a pre-carrier visual asset must still deserialize");
+        assert!(legacy.interior_texts.is_empty());
+
+        // 2. It re-serializes without the key, so an artifact that gains no interior text writes
+        //    exactly the bytes it wrote before. This is what keeps the change landable: the
+        //    capture premise a persisted `proof_ledger` was sealed over is these bytes, so a
+        //    figure that carries nothing new cannot move the digest that authorizes the artifact.
+        let unchanged = serde_json::to_string(&legacy).expect("serialize");
+        assert!(
+            !unchanged.contains("interior_texts"),
+            "a figure with no interior text must not gain a key: {unchanged}"
+        );
+        assert_eq!(
+            serde_json::to_value(&legacy).expect("value"),
+            serde_json::to_value(VisualAsset {
+                interior_texts: Vec::new(),
+                ..legacy.clone()
+            })
+            .expect("value"),
+            "an empty carrier must be indistinguishable from no carrier"
+        );
+
+        // 3. The carrier round-trips, and it is what distinguishes the two records.
+        let carried = VisualAsset {
+            interior_texts: vec![FigureInteriorText {
+                source_ref: Some("#/texts/117".to_string()),
+                kind: ContentElementKind::BodyText,
+                text: "SCL".to_string(),
+                page_id: Some("page_0004".to_string()),
+            }],
+            ..legacy.clone()
+        };
+        let encoded = serde_json::to_string(&carried).expect("serialize");
+        assert!(encoded.contains("\"interior_texts\""), "{encoded}");
+        let decoded: VisualAsset =
+            serde_json::from_str(&encoded).expect("a carrier-bearing asset must round-trip");
+        assert_eq!(decoded, carried);
+        assert_ne!(decoded, legacy);
+
+        // 4. The carrier survives the classification replay a persisted artifact is verified
+        //    against. `validate_proof_context` does not compare `visual_assets` to its captured
+        //    premise directly — it rebuilds them through `replay_source_classifications` — so a
+        //    field that replay dropped would make every artifact carrying interior text fail to
+        //    load, silently, only in production.
+        let mut premises = BTreeMap::new();
+        premises.insert(
+            "visual_assets".to_string(),
+            serde_json::to_value(vec![carried.clone()]).expect("value"),
+        );
+        premises.insert("structured_tables".to_string(), serde_json::json!([]));
+        premises.insert("document_sections".to_string(), serde_json::json!([]));
+        let context = SourceProofContext {
+            schema_version: SOURCE_PROOF_CONTEXT_SCHEMA_VERSION,
+            field_premises: premises,
+            grounded_proposals: Vec::new(),
+            test_fixture: false,
+        };
+        let (replayed, _, _) =
+            super::replay_source_classifications(&context).expect("replay the capture premise");
+        assert_eq!(replayed.len(), 1);
+        assert_eq!(
+            replayed[0].interior_texts, carried.interior_texts,
+            "the classification replay must reproduce the interior text it was given"
+        );
+        assert_eq!(
+            VisualAsset {
+                diagram_kind: carried.diagram_kind,
+                ..replayed[0].clone()
+            },
+            carried,
+            "replay must reproduce every captured field and re-derive only the classification"
         );
     }
 }

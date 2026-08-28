@@ -23256,6 +23256,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -25583,6 +25584,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::Unknown,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -26987,6 +26989,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.visual_assets.push(VisualAsset {
             asset_id: "figure_xack".to_string(),
@@ -27000,6 +27003,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -27072,6 +27076,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -27136,6 +27141,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -27610,6 +27616,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::Unknown,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 

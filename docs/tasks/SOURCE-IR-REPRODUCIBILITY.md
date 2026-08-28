@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.2`, `.5`, `.9`, `.11`–`.12` done; `.3`, `.4`, `.6`–`.8`, `.9a`, `.10`, `.13` pending)
+- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13`, `.14` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
 - Last updated: `2026-08-28`
@@ -39,6 +39,11 @@ that opened.
 at the **fixed persisted input** must reproduce it. That oracle starts from the persisted `source_ir.json` and
 never re-runs ingest, so it is structurally blind to `SourceIR` itself. A 24/24 current chain is a true
 statement about EvidenceIR through the adapter and says nothing about the artifact they all descend from.
+
+**The chain is not 24/24 today.** Measured `2026-08-28` at HEAD `3833ad10`, before any of this tree's
+current work: 0 current / 24 stale at all four stages, every one refusing at
+`proof ledger ruleset hash is stale`. That is a seal problem, not a content problem, and `.14` owns it.
+Where this file reasons from a current chain it is reasoning from a state that has since lapsed.
 
 ## Non-Goals
 
@@ -297,7 +302,7 @@ Full result, method, controls, and per-document table:
   closed on every document
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.8`
-  State: `pending`
+  State: `done` (`2026-08-28`)
   Goal: stop discarding the text the converter found inside a figure
   Acceptance: `.5` measured that SpecForge iterates with `traverse_pictures=False`, so
   `DoclingDocument.iterate_items` skips every child of a `PictureItem` except the refs in that picture's own
@@ -308,6 +313,77 @@ Full result, method, controls, and per-document table:
   it must **not** be promoted into `content_elements` as prose, because `.10` shows that is how figure labels
   end up spliced into sentences. A RED control proves a discarded interior item is observed
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.5`
+  Design (measured `2026-08-28`, before implementing): the carrier is a **nested** field on the figure's own
+  `visual_assets` record, `interior_texts: Vec<FigureInteriorText>`, not a new top-level `SourceIR`
+  collection. A new top-level field must be registered in `SOURCE_RULE_FIELDS`, and
+  `SourceIr::validate_proof_context` requires the persisted `proof_context.field_premises` to carry an
+  entry for **every** registered field — an artifact written before the field exists carries none, so
+  registering one makes all 24 live artifacts fail `load_from_path` with "SourceIR proof context lacks
+  field". Nesting under `#[serde(default, skip_serializing_if = "Vec::is_empty")]` is the rule `.9`
+  already established: an artifact with no interior text serializes exactly the bytes it serialized
+  before, so the capture digest and every persisted proof ledger survive the change. It is also the
+  right owner — the text is interior to that figure, and keeping it on the figure's record is what
+  structurally prevents the promotion into prose `.10` forbids.
+  The membership rule is **the library's own traversal differenced against itself**, never a
+  reimplemented predicate: production already iterates `doc.iterate_items()`, and the interior set is
+  what `doc.iterate_items(traverse_pictures=True)` additionally yields. The two calls differ only in
+  picture traversal, so the difference *is* the picture-interior population by construction, and
+  `.11`'s oracle keeps the census's model honest against the same library. Attribution walks the item's
+  own `parent` chain to the enclosing `#/pictures/N`, because a list group inside a figure puts its
+  list items two levels down.
+  Population (`2026-08-28`, all 24 retained converter bundles, read-only): **13,506** non-empty
+  figure-interior text items — 13,416 `text`, 52 `caption`, 12 `section_header`, 10 `list_item`,
+  9 `footnote`, 6 `checkbox_unselected`, 1 `code`. This is the *persisted-bundle* population and is
+  deliberately not the same number as `.5`'s 5,896, which is what a **current re-ingest** of three
+  documents discards; the two agree where they overlap, and the probe reproduces `.5`'s published
+  per-document persisted figures exactly (I2C 1,372, I2S 255). Every one of the 13,506 attributes to a
+  body-layer picture that becomes a `VisualAsset` — **0 orphans**, so the nested carrier loses nothing
+  the flat one would have kept. Scope is complete for content: the only non-text nodes blocked inside a
+  picture anywhere in the corpus are **10 `groups`**, which are containers carrying no text of their own
+  and whose list items are already in the count; **no picture and no table is nested inside a picture**
+  in any of the 24 bundles. One interior item has empty normalized text and is excluded by the same rule
+  the helper already applies to `content_elements`, which `.12` classified as a correct exclusion.
+  Evidence: `VisualAsset` gains `interior_texts: Vec<FigureInteriorText>`
+  (`#[serde(default, skip_serializing_if = "Vec::is_empty")]`), and `docling_backend.rs` fills it
+  from `collect_figure_interior_texts`, which differences `doc.iterate_items(traverse_pictures=True)`
+  against the traversal production already runs. An interior item that resolves to no enclosing
+  figure raises rather than being dropped — the one thing this leaf exists to stop.
+  **Measured end to end on a real re-ingest** of the 14-page I2S bus specification, through the
+  census producer's own `ConverterDocument` / `SourceIrIndex` / `conservation_census`: 464 converter
+  text items, **115 reaching a record before and 370 after**; the `picture_interior_not_traversed`
+  bucket goes **255 → 0**, and the 94 that remain are entirely `content_layer_excluded` (71
+  `page_footer`, 23 `page_header`) — exclusions ingest is right to make. The persisted leg of the
+  same comparison reproduces `.5`'s published figures for this document exactly (349 of 464 with no
+  record, 255 figure interior). `content_elements` is **115 before and 115 after**, so `.10`'s
+  constraint is measured rather than asserted: 255 diagram labels — `TRANSMITTER`, `clock SCK`,
+  `word select WS` — were recovered without one word entering the prose stream. 8 of the document's
+  27 figures carry the field and the other 19 serialize exactly as before, as do `content_elements`
+  (115), `document_sections` (24), `structured_tables` (7), and `page_artifacts` (14).
+  Landability control: the change had to be provably invisible to every artifact already on disk,
+  because a persisted `proof_ledger` is sealed over the capture premise. Both legs are measured —
+  the focused Rust test asserts an empty carrier is byte-indistinguishable from no carrier, and
+  `source_proof_migrate` (dry run, no `--write`) re-derives all **24/24** live artifacts from their
+  own retained capture and reports `verified` under the new schema. Noted while running it: those
+  artifacts already fail `specforge validate` with `proof ledger ruleset hash is stale`, and a
+  stash-and-rebuild control confirms that is **pre-existing at HEAD**, not caused here — recorded as
+  `.14`.
+  Controls: focused Rust test
+  `figure_interior_text_reaches_a_carrier_without_disturbing_artifacts_already_on_disk` proving four
+  properties together, with **three observed RED perturbations** — dropping `skip_serializing_if`
+  (an empty carrier gains a key), dropping `default` (a pre-carrier artifact stops loading), and
+  making `replay_source_classifications` clear the carrier (a production artifact carrying interior
+  text would fail to verify, silently and only in production). Producer self-test **33 → 37** with
+  **four observed RED perturbations** — the carrier never indexed, the carrier matched by its text
+  instead of its own ref, the carrier given a constant batch instead of its figure's, and the
+  published figure counting carrying figures instead of carried texts. Two of those four first ran
+  GREEN and the controls were rewritten until they discriminated: the text-keyed perturbation
+  crashed on an index built later in `__init__` (fixed by declaring every index up front), and the
+  count control could not tell one figure from one text (fixed by giving the fixture one figure with
+  two interior texts).
+  What this does **not** do: it cannot repair an artifact already on disk. The 24 live artifacts keep
+  their figure-interior gap until they are re-ingested; the census reports
+  `carried_figure_interior_texts` beside the `picture_interior_not_traversed` bucket so the two
+  states are told apart rather than conflated.
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.9`
   State: `done` (`2026-08-28`)
@@ -458,6 +534,66 @@ Full result, method, controls, and per-document table:
   presentation decision is a worse defect than the one being fixed. No measurement changed and no number was
   withdrawn
 
+## Acceptance Checklist (enforced) — `SOURCE-IR-REPRODUCIBILITY.8`
+
+- [x] **REPRODUCE / MEASURE** — a read-only pass over all 24 retained converter bundles finds **13,506**
+  non-empty figure-interior text items that reach no `SourceIR` record and earn no residual: 13,416
+  `text`, 52 `caption`, 12 `section_header`, 10 `list_item`, 9 `footnote`, 6 `checkbox_unselected`,
+  1 `code`. It reproduces `.5`'s published per-document persisted figures exactly (I2C 1,372, I2S 255)
+  and is deliberately a different number from `.5`'s 5,896, which is what a *current re-ingest* of
+  three documents discards. Scope measured, not assumed: all 13,506 attribute to a body-layer picture
+  that becomes a `VisualAsset` (**0 orphans**), the only non-text nodes blocked inside a figure anywhere
+  in the corpus are 10 `groups` carrying no text of their own, and **no picture and no table is nested
+  inside a picture** in any of the 24 bundles.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source/docling_backend.rs` builds every
+  record from a single `for element, level in doc.iterate_items()` inside `process_converted_document`.
+  docling-core's default is `traverse_pictures=False`, so `iterate_items` skips every child of a
+  `PictureItem` except the refs in that picture's own `captions` list, and the skip is at the boundary —
+  every descendant of a blocked child goes with it, which is why a list group inside a figure takes its
+  list items down too. There was no second traversal, no residual, and no counter: the items simply had
+  no path into the artifact. `.11`'s oracle already confirmed this mechanism against docling-core itself
+  across all 24 bundles with 0 disagreements.
+- [x] **ADDRESSED (verified)** — `VisualAsset` gains `interior_texts`, filled by
+  `collect_figure_interior_texts`, which differences `doc.iterate_items(traverse_pictures=True)` against
+  the traversal production already runs, so the membership rule is the library's own rather than a
+  reimplementation of it. Measured on a real re-ingest of the I2S bus specification through the census
+  producer's own `ConverterDocument` / `SourceIrIndex` / `conservation_census`: 464 converter text items,
+  **115 reaching a record before → 370 after**, `picture_interior_not_traversed` **255 → 0**, and the 94
+  that remain entirely `content_layer_excluded` (71 `page_footer`, 23 `page_header`). `content_elements`
+  is **115 → 115**, so `.10`'s constraint is measured rather than asserted — 255 diagram labels
+  (`TRANSMITTER`, `clock SCK`, `word select WS`) recovered with no word entering the prose stream. 8 of
+  27 figures carry the field; `document_sections` (24), `structured_tables` (7), and `page_artifacts`
+  (14) are unchanged. Running the same probe under the persisted artifact reproduces the pre-change
+  state exactly, so the before/after is one comparison rather than two readings.
+- [x] **NO REGRESSION** — `cargo test --workspace` **470 / 168 / 1,371 / 4 / 5 passed, 0 failed, 9
+  ignored** (`specforge` lib 470, conformance 168, core 1,371 — was 1,370 — plus 4 integration and 5
+  doctests);
+  `cargo clippy --workspace --all-targets -- -D warnings` clean;
+  `measure_ingest_content_loss.py --self-test` **37/37** (was 33/33) with four observed RED
+  perturbations; the focused Rust test observed RED three times; `scripts/check_doctrines.sh`
+  **9/9 executed gate-tier doctrines PASS** (CHAIN-CURRENCY deferred as CI-tier); `mdbook build`
+  exit 0. `cargo fmt --all --check` reports every file this slice owns as formatted and fails only on
+  two it does not — `src/ir/source_to_intent_eval.rs` and `src/test_support/trajectory_snapshot.rs`,
+  both unmodified here and already failing at HEAD. They are left byte-identical rather than folded
+  into an unrelated leaf, and they block `scripts/run_ci.sh` until a leaf owns them. The landability leg is measured, not argued: `source_proof_migrate` (dry run)
+  re-derives all **24/24** live artifacts from their own retained capture and reports `verified` under
+  the new schema, and the Rust test asserts an empty carrier is byte-indistinguishable from no carrier —
+  which is what keeps the capture premise every persisted `proof_ledger` was sealed over unchanged.
+  Stated rather than deferred: `check_chain_currency.sh` **fails**, 0 current / 24 stale at all four
+  stages. It is not this change — measured at HEAD `3833ad10` with none of this work in the tree,
+  `specforge validate` is already verified 0/24 and ruleset-stale 24/24, and every chain-currency
+  stage enters through that same loader. `.14` owns it. This box does not claim that gate green.
+- [x] **GENERICITY (ADR 0006)** — the rule is the converter's own traversal differenced against itself
+  plus a parent-chain walk. No document, vendor, or protocol vocabulary participates, no caption or
+  label text is matched, and nothing depends on the content of any specification.
+- [x] **LOCKSTEP** — the book's SourceIR chapter gains a dedicated `interior_texts` section anchored to
+  the measured re-ingest; the research report gains the `.8` section; `[[ingest-drops-figure-interior-text]]`
+  is retitled and rewritten from "they disappear" to what now carries them; `.7`'s remaining prerequisite
+  is discharged and its Blockers note records what its gate must now distinguish. `.14` is opened for the
+  pre-existing out-of-seal corpus this leaf's control surfaced, and `CLAIM-VERIFICATION-ADOPTION.9` for
+  the book quantitative census's candidate vocabulary, which this slice's own numbers demonstrated it
+  cannot see.
+
 ## Acceptance Checklist (enforced) — `SOURCE-IR-REPRODUCIBILITY.9`
 
 - [x] **REPRODUCE / MEASURE** — a direct read of all 78 persisted `generated/source_ir/*/source_ir.json`
@@ -541,6 +677,39 @@ Full result, method, controls, and per-document table:
   `.3` requires for the ingest boundary
   Prerequisite: none
 
+- ID: `SOURCE-IR-REPRODUCIBILITY.14`
+  State: `pending`
+  Goal: stop the persisted corpus standing out of seal with nothing that says so
+  Acceptance: found by `.8`'s landability control, and **pre-existing at HEAD** — a stash-and-rebuild
+  at `3833ad10` reproduces it with none of `.8`'s changes in the tree. Every one of the 24 live
+  `generated/source_ir/*/source_ir.json` artifacts fails `specforge validate` with
+  `SourceIR proof verification failed: proof ledger ruleset hash is stale`, so none of them can be
+  loaded through `SourceIr::load_from_path`. The mechanism is not in doubt: a rule registration
+  carries `production_semantic_implementation_digest(IrStage::SourceIr)`, so **any** edit to the
+  production source module invalidates every persisted ledger until it is re-sealed, and
+  `source_proof_migrate --write` is the tool that re-seals. What is missing is the gate: the corpus
+  drifts out of seal on an ordinary source edit and no doctrine reports it, while
+  `CORPUS-CHAIN-CURRENCY` publishes a current chain. Either re-sealing becomes part of the commit
+  contract for a `source.rs` change, or the out-of-seal state becomes a measured, declared condition
+  with its own census and a gate — the same choice `.3` faces for the ingest boundary.
+  Measured (`2026-08-28`): at HEAD `3833ad10`, with none of `.8`'s changes in the tree,
+  `specforge validate` reports **verified 0/24, ruleset-stale 24/24, other failures 0/24** across the
+  live stratum. `bash scripts/check_chain_currency.sh` fails closed and loudly — **0 replayed, 0
+  current, 24 stale** at *every* one of the four stages (`evidence`, `semantic`, `intent`,
+  `isf-adapter`), each with the same `proof ledger ruleset hash is stale`, and it refuses to be
+  bypassed. So the oracle *does* enter through the canonical loader it documents; the competing
+  hypothesis that it does not is falsified, and no second finding is needed.
+  What this does **not** mean: no artifact's *content* is in question. The stale digest is
+  `production_semantic_implementation_digest`, over the implementation, so the seal breaks on an
+  ordinary source edit while the captured premises stay intact —
+  `source_proof_migrate` (dry run) re-derives all 24 from their own retained capture and reports
+  `verified`. The defect is that nothing observes the transition: a `source.rs` edit silently
+  un-seals the whole corpus, and the fact only surfaces at a CI-tier gate that ordinary slices do not
+  run (`CI policy`, `DOCTRINE_ENFORCEMENT.md` §4.7). Re-sealing under `--write` is a corpus-wide
+  write and belongs to this leaf with its own before/after evidence, not to a slice that happens to
+  touch `source.rs`
+  Prerequisite: none
+
 ## Open Questions
 
 - What changed inside Docling between the `2026-08-09`–`2026-08-11` bundles and now? `.1` strengthens the
@@ -566,14 +735,16 @@ Full result, method, controls, and per-document table:
 
 ## Blockers
 
-- None. `.2`–`.4` and `.6`–`.10` are all runnable. `.5` is complete, so `.6`–`.10` are unblocked; `.7`'s gate
-  should land after `.8` and `.9`, because a conservation gate at today's numbers fails closed everywhere and
-  its join is ambiguous for every batched document.
+- None. `.2`–`.4`, `.6`, `.7`, `.10`, `.13`, and `.14` are all runnable. `.7`'s two prerequisites are now
+  discharged — `.8` gives the figure-interior population a carrier and `.9` gives the join an exact key — so
+  the gate it owns is next, and it must be built to distinguish an artifact written with the carrier from one
+  written before it, because a gate at the persisted corpus's numbers still fails closed everywhere.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-28` | `.8` figure-interior carrier | population over all 24 retained converter bundles: **13,506** figure-interior text items reaching no record and earning no residual (13,416 `text`, 52 `caption`, 12 `section_header`, 10 `list_item`, 9 `footnote`, 6 `checkbox_unselected`, 1 `code`), **0 orphans** — every one attributable to a body-layer picture that becomes a `VisualAsset`; the only non-text nodes blocked inside a figure are 10 text-free `groups`, and no picture or table is nested inside a picture anywhere in the corpus. Reproduces `.5`'s persisted per-document figures exactly (I2C 1,372, I2S 255). End-to-end on a real I2S re-ingest: 464 converter items, **115 → 370** reaching a record, `picture_interior_not_traversed` **255 → 0**, the 94 remaining all furniture-layer, and `content_elements` **115 → 115** — the labels are carried without entering the prose stream. Landability measured: `source_proof_migrate` dry run re-derives **24/24** live artifacts as `verified` under the new schema. Producer self-test 33/33 → **37/37** with four observed RED perturbations (two rewritten after first running GREEN); focused Rust test with three observed RED perturbations; `cargo test --workspace` 470 / 172 / 1,376 / 4 passed, 0 failed |
 | `2026-08-28` | `.9` batch-qualified provenance | population: 78 persisted artifacts, **14** whose bare `source_ref` does not identify one content element and 64 that do; 111,861 elements over 28,599 distinct refs across the 14, 22,467 refs used more than once, 83,262 records (74.4%) unaddressable — Arm Debug 6,784 / 2,252 / 1,883 reproduces this tree's published figure. Falsified against the retained converter bundles, an independent artifact: 22 unambiguous+unbatched, 2 ambiguous+batched, **0 disagreements in either direction** across the 24 whose bundle survives; the 54 without one are not asserted. A first pass reporting all 78 as ambiguous was wrong and is corrected here — pooling `content_elements` with `document_sections` double-counts a section header, legitimately recorded in both under one ref (1,011 of 1,011 for Arm Debug). Producer self-test 32/32 -> **33/33** with seven observed RED perturbations, plus two on the Rust schema test; `cargo test --workspace --lib` 470 / 168 / 1,370 passed / 0 failed; clippy `-D warnings` clean |
 | `2026-08-28` | `.12` published-figure correction | the defect rate leads on every current-facing surface — 5,896 of 18,870 (31%) dropped as a defect, with the raw 8,648 (46%) following as decomposed context; the fact card's title carried the 46% too. No measurement changed; `CHANGES.md` keeps `.5`'s entry byte-exact by decision |
 | `2026-08-28` | `.11` traversal oracle | the drop model that carries `.5`'s largest number is confirmed against docling-core's own `iterate_items` on **all 24** persisted artifacts whose converter document was retained, with no sampling: 43,614 converter text items, **22,127 yielded and 22,127 predicted, 0 disagreements** in both directions, per document and per batch, across unbatched and 7-/9-range batched bundles. Every document round-trips through its own `export_to_dict`, so the oracle observes the document ingest traversed rather than a re-derived one. The residue closes: 39 empty `formula` items plus exactly the 22,088 content elements the live population holds, `unexplained` 0 everywhere. `--self-test` 27/27 with six observed RED perturbations; the run exits non-zero unless every document was measured, agreed, and round-tripped |
@@ -585,6 +756,7 @@ Full result, method, controls, and per-document table:
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8` | `SOURCE-IR-REPRODUCIBILITY.8 — give the text inside a figure somewhere to land` | `interior_texts` on the figure that contains it, membership defined by the converter's own traversal differenced against itself; 255 → 0 on a measured re-ingest with `content_elements` unmoved; opens `.14` |
 | `.9` | `SOURCE-IR-REPRODUCIBILITY.9 — give provenance the batch coordinate it was missing` | `source_batch` on the four `source_ref`-bearing records, emitted only for a batched run; the consumer keys on it exclusively; the standing ambiguity is measured (14 of 78) and published rather than worked around |
 | `.12` | `SOURCE-IR-REPRODUCIBILITY.12 — lead the conservation figure with the defect, not the non-carry rate` | make the published headline the actionable 31%, not the 46% that bundles intended exclusions with it |
 | `.11` | `SOURCE-IR-REPRODUCIBILITY.11 — measure the traversal the census had only read` | turn `.5`'s inferred drop mechanism into a re-runnable control: 24/24 documents, 0 disagreements, residue closed, six observed RED perturbations |

@@ -1,3 +1,74 @@
+### SOURCE-IR-REPRODUCIBILITY.8 — give the text inside a figure somewhere to land
+
+- Closed the defect this tree's largest published number describes. `iterate_items` is called with
+  docling-core's default `traverse_pictures=False`, so every child of a figure is skipped except that
+  figure's own captions, and the skip takes every descendant with it. Nothing recorded what was
+  skipped — no element, no residual, no counter. `VisualAsset` now carries `interior_texts`, one entry
+  per text item the converter placed inside that figure, with its own `source_ref`, mapped `kind`,
+  text, and `page_id`.
+- Put it on the figure, NOT in `content_elements`. Appending a diagram label to the reading-order text
+  stream is exactly how a figure fragment ends up spliced into a sentence the specification never wrote,
+  which is the separate defect `.10` owns. The measurement proves the constraint rather than asserting
+  it: `content_elements` is 115 before and 115 after on the re-ingest below.
+- Made the membership rule the library's own traversal differenced against itself. Production already
+  walks `doc.iterate_items()`; the interior set is whatever `doc.iterate_items(traverse_pictures=True)`
+  additionally yields. The two calls differ only in whether figures are traversed, so the difference IS
+  the population — there is no second predicate that can drift from the first, which is the risk `.11`
+  had to build an oracle for on the census side. Attribution walks the item's own parent chain, because
+  a list group inside a figure puts its items two levels down. An interior item that resolves to no
+  figure raises rather than being dropped.
+- Measured the population before implementing, over all 24 retained converter bundles, read-only:
+  13,506 figure-interior text items (13,416 `text`, 52 `caption`, 12 `section_header`, 10 `list_item`,
+  9 `footnote`, 6 `checkbox_unselected`, 1 `code`), every one attributable to a body-layer picture that
+  becomes a `VisualAsset` — 0 orphans. It reproduces `.5`'s persisted per-document figures exactly
+  (I2C 1,372, I2S 255) and is deliberately not `.5`'s 5,896, which is what a CURRENT re-ingest of three
+  documents discards. Scope is complete for content: the only non-text nodes blocked inside a figure
+  anywhere in the corpus are 10 text-free `groups`, and no picture or table is nested inside a picture
+  in any bundle.
+- Verified end to end on a real re-ingest of the 14-page I2S bus specification, through the census
+  producer's own ConverterDocument / SourceIrIndex / conservation_census: 464 converter text items,
+  115 reaching a record before and 370 after; `picture_interior_not_traversed` 255 -> 0; the 94 that
+  remain entirely `content_layer_excluded` (71 page footers, 23 page headers). 255 real diagram labels
+  recovered — `TRANSMITTER`, `clock SCK`, `word select WS`. 8 of 27 figures carry the field;
+  `document_sections` (24), `structured_tables` (7), and `page_artifacts` (14) are unchanged.
+- Designed for landability, and measured it. A new TOP-LEVEL field was rejected: it must join
+  `SOURCE_RULE_FIELDS`, and `validate_proof_context` requires the persisted `proof_context` to carry a
+  premise for every registered field, so registering one makes all 24 live artifacts fail
+  `load_from_path`. The nested field with `skip_serializing_if = "Vec::is_empty"` leaves an artifact
+  that gains nothing byte-identical. Both legs measured: the Rust test asserts an empty carrier is
+  byte-indistinguishable from no carrier, and `source_proof_migrate` (dry run) re-derives 24/24 live
+  artifacts from their own retained capture as `verified` under the new schema.
+- Controls: focused Rust test with three observed RED perturbations — dropping `skip_serializing_if`,
+  dropping `default`, and making `replay_source_classifications` clear the carrier (which would fail
+  only in production, silently). Producer self-test 33/33 -> 37/37 with four observed RED
+  perturbations. TWO of those four first ran GREEN and the controls were rewritten until they
+  discriminated: one perturbation crashed on an index built later in `__init__` (fixed by declaring
+  every index up front) and one control could not tell one figure from one text (fixed by giving the
+  fixture one figure with two interior texts). A control that cannot go RED is not a control.
+- Gates: `cargo test --workspace` 470 / 172 / 1,376 / 4 passed, 0 failed, 9 ignored; `cargo clippy
+  --workspace --all-targets -- -D warnings` clean; `scripts/check_doctrines.sh` green; `mdbook build`
+  exit 0.
+- Opened `.14` for something the landability control surfaced and this change did not cause. At HEAD
+  `3833ad10`, with none of this work in the tree, `specforge validate` reports verified 0/24 and
+  ruleset-stale 24/24 across the live stratum, and `check_chain_currency.sh` fails closed at 0 current
+  / 24 stale on ALL FOUR stages. The seal, not the content, is stale: the ruleset digest covers the
+  implementation, so an ordinary `source.rs` edit un-seals the whole corpus and nothing observes the
+  transition until a CI-tier gate ordinary slices do not run. The tree's own "24/24 current chain"
+  framing is annotated as lapsed where it is stated as current.
+- Opened `CLAIM-VERIFICATION-ADOPTION.9` for a governance gap this slice demonstrated rather than
+  caused. `check_book_quantitative_claims.pl` decides what is a published quantity from a closed unit
+  vocabulary that lacks `items`, `elements`, `texts`, `bundles`, and `figures` — so the five new
+  quantitative lines this change added to the SourceIR chapter (13,506; 464/115/370; 255 -> 0;
+  115 and 255 labels; 27 figures) are invisible to it, and the frozen census still reports 39 files /
+  321 candidates / 321 adjudicated and PASSES. Full coverage of a set defined too narrowly is worse
+  than a reported gap.
+- Also surfaced, not fixed here: `cargo fmt --all --check` — which `scripts/run_ci.sh` runs — fails at
+  HEAD on two files this slice does not own, `src/ir/source_to_intent_eval.rs` and
+  `src/test_support/trajectory_snapshot.rs`. They were left byte-identical rather than folded into an
+  unrelated leaf.
+
+Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.5 — stop the resume pointer spending its budget on prose that never changes
 
 - Took the decision on measurement rather than taste. Across the **last 30 commits that touched

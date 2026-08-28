@@ -671,6 +671,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         }
     }
 

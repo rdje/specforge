@@ -212,6 +212,74 @@ python3 scripts/measure_ingest_content_loss.py \
   --document um11732_v3_2022_02_17_i2s_bus_specification
 ```
 
+## Closing the figure-interior bucket (`SOURCE-IR-REPRODUCIBILITY.8`)
+
+The 5,896 above is a defect because those items reach no record and earn no residual, not because
+figure text is uninteresting. `.8` gave them a carrier: every `visual_assets` record may now hold an
+`interior_texts` list — one entry per text item the converter placed inside that figure, with its own
+`source_ref`, mapped `kind`, text, and `page_id`.
+
+Three decisions are load-bearing.
+
+**It is on the figure, not in `content_elements`.** Appending a diagram label to the reading-order
+text stream is precisely how a figure fragment ends up spliced into a sentence the specification never
+wrote, which is the *other* defect this report documents. Anything that walks `content_elements` sees
+what it saw before.
+
+**The membership rule is the library's own traversal differenced against itself.** Ingest already
+walks `doc.iterate_items()`; the interior set is whatever `doc.iterate_items(traverse_pictures=True)`
+additionally yields. The two calls differ only in whether figures are traversed, so the difference *is*
+the figure-interior population — there is no second predicate that could drift from the first, which
+matters because `.11` had to build an oracle for exactly that risk in the census. Attribution walks the
+item's own parent chain to the enclosing figure; an item that resolves to none stops the ingest rather
+than being dropped.
+
+**It is omitted when a figure has none.** A persisted `proof_ledger` is sealed over the capture
+premise, so a field that appeared on every artifact would invalidate the whole corpus. An empty carrier
+is byte-indistinguishable from no carrier, which is what makes the change landable —
+`source_proof_migrate` re-derives all 24 live artifacts from their own retained capture and reports
+`verified` under the new schema.
+
+Population, over all 24 retained converter bundles (read-only, no ingest): **13,506** interior texts,
+every one attributable to a body-layer picture that becomes a `VisualAsset` — **0 orphans**. This is
+the *persisted-bundle* population and is deliberately not the 5,896 above, which is what a current
+re-ingest of three documents discards.
+
+| Docling label | Interior texts | Mapped `kind` |
+| --- | ---: | --- |
+| `text` | 13,416 | `body_text` |
+| `caption` | 52 | `caption` |
+| `section_header` | 12 | `section_header` |
+| `list_item` | 10 | `list_item` |
+| `footnote` | 9 | `footnote` |
+| `checkbox_unselected` | 6 | `body_text` |
+| `code` | 1 | `code` |
+| **Total** | **13,506** | |
+
+Scope is complete for content. The only non-text nodes blocked inside a figure anywhere in the corpus
+are **10 `groups`** — containers with no text of their own, whose list items are already counted — and
+**no picture and no table is nested inside a picture** in any of the 24 bundles. One interior item has
+empty normalized text and is excluded by the same rule `content_elements` already applies.
+
+Measured end to end on a real re-ingest of the I2S bus specification, the document the section above
+used to make the opposite point:
+
+| | Converter items | Reach SourceIR | Reach nothing | `picture_interior_not_traversed` | `content_elements` |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| persisted (`2026-08-10`) | 464 | 115 | 349 | 255 | 115 |
+| re-ingested with the carrier | 464 | **370** | 94 | **0** | **115** |
+
+The 94 that remain are entirely `content_layer_excluded` — 71 `page_footer`, 23 `page_header` — which
+ingest is right to skip. `content_elements` does not move, which is the property that had to hold: 255
+diagram labels (`TRANSMITTER`, `clock SCK`, `word select WS`) were recovered without one word entering
+the prose stream. Eight of the document's 27 figures carry the field; the other 19 serialize exactly as
+before, as do `document_sections` (24), `structured_tables` (7), and `page_artifacts` (14).
+
+**Artifacts already on disk do not gain the field.** The carrier records what a run finds; it cannot
+reconstruct what an earlier run discarded. The 24 live artifacts keep their figure-interior gap until
+they are re-ingested, and the census publishes `carried_figure_interior_texts` beside the
+`picture_interior_not_traversed` bucket so the two states are told apart rather than conflated.
+
 ## The mechanism, measured rather than read (`SOURCE-IR-REPRODUCIBILITY.11`)
 
 The 5,896 above is the largest number in this report and every leaf it opened cites it — yet it

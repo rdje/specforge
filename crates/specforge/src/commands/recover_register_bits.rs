@@ -527,6 +527,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::RegisterBitfield,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk().unwrap();
 
@@ -594,6 +595,7 @@ mod tests {
                 placeholder_text: None,
                 note: None,
                 diagram_kind: kind,
+                interior_texts: Vec::new(),
             });
         }
         let register = RegisterRecord {

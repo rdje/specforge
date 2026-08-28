@@ -639,11 +639,19 @@ def process_converted_document(
     # ── Single-pass element extraction ─────────────────────────────────────────
     # We iterate once and collect all four categories: visual assets, structured
     # table cell grids, typed content elements, and section headings.
+    #
+    # `picture_records_by_ref` and `yielded_refs` are what the figure-interior pass below
+    # needs and this loop can supply for free: the picture record each interior text belongs
+    # to, and exactly which items this traversal yielded.
+    picture_records_by_ref = {}
+    yielded_refs = set()
     for element, level in doc.iterate_items():
         acc.element_reading_order += 1
         page_number = int(element.prov[0].page_no) if getattr(element, "prov", None) else None
         page_id = f"page_{page_number:04d}" if page_number is not None else None
         source_ref = getattr(element, "self_ref", None)
+        if source_ref is not None:
+            yielded_refs.add(source_ref)
 
         if isinstance(element, PictureItem):
             # ── Figure / diagram / chart ───────────────────────────────────────
@@ -657,7 +665,7 @@ def process_converted_document(
             if page_number in acc.page_metadata_records:
                 acc.page_metadata_records[page_number]["record"]["picture_refs"].append(source_ref)
             asset_kind_str = picture_asset_kind(caption_text)
-            acc.visual_assets.append({
+            picture_record = {
                 "asset_id": asset_id,
                 "asset_kind": asset_kind_str,
                 "page_id": page_id,
@@ -669,7 +677,15 @@ def process_converted_document(
                 "placeholder_text": None,
                 "note": None,
                 "diagram_kind": classify_diagram_kind(caption_text, asset_kind_str),
-            })
+                # Filled by `collect_figure_interior_texts` once the traversal above has
+                # named every picture; the key is dropped again when the figure has none, so
+                # a document with no figure-interior text serializes exactly as before
+                # (SOURCE-IR-REPRODUCIBILITY.8).
+                "interior_texts": [],
+            }
+            if source_ref is not None:
+                picture_records_by_ref[source_ref] = picture_record
+            acc.visual_assets.append(picture_record)
 
         elif isinstance(element, TableItem):
             # ── Table image + structured cell grid ────────────────────────────
@@ -775,6 +791,77 @@ def process_converted_document(
                     "reading_order": acc.element_reading_order,
                     "section_kind": classify_section(text),
                 })
+
+    collect_figure_interior_texts(doc, yielded_refs, picture_records_by_ref)
+
+
+def enclosing_picture_ref(doc, element):
+    """The `self_ref` of the figure this item sits inside, or None.
+
+    Walking only the direct parent is not enough: a `list` group inside a figure puts its
+    list items two levels down, so the ancestor chain is what decides.
+    """
+    current = element
+    seen = set()
+    while True:
+        parent = getattr(current, "parent", None)
+        cref = getattr(parent, "cref", None) if parent is not None else None
+        if cref is None or cref in seen:
+            return None
+        if cref.startswith("#/pictures/"):
+            return cref
+        seen.add(cref)
+        try:
+            current = parent.resolve(doc)
+        except Exception:
+            return None
+
+
+def collect_figure_interior_texts(doc, yielded_refs, picture_records_by_ref):
+    """Carry the text the converter put inside a figure, which the traversal above skips.
+
+    `doc.iterate_items()` uses docling-core's default `traverse_pictures=False`, so every child
+    of a `PictureItem` is skipped except the refs in that picture's own `captions` list, and the
+    skip takes every descendant of a blocked child with it. Before
+    SOURCE-IR-REPRODUCIBILITY.8 that text reached no record and earned no residual.
+
+    The membership rule is the library's own traversal differenced against itself, never a
+    reimplementation of it: the two calls differ only in whether pictures are traversed, so
+    whatever the second yields and the first did not IS the picture-interior population.
+
+    These records are attached to the figure that contains them and are deliberately NOT
+    appended to `content_elements`: promoting a diagram label into the prose stream is how a
+    figure fragment ends up spliced into a sentence the specification never wrote
+    (SOURCE-IR-REPRODUCIBILITY.10).
+    """
+    for element, _level in doc.iterate_items(traverse_pictures=True):
+        source_ref = getattr(element, "self_ref", None)
+        if source_ref is None or source_ref in yielded_refs:
+            continue
+        text = normalize_text(getattr(element, "text", None))
+        if not text:
+            # An item whose text normalizes away carries no information; this is the same rule
+            # the content-element branch above applies, and it is a declared exclusion rather
+            # than a silent one.
+            continue
+        picture_ref = enclosing_picture_ref(doc, element)
+        record = picture_records_by_ref.get(picture_ref)
+        if record is None:
+            # The difference set is picture-interior by construction, so this cannot be reached
+            # by a document whose figures all became visual assets. Refusing rather than
+            # dropping keeps a shape we have not seen from disappearing the way this text used
+            # to.
+            raise RuntimeError(
+                f"figure-interior text {source_ref!r} has no enclosing visual asset "
+                f"(enclosing picture {picture_ref!r}); refusing to discard it silently"
+            )
+        page_number = int(element.prov[0].page_no) if getattr(element, "prov", None) else None
+        record["interior_texts"].append({
+            "source_ref": source_ref,
+            "kind": docling_label_to_kind(getattr(element, "label", None)),
+            "text": text,
+            "page_id": f"page_{page_number:04d}" if page_number is not None else None,
+        })
 
 
 def main():
@@ -916,6 +1003,12 @@ def main():
     page_metadata_records = acc.page_metadata_records
     page_artifacts = acc.page_artifacts
     visual_assets = acc.visual_assets
+    # `interior_texts` is omitted when empty, matching the Rust field's
+    # `skip_serializing_if = "Vec::is_empty"`, so a document with no figure-interior text
+    # produces the same summary bytes it produced before SOURCE-IR-REPRODUCIBILITY.8.
+    for asset in visual_assets:
+        if not asset.get("interior_texts"):
+            asset.pop("interior_texts", None)
     structured_tables = acc.structured_tables
     content_elements = acc.content_elements
     document_sections = acc.document_sections

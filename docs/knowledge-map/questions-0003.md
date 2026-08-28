@@ -38,6 +38,8 @@
   > does a blocked adapter remove a previously emitted isf
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > does a figure label appear in content_elements
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > does a figure that produced waveform contracts get a residual
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
@@ -205,6 +207,8 @@
   > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > does the extractor cut identifiers at the underscore character
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > does the figure carrier change artifacts already on disk
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > does the legal statement classifier use a vendor or document denylist
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -293,7 +297,3 @@
   > how are doctrines enforced in specforge
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > how are document keys in the source PDF registry derived from filenames
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > how are duplicate signal constraints deduplicated in the LLM-primary extractor
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how are external held-out PDFs identified without absolute host paths

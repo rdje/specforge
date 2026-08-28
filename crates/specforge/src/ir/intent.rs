@@ -5605,6 +5605,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         let make_cell = |text: &str, is_header: bool| StructuredTableCellRecord {
             text: text.to_string(),

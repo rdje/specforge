@@ -12533,6 +12533,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::BlockDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -12607,6 +12608,7 @@ mod tests {
                 placeholder_text: None,
                 note: None,
                 diagram_kind: crate::ir::source::DiagramKind::default(),
+                interior_texts: Vec::new(),
             });
         }
         source_ir.write_test_fixture_to_disk()?;
@@ -12765,8 +12767,7 @@ mod tests {
                 .join("intent_ir"),
         )?;
         assert_eq!(
-            intent_ir.captured_region_residuals,
-            semantic_ir.captured_region_residuals,
+            intent_ir.captured_region_residuals, semantic_ir.captured_region_residuals,
             "the region never gains a carrier at this boundary, so its explanation is carried"
         );
 
@@ -13773,6 +13774,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -13911,6 +13913,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -13981,6 +13984,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -14059,6 +14063,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -14140,6 +14145,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -14222,6 +14228,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -14286,6 +14293,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -14335,6 +14343,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -14412,6 +14421,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -14487,6 +14497,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -14557,6 +14568,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: crate::ir::source::DiagramKind::StateMachineDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -15518,6 +15530,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.structured_tables.push(StructuredTableRecord {
             table_id: "table_signal_semantic_tags".to_string(),
@@ -15755,6 +15768,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.structured_tables.push(StructuredTableRecord {
             table_id: "table_xreq_roles".to_string(),
@@ -19451,6 +19465,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.visual_assets.push(VisualAsset {
             asset_id: "figure_xack".to_string(),
@@ -19464,6 +19479,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -22862,6 +22878,7 @@ mod tests {
                     .to_string(),
             ),
             diagram_kind: DiagramKind::StateMachineDiagram,
+            interior_texts: Vec::new(),
         });
         source_ir.write_test_fixture_to_disk()?;
 
@@ -25297,6 +25314,7 @@ mod tests {
                 serde_json::to_string(&fixture["observation"])?
             )),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         }];
         source_ir.write_test_fixture_to_disk()?;
 

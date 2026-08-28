@@ -6,33 +6,32 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SOURCE-IR-REPRODUCIBILITY.8`, then `.7`. Open: `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`–`.8`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`;
+- Active unit: `SOURCE-IR-REPRODUCIBILITY.7`, then `.14`. Open: `SOURCE-IR-REPRODUCIBILITY`
+  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`/`.14`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`;
   `SCRATCH-RESIDUE-CONTAINMENT.1`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CLAIM-VERIFICATION-ADOPTION.1a`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`. The last six are tracking-only.
-- Current state: `.9` gave provenance the coordinate it lacked — `source_batch` on the four
-  `source_ref`-bearing records, written only for a batched run, so `(source_batch, source_ref)` addresses
-  one converter item. Standing ambiguity measured corpus-wide: **14 of 78** artifacts, 83,262 records
-  (74.4% of those 14) unaddressable by a bare ref; falsified against the retained converter bundles with
-  **0 disagreements over 24**. A first pass claiming all 78 was wrong (it pooled `document_sections`,
-  which legitimately shares a ref) and is corrected in the record. Earlier this session
-  `STATUS-LEDGER-ROLLOVER` closed out: `.4a` re-derived the measurement `.3`/`.4` rested on (70 records,
-  not the published 64 — that was the warning threshold), `.3` rolled the ledger (root 70 -> 44 records /
-  102,748 -> 76,758 bytes), and `.4` derived and published the per-record budget plus the live record
-  count no producer reported before, finding **two of four** declared record windows unreachable. The
-  standing figure-interior ingest defect is unchanged and unfixed.
+- Current state: `.8` closed the figure-interior drop. `VisualAsset` carries `interior_texts`, filled from
+  the library's own traversal differenced against itself (`iterate_items(traverse_pictures=True)` minus the
+  call production already makes), attributed up the parent chain, raising rather than dropping when a figure
+  cannot be named. Population 13,506 over all 24 retained bundles, 0 orphans; on a real I2S re-ingest
+  `picture_interior_not_traversed` goes **255 -> 0** with `content_elements` **115 -> 115**, so the labels are
+  carried without entering prose. Landable by construction and by measurement: an empty carrier is
+  byte-indistinguishable from no carrier, and `source_proof_migrate` re-derives 24/24 live artifacts as
+  `verified`. Producer self-test 33 -> 37, four observed RED, two rewritten after first running GREEN.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: run `SOURCE-IR-REPRODUCIBILITY.8` — a typed carrier or an explicit residual for the 5,896
-  figure-interior text items ingest discards, never promoted into `content_elements` as prose. It is the
-  last prerequisite `.7`'s conservation gate waits on now that `.9` is done.
+- Next action: run `SOURCE-IR-REPRODUCIBILITY.7` — both its prerequisites are now discharged (`.8` the
+  carrier, `.9` the exact join). Its gate must distinguish an artifact written with the carrier from one
+  written before it, or it fails closed on all 24 persisted artifacts.
 - In-flight uncommitted: none after this commit; no background job is running. This pointer's fixed prose
   is capped at a derived 12 lines (`MEMORY_ARCHITECTURE.md` §6); the gate prints the room left each run.
-- Blockers: none. Owned, not fixed: `CLAIM-VERIFICATION-ADOPTION.7` (a published count does not
-  re-derive), `.8` (the census registry grows one record per ledger-prepending slice against a declared
-  128 — derive it, do not carry it: `grep -c . doctrine/claim_verification/current_claim_census.jsonl`),
-  `SOURCE-IR-REPRODUCIBILITY.13` (frozen reviewed fixture not re-derivable), and
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` (`docs/research/*.md` is one file from a ceiling with no warning
-  band and no rollover; `bash scripts/check_live_document_size.sh` reports the margin).
+- Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.14` (measured at HEAD `3833ad10` before this
+  work: `specforge validate` verified 0/24, ruleset-stale 24/24; `check_chain_currency.sh` 0 current / 24
+  stale at all four stages — a stale seal, not stale content), `.13` (frozen reviewed fixture not
+  re-derivable), `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9` (`.9` new: the book quantitative census's unit
+  vocabulary cannot see `items`/`elements`/`texts`/`bundles`/`figures`, so it passes at 321/321 while five
+  new quantities go unadjudicated), and `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`. Unowned and needing a leaf:
+  `cargo fmt --all --check` fails at HEAD on `src/ir/source_to_intent_eval.rs` and
+  `src/test_support/trajectory_snapshot.rs`, blocking `scripts/run_ci.sh` before any push.

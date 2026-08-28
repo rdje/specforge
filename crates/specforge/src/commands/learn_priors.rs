@@ -2365,6 +2365,7 @@ mod tests {
             placeholder_text: None,
             note: None,
             diagram_kind: DiagramKind::TimingDiagram,
+            interior_texts: Vec::new(),
         }];
 
         let mut intent_ir = base_intent_ir("visual_negative_doc", "visual_negative_doc");

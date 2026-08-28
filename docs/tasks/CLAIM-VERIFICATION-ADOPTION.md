@@ -4,7 +4,7 @@
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
 - Status: `active` (`.0`–`.6` done; `.7` owns the gate that would have observed `.6`'s defect; `.8` tracks
-  the census registry's own capacity)
+  the census registry's own capacity; `.9` owns the book census's too-narrow candidate vocabulary)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
 - Last updated: `2026-08-28`
@@ -368,6 +368,32 @@ the workflow through the mdBook and repository review path.
   moment, and the rule `.8` needs is concrete: retire an evidence row when the record head it was created
   for leaves the live window, rather than relocating it onto whatever line now sits at its offset
   Prerequisite: none; it blocks nothing today
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.9`
+  Status: `pending`
+  Goal: stop the book quantitative census passing while it cannot see the numbers on the page
+  Acceptance: `check_book_quantitative_claims.pl:is_candidate` decides what counts as a published
+  quantity with one regex whose unit vocabulary is a **closed list** — `files`, `lines`, `bytes`,
+  `records`, `members`, `facts`, `questions`, `shards`, `cases`, `tests`, `checks`, `surfaces`,
+  `claims`, `fields`, `families`, `documents`, `pages`, `fixtures`, `diagnostics`, `commands`,
+  `doctrines`, `signals`, `registers`, `artifacts`, `rules` — plus bare `N%` and `N/N`. Nouns the
+  pipeline actually publishes in are absent: `items`, `elements`, `texts`, `bundles`, `figures`,
+  `tables`, `assets`, `refs`, `batches`.
+  Demonstrated (`2026-08-28`, during `SOURCE-IR-REPRODUCIBILITY.8`): five new current-facing
+  quantitative lines landed in `docs/book/src/pipeline/sourceir.md` — "13,506 carried", "464 converter
+  text items, 115 reaching a record before", "**370** after … **255 → 0**", "stays at **115** … 255
+  diagram labels", "27 figures … the other 19" — and the frozen census reported **39 book files / 321
+  candidate lines / 321 adjudicated regions and passed**, because not one of the five matches the
+  vocabulary. A census that reports full coverage of a set it defines too narrowly is worse than one
+  that reports a gap.
+  The fix is not simply a longer list, and this leaf must establish that before editing one: widening
+  the vocabulary reclassifies existing prose as candidates, and every newly matched line needs its own
+  adjudicated region in the same commit or the gate fails closed. So the work is (1) measure how many
+  new candidates each added noun produces before adding it, (2) prefer a rule that does not enumerate
+  nouns at all — a grouped or emphasized numeral in prose is the actual signal — and (3) adjudicate the
+  resulting population, starting with the five above. A RED control must prove a quantity the current
+  vocabulary misses is observed after the change
+  Prerequisite: none
 
 ## Current Frontier
 
