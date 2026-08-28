@@ -6,14 +6,18 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SOURCE-IR-REPRODUCIBILITY.7`, then `.14`. Open: `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`/`.14`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`;
+- Active unit: `SOURCE-IR-REPRODUCIBILITY.15`, then `.16`, then `.7`. Open: `SOURCE-IR-REPRODUCIBILITY`
+  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`/`.15`/`.16`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`;
   `SCRATCH-RESIDUE-CONTAINMENT.1`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CLAIM-VERIFICATION-ADOPTION.1a`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`. The last six are tracking-only.
-- Current state: `SIGNOFF-REMEDIATION.3` restored workspace formatting (whitespace + one inert trailing
-  comma; all 10 pinned digests byte-identical, snapshot validator green). Before it, `.8` closed the
-  figure-interior drop. `VisualAsset` carries `interior_texts`, filled from
+- Current state: `.14` re-sealed the SourceIR corpus — **24 proof-only, 0 public content changed** against
+  an 89 MB pre-write snapshot; `validate` 24/24; chain-currency `evidence` **0 -> 24 current**. Downstream
+  `semantic`/`intent`/`adapter` still 0/24 on a different error (persisted EvidenceIR's cumulative seal),
+  which needs a stage-rebuild cascade (`.15`) because only SourceIr has a proof-only re-seal path.
+  Detection costs 0.18 s / 7.2 s versus ~20 min via chain currency, after 13 days / 54 commits of latency
+  — so the check belongs at gate tier (`.16`). Earlier: `SIGNOFF-REMEDIATION.3` restored workspace
+  formatting; `.8` closed the figure-interior drop. `VisualAsset` carries `interior_texts`, filled from
   the library's own traversal differenced against itself (`iterate_items(traverse_pictures=True)` minus the
   call production already makes), attributed up the parent chain, raising rather than dropping when a figure
   cannot be named. Population 13,506 over all 24 retained bundles, 0 orphans; on a real I2S re-ingest
@@ -24,9 +28,9 @@
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: run `SOURCE-IR-REPRODUCIBILITY.7` — both its prerequisites are now discharged (`.8` the
-  carrier, `.9` the exact join). Its gate must distinguish an artifact written with the carrier from one
-  written before it, or it fails closed on all 24 persisted artifacts.
+- Next action: run `SOURCE-IR-REPRODUCIBILITY.15` — rebuild evidence (already proven 24/24 content-current,
+  so the safe starting point), then semantic/intent/adapter, diffing content per stage and attributing any
+  delta per ADR 0025. That is the last thing blocking a push.
 - In-flight uncommitted: none after this commit; no background job is running. This pointer's fixed prose
   is capped at a derived 12 lines (`MEMORY_ARCHITECTURE.md` §6); the gate prints the room left each run.
 - Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.14` (measured at HEAD `3833ad10` before this
@@ -36,6 +40,5 @@
   `items`/`elements`/`texts`/`bundles`/`figures`, so five new quantities raised no alarm — the tool
   declares itself a lexical alarm, so this is a blind spot, not an over-claim), and
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`.
-- One thing blocks a push now: `run_ci.sh` runs `check_doctrines.sh --all` first under `set -euo
-  pipefail`, and CHAIN-CURRENCY fails 0 current / 24 stale — `.14`'s seal debt. `SIGNOFF-REMEDIATION.3`
-  cleared the formatting drift that blocked its third step.
+- One thing still blocks a push: CHAIN-CURRENCY, now only at `semantic`/`intent`/`isf-adapter` (evidence
+  is current). `.15` owns the downstream cascade; formatting and the SourceIR seal are both cleared.

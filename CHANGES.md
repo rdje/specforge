@@ -1,3 +1,39 @@
+### SOURCE-IR-REPRODUCIBILITY.14 — re-seal the SourceIR corpus, and size the check that should have caught it
+
+- Corrected this leaf's own mechanism before acting on it. It said a rule registration "carries
+  production_semantic_implementation_digest, so ANY edit to the production source module invalidates
+  every persisted ledger". Wrong, and unfair to the design. The digest is generated at build time by
+  crates/specforge-core/build.rs, which roots at each stage's rule-registry constructor, recursively
+  follows its stage-local production items, and folds in the trusted-kernel token graph — comments, doc
+  attributes, formatting, cfg(test) items, and conformance sources are explicitly NOT inputs. It is
+  implementation authority, not a whole-file freshness proxy: only 5 of the 54 commits since the corpus
+  was sealed touched a stage root or derivation.rs at all.
+- Re-sealed all 24 live artifacts with source_proof_migrate --write --retained-manifest.
+- Proved it was a seal and not a content problem, rather than assuming. Snapshotted all 24
+  source_ir.json (89.0 MB) before the write and compared field by field with proof_context/proof_ledger
+  excluded: 24 PROOF-ONLY, 0 PUBLIC CONTENT CHANGED, 0 unchanged. After: specforge validate reports
+  verified 24/24 failed 0/24, and the ruleset digest is homogeneous across all 24.
+- Chain currency moved, partly, and exposed the same debt one stage down. `evidence` went 0 current / 24
+  stale -> 24 replayed / 24 current / 0 stale. `semantic`, `intent`, and `isf-adapter` remain 0/24 but
+  now fail on a DIFFERENT error — "EvidenceIR proof verification failed: CUMULATIVE proof ledger ruleset
+  hash is stale" — because they read the persisted EvidenceIR, whose own cumulative seal is stale.
+- Established that the downstream remedy is not the same operation. Only SourceIr has
+  rebuild_from_retained_capture; EvidenceIR, SemanticIR, IntentIR, and the adapter have no proof-only
+  re-seal, so downstream needs a stage-rebuild cascade that writes real artifact content. Opened `.15`
+  for it, with the ADR 0025 precedent recorded: that reconciliation found exactly one real content delta
+  across 24 documents, so "it will be identical" is a hypothesis to test, not a given.
+- Answered the director's question with measurements instead of opinion, and opened `.16` to act on it.
+  Detecting the stale seal costs 0.18 s to read all 78 seals, or 7.2 s to verify all 24 canonically.
+  Learning the same fact from check_chain_currency.sh took ~20 MINUTES. And it went undiscovered for
+  13 DAYS / 54 COMMITS — sealed 2026-08-15, earliest possible breaker 29dde0ac on 2026-08-16.
+  Pre-push is three orders of magnitude too late; the check belongs at gate tier.
+- `.16` records two constraints its implementation must not violate: ask the product's own canonical
+  loader rather than reimplement the digest comparison (the `.11` lesson about a drifting second copy of
+  a predicate), and PASS on a tree with no persisted corpus, because generated/ is untracked and a fresh
+  clone has none. Scope it to stages whose seal is current when it lands, so it does not fail on day one.
+
+Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
+
 ### SIGNOFF-REMEDIATION.3 — restore workspace formatting at main
 
 - Reopened the tree that exists for exactly this. Its 2026-05-17 goal statement reads "HEAD fails

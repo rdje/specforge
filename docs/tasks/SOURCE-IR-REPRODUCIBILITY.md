@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13`, `.14` pending)
+- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13`–`.16` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
 - Last updated: `2026-08-28`
@@ -684,10 +684,19 @@ Full result, method, controls, and per-document table:
   at `3833ad10` reproduces it with none of `.8`'s changes in the tree. Every one of the 24 live
   `generated/source_ir/*/source_ir.json` artifacts fails `specforge validate` with
   `SourceIR proof verification failed: proof ledger ruleset hash is stale`, so none of them can be
-  loaded through `SourceIr::load_from_path`. The mechanism is not in doubt: a rule registration
-  carries `production_semantic_implementation_digest(IrStage::SourceIr)`, so **any** edit to the
-  production source module invalidates every persisted ledger until it is re-sealed, and
-  `source_proof_migrate --write` is the tool that re-seals.
+  loaded through `SourceIr::load_from_path`, and `source_proof_migrate --write` is the tool that
+  re-seals.
+  **Mechanism corrected (`2026-08-28`):** an earlier draft of this leaf said a rule registration
+  "carries `production_semantic_implementation_digest(IrStage::SourceIr)`, so **any** edit to the
+  production source module invalidates every persisted ledger". That overstates it and gives the
+  design less credit than it earns. The digest is not computed over a file. It is generated at build
+  time by `crates/specforge-core/build.rs`, which roots at each stage's rule-registry constructor,
+  recursively follows its **stage-local production items** including the verifier it binds, and folds
+  in the production trusted-kernel token graph. Rust comments, doc attributes, formatting,
+  `cfg(test)` items, and conformance sources are explicitly **not** inputs — it is implementation
+  authority, not a whole-file freshness proxy. Measured consequence: of the **54** commits since the
+  corpus was sealed on `2026-08-15`, only **5** touched a stage root or `derivation.rs` at all, so
+  the blast radius is far narrower than "any edit".
   **Correction (`2026-08-28`, same day):** an earlier draft of this leaf said "no doctrine reports it,
   while `CORPUS-CHAIN-CURRENCY` publishes a current chain". Both halves are wrong and the measurement
   below, taken after that sentence was written, contradicts them. `CHAIN-CURRENCY` reports it loudly,
@@ -715,9 +724,62 @@ Full result, method, controls, and per-document table:
   run (`DOCTRINE_ENFORCEMENT.md` §4.7). Re-sealing under `--write` is a corpus-wide write and belongs
   to this leaf with its own before/after evidence, not to a slice that happens to touch `source.rs`.
   Practical consequence to record: `scripts/run_ci.sh` runs `check_doctrines.sh --all` **first** under
-  `set -euo pipefail`, so this is the first thing that blocks a push today — ahead of the formatting
-  drift noted in the verification log, which blocks at its third step
+  `set -euo pipefail`, so this is the first thing that blocks a push — ahead of the formatting drift
+  `SIGNOFF-REMEDIATION.3` cleared, which blocked at its third step.
+  **Resolved for SourceIR (`2026-08-28`).** `source_proof_migrate --write --retained-manifest` re-sealed
+  all 24 live artifacts. The decisive control is the content diff, taken against an 89.0 MB snapshot of
+  the 24 `source_ir.json` files captured before the write and compared field by field with
+  `proof_context`/`proof_ledger` excluded: **24 proof-only, 0 public content changed, 0 unchanged**. So
+  the staleness was a seal, exactly as diagnosed, and nothing about any artifact's content was in
+  question. After it, `specforge validate` reports **verified 24/24, failed 0/24**, and the persisted
+  ruleset digest is homogeneous across all 24.
+  Chain currency moved with it, partly: `evidence` went **0 current / 24 stale -> 24 replayed, 24
+  current, 0 stale**. `semantic`, `intent`, and `isf-adapter` remain 0/24 but now fail on a **different**
+  error — `EvidenceIR proof verification failed: cumulative proof ledger ruleset hash is stale`. Those
+  stages read the *persisted* EvidenceIR, whose own cumulative seal is stale, so the same class of debt
+  exists one stage down. No equivalent of `rebuild_from_retained_capture` exists for EvidenceIR,
+  SemanticIR, IntentIR, or the adapter — only `SourceIr` has one — so the downstream remedy is a real
+  stage-rebuild cascade that writes artifact content, not a proof-only re-seal. That is `.15`
+  Cost measured, since it decides where the check belongs: reading the ruleset seal from all 78
+  artifacts is **0.18 s**; full canonical verification of all 24 through the product's own loader is
+  **7.2 s**; discovering the same fact through `check_chain_currency.sh` took **~20 minutes**. And it went
+  undiscovered for **13 days / 54 commits** — sealed `2026-08-15`, with the earliest commit that could
+  have broken it on `2026-08-16` (`29dde0ac`), one of only 5 in that window that touched a stage root or
+  `derivation.rs`
   Prerequisite: none
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.15`
+  State: `pending`
+  Goal: carry the seal restoration downstream, where no proof-only path exists
+  Acceptance: `.14` re-sealed SourceIR and evidence replay went to 24/24 current, which exposed the same
+  debt one stage down: `semantic`, `intent`, and `isf-adapter` fail at `EvidenceIR proof verification
+  failed: **cumulative** proof ledger ruleset hash is stale`, because they read the persisted EvidenceIR
+  rather than the replayed one. Only `SourceIr` has `rebuild_from_retained_capture`; EvidenceIR,
+  SemanticIR, IntentIR, and the adapter have no proof-only re-seal, so the remedy is a **stage-rebuild
+  cascade that writes real artifact content**, and it must be treated as such. Two properties have to be
+  proved, not assumed: that each rebuilt stage is content-identical to its persisted form — the evidence
+  stage already reports 24/24 current, so it is the safe starting point, while `semantic`/`intent`/
+  `adapter` currency is **unknown** because their upstream refused to load — and that any content delta
+  that does appear is attributed to a named change per ADR 0025 decision 1 rather than absorbed. The
+  precedent to respect: the ADR 0025 reconciliation found exactly one real delta across 24 documents
+  (`table_0044` becoming `register_map`), so "it will be identical" is a hypothesis, not a given
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.14` (met for SourceIR)
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.16`
+  State: `pending`
+  Goal: make the seal debt visible at the moment it is created, not at the push boundary
+  Acceptance: the director's call on `.14`'s open question, decided `2026-08-28` on the measurements in
+  that leaf — 0.18 s to read every seal and 7.2 s to verify all 24 canonically, against ~20 minutes to
+  learn the same fact from `check_chain_currency.sh`, and 13 days / 54 commits of actual latency. A
+  gate-tier check must report the persisted corpus's seal state per commit. Two design constraints it
+  must not violate: it must ask the product's own canonical loader rather than reimplement the digest
+  comparison — the `.11` lesson about a second copy of a predicate that can drift — and it must PASS on a
+  tree with no persisted corpus, because `generated/` is untracked and a fresh clone has none. The seal is
+  homogeneous across all 24 artifacts, so verifying homogeneity plus one sample is decisive and costs
+  under a second; verifying all 24 costs 7.2 s and is still gate-affordable. Scope it to the stages whose
+  seal is actually current when it lands — SourceIR today — and let `.15` extend it as it re-seals the
+  rest, rather than landing a gate that fails on day one
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.14`
 
 ## Open Questions
 
@@ -753,6 +815,7 @@ Full result, method, controls, and per-document table:
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-28` | `.14` SourceIR seal restored | `source_proof_migrate --write` re-sealed all 24 live artifacts. Decisive control is the content diff against an 89.0 MB pre-write snapshot of the 24 `source_ir.json` files, compared field by field with `proof_context`/`proof_ledger` excluded: **24 proof-only, 0 public content changed**. After: `specforge validate` **verified 24/24, failed 0/24**, seal homogeneous across all 24. Chain currency `evidence` **0 current / 24 stale -> 24 replayed / 24 current / 0 stale**; `semantic`/`intent`/`isf-adapter` still 0/24 but on a **different** error (persisted EvidenceIR's *cumulative* seal), which is `.15`. Cost that decided `.16`: 0.18 s to read all 78 seals, 7.2 s to verify all 24 canonically, versus **~20 min** for `check_chain_currency.sh` — and **13 days / 54 commits** of actual latency (sealed `2026-08-15`; earliest possible breaker `29dde0ac` `2026-08-16`, one of only 5 commits in that window touching a stage root or `derivation.rs`) |
 | `2026-08-28` | `.8` figure-interior carrier | population over all 24 retained converter bundles: **13,506** figure-interior text items reaching no record and earning no residual (13,416 `text`, 52 `caption`, 12 `section_header`, 10 `list_item`, 9 `footnote`, 6 `checkbox_unselected`, 1 `code`), **0 orphans** — every one attributable to a body-layer picture that becomes a `VisualAsset`; the only non-text nodes blocked inside a figure are 10 text-free `groups`, and no picture or table is nested inside a picture anywhere in the corpus. Reproduces `.5`'s persisted per-document figures exactly (I2C 1,372, I2S 255). End-to-end on a real I2S re-ingest: 464 converter items, **115 → 370** reaching a record, `picture_interior_not_traversed` **255 → 0**, the 94 remaining all furniture-layer, and `content_elements` **115 → 115** — the labels are carried without entering the prose stream. Landability measured: `source_proof_migrate` dry run re-derives **24/24** live artifacts as `verified` under the new schema. Producer self-test 33/33 → **37/37** with four observed RED perturbations (two rewritten after first running GREEN); focused Rust test with three observed RED perturbations; `cargo test --workspace` 470 / 172 / 1,376 / 4 passed, 0 failed |
 | `2026-08-28` | `.9` batch-qualified provenance | population: 78 persisted artifacts, **14** whose bare `source_ref` does not identify one content element and 64 that do; 111,861 elements over 28,599 distinct refs across the 14, 22,467 refs used more than once, 83,262 records (74.4%) unaddressable — Arm Debug 6,784 / 2,252 / 1,883 reproduces this tree's published figure. Falsified against the retained converter bundles, an independent artifact: 22 unambiguous+unbatched, 2 ambiguous+batched, **0 disagreements in either direction** across the 24 whose bundle survives; the 54 without one are not asserted. A first pass reporting all 78 as ambiguous was wrong and is corrected here — pooling `content_elements` with `document_sections` double-counts a section header, legitimately recorded in both under one ref (1,011 of 1,011 for Arm Debug). Producer self-test 32/32 -> **33/33** with seven observed RED perturbations, plus two on the Rust schema test; `cargo test --workspace --lib` 470 / 168 / 1,370 passed / 0 failed; clippy `-D warnings` clean |
 | `2026-08-28` | `.12` published-figure correction | the defect rate leads on every current-facing surface — 5,896 of 18,870 (31%) dropped as a defect, with the raw 8,648 (46%) following as decomposed context; the fact card's title carried the 46% too. No measurement changed; `CHANGES.md` keeps `.5`'s entry byte-exact by decision |
@@ -766,6 +829,7 @@ Full result, method, controls, and per-document table:
 | Unit | Commit | Outcome |
 | --- | --- | --- |
 | `.8` | `SOURCE-IR-REPRODUCIBILITY.8 — give the text inside a figure somewhere to land` | `interior_texts` on the figure that contains it, membership defined by the converter's own traversal differenced against itself; 255 → 0 on a measured re-ingest with `content_elements` unmoved; opens `.14` |
+| `.14` | `SOURCE-IR-REPRODUCIBILITY.14 — re-seal the SourceIR corpus and size the check that should have caught it` | proof-only re-seal of all 24, 0 content changed; evidence chain currency restored; `.15`/`.16` opened |
 | `.9` | `SOURCE-IR-REPRODUCIBILITY.9 — give provenance the batch coordinate it was missing` | `source_batch` on the four `source_ref`-bearing records, emitted only for a batched run; the consumer keys on it exclusively; the standing ambiguity is measured (14 of 78) and published rather than worked around |
 | `.12` | `SOURCE-IR-REPRODUCIBILITY.12 — lead the conservation figure with the defect, not the non-carry rate` | make the published headline the actionable 31%, not the 46% that bundles intended exclusions with it |
 | `.11` | `SOURCE-IR-REPRODUCIBILITY.11 — measure the traversal the census had only read` | turn `.5`'s inferred drop mechanism into a re-runnable control: 24/24 documents, 0 disagreements, residue closed, six observed RED perturbations |
