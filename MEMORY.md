@@ -34,8 +34,10 @@
 - Blockers: none. Owned, not fixed: `.13` (frozen reviewed fixture not re-derivable),
   `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`. Unowned: `generated/`
   holds 138 `live-document-size-tests.*` dirs (15 MB, 5 clusters). NOT a harness defect — a clean
-  `perl scripts/test_live_document_size.pl` run leaks **0** (measured, exit 0), so `CLEANUP => 1` works
-  and these are residue of INTERRUPTED runs, whose kill bypasses File::Temp's END cleanup. Real gap:
+  `perl scripts/test_live_document_size.pl` run leaks **0** (measured twice, exit 0) and holds a peak of
+  **84** live fixtures mid-run, cleaning all of them at exit. Every residue cluster (1/1/53/30/53) is
+  below 84, so they are runs that never reached normal exit — a kill bypasses File::Temp's END cleanup.
+  WHY those runs died is unknown; do not record a trigger without measuring one. Real gap:
   nothing reclaims them (`specforge clean` reaches them only via `--scope all-generated`, which discards
   the whole corpus) and no gate sees them (`check_live_document_size.pl` reads `git ls-files --cached`
   and skips `generated/`; the locality gate scans only `.project-data/tmp` at depth 1, files only).
