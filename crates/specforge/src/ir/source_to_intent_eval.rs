@@ -1029,7 +1029,9 @@ fn required_residual_observations(cell: &CellResult, residual: &ResidualScores) 
     let mut required = 0;
     let mut met = 0;
     for (score, actionable, promoted) in stages {
-        let promoted_keys = promoted.map(|scores| scores.matched_keys.as_slice()).unwrap_or(&[]);
+        let promoted_keys = promoted
+            .map(|scores| scores.matched_keys.as_slice())
+            .unwrap_or(&[]);
         let duplicated = multiset_intersection_count(&score.actual_keys, promoted_keys) > 0;
         let usable = actionable && !duplicated && score.unprovenanced_records == 0;
         if cell.expected_disposition != ExpectedDisposition::Canonical {
@@ -1871,7 +1873,10 @@ mod tests {
             },
         );
         let scores = unprovenanced.residual.clone().expect("residual scores");
-        assert_eq!(required_residual_observations(&unprovenanced, &scores), (4, 1));
+        assert_eq!(
+            required_residual_observations(&unprovenanced, &scores),
+            (4, 1)
+        );
 
         // A cell with no canonical scores at all still requires one observation per stage.
         let non_canonical = residual_cell(
@@ -1885,7 +1890,10 @@ mod tests {
             },
         );
         let scores = non_canonical.residual.clone().expect("residual scores");
-        assert_eq!(required_residual_observations(&non_canonical, &scores), (2, 1));
+        assert_eq!(
+            required_residual_observations(&non_canonical, &scores),
+            (2, 1)
+        );
     }
 
     #[test]

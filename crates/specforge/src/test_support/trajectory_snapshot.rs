@@ -579,12 +579,14 @@ fn validate_population_replay_evidence(
         || replay.owner != "SOURCE-IR-REPRODUCIBILITY.2"
     {
         problems.push(
-            "population replay identity must name the schema-1 current replay authority".to_string(),
+            "population replay identity must name the schema-1 current replay authority"
+                .to_string(),
         );
     }
     if replay.production_revision != POPULATION_REPLAY_PRODUCTION_REVISION {
         problems.push(
-            "population replay production revision must name the committed .8c boundary".to_string(),
+            "population replay production revision must name the committed .8c boundary"
+                .to_string(),
         );
     }
     if replay.reviewed_dataset.path
@@ -1391,7 +1393,8 @@ fn conformance_owned_test_roots() -> (BTreeSet<String>, BTreeSet<String>) {
             .map(str::to_string)
             .collect()
     }
-    let mut crate_roots = declared_modules(include_str!("../../../specforge-conformance/src/lib.rs"));
+    let mut crate_roots =
+        declared_modules(include_str!("../../../specforge-conformance/src/lib.rs"));
     crate_roots.remove("ir");
     let ir_roots = declared_modules(include_str!("../../../specforge-conformance/src/ir.rs"));
     (crate_roots, ir_roots)
@@ -1409,7 +1412,11 @@ fn owning_test_package(filter: &str) -> &'static str {
     } else {
         crate_roots.contains(root)
     };
-    if owned { "specforge-conformance" } else { "specforge" }
+    if owned {
+        "specforge-conformance"
+    } else {
+        "specforge"
+    }
 }
 
 /// Reject a composed reproduction command that cannot select the tests it names.
@@ -1860,10 +1867,15 @@ mod tests {
     fn reproduction_command_control_rejects_silent_green_and_unsupported_forms() {
         // The exact `.8` defect: the evaluator module is re-exported through the `specforge`
         // facade, so this command exits zero after selecting no test at all.
-        let wrong_package =
-            reproduction_command_problem("case", "cargo test -p specforge --lib ir::source_to_intent_eval")
-                .expect("a facade-only package must be rejected");
-        assert!(wrong_package.contains("specforge-conformance"), "{wrong_package}");
+        let wrong_package = reproduction_command_problem(
+            "case",
+            "cargo test -p specforge --lib ir::source_to_intent_eval",
+        )
+        .expect("a facade-only package must be rejected");
+        assert!(
+            wrong_package.contains("specforge-conformance"),
+            "{wrong_package}"
+        );
         assert!(wrong_package.contains("zero tests"), "{wrong_package}");
 
         assert_eq!(
@@ -1904,9 +1916,15 @@ mod tests {
     #[test]
     fn conformance_owned_roots_derive_from_the_downstream_crate_wiring() {
         let (crate_roots, ir_roots) = conformance_owned_test_roots();
-        assert!(!crate_roots.contains("ir"), "the facade module is not a leaf root");
+        assert!(
+            !crate_roots.contains("ir"),
+            "the facade module is not a leaf root"
+        );
         for expected in ["behavioral_genericity", "eval", "test_support"] {
-            assert!(crate_roots.contains(expected), "missing crate root {expected}");
+            assert!(
+                crate_roots.contains(expected),
+                "missing crate root {expected}"
+            );
         }
         for expected in [
             "completeness",
@@ -1916,7 +1934,10 @@ mod tests {
         ] {
             assert!(ir_roots.contains(expected), "missing ir root {expected}");
         }
-        assert_eq!(owning_test_package("ir::source_to_intent_eval"), "specforge-conformance");
+        assert_eq!(
+            owning_test_package("ir::source_to_intent_eval"),
+            "specforge-conformance"
+        );
         assert_eq!(owning_test_package("ir::source"), "specforge");
         assert_eq!(owning_test_package("commands::converge"), "specforge");
     }

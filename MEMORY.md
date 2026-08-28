@@ -11,7 +11,9 @@
   `SCRATCH-RESIDUE-CONTAINMENT.1`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CLAIM-VERIFICATION-ADOPTION.1a`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`. The last six are tracking-only.
-- Current state: `.8` closed the figure-interior drop. `VisualAsset` carries `interior_texts`, filled from
+- Current state: `SIGNOFF-REMEDIATION.3` restored workspace formatting (whitespace + one inert trailing
+  comma; all 10 pinned digests byte-identical, snapshot validator green). Before it, `.8` closed the
+  figure-interior drop. `VisualAsset` carries `interior_texts`, filled from
   the library's own traversal differenced against itself (`iterate_items(traverse_pictures=True)` minus the
   call production already makes), attributed up the parent chain, raising rather than dropping when a figure
   cannot be named. Population 13,506 over all 24 retained bundles, 0 orphans; on a real I2S re-ingest
@@ -33,8 +35,7 @@
   re-derivable), `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9` (`.9`: the book census's noun list cannot see
   `items`/`elements`/`texts`/`bundles`/`figures`, so five new quantities raised no alarm — the tool
   declares itself a lexical alarm, so this is a blind spot, not an over-claim), and
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`. Unowned and needing a leaf: `cargo fmt --all --check` fails on
-  `src/ir/source_to_intent_eval.rs` and `src/test_support/trajectory_snapshot.rs`, unformatted for 5+
-  commits under CI's own pinned rustc 1.95.0.
-- Two things block a push, in this order: `run_ci.sh` runs `check_doctrines.sh --all` first, so
-  `.14`'s seal debt stops it before the formatting drift does.
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`.
+- One thing blocks a push now: `run_ci.sh` runs `check_doctrines.sh --all` first under `set -euo
+  pipefail`, and CHAIN-CURRENCY fails 0 current / 24 stale — `.14`'s seal debt. `SIGNOFF-REMEDIATION.3`
+  cleared the formatting drift that blocked its third step.

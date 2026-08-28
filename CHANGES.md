@@ -1,3 +1,34 @@
+### SIGNOFF-REMEDIATION.3 — restore workspace formatting at main
+
+- Reopened the tree that exists for exactly this. Its 2026-05-17 goal statement reads "HEAD fails
+  `cargo fmt --all --check` … so the canonical CI entrypoint `scripts/run_ci.sh` would reject `main`",
+  and that was true again. Two files: `src/ir/source_to_intent_eval.rs` and
+  `src/test_support/trajectory_snapshot.rs`. A duplicate tree would have been archaeology.
+- Excluded the easy dismissal first. Not a local-toolchain artifact: `rustc --version` is 1.95.0, the
+  exact version .github/workflows/ci.yml pins via dtolnay/rust-toolchain@stable, with no rustfmt.toml
+  and no ignore list — so it reproduces in CI. Not a fresh regression either: replaying each file's last
+  five revisions through `rustfmt --check` reports UNFORMATTED at every one.
+- Discharged the digest constraint by measurement rather than by assuming formatting is inert.
+  `trajectory_snapshot.rs` carries REPLAY_PROJECTION_SHA256 and the eight-surface lockstep
+  SOURCE-IR-REPRODUCIBILITY.2 documented. All 9 of its 64-hex literals (and the 1 in the eval file) are
+  byte-identical before and after as sorted sets; stripping all whitespace and diffing token by token
+  leaves EXACTLY ONE OPCODE for the whole file — a single inserted `,`, the trailing comma rustfmt adds
+  when splitting an assert!. The eval file's token delta is zero.
+- Named the oracle rather than resting on inspection. The trajectory snapshot validator fails closed on
+  any REPLAY_PROJECTION_SHA256 mismatch and passes, so the pins are re-checked by the machinery that
+  exists to catch exactly this.
+- Root cause of the invisibility, not just of the drift: `run_ci.sh` is the only gate that runs
+  `cargo fmt --all --check`, and the CI policy moved that entrypoint to the push boundary, so no
+  per-slice gate observes formatting. That is a consequence of a deliberate policy, not an oversight.
+- Stated what this does NOT unblock. `run_ci.sh` runs `check_doctrines.sh --all` FIRST under
+  `set -euo pipefail`, and CHAIN-CURRENCY fails 0 current / 24 stale. Formatting was the entrypoint's
+  third step and is now clear; the first is not, and belongs to SOURCE-IR-REPRODUCIBILITY.14.
+- Gates: cargo fmt --all --check clean workspace-wide; cargo clippy --workspace --all-targets --
+  -D warnings clean; cargo test --workspace 470 / 168 / 1,371 / 4 / 5 passed, 0 failed, 9 ignored;
+  scripts/check_doctrines.sh 9/9 executed gate-tier doctrines PASS.
+
+Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
+
 ### SOURCE-IR-REPRODUCIBILITY.14 / CLAIM-VERIFICATION-ADOPTION.9 — correct two findings the director asked me to re-verify
 
 - Re-verified all three findings from `5f568381` on request rather than restating them. One holds as
