@@ -36,6 +36,13 @@
   three schema properties together and was observed RED twice.
 - Gates: `cargo test --workspace --lib` **470 / 168 / 1,370 passed, 0 failed, 9 ignored**; `cargo clippy
   --workspace --all-targets -- -D warnings` clean; `mdbook build` exit 0.
+- Confirmed on real data once the tree was clean enough to run the producer. The acceptance is
+  "provenance must resolve to exactly one converter item", and the converter side settles it: the Arm
+  Debug guide's seven-document bundle yields **12,144** text items addressed by only **2,486** distinct
+  `self_ref` values — 9,658 reused — and by **12,144 distinct batch-qualified addresses**, one per item.
+  The unbatched I2C specification is 2,507 / 2,507 / 0 / 2,507, so an unbatched run needs no coordinate
+  and gains none. Both persisted artifacts report `source_ref_identity: ref_text_pair`, correctly: they
+  were written before the coordinate existed and the consumer says so.
 - Opened `.9a` (tracking-only): the producer's clean-tree guard fires for `--persisted`, which performs no
   ingest, so a read-only population measurement cannot be taken from a working tree. It blocked nothing
   here — the population was read directly from the artifacts — but the guard should govern exactly the

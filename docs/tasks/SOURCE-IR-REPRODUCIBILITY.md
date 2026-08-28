@@ -363,6 +363,14 @@ Full result, method, controls, and per-document table:
   addresses not batch-qualified. The conservation census now publishes `source_ref_identity`,
   `converter_refs`, `converter_distinct_refs`, `converter_refs_reused`, and
   `converter_distinct_addresses`, so the ambiguity is reported rather than worked around silently.
+  Confirmed on real data after the change landed (`2026-08-28`, `2172ad9e`, producer `--persisted`, which
+  needs a clean tree): the acceptance is "provenance must resolve to exactly one converter item", and on
+  the converter side the Arm Debug guide's 7-document bundle yields **12,144** text items addressed by
+  only **2,486** distinct `self_ref` values — 9,658 reused — and by **12,144 distinct batch-qualified
+  addresses**, one per item. The unbatched I2C specification is 2,507 items / 2,507 refs / 0 reused /
+  2,507 addresses, so an unbatched run needs no coordinate and gains none. Both report
+  `source_ref_identity: ref_text_pair`, correctly: they are artifacts written before the coordinate
+  existed, and the consumer says so rather than implying an exactness they cannot support.
   What this does **not** do: it cannot repair an artifact already on disk. The 14 ambiguous artifacts
   stay ambiguous until they are re-ingested; the coordinate is recorded from this revision forward, and
   the consumer states which key each artifact supports rather than treating both as exact.
