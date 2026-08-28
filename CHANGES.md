@@ -1,3 +1,35 @@
+### STATUS-LEDGER-ROLLOVER.3 — roll the status ledger, and record how its plan is actually built
+
+- Performed the declared transaction before it could block a product slice. At 102,748 bytes the status
+  ledger was 89.35% of its 115,000-byte health target, and only a record of 751 bytes or less would have
+  stayed under the mandatory 90% signal — no status record that small has been written in months, so the
+  next one would have forced a control-plane migration into a product commit.
+- Sealed 26 records, kept 4. Root **70 -> 44 records / 112 -> 86 lines / 102,748 -> 76,758 bytes**: 66.75% of
+  the byte target, 55.00% of the record window, 15.36% of lines, and an unchanged 77.8% widest line, because
+  the 4,824-byte line is inside the pinned migration suffix where no cut can reach it. Segment
+  `segment-0011-2026-08-28.md` holds 26 records / 25,990 bytes at SHA-256 `a13be8e8…7a15`.
+- Chose four kept records for a stated reason, not a round number. The pinned 40-record migration suffix is
+  live forever and alone spends 66,720 of the 92,000-byte warning budget, so the entire reachable headroom is
+  about 18 budget-sized records and only a cut that removes every post-migration record reaches it — leaving
+  a "current snapshot" whose newest entry is `2026-08-08`. The four kept records are exactly the
+  `2026-08-28` ones, so the snapshot still opens on the current day, and 15,242 bytes remain, about eleven
+  records at the 1,351.6-byte budget `STATUS-LEDGER-ROLLOVER.4a` derived.
+- Recorded how the plan is actually built, which is what this leaf existed for. The metrics are HARVESTED,
+  not computed: a first pass writes `1` for every metric and 64 zero-hex for every digest, the checker
+  reports each mismatch as `actual X, expected Y`, and the second pass with those values is exact. Only two
+  figures can be modelled by hand — `keep + records == post_migration_records`, and the resulting root bytes
+  — and both were, as a control that the harvest is not self-fulfilling: 76,758 predicted from the
+  per-record size table before the first dry run, 76,758 reported.
+- Left the finding a rollover cannot fix. The post-cut live-window record mean is **1,588.3 bytes** against
+  the 1,351.6-byte budget, because the pinned suffix averages 1,496.2 on its own and the four kept records
+  average 2,509.5. The transaction resets the clock; `STATUS-LEDGER-ROLLOVER.4` owns the limit that makes it
+  stop repeating.
+- Transaction integrity: dry run "exact and warning-safe" before the applied run, installed root-last, all
+  ten older segments and the source capsule byte-identical, only the root, the new segment, the manifest,
+  and the index changed. No record edited, reordered, or reflowed; no limit, milestone, or ceiling moved.
+  This transaction writes no `LIVE_ACHIEVEMENT_STATUS.md` record — a containment migration changes no product
+  status.
+
 ### STATUS-LEDGER-ROLLOVER.4a — re-derive the status-ledger measurement `.3` and `.4` were sized on
 
 - Re-derived the live root instead of trusting the row that had just been published. `.4`'s own decision

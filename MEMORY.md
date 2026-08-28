@@ -17,26 +17,25 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `STATUS-LEDGER-ROLLOVER.3` (blocks the next status-bearing commit), then `.4`, then
-  `SOURCE-IR-REPRODUCIBILITY.8` or `.9`. Open: `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`–`.10`/`.13`;
-  `STATUS-LEDGER-ROLLOVER` `.2`/`.3`/`.4`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`. Tracking-only:
+- Active unit: `STATUS-LEDGER-ROLLOVER.4`, then `SOURCE-IR-REPRODUCIBILITY.8` or `.9`. Open:
+  `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`–`.10`/`.13`; `STATUS-LEDGER-ROLLOVER` `.2`/`.4`;
+  `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`; `SCRATCH-RESIDUE-CONTAINMENT.1`. Tracking-only:
   `SCRATCH-RESIDUE-CONTAINMENT.1`, `SPEC-TO-INTENT-ALIGNMENT.9`, `PROVIDER-MODEL-STORE-LOCALITY.1`,
   `TASK-PART-SEAL-REACHABILITY.0`, `CLAIM-VERIFICATION-ADOPTION.1a`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`.
-- Current state: `.4a` re-derived the status-ledger measurement `.3` and `.4` were both sized on. The root
-  holds **70** records at a 1,369.7-byte mean, not the published 64 / 1,605 — `64` is this surface's record
-  warning threshold (80 x 80%), and every figure divided by it was wrong. The conclusion survives with a
-  narrower margin: capacity is 78 records against a declared 80-record window, and the honest budget is
-  1,351.6 bytes once the 6,871-byte prologue/trailer overhead is charged. Root cause is structural — **no
-  tracked producer reports a rolling ledger's live record count**. The same review found and repaired a
-  stale assertion inside the claim registry itself, attributed exactly to `.6`'s own rollover moving 14
-  annotated regions out of the live window. The standing ingest defect is unchanged and unfixed.
+- Current state: `.4a` re-derived the measurement `.3`/`.4` were sized on — the root held **70** records at a
+  1,369.7-byte mean, not the published 64 / 1,605; `64` is this surface's record warning threshold (80 x 80%).
+  The honest budget is 1,351.6 bytes once the 6,871-byte prologue/trailer overhead is charged, and **no
+  tracked producer reports a rolling ledger's live record count**. `.3` then rolled the ledger: 26 records
+  sealed as `segment-0011-2026-08-28.md`, root **70 -> 44 records / 102,748 -> 76,758 bytes** (66.75% of
+  target), older members byte-identical. The post-cut record mean is still **1,588.3 bytes**, above budget,
+  which a rollover cannot fix. `.4a` also repaired a stale assertion inside the claim registry itself. The
+  standing ingest defect is unchanged and unfixed.
   `[claim: claim-provenance-gate-active]`
   `[claim: mdbook-quantitative-census-frozen]`
   `[claim: current-claim-census-frozen]`
-- Next action: run `STATUS-LEDGER-ROLLOVER.3` — at 102,748 bytes / 89.35% only a record of 751 bytes or less
-  avoids the mandatory 90% signal, so the next status record forces the rollover. Build the plan by harvesting
-  the dry run's `actual` values; a hand-modelled cut is wrong on every field. Then `.4`, then
-  `SOURCE-IR-REPRODUCIBILITY.8`/`.9`, which both gate `.7`.
+- Next action: run `STATUS-LEDGER-ROLLOVER.4` — check the derived budget (`(health_bytes - live-view
+  overhead) / live_limits.records`) and publish the live record count, deriving both from the registry so
+  neither can go stale. Then `SOURCE-IR-REPRODUCIBILITY.8`/`.9`, which both gate `.7`.
 - In-flight uncommitted: none after this commit; no background job is running.
 - Blockers: none. Owned, not fixed: `CLAIM-VERIFICATION-ADOPTION.7` (a published count does not re-derive),
   `.8` (census registry 109 of a declared 128, +1 per ledger-prepending slice),

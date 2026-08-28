@@ -93,7 +93,7 @@ pressure axis here, because one status record is one line.
   Commit: `pending`
 
 - ID: `STATUS-LEDGER-ROLLOVER.3`
-  Status: `pending`
+  Status: `done` (`2026-08-28`)
   Goal: roll the status ledger before the next product record, and record how its plan is actually built
   Acceptance: measured `2026-08-28` at `3b3ea863` (`.4a`; the root is unchanged since `245b3b60`),
   `LIVE_ACHIEVEMENT_STATUS.md` is **102,748 bytes = 89.35%** of its 115,000-byte health target across
@@ -113,6 +113,32 @@ pressure axis here, because one status record is one line.
   this ledger to its signal about every two slices; keeping a record near 1.2 KiB is what let `.2` land
   without a rollover at all. A cut that does not also address record size buys one or two slices
   Prerequisite: none; it blocks the next status-bearing commit
+  Evidence (`2026-08-28`): plan `docs/research/status-ledger-rollover-2026-08-28-plan.jsonl` pins boundary
+  commit `024202dd` and opening SHA-256 `3055b508…cfc6`; the dry run reported **exact and warning-safe**
+  before the applied run, and the applied run installed root-last. Root **70 -> 44 records / 112 -> 86 lines
+  / 102,748 -> 76,758 bytes** = 66.75% of the byte target, 55.00% of the record window, 15.36% of lines, and
+  an unchanged 77.8% widest line (the 4,824-byte line is record 61, inside the pinned suffix, so no cut can
+  reach it). Segment `segment-0011-2026-08-28.md` holds 26 records / 26 lines / 25,990 bytes at SHA-256
+  `a13be8e8…7a15`; `git diff` proves every older segment and the source capsule byte-identical, with only the
+  root, the new segment, the manifest, and the index changed. No limit, milestone, or ceiling moved, and no
+  record was edited, reordered, or reflowed.
+  How the plan was actually built (this is the part `.3` exists to record): the metrics were **harvested,
+  not computed**. A first pass wrote `1` for every metric and 64 zero-hex for every digest; the checker
+  reports each mismatch as `actual X, expected Y`, so one dry run yields the segment's records/lines/bytes/
+  line_bytes and SHA-256, its first- and last-record digests, and the resulting root's four metrics and
+  digest. The second dry run with those values is exact. Only two figures can be modelled by hand and both
+  were, as a cross-check that the harvest is not self-fulfilling: `keep + records == post_migration_records`
+  (4 + 26 == 30) and the resulting root bytes, predicted at 76,758 from the record-size table before the
+  first dry run and reported as 76,758 by the checker.
+  Sizing (why four, not the minimum or the maximum): the pinned 40-record migration suffix is live forever
+  under `validate_retained_suffix` and alone spends 66,720 of the 92,000-byte warning budget, so the whole
+  reachable headroom is about 25,000 bytes — roughly 18 records at `.4a`'s 1,351.6-byte budget — and only a
+  cut that removes **every** post-migration record reaches it, leaving the reader a snapshot whose newest
+  entry is `2026-08-08`. Keeping the four newest is the natural boundary because those four are exactly the
+  `2026-08-28` records, so the snapshot still opens on the current day, and it leaves 15,242 bytes ≈ eleven
+  budget-sized records. The live-window record mean after the cut is **1,588.3 bytes**, still above budget:
+  the suffix averages 1,496.2 and the four kept records average 2,509.5. A rollover cannot fix that, which is
+  `.4`'s point.
 
 - ID: `STATUS-LEDGER-ROLLOVER.4`
   Status: `pending`
@@ -161,7 +187,7 @@ pressure axis here, because one status record is one line.
 | 1 | `STATUS-LEDGER-ROLLOVER.0` | `done` | the mandatory transaction; it unblocks the next product-status record |
 | 2 | `STATUS-LEDGER-ROLLOVER.1` | `done` | its alignment review was a blocker, so it landed in the same commit |
 | 3 | `STATUS-LEDGER-ROLLOVER.4a` | `done` | `.3` and `.4` were both sized on a wrong record count; nothing downstream could be built until it was re-derived |
-| 4 | `STATUS-LEDGER-ROLLOVER.3` | `pending` | the mandatory transaction; any next status record crosses the 90% byte signal |
+| 4 | `STATUS-LEDGER-ROLLOVER.3` | `done` | the mandatory transaction; the root is back to 66.75% bytes / 55.00% records |
 | 5 | `STATUS-LEDGER-ROLLOVER.4` | `pending` | the budget and the unreported record count that let `.4a`'s error through |
 | 6 | `STATUS-LEDGER-ROLLOVER.2` | `pending` | tracking only; it blocks nothing, and no ledger is at a stop today |
 
@@ -203,6 +229,9 @@ pressure axis here, because one status record is one line.
 | `2026-08-28` | `.4a` re-derivation | counted the live window from the tracked root with its registered grammar markers, and measured the fixed prologue/trailer overhead the byte budget also pays | 70 records / 95,877 record bytes / 6,871 bytes of non-record overhead against 102,748 total; record mean 1,369.7, whole-window mean 1,467.8; the published `64 records` and `1,605-byte mean` are both wrong |
 | `2026-08-28` | `.4a` falsification | probed the tracked checker's own `current_snapshot_bullets_v1` parser through rollover-plan boundary arithmetic, an independent producer from the marker extraction | `opening_records: 71` RED (`has fewer records than its opening boundary`); `opening_records: 70` not RED — both producers agree at exactly 70, so the competing hypothesis that continuation bullets inflate the shell count is refuted |
 | `2026-08-28` | `.4a` root cause | asked where `64` could have come from, and which producer should have caught it | `64` is this surface's record warning threshold (80 x 80%), published as an observed count; `102,748 / 64` then yields the 1,605-byte mean and the 71-record bound. No tracked producer reports the live record count — `check_live_document_size.pl --report` emits bytes/lines/line_bytes and `check_rolling_ledger_protocol.pl --report` emits the frozen `planned_live` boundary — so nothing could contradict it |
+| `2026-08-28` | `.3` transaction | `--rollover-plan` dry run, then `--apply-rollover`; `git diff` over every prior archive member; live-size gate | dry run "exact and warning-safe" on the second attempt (the first carried deliberate placeholders to harvest actuals); applied root-last; all ten older segments and the source capsule byte-identical; the `achievement_status` warning lines are gone from the pressure report |
+| `2026-08-28` | `.3` cross-check | predicted the resulting root bytes by hand from the per-record size table before running the checker | 76,758 predicted, 76,758 reported — the two figures a planner can model (`keep + records == post_migration_records`, and root bytes) both agree, so the harvested metrics are not merely self-consistent |
+| `2026-08-28` | `.3` record-count corroboration | read the dry run's own `resulting_live.records` against the plan's cut | 44 = 70 - 26, an independent third confirmation of `.4a`'s corrected 70-record count, this time from the checker's transaction path rather than its boundary arithmetic |
 | `2026-08-11` | `.2` finding | measured the pinned migration suffix against each ledger's health target | it is immovable under the current registry and dominant everywhere: changes 170,695 B (66.9%), development-notes 155,662 B (62.3%), live-achievement-status 68,133 B (59.2%), rust-codebase-analysis 84,380 B (46.9%). After a maximal cut the usable live capacity left is 387 / 464 / 24-records / 79 lines respectively |
 
 ## Commit Log
@@ -212,6 +241,7 @@ pressure axis here, because one status record is one line.
 | `STATUS-LEDGER-ROLLOVER.0` | `STATUS-LEDGER-ROLLOVER.0 — seal segment-0007 and give the status ledger real headroom` | 21 records sealed; older members byte-identical; root at 62.5% records / 70.1% bytes |
 | `STATUS-LEDGER-ROLLOVER.1` | same commit | four false current-root claims removed from the book; a known current-facing contradiction is a `COMMIT.md` blocker, so it could not wait for its own slice |
 | `STATUS-LEDGER-ROLLOVER.4a` | `STATUS-LEDGER-ROLLOVER.4a — re-derive the status-ledger measurement .3 and .4 were sized on` | 64 records -> 70; 1,605-byte mean -> 1,369.7; binds at 71 -> 78; the unsatisfiable-limits conclusion survives with a narrower margin |
+| `STATUS-LEDGER-ROLLOVER.3` | `STATUS-LEDGER-ROLLOVER.3 — roll the status ledger, and record how its plan is actually built` | 26 records sealed as segment-0011; root 70 -> 44 records / 102,748 -> 76,758 bytes; older members byte-identical |
 
 ## Changelog
 
@@ -231,6 +261,13 @@ pressure axis here, because one status record is one line.
   charged. The finding that matters for `.4` is not the arithmetic: the record dimension is bounded, sits at
   87.5% of its bound, and **no producer reports it**, so nothing in the repository could have contradicted
   the published number.
+- `2026-08-28`: `.3` closed. The transaction ran as declared and no code changed. Two things are now durable
+  that were not: the plan is built by harvesting the dry run's `actual` values rather than hand-modelling a
+  grammar the checker re-renders, and the cut is sized against `.4a`'s overhead-net per-record budget instead
+  of against the committed root. The measurement that matters for `.4` is the one the cut could not change:
+  the post-cut live-window record mean is 1,588.3 bytes against a 1,351.6-byte budget, because the pinned
+  suffix averages 1,496.2 on its own. A rollover resets the clock; it cannot make the declared limits
+  satisfiable.
 - `2026-08-11`: `.2` opened as tracking-only. Root-causing why this ledger returns to its threshold so fast
   found a structural answer that is not specific to this ledger, so it is measured and recorded rather than
   fixed inside a rollover slice.

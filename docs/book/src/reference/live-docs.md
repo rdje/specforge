@@ -408,6 +408,31 @@ newest successor, and warning-safe survivor. The checker rejects boundary drift,
 successor, surface-authority disagreement, or any survivor at warning. Thirty-five focused cases include a
 failure injected after segment installation and prove byte-exact rollback with no transaction residue.
 
+**Write the plan's metrics by harvesting them, not by computing them.** The plan must state the segment's
+records, lines, bytes, and widest line, its SHA-256 and its first/last record digests, and the same five
+values for the resulting root. Those are properties of the checker's *re-rendered* live view — it rebuilds
+the root from whole records plus the stable prologue and trailer — so they are not a byte slice of the file
+and hand-arithmetic gets them wrong. The supported procedure is two dry runs:
+
+1. Write the plan with the fields you actually decide — `boundary_commit`, `opening_sha256`,
+   `opening_records`, the record decomposition, `keep_opening_prefix_records`, `records`, the segment id and
+   path, and the successor — and put a placeholder in every metric and digest.
+2. Run the dry run. Each mismatch is reported as `actual X, expected Y`, so one pass yields every harvested
+   value.
+3. Substitute the reported values and re-run the dry run until it reports
+   `dry-run is exact and warning-safe`. Apply only that plan.
+
+Two figures *can* be modelled by hand, and checking them guards against a harvest that is merely
+self-consistent: `keep_opening_prefix_records + records` must equal `post_migration_records`, and the
+resulting root's byte size is the committed root minus the summed byte size of the cut records.
+
+Size the cut against the per-record budget the surface's own limits imply, not against the committed root.
+A live window declares both a record count and a byte target, and the byte target also pays for the root's
+prologue and trailer — so the budget one record may spend is
+`(health_bytes - live-view overhead) / live_limits.records`, and a retained migration suffix spends that
+budget permanently. When the two declared limits are not simultaneously satisfiable at current record
+sizes, the byte dimension binds first and a rollover only resets the clock.
+
 Each initial migration copied the exact pre-migration file into an immutable, repository-local source
 capsule before shortening the stable root. The capsule manifest records its digest and dimensions; a
 bounded index links both the current root and historical capsule; the checker retrieves and revalidates
