@@ -155,6 +155,32 @@ The reports are useful because they separate:
 That separation matters.
 An artifact can improve without the project snapshot being refreshed until `project-validation` is run.
 
+### `validate` writes, and the order matters
+
+`validate` is not a read-only inspection. On a proof-carrying artifact it is a *closed mutation*: it
+replaces `validation_reports` and extends the artifact's proof before persisting it, which is exactly
+what ADR 0038 asks of every backannotation path. One consequence follows from that and from the
+downstream rule that each stage retains its upstream's ledger as an **exact ordered prefix**:
+
+> Re-validating an artifact invalidates every downstream artifact that was built before that
+> validation. They stop loading, with `cumulative proof ledger does not retain the exact verified
+> upstream prefix`.
+
+This is the proof system working, not breaking — the upstream really did change. But it makes `validate`
+order-sensitive in a way that is easy to trip over. The rule in practice:
+
+- validate each artifact **once**, walking strictly upstream to downstream;
+- never re-validate an upstream stage unless you also rebuild everything below it;
+- what accumulates is only the small `proof_context.mutations` audit list — the proof ledger itself does
+  not grow, and `validation_reports` stays at a single entry because backannotation replaces rather than
+  appends.
+
+If you only need to know whether a persisted artifact still loads through the canonical verified path,
+**do not use `validate`** — run the stage that consumes it with `--dry-run`. That enters the identical
+loader and leaves the artifact byte-identical. This is why `check_chain_currency.sh` replays every stage
+with `--dry-run`, and why `rebuild_stage_cascade.sh --check` probes with the downstream stage instead of
+validating. The terminal stage has no consumer, so it has no read-only canonical probe.
+
 ## Rescan plans and approval boundaries
 
 `project-validation` can also write:

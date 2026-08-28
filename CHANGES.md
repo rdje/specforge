@@ -1,3 +1,55 @@
+### SOURCE-IR-REPRODUCIBILITY.15 — rebuild the downstream chain the seal could not reach
+
+- Found the baseline was ONE defect, not three. All 72 downstream canonical validates (24 x
+  evidence/semantic/intent) failed with the SAME message, so a single upstream seal blocked the whole
+  chain. Mechanism read from the source rather than inferred: cumulative_ruleset_sha256 in
+  ir/derivation.rs folds the upstream cumulative digest with the stage-local one, so `.14`'s SourceIR
+  re-seal necessarily moved every digest below it.
+- Rebuilt all four stages with the new scripts/rebuild_stage_cascade.sh --write:
+  24 rebuilt / 24 content-identical / 0 content-changed / 24 validated / 0 failed at EVERY one of
+  evidence, semantic, intent, and isf-adapter, each stage's seal moving to exactly one new value.
+  The ADR 0025 precedent said "it will be identical" is a hypothesis, not a given; it held, and it was
+  measured against an 842 MB snapshot taken before any write, not trusted.
+- Gave remedy and oracle ONE predicate. compare_stage_artifact/compare_emitted_isf were extracted
+  BYTE-FOR-BYTE into scripts/lib/stage_artifact_identity.sh, which check_chain_currency.sh now sources,
+  so a remedy can never certify itself with a comparison the gate would not make (the `.11` lesson).
+  RED control: making the shared predicate always report identity drives the ORACLE's own self-test
+  22/22 -> 20/22, so the library is load-bearing rather than a dead file.
+- THE VERIFICATION INSTRUMENT DAMAGED WHAT IT MEASURED, and that is the most important thing this slice
+  learned. A post-cascade `specforge validate` census over all 24 x 4 artifacts made the oracle report
+  intent and isf-adapter 0/24 current on a NEW error — "cumulative proof ledger does not retain the
+  exact verified upstream prefix". Two hypotheses: the rebuild made bad artifacts, or the measurement
+  broke them. Separated by direct control, not argument: specforge validate is NOT IDEMPOTENT. Each call
+  appends one validation_backannotation mutation to proof_context and moves the artifact's digest
+  (measured 4 -> 5 -> 6 over three consecutive calls), and every downstream stage retains its upstream
+  ledger as an exact prefix — so re-validating evidence broke semantic, and so on down. The cascade
+  itself was correct: it validates each artifact exactly once, strictly upstream to downstream.
+- Checked before calling it a defect, and it is NOT one. ADR 0038 designs both halves deliberately —
+  validation backannotation is a closed mutation that "extends the proof before persistence", and each
+  downstream stage "copies those verified claims as an exact ordered prefix". A proof system whose
+  upstream really changed SHOULD fail closed. Scope measured rather than extrapolated: proof_ledger.claims
+  is 480 at one mutation and 480 at four, and backannotate_report does clear()+push() so
+  validation_reports stays at 1. Only the small proof_context.mutations audit list grows.
+- Fixed the two consequences instead of noting them. scripts/rebuild_stage_cascade.sh --check carried the
+  same defect — it probed each stage with `specforge validate` while printing "nothing was written". The
+  read-only way to ask the SAME canonical loader is to run the CONSUMING stage with --dry-run, measured
+  to leave the artifact byte-identical while validate moved it; --check now does that and reports the
+  terminal stage honestly as having no such probe. Self-test 10's digest check could not catch it
+  (a miniature corpus's artifacts never load), so controls 13/14 use a recording-stub binary asserting
+  --check never invokes validate and does ask a --dry-run loader: observed RED at 12/14 against the exact
+  shipped known-bad code, GREEN at 14/14 after the fix.
+- Corrected `.16`'s cost figure BEFORE it is designed against. Its 0.18 s is a grep read; reusing it as
+  the cost of an exact read would have been wrong. Measured on the same 78 source_ir.json: grep 0.295 s,
+  the exact depth-aware scan 21.0 s — 71x, not the ~200x a first composite wall-clock suggested. The
+  driver is not the scan: 24 proof-carrying files cost 6.4 s because the reader exits at the ledger,
+  while 54 proofless files cost 14.3 s because it reads each to EOF for a ledger that is not there. So
+  the constraint is sharper than "add a fast path". `.16` also now records that "ask the product's own
+  canonical loader" must NOT mean `specforge validate`, which would corrupt the chain every commit.
+- Book: the doctrine chapter gains the stale-seal remedy (proof-only for SourceIR, stage rebuild below
+  it); the generated-artifacts chapter gains "validate writes, and the order matters".
+
+Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
+
 ### SOURCE-IR-REPRODUCIBILITY.14 — re-seal the SourceIR corpus, and size the check that should have caught it
 
 - Corrected this leaf's own mechanism before acting on it. It said a rule registration "carries

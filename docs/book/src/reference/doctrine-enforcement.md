@@ -210,6 +210,44 @@ fail closed, so the checkable population can only grow deliberately, one refresh
 reclamation must name the leaf that decided it. The declaration is schema-closed — an unknown, mistyped,
 unsorted, or self-contradictory field is itself a breach — so it cannot decay into prose.
 
+### When a seal goes stale, and how the corpus gets it back
+
+A stage artifact records the `ruleset_sha256` of the rule set that proved it, and every stage below
+records the *cumulative* digest of its upstream's rule set folded with its own. Those digests are built
+from the production implementation each rule depends on, so an ordinary edit to a stage's production
+module re-seals nothing and invalidates everything below it: the persisted corpus starts failing to load
+with `proof ledger ruleset hash is stale`, and one stage further down with `cumulative proof ledger
+ruleset hash is stale`.
+
+This is a statement about the *seal*, not about the artifacts. The captured premises are untouched, and
+the content is not in question until something measures it. Two remedies exist, and they are not
+interchangeable:
+
+- **SourceIR has a proof-only path.** `cargo run --example source_proof_migrate -- --write` re-derives
+  each artifact's ledger from its own retained capture. It rewrites the proof and nothing else, so
+  public content cannot move.
+- **Every stage below it has no such path.** EvidenceIR, SemanticIR, IntentIR, and the adapter cannot
+  be re-sealed in place — the only way to give them a current ledger is to re-run the stage, which
+  writes real artifact content. That is a heavier act, and `scripts/rebuild_stage_cascade.sh` exists so
+  it is a measured one.
+
+The cascade rebuilds `evidence` → `semantic` → `intent` → `isf-adapter` across the proof-carrying
+documents, in that order, and proves two things per stage rather than assuming them: that each rebuilt
+artifact is content-identical to the one it replaced, and that it validates through the product's own
+loader afterward — which is what re-earns the seal and restores the `validation_reports`
+back-annotation the rebuild necessarily dropped. Content identity is decided by the *same* predicate the
+chain-currency oracle uses; both scripts share one definition
+(`scripts/lib/stage_artifact_identity.sh`) so a remedy can never certify itself with a comparison the
+gate would not make. A legacy proofless document has no current seal to restore and is reported as an
+explicit out-of-scope count, never silently skipped.
+
+A content delta is never absorbed. If a rebuilt artifact differs, the run names the differing top-level
+sections, stops at that stage so nothing is rebuilt on top of an unexplained change, and keeps its
+pre-write snapshot for attribution. That caution is not theoretical: the ADR 0025 reconciliation found
+exactly one real content delta across the whole checkable population. The cascade is a remedy, not an
+oracle — after it runs, `scripts/check_chain_currency.sh` is still the only thing that may call the
+corpus current.
+
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
 evidence/`.isf` checks, chain currency, the full `cargo` suite, and the mdBook doctest/build pair — are the
 strongest leg of all. They are too slow to run on every local commit, so they run in the full CI gate
@@ -432,6 +470,11 @@ bash scripts/check_doctrines.sh --all
 # ask the chain-currency oracle directly, or prove it is fail-closed first:
 bash scripts/check_chain_currency.sh
 bash scripts/check_chain_currency.sh --self-test
+
+# report the persisted corpus's proof-seal state, then restore a stale one by rebuilding the chain:
+bash scripts/rebuild_stage_cascade.sh --check
+bash scripts/rebuild_stage_cascade.sh --write
+bash scripts/rebuild_stage_cascade.sh --self-test
 
 # run structural genericity plus the frozen behavioral design contract directly:
 bash scripts/check_production_genericity.sh

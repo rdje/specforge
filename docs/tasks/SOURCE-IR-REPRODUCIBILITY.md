@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13`–`.16` pending)
+- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12`, `.15` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13`, `.14`, `.16` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
 - Last updated: `2026-08-28`
@@ -749,7 +749,7 @@ Full result, method, controls, and per-document table:
   Prerequisite: none
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.15`
-  State: `pending`
+  State: `done` (`2026-08-28`)
   Goal: carry the seal restoration downstream, where no proof-only path exists
   Acceptance: `.14` re-sealed SourceIR and evidence replay went to 24/24 current, which exposed the same
   debt one stage down: `semantic`, `intent`, and `isf-adapter` fail at `EvidenceIR proof verification
@@ -763,6 +763,62 @@ Full result, method, controls, and per-document table:
   that does appear is attributed to a named change per ADR 0025 decision 1 rather than absorbed. The
   precedent to respect: the ADR 0025 reconciliation found exactly one real delta across 24 documents
   (`table_0044` becoming `register_map`), so "it will be identical" is a hypothesis, not a given
+  **Delivered (`2026-08-28`).** The baseline was one defect, not three: all **72** downstream canonical
+  validates (24 x evidence/semantic/intent) failed with the *same* message, so a single upstream seal
+  blocked the whole chain. Mechanism read from the source rather than inferred —
+  `cumulative_ruleset_sha256` (`crates/specforge/src/ir/derivation.rs`) folds the upstream cumulative
+  digest with the stage-local one, so re-sealing SourceIR necessarily moves every digest below it.
+  `scripts/rebuild_stage_cascade.sh --write` rebuilt all four stages: **24 rebuilt / 24
+  content-identical / 0 content-changed / 24 validated / 0 failed at every one of evidence, semantic,
+  intent, and isf-adapter**, with each stage's seal moving to exactly one new value. The hypothesis this
+  leaf was told not to assume therefore held, and it was measured rather than trusted.
+  The comparison is not the remedy's own: `compare_stage_artifact`/`compare_emitted_isf` were extracted
+  **byte-for-byte** into `scripts/lib/stage_artifact_identity.sh`, which `check_chain_currency.sh` now
+  sources, so remedy and oracle share one predicate (`.11`). RED control: making the shared predicate
+  always report identity drives the ORACLE's own self-test from 22/22 to **20/22**, so the library is
+  load-bearing rather than a dead file. Cascade `--self-test` 12/12, two cases written after observing
+  the first reader go RED — a compactly serialized ledger read as `none` (which would have silently
+  dropped a sealed document out of scope), and a claim digest nested inside the ledger mistaken for the
+  ledger's own seal; the line-matching reader was replaced by a depth-aware streaming scan rather than
+  the test being weakened.
+  **The verification instrument damaged what it measured, and that is the leaf's most important
+  finding.** The first post-cascade run put a canonical `specforge validate` census over all 24 x 4
+  persisted artifacts. It reported `evidence` OK but `semantic`/`intent`/`isf-adapter` failing, and
+  `check_chain_currency.sh` then reported `intent` and `isf-adapter` **0/24 current** on a new error:
+  `SemanticIR proof verification failed: cumulative proof ledger does not retain the exact verified
+  upstream prefix`. The competing hypotheses were (a) the rebuild had produced bad artifacts, or (b) the
+  measurement had broken them. (b) is correct, and it was separated by direct control rather than
+  argument: **`specforge validate` is not idempotent.** Each invocation appends one
+  `validation_backannotation` mutation to the artifact's proof context and moves its digest — measured
+  4 -> 5 -> 6 across three consecutive calls on one EvidenceIR. Because every downstream stage retains
+  its upstream's ledger as an exact prefix, validating an upstream a second time invalidates every
+  downstream artifact built before it. The cascade itself was correct — it validates each artifact
+  exactly once, strictly upstream-to-downstream — but a census that re-validated `evidence` broke
+  `semantic`, and so on down.
+  Two consequences were fixed rather than noted. First, this script's own `--check` carried the same
+  defect: it probed each stage with `specforge validate` while printing "nothing was written", so a
+  "read-only" pre-flight silently invalidated the chain. The read-only way to ask the *same* canonical
+  loader is to run the CONSUMING stage with `--dry-run` — measured to leave the artifact byte-identical
+  while `validate` moved it — and `--check` now uses that, reporting the terminal stage honestly as
+  having no such probe. Second, self-test 10's digest check could not catch it, because a miniature
+  corpus's artifacts never load; controls **13/14** replace that with a recording-stub binary that
+  asserts `--check` never asks for `validate` and does ask a `--dry-run` loader. Both were observed RED
+  against the exact shipped known-bad code (12/14) and GREEN after the fix (14/14). The corpus was then
+  rebuilt to restore the chain, and re-verified with read-only instruments only. The oracle then
+  certified it: `check_chain_currency.sh` reports **24 replayed / 24 current / 0 stale at all four
+  stages** with retention exactly the declared set, and exits 0 — the CHAIN-CURRENCY blocker `.14` left
+  standing at `evidence` only is now cleared for the whole chain.
+  **This is designed behaviour, not a product defect — checked before it was written up as one.** ADR
+  0038 states both halves deliberately: validation backannotation is one of the closed mutation kinds
+  that "extend the proof ... before persistence" (decision 2's migration notes), and each downstream
+  stage "copies those verified claims as an exact ordered prefix". The downstream rejection is the
+  intended consequence of two intended properties, and a proof system whose upstream artifact really did
+  change SHOULD fail closed. Scope was also measured rather than assumed: `proof_ledger.claims` is
+  **480 at one mutation and 480 at four** on the same artifact, and `backannotate_report` does
+  `clear(); push()`, so `validation_reports` stays at length 1 — nothing accumulates but the small
+  `proof_context.mutations` audit list. What is genuinely missing is operational: nothing in the book,
+  the CLI help, or the doctrine warns that `validate` mutates and is order-sensitive, which is what cost
+  this leaf a corpus rebuild. That gap is closed in the book by this commit, not routed to a new tree
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.14` (met for SourceIR)
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.16`
@@ -779,7 +835,32 @@ Full result, method, controls, and per-document table:
   under a second; verifying all 24 costs 7.2 s and is still gate-affordable. Scope it to the stages whose
   seal is actually current when it lands — SourceIR today — and let `.15` extend it as it re-seals the
   rest, rather than landing a gate that fails on day one
-  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.14`
+  **Scope widened by `.15` (`2026-08-28`):** all four downstream stages are now current, so this gate
+  covers the whole chain rather than SourceIR alone, and it will not fail on day one.
+  **Cost corrected before it is designed against (`2026-08-28`).** The `0.18 s` above is a `grep` read,
+  and reusing it as the cost of an *exact* read would have been wrong. Measured on the same 78
+  `source_ir.json`: `grep` fast path **0.295 s**, the exact depth-aware scan `.15` had to write
+  **21.0 s** — 71x, not the ~200x a first composite wall-clock suggested. The cost driver is not the scan
+  being intrinsically slow: the **24** proof-carrying files cost **6.4 s** because the reader exits at
+  the ledger, while the **54** proofless files cost **14.3 s** because it reads each to EOF looking for a
+  ledger that is not there. So the design constraint is sharper than "add a fast path": this gate must
+  answer *"this artifact carries no ledger"* without reading the whole file. For reference the full
+  `rebuild_stage_cascade.sh --check` pre-flight is 36.7 s, decomposing as 21.0 s stratum scan + 12.6 s
+  seal census over the 96 downstream artifacts + ~3.1 s for four canonical validates
+  **A third constraint, and the one most likely to sink a naive implementation (`.15`, `2026-08-28`).**
+  This leaf's existing wording — "ask the product's own canonical loader rather than reimplement the
+  digest comparison" — reads as *use `specforge validate`*. That would be a corpus-corrupting gate.
+  `specforge validate` is **not idempotent**: each call appends a `validation_backannotation` mutation
+  and moves the artifact's digest (measured 4 -> 5 -> 6 over three calls), and every downstream stage
+  retains its upstream ledger as an exact prefix — so a gate that validated persisted artifacts on every
+  commit would invalidate the chain below them on every commit. `.15` did exactly this by accident and
+  had to rebuild the corpus. The read-only way to ask the SAME canonical loader is to run the CONSUMING
+  stage with `--dry-run`, which is measured to leave the artifact byte-identical; that is what
+  `rebuild_stage_cascade.sh --check` and `check_chain_currency.sh` both use. The terminal stage has no
+  consumer and therefore no read-only canonical probe, which this gate must report rather than paper
+  over. Reusable control: a recording-stub binary asserting the gate never invokes `validate`
+  (`rebuild_stage_cascade.sh` self-test 13/14, observed RED at 12/14 on the known-bad code)
+  Prerequisite: `SOURCE-IR-REPRODUCIBILITY.14`, `SOURCE-IR-REPRODUCIBILITY.15`
 
 ## Open Questions
 
@@ -810,11 +891,16 @@ Full result, method, controls, and per-document table:
   discharged — `.8` gives the figure-interior population a carrier and `.9` gives the join an exact key — so
   the gate it owns is next, and it must be built to distinguish an artifact written with the carrier from one
   written before it, because a gate at the persisted corpus's numbers still fails closed everywhere.
+- `.16` is now unblocked and is the frontier: `.15` made all four downstream stages current, so the gate it
+  owns will not fail on day one, and `.15` handed it the two constraints that would otherwise have sunk it
+  (never probe with `specforge validate`; answer "carries no ledger" without reading the whole file).
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-28` | `.15` chain currency restored | `check_chain_currency.sh` (read-only; every replay is `--dry-run`): **evidence / semantic / intent / isf-adapter each 24 replayed, 24 current, 0 stale**, 54 legacy documents explicitly unmeasurable, retention exactly the declared 24 bundles, exit 0. `.14` left this doctrine green only at `evidence`; the whole chain is now current |
+| `2026-08-28` | `.15` downstream chain rebuilt | `rebuild_stage_cascade.sh --write`: **24 rebuilt / 24 content-identical / 0 content-changed / 24 validated / 0 failed** at every one of `evidence`, `semantic`, `intent`, `isf-adapter`, each seal moving to exactly one new value. Decisive control is independent of the remedy's own bookkeeping: an 842 MB snapshot of all 120 downstream artifacts taken **before any write**, re-compared afterwards with the shared predicate — 24/24 content-identical and 24/24 seal-moved at all four stages. Shared predicate: `compare_stage_artifact`/`compare_emitted_isf` extracted **byte-for-byte** (`diff` of removed vs extracted block is empty) into `scripts/lib/stage_artifact_identity.sh`; sabotaging it drives the ORACLE's own self-test **22/22 -> 20/22**. Cascade `--self-test` **14/14**, with 13/14 observed **RED at 12/14** against the exact known-bad `--check` that probed with `specforge validate`. Root-caused, not classified: `specforge validate` is not idempotent (mutations **4 -> 5 -> 6** over three calls; digest moves each time) while a `--dry-run` consuming-stage replay leaves the artifact **byte-identical** — so the first post-run validate census invalidated the chain it was measuring and forced a second rebuild. Designed behaviour per ADR 0038, not a defect: `proof_ledger.claims` is **480 at one mutation and 480 at four**, and `backannotate_report` is `clear()`+`push()` so `validation_reports` stays at 1 |
 | `2026-08-28` | `.14` SourceIR seal restored | `source_proof_migrate --write` re-sealed all 24 live artifacts. Decisive control is the content diff against an 89.0 MB pre-write snapshot of the 24 `source_ir.json` files, compared field by field with `proof_context`/`proof_ledger` excluded: **24 proof-only, 0 public content changed**. After: `specforge validate` **verified 24/24, failed 0/24**, seal homogeneous across all 24. Chain currency `evidence` **0 current / 24 stale -> 24 replayed / 24 current / 0 stale**; `semantic`/`intent`/`isf-adapter` still 0/24 but on a **different** error (persisted EvidenceIR's *cumulative* seal), which is `.15`. Cost that decided `.16`: 0.18 s to read all 78 seals, 7.2 s to verify all 24 canonically, versus **~20 min** for `check_chain_currency.sh` — and **13 days / 54 commits** of actual latency (sealed `2026-08-15`; earliest possible breaker `29dde0ac` `2026-08-16`, one of only 5 commits in that window touching a stage root or `derivation.rs`) |
 | `2026-08-28` | `.8` figure-interior carrier | population over all 24 retained converter bundles: **13,506** figure-interior text items reaching no record and earning no residual (13,416 `text`, 52 `caption`, 12 `section_header`, 10 `list_item`, 9 `footnote`, 6 `checkbox_unselected`, 1 `code`), **0 orphans** — every one attributable to a body-layer picture that becomes a `VisualAsset`; the only non-text nodes blocked inside a figure are 10 text-free `groups`, and no picture or table is nested inside a picture anywhere in the corpus. Reproduces `.5`'s persisted per-document figures exactly (I2C 1,372, I2S 255). End-to-end on a real I2S re-ingest: 464 converter items, **115 → 370** reaching a record, `picture_interior_not_traversed` **255 → 0**, the 94 remaining all furniture-layer, and `content_elements` **115 → 115** — the labels are carried without entering the prose stream. Landability measured: `source_proof_migrate` dry run re-derives **24/24** live artifacts as `verified` under the new schema. Producer self-test 33/33 → **37/37** with four observed RED perturbations (two rewritten after first running GREEN); focused Rust test with three observed RED perturbations; `cargo test --workspace` 470 / 172 / 1,376 / 4 passed, 0 failed |
 | `2026-08-28` | `.9` batch-qualified provenance | population: 78 persisted artifacts, **14** whose bare `source_ref` does not identify one content element and 64 that do; 111,861 elements over 28,599 distinct refs across the 14, 22,467 refs used more than once, 83,262 records (74.4%) unaddressable — Arm Debug 6,784 / 2,252 / 1,883 reproduces this tree's published figure. Falsified against the retained converter bundles, an independent artifact: 22 unambiguous+unbatched, 2 ambiguous+batched, **0 disagreements in either direction** across the 24 whose bundle survives; the 54 without one are not asserted. A first pass reporting all 78 as ambiguous was wrong and is corrected here — pooling `content_elements` with `document_sections` double-counts a section header, legitimately recorded in both under one ref (1,011 of 1,011 for Arm Debug). Producer self-test 32/32 -> **33/33** with seven observed RED perturbations, plus two on the Rust schema test; `cargo test --workspace --lib` 470 / 168 / 1,370 passed / 0 failed; clippy `-D warnings` clean |
@@ -828,6 +914,7 @@ Full result, method, controls, and per-document table:
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.15` | `SOURCE-IR-REPRODUCIBILITY.15 — rebuild the downstream chain the seal could not reach` | 24/24 content-identical at all four stages with every seal moved; one shared identity predicate for remedy and oracle; `.16`'s cost figure corrected before it is designed against |
 | `.8` | `SOURCE-IR-REPRODUCIBILITY.8 — give the text inside a figure somewhere to land` | `interior_texts` on the figure that contains it, membership defined by the converter's own traversal differenced against itself; 255 → 0 on a measured re-ingest with `content_elements` unmoved; opens `.14` |
 | `.14` | `SOURCE-IR-REPRODUCIBILITY.14 — re-seal the SourceIR corpus and size the check that should have caught it` | proof-only re-seal of all 24, 0 content changed; evidence chain currency restored; `.15`/`.16` opened |
 | `.9` | `SOURCE-IR-REPRODUCIBILITY.9 — give provenance the batch coordinate it was missing` | `source_batch` on the four `source_ref`-bearing records, emitted only for a batched run; the consumer keys on it exclusively; the standing ambiguity is measured (14 of 78) and published rather than worked around |
