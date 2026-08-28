@@ -32,7 +32,11 @@
 - In-flight uncommitted: none after this commit; `check_chain_currency.sh` was re-run read-only to certify
   the corpus. This pointer's fixed prose is capped at a derived 12 lines (`MEMORY_ARCHITECTURE.md` §6).
 - Blockers: none. Owned, not fixed: `.13` (frozen reviewed fixture not re-derivable),
-  `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`. Unowned and newly
-  measured: `generated/` holds 138 `live-document-size-tests.*` dirs (15 MB) leaked by
-  `scripts/test_live_document_size.pl`; `SCRATCH-RESIDUE-CONTAINMENT` explicitly excludes `generated/`,
-  so nothing owns them and no gate sees them — needs its own tree.
+  `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9`, and `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`. Unowned: `generated/`
+  holds 138 `live-document-size-tests.*` dirs (15 MB, 5 clusters). NOT a harness defect — a clean
+  `perl scripts/test_live_document_size.pl` run leaks **0** (measured, exit 0), so `CLEANUP => 1` works
+  and these are residue of INTERRUPTED runs, whose kill bypasses File::Temp's END cleanup. Real gap:
+  nothing reclaims them (`specforge clean` reaches them only via `--scope all-generated`, which discards
+  the whole corpus) and no gate sees them (`check_live_document_size.pl` reads `git ls-files --cached`
+  and skips `generated/`; the locality gate scans only `.project-data/tmp` at depth 1, files only).
+  `SCRATCH-RESIDUE-CONTAINMENT` excludes `generated/` by its Non-Goals. Needs its own tree.
