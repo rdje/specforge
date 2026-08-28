@@ -28,9 +28,11 @@
 - Next action: run `SOURCE-IR-REPRODUCIBILITY.8` — a typed carrier or an explicit residual for the 5,896
   figure-interior text items ingest discards, never promoted into `content_elements` as prose. It is the
   last prerequisite `.7`'s conservation gate waits on now that `.9` is done.
-- In-flight uncommitted: none after this commit; no background job is running. The pointer's fixed prose
-  is now capped at a derived 12 lines (`MEMORY_ARCHITECTURE.md` §6), leaving 42 for this block.
+- In-flight uncommitted: none after this commit; no background job is running. This pointer's fixed prose
+  is capped at a derived 12 lines (`MEMORY_ARCHITECTURE.md` §6); the gate prints the room left each run.
 - Blockers: none. Owned, not fixed: `CLAIM-VERIFICATION-ADOPTION.7` (a published count does not
-  re-derive), `.8` (census registry 109 of a declared 128, +1 per ledger-prepending slice),
-  `SOURCE-IR-REPRODUCIBILITY.13` (frozen reviewed fixture not re-derivable), `docs/research/*.md` 63 of
-  64 files and this pointer 44 of 50 lines (`LIVE-DOCUMENT-PRESSURE-HEADROOM.4`).
+  re-derive), `.8` (the census registry grows one record per ledger-prepending slice against a declared
+  128 — derive it, do not carry it: `grep -c . doctrine/claim_verification/current_claim_census.jsonl`),
+  `SOURCE-IR-REPRODUCIBILITY.13` (frozen reviewed fixture not re-derivable), and
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` (`docs/research/*.md` is one file from a ceiling with no warning
+  band and no rollover; `bash scripts/check_live_document_size.sh` reports the margin).
