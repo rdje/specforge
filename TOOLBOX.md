@@ -88,15 +88,21 @@ control also binds one exact known-bad source region. The report exposes 7 cited
 6 governed producers / 0 ignored / 0 untracked producer candidates. `[claim: claim-provenance-gate-active]`
 
 For the current-surface authority sweep, use `perl scripts/check_current_claim_census.pl --check`, `--report`,
-`--produce`, and `--self-test`. Its stable partition is 11 derived, 7 identity-gated, 6 registered, and
-0 incomplete, and it retains every non-frontier outcome. The **excluded count and the unit total are not
-constants and are deliberately not published here**: every slice that prepends a rolling-ledger head earns
-exactly one more excluded unit, measured 56 → 57 → 58 → 59 → 60 across `50775894`, `e6f5012d`, `f9e785ca`,
-`fdda3c53`, and this commit. A number that increments once per commit is stale the moment it is written, so
-read it from `--report`. Candidate closure separately reports
-86 produced anchors = 51 exact evidence keys + 35 current registered annotations + 0 unresolved; the 27-case
-self-test instantiates every outcome family and challenges all coverage joins. Zero outer incomplete does not
-certify the 89 incomplete assertion regions exposed by the narrower mdBook contract.
+`--produce`, and `--self-test`. Only the fields a per-revision trajectory shows actually hold are carried here:
+`authority_outcomes.derived` **11**, `authority_outcomes.identity_gated` **7**, no `incomplete` outcome,
+`candidate_closure.unresolved` **0**, and **39** current surfaces over **5** views — unchanged at every one of
+the 28 consecutive revisions from `e6f5012d` to this commit, and at the older `50775894` anchor `.6` cited. **Everything else that report prints is moved by ordinary,
+often unrelated work and is deliberately not published here**: `evidence_units`, `authority_outcomes.excluded`,
+`authority_outcomes.registered`, and the rest of `candidate_closure`. Two measured mechanisms move them. A slice
+that prepends or seals a rolling-ledger record changes the unit and exclusion totals — 15 rises, 2 falls, and 10
+no-changes across the 27 transitions measured from `e6f5012d`, so it is not even monotone. And any commit that adds or drops a
+`[claim: <id>]` annotation moves `registered` and closure: 6 and 86 = 51 + 35 through `fdda3c53`; 5 and
+72 = 50 + 22 from `5fe81128`, whose own `CHANGES.md` rollover carried 14 annotated regions out of the live
+window inside the commit that published the older values; 4 and 69 = 49 + 20 from `1507adbf`, which rewrote the
+resume pointer and dropped its three annotations. Read all of them from `--report`. The 27-case self-test
+instantiates every outcome family and challenges all coverage joins. Zero outer incomplete does not certify the
+**89** incomplete assertion regions (`check_book_quantitative_claims.pl --report`,
+`authority_outcomes.incomplete`) exposed by the narrower mdBook contract.
 `[claim: current-claim-census-frozen]`
 
 For manual-wide quantitative review, use `perl scripts/check_book_quantitative_claims.pl --check` to derive the
@@ -107,12 +113,15 @@ authority is accepted only from exact non-overlapping regions in frozen phase. T
 example/identity, and dated scope separate from registered authority and honest missing evidence legs. The
 `mdbook-quantitative-census-frozen` claim verifies that mapping only; an `incomplete` region remains unverified.
 
-Every count in this section is re-derived from those three `--report` commands, not carried. That is not a
-style preference: a `[claim: <id>]` annotation closes its region on the **presence** of the annotation, and the
-digest gate proves only that a governed file has not changed — neither reads the numbers in the sentence. Three
-counts here drifted under a fully green gate before `CLAIM-VERIFICATION-ADOPTION.6` re-derived them; two of
-those were per-commit counters that no maintenance discipline could have kept current, so `.6` withdrew them
-rather than re-carrying them. `.7` owns making the remaining ones re-derive mechanically.
+Every count in this section was re-derived from those three `--report` commands at this commit, and a count is
+carried only where a measured per-revision trajectory shows it holds. That is not a style preference: a
+`[claim: <id>]` annotation closes its region on the **presence** of the annotation, and the digest gate proves
+only that a governed file has not changed — neither reads the numbers in the sentence. `CLAIM-VERIFICATION-ADOPTION.6`
+corrected three drifted counts here and recorded eight as “confirmed unchanged”; `.6a` re-derived the 28
+consecutive revisions since, each with that commit's own checker, and found four of those eight were already
+false in `.6`'s own commit.
+That is same-transaction invalidation, not slow decay, so the default is withdrawal plus a named producer field.
+`.7` owns making the remaining ones re-derive mechanically.
 
 ## How to run the SpecForge CLI
 

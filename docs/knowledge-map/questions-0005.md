@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how does ingest avoid crashing the host when memory runs out
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how does ingest avoid filling the disk on a very large PDF
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -291,9 +297,3 @@
   > how many administrative workflow statements were measured
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how many alignment task owners and routes survive migration
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > how many caption bindings does the corpus lose on re-ingest
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many captions does ingest discard
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how many captured figure regions does the retained corpus hold

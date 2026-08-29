@@ -3,8 +3,8 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6` done; `.6a` owns four counters `.6` recorded as confirmed that have drifted
-  again; `.7` owns the gate that would have observed `.6`'s defect; `.8` tracks the census registry's own
+- Status: `active` (`.0`–`.6`, `.6a` done; `.6b` owns the same drift on the two surfaces `.6`/`.6a` did not
+  sweep; `.7` owns the gate that would have observed `.6`'s defect; `.8` tracks the census registry's own
   capacity; `.9` owns the candidate vocabulary's blind spot)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
@@ -326,7 +326,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.6a`
-  Status: `pending`
+  Status: `done` (`2026-08-29`)
   Goal: withdraw the four `TOOLBOX.md` census counters that `.6` confirmed and that have drifted again, on
   measured trajectory rather than by analogy with `.6`
   Acceptance: `.6` re-derived all 11 counts, withdrew the two it proved were per-commit counters, and
@@ -362,14 +362,103 @@ the workflow through the mdBook and repository review path.
   reproduce it. When `6 registered` became 5 is **not known** and must be measured; no endpoint comparison
   can supply it.
   Natural experiment obtained this session, which is dimensionally different from re-reading the file:
-  commit `1507adbf` touched only `MEMORY.md` and two claim registries — nothing owned by the census — and
-  moved all four again, `registered` 5 -> 4 and closure 72/50/22 -> 69/49/20. A counter that an unrelated
-  slice moves is not a constant, whatever a previous confirmation recorded. The pointer rewrite dropped three
-  `[claim: <id>]` annotations, which is exactly the mechanism `.6` named: the census closes a region on the
+  commit `1507adbf` published no census result and touched no producer — `MEMORY.md`,
+  `docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md`, and the two claim registries — and moved all four again,
+  `registered` 5 -> 4 and closure 72/50/22 -> 69/49/20. (The opening note said "nothing owned by the census";
+  that was wrong and is corrected here — `MEMORY.md` and `docs/tasks/*.md` are both governed census surfaces,
+  which is precisely why the pointer rewrite could move the counts.) The rewrite dropped all three
+  `[claim: <id>]` annotations `MEMORY.md` carried at `c1609558` (`claim-provenance-gate-active`,
+  `current-claim-census-frozen`, `mdbook-quantitative-census-frozen`; `git show <rev>:MEMORY.md | grep -c
+  '\[claim:'` gives 3 -> 0), which is exactly the mechanism `.6` named: the census closes a region on the
   **presence** of the annotation, so the counts move whenever annotations do
   Risk this leaf must not repeat: `.6`'s first attempt wrote 59/35 and the commit publishing it made them
   60/36. Re-carrying a per-commit counter is stale on landing, so the default is withdrawal plus a named
   producer field, and re-carrying requires the trajectory to show the number actually held
+  **Measured trajectory (`2026-08-29`) — the 28 consecutive revisions `e6f5012d` -> `60a81db7`, plus the older
+  `50775894` anchor `.6` itself cited (29 measurements), each with that revision's own checker, in a detached
+  worktree**, which is what separates a stale constant from a counter ordinary work moves. Rig, exactly as run:
+
+  ```sh
+  git worktree add --detach .project-data/tmp/claim-census-trajectory/wt 5fe81128
+  for rev in 50775894 $(git rev-list --reverse 5fe81128~3^..HEAD); do
+    git -C .project-data/tmp/claim-census-trajectory/wt checkout --detach --quiet "$rev"
+    rm -rf   .project-data/tmp/claim-census-trajectory/wt/subs/fsmgen
+    mkdir -p .project-data/tmp/claim-census-trajectory/wt/subs/fsmgen
+    git -C subs/fsmgen archive "$(git rev-parse "$rev:subs/fsmgen")" \
+      | tar -x -C .project-data/tmp/claim-census-trajectory/wt/subs/fsmgen
+    ( cd .project-data/tmp/claim-census-trajectory/wt \
+      && perl scripts/check_current_claim_census.pl --report )
+  done
+  git worktree remove --force .project-data/tmp/claim-census-trajectory/wt
+  ```
+
+  The `subs/fsmgen` step is not optional and is the reason the first two attempts recorded nothing:
+  `git worktree add` does not populate a gitlink, so `check_fsmgen_feedback_protocol.pl` fails, the
+  `fsmgen_correspondence_projection` derived-state contract fails with it, and the census exits **before**
+  printing its report at every revision. Recorded as `[[worktree-doctrine-measurement-gitlink]]`.
+
+  | Band | `registered` | `candidate_closure` | Revisions |
+  | --- | ---: | --- | --- |
+  | A | 6 | 86 = 51 + 35 + 0 | `50775894`\*, `e6f5012d`, `f9e785ca`, `fdda3c53` |
+  | B | 5 | 72 = 50 + 22 + 0 | `5fe81128`, `245b3b60`, `3b3ea863`, `024202dd`, `5cac6c67`, `75275b69`, `2172ad9e`, `10d66551`, `943381c8`, `5f44ea68`, `3833ad10`, `5f568381`, `4f7590a4`, `455e74bd`, `369e826a`, `01f385b0`, `b36e81b3`, `505fe7b4`, `1ccb7331`, `3840bb0e`, `69a0d6da`, `d1c22cd9`, `c1609558` |
+  | C | 4 | 69 = 49 + 20 + 0 | `1507adbf`, `60a81db7` |
+
+  \* `50775894`'s `--report` predates the `candidate_closure` field and emits only
+  `producer_candidates: 76`; its `registered` is 6. The closure triple is therefore measured across the 28
+  consecutive revisions from `e6f5012d`, and `registered` at all 29 measurements. `50775894` is `.6`'s own
+  cited anchor and is 29 commits before `e6f5012d`, so it is a sampled point, not part of the consecutive run.
+  **The unanswered question is answered: `6 registered` became 5 inside `5fe81128` itself** — the same commit,
+  the same rollover, and the same transaction that published "6 registered" as confirmed unchanged. All four
+  counts were already false in `.6`'s own commit. This is not slow decay a maintenance pass could have caught;
+  it is same-transaction invalidation, and it is why `.6`'s wording ("confirmed unchanged") was unearnable at
+  the moment it was written.
+  **Stable at all 29 measurements**, and therefore carried with their producer fields named:
+  `authority_outcomes.derived` **11**, `authority_outcomes.identity_gated` **7**, no `incomplete` outcome,
+  `candidate_closure.unresolved` **0**, `current_surfaces` **39**, `views` **5**.
+  **A fifth number in the same section is also corrected, and its stated mechanism was wrong.** `.6` published
+  the unit trajectory "56 -> 57 -> 58 -> 59 -> **60** across `50775894`, `e6f5012d`, `f9e785ca`, `fdda3c53`,
+  and this commit" and the rule "every slice that prepends a rolling-ledger head earns exactly one more
+  excluded unit". Measured: 56 / 57 / 58 / 59 are right and the last element is **59, not 60** — `.6`'s own
+  rollover sealed 18 records while adding 2, so the total did not rise. And the rule is not a rule: across the
+  27 transitions from `e6f5012d` to `60a81db7` the unit total rises 15 times, **falls twice**
+  (`943381c8` 65 -> `5f44ea68` 64 and `c1609558` 71 -> `1507adbf` 70), and is unchanged 10 times. Withdrawn
+  with the rest rather than re-carried.
+  **Sweep boundary stated, because a partial sweep is what created this leaf.** `.6a` re-derived every count
+  inside `TOOLBOX.md`'s claim-doctrine section, as `.6` did — and no further. Two other current-facing
+  surfaces publish the same census numbers and are stale at `60a81db7`; they are owned by `.6b`, opened in
+  this commit rather than reported.
+  **This is a correction, not a control.** Nothing here observes the next drift. `.7` still owns the gate that
+  binds a published count to its producer's exact report field, and `.6a` narrows `.7`'s design target: the
+  gate has to be able to fail a commit whose *own* transaction invalidates a count it publishes.
+  Verification: `28-consecutive-revision worktree trajectory plus the 50775894 anchor (each commit's own checker); TOOLBOX.md counts re-derived at
+  HEAD from check_current_claim_census.pl --report (11/7/-/0 carried, registered+closure withdrawn),
+  check_claim_verification.pl --report (7/7/6/0/0 current), check_book_quantitative_claims.pl --report
+  (89 incomplete current), census --self-test 27/27; doctrine gate`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.6a — measure the drift trajectory before withdrawing the counters`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.6b`
+  Status: `pending`
+  Goal: apply `.6`/`.6a`'s remedy to the two remaining current-facing surfaces that publish the census counts
+  Acceptance: `.6` and `.6a` swept `TOOLBOX.md` only, and said so. Found while running `.6a` and measured at
+  `60a81db7` against the same two producers, two further surfaces publish the same stale numbers:
+  `docs/book/src/reference/doctrine-enforcement.md` states "The repaired result contains 56 exact evidence
+  units: 11 derived, seven identity-gated, six registered, zero incomplete, and 32 excluded" (producer: 70
+  units, 11/7/**4**/0/**48**) and "The current authority freezes `regions=307`, `registered=8`,
+  `incomplete=78`, and `excluded=221` ... `authored=26`, `example=8`, `identity=1`, and `dated=186`"
+  (producer: **321**/8/**89**/**224**, exclusions 26/8/1/**189**); and the fact card
+  `docs/knowledge/current-claim-census-freeze.md` states "The current 56-unit result is 11 derived, seven
+  identity_gated, six registered, zero incomplete, and 32 excluded" and "78 incomplete assertion-level
+  regions", with "56 exact authority units" in its own title. The leaf must re-derive every count on both
+  surfaces, withdraw the ones `.6a`'s trajectory proves ordinary work moves, correct the genuinely stale
+  constants, and leave the boundary-scoped historical sentences (`.3c` closed 79 = 51 + 28, `.4` closed
+  84 = 51 + 33, `.5` closed 86 = 51 + 35) as dated observations rather than rewording them into current
+  claims. Two ordering constraints are part of acceptance: editing the book moves the frozen mdBook region
+  set, so `doctrine/claim_verification/book_quantitative_claims.jsonl` is regenerated in the same
+  transaction; and the **89** mdBook incomplete count `TOOLBOX.md` carries must be re-derived *after* the book
+  edit, because this leaf's own edit can move it — the precise failure `.6` recorded and `.6a` measured
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.6a`
+  Verification: `pending`
+  Commit: `pending`
   Verification: `pending`
   Commit: `pending`
 
@@ -414,6 +503,14 @@ the workflow through the mdBook and repository review path.
   The disagreement between two surfaces publishing the same count is a second, cheaper signal `.7`
   could exploit: it needs no producer at all, only the observation that two governed regions state
   different values for one quantity
+  Sixth instance (`2026-08-29`, measured by `.6a`, owned by `.6b` rather than repaired in place): the
+  **same-transaction** shape is now proved rather than suspected. All four counts `.6` recorded as
+  "confirmed unchanged" were already false in `5fe81128`, the commit that published them, and the same
+  commit's rollover is what falsified them. A gate that re-derives a published count at commit time is
+  therefore not a convenience — it is the only instrument that can see this class at all, because there is
+  no interval during which the published value was true. `.6a` also measured that the unit total is **not
+  monotone** (it falls when a governed surface loses annotated lines), so "counts only ever grow" is not a
+  simplification `.7` may rely on
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.8`
   Status: `pending` (tracking-only)
@@ -494,7 +591,8 @@ the workflow through the mdBook and repository review path.
 | 17 | `CLAIM-VERIFICATION-ADOPTION.3c` | `done` | 27-case family/join matrix and zero-unresolved candidate closure close `.3` |
 | 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `done` | seven controls and six producers close with exact RED evidence and zero scratch candidates |
 | 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `done` | public workflow, independent audit, and selected full CI close the fifth architecture |
-| 20 | `CLAIM-VERIFICATION-ADOPTION.6a` | `pending` | four counts `.6` recorded as "confirmed unchanged" no longer hold, and an unrelated commit moved all four again |
+| 20 | `CLAIM-VERIFICATION-ADOPTION.6a` | `done` | 28-consecutive-revision trajectory proves all four were already false inside `.6`'s own commit; withdrawn with producer fields named |
+| 21 | `CLAIM-VERIFICATION-ADOPTION.6b` | `pending` | the mdBook doctrine chapter and the census fact card still publish the counts `.6a` withdrew, plus two stale mdBook-census constants |
 
 ## Decisions
 
@@ -1161,6 +1259,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-29` | `.6a` | 28-consecutive-revision worktree trajectory (`e6f5012d` -> `60a81db7`) plus the `50775894` anchor, each with its own `check_current_claim_census.pl --report`; `check_claim_verification.pl --report`; `check_book_quantitative_claims.pl --report`; census `--self-test`; doctrine gate | `registered` **6 -> 5 -> 4** and closure **86/51/35 -> 72/50/22 -> 69/49/20**, stepping at `5fe81128` and `1507adbf`; so all four counts `.6` called confirmed were false **inside `.6`'s own commit**. `.6`'s unit trajectory is also corrected (**59**, not 60, at `5fe81128`) and its "one more excluded unit per rolling-ledger head" rule withdrawn — 15 rises, **2 falls**, 10 no-changes over 27 transitions. Stable across all 29: derived **11**, identity-gated **7**, no `incomplete`, unresolved **0**, surfaces **39**, views **5**; carried with producer fields named. `7/7/6/0/0` control audit and mdBook **89** incomplete re-derive; self-test **27/27** |
 | `2026-08-29` | `.7` fifth stale-count instance | `test_live_document_size.pl`; `check_fact_card_catalog.pl --self-test`; `test_derived_state_contracts.pl`; `test_derived_state_authorities.pl`; `check_task_tree_archive.pl --self-test`; `check_active_task_evidence.pl --self-test` | producers report **84 / 60 / 47 / 25 / 15 / 44**. `DOCTRINE_ENFORCEMENT.md` published 84/**58**; the book published **81**/**58**. Two stale counts repaired; the other four re-derive. The book's stale `81` sits at a line the frozen census holds **no** region for; its stale `58` sits at a line the census holds an **incomplete** region for — one outside the denominator, one inside it and explicitly unverified. Neither a digest binding nor the frozen census can observe either, which is `.7`'s whole point |
 --- |
 | `2026-08-15` | `.0` | full source-standard read; claim/review/derived-state/doctrine/control/tracked-
@@ -1250,6 +1349,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.3c` | `CLAIM-VERIFICATION-ADOPTION.3c — close the current-claim sweep` | clean-boundary replay, all-family RED matrix, mechanically closed candidate denominator |
 | `.4` | `CLAIM-VERIFICATION-ADOPTION.4 — prove tracked producers and falsifying controls` | exact known-bad regions, repaired workflow probe, derived six-producer/scratch census |
 | `.5` | `CLAIM-VERIFICATION-ADOPTION.5 — close three-leg claim verification adoption` | complete author/reviewer workflow, five-architecture retrieval, public alignment, independent full signoff |
+| `.6` | `CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts` | 11 counts re-derived, two per-commit counters withdrawn, mdBook incomplete 75 -> 89; four "confirmed" counts later proved false in this same commit |
+| `.6a` | `CLAIM-VERIFICATION-ADOPTION.6a — own four counters .6 confirmed that have drifted again` | leaf opened; withdrawal deliberately deferred until the trajectory was measured |
+| `.6a` | `CLAIM-VERIFICATION-ADOPTION.6a — measure the drift trajectory before withdrawing the counters` | 28-consecutive-revision worktree measurement plus the `50775894` anchor; four counters withdrawn with producer fields named, six carried, `.6`'s unit trajectory corrected, `.6b` opened |
 
 ## Changelog
 
@@ -1260,6 +1362,15 @@ was added; the stable-path remedy and its consumed authority are complete.
   again to 4 and `69/49/20`. The leaf is scoped to measure the trajectory before withdrawing anything, so
   "per-commit counter" is proved the way `.6` and `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` proved theirs rather
   than inferred from two endpoints.
+- `2026-08-29`: closed `.6a`. The trajectory was measured over the 28 consecutive revisions since `.6`, plus
+  `.6`'s own older `50775894` anchor, in a detached worktree, each with its own checker, and it answers the question the leaf opened with: `6 registered` became 5 **inside
+  `5fe81128`**, alongside the closure triple, so nothing in `.6`'s "confirmed unchanged" list was true when
+  `.6` wrote it. All four are withdrawn from `TOOLBOX.md` in favour of `--report` with their producer fields
+  named; the six values that did hold at every measurement are carried. `.6`'s own unit trajectory and its
+  stated growth rule are corrected as a fifth number in the same section. Opened `.6b` for the mdBook doctrine
+  chapter and the census fact card, which publish the same counts and were outside `.6`/`.6a`'s stated sweep
+  boundary. Added `[[worktree-doctrine-measurement-gitlink]]`, because the rig fails closed and silently until
+  the `subs/fsmgen` gitlink is populated in the worktree.
 - `2026-08-28`: `.7` gained its fourth instance and its repair, and `.8` was opened. `STATUS-LEDGER-ROLLOVER.4a`
   found `current-claim-census-frozen`'s own assertion stale and attributed it exactly: `.6` measured 86/51/35
   before applying its own `CHANGES.md` rollover, and that rollover moved 14 claim-annotated regions into an

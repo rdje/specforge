@@ -120,10 +120,16 @@
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how do I make the NLI verifier actively change extraction / demote claims
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > how do I measure a doctrine checker across many revisions
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I measure the extraction-quality gauge before and after a canonical promotion
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > how do I populate the fsmgen gitlink in a detached measurement worktree
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > how do I re-derive a published count per revision instead of at two endpoints
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I read the labels inside a diagram
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
@@ -292,9 +298,3 @@
   > how does held out full capture refresh preserve alpha eligibility authority
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does ingest avoid crashing the host when memory runs out
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does ingest avoid filling the disk on a very large PDF
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)

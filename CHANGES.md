@@ -1,3 +1,29 @@
+### CLAIM-VERIFICATION-ADOPTION.6a — measure the drift trajectory before withdrawing the counters
+
+- Measured the four drifted TOOLBOX.md census counters across the 28 consecutive revisions e6f5012d ->
+  60a81db7, plus the older 50775894 anchor `.6` cited — 29 measurements in a detached worktree, each with that
+  revision's OWN checker, rather than inferring "per-commit" from two endpoints. `registered` went 6 -> 5 and closure 86/51/35 -> 72/50/22 INSIDE 5fe81128 — the commit that
+  published them as "confirmed unchanged" — then 4 and 69/49/20 at 1507adbf. The leaf's open question, when
+  6 registered became 5, is answered: in the same transaction that published 6. Same-transaction
+  invalidation, not decay, so no maintenance discipline could have kept the sentence true.
+- Withdrew all four from the prose and routed the reader to --report with the producer field named. Carried
+  only what held at every measurement: derived 11, identity-gated 7, no incomplete outcome, unresolved 0,
+  39 current surfaces, 5 views.
+- Corrected a fifth number in the same section that nobody had questioned. `.6` published the unit trajectory
+  56 -> 57 -> 58 -> 59 -> 60; the last element is 59, not 60, because its own rollover sealed 18 records while
+  adding 2. Its stated rule, one more excluded unit per rolling-ledger head, is not a rule either: over the 27
+  transitions from e6f5012d the total rises 15 times, FALLS twice, and holds 10 times. Withdrawn with the rest.
+- Opened `.6b` instead of filing a defect. `.6`/`.6a` swept TOOLBOX.md only, and two surfaces still publish
+  the same counts: docs/book/src/reference/doctrine-enforcement.md (56 units and 11/7/6/0/32 against 70 and
+  11/7/4/0/48; regions=307, registered=8, incomplete=78, excluded=221 against 321/8/89/224) and the fact card
+  docs/knowledge/current-claim-census-freeze.md (the same 56-unit sentence, 78 incomplete, and "56 exact
+  authority units" in its own title).
+- Recorded the rig as a fact card, because it fails closed and silently: a git worktree does not populate the
+  subs/fsmgen gitlink, so check_fsmgen_feedback_protocol.pl fails, fsmgen_correspondence_projection fails with
+  it, and the census exits BEFORE printing its report at every revision — two earlier attempts recorded
+  nothing for exactly that reason. Correction, not control: `.7` still owns the gate, and `.6a` narrows its
+  target to a commit whose own transaction invalidates a count that same commit publishes.
+
 ### SCRATCH-RESIDUE-CONTAINMENT.3 — own and reclaim the fixture residue under generated/
 
 - Gave the `generated/` test-fixture residue an owner instead of a note. That tree's Non-Goal said
