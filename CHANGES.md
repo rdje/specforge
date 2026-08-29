@@ -1,3 +1,38 @@
+### SCRATCH-RESIDUE-CONTAINMENT.3 — own and reclaim the fixture residue under generated/
+
+- Gave the `generated/` test-fixture residue an owner instead of a note. That tree's Non-Goal said
+  "do not touch generated/; its lifecycle is owned by specforge clean and CORPUS-CHAIN-CURRENCY".
+  The premise was measured and is false for this class: clean's three scopes are source-normalized,
+  document, and all-generated; the first two are keyed on document roots and reach nothing else, and
+  the third discards the whole corpus. CHAIN-CURRENCY walks stage artifacts and never sees them. The
+  Non-Goal is narrowed to stage artifacts, deliberately and with the falsification recorded.
+- Reachability answered on both legs of the tree's own model before deleting anything. Named: git grep
+  returns only the producer script and two prose lines describing the residue; no tracked file names an
+  individual root. Chained: the retained-evidence walk resolves under .project-data/tmp and never leaves
+  it. Both negative.
+- Reclaimed 317 directories / 7,630 files / 32 MB with an empty name census after — the standing
+  138 / 3,449 / 15 MB plus this leaf's own controls. Producer re-verified clean afterwards: 84/84
+  checks pass, exit 0, leak 0.
+- MEASURED THE MECHANISM `.15` FORBADE ASSUMING. It recorded "a kill bypasses File::Temp's END cleanup"
+  as a hypothesis and said not to record a trigger without measuring one. Killing the producer at a
+  known live-fixture count leaks EVERY live fixture: SIGKILL 15/15, 15/15, 20/20; SIGTERM 15/15, 15/15,
+  20/20. The suite installs no %SIG handler and relies solely on tempdir(CLEANUP => 1), whose cleanup is
+  an END block a signal death never reaches. A third reproduction arrived unasked — this session's own
+  2-minute harness timeout killed a verification run and leaked 50.
+- Found the asymmetry that explains why the residue is rare rather than constant: killing only the
+  WRAPPER (check_live_document_size.sh) and orphaning the producer leaks 0, because the orphan runs to
+  normal exit and cleans up. So an interrupted gate does not normally leak. The observed cluster sizes
+  (53/53/30/1/1), all below the run's 84-fixture peak, fit that shape exactly.
+- Did NOT publish a SIGINT result. A background child of a non-interactive shell inherits SIG_IGN for
+  SIGINT, so the probe could not deliver it; the one apparent leaked=0 reading is a harness artifact,
+  not a property of the suite. Recorded as honestly unmeasured.
+- Confirmed the gate exposure is a real nondeterministic-failure surface, not tidiness:
+  check_persisted_artifact_paths.pl (run by PROJECT-DATA-LOCALITY) walks every *.json under generated/
+  and FAILED with 20 "cannot read canonical artifact" lines when a fixture run deleted them mid-walk.
+- Prevention is NOT done and is routed to `.4`: the producer is still signal-unsafe, so the residue
+  recurs. `.4` must choose between a %SIG handler and a proportionate reclamation scope on evidence,
+  with a RED control proving the choice survives the measured kill shape.
+
 ### SOURCE-IR-REPRODUCIBILITY.16 — report the seal debt on the commit that creates it
 
 - Added scripts/check_proof_seal_currency.sh and registered PROOF-SEAL-CURRENCY at GATE tier in

@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SCRATCH-RESIDUE-CONTAINMENT`
-- Status: `active` (`.0` complete; `.1` pending)
+- Status: `active` (`.0`, `.3` complete; `.1`, `.2`, `.4` pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-08-27`
+- Last updated: `2026-08-29`
 - Owner: repo-local workflow
 
 ## Goal
@@ -21,7 +21,15 @@ only when it is provably safe; the reachability question is what makes it provab
   behavioral holdout resolves retained artifacts by walking `retained_evidence_path` links, so a root can be
   load-bearing without any tracked file naming it directly.
 - Do not delete the evidence behind a published signoff on a sweep's own authority. That is a decision (`.1`).
-- Do not touch `generated/`; its lifecycle is owned by `specforge clean` and `CORPUS-CHAIN-CURRENCY`.
+- Do not touch stage artifacts under `generated/`; their lifecycle is owned by `specforge clean` and
+  `CORPUS-CHAIN-CURRENCY`. **Narrowed `2026-08-29` (`.3`), because this Non-Goal's premise was measured and
+  is false for one class.** It assumed everything under `generated/` has an owner. Test-fixture roots left by
+  `scripts/test_live_document_size.pl` have none: `specforge clean`'s three scopes are `source-normalized`,
+  `document`, and `all-generated` (verified in `crates/specforge/src/commands/clean.rs` and `clean --help`),
+  the first two are keyed on document roots and reach nothing else, and the third discards the whole corpus —
+  so there is no proportionate route. `CORPUS-CHAIN-CURRENCY` walks persisted stage artifacts and never sees
+  them. The narrowing is deliberate and bounded: unreachable **test-fixture** roots under `generated/` are in
+  scope; stage artifacts remain out.
 
 ## Reachability model (`.0`, `2026-08-27`, complete)
 
@@ -86,6 +94,54 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   unreachable roots with their size; a RED control proves a chain-reachable root is never reported unreachable
   Prerequisite: `SCRATCH-RESIDUE-CONTAINMENT.1`
 
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.3`
+  State: `done` (`2026-08-29`)
+  Goal: own and reclaim the fixture residue under `generated/` that no owner reaches
+  Acceptance: routed here from `SOURCE-IR-REPRODUCIBILITY.16`'s resume pointer, which recorded the class as
+  unowned. Both legs of `.0`'s reachability model are answered for it, the reclamation is censused before and
+  after, and the producer is proved unaffected — not merely assumed to be.
+  **Reachability.** Named: `git grep live-document-size-tests` returns only the producer script and two prose
+  lines describing the residue itself; no tracked file names any individual root. Chained: the retained-evidence
+  walk resolves under `.project-data/tmp`, never `generated/`, so no chain reaches them. Both legs negative.
+  **Census.** Standing residue at `2026-08-29`: **138 directories, 3,449 files, 15 MB**, in five mtime clusters
+  (53/53/30/1/1), holding 2,080 `.md`, 276 `.sh`, 276 `.jsonl`, 138 `.json`, 138 `.log`, 138 `.tsv`, 138 `.txt`
+  and 10 fixture Git repositories. Reclaimed together with this leaf's own experiment output: **317 directories,
+  7,630 files, 32 MB removed, 0 remaining** by name census. The producer then re-ran clean: **84/84 pass, exit
+  0, leak 0**.
+  **The mechanism is now measured, not inferred.** `.15` recorded "a kill bypasses File::Temp's END cleanup" as
+  a hypothesis and forbade recording a trigger without measuring one. Measured here by direct control, killing
+  the producer at a known live-fixture count: **SIGKILL leaks every live fixture (15/15, 15/15, 20/20)** and
+  **SIGTERM leaks every live fixture (15/15, 15/15, 20/20)**. The suite installs no `%SIG` handler and relies
+  solely on `tempdir(CLEANUP => 1)`, whose cleanup is an END block a signal death never reaches.
+  A **third, incidental reproduction** arrived unasked: this session's own 2-minute harness timeout killed a
+  verification run mid-suite and leaked **50**.
+  **The asymmetry that explains why this residue is rare.** Killing the *wrapper*
+  (`scripts/check_live_document_size.sh`) and leaving the producer orphaned leaks **0** — the orphan runs to
+  normal exit and cleans up. So an interrupted gate does not normally leak; only a signal that reaches the perl
+  process itself does. The observed cluster sizes (53/53/30/1/1), all below the run's 84-fixture peak, fit that
+  shape exactly.
+  **Honestly unmeasured:** SIGINT, the Ctrl-C shape. A background child of a non-interactive shell inherits
+  `SIG_IGN` for SIGINT, so the probe could not deliver it and the one apparent `leaked=0` reading for SIGINT is
+  an artifact of the harness, not a property of the suite. It is not published as a result.
+  **Gate exposure, corrected from the resume pointer.** `.16`'s pointer said "no gate sees them". No gate
+  *judges* them, but `scripts/check_persisted_artifact_paths.pl` — run by `PROJECT-DATA-LOCALITY` — walks every
+  `*.json` under `generated/` and classified their 138 as `other`. Observed `2026-08-29`: a fixture run
+  concurrent with the gate deleted them mid-walk and the gate FAILED with 20 `cannot read canonical artifact`
+  lines. That is a live nondeterministic-failure surface, not a tidiness issue, and it is why this class needed
+  an owner rather than a note
+  Prerequisite: `SCRATCH-RESIDUE-CONTAINMENT.0`
+
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.4`
+  State: `pending`
+  Goal: stop the fixture residue being created, or give it a proportionate reclamation route
+  Acceptance: `.3` reclaimed the standing residue and measured how it appears; it did not stop it recurring.
+  Two candidate remedies, and the leaf must decide between them on evidence rather than take both: make the
+  producer signal-safe (a `%SIG` handler for INT/TERM that runs the same cleanup END would), or give the
+  fixture root a reclamation scope that does not discard the corpus. A RED control must prove the chosen
+  remedy actually survives the kill shape `.3` measured, and the gate-walk exposure must be closed or
+  explicitly accepted with a reason
+  Prerequisite: `SCRATCH-RESIDUE-CONTAINMENT.3`
+
 ## Open Questions
 
 - Should a scratch root that is only chain-reachable be required to carry its own declaration, so reachability
@@ -99,12 +155,14 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-29` | `.3` fixture-residue reclamation | reachability both legs negative (`git grep` returns only the producer and two prose lines; no chain leaves `.project-data/tmp`). Reclaimed **317 directories / 7,630 files / 32 MB** — the standing **138 / 3,449 / 15 MB** plus this leaf's own controls — with an empty name census after. Producer re-verified clean: **84/84, exit 0, leak 0**. Mechanism measured rather than inferred: killing the producer at a known live count leaks every live fixture under **SIGKILL (15/15, 15/15, 20/20)** and **SIGTERM (15/15, 15/15, 20/20)**; killing only the wrapper and orphaning the producer leaks **0**; a harness timeout reproduced it incidentally at **50**. SIGINT stays unmeasured — a background child inherits `SIG_IGN` for it. Gate exposure confirmed: `check_persisted_artifact_paths.pl` walks every `*.json` under `generated/` and FAILED with 20 `cannot read canonical artifact` lines when a fixture run deleted them mid-walk |
 | `2026-08-27` | `.0` reachability sweep and reclamation | every root under `.project-data/tmp/` classified by named-or-chained reachability; the retained-evidence chain traced to one hop with the declared `retained_evidence_sha256` matching on disk; 12 unreachable paths removed — 5,290 files / 2,669,876 KiB (2.55 GiB) — with an empty residue census, and all four retained roots byte-count and file-count identical before and after |
 
 ## Commit Log
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.3` | `SCRATCH-RESIDUE-CONTAINMENT.3 — own and reclaim the fixture residue under generated/` | narrow the `generated/` Non-Goal on a measured falsification, reclaim 317 roots / 32 MB, measure the kill shape that creates them, and route prevention to `.4` |
 | `.0` | `SCRATCH-RESIDUE-CONTAINMENT.0 — reclaim the scratch nothing can reach` | establish the named-or-chained reachability model, reclaim 2.55 GiB provably unreachable, and route the two chain-bearing holdout roots to `.1` |
 
 ## Update protocol

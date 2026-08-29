@@ -37,13 +37,13 @@
 - In-flight uncommitted: none after this commit. This pointer's fixed prose is capped at a derived 12
   lines (`MEMORY_ARCHITECTURE.md` §6).
 - Blockers: none. Owned, not fixed: `.13` (frozen reviewed fixture not re-derivable),
-  `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`. Unowned and needs its
-  own tree: `generated/` holds 138 `live-document-size-tests.*` dirs (15 MB, 5 clusters). Not a harness
-  defect — a clean `perl scripts/test_live_document_size.pl` run leaks **0** (measured twice) at a peak
-  of **84** live fixtures; every cluster (1/1/53/30/53) is below 84, so these are runs killed before
-  File::Temp's END cleanup. WHY they died is unknown; do not record a trigger without measuring one.
-  Nothing reclaims them (`specforge clean` reaches them only via `--scope all-generated`, which discards
-  the corpus). Correction to this pointer's earlier "no gate sees them": no gate JUDGES them, but
-  `check_persisted_artifact_paths.pl` (run by the locality gate) WALKS every `*.json` under `generated/`
-  and FAILED on `2026-08-29` when a concurrent fixture run deleted them mid-walk.
-  `SCRATCH-RESIDUE-CONTAINMENT` excludes `generated/` by its Non-Goals.
+  `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`,
+  `SCRATCH-RESIDUE-CONTAINMENT.4`. The `generated/` fixture residue is no longer unowned: `.3` narrowed
+  that tree's `generated/` Non-Goal on a measured falsification (`specforge clean`'s three scopes reach
+  it only via `--scope all-generated`, which discards the corpus) and reclaimed **317 roots / 7,630
+  files / 32 MB, 0 remaining**. Mechanism measured, not inferred: killing the producer leaks every live
+  fixture under SIGKILL and SIGTERM (15/15, 15/15, 20/20 each); killing only the wrapper and orphaning
+  the producer leaks **0**; SIGINT stays honestly unmeasured. `.4` owns prevention — the producer is
+  still signal-unsafe, so the residue recurs. Watch the exposure: `check_persisted_artifact_paths.pl`
+  (locality gate) walks every `*.json` under `generated/` and FAILS if a fixture run deletes one
+  mid-walk, so never run the suite concurrently with the gate.
