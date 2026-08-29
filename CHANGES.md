@@ -1,3 +1,36 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.2c — shard the task index by lifecycle, not by alphabet
+
+- Made the director's no-cap directive true instead of relocated. .2a removed the file-count cap and moved the
+  binding stop to docs/TASK_TREE.md at one row per tree; copying the Knowledge Map's quantum split would have
+  relocated it again, because a landing that lists every tree grows with project lifetime whatever the quantum.
+- Sharded by LIFECYCLE. The landing carries every open tree - anything not done or superseded - and routes the
+  complete catalog to derived parts under docs/task-catalog/. The bound now measures concurrent work in flight,
+  which ordinary work reduces by finishing trees. Measured: landing 404 -> 295 lines with 25 open trees, and
+  150 trees across 3 parts. Generation and proof follow the existing remedies exactly: --write renders landing
+  and parts, --check derive-and-diffs both and refuses an unplanned part, no member list is hand-edited.
+- One checker rule changed, and it was over-strict rather than wrong. routed_membership required its index to
+  live inside the surface, which holds for docs/knowledge/INDEX.md but not for docs/TASK_TREE.md - a task index
+  is not a task tree. Where the landing lives and whether membership may take one hop are orthogonal, so a
+  routed index may now sit outside its collection when it is itself a classified surface. The control that
+  asserted the old location rule now asserts what actually protects the reader (an outside index still proves
+  membership), and a new control covers the surviving refusal.
+- Derived the parts bounds from the generator's own structure rather than copying fact_card_titles'. A full
+  part is 56 rows plus 11 fixed lines = 67 lines and a row is capped at 512 bytes, so the health targets are
+  set such that a structurally full part sits BELOW the 80% warning. Copying the 80-line target would have made
+  a full part warn at 83.8% with nothing to do about it - the exact bound-with-no-remedy this tree removes.
+- Found while implementing, tracked as .6 rather than widened here: external_membership's "is not a classified
+  Markdown surface" refusal actually tests only that the path is a tracked Markdown file. Unclassified Markdown
+  is refused separately, so this is a weak control rather than a hole, but its message claims more than it
+  checks. The new routed rule tests real classification.
+- Suite 92 -> 93 cases, all passing; the published count was corrected on both surfaces carrying it.
+- Falsified one of .6a's own carried values, which is worth more than the shard. .6a carried current_surfaces
+  39 as stable across all 29 measured revisions and published it in TOOLBOX.md, the census fact card, and the
+  current-claim-census-frozen assertion; registering task_tree_catalog_parts moved it to 40 on the first
+  structural slice after that measurement. A trajectory shows what has not happened, never what cannot, so
+  "stable across N revisions" is grounds for withdrawing later rather than a licence to carry. All three
+  publishers withdraw it to --report in this same commit. Also re-pinned the landing's census marker, which
+  contained a tree count that adding one tree would have broken.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.2b — retire the consumed ceiling-increase authority
 
 - Observed the control RED before retiring anything, which is why this is a leaf and not a tidy-up. With the

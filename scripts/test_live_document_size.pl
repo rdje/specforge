@@ -529,7 +529,11 @@ expect_case('routed membership rejects a chained route surface', 0, qr/route_sur
     };
     save_registry($fixture);
 });
-expect_case('routed membership rejects an index outside the surface', 0, qr/routed_membership index 'snapshot\.md' is outside the surface/, sub {
+# A routed index that sits outside its surface is no longer refused for that alone — it may, when the index is
+# itself a classified surface (LIVE-DOCUMENT-PRESSURE-HEADROOM.2c). It still has to prove membership, so the
+# case that used to assert the location rule now asserts the rule that actually protects the reader.
+expect_case('a routed membership index outside the surface still proves membership',
+  0, qr/index 'snapshot\.md' does not link route member 'routed-titles\/titles-0001\.md'/, sub {
     my ($fixture) = @_;
     surface($fixture, 'routed')->{index} = 'snapshot.md';
     save_registry($fixture);
@@ -1075,6 +1079,18 @@ expect_case('a cardinality exemption with an untracked authority is rejected',
   0, qr/authority 'routed\/absent\.md' is not a tracked repository file/, sub {
     my ($fixture) = @_;
     declare_exemption($fixture, authority => 'routed/absent.md');
+    save_registry($fixture);
+});
+
+# A routed index may live outside its own collection (docs/TASK_TREE.md is not a task tree), but only when
+# it is itself a classified surface — otherwise the landing floats outside every bound
+# (LIVE-DOCUMENT-PRESSURE-HEADROOM.2c).
+expect_case('a routed membership index outside the surface must itself be classified',
+  0, qr/routed_membership index 'unclassified\/INDEX\.md' is outside the surface and is not a classified Markdown surface/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'unclassified/INDEX.md', "# Floating landing\n");
+    my $surface = surface($fixture, 'routed');
+    $surface->{index} = 'unclassified/INDEX.md';
     save_registry($fixture);
 });
 

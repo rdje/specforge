@@ -22,8 +22,9 @@ reverify: perl scripts/check_current_claim_census.pl --self-test && perl scripts
 
 `CLAIM-VERIFICATION-ADOPTION.3b.4` re-freezes the nonhistorical claim-authority census after the bounded `.3b`
 repair sequence.
-The denominator is derived from the live-document registry: 39 current surfaces, of which 32 enter semantic
-inspection and seven have explicit standard-scope exclusions. All five views have evidence.
+The denominator is derived from the live-document registry, so it moves whenever a surface is registered:
+read `current_surfaces` / `included_surfaces` / `excluded_surfaces` from `--report`. All five views have
+evidence, and every included surface has one, which is the property that does not move.
 
 At the `.3b.4` boundary the result was **56 units: 11 `derived`, seven `identity_gated`, six `registered`,
 zero `incomplete`, and 32 `excluded`**. Only three of those fields are constants.
@@ -33,7 +34,9 @@ work** — a rolling-ledger rollover carries claim-annotated regions out of the 
 adds or drops a `[claim: <id>]` annotation moves the rest. `registered` went 6 -> 5 -> 4 and closure
 86/51/35 -> 72/50/22 -> 69/49/20 across that run, stepping inside `5fe81128` and `1507adbf`. What held at every
 measurement is `derived` **11**, `identity_gated` **7**, the absence of an `incomplete` outcome, zero
-unresolved candidates, **39** current surfaces, and **5** views; read everything else from `--report`.
+unresolved candidates, and **5** views; read everything else from `--report`. `current_surfaces` held at 39
+for 29 measured revisions and then moved to 40 the moment `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` registered a
+derived task-catalog surface — an unmoved value is not a constant.
 The first production pass exposed why view membership cannot be a declaration-only property:
 a candidate keyed by surface + path + line collapsed a second semantic view onto the first. Candidate identity
 now includes surface + view + path + line, and frozen validation independently requires evidence for every

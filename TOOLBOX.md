@@ -90,8 +90,10 @@ control also binds one exact known-bad source region. The report exposes 7 cited
 For the current-surface authority sweep, use `perl scripts/check_current_claim_census.pl --check`, `--report`,
 `--produce`, and `--self-test`. Only the fields a per-revision trajectory shows actually hold are carried here:
 `authority_outcomes.derived` **11**, `authority_outcomes.identity_gated` **7**, no `incomplete` outcome,
-`candidate_closure.unresolved` **0**, and **39** current surfaces over **5** views — unchanged at every one of
-the 28 consecutive revisions from `e6f5012d` to this commit, and at the older `50775894` anchor `.6` cited. **Everything else that report prints is moved by ordinary,
+`candidate_closure.unresolved` **0**, and **5** views — unchanged at every one of the 28 consecutive revisions
+from `e6f5012d` to this commit, and at the older `50775894` anchor `.6` cited. `current_surfaces` was carried
+here too until `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` registered a new surface and moved it 39 -> 40: a value
+stable across 29 revisions is still not a constant, only an unmoved one, so it is withdrawn to `--report`. **Everything else that report prints is moved by ordinary,
 often unrelated work and is deliberately not published here**: `evidence_units`, `authority_outcomes.excluded`,
 `authority_outcomes.registered`, and the rest of `candidate_closure`. Two measured mechanisms move them. A slice
 that prepends or seals a rolling-ledger record changes the unit and exclusion totals — 15 rises, 2 falls, and 10

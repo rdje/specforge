@@ -921,6 +921,18 @@ sub validate_index {
         problem("surface '$id' external_membership index '$index' must be outside the surface") if $inside;
         problem("surface '$id' external_membership index '$index' is not a classified Markdown surface")
             if !$path_seen{$index};
+    } elsif ($kind eq 'routed_membership') {
+        # Where the landing lives and whether membership may take one hop are orthogonal. A routed index may
+        # sit outside its own collection — docs/TASK_TREE.md is not a task tree — but then it must itself be a
+        # classified surface, exactly as external_membership requires, so the landing stays bounded by a
+        # registered surface instead of floating (LIVE-DOCUMENT-PRESSURE-HEADROOM.2c).
+        # Note the test: real classification, not mere existence. `%path_seen` only says a Markdown file is
+        # tracked, which is what external_membership checks under the same wording; that is weaker than the
+        # sentence claims and is recorded for its owner rather than widened here.
+        my $classified = grep { grep { $_ eq $index } @{ $matches_by_surface{$_} // [] } }
+            keys %matches_by_surface;
+        problem("surface '$id' routed_membership index '$index' is outside the surface and is not a classified Markdown surface")
+            if !$inside && !$classified;
     } else {
         problem("surface '$id' $kind index '$index' is outside the surface") if !$inside;
     }

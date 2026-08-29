@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5`/`.2a`/`.2b` done; `.2c` shards the index the stop relocated to; `.1`/`.3`/`.4` pending)
+- Status: `active` (`.0`/`.5`/`.2a`/`.2b`/`.2c` done — `.2` closes; `.1`/`.3`/`.4`/`.6` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-29`
@@ -227,7 +227,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b — retire the consumed ceiling-increase authority`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c`
-  Status: `pending`
+  Status: `done` (`2026-08-29`)
   Goal: give the derived task index the sharding remedy so its cardinality stops being a stop
   Acceptance: `docs/TASK_TREE.md` becomes a bounded landing plus derived catalog parts, following the two
   remedies this repository already proves — the Knowledge Map's landing plus question shards and
@@ -235,8 +235,59 @@ repeatable rollover/remedy paths and remain under their existing owners.
   list; every existing route into the index still resolves; and the residual 108-tree stop `.2` measured is
   replaced by a bound that ordinary compliant work can pass without an authority edit
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`
-  Verification: `pending`
-  Commit: `pending`
+  **The shard is by lifecycle, not by alphabet, and that is the whole point.** Copying the Knowledge Map's
+  quantum split would have relocated the stop again — a landing listing every tree grows with project
+  lifetime whatever the quantum. The landing now carries every **open** tree (anything not `done` or
+  `superseded`) and routes the complete catalog to derived parts under `docs/task-catalog/`. So the bound
+  measures **concurrent work in flight**, which ordinary work reduces by finishing trees, instead of measuring
+  how long the project has existed. Measured: the landing went **404 -> 295 lines** with 25 open trees, and
+  150 trees route through 3 parts.
+  Generation and proof follow the two existing remedies exactly: `--write` renders the landing section and
+  every part, `--check` derive-and-diffs all of them and refuses an unplanned part file, and no member list is
+  hand-edited. `$TREES_PER_PART` is 56 and `$MAX_PARTS` 16.
+  **One checker rule had to change, and it was over-strict rather than wrong.** `routed_membership` required
+  its index to live *inside* the surface, which is true for `docs/knowledge/INDEX.md` but false for
+  `docs/TASK_TREE.md` — a task index is not a task tree. Where the landing lives and whether membership may
+  take one hop are orthogonal, so a routed index may now sit outside its collection provided it is itself a
+  classified surface; the landing therefore stays bounded by a registered surface rather than floating. The
+  existing control that asserted the old location rule is rewritten to assert what actually protects the
+  reader — an outside index still has to prove membership — and a new control covers the surviving refusal.
+  **Parts bounds are derived from the generator's own structure, not copied.** A full part is 56 rows plus 11
+  fixed lines = 67 lines, and a row is capped at 512 bytes, so the health targets are set such that a
+  structurally full part sits *below* the 80% warning (84 lines, 704 line-bytes, 12 of 16 files). Copying
+  `fact_card_titles`' 80-line target would have made a full part warn at 83.8% with no action available —
+  the exact "bound with no compliant remedy" this tree exists to remove.
+  **Found while implementing, not fixed here:** `external_membership`'s "is not a classified Markdown
+  surface" refusal actually tests only that the path is a *tracked Markdown file* (`%path_seen`), not that any
+  surface claims it. In a valid registry the two coincide, because unclassified Markdown is refused
+  separately, so this is a weak control rather than a hole — but its message claims more than it checks. The
+  new routed rule tests real classification; the older one is left for its owner. Tracked as
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.6`.
+  **This slice falsified one of `.6a`'s own carried values, and that is worth more than the shard.** `.6a`
+  carried `current_surfaces` **39** as stable across all 29 measured revisions and published it in
+  `TOOLBOX.md`, the census fact card, and the `current-claim-census-frozen` assertion. Registering
+  `task_tree_catalog_parts` moved it to **40** on the first structural slice after that measurement. A value
+  stable across 29 revisions is not a constant — it is an unmoved one, and a trajectory can only ever show
+  what has not happened yet. All three surfaces withdraw it to `--report` in this commit. Also re-pinned: the
+  landing's own census evidence pinned `stdout_contains: "task-tree-catalog: 150 real task trees"`, a marker
+  containing a tree count that adding one tree would break; it now pins the stable phrase instead.
+  Verification: `check_task_tree_catalog.pl --self-test 13/13; --write then --check derive-and-diff green at
+  150 trees across 3 parts with 25 open on the landing; check_live_document_size.pl green at 892 Markdown
+  files / 56 surfaces with no warning on the new surface; test_live_document_size.pl 93 cases`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c — shard the task index by lifecycle, not by alphabet`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.6`
+  Status: `pending` (tracking-only)
+  Goal: make `external_membership`'s classification refusal test classification
+  Acceptance: `scripts/check_live_document_size.pl` refuses an `external_membership` index that "is not a
+  classified Markdown surface", but the test is `%path_seen` — which only proves the path is a tracked
+  Markdown file. Any surface could point its external index at an unclassified tracked file and the message
+  would not fire; the separate unclassified-Markdown refusal is what actually catches it today, so this is a
+  weak control rather than an open hole. Make the test match the message the way
+  `routed_membership` now does (a surface must actually match the path), and add a RED control that
+  distinguishes the two — a tracked-but-unclassified index must be refused by *this* rule, named, rather than
+  only by the coverage rule
+  Prerequisite: none; found by `.2c` while widening the routed rule
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.3`
   Status: `pending`

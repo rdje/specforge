@@ -40,7 +40,8 @@ correctly without re-reading chat history.
 
 - **One file per top-level tree** under [`docs/tasks/`](tasks/), copied from
   [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
-- **`docs/TASK_TREE.md`** is the workflow spec + the derived complete task-tree catalog
+- **`docs/TASK_TREE.md`** is the workflow spec + the derived bounded landing: every open tree,
+  plus a route to the derived `docs/task-catalog/` parts that hold the complete catalog
   + the **PNT** (Pick-the-Next-Task) selection rules. The catalog is navigation only;
   `MEMORY.md` and each owning tree carry current execution state.
 - **Nodes** are containers (have children) or **leaves** (the only unit PNT may

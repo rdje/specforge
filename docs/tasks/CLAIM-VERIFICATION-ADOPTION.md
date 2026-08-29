@@ -595,6 +595,35 @@ the workflow through the mdBook and repository review path.
   for leaves the live window, rather than relocating it onto whatever line now sits at its offset
   Prerequisite: none; it blocks nothing today
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.10`
+  Status: `pending`
+  Goal: re-adopt the upstream standard, whose dropped rules would have caught this session's own defect
+  Acceptance: directive 17 asks that the source standard be checked for updates after adoption. It had not
+  been re-read since `.1`. Read `2026-08-29` at `/Volumes/SSD/Documents/github/pgen/docs/CLAIM_VERIFICATION.md`
+  (245 lines, mtime `2026-08-26`; same volume, read-only, no copy taken). The local `CLAIM_VERIFICATION.md`
+  is **205 lines and a restatement, not a copy**, so a byte diff says nothing — the gap has to be read
+  section by section. Three upstream rules are absent locally, and each one independently forbids a mistake
+  this repository has actually made:
+  1. **§2, "the taxonomy of checks that cannot fail"** — a table of what each check class *still permits*
+     (`sum(parts) == total` permits any redistribution; a hash of inputs permits every logic bug downstream;
+     tests written from the spec over an implementation written from the same spec permit every misreading),
+     closing with the general form: **a check and the thing it checks must not share a parent**. The local
+     standard has the anti-patterns list but not the taxonomy that generates it.
+  2. **Leg 2's illustration rule** — "two explanations that predict the same observation are not distinguished
+     by *more* of that observation; if your evidence is consistent with both hypotheses, you have not tested,
+     you have illustrated." That is exactly `.6a`'s false mechanism: "sealed 18 while adding 2" predicted the
+     observation (the total held) and was never separated from the true account (one row retired, one added).
+  3. **Leg 2's cheapest-oracle rule** — "the cheapest oracle is your own project's history: before publishing
+     a finding, check whether a case of the same shape has already been adjudicated." `.6` had written the
+     true mechanism in its own commit body; `.6a` invented a second wrong account without reading it.
+  The leaf must carry these into `CLAIM_VERIFICATION.md` and the `TOOLBOX.md` published-claim section without
+  bloating either past its bounds, keep the local registry/gate sections that the upstream does not have, and
+  record explicitly which upstream material is deliberately **not** adopted and why. Then re-assess `.7`: if
+  the illustration rule is normative locally, a mechanism gate may be a review obligation rather than a
+  checker, and `.7`'s scope decision becomes evidence-based instead of open
+  Prerequisite: none; it blocks nothing mechanically, but it is the cheapest fix for the defect class `.7`
+  is trying to gate
+
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
   Status: `pending`
   Goal: stop the book quantitative census passing while it cannot see the numbers on the page
@@ -643,6 +672,13 @@ the workflow through the mdBook and repository review path.
   gate, while the contract honestly reported full coverage of its declared denominator. Same shape as `.7`'s
   fifth instance (a stale count outside the denominator), now with the vocabulary cause and the duration
   measured rather than inferred
+  Eighth instance (`2026-08-29`, produced by `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` one commit after `.6a`
+  measured it): `.6a` carried `current_surfaces` **39** on the strength of a 29-revision trajectory in which
+  it never moved, and the very next structural slice registered a surface and made it **40**. Nothing about
+  `.6a`'s method was wrong — the trajectory was real — which is the point: **a trajectory shows what has not
+  happened, never what cannot.** So "stable across N revisions" is evidence for *withdrawing later* rather
+  than a licence to carry, and `.7`'s gate is the only thing that separates the two. All three publishers
+  withdrew the value in the same commit that moved it, which is the discipline working
   Prerequisite: none
 
 ## Current Frontier

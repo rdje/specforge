@@ -27,158 +27,49 @@ This derived catalog is navigation, not execution history. Read `MEMORY.md` for 
 resume pointer, then open the owning tree for its frontier, decisions, evidence, and commits.
 The author template is linked separately and is never classified as active work.
 
+### Open trees
+
+Every tree that is not `done` or `superseded` — the set a session can still act on. There is no
+limit on how many task-trees exist; a finished tree stays as project history in the parts below
+(ADR 0045).
+
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
-| `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `done` | keep active task history bounded and resumable | [open](tasks/ACTIVE-TASK-EVIDENCE-CONTAINMENT.md) |
-| `AMBIGUITY-PHRASE-DETECTOR` | `done` | flag vague / under-specified spec prose for review | [open](tasks/AMBIGUITY-PHRASE-DETECTOR.md) |
-| `ARTIFACT-PATH-PORTABILITY` | `done` | repository-relative IR provenance and move-safe generated artifacts | [open](tasks/ARTIFACT-PATH-PORTABILITY.md) |
-| `AUDIT-DOC-RECONCILE` | `done` | fix doc drift found by the post-ISF-ONLY audit | [open](tasks/AUDIT-DOC-RECONCILE.md) |
-| `AUDIT-PROVIDER-FRAMING-RECONCILE` | `done` | reconcile live-doc framing that the LLM/VLM provider "doesn't exist" / R16 CVE crux is "upstream-blocked" | [open](tasks/AUDIT-PROVIDER-FRAMING-RECONCILE.md) |
-| `BOOK-COMMAND-COVERAGE` | `done` | mdBook command-surface drift reconciliation | [open](tasks/BOOK-COMMAND-COVERAGE.md) |
-| `BOOK-METHOD-DOC` | `done` | per-task-tree implementation & verification, in the book | [open](tasks/BOOK-METHOD-DOC.md) |
-| `BOOK-USER-FRIENDLY-BACKFILL` | `done` | upgrade existing book subsections to the user-friendly standard | [open](tasks/BOOK-USER-FRIENDLY-BACKFILL.md) |
-| `CANONICAL-PROMOTION-SWEEP` | `done` | land the default LLM-primary constraint promotion across the corpus's canonical artifacts | [open](tasks/CANONICAL-PROMOTION-SWEEP.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](tasks/CLAIM-VERIFICATION-ADOPTION.md) |
-| `COMPLETENESS-CLOSURE-INVARIANTS` | `done` | first completeness miss-detectors (symbol closure + register tiling) | [open](tasks/COMPLETENESS-CLOSURE-INVARIANTS.md) |
-| `COMPLETENESS-RECALL-GAUGE` | `done` | a calibrated capture–recapture recall estimate | [open](tasks/COMPLETENESS-RECALL-GAUGE.md) |
-| `COMPLETENESS-RECALL-RELATIONS` | `done` | extend per-extractor tagging + recall gauge to actor-signal relations | [open](tasks/COMPLETENESS-RECALL-RELATIONS.md) |
-| `COMPLETENESS-REGION-ACCOUNTING` | `done` | surface intent-bearing source regions that produced no fact | [open](tasks/COMPLETENESS-REGION-ACCOUNTING.md) |
-| `COMPLETENESS-REPORT-SURFACE` | `done` | one honest completeness headline over the detectors | [open](tasks/COMPLETENESS-REPORT-SURFACE.md) |
-| `CONSTRAINT-CONDITION-SUBJECT` | `done` | never let a condition-clause signal become a constraint subject | [open](tasks/CONSTRAINT-CONDITION-SUBJECT.md) |
-| `CONSTRAINT-DRIVE-LEVEL-RECALL` | `done` | extract "drive <signal> LOW/HIGH" as a value constraint | [open](tasks/CONSTRAINT-DRIVE-LEVEL-RECALL.md) |
-| `CONSTRAINT-EXTRACTION-V2` | `done` | fix the 3 constraint bug classes REEXTRACTION-REMEASURE found | [open](tasks/CONSTRAINT-EXTRACTION-V2.md) |
-| `CONSTRAINT-SUBJECT-PRECISION` | `done` | stop the constraint extractor minting non-subject signals | [open](tasks/CONSTRAINT-SUBJECT-PRECISION.md) |
-| `CORPUS-CHAIN-CURRENCY` | `done` | prove, not assume, that every persisted chain matches the current binary | [open](tasks/CORPUS-CHAIN-CURRENCY.md) |
 | `CORPUS-COVERAGE` | `active` | build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale | [open](tasks/CORPUS-COVERAGE.md) |
 | `CORPUS-HARDENING` | `active` | harden SpecForge against the real chip-doc corpus (AMBA core first) | [open](tasks/CORPUS-HARDENING.md) |
 | `CORPUS-PATTERN-REUSE` | `active` | reuse extraction patterns across PDFs, clustered by derived vendor/layout fingerprint | [open](tasks/CORPUS-PATTERN-REUSE.md) |
-| `CORPUS-TASK-EVIDENCE-CONTAINMENT` | `done` | keep the active corpus task bounded and lossless | [open](tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) |
-| `CVE-PROSE-EXTRACTION` | `done` | wire a live prose→ActorContract extractor into the R16 constrained-verified surface | [open](tasks/CVE-PROSE-EXTRACTION.md) |
-| `DECISION-RECORD-CAPACITY-HEADROOM` | `done` | restore room for durable architecture decisions | [open](tasks/DECISION-RECORD-CAPACITY-HEADROOM.md) |
-| `DEMPSTER-FUSION-COMBINER` | `done` | corroboration-boosting confidence fusion (Dempster's rule) | [open](tasks/DEMPSTER-FUSION-COMBINER.md) |
 | `DOC-INTENT-TAXONOMY` | `active` | chip-spec document intent taxonomy → per-category complete ISF synthesis | [open](tasks/DOC-INTENT-TAXONOMY.md) |
-| `DOCLING-DEVICE-CPU-DEFAULT` | `done` | make Docling ingest avoid the broken MPS auto-device | [open](tasks/DOCLING-DEVICE-CPU-DEFAULT.md) |
-| `DOCTRINE-ENFORCEMENT-ADOPT` | `done` | adopt the portable Doctrine-Enforcement architecture (4th standard) | [open](tasks/DOCTRINE-ENFORCEMENT-ADOPT.md) |
-| `EVAL-DOCUMENT-RECALL` | `done` | attribution-agnostic fact recall (the per-statement scorer under-counts) | [open](tasks/EVAL-DOCUMENT-RECALL.md) |
-| `EVAL-GOLD-INTERANNOTATOR-AGREEMENT` | `done` | is the eval answer-key trustworthy? (Cohen's κ) | [open](tasks/EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md) |
-| `EVAL-RELATION-GRANULARITY` | `done` | per-relation-kind P/R/F1 + MUC near-miss diagnostic | [open](tasks/EVAL-RELATION-GRANULARITY.md) |
-| `EVIDENCE-DETERMINISM` | `done` | make the EvidenceIR build reproducible (no content-level non-determinism) | [open](tasks/EVIDENCE-DETERMINISM.md) |
-| `EVIDENCE-MATERIALIZE-IDEMPOTENCY` | `done` | don't accumulate stale facts on re-build | [open](tasks/EVIDENCE-MATERIALIZE-IDEMPOTENCY.md) |
 | `EXTRACTION-GAP-FIX` | `active` | close the extraction gaps PDF-VARIANT-DIGESTION.4 quantified | [open](tasks/EXTRACTION-GAP-FIX.md) |
 | `EXTRACTION-QUALITY-GAUGE` | `active` | measure the extraction-quality gap — and CHI's is large | [open](tasks/EXTRACTION-QUALITY-GAUGE.md) |
-| `EXTRACTOR-ARCHITECTURE` | `done` | make the EvidenceIR extractor path a coherent whole | [open](tasks/EXTRACTOR-ARCHITECTURE.md) |
-| `FACT-CARD-CAPACITY-HEADROOM` | `done` | restore headroom before the fact plane refuses new knowledge | [open](tasks/FACT-CARD-CAPACITY-HEADROOM.md) |
-| `FACT-CARD-CATALOG-CONTAINMENT` | `done` | keep fact-card browsing bounded before capacity fails | [open](tasks/FACT-CARD-CATALOG-CONTAINMENT.md) |
-| `FSMGEN-ASSERT-LOWERING` | `done` | lower stable / antecedent→consequent / min>1 obligations into the ISF verification family | [open](tasks/FSMGEN-ASSERT-LOWERING.md) |
-| `FSMGEN-ASSERT-MIGRATE` | `done` | re-pin to 43b29f5c + migrate `(contract … eventually …)` → `(assert (monitor …))` | [open](tasks/FSMGEN-ASSERT-MIGRATE.md) |
-| `FSMGEN-ISSUE-REPORTING` | `done` | File the FSMGen doc-vs-strict findings via the bundle protocol | [open](tasks/FSMGEN-ISSUE-REPORTING.md) |
-| `FSMGEN-LTL-MTL-SUGGESTION` | `done` | suggest first-class LTL/MTL temporal properties in ISF | [open](tasks/FSMGEN-LTL-MTL-SUGGESTION.md) |
-| `FSMGEN-MIN-WINDOW-CONFIRM` | `done` | answer FSMGen's `min > 1` window question | [open](tasks/FSMGEN-MIN-WINDOW-CONFIRM.md) |
-| `FSMGEN-REFRESH-INTEGRATE-2` | `done` | refresh the FSMGen submodule (2026-06) + re-assess adoptable ISF features | [open](tasks/FSMGEN-REFRESH-INTEGRATE-2.md) |
-| `FSMGEN-REFRESH-INTEGRATE-3` | `done` | bump FSMGen submodule to the phase-membership-response tip | [open](tasks/FSMGEN-REFRESH-INTEGRATE-3.md) |
-| `FSMGEN-REFRESH-INTEGRATE-4` | `done` | refresh the FSMGen pin + integrate FSMGen's answer to the field-structured-storage FR | [open](tasks/FSMGEN-REFRESH-INTEGRATE-4.md) |
-| `FSMGEN-REFRESH-INTEGRATE-5` | `done` | refresh the FSMGen pin to the SHIPPED declarative storage fields + un-gate DOC-INTENT-TAXONOMY.4a.ii | [open](tasks/FSMGEN-REFRESH-INTEGRATE-5.md) |
-| `FSMGEN-REFRESH-INTEGRATE-6` | `done` | refresh the FSMGen pin and integrate the current upstream contract | [open](tasks/FSMGEN-REFRESH-INTEGRATE-6.md) |
-| `FSMGEN-REFRESH-INTEGRATE-7` | `done` | refresh the FSMGen pin and integrate the latest upstream contract | [open](tasks/FSMGEN-REFRESH-INTEGRATE-7.md) |
-| `FSMGEN-REFRESH-INTEGRATE-8` | `done` | refresh the FSMGen pin and audit the new upstream delta | [open](tasks/FSMGEN-REFRESH-INTEGRATE-8.md) |
-| `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](tasks/FSMGEN-REFRESH-INTEGRATE.md) |
-| `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](tasks/FSMGEN-SUBMODULE-BUMP.md) |
-| `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](tasks/FULL-PAGE-INTENT-CAPTURE.md) |
-| `GRITS-CROSS-TOOL` | `done` | a table-structure gold from independent-witness agreement | [open](tasks/GRITS-CROSS-TOOL.md) |
-| `INTENT-COMPLETENESS-RESEARCH` | `done` | theory + design for detecting & bounding intent-capture misses | [open](tasks/INTENT-COMPLETENESS-RESEARCH.md) |
-| `ISF-HANDSHAKE-STAGE-LOWERING` | `superseded` | lower HandshakeComplete temporal_rules to `(stage …)` | [open](tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
-| `ISF-ONLY-CONSOLIDATION` | `done` | Drop HDL + `.fsm` adapters; SpecForge emits only `.isf` | [open](tasks/ISF-ONLY-CONSOLIDATION.md) |
-| `ISF-ONLY-IR-PRUNE` | `done` | remove genuinely `.fsm`-era orphaned IR surfaces | [open](tasks/ISF-ONLY-IR-PRUNE.md) |
-| `ISF-REGISTER-RESET-EMIT` | `done` | lower extracted register reset values into the ISF `(storage (var … (reset V)))` surface | [open](tasks/ISF-REGISTER-RESET-EMIT.md) |
-| `ISF-RULE-CONFLICT-RESIDUAL` | `done` | surface dropped value-conflicting rules as explicit residuals (not silent loss) | [open](tasks/ISF-RULE-CONFLICT-RESIDUAL.md) |
-| `ISF-SYMBOL-COUNT-EMITTED` | `done` | make the adapter `constant_count`/`enum_count` reflect emitted content | [open](tasks/ISF-SYMBOL-COUNT-EMITTED.md) |
-| `ISF-SYMBOL-SURFACE-EMIT` | `done` | emit the built-but-discarded `(constants)`/`(types)`/`(enums)` ISF surface | [open](tasks/ISF-SYMBOL-SURFACE-EMIT.md) |
-| `ISF-TEMPORAL-LOWERING` | `done` | lower IntentIR.temporal_rules into the `.isf` adapter | [open](tasks/ISF-TEMPORAL-LOWERING.md) |
-| `ISF-TXN-GRAMMAR-FIX` | `done` | correct SpecForge's `.isf` transaction-step emitter grammar | [open](tasks/ISF-TXN-GRAMMAR-FIX.md) |
-| `ISF-VALUE-WIDTH-EMIT` | `done` | width-align ISF value literals to the declared signal width | [open](tasks/ISF-VALUE-WIDTH-EMIT.md) |
 | `KG-ISF-COMPLETENESS` | `active` | the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF | [open](tasks/KG-ISF-COMPLETENESS.md) |
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](tasks/KG-ISF-TRANSACTIONS.md) |
-| `KNOWLEDGE-MAP-ADOPTION` | `done` | adopt the portable Knowledge Map retrieval layer | [open](tasks/KNOWLEDGE-MAP-ADOPTION.md) |
-| `LITERATURE-GROUNDING` | `done` | ground every SpecForge aspect in published research | [open](tasks/LITERATURE-GROUNDING.md) |
-| `LIVE-DOC-STOP-RISK` | `done` | find the live-document stops that no current signal makes actionable | [open](tasks/LIVE-DOC-STOP-RISK.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM` | `active` | keep current-facing canonical surfaces writable | [open](tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md) |
-| `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION` | `done` | bounded live docs, stable README, and same-volume project data | [open](tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md) |
-| `LLM-EXTRACTION-EVAL` | `done` | a labeled precision/recall eval set for the LLM extraction passes | [open](tasks/LLM-EXTRACTION-EVAL.md) |
-| `LLM-PRIMARY-PROMOTION` | `done` | promote the LLM-primary constraint surface into the canonical pipeline | [open](tasks/LLM-PRIMARY-PROMOTION.md) |
-| `LLM-TEXT-TRANSPORT-DEDUP` | `done` | consolidate the duplicated text chat transport (extract-contracts + signal-resolve) | [open](tasks/LLM-TEXT-TRANSPORT-DEDUP.md) |
-| `LOGIC-LEVEL-BOUNDARY` | `done` | resolve HIGH/LOW as universal "how"; centralize the vocabulary | [open](tasks/LOGIC-LEVEL-BOUNDARY.md) |
-| `MDBOOK-DOCTEST-HYGIENE` | `done` | classify examples and make the live book doctest-safe | [open](tasks/MDBOOK-DOCTEST-HYGIENE.md) |
-| `MEASUREMENT-PLANE-CONVERGENCE-RISK` | `superseded` | can we tell whether SpecForge is converging? | [open](tasks/MEASUREMENT-PLANE-CONVERGENCE-RISK.md) |
-| `MEMORY-ARCHITECTURE-DOC` | `done` | author a portable, harness-agnostic durable-memory standard | [open](tasks/MEMORY-ARCHITECTURE-DOC.md) |
 | `MEMORY-BOUNDED-INGEST` | `active` | bounded-memory ingestion of very large PDFs | [open](tasks/MEMORY-BOUNDED-INGEST.md) |
-| `MEMORY-RESUME-POINTER-BYTE-CAP` | `done` | set the durable resume pointer's one-read ceiling | [open](tasks/MEMORY-RESUME-POINTER-BYTE-CAP.md) |
-| `NLI-CLAIM-CONDITION` | `done` | carry a constraint's condition into its NLI claim (precision fix) | [open](tasks/NLI-CLAIM-CONDITION.md) |
-| `NLI-CLAIM-CONNECTOR` | `done` | join the condition clause with a connective so claims read as English | [open](tasks/NLI-CLAIM-CONNECTOR.md) |
-| `NLI-ENTAILMENT-VERIFIER` | `done` | a semantic "does the source actually say this?" gate | [open](tasks/NLI-ENTAILMENT-VERIFIER.md) |
-| `NLI-GATE-METRIC` | `done` | surface the NLI gate's demotions as a validate metric | [open](tasks/NLI-GATE-METRIC.md) |
-| `NLI-INTENT-GATE` | `done` | make the NLI verifier an active IntentIR gate (demote NotEntailed → residual) | [open](tasks/NLI-INTENT-GATE.md) |
-| `NLP-ENRICH-TRANSPORT-DEDUP` | `done` | complete the text-transport consolidation (route nlp_enrich through llm_text) | [open](tasks/NLP-ENRICH-TRANSPORT-DEDUP.md) |
 | `NLP-SHALLOW-PARSE` | `active` | a deterministic in-Rust shallow-parse tier (subject–verb–object understanding) | [open](tasks/NLP-SHALLOW-PARSE.md) |
-| `PDF-AGNOSTIC-EXTRACTION` | `done` | remove all hardcoded chip-spec vocabulary; derive from the document | [open](tasks/PDF-AGNOSTIC-EXTRACTION.md) |
 | `PDF-VARIANT-DIGESTION` | `active` | make SpecForge digest as many chip-spec PDF variants as possible | [open](tasks/PDF-VARIANT-DIGESTION.md) |
-| `PER-EXTRACTOR-FACT-TAGGING` | `done` | record which extractor found each fact (recall-gauge precondition) | [open](tasks/PER-EXTRACTOR-FACT-TAGGING.md) |
-| `PRIOR-DECAY` | `done` | detect & flag contested priors (revision-on-contradiction for CorpusMemory) | [open](tasks/PRIOR-DECAY.md) |
-| `PROVENANCE-HARDENING` | `done` | Test Assertion Coverage For Provenance-Like IR Fields | [open](tasks/PROVENANCE-HARDENING.md) |
 | `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](tasks/PURE-NLP-INTENT-EXTRACTION.md) |
-| `R1-R5-FOUNDATION-BACKFILL` | `done` | own + audit the foundational pipeline milestones (delivered pre-task-tree-system) | [open](tasks/R1-R5-FOUNDATION-BACKFILL.md) |
-| `R14-SIGNAL-RESOLVE` | `done` | Tier-3 LLM `signal_relation` extraction (the `signal-resolve` command) | [open](tasks/R14-SIGNAL-RESOLVE.md) |
-| `R15-GRAPH-DIRECTION-MIGRATION` | `done` | Complete actor-relative graph direction migration | [open](tasks/R15-GRAPH-DIRECTION-MIGRATION.md) |
-| `R15C-CONVERGENCE-REPORT` | `done` | make the convergent extraction loop first-class + inspectable | [open](tasks/R15C-CONVERGENCE-REPORT.md) |
 | `R15C-R15G-LEARNING-PLANE-BACKFILL` | `active` | own + audit the learning / eval / corpus lanes (in-progress) | [open](tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
-| `R16-CAPTURE-FIDELITY-GATES` | `done` | objective capture-fidelity metric (point #5) | [open](tasks/R16-CAPTURE-FIDELITY-GATES.md) |
-| `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | schema-constrained + verified extraction (point #6 — the crux, continuous) | [open](tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
-| `R16-CONTRACT-IR` | `done` | typed timed-contract IR layer (point #1) | [open](tasks/R16-CONTRACT-IR.md) |
-| `R16-INTENT-CAPTURE` | `done` | SOTA design-intent capture (program umbrella) | [open](tasks/R16-INTENT-CAPTURE.md) |
-| `R16-KG-PROTOCOL-ONTOLOGY` | `done` | protocol-structured knowledge graph (point #2) | [open](tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
-| `R16-MODULE-HARDENING` | `done` | unit-test signoff hardening for the R16 IR modules | [open](tasks/R16-MODULE-HARDENING.md) |
-| `R16-MULTIMODAL-CONTRACT-FUSION` | `done` | cross-modal evidence → one contract (point #3) | [open](tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
-| `R16-WAVEFORM-CONTRACT-MINING` | `done` | timing diagram → contract (point #4 — the crux) | [open](tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
-| `R6-CONVERGE-HARDENING` | `done` | Converge Module Test Assertion Hardening | [open](tasks/R6-CONVERGE-HARDENING.md) |
-| `R6-EVIDENCE-HARDENING` | `done` | Evidence + Adapter Module Test Assertion Hardening | [open](tasks/R6-EVIDENCE-HARDENING.md) |
-| `R6-FSM-ADAPTER` | `superseded` | `.fsm` Adapter Hardening | [open](tasks/R6-FSM-ADAPTER.md) |
-| `R6-INTENT-HARDENING` | `done` | Intent Module Test Assertion Hardening | [open](tasks/R6-INTENT-HARDENING.md) |
-| `R6-ISF-ADAPTER` | `done` | ISF (.isf) adapter ownership backfill + hardening | [open](tasks/R6-ISF-ADAPTER.md) |
-| `R6-PRIOR-MEMORY-HARDENING` | `done` | Prior Memory Module Test Assertion Hardening | [open](tasks/R6-PRIOR-MEMORY-HARDENING.md) |
-| `R6-SEMANTIC-HARDENING` | `done` | Semantic Module Test Assertion Hardening | [open](tasks/R6-SEMANTIC-HARDENING.md) |
-| `R6-SOURCE-HARDENING` | `done` | SourceIR Field Test Assertion Hardening | [open](tasks/R6-SOURCE-HARDENING.md) |
-| `R7-VALIDATION` | `done` | R7 Validation and Back-Annotation Hardening | [open](tasks/R7-VALIDATION.md) |
-| `R8-R13-EXTRACTION-BACKFILL` | `done` | own + audit the extraction-SOTA milestones (delivered pre-task-tree-system) | [open](tasks/R8-R13-EXTRACTION-BACKFILL.md) |
-| `RECALL-CHAO-ESTIMATOR` | `done` | a heterogeneity-robust second recall estimate (Chao) alongside Lincoln–Petersen | [open](tasks/RECALL-CHAO-ESTIMATOR.md) |
-| `REEXTRACTION-REMEASURE` | `done` | re-ingest + re-extract the APB spec to measure current quality | [open](tasks/REEXTRACTION-REMEASURE.md) |
-| `REGISTER-CLASSIFIER-ENCODING-FP` | `done` | stop DVM/encoding cross-reference tables being mis-read as register maps | [open](tasks/REGISTER-CLASSIFIER-ENCODING-FP.md) |
-| `REGISTER-MAP-CLASSIFIER-PRECISION` | `done` | stop the over-eager `register_map` table classification | [open](tasks/REGISTER-MAP-CLASSIFIER-PRECISION.md) |
-| `ROADMAP-TASKTREE-COVERAGE` | `done` | every roadmap milestone task-tree-owned + audited + locked to code & mdBook | [open](tasks/ROADMAP-TASKTREE-COVERAGE.md) |
-| `ROOT-ROLLING-LEDGER-PRESSURE` | `done` | restore bounded headroom in current continuity ledgers | [open](tasks/ROOT-ROLLING-LEDGER-PRESSURE.md) |
 | `SCRATCH-RESIDUE-CONTAINMENT` | `active` | reclaim repository scratch that nothing can reach | [open](tasks/SCRATCH-RESIDUE-CONTAINMENT.md) |
-| `SEMANTIC-EMPTY-CATALOG-FILTER` | `done` | stop disabling the grounding filter on documents with no grounding | [open](tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md) |
 | `SIGNAL-CATALOG-CAPTURE-GAP` | `active` | protocol specifications that declare no signals at all | [open](tasks/SIGNAL-CATALOG-CAPTURE-GAP.md) |
-| `SIGNAL-TABLE-COLUMNLESS-RECALL` | `done` | capture signals from column-less Signal\|Description tables | [open](tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md) |
-| `SIGNOFF-BURNDOWN` | `superseded` | WITHDRAWN — this tree was archaeology | [open](tasks/SIGNOFF-BURNDOWN.md) |
-| `SIGNOFF-REMEDIATION` | `done` | Restore signoff quality at HEAD | [open](tasks/SIGNOFF-REMEDIATION.md) |
 | `SOURCE-IR-REPRODUCIBILITY` | `active` | make SourceIR ingest reproducible, and gate it | [open](tasks/SOURCE-IR-REPRODUCIBILITY.md) |
 | `SPEC-CLARIFICATION-LOOP` | `active` | autonomous-first, user-assisted specification completion | [open](tasks/SPEC-CLARIFICATION-LOOP.md) |
-| `SPEC-MINING-PROVENANCE` | `done` | name the discipline + a per-author adopt/defer ledger | [open](tasks/SPEC-MINING-PROVENANCE.md) |
 | `SPEC-TO-INTENT-ALIGNMENT` | `active` | steer PDF evidence into complete executable-intent IR | [open](tasks/SPEC-TO-INTENT-ALIGNMENT.md) |
-| `SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT` | `done` | keep the active alignment program bounded and resumable | [open](tasks/SPEC-TO-INTENT-TASK-EVIDENCE-CONTAINMENT.md) |
 | `STATUS-LEDGER-ROLLOVER` | `active` | roll the status ledger before its next product record is refused | [open](tasks/STATUS-LEDGER-ROLLOVER.md) |
-| `SWD-SERIAL-EXTRACTION` | `done` | serial-protocol/architecture extraction for SWD/ADI → WIRE-BASED-100 100% | [open](tasks/SWD-SERIAL-EXTRACTION.md) |
-| `SYMBOL-CLOSURE-CORPUS-VALIDATION` | `done` | corpus-validate (and settle) the descoped symbol-closure detector | [open](tasks/SYMBOL-CLOSURE-CORPUS-VALIDATION.md) |
-| `TABLE-GRITS-CONFORMAL` | `done` | GriTS table-structure metric + split-conformal calibration | [open](tasks/TABLE-GRITS-CONFORMAL.md) |
 | `TASK-PART-SEAL-REACHABILITY` | `active` | give a completed task-evidence part a reachable closed state | [open](tasks/TASK-PART-SEAL-REACHABILITY.md) |
-| `TEMPORAL-ANTECEDENT-RECALL` | `done` | distribute a shared assertion-value across coordinated condition signals | [open](tasks/TEMPORAL-ANTECEDENT-RECALL.md) |
-| `TEMPORAL-RULE-EVAL` | `done` | supervised precision/recall/F1 for mined temporal rules | [open](tasks/TEMPORAL-RULE-EVAL.md) |
-| `TEMPORAL-RULE-LTL-RENDER` | `done` | render mined temporal rules in standard LTL/MTL notation | [open](tasks/TEMPORAL-RULE-LTL-RENDER.md) |
-| `TEMPORAL-RULE-SVA-RENDER` | `superseded` | render mined temporal rules as SystemVerilog Assertions (SVA) | [open](tasks/TEMPORAL-RULE-SVA-RENDER.md) |
-| `TRACE-SEVERITY-GATING-AUDIT` | `done` | warnings/errors/fatals must never be masked by a trace/verbosity level | [open](tasks/TRACE-SEVERITY-GATING-AUDIT.md) |
-| `VERB-COVERAGE-CORPUS` | `done` | mine a comprehensive normative-verb vocabulary from a real chip-spec corpus | [open](tasks/VERB-COVERAGE-CORPUS.md) |
 | `WIRE-BASED-100` | `active` | max every score (100%) on wire-based interface specs (APB/AHB/AXI/SWD/…) | [open](tasks/WIRE-BASED-100.md) |
+
+### Complete catalog
+
+All 150 trees route through 3 derived part(s); open a range to find an id.
+
+| Part | Trees | First id | Last id |
+| --- | ---: | --- | --- |
+| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FULL-PAGE-INTENT-CAPTURE` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `GRITS-CROSS-TOOL` | `R6-CONVERGE-HARDENING` |
+| [0003](task-catalog/catalog-0003.md) | 38 | `R6-EVIDENCE-HARDENING` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 
@@ -188,12 +79,19 @@ Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 
 ```text
 docs/TASK_TREE.md
+docs/task-catalog/
+  catalog-0001.md
+  <catalog-NNNN.md>
 docs/tasks/
   TEMPLATE.md
   <TREE>.md
 ```
 
-`docs/TASK_TREE.md` is the workflow and active-tree index.
+`docs/TASK_TREE.md` is the workflow spec plus a bounded landing: it lists every **open** tree and
+routes to the derived catalog parts for the rest, so it grows with work in flight rather than with
+project lifetime. `docs/task-catalog/` holds those parts; both the landing section and the parts are
+generated by `perl scripts/check_task_tree_catalog.pl --write` and verified by derive-and-diff — never
+hand-edited. There is no limit on the number of task-trees (ADR 0045).
 Each top-level task owns one file in `docs/tasks/`.
 `docs/tasks/TEMPLATE.md` is copied when creating a new top-level tree.
 
@@ -313,7 +211,7 @@ Rules:
 When PNT is asked to continue and at least one active task tree exists:
 
 1. Read `docs/TASK_TREE.md`.
-2. Read the active task file named in the `Active Task Trees` table.
+2. Read the active task file named in the `Open trees` table.
 3. Pick the first eligible leaf in that file's `Current Frontier`.
 4. Implement only that leaf.
 5. If the leaf is too broad, split it before implementation and commit the

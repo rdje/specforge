@@ -278,8 +278,24 @@ sub validate_workstream_ids {
 sub validate_owners {
     my ($ids, $owners) = @_;
     problem('workstream_owners count must equal workstream_ids count') if @$owners != @$ids;
+    # The task catalog is a bounded landing plus derived parts: the landing carries open trees and the parts
+    # carry the complete membership (LIVE-DOCUMENT-PRESSURE-HEADROOM.2c). A roadmap owner may be a finished
+    # tree, so completeness must be read across both or every closed workstream reports absent.
     my $catalog_path = absolute('docs/TASK_TREE.md');
     my $catalog = -f $catalog_path ? slurp($catalog_path, 'task catalog') : undef;
+    if (defined $catalog) {
+        my $part_directory = absolute('docs/task-catalog');
+        if (-d $part_directory && opendir(my $dh, $part_directory)) {
+            my @parts = sort grep { /\Acatalog-[0-9]{4}\.md\z/ } readdir($dh);
+            closedir $dh;
+            for my $part (@parts) {
+                my $part_text = slurp(absolute("docs/task-catalog/$part"), 'task catalog part');
+                # Part rows resolve from the part directory, so normalise their prefix before joining.
+                $part_text =~ s{\(\.\./tasks/}{(tasks/}g;
+                $catalog .= $part_text;
+            }
+        }
+    }
     for my $index (0 .. $#$owners) {
         my $owner = $owners->[$index];
         reject_unknown($owner, "workstream owner $index", qw(id initial_status path));

@@ -83,7 +83,7 @@ The README guard is unconditional: it evaluates the resulting tree even when a c
 may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
 The project-owned normative contract is `README_POLICY.md`.
 
-Among its focused suites, the live-document gate runs 92 common lifecycle/control cases, 47 neutral derived-state
+Among its focused suites, the live-document gate runs 93 common lifecycle/control cases, 47 neutral derived-state
 classification cases, 25 SpecForge authority-adapter cases, and 15 terminal-task source/route/identity/boundary
 cases, plus 44 active-task source/topology/route/payload/bound/writer cases, 60 fact-catalog source/plan/route/residue/
 bound cases, and the projection-specific Knowledge Map contract and portable-bundle integration suite. Generated
