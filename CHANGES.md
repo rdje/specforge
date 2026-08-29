@@ -1,3 +1,13 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.2b — retire the consumed ceiling-increase authority
+
+- Observed the control RED before retiring anything, which is why this is a leaf and not a tidy-up. With the
+  tree clean at ef3b4bb4, check_live_document_size.pl reported "surface 'task_evidence' has unused or banked
+  ceiling-increase authority" and exited 1. HEAD was gate-failing on a clean tree by design: the authority is
+  single-use, .2a could not land without it, and the registry refuses to keep it once the new bands are
+  committed.
+- Retired the one `increase` record for task_evidence. ceiling_increase_authorities.jsonl is back to its
+  registry control record alone, and the gate is green at 889 Markdown files across 55 governed surfaces.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.2a — remove the task-plane cap through a declared exemption
 
 - Removed the 160-file cap on docs/tasks/ per the director's decision that there is no limit on the number of

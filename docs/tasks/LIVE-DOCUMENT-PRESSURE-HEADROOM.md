@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5`/`.2a` done; `.2b` retires the consumed authority next; `.1`/`.3`/`.4`/`.2c` pending)
+- Status: `active` (`.0`/`.5`/`.2a`/`.2b` done; `.2c` shards the index the stop relocated to; `.1`/`.3`/`.4` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-29`
@@ -207,14 +207,24 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a — remove the task-plane cap through a declared exemption`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b`
-  Status: `pending`
+  Status: `done` (`2026-08-29`)
   Goal: retire the consumed ceiling-increase authority
   Acceptance: the single-use authority record `.2a` consumed is removed once HEAD already carries the new
   ceilings, so the registry cannot bank it; the generic gate's own "unused or banked ceiling-increase
   authority" refusal is the control that proves the retirement was required rather than cosmetic
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`
-  Verification: `pending`
-  Commit: `pending`
+  **The control was observed RED before the retirement, which is the whole point of this leaf.** Immediately
+  after `.2a` landed at `ef3b4bb4` — clean tree, nothing uncommitted —
+  `perl scripts/check_live_document_size.pl` reported `surface 'task_evidence' has unused or banked
+  ceiling-increase authority` and exited non-zero. So HEAD was gate-failing on a clean tree, by design: the
+  authority is single-use, `.2a` could not land without it, and the registry refuses to keep it once the new
+  bands are committed. That is the difference between a retirement that was required and one that is
+  cosmetic, and it is why `.2b` is a separate leaf rather than a tidy-up inside `.2a`.
+  Retired the one `increase` record for `task_evidence`; the registry is back to its control record alone.
+  Verification: `RED before — "surface 'task_evidence' has unused or banked ceiling-increase authority",
+  exit 1 on a clean tree at ef3b4bb4; GREEN after — 889 Markdown files satisfy 55 governed surfaces, exit 0;
+  ceiling_increase_authorities.jsonl holds only its registry control record`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b — retire the consumed ceiling-increase authority`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c`
   Status: `pending`
