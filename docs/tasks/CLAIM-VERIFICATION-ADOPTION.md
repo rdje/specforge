@@ -3,9 +3,9 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a` done; `.6b` owns the same drift on the two surfaces `.6`/`.6a` did not
-  sweep; `.7` owns the gate that would have observed `.6`'s defect; `.8` tracks the census registry's own
-  capacity; `.9` owns the candidate vocabulary's blind spot)
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b` done — every surface publishing the census counts is now swept;
+  `.7` owns the gate that would have observed the drift; `.8` tracks the census registry's own capacity; `.9`
+  owns the candidate vocabulary's blind spot, now with a second measured demonstration)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
 - Last updated: `2026-08-29`
@@ -418,8 +418,10 @@ the workflow through the mdBook and repository review path.
   **A fifth number in the same section is also corrected, and its stated mechanism was wrong.** `.6` published
   the unit trajectory "56 -> 57 -> 58 -> 59 -> **60** across `50775894`, `e6f5012d`, `f9e785ca`, `fdda3c53`,
   and this commit" and the rule "every slice that prepends a rolling-ledger head earns exactly one more
-  excluded unit". Measured: 56 / 57 / 58 / 59 are right and the last element is **59, not 60** — `.6`'s own
-  rollover sealed 18 records while adding 2, so the total did not rise. And the rule is not a rule: across the
+  excluded unit". Measured: 56 / 57 / 58 / 59 are right and the last element is **59, not 60**. The mechanism
+  was re-derived from the registry blobs after `.6a` first published a wrong one (see the correction below):
+  `5fe81128` removed exactly **one** census evidence row and added exactly **one**, so the total held at 59.
+  And the rule is not a rule: across the
   27 transitions from `e6f5012d` to `60a81db7` the unit total rises 15 times, **falls twice**
   (`943381c8` 65 -> `5f44ea68` 64 and `c1609558` 71 -> `1507adbf` 70), and is unchanged 10 times. Withdrawn
   with the rest rather than re-carried.
@@ -437,7 +439,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.6a — measure the drift trajectory before withdrawing the counters`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.6b`
-  Status: `pending`
+  Status: `done` (`2026-08-29`)
   Goal: apply `.6`/`.6a`'s remedy to the two remaining current-facing surfaces that publish the census counts
   Acceptance: `.6` and `.6a` swept `TOOLBOX.md` only, and said so. Found while running `.6a` and measured at
   `60a81db7` against the same two producers, two further surfaces publish the same stale numbers:
@@ -457,8 +459,61 @@ the workflow through the mdBook and repository review path.
   transaction; and the **89** mdBook incomplete count `TOOLBOX.md` carries must be re-derived *after* the book
   edit, because this leaf's own edit can move it — the precise failure `.6` recorded and `.6a` measured
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.6a`
-  Verification: `pending`
-  Commit: `pending`
+  **Remedy applied, and it is withdrawal on both surfaces rather than fresh numbers.** The book chapter now
+  states the `.3b.4` unit vector as a *dated boundary*, names the two mechanisms `.6a` measured, carries only
+  `derived` 11 / `identity_gated` 7 / no `incomplete` / zero unresolved, and routes the rest to `--report`. Its
+  quantitative-adjudication section stops printing `regions`/`registered`/`incomplete`/`excluded` at all and
+  routes to `--report` plus the registry's own `expected_*` fields, because those totals move whenever the
+  manual changes — *including the commit that edits the chapter*. The three closure boundaries (79 = 51 + 28,
+  84 = 51 + 33, 86 = 51 + 35) are kept as dated observations, and the invariant that survives them is stated
+  instead: unresolved is zero. The fact card gets the same treatment plus a retitle, because its old title
+  published `56 exact authority units` as current.
+  Ordering constraint discharged: the mdBook incomplete count was re-derived **after** the book edit and is
+  **unchanged at 89** — this edit removed numbers rather than adding candidate lines, and the census still
+  reports 39 book files / 21 candidate files / 321 regions. `TOOLBOX.md` nevertheless **withdraws** the 89 as
+  well, for consistency with what the book and the card now say: it stepped once (75 -> 89 at `e6f5012d`) in
+  the same 29 measurements over which `registered` stepped twice, so carrying one and withdrawing the other
+  could not be defended.
+  Registry work this required, exactly as predicted: one frozen mdBook region (`book-quantity-0bee17d3b260b5c9`)
+  moved 540 -> 547 and was re-pointed; no region was added or removed. The mdBook is a `maintained_reference`
+  surface, so editing it also required a **new** `shipped_behavior.reference_contract.aggregate_change`
+  authority (16,949 -> 16,961 lines, 1,090,989 -> 1,092,351 bytes); the generic gate refuses a reused
+  authority_id across an aggregate change and caught the omission on the first commit attempt.
+  **This commit then demonstrated `.6a`'s finding on itself.** Its own `CHANGES.md` rollover retired **13**
+  census evidence rows whose regions left the live window — each verified byte-exact in
+  `segment-0015-2026-08-29.md` at lines 1, 52, 104, 140, 171, 201, 272, 324, 344, 394, 426, 458, 492, and
+  retired rather than re-anchored, per `.8`'s rule — and added one for the new ledger head. So
+  `evidence_units` fell **71 -> 59** inside a single slice that published no census result at all. Every field
+  `.6a` carried held across it: `derived` 11, `identity_gated` 7, no `incomplete`, `unresolved` 0, **39**
+  surfaces, **5** views, and `registered` 4 with closure 69/49/20 unchanged. One book region also had to be
+  re-anchored (`bacf4da4d64a` -> `c1ca6cd11566`, line 422 -> 428) because the edit moved the annotated line.
+  **Correction `.6b` owes `.6a`, found by the director asking whether the finding was trusted.** `.6a`
+  published a *mechanism* for its own correction — "`.6`'s own rollover sealed 18 records while adding 2, so
+  the total did not rise" — that it had **not measured**. Re-derived here from the tracked registry blobs:
+  `git show fdda3c53:doctrine/claim_verification/current_claim_census.jsonl` and the same at `5fe81128` both
+  hold **59** evidence rows with **5** `CHANGES.md` rows, and the diff between them is exactly **one row
+  removed and one added**. So the total held because one retirement cancelled one addition — not because
+  eighteen sealed records cancelled two. The measured *numbers* `.6a` published are unaffected (56/57/58/59
+  and 59 at `5fe81128` all re-derive), and so is the withdrawal; only the causal sentence was wrong.
+  Two things are worth keeping from this. First, `.6` itself had already written the true mechanism down —
+  "one census evidence region went with the sealed records and was retired, not re-anchored" — so its
+  published `60` was a prediction that contradicted its own commit body, and `.6a` then invented a second
+  wrong account instead of reading either. Second, the leaf that exists to stop unmeasured numbers published
+  an unmeasured cause in the same breath, which is the same defect one level up: `.7`'s gate must reach a
+  claimed *mechanism*, not only a claimed count, or it will keep passing sentences like this one.
+  **Attribution measured, not assumed, and cheaply.** The mdBook census's whole history is recoverable without
+  a worktree, because its frozen contract is a tracked registry: counting outcomes in
+  `git show <rev>:doctrine/claim_verification/book_quantitative_claims.jsonl` over the 31 commits that touched
+  it gives the exact trajectory. `regions/registered/incomplete/excluded` ran 304/8/75/221 from `467928bb`
+  through `a4a08cd4`, then 307/8/78/221 at `be3b12e6` — which is what the chapter says, and it was **right
+  when written** — then 308/8/78/222, 309/8/80/221, 318/8/89/221, 319/8/89/222, 320/8/89/223, and
+  321/8/89/224 from `fdda3c53` onward. The book was never updated after `be3b12e6`. The census sentence has the
+  same story one surface over: "56 exact evidence units" was correct at `50775894` and false from `e6f5012d`.
+  So neither sentence was ever wrong on the day it landed, and both were wrong for twelve days afterwards
+  Verification: `check_book_quantitative_claims.pl --check green (39 files / 21 candidate files / 321 regions)
+  and --report unchanged at 321/8/89/224 after the edit; check_current_claim_census.pl --check green;
+  knowledge-map derive-and-diff in sync; fact-card catalog valid for 248 cards; doctrine gate`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.6b / CHANGES-LEDGER-ROLLOVER.3 — sweep the two surfaces .6 and .6a left`
   Verification: `pending`
   Commit: `pending`
 
@@ -503,6 +558,13 @@ the workflow through the mdBook and repository review path.
   The disagreement between two surfaces publishing the same count is a second, cheaper signal `.7`
   could exploit: it needs no producer at all, only the observation that two governed regions state
   different values for one quantity
+  Seventh instance (`2026-08-29`, `.6b` correcting `.6a`): the drift class is not confined to counts.
+  `.6a` published an unmeasured **mechanism** — "`.6`'s own rollover sealed 18 records while adding 2" — and
+  it is false; `5fe81128` removed one census evidence row and added one. `.6` had published a different wrong
+  account and the true one in the same commit body. A gate that re-derives a published *count* against its
+  producer would have passed all three sentences, because none of them is a count. So `.7`'s design has to
+  decide explicitly whether a claimed causal account is in or out of scope, and say so rather than leave the
+  hole unnamed
   Sixth instance (`2026-08-29`, measured by `.6a`, owned by `.6b` rather than repaired in place): the
   **same-transaction** shape is now proved rather than suspected. All four counts `.6` recorded as
   "confirmed unchanged" were already false in `5fe81128`, the commit that published them, and the same
@@ -566,6 +628,21 @@ the workflow through the mdBook and repository review path.
   nouns at all — a grouped or emphasized numeral in prose is the actual signal — and (3) adjudicate the
   resulting population, starting with the five above. A RED control must prove a quantity the current
   vocabulary misses is observed after the change
+  **Second demonstration (`2026-08-29`, measured by `.6b`), and it is sharper than the first because it is the
+  census's own chapter.** At `40acadb2`, `docs/book/src/reference/doctrine-enforcement.md` was 557 lines and
+  published two stale current sentences — "56 exact evidence units: 11 derived, seven identity-gated, six
+  registered, zero incomplete, and 32 excluded", and `regions=307` / `registered=8` / `incomplete=78` /
+  `excluded=221` with `dated=186`. The frozen census held exactly **five** regions in that whole chapter —
+  lines 31, 49, 88, 306, 540 — and since `--check` was green there, that is also the complete candidate set:
+  **not one candidate is a line carrying those counts**. Two grammar gaps explain it: `units` is not in the
+  closed noun list, and a backticked `key=value` form such as `regions=307` matches no clause at all. So the
+  surface that documents the census is a surface the census cannot see. Duration measured from the tracked
+  registry rather than estimated: `regions=307/78/221` was **correct when written** at `be3b12e6`
+  (`2026-08-16`) and then moved seven times — 308/222, 309/80/221, 318/89, 319/222, 320/223, 321/224 — settling
+  at `fdda3c53` (`2026-08-28`), so the chapter was stale for **12 days and 7 registry changes** under a green
+  gate, while the contract honestly reported full coverage of its declared denominator. Same shape as `.7`'s
+  fifth instance (a stale count outside the denominator), now with the vocabulary cause and the duration
+  measured rather than inferred
   Prerequisite: none
 
 ## Current Frontier
@@ -592,7 +669,8 @@ the workflow through the mdBook and repository review path.
 | 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `done` | seven controls and six producers close with exact RED evidence and zero scratch candidates |
 | 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `done` | public workflow, independent audit, and selected full CI close the fifth architecture |
 | 20 | `CLAIM-VERIFICATION-ADOPTION.6a` | `done` | 28-consecutive-revision trajectory proves all four were already false inside `.6`'s own commit; withdrawn with producer fields named |
-| 21 | `CLAIM-VERIFICATION-ADOPTION.6b` | `pending` | the mdBook doctrine chapter and the census fact card still publish the counts `.6a` withdrew, plus two stale mdBook-census constants |
+| 21 | `CLAIM-VERIFICATION-ADOPTION.6b` | `done` | book chapter, fact card, and `TOOLBOX.md`'s last carried mdBook count now all route to `--report`; drift attributed per registry revision |
+| 22 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | six instances now; the gate that re-derives a published count against its producer is the only thing that can observe this class |
 
 ## Decisions
 
@@ -1259,6 +1337,8 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-29` | `.6b` correcting `.6a` | outcome/row census of `current_claim_census.jsonl` at `fdda3c53` and `5fe81128` from Git blobs | both revisions hold **59** evidence rows and **5** `CHANGES.md` rows, differing by exactly **one removed / one added**. `.6a`'s published mechanism ("sealed 18 while adding 2") is **false**; the total held because one retirement cancelled one addition. Every number `.6a` published re-derives and the withdrawal stands. Recorded as `.7`'s seventh instance: a count-only gate passes a false mechanism |
+| `2026-08-29` | `.6b` | outcome census over 31 registry revisions of `book_quantitative_claims.jsonl`; `check_book_quantitative_claims.pl --check`/`--report`/`--produce`; `check_current_claim_census.pl --check`; knowledge-map derive-and-diff; fact-card catalog; doctrine gate | the book's `regions=307/8/78/221` was **correct when written** at `be3b12e6` (`2026-08-16`) and then moved **seven times** to 321/8/89/224 by `fdda3c53`, unedited for 12 days; "56 exact evidence units" was correct at `50775894` and false from `e6f5012d`. Both withdrawn and routed to `--report`, the fact card retitled, and `TOOLBOX.md`'s last carried mdBook count withdrawn for consistency. Post-edit re-derive: **321/8/89/224 unchanged**, 39 book files / 21 candidate files. One frozen region re-pointed 540 -> 547. For `.9`: the chapter held **5** candidate lines in 557 and none was a drifted one — `units` and backticked `key=value` are both outside the grammar |
 | `2026-08-29` | `.6a` | 28-consecutive-revision worktree trajectory (`e6f5012d` -> `60a81db7`) plus the `50775894` anchor, each with its own `check_current_claim_census.pl --report`; `check_claim_verification.pl --report`; `check_book_quantitative_claims.pl --report`; census `--self-test`; doctrine gate | `registered` **6 -> 5 -> 4** and closure **86/51/35 -> 72/50/22 -> 69/49/20**, stepping at `5fe81128` and `1507adbf`; so all four counts `.6` called confirmed were false **inside `.6`'s own commit**. `.6`'s unit trajectory is also corrected (**59**, not 60, at `5fe81128`) and its "one more excluded unit per rolling-ledger head" rule withdrawn — 15 rises, **2 falls**, 10 no-changes over 27 transitions. Stable across all 29: derived **11**, identity-gated **7**, no `incomplete`, unresolved **0**, surfaces **39**, views **5**; carried with producer fields named. `7/7/6/0/0` control audit and mdBook **89** incomplete re-derive; self-test **27/27** |
 | `2026-08-29` | `.7` fifth stale-count instance | `test_live_document_size.pl`; `check_fact_card_catalog.pl --self-test`; `test_derived_state_contracts.pl`; `test_derived_state_authorities.pl`; `check_task_tree_archive.pl --self-test`; `check_active_task_evidence.pl --self-test` | producers report **84 / 60 / 47 / 25 / 15 / 44**. `DOCTRINE_ENFORCEMENT.md` published 84/**58**; the book published **81**/**58**. Two stale counts repaired; the other four re-derive. The book's stale `81` sits at a line the frozen census holds **no** region for; its stale `58` sits at a line the census holds an **incomplete** region for — one outside the denominator, one inside it and explicitly unverified. Neither a digest binding nor the frozen census can observe either, which is `.7`'s whole point |
 --- |
@@ -1352,6 +1432,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | `.6` | `CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts` | 11 counts re-derived, two per-commit counters withdrawn, mdBook incomplete 75 -> 89; four "confirmed" counts later proved false in this same commit |
 | `.6a` | `CLAIM-VERIFICATION-ADOPTION.6a — own four counters .6 confirmed that have drifted again` | leaf opened; withdrawal deliberately deferred until the trajectory was measured |
 | `.6a` | `CLAIM-VERIFICATION-ADOPTION.6a — measure the drift trajectory before withdrawing the counters` | 28-consecutive-revision worktree measurement plus the `50775894` anchor; four counters withdrawn with producer fields named, six carried, `.6`'s unit trajectory corrected, `.6b` opened |
+| `.6b` | `CLAIM-VERIFICATION-ADOPTION.6b / CHANGES-LEDGER-ROLLOVER.3 — sweep the two surfaces .6 and .6a left` | book chapter and fact card routed to `--report`, card retitled, drift attributed across 31 registry revisions, `.9` second demonstration |
 
 ## Changelog
 
@@ -1371,6 +1452,15 @@ was added; the stable-path remedy and its consumed authority are complete.
   chapter and the census fact card, which publish the same counts and were outside `.6`/`.6a`'s stated sweep
   boundary. Added `[[worktree-doctrine-measurement-gitlink]]`, because the rig fails closed and silently until
   the `subs/fsmgen` gitlink is populated in the worktree.
+- `2026-08-29`: closed `.6b`, which finishes the sweep `.6` started and `.6a` bounded. The mdBook doctrine
+  chapter and the `current-claim-census-freeze` fact card both stop publishing census totals and route to
+  `--report`; the card is retitled, because its old title published `56 exact authority units` as current.
+  Attribution came free: the mdBook census's frozen contract is a tracked registry, so counting outcomes in
+  each of its 31 revisions gives the exact trajectory with no worktree at all — a cheaper instrument than
+  `.6a`'s, and worth reaching for first when the thing being measured is itself a tracked artifact. Both stale
+  sentences were correct on the day they landed and wrong for twelve days after. `.9` gains its second and
+  sharper demonstration: the chapter documenting the census held five candidate lines in 557, and none of them
+  was a line the census got wrong.
 - `2026-08-28`: `.7` gained its fourth instance and its repair, and `.8` was opened. `STATUS-LEDGER-ROLLOVER.4a`
   found `current-claim-census-frozen`'s own assertion stale and attributed it exactly: `.6` measured 86/51/35
   before applying its own `CHANGES.md` rollover, and that rollover moved 14 claim-annotated regions into an

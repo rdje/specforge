@@ -1,3 +1,49 @@
+### CLAIM-VERIFICATION-ADOPTION.6b / CHANGES-LEDGER-ROLLOVER.3 — sweep the two surfaces .6 and .6a left
+
+- Finished the sweep `.6` started and `.6a` bounded. `.6`/`.6a` corrected TOOLBOX.md only and said so; two
+  other current-facing surfaces published the same census numbers. docs/book/src/reference/doctrine-enforcement.md
+  said "56 exact evidence units: 11 derived, seven identity-gated, six registered, zero incomplete, and 32
+  excluded" against a producer reporting 70 and 11/7/4/0/48, and `regions=307, registered=8, incomplete=78,
+  excluded=221` against 321/8/89/224. The fact card current-claim-census-freeze repeated both, with "56 exact
+  authority units" in its own title.
+- Attribution came free, and from a cheaper instrument than `.6a`'s worktree replay: the mdBook census's
+  frozen contract is a TRACKED registry, so counting outcomes in each of the 31 revisions of
+  doctrine/claim_verification/book_quantitative_claims.jsonl gives the exact trajectory with no checkout at
+  all. 304/8/75/221 through a4a08cd4; 307/8/78/221 at be3b12e6 — which is what the chapter says, and it was
+  RIGHT when written — then 308, 309/80, 318/89, 319, 320, and 321/8/89/224 from fdda3c53 onward. The chapter
+  was never updated after be3b12e6, so it was stale for twelve days across seven registry changes.
+  When the thing being measured is itself a tracked artifact, its history is already in Git.
+- Applied `.6a`'s remedy rather than fresh numbers: both surfaces now state the old vectors as DATED
+  boundaries, name the two mechanisms that move them, and route current truth to `--report`. The card is
+  retitled. TOOLBOX.md also withdraws the one mdBook count it still carried (89) — it stepped once in the same
+  29 measurements over which `registered` stepped twice, so carrying one and withdrawing the other could not
+  be defended.
+- Ordering constraint the leaf set itself, discharged: the mdBook incomplete count was re-derived AFTER the
+  book edit and is unchanged at 89, because the edit removed numbers instead of adding candidate lines. One
+  frozen region moved 540 -> 547 and was re-pointed; no region was added or removed.
+- Sharpened `.9` with a second and better demonstration. At 40acadb2 the chapter was 557 lines and the frozen
+  census held FIVE regions in it — lines 31, 49, 88, 306, 540 — and not one was a line carrying the stale
+  counts. Two grammar gaps: `units` is not in the closed noun list, and a backticked `key=value` such as
+  `regions=307` matches no clause. The surface documenting the census is a surface the census cannot see.
+- Rolled the change ledger in the same commit, as the protocol requires of the leaf whose entry trips the
+  signal. Sealed the twelve oldest post-migration records into segment-0015-2026-08-29.md (504 lines / 45,619
+  bytes) under a plan pinning boundary commit 40acadb2 and its exact opening blob; dry run exact and
+  warning-safe before the applied run; no record edited or reordered, no limit moved, the retained 75-record
+  suffix untouched. Root 1,619 -> 1,114 lines (61.9%) and 176,223 bytes (69.1%).
+- Opened CHANGES-LEDGER-ROLLOVER.4 for the standing limit this exposes: the pinned 75-record migration suffix
+  alone is 1,054 lines and 170,695 bytes — 58.6% and 66.9% of the targets before a single current record — so
+  every rollover can only recycle the remaining third, and the ledger returns to its signal about every dozen
+  slices. Not fixed here; the suffix is already byte-exact in the source capsule, so retiring it from the live
+  window is a registry decision, not a segment.
+- Corrected `.6a` on re-verification, prompted by the director asking whether the finding was trusted. `.6a`
+  published a MECHANISM it had not measured: "its own rollover sealed 18 records while adding 2". Re-derived
+  from the registry blobs, fdda3c53 and 5fe81128 both hold 59 evidence rows with 5 CHANGES.md rows and differ
+  by exactly one row removed and one added, so the total held because one retirement cancelled one addition.
+  Every number `.6a` published still re-derives and the withdrawal stands; only the cause was wrong. `.6` had
+  already written the true mechanism in its own commit body, so its published 60 contradicted itself and
+  `.6a` then invented a second wrong account rather than reading either. Routed to `.7`: a gate that
+  re-derives counts but not claimed mechanisms would have passed all three sentences.
+
 ### CLAIM-VERIFICATION-ADOPTION.6a — measure the drift trajectory before withdrawing the counters
 
 - Measured the four drifted TOOLBOX.md census counters across the 28 consecutive revisions e6f5012d ->
@@ -10,8 +56,9 @@
   only what held at every measurement: derived 11, identity-gated 7, no incomplete outcome, unresolved 0,
   39 current surfaces, 5 views.
 - Corrected a fifth number in the same section that nobody had questioned. `.6` published the unit trajectory
-  56 -> 57 -> 58 -> 59 -> 60; the last element is 59, not 60, because its own rollover sealed 18 records while
-  adding 2. Its stated rule, one more excluded unit per rolling-ledger head, is not a rule either: over the 27
+  56 -> 57 -> 58 -> 59 -> 60; the last element is 59, not 60. (The mechanism first published with that
+  correction was itself wrong and is corrected by .6b below: 5fe81128 removed one census evidence row and
+  added one, so the total held.) Its stated rule, one more excluded unit per rolling-ledger head, is not a rule either: over the 27
   transitions from e6f5012d the total rises 15 times, FALLS twice, and holds 10 times. Withdrawn with the rest.
 - Opened `.6b` instead of filing a defect. `.6`/`.6a` swept TOOLBOX.md only, and two surfaces still publish
   the same counts: docs/book/src/reference/doctrine-enforcement.md (56 units and 11/7/6/0/32 against 70 and
@@ -58,511 +105,6 @@
 - Prevention is NOT done and is routed to `.4`: the producer is still signal-unsafe, so the residue
   recurs. `.4` must choose between a %SIG handler and a proportionate reclamation scope on evidence,
   with a RED control proving the choice survives the measured kill shape.
-
-### SOURCE-IR-REPRODUCIBILITY.16 — report the seal debt on the commit that creates it
-
-- Added scripts/check_proof_seal_currency.sh and registered PROOF-SEAL-CURRENCY at GATE tier in
-  scripts/check_doctrines.sh. `.14`'s seal debt stood for 13 days and 54 commits because the only
-  doctrine that reports it, CHAIN-CURRENCY, is CI-tier and first speaks at the push boundary. Now every
-  commit reads the seal of every persisted artifact at all five chain stages and asks the current
-  build's own canonical loader whether it still accepts it.
-- Real corpus, exit 0: 24/24 persisted and sealed with 1 distinct seal at each of source-ir, evidence,
-  semantic, intent, isf-adapter; four read-only canonical probes accepted; terminal stage reported
-  unprobed, in 14.1 s. The gate tier measured 4 m 21 s without it and 3 m 02 s with it, so variance
-  dominates that comparison and 14.1 s is the honest figure.
-- The census is TOTAL and the probe is REPRESENTATIVE — one per DISTINCT seal per stage. That is not a
-  sample: the census is what establishes representativeness, so a per-document divergence raises the
-  distinct count and earns its own probe rather than hiding behind a homogeneous neighbour.
-- Read-only is proved, not asserted. The composite SHA-256 of all 120 in-scope artifacts is
-  byte-identical across a full run, and the probe is the CONSUMING stage in --dry-run, never
-  `specforge validate` — which is not idempotent and would invalidate the chain it claims to read.
-  A recording stub makes that behavioural rather than structural.
-- THE RED CONTROL IS THE REAL PRODUCT LOADER, NOT A STUB. Copying one sealed source_ir.json into a
-  scratch corpus root and zeroing its ledger ruleset_sha256 makes the current binary emit `.14`'s exact
-  diagnostic — "SourceIR proof verification failed: proof ledger ruleset hash is stale" — the gate exits
-  1, and it classifies the rejection as the stale-seal class and names the owning remedy instead of
-  printing a loader error for the reader to interpret. The same root untampered passes.
-- Corrected this leaf's own cost framing before designing against it. It asked for an answer to "carries
-  no ledger" WITHOUT READING THE WHOLE FILE. Proving absence requires reading every byte; what is
-  actually removable is the parser. A necessary-condition prefilter (index() for the "proof_ledger" key,
-  one process for a whole list) costs 0.24 s over all 78 source_ir.json where the exact scan costs
-  2.96 s on the 54 proofless ones alone. It is never an authority: a nested proof_ledger is a candidate
-  the exact scan rejects. Soundness measured over 390 persisted artifacts — 120 candidates,
-  120 exact positives, 0 prefilter-negatives the exact scan would have accepted.
-- Made the exact scan 5.1x faster (6.26 s -> 1.23 s on the 24 proof-carrying source_ir.json) by matching
-  whole string literals and the runs between structural bytes instead of walking one character at a
-  time. Because that rewrites a predicate `.15` had already proved, it is held to an agreement census
-  rather than to review: 390 persisted artifacts, 0 mismatches, exit codes included.
-- Shared, not copied (the `.11` lesson): scan_proof_ledger / carries_proof_ledger / recorded_ruleset and
-  the chain stage+probe table now live once in scripts/lib/proof_seal_scan.sh. rebuild_stage_cascade.sh
-  sources them and its stage table became thin wrappers, with its 14/14 self-test unchanged as the
-  control that the refactor preserved behaviour. Sabotaging the shared predicate drives the new gate
-  16/16 -> 10/16 and the cascade 14/14 -> 11/14, so the library is load-bearing for both.
-- Two limits are reported rather than papered over. The terminal isf-adapter stage has no consumer, so
-  no read-only canonical probe exists for it at all — and CHAIN-CURRENCY does not close that gap either,
-  because its content comparison excludes the proof surface by construction. And a current seal is not
-  content currency: this gate never says an artifact is what the current binary would reproduce.
-- Book: "Seeing the seal break on the commit that breaks it" under doctrine enforcement, plus the new
-  registry row.
-- Corrected a falsified clause in the resume pointer while measuring the above. It said "no gate sees"
-  the 138 leaked live-document-size-tests dirs under generated/. No gate JUDGES them, but
-  check_persisted_artifact_paths.pl (run by the locality gate) WALKS every *.json under generated/ and
-  classifies theirs as `other` — and it FAILED on 2026-08-29 when a fixture run deleted them mid-walk,
-  which is how this was found. The residue still needs its own tree.
-
-### SOURCE-IR-REPRODUCIBILITY.15 — rebuild the downstream chain the seal could not reach
-
-- Found the baseline was ONE defect, not three. All 72 downstream canonical validates (24 x
-  evidence/semantic/intent) failed with the SAME message, so a single upstream seal blocked the whole
-  chain. Mechanism read from the source rather than inferred: cumulative_ruleset_sha256 in
-  ir/derivation.rs folds the upstream cumulative digest with the stage-local one, so `.14`'s SourceIR
-  re-seal necessarily moved every digest below it.
-- Rebuilt all four stages with the new scripts/rebuild_stage_cascade.sh --write:
-  24 rebuilt / 24 content-identical / 0 content-changed / 24 validated / 0 failed at EVERY one of
-  evidence, semantic, intent, and isf-adapter, each stage's seal moving to exactly one new value.
-  The ADR 0025 precedent said "it will be identical" is a hypothesis, not a given; it held, and it was
-  measured against an 842 MB snapshot taken before any write, not trusted.
-- Gave remedy and oracle ONE predicate. compare_stage_artifact/compare_emitted_isf were extracted
-  BYTE-FOR-BYTE into scripts/lib/stage_artifact_identity.sh, which check_chain_currency.sh now sources,
-  so a remedy can never certify itself with a comparison the gate would not make (the `.11` lesson).
-  RED control: making the shared predicate always report identity drives the ORACLE's own self-test
-  22/22 -> 20/22, so the library is load-bearing rather than a dead file.
-- THE VERIFICATION INSTRUMENT DAMAGED WHAT IT MEASURED, and that is the most important thing this slice
-  learned. A post-cascade `specforge validate` census over all 24 x 4 artifacts made the oracle report
-  intent and isf-adapter 0/24 current on a NEW error — "cumulative proof ledger does not retain the
-  exact verified upstream prefix". Two hypotheses: the rebuild made bad artifacts, or the measurement
-  broke them. Separated by direct control, not argument: specforge validate is NOT IDEMPOTENT. Each call
-  appends one validation_backannotation mutation to proof_context and moves the artifact's digest
-  (measured 4 -> 5 -> 6 over three consecutive calls), and every downstream stage retains its upstream
-  ledger as an exact prefix — so re-validating evidence broke semantic, and so on down. The cascade
-  itself was correct: it validates each artifact exactly once, strictly upstream to downstream.
-- Checked before calling it a defect, and it is NOT one. ADR 0038 designs both halves deliberately —
-  validation backannotation is a closed mutation that "extends the proof before persistence", and each
-  downstream stage "copies those verified claims as an exact ordered prefix". A proof system whose
-  upstream really changed SHOULD fail closed. Scope measured rather than extrapolated: proof_ledger.claims
-  is 480 at one mutation and 480 at four, and backannotate_report does clear()+push() so
-  validation_reports stays at 1. Only the small proof_context.mutations audit list grows.
-- Fixed the two consequences instead of noting them. scripts/rebuild_stage_cascade.sh --check carried the
-  same defect — it probed each stage with `specforge validate` while printing "nothing was written". The
-  read-only way to ask the SAME canonical loader is to run the CONSUMING stage with --dry-run, measured
-  to leave the artifact byte-identical while validate moved it; --check now does that and reports the
-  terminal stage honestly as having no such probe. Self-test 10's digest check could not catch it
-  (a miniature corpus's artifacts never load), so controls 13/14 use a recording-stub binary asserting
-  --check never invokes validate and does ask a --dry-run loader: observed RED at 12/14 against the exact
-  shipped known-bad code, GREEN at 14/14 after the fix.
-- Corrected `.16`'s cost figure BEFORE it is designed against. Its 0.18 s is a grep read; reusing it as
-  the cost of an exact read would have been wrong. Measured on the same 78 source_ir.json: grep 0.295 s,
-  the exact depth-aware scan 21.0 s — 71x, not the ~200x a first composite wall-clock suggested. The
-  driver is not the scan: 24 proof-carrying files cost 6.4 s because the reader exits at the ledger,
-  while 54 proofless files cost 14.3 s because it reads each to EOF for a ledger that is not there. So
-  the constraint is sharper than "add a fast path". `.16` also now records that "ask the product's own
-  canonical loader" must NOT mean `specforge validate`, which would corrupt the chain every commit.
-- Book: the doctrine chapter gains the stale-seal remedy (proof-only for SourceIR, stage rebuild below
-  it); the generated-artifacts chapter gains "validate writes, and the order matters".
-
-Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
-
-### SOURCE-IR-REPRODUCIBILITY.14 — re-seal the SourceIR corpus, and size the check that should have caught it
-
-- Corrected this leaf's own mechanism before acting on it. It said a rule registration "carries
-  production_semantic_implementation_digest, so ANY edit to the production source module invalidates
-  every persisted ledger". Wrong, and unfair to the design. The digest is generated at build time by
-  crates/specforge-core/build.rs, which roots at each stage's rule-registry constructor, recursively
-  follows its stage-local production items, and folds in the trusted-kernel token graph — comments, doc
-  attributes, formatting, cfg(test) items, and conformance sources are explicitly NOT inputs. It is
-  implementation authority, not a whole-file freshness proxy: only 5 of the 54 commits since the corpus
-  was sealed touched a stage root or derivation.rs at all.
-- Re-sealed all 24 live artifacts with source_proof_migrate --write --retained-manifest.
-- Proved it was a seal and not a content problem, rather than assuming. Snapshotted all 24
-  source_ir.json (89.0 MB) before the write and compared field by field with proof_context/proof_ledger
-  excluded: 24 PROOF-ONLY, 0 PUBLIC CONTENT CHANGED, 0 unchanged. After: specforge validate reports
-  verified 24/24 failed 0/24, and the ruleset digest is homogeneous across all 24.
-- Chain currency moved, partly, and exposed the same debt one stage down. `evidence` went 0 current / 24
-  stale -> 24 replayed / 24 current / 0 stale. `semantic`, `intent`, and `isf-adapter` remain 0/24 but
-  now fail on a DIFFERENT error — "EvidenceIR proof verification failed: CUMULATIVE proof ledger ruleset
-  hash is stale" — because they read the persisted EvidenceIR, whose own cumulative seal is stale.
-- Established that the downstream remedy is not the same operation. Only SourceIr has
-  rebuild_from_retained_capture; EvidenceIR, SemanticIR, IntentIR, and the adapter have no proof-only
-  re-seal, so downstream needs a stage-rebuild cascade that writes real artifact content. Opened `.15`
-  for it, with the ADR 0025 precedent recorded: that reconciliation found exactly one real content delta
-  across 24 documents, so "it will be identical" is a hypothesis to test, not a given.
-- Answered the director's question with measurements instead of opinion, and opened `.16` to act on it.
-  Detecting the stale seal costs 0.18 s to read all 78 seals, or 7.2 s to verify all 24 canonically.
-  Learning the same fact from check_chain_currency.sh took ~20 MINUTES. And it went undiscovered for
-  13 DAYS / 54 COMMITS — sealed 2026-08-15, earliest possible breaker 29dde0ac on 2026-08-16.
-  Pre-push is three orders of magnitude too late; the check belongs at gate tier.
-- `.16` records two constraints its implementation must not violate: ask the product's own canonical
-  loader rather than reimplement the digest comparison (the `.11` lesson about a drifting second copy of
-  a predicate), and PASS on a tree with no persisted corpus, because generated/ is untracked and a fresh
-  clone has none. Scope it to stages whose seal is current when it lands, so it does not fail on day one.
-
-Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
-
-### SIGNOFF-REMEDIATION.3 — restore workspace formatting at main
-
-- Reopened the tree that exists for exactly this. Its 2026-05-17 goal statement reads "HEAD fails
-  `cargo fmt --all --check` … so the canonical CI entrypoint `scripts/run_ci.sh` would reject `main`",
-  and that was true again. Two files: `src/ir/source_to_intent_eval.rs` and
-  `src/test_support/trajectory_snapshot.rs`. A duplicate tree would have been archaeology.
-- Excluded the easy dismissal first. Not a local-toolchain artifact: `rustc --version` is 1.95.0, the
-  exact version .github/workflows/ci.yml pins via dtolnay/rust-toolchain@stable, with no rustfmt.toml
-  and no ignore list — so it reproduces in CI. Not a fresh regression either: replaying each file's last
-  five revisions through `rustfmt --check` reports UNFORMATTED at every one.
-- Discharged the digest constraint by measurement rather than by assuming formatting is inert.
-  `trajectory_snapshot.rs` carries REPLAY_PROJECTION_SHA256 and the eight-surface lockstep
-  SOURCE-IR-REPRODUCIBILITY.2 documented. All 9 of its 64-hex literals (and the 1 in the eval file) are
-  byte-identical before and after as sorted sets; stripping all whitespace and diffing token by token
-  leaves EXACTLY ONE OPCODE for the whole file — a single inserted `,`, the trailing comma rustfmt adds
-  when splitting an assert!. The eval file's token delta is zero.
-- Named the oracle rather than resting on inspection. The trajectory snapshot validator fails closed on
-  any REPLAY_PROJECTION_SHA256 mismatch and passes, so the pins are re-checked by the machinery that
-  exists to catch exactly this.
-- Root cause of the invisibility, not just of the drift: `run_ci.sh` is the only gate that runs
-  `cargo fmt --all --check`, and the CI policy moved that entrypoint to the push boundary, so no
-  per-slice gate observes formatting. That is a consequence of a deliberate policy, not an oversight.
-- Stated what this does NOT unblock. `run_ci.sh` runs `check_doctrines.sh --all` FIRST under
-  `set -euo pipefail`, and CHAIN-CURRENCY fails 0 current / 24 stale. Formatting was the entrypoint's
-  third step and is now clear; the first is not, and belongs to SOURCE-IR-REPRODUCIBILITY.14.
-- Gates: cargo fmt --all --check clean workspace-wide; cargo clippy --workspace --all-targets --
-  -D warnings clean; cargo test --workspace 470 / 168 / 1,371 / 4 / 5 passed, 0 failed, 9 ignored;
-  scripts/check_doctrines.sh 9/9 executed gate-tier doctrines PASS.
-
-Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
-
-### SOURCE-IR-REPRODUCIBILITY.14 / CLAIM-VERIFICATION-ADOPTION.9 — correct two findings the director asked me to re-verify
-
-- Re-verified all three findings from `5f568381` on request rather than restating them. One holds as
-  published, two were overstated in ways that matter, and both are corrected in their owning leaves
-  here. No measurement changed; every number in `5f568381` re-derives.
-- `.14` contradicted itself. It said "no doctrine reports it, while CORPUS-CHAIN-CURRENCY publishes a
-  current chain", then two paragraphs later recorded that `check_chain_currency.sh` fails loudly at 0
-  current / 24 stale and refuses to be bypassed. The second is right: CHAIN-CURRENCY reports the seal
-  debt, names the owning remedy (rebuild under CORPUS-COVERAGE, ADR 0025 decision 1), and publishes no
-  current chain. The first sentence was written before the check was run and never reconciled. What is
-  actually absent is a GATE-TIER signal — CHAIN-CURRENCY is registered `ci`, so an ordinary slice never
-  runs it — and that is a direct consequence of the CI policy that deliberately moved full CI to the
-  push boundary. So `.14` is reframed from "unowned hole" to a director judgement call: is a cheap
-  seal-only check worth gate tier, or is pre-push discovery the intended cost?
-- `CLAIM-VERIFICATION-ADOPTION.9` was unfair to a tool that declared its own limits. It claimed the book
-  census "reports full coverage of a set it defines too narrowly". But `.3b.3.0` (`2026-08-15`) declared
-  the grammar "a prose-only lexical candidate grammar as a COMPLETENESS ALARM, not a semantic
-  classifier", and `.3b.3.3` states the frozen claim "verifies the census mapping, not the truth of its
-  assertions". 321/321 is an honest statement about the mapping over its declared denominator. The
-  narrower finding stands and is still worth acting on: the alarm's noun list has a blind spot for the
-  nouns this pipeline publishes in, so five new quantities in a governed chapter raised no alarm.
-- The formatting finding survives and got stronger under checking. The local toolchain is rustc 1.95.0,
-  exactly the version `.github/workflows/ci.yml` pins, so it reproduces in CI; and both files have been
-  unformatted for at least five commits back, so it is standing debt rather than a fresh regression.
-- Corrected the ordering claim that went with it. `scripts/run_ci.sh` runs `check_doctrines.sh --all`
-  FIRST under `set -euo pipefail`, so chain currency — not formatting — is the first thing that blocks a
-  push today; formatting blocks at the third step.
-
-Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
-
-### SOURCE-IR-REPRODUCIBILITY.8 — give the text inside a figure somewhere to land
-
-- Closed the defect this tree's largest published number describes. `iterate_items` is called with
-  docling-core's default `traverse_pictures=False`, so every child of a figure is skipped except that
-  figure's own captions, and the skip takes every descendant with it. Nothing recorded what was
-  skipped — no element, no residual, no counter. `VisualAsset` now carries `interior_texts`, one entry
-  per text item the converter placed inside that figure, with its own `source_ref`, mapped `kind`,
-  text, and `page_id`.
-- Put it on the figure, NOT in `content_elements`. Appending a diagram label to the reading-order text
-  stream is exactly how a figure fragment ends up spliced into a sentence the specification never wrote,
-  which is the separate defect `.10` owns. The measurement proves the constraint rather than asserting
-  it: `content_elements` is 115 before and 115 after on the re-ingest below.
-- Made the membership rule the library's own traversal differenced against itself. Production already
-  walks `doc.iterate_items()`; the interior set is whatever `doc.iterate_items(traverse_pictures=True)`
-  additionally yields. The two calls differ only in whether figures are traversed, so the difference IS
-  the population — there is no second predicate that can drift from the first, which is the risk `.11`
-  had to build an oracle for on the census side. Attribution walks the item's own parent chain, because
-  a list group inside a figure puts its items two levels down. An interior item that resolves to no
-  figure raises rather than being dropped.
-- Measured the population before implementing, over all 24 retained converter bundles, read-only:
-  13,506 figure-interior text items (13,416 `text`, 52 `caption`, 12 `section_header`, 10 `list_item`,
-  9 `footnote`, 6 `checkbox_unselected`, 1 `code`), every one attributable to a body-layer picture that
-  becomes a `VisualAsset` — 0 orphans. It reproduces `.5`'s persisted per-document figures exactly
-  (I2C 1,372, I2S 255) and is deliberately not `.5`'s 5,896, which is what a CURRENT re-ingest of three
-  documents discards. Scope is complete for content: the only non-text nodes blocked inside a figure
-  anywhere in the corpus are 10 text-free `groups`, and no picture or table is nested inside a picture
-  in any bundle.
-- Verified end to end on a real re-ingest of the 14-page I2S bus specification, through the census
-  producer's own ConverterDocument / SourceIrIndex / conservation_census: 464 converter text items,
-  115 reaching a record before and 370 after; `picture_interior_not_traversed` 255 -> 0; the 94 that
-  remain entirely `content_layer_excluded` (71 page footers, 23 page headers). 255 real diagram labels
-  recovered — `TRANSMITTER`, `clock SCK`, `word select WS`. 8 of 27 figures carry the field;
-  `document_sections` (24), `structured_tables` (7), and `page_artifacts` (14) are unchanged.
-- Designed for landability, and measured it. A new TOP-LEVEL field was rejected: it must join
-  `SOURCE_RULE_FIELDS`, and `validate_proof_context` requires the persisted `proof_context` to carry a
-  premise for every registered field, so registering one makes all 24 live artifacts fail
-  `load_from_path`. The nested field with `skip_serializing_if = "Vec::is_empty"` leaves an artifact
-  that gains nothing byte-identical. Both legs measured: the Rust test asserts an empty carrier is
-  byte-indistinguishable from no carrier, and `source_proof_migrate` (dry run) re-derives 24/24 live
-  artifacts from their own retained capture as `verified` under the new schema.
-- Controls: focused Rust test with three observed RED perturbations — dropping `skip_serializing_if`,
-  dropping `default`, and making `replay_source_classifications` clear the carrier (which would fail
-  only in production, silently). Producer self-test 33/33 -> 37/37 with four observed RED
-  perturbations. TWO of those four first ran GREEN and the controls were rewritten until they
-  discriminated: one perturbation crashed on an index built later in `__init__` (fixed by declaring
-  every index up front) and one control could not tell one figure from one text (fixed by giving the
-  fixture one figure with two interior texts). A control that cannot go RED is not a control.
-- Gates: `cargo test --workspace` 470 / 172 / 1,376 / 4 passed, 0 failed, 9 ignored; `cargo clippy
-  --workspace --all-targets -- -D warnings` clean; `scripts/check_doctrines.sh` green; `mdbook build`
-  exit 0.
-- Opened `.14` for something the landability control surfaced and this change did not cause. At HEAD
-  `3833ad10`, with none of this work in the tree, `specforge validate` reports verified 0/24 and
-  ruleset-stale 24/24 across the live stratum, and `check_chain_currency.sh` fails closed at 0 current
-  / 24 stale on ALL FOUR stages. The seal, not the content, is stale: the ruleset digest covers the
-  implementation, so an ordinary `source.rs` edit un-seals the whole corpus and nothing observes the
-  transition until a CI-tier gate ordinary slices do not run. The tree's own "24/24 current chain"
-  framing is annotated as lapsed where it is stated as current.
-- Opened `CLAIM-VERIFICATION-ADOPTION.9` for a governance gap this slice demonstrated rather than
-  caused. `check_book_quantitative_claims.pl` decides what is a published quantity from a closed unit
-  vocabulary that lacks `items`, `elements`, `texts`, `bundles`, and `figures` — so the five new
-  quantitative lines this change added to the SourceIR chapter (13,506; 464/115/370; 255 -> 0;
-  115 and 255 labels; 27 figures) are invisible to it, and the frozen census still reports 39 files /
-  321 candidates / 321 adjudicated and PASSES. Full coverage of a set defined too narrowly is worse
-  than a reported gap.
-- Also surfaced, not fixed here: `cargo fmt --all --check` — which `scripts/run_ci.sh` runs — fails at
-  HEAD on two files this slice does not own, `src/ir/source_to_intent_eval.rs` and
-  `src/test_support/trajectory_snapshot.rs`. They were left byte-identical rather than folded into an
-  unrelated leaf.
-
-Published-claims: claim-provenance-gate-active, current-claim-census-frozen, mdbook-quantitative-census-frozen
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.5 — stop the resume pointer spending its budget on prose that never changes
-
-- Took the decision on measurement rather than taste. Across the **last 30 commits that touched
-  `MEMORY.md` the preamble is 19 lines in every single one** — a constant — while the mutable
-  "Current state" block grew 17 -> 28 against the 31 lines that leaves it, **90% of its real budget**.
-  The growth is in the half that is supposed to grow, so tighter authoring is not the remedy: 38% of a
-  50-line bound was being spent on prose that is byte-identical in every commit.
-- Proved nothing unique was being deleted before deleting it. All eight routes the preamble stated
-  resolve upstream — `git rev-parse HEAD` and the no-HEAD-shadow rule in `MEMORY_ARCHITECTURE.md`,
-  and `DOCTRINE_ENFORCEMENT.md`, `docs/TASK_TREE.md`, `COMMIT.md`, ADR 0003, `check_doctrines.sh`,
-  `KNOWLEDGE_MAP.md` in `AGENTS.md` — and a harness reads `AGENTS.md` first, with `MEMORY.md` as step 4.
-  The pointer was restating a bootstrap that necessarily precedes it. This is deduplication.
-- Fixed region **19 -> 8 lines**; mutable budget **31 -> 42** (+35%) with **no bound moved**. The four
-  fields `check_memory_architecture.sh` requires are untouched.
-- Gated it, because an ungoverned split drifts back. The checker now derives
-  `MEMORY_POINTER_LINE_CAP / MEMORY_POINTER_FIXED_SHARE_DIVISOR` = 50/4 = **12 lines** for everything
-  above and including the `## Current state` marker, prints the remaining mutable room on every run, and
-  names routing as the remedy rather than a bigger cap. Derived from the existing cap, so it cannot go
-  stale the way a carried literal does — the lesson `STATUS-LEDGER-ROLLOVER.4a` paid for.
-- Four observed cases, one of them on real shipped content rather than a fixture: **the pointer exactly
-  as it stood at HEAD now fails**, 19 > 12; a pointer with no `## Current state` marker fails as "no
-  overwritable resume signal"; 13 lines fails and exactly 12 passes.
-- The gate caught a gap in that verification, which is worth recording because it generalizes. Token
-  presence proves a *route* survives; it says nothing about a **registry pin**. One routed line was both:
-  the derived-state contract `active_resume_repository_revision` pinned the exact heading
-  `## How to resume (any AI, any harness)` as its `field_marker`, and the current-claim census pinned an
-  evidence region on it. Both broke and `check_doctrines.sh` refused the commit. Repaired by repointing
-  each at the surviving declaration — ``on read: revision from `git rev-parse HEAD` ``, which is what the
-  contract exists to anchor — rather than restoring a heading to satisfy a literal. Verified after:
-  derived-state 14 contracts / 47 self-test checks, census 39 surfaces / 66 evidence units, 0 unresolved.
-- `MEMORY_ARCHITECTURE.md` §6 carries the rule, the measurement behind it, and the routing remedy.
-
-- Performed the declared `CHANGES.md` rollover in the same commit, owned by `CHANGES-LEDGER-ROLLOVER.2`.
-  This session's records took the ledger to **1,639 of a 1,800-line health target (91.1%)**, past the
-  mandatory 90% signal, and the protocol refuses the append unless the same change performs the rollover
-  — which is `STATUS-LEDGER-ROLLOVER.4`'s finding arriving on schedule: this ledger's declared 128-record
-  window is unreachable at 108, so a size dimension always binds first and it was lines. Sealed the 14
-  oldest opening post-migration records into
-  `docs/archive/rolling-ledgers/changes/segment-0014-2026-08-28.md` (14 records / 371 lines / 33,716
-  bytes / SHA-256 `6da102b1…c831`) under a plan pinning boundary commit `943381c8` and its exact opening
-  blob `84d2daff…2284`. Dry run "exact and warning-safe" before the applied run, installed root-last, all
-  13 older segments and the source capsule byte-identical. Root is **81 records / 1,267 lines (70.4%) /
-  190,273 bytes (74.6%)**; no record edited, reordered, or reflowed and no limit, milestone, or ceiling
-  moved. The hand-modellable cross-check agreed: 1,219 lines and 185,668 bytes predicted for the opening
-  root before the first dry run, reported exactly.
-- The rollover also produced `CLAIM-VERIFICATION-ADOPTION.8`'s first concrete retirement rule. Two dead
-  census evidence rows had drifted onto **blank lines** — region SHA-256 `01ba4719…546b`, the digest of a
-  bare newline — and the cut made them collide on one `evidence_id`, failing the gate. A region pinned to
-  a newline addresses nothing, so both were retired (registry 114 -> 112). `.8` now records the rule that
-  follows: retire an evidence row when the record head it was created for leaves the live window, rather
-  than relocating it onto whatever line now sits at its offset.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.4/.5 — record two reachable stops the opening boundary could not have seen
-
-- Re-measured the pressure frontier while running an unrelated slice, and two axes are worse than the
-  `2026-08-14` boundary recorded. Both share one shape the containment doctrine calls out: a surface whose
-  `health_targets` equal its `enforcement_ceilings` has **no warning band** — it reports "at or above
-  rollover" and then simply refuses.
-- `docs/research/*.md` is **63 of a 64-file ceiling** and its widest member is 639 of 640 lines. Two active
-  trees write research records as ordinary output — `SOURCE-IR-REPRODUCIBILITY` published three in two
-  days — so the next research record is the last one this collection can accept, and unlike a rolling
-  ledger there is no declared rollover transaction to release it. `.4` now owns that explicitly rather
-  than carrying it as a generic "member warning". The `.jsonl` rollover plans in the same directory do not
-  count against it: the surface targets `*.md` only.
-- `MEMORY.md` is **46 of 50 lines**, with health target and ceiling both 50. Every slice this session had
-  to hand-compress the resume pointer to stay inside it — three times — which is a workflow tax, not a
-  containment control. `.5` opens to decide the right remedy: the file carries an 18-line fixed how-to-
-  resume preamble that never changes, and routing it to `MEMORY_ARCHITECTURE.md` would nearly double the
-  room available to the mutable half without moving a bound. Raising the ceiling is explicitly not the
-  remedy.
-- Tracking-only; no bound, record, or evidence moved.
-
-### SOURCE-IR-REPRODUCIBILITY.9 — give provenance the batch coordinate it was missing
-
-- Added the coordinate rather than redefining the field. `source_ref` is Docling's `self_ref` and is
-  carried unchanged through EvidenceIR, SemanticIR, and IntentIR; overloading it into `batch2:#/texts/7`
-  would change the meaning of a value four stages already depend on. The four record kinds that carry it —
-  `content_elements`, `document_sections`, `structured_tables`, `visual_assets` — gain
-  `source_batch: Option<u32>`, which indexes `documents[i]` in the batched raw-backend envelope SpecForge
-  already writes, so `(source_batch, source_ref)` addresses exactly one converter item.
-- Wrote it only where it means something. `_IngestAccumulator.batch_ref()` returns `None` unless
-  `len(page_batches) > 1`, and the field is `#[serde(default, skip_serializing_if = "Option::is_none")]`,
-  so a single-pass ingest writes the bytes it wrote before this change and every artifact already on disk
-  deserializes with `None` rather than defaulting to batch zero — which would be a claim, not a default.
-- Measured the standing ambiguity across the whole persisted corpus instead of quoting one document.
-  **14 of 78** artifacts carry a bare `source_ref` that does not identify one content element; 64 do not.
-  Across the 14, 111,861 content elements resolve to **28,599** distinct refs, 22,467 refs are used more
-  than once, and **83,262 records (74.4%)** cannot be addressed by a bare ref. The Arm Debug guide
-  reproduces this tree's published figure exactly: 6,784 / 2,252 / 1,883.
-- Falsified the obvious competing reading. "The reuse is a producer bug emitting duplicate refs" is
-  separated by the retained converter bundles, an independent artifact: of the 24 artifacts whose bundle
-  survives, **22 are unambiguous and unbatched and 2 are ambiguous and batched**, with zero disagreements
-  in either direction. The other 54 have no retained bundle, so their batching is not confirmable from the
-  artifact and is not asserted.
-- Corrected a first measurement that was wrong, in the record. A first pass reported **all 78** artifacts
-  as ambiguous. It pooled `content_elements` with `document_sections`, and a section header is legitimately
-  recorded in both under one ref — 1,011 of 1,011 for the Arm Debug guide. That is a shared ref, not a
-  collision; the population counts `content_elements` alone.
-- Made the consumer key on it exclusively. In `measure_ingest_content_loss.py` a coordinate-bearing record
-  is matched only by `batch{n}:{ref}` and never also by the `(source_ref, text)` pair, or the fallback
-  would re-admit the collision it fixes. The census now publishes `source_ref_identity`, `converter_refs`,
-  `converter_distinct_refs`, `converter_refs_reused`, and `converter_distinct_addresses`, so the ambiguity
-  is reported rather than silently worked around.
-- Controls: producer self-test **32/32 -> 33/33** with seven observed RED perturbations — the coordinate
-  record also entering the pair index, the exact address never consulted, a boolean accepted as a
-  coordinate, a mixed artifact reported as exact, the batch not passed through the production join, the
-  ref-reuse count reported as zero, and the addresses not batch-qualified. One focused Rust test proves the
-  three schema properties together and was observed RED twice.
-- Gates: `cargo test --workspace --lib` **470 / 168 / 1,370 passed, 0 failed, 9 ignored**; `cargo clippy
-  --workspace --all-targets -- -D warnings` clean; `mdbook build` exit 0.
-- Confirmed on real data once the tree was clean enough to run the producer. The acceptance is
-  "provenance must resolve to exactly one converter item", and the converter side settles it: the Arm
-  Debug guide's seven-document bundle yields **12,144** text items addressed by only **2,486** distinct
-  `self_ref` values — 9,658 reused — and by **12,144 distinct batch-qualified addresses**, one per item.
-  The unbatched I2C specification is 2,507 / 2,507 / 0 / 2,507, so an unbatched run needs no coordinate
-  and gains none. Both persisted artifacts report `source_ref_identity: ref_text_pair`, correctly: they
-  were written before the coordinate existed and the consumer says so.
-- Opened `.9a` (tracking-only): the producer's clean-tree guard fires for `--persisted`, which performs no
-  ingest, so a read-only population measurement cannot be taken from a working tree. It blocked nothing
-  here — the population was read directly from the artifacts — but the guard should govern exactly the
-  modes that depend on production code.
-
-### STATUS-LEDGER-ROLLOVER.4 — derive, publish, and control the per-record budget
-
-- Made the budget a derivation rather than a memory. `measure_record_budget` computes
-  `int((health_targets.bytes_each - live-view overhead) / live_limits.records)` from
-  `doctrine/live_document_size/surfaces.jsonl` and `rolling_ledgers.jsonl`, with no literal anywhere, and
-  measures the overhead as `live bytes - sum(record bytes)` instead of assuming it is zero. That last part
-  is the whole correction: the naive `bytes_each / records` reading is a budget no ledger can meet, because
-  a live view also carries a prologue and — for `LIVE_ACHIEVEMENT_STATUS.md` — a 6,871-byte gap section and
-  validation trailer that spend the same target.
-- Published the live record count, which no producer reported before. `--report` now carries a `live` object
-  per migrated ledger: records, declared_records, record_bytes, overhead_bytes, health_bytes,
-  record_budget_bytes, record_mean_bytes, max_record_bytes, max_record_ordinal, oversized_records, and
-  reachable_records. This is the gap that let `STATUS-LEDGER-ROLLOVER.4a`'s wrong count survive review — the
-  generic size gate measures bytes/lines/line widths, and `planned_live` is the frozen migration boundary.
-- The finding is wider than the leaf that opened it. Measured across all four root ledgers, **two declared
-  windows are unreachable**: `changes` holds **109** records against a declared **128** at its 2,328-byte
-  mean, and `live-achievement-status` holds **68** against **80** at 1,588. `development-notes` (101 vs 96)
-  and `rust-codebase-analysis` (109 vs 96) are reachable. Every ledger carries records above its budget:
-  62/91, 38/83, 20/44, 17/56.
-- Reported as pressure, not corruption, and the measurement is why. The records on a surface are sealed
-  evidence no compliant change may shrink, so a `problem()` would be a stop with no exit — the anti-pattern
-  `LIVE-DOC-STOP-RISK` exists to prevent. The checker gains a non-fatal notice channel that reports the way
-  the generic live-size gate reports an approaching ceiling: named, quantified, derivation shown inline.
-- Controls that can actually fail. Self-test 35 -> **41**, with **seven observed RED perturbations** of the
-  production code, each restored after observation and each naming the one leg it broke: overhead not
-  charged, budget carried as a literal, oversized records never reported, unreachable window never reported,
-  the size comparison loosened, the declared window ignored, and the health target ignored. A further
-  control proves a live view whose overhead exceeds its own health target is a hard failure rather than a
-  silently negative budget.
-- Book updated: the live-docs chapter now states the budget formula, why the overhead is charged, why the
-  two kinds of pressure are warnings rather than violations, and what `--report`'s `live` object carries.
-
-### STATUS-LEDGER-ROLLOVER.3 — roll the status ledger, and record how its plan is actually built
-
-- Performed the declared transaction before it could block a product slice. At 102,748 bytes the status
-  ledger was 89.35% of its 115,000-byte health target, and only a record of 751 bytes or less would have
-  stayed under the mandatory 90% signal — no status record that small has been written in months, so the
-  next one would have forced a control-plane migration into a product commit.
-- Sealed 26 records, kept 4. Root **70 -> 44 records / 112 -> 86 lines / 102,748 -> 76,758 bytes**: 66.75% of
-  the byte target, 55.00% of the record window, 15.36% of lines, and an unchanged 77.8% widest line, because
-  the 4,824-byte line is inside the pinned migration suffix where no cut can reach it. Segment
-  `segment-0011-2026-08-28.md` holds 26 records / 25,990 bytes at SHA-256 `a13be8e8…7a15`.
-- Chose four kept records for a stated reason, not a round number. The pinned 40-record migration suffix is
-  live forever and alone spends 66,720 of the 92,000-byte warning budget, so the entire reachable headroom is
-  about 18 budget-sized records and only a cut that removes every post-migration record reaches it — leaving
-  a "current snapshot" whose newest entry is `2026-08-08`. The four kept records are exactly the
-  `2026-08-28` ones, so the snapshot still opens on the current day, and 15,242 bytes remain, about eleven
-  records at the 1,351.6-byte budget `STATUS-LEDGER-ROLLOVER.4a` derived.
-- Recorded how the plan is actually built, which is what this leaf existed for. The metrics are HARVESTED,
-  not computed: a first pass writes `1` for every metric and 64 zero-hex for every digest, the checker
-  reports each mismatch as `actual X, expected Y`, and the second pass with those values is exact. Only two
-  figures can be modelled by hand — `keep + records == post_migration_records`, and the resulting root bytes
-  — and both were, as a control that the harvest is not self-fulfilling: 76,758 predicted from the
-  per-record size table before the first dry run, 76,758 reported.
-- Left the finding a rollover cannot fix. The post-cut live-window record mean is **1,588.3 bytes** against
-  the 1,351.6-byte budget, because the pinned suffix averages 1,496.2 on its own and the four kept records
-  average 2,509.5. The transaction resets the clock; `STATUS-LEDGER-ROLLOVER.4` owns the limit that makes it
-  stop repeating.
-- Transaction integrity: dry run "exact and warning-safe" before the applied run, installed root-last, all
-  ten older segments and the source capsule byte-identical, only the root, the new segment, the manifest,
-  and the index changed. No record edited, reordered, or reflowed; no limit, milestone, or ceiling moved.
-  This transaction writes no `LIVE_ACHIEVEMENT_STATUS.md` record — a containment migration changes no product
-  status.
-
-### STATUS-LEDGER-ROLLOVER.4a — re-derive the status-ledger measurement `.3` and `.4` were sized on
-
-- Re-derived the live root instead of trusting the row that had just been published. `.4`'s own decision
-  paragraph asserted a live window of "102,748 bytes across **64** records — a **1,605-byte mean**", from
-  which it derived a 71-record capacity bound. `LIVE_ACHIEVEMENT_STATUS.md` holds **70** records / 95,877
-  record bytes / a **1,369.7-byte** record mean, and `.3`'s row attributed the byte figure to `5fe81128`,
-  where the root was 101,547 bytes across 69 records.
-- Named where `64` came from, because a wrong count with a plausible provenance is worse than an obvious
-  one. `64` is this surface's record **warning threshold** — `live_limits.records` 80 x `warning_pct` 80 —
-  published as an observed count; `102,748 / 64` then manufactured both the 1,605-byte mean and the
-  71-record bound. A threshold and a measurement are indistinguishable once they are prose.
-- Corrected the budget itself, not only the count. The naive `115,000 / 80` = 1,437.5 bytes per record
-  cannot be met by any ledger, because the live view also charges a 46-byte prologue and a 6,825-byte
-  validation-projection trailer to the same target. The honest budget is
-  `(health_bytes - live_view_overhead) / live_limits.records` = **1,351.6 bytes**.
-- Kept the conclusion that survives and narrowed the one that did not. The declared 80-record window and
-  115,000-byte health target remain mutually unsatisfiable at current record sizes — capacity is **78**
-  records, not 71 — so the byte dimension still binds first and a rollover only resets the clock. The
-  driver is sharper than the tree stated: the newest ten records average **2,085.6 bytes**, 1.54x the
-  budget, which alone caps the window at 51; the pinned migration suffix averages 1,496.2.
-- Found the structural reason the error was publishable, which is the finding that matters. **No tracked
-  producer reports a rolling ledger's live record count.** `check_live_document_size.pl --report` emits
-  bytes, lines, and line bytes; `check_rolling_ledger_protocol.pl --report` emits the registry's frozen
-  `planned_live` migration boundary. The record dimension is bounded, sits at 87.5% of its bound, and is
-  unreported, so nothing in the repository could contradict the number. `.4` now owns publishing it.
-- Falsified rather than re-checked. The competing hypothesis — that continuation bullets inflate a shell
-  count — is separated by the tracked checker's own `current_snapshot_bullets_v1` parser, probed through
-  rollover-plan boundary arithmetic: `opening_records: 71` goes RED with `has fewer records than its
-  opening boundary` and `70` does not. Two independent producers agree at exactly 70. The durability leg
-  is explicitly **missing** and is `.4`'s deliverable.
-- Repaired a second stale published claim the mandatory alignment review turned up, because a known
-  current-facing contradiction is a `COMMIT.md` blocker. `current-claim-census-frozen`'s own **assertion**
-  carried "56 exact evidence units" and "86 produced candidates close through 51 exact evidence keys and 35
-  current registered annotations"; the producer reports 61 units and 72/50/22. Attributed exactly rather
-  than merely refreshed: `CLAIM-VERIFICATION-ADOPTION.6` measured those counts **before** applying its own
-  `CHANGES.md` rollover in the same commit, and that rollover moved **14** claim-annotated regions out of the
-  live window into `segment-0013`, which is not a current census surface. 86 - 14 = 72. A commit falsified
-  its own published claim, under a green gate, inside one transaction. The counters are withdrawn from the
-  assertion and the reader is routed to `--report`, which is `.6`'s own remedy applied one surface further
-  out; `CLAIM-VERIFICATION-ADOPTION.7` keeps the gate open, now scoped to claim assertions as well as prose.
-- Opened `CLAIM-VERIFICATION-ADOPTION.8` for a capacity stop the same review measured.
-  `doctrine/claim_verification/current_claim_census.jsonl` declares `max_records: 128` and holds **109**,
-  growing by exactly one record per slice that prepends a rolling-ledger head — 105 / 105 / 105 / 106 / 107 /
-  107 / 108 / 109 across the last eight commits. About **19 slices** of headroom, and the growth is pure
-  accumulation, since a row for a former head stops being a candidate and nothing retires it.
-- Docs-only; no product status changed, and appending a status record would itself have forced the
-  rollover `.3` owns, so `LIVE_ACHIEVEMENT_STATUS.md` is deliberately untouched.
 
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
 

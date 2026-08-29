@@ -415,11 +415,17 @@ treated as findings. Before the result could freeze, a controlled first pass cau
 emitted only their first-view anchor. Candidate identity now includes the semantic view, and frozen validation
 requires evidence for every included surface and every required view.
 
-The repaired result contains 56 exact evidence units: 11 derived, seven identity-gated, six registered, zero
-incomplete, and 32 excluded. The five old broad anchors for README maintained references, mdBook quantitative
-claims, workflow/doctrine baselines, knowledge-card references, and FSMGen issue-packet references now have
-narrow identity or registered authority; the other 46 units retain their original outcomes.
-`[claim: current-claim-census-frozen]` Reproduce the result with:
+At its `.3b.4` boundary the repaired result contained 56 exact evidence units: 11 derived, seven
+identity-gated, six registered, zero incomplete, and 32 excluded. That is a dated boundary, not a standing
+partition. `CLAIM-VERIFICATION-ADOPTION.6a` measured the totals across 28 consecutive revisions and found that
+ordinary, unrelated work moves them: a rolling-ledger rollover carries claim-annotated regions out of the live
+window, and any commit that adds or drops a `[claim: <id>]` annotation moves the registered and closure counts.
+So the unit total, the excluded and registered counts, and candidate closure are read from `--report` rather
+than carried here; only `authority_outcomes.derived` (11), `authority_outcomes.identity_gated` (7), the absence
+of an `incomplete` outcome, and zero unresolved candidates have held at every measurement. The five old broad
+anchors for README maintained references, mdBook quantitative claims, workflow/doctrine baselines,
+knowledge-card references, and FSMGen issue-packet references have narrow identity or registered authority; the
+other units retain their original outcomes. `[claim: current-claim-census-frozen]` Reproduce the result with:
 
 ```sh
 perl scripts/check_current_claim_census.pl --self-test
@@ -429,9 +435,10 @@ perl scripts/check_current_claim_census.pl --produce
 ```
 
 The closing audit also reverses the join: every produced candidate must have exact frozen evidence or carry a
-current registered claim annotation. The `.3c` boundary closed 79 candidates as 51 exact keys and 28 annotations;
-`.4` closed at 84 = 51 + 33, and the two final documentation annotations make the `.5` lockstep result
-86 = 51 + 35 + 0 unresolved.
+current registered claim annotation. Its dated boundaries were 79 = 51 + 28 at `.3c`, 84 = 51 + 33 at `.4`, and
+86 = 51 + 35 + 0 unresolved at `.5`; the current triple is whatever `--report` prints, because each of those
+numbers moved without the census producer changing. What does not move is the closure property itself:
+unresolved candidates must be zero.
 The twenty-seven-case suite instantiates every outcome family and drives family-specific plus
 surface/view/path/region/source/identity coverage faults RED.
 
@@ -541,10 +548,15 @@ WIRE-BASED-100 golds and `kg-bench` (156/156) are orthogonal by construction.
 
 ## Quantitative adjudication result
 
-The current authority freezes `regions=307`, `registered=8`, `incomplete=78`, and `excluded=221`. The exclusions
-remain separated as `authored=26`, `example=8`, `identity=1`, and `dated=186`; those labels are exact-region scope,
-not a claim that the rest of a section shares the same meaning. Registered regions are limited to the verified
-workflow-capacity profile. Every other current actionable assertion keeps re-derivation, independent
+The authority freezes an exact region set whose totals move whenever the manual itself changes — including
+the commit you are reading, which edited this chapter — so they are derived on read rather than printed here.
+`perl scripts/check_book_quantitative_claims.pl --report` gives the current `regions` and the
+`registered` / `incomplete` / `excluded` split, and the frozen contract's declared expectations live in
+`doctrine/claim_verification/book_quantitative_claims.jsonl` (`expected_book_files`,
+`expected_candidate_files`, `expected_candidate_lines`). Exclusions stay separated by scope reason — authored
+threshold or choice, example or command literal, schema/date/path/digest identity, and dated boundary evidence
+— and those labels are exact-region scope, not a claim that the rest of a section shares the same meaning.
+Registered regions are limited to the verified workflow-capacity profile. Every other current actionable assertion keeps re-derivation, independent
 falsification, and durability visibly missing until a later repair earns those legs.
 `[claim: mdbook-quantitative-census-frozen]`
 

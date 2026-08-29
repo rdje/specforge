@@ -101,8 +101,8 @@ no-changes across the 27 transitions measured from `e6f5012d`, so it is not even
 window inside the commit that published the older values; 4 and 69 = 49 + 20 from `1507adbf`, which rewrote the
 resume pointer and dropped its three annotations. Read all of them from `--report`. The 27-case self-test
 instantiates every outcome family and challenges all coverage joins. Zero outer incomplete does not certify the
-**89** incomplete assertion regions (`check_book_quantitative_claims.pl --report`,
-`authority_outcomes.incomplete`) exposed by the narrower mdBook contract.
+incomplete assertion regions exposed by the narrower mdBook contract — that count moves whenever the manual
+does, so read it from `check_book_quantitative_claims.pl --report`, `authority_outcomes.incomplete`.
 `[claim: current-claim-census-frozen]`
 
 For manual-wide quantitative review, use `perl scripts/check_book_quantitative_claims.pl --check` to derive the

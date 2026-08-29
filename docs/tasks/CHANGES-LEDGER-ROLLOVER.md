@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `CHANGES-LEDGER-ROLLOVER`
-- Status: `active` (`.0`/`.1` done; `.2` rolls the ledger again at the same signal)
+- Status: `active` (`.0`/`.1`/`.2`/`.3` done; `.4` owns the standing limit every rollover keeps hitting)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-11`
-- Last updated: `2026-08-28`
+- Last updated: `2026-08-29`
 - Owner: repo-local workflow
 
 ## Goal
@@ -90,12 +90,55 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   Plan: [`docs/research/claim-verification-adoption-6-changes-rollover-plan.jsonl`](../research/claim-verification-adoption-6-changes-rollover-plan.jsonl)
   Commit: `CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts`
 
+- ID: `CHANGES-LEDGER-ROLLOVER.3`
+  Status: `done` (`2026-08-29`)
+  Goal: seal twelve records so the ledger accepts `CLAIM-VERIFICATION-ADOPTION.6b`'s append
+  Acceptance: the committed root at `40acadb2` is 1,619 lines — 89.9% of the 1,800-line health target — and the
+  next ordinary record crosses the mandatory 90% signal, so by this tree's own rule the leaf whose entry trips
+  the threshold performs the rollover and both land in one commit. A plan pins boundary commit `40acadb2` and
+  its exact opening blob; the dry run is green before the applied run; no record is edited, reordered, or
+  reflowed; no limit, milestone, or ceiling moves; the retained 75-record migration suffix is untouched; and the
+  survivor is below the 80% warning on every dimension with the segment, manifest, index, and chronology chain
+  validating
+  Evidence: sealed 12 records / 504 lines / 45,619 bytes into
+  `docs/archive/rolling-ledgers/changes/segment-0015-2026-08-29.md`, leaving a 1,114-line (61.9%) /
+  176,223-byte (69.1%) root that is 1,152 lines (64.0%) after this slice's record. Dry run reported
+  `exact and warning-safe` before the applied run; the applied run reports all 4 ledgers satisfying the
+  lossless live-window/archive protocol
+  Rig note worth keeping: a plan's `first_record_sha256` is the digest of the record's **raw** byte slice,
+  which includes the blank line that separates it from the next record — while the segment's own digest is
+  taken **after** the writer collapses the trailing blank to a single newline. Computing both the same way is
+  the natural mistake, and the dry run reports the computed digest next to the expected one so it is a
+  one-iteration fix rather than an opaque identity failure
+  Plan: [`docs/research/claim-verification-adoption-6b-changes-rollover-plan.jsonl`](../research/claim-verification-adoption-6b-changes-rollover-plan.jsonl)
+  Commit: `CLAIM-VERIFICATION-ADOPTION.6b / CHANGES-LEDGER-ROLLOVER.3 — sweep the two surfaces .6 and .6a left`
+
+- ID: `CHANGES-LEDGER-ROLLOVER.4`
+  Status: `pending` (tracking-only)
+  Goal: decide the lifecycle of the pinned 75-record migration suffix, which is why every rollover only buys a
+  dozen slices
+  Acceptance: measured `2026-08-29`, the retained migration suffix alone is **1,054 lines and 170,695 bytes** —
+  **58.6%** of the 1,800-line health target and **66.9%** of the 255,000-byte target — before a single current
+  record exists. So a rollover can only ever recycle the remaining third, and at the measured ~2,500-byte
+  record mean the ledger returns to its 90% signal after roughly a dozen ordinary slices. Three rollovers
+  (`.0`/`.1`, `.2`, `.3`) have now each bought about that much, which is the signature of a standing limit
+  rather than a run of coincidences. The decision this leaf owns is whether that suffix belongs in the live
+  window at all: `.2` declined to seal it into a segment on the correct ground that its bytes are **already
+  byte-exact in the source capsule**, and that same fact means retiring it from the live view duplicates
+  nothing — it is a `planned_live` registry change plus a decision record, not a segment. Acceptance must show
+  every reader route still resolves, the capsule still reconstructs every source byte, and the resulting live
+  window is a window over *current* history rather than mostly frozen migration history
+  Prerequisite: none; it blocks nothing today, and `.3` bought roughly eleven records of headroom
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `CHANGES-LEDGER-ROLLOVER.0` | `done` | landed, but one line short of its own acceptance |
 | 2 | `CHANGES-LEDGER-ROLLOVER.1` | `done` | corrected the cut to account for the record the rollover itself writes |
+| 3 | `CHANGES-LEDGER-ROLLOVER.2` | `done` | sealed 18 records so `.6`'s append was legal |
+| 4 | `CHANGES-LEDGER-ROLLOVER.3` | `done` | sealed 12 records so `.6b`'s append was legal; root 61.9% / 69.1% |
+| 5 | `CHANGES-LEDGER-ROLLOVER.4` | `pending` | the frozen migration suffix occupies two thirds of the byte budget, so every rollover buys only a dozen slices |
 
 ## Decisions
 
