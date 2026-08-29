@@ -85,6 +85,33 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Goal: re-derive task-tree collection and bounded catalog capacity as one profile
   Acceptance: exact growth, readers/writers, route cardinality, catalog shape, aggregate reachability, capacity,
   and boundary faults are measured and decided before changing either the file or index authority
+  **Measured composition (`2026-08-29`, director question: why is there a cap at all, and can the structure
+  make it stop mattering).** The pressured axis is `task_evidence.files` — the COUNT of root Markdown files
+  matching `docs/tasks/*.md`, top level only; the three part-directories are separate surfaces with their own
+  bounds. It is **151 of 160**, and both `health_targets.files` and `enforcement_ceilings.files` are 160, so
+  like `.4`'s research axis there is no warning band. The per-file caps on the same surface (3,000 lines,
+  278,528 bytes, 6,400 line-bytes) are NOT the pressure point.
+  The decisive number is the composition, not the count: of those 151 roots, **120 are `done`, 5 are
+  `superseded`, 24 are `active`, 1 is `proposed`**. So **83% of the live collection is finished work**, and the
+  bound is currently measuring cumulative project history rather than actionable state. That is why it reads as
+  an arbitrary ceiling — it is being spent on trees nothing will ever act on again.
+  **Candidate design this leaf should decide against (not yet accepted).** Make the collection's membership
+  SEMANTIC instead of cumulative: `docs/tasks/` holds what can still be acted on, and a root whose every leaf
+  is `done`/`superseded` with a closed commit log is TERMINAL and retires. Retirement already exists and is
+  already proven four times — `archive_terminal` plus `check_task_tree_archive.pl`'s `source_locked` ->
+  `migrated` transition seals a byte-exact capsule under `docs/archive/tasks/` reachable from a bounded index —
+  but it has only ever been applied to PARTS of one oversized tree, never to a whole finished root. Extending it
+  to terminal roots converts the bound from a countdown against project lifetime into a statement about
+  concurrent WIP, which is a signal worth having.
+  Why NOT simply raise 160: this tree's own Non-Goals forbid raising a bound to quiet a warning, and doubling it
+  only moves the countdown. The caps exist because every one of these surfaces is read by a fresh session with a
+  bounded context; an unbounded `docs/tasks/` makes the frontier unfindable and pushes `docs/TASK_TREE.md` past
+  its own 512-line ceiling. The cap is a proxy for "a fresh session can still find the frontier".
+  Risk to design against, stated before building: retirement must not dangle a live pointer. Task trees
+  cross-reference each other by leaf id, and claim records carry `retained_evidence` paths into
+  `docs/tasks/*.md`. A terminal-root transaction therefore needs a route-rewrite step and a gate proving no live
+  reference resolves into the archive by accident — the same obligation the parts migration already discharges,
+  widened from parts to roots
   Verification: `pending`
   Commit: `pending`
 
