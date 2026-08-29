@@ -6,7 +6,7 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`, then `.2b`/`.2c`. Open elsewhere:
+- Active unit: `CLAIM-VERIFICATION-ADOPTION.6a`, then `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`/`.2b`/`.2c`. Open:
   `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION`
   `.7`/`.8`/`.1a`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
   `SPEC-TO-INTENT-ALIGNMENT.9`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`;
@@ -21,12 +21,15 @@
   `task_tree_index` is 404 lines with `lines_each ... warning (84.2%) - 108 below its 512 ceiling` at one
   catalog row per tree. So `.2a` RELOCATES the nearest stop from 9 trees to about 108, and `.2c` is the
   half that removes it. Doctrine gate green at `c1609558`: 10/10 executed PASS, CHAIN-CURRENCY deferred.
-- Next action: run `.2a`. Null `task_evidence.files` in both bands behind a DECLARED exemption the checker
-  enforces (every resource axis stays numeric, both bands null together, and a bounded reader-facing route
-  must name a different registered surface covering the index), delete `$MAX_TASKS` in the same
-  transaction, add one exact record to `ceiling_increase_authorities.jsonl` plus an ADR, and observe the
-  four refusals RED in `scripts/test_live_document_size.pl`. `.2b` must then retire that single-use
-  authority, or the very next commit fails on `unused or banked ceiling-increase authority`.
+- Next action: run `CLAIM-VERIFICATION-ADOPTION.6a` first, because it corrects published counts that are
+  false right now and that `1507adbf` made falser. Measure each of the four counters across `5fe81128` ->
+  `c1609558` with each commit's OWN checker in a worktree before withdrawing anything; do not infer
+  "per-commit" from two endpoints. Then `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`: null `task_evidence.files` in
+  both bands behind a DECLARED exemption the checker enforces (every resource axis stays numeric, both bands
+  null together, a bounded reader-facing route names a different registered surface covering the index),
+  delete `$MAX_TASKS` in the SAME transaction, add one exact record to `ceiling_increase_authorities.jsonl`
+  plus an ADR, and observe four RED refusals in `scripts/test_live_document_size.pl`. `.2b` must then retire
+  that single-use authority, or the very next commit fails on `unused or banked ceiling-increase authority`.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/
   `.9`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`; `SCRATCH-RESIDUE-CONTAINMENT.4` — the `generated/` fixture

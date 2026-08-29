@@ -3,11 +3,12 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6` done; `.7` owns the gate that would have observed `.6`'s defect; `.8` tracks
-  the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot)
+- Status: `active` (`.0`–`.6` done; `.6a` owns four counters `.6` recorded as confirmed that have drifted
+  again; `.7` owns the gate that would have observed `.6`'s defect; `.8` tracks the census registry's own
+  capacity; `.9` owns the candidate vocabulary's blind spot)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
-- Last updated: `2026-08-28`
+- Last updated: `2026-08-29`
 - Owner: repo-local workflow
 - Owner directive: adopt `/Volumes/SSD/Documents/github/pgen/docs/CLAIM_VERIFICATION.md` if SpecForge has not
   already adopted it.
@@ -324,6 +325,54 @@ the workflow through the mdBook and repository review path.
   file. Neither leg reads a number
   Commit: `CLAIM-VERIFICATION-ADOPTION.6 — re-derive the drifted claim-annotated prose counts`
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.6a`
+  Status: `pending`
+  Goal: withdraw the four `TOOLBOX.md` census counters that `.6` confirmed and that have drifted again, on
+  measured trajectory rather than by analogy with `.6`
+  Acceptance: `.6` re-derived all 11 counts, withdrew the two it proved were per-commit counters, and
+  explicitly recorded the other eight as **"confirmed unchanged"**. Four of those eight no longer hold. The
+  leaf must (a) re-derive the trajectory of each of the four across the revisions between `5fe81128` and
+  `c1609558` using each commit's own checker in a worktree, so "per-commit counter" is measured the way `.6`
+  measured its two and `.5` measured the pointer preamble — never asserted from one endpoint; (b) withdraw
+  only those the trajectory proves are per-commit, correct any that are genuinely stale constants, and leave
+  the confirmed-stable ones carried with their producer field named; and (c) state plainly that the
+  mechanical gate remains `.7`, so this is a correction, not a control
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.6`
+  Measured `2026-08-29` at `c1609558`, before any of this session's edits, by running each producer and
+  comparing field by field with the section's prose. Two sentences are **current**: `--report`'s
+  7 cited controls / 7 exact RED regions / 6 governed producers / 0 ignored / 0 untracked, and the
+  27-case self-test (27/27). Two are **not**, and both are inside the counts `.6` recorded as confirmed:
+
+  | `TOOLBOX.md` carries | `check_current_claim_census.pl --report` at `c1609558` | verdict |
+  | --- | ---: | --- |
+  | 11 derived | 11 | confirmed |
+  | 7 identity-gated | 7 | confirmed |
+  | 6 registered | 5 | **drifted** |
+  | 0 incomplete | no incomplete outcome present | confirmed |
+  | 86 produced anchors | 72 | **drifted** |
+  | 51 exact evidence keys | 50 | **drifted** |
+  | 35 registered annotations | 22 | **drifted** |
+  | 0 unresolved | 0 | confirmed |
+
+  Attribution is **partly documented and partly unmeasured, and the difference is not blurred**. For the
+  closure triple the `current-claim-census-frozen` record already states the cause in its own `assertion`:
+  `5fe81128`'s own `CHANGES.md` rollover moved 14 annotated regions into segment `0013` and took 86/51/35 to
+  72/50/22 within the very commit that published them — so the claim record observed the invalidation and
+  `TOOLBOX.md` did not. That is the record's account, not this leaf's re-derivation, and `.6a` must
+  reproduce it. When `6 registered` became 5 is **not known** and must be measured; no endpoint comparison
+  can supply it.
+  Natural experiment obtained this session, which is dimensionally different from re-reading the file:
+  commit `1507adbf` touched only `MEMORY.md` and two claim registries — nothing owned by the census — and
+  moved all four again, `registered` 5 -> 4 and closure 72/50/22 -> 69/49/20. A counter that an unrelated
+  slice moves is not a constant, whatever a previous confirmation recorded. The pointer rewrite dropped three
+  `[claim: <id>]` annotations, which is exactly the mechanism `.6` named: the census closes a region on the
+  **presence** of the annotation, so the counts move whenever annotations do
+  Risk this leaf must not repeat: `.6`'s first attempt wrote 59/35 and the commit publishing it made them
+  60/36. Re-carrying a per-commit counter is stale on landing, so the default is withdrawal plus a named
+  producer field, and re-carrying requires the trajectory to show the number actually held
+  Verification: `pending`
+  Commit: `pending`
+
 - ID: `CLAIM-VERIFICATION-ADOPTION.7`
   Status: `pending`
   Goal: make a claim-annotated prose count re-derive against its producer, so this drift is observed
@@ -445,6 +494,7 @@ the workflow through the mdBook and repository review path.
 | 17 | `CLAIM-VERIFICATION-ADOPTION.3c` | `done` | 27-case family/join matrix and zero-unresolved candidate closure close `.3` |
 | 18 | `CLAIM-VERIFICATION-ADOPTION.4` | `done` | seven controls and six producers close with exact RED evidence and zero scratch candidates |
 | 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `done` | public workflow, independent audit, and selected full CI close the fifth architecture |
+| 20 | `CLAIM-VERIFICATION-ADOPTION.6a` | `pending` | four counts `.6` recorded as "confirmed unchanged" no longer hold, and an unrelated commit moved all four again |
 
 ## Decisions
 
@@ -1203,6 +1253,13 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-29`: opened `.6a`. Re-derived `TOOLBOX.md`'s census sentences against their producers at
+  `c1609558` and found four of the eight counts `.6` recorded as "confirmed unchanged" no longer hold
+  (`6 registered` -> 5; closure `86/51/35` -> `72/50/22`); the other four and the provenance sentence are
+  current. `1507adbf`, which touched only the resume pointer and two claim registries, then moved all four
+  again to 4 and `69/49/20`. The leaf is scoped to measure the trajectory before withdrawing anything, so
+  "per-commit counter" is proved the way `.6` and `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` proved theirs rather
+  than inferred from two endpoints.
 - `2026-08-28`: `.7` gained its fourth instance and its repair, and `.8` was opened. `STATUS-LEDGER-ROLLOVER.4a`
   found `current-claim-census-frozen`'s own assertion stale and attributed it exactly: `.6` measured 86/51/35
   before applying its own `CHANGES.md` rollover, and that rollover moved 14 claim-annotated regions into an
