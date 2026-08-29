@@ -112,6 +112,48 @@ repeatable rollover/remedy paths and remain under their existing owners.
   `docs/tasks/*.md`. A terminal-root transaction therefore needs a route-rewrite step and a gate proving no live
   reference resolves into the archive by accident — the same obligation the parts migration already discharges,
   widened from parts to roots
+  **Director's decision (`2026-08-29`), and the retirement recommendation above is WITHDRAWN as the primary
+  remedy.** Directive: there is to be **no limit on the number of task-trees**, and a completed tree is project
+  history that must be kept — at session start you read specific trees, never all of them. Measurement supports
+  the directive on every axis, so this is not a bound raised to quiet a warning (this tree's Non-Goal), it is a
+  bound removed because it protects nothing another axis does not already protect:
+  1. **The number has no derivation.** `files: 160` was authored in `cb65d5c7` (`2026-08-08`), the bulk
+     activation of the whole doctrine, when the plane held **122** files. It is "current plus headroom, rounded",
+     never a task-plane-specific analysis.
+  2. **An unbounded collection is already legal.** `shipped_behavior` — the mdBook, also `locator: collection` —
+     declares `files: null` in both health and ceiling. So a file-count cap is a per-surface choice, not a
+     doctrine requirement.
+  3. **Nothing but the count is under load.** Measured `2026-08-29`: files **151/160 = 94.4%**, but
+     `lines_total` **36,074/480,000 = 7.5%**, `bytes_total` **2,655,253/44,564,480 = 6.0%**, and the largest
+     single file **1,287/3,000 lines = 42.9%**. The aggregate axes already bound the real resource — content —
+     and they are near-empty.
+  4. **There is no rollover declared for `task_evidence` at all**, so the cap is a bound the surface can reach
+     with no remedy compliant work can take: the exact `LIVE-DOC-STOP-RISK` condition, same shape as `.4`'s
+     research-records finding. Removing the cap dissolves that too.
+  5. **The reader-facing limit is a different surface, and the directive names it.** Nobody reads
+     `docs/tasks/` linearly; a session reads `docs/TASK_TREE.md` then opens the one tree it needs. That index is
+     the thing with a real bounded-context cost, and it carries one row per tree: **404 of 512 lines, 158 rows**.
+     So cardinality pressure belongs there, not on the directory.
+  **Decided remedy, replacing retirement.** (a) Set `task_evidence.files` to `null` in both health and ceiling,
+  with an authority record stating this rationale; leave every per-file and aggregate bound untouched, because
+  those bound the resource that actually exists. (b) Give `docs/TASK_TREE.md` the sharding remedy this
+  repository already proves twice — bounded landing plus parts, as the Knowledge Map does with 15 question
+  shards and `fact_card_titles` with 6 title parts — so index cardinality stops being a ceiling and becomes a
+  routing problem. Nothing is deleted and nothing is archived for capacity. Archiving stays available only for a
+  single tree outgrowing its **per-file** bound, which is what produced the existing three (sealed at 2,393 /
+  2,308 / 2,049 lines against the 3,000 cap).
+  **Director's earlier proposal — materialize a tree as a DIRECTORY — assessed, and it is not this axis's
+  remedy.** The premise is right: decision 0003 requires an owning *leaf*, never an owning *file*, and the repo
+  already does this three times. But splitting one tree into eight parts spends 1 -> 8 against the very count
+  under pressure; it escapes only because `task_evidence` targets `docs/tasks/*.md` top level, which requires a
+  NEW registered surface per tree — measured, an unregistered `docs/tasks/<dir>/*.md` is refused outright with
+  `tracked Markdown '<path>' is not classified`. And that cost hits a **tighter** bound: `surfaces.jsonl`
+  declares `max_records: 64` and holds **56**, at roughly three records per directory tree, so about two more
+  before the registry itself refuses. Directory materialization remains the correct answer to a single
+  oversized tree; it is not the answer to collection cardinality. If it is ever adopted broadly, the blocker to
+  fix first is that the three existing entries enumerate every part file by literal path — one pattern-based
+  surface CLASS (`docs/tasks/*/INDEX.md`, `docs/tasks/*/*.md`) would make it O(1) in registry records instead
+  of O(n)
   Verification: `pending`
   Commit: `pending`
 
