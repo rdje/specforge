@@ -142,18 +142,11 @@ repeatable rollover/remedy paths and remain under their existing owners.
   routing problem. Nothing is deleted and nothing is archived for capacity. Archiving stays available only for a
   single tree outgrowing its **per-file** bound, which is what produced the existing three (sealed at 2,393 /
   2,308 / 2,049 lines against the 3,000 cap).
-  **Director's earlier proposal — materialize a tree as a DIRECTORY — assessed, and it is not this axis's
-  remedy.** The premise is right: decision 0003 requires an owning *leaf*, never an owning *file*, and the repo
-  already does this three times. But splitting one tree into eight parts spends 1 -> 8 against the very count
-  under pressure; it escapes only because `task_evidence` targets `docs/tasks/*.md` top level, which requires a
-  NEW registered surface per tree — measured, an unregistered `docs/tasks/<dir>/*.md` is refused outright with
-  `tracked Markdown '<path>' is not classified`. And that cost hits a **tighter** bound: `surfaces.jsonl`
-  declares `max_records: 64` and holds **56**, at roughly three records per directory tree, so about two more
-  before the registry itself refuses. Directory materialization remains the correct answer to a single
-  oversized tree; it is not the answer to collection cardinality. If it is ever adopted broadly, the blocker to
-  fix first is that the three existing entries enumerate every part file by literal path — one pattern-based
-  surface CLASS (`docs/tasks/*/INDEX.md`, `docs/tasks/*/*.md`) would make it O(1) in registry records instead
-  of O(n)
+  **Withdrawn by the director (`2026-08-29`): the "materialize a task-tree as a directory" thread.** It was
+  raised about a different subject than the collection-cardinality bound this leaf owns, and its assessment is
+  removed rather than left as off-topic weight on a leaf reserved for the cap discussion. Do not re-raise it
+  here; if a single tree ever outgrows its per-file bound, that is the existing parts-and-archive remedy and it
+  belongs to that tree, not to this one
   Verification: `pending`
   Commit: `pending`
 
