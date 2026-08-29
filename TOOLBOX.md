@@ -360,6 +360,22 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   measurement ADR 0025 decision 1 requires before attributing a delta. Skips loudly with no corpus.
 - **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its sixteen fail-closed cases)
 
+### 7.2a-i `scripts/check_proof_seal_currency.sh` — the PROOF-SEAL-CURRENCY gate (gate-tier)
+- **WHAT:** reads the `ruleset_sha256` every persisted artifact records at all five chain stages for the
+  proof-carrying stratum — a **total** census — then asks the current build's own canonical loader whether
+  it still accepts that seal, with one **representative** probe per *distinct* seal per stage. The probe is
+  the CONSUMING stage in `--dry-run`; never `specforge validate`, which is not idempotent and would
+  invalidate the chain it claims to read. The terminal `adapters/isf` stage has no consumer, so it is
+  censused and reported UNPROBED rather than counted as a pass.
+- **WHEN:** automatically, on every commit through the doctrine driver — that is the point. Run it by hand
+  after editing a stage root or `derivation.rs` if you want the answer before the hook gives it to you.
+  Skips loudly and passes with no corpus.
+- **LIMIT:** a current seal is **not** content currency. Whether a persisted artifact is still what the
+  current binary reproduces stays `CHAIN-CURRENCY`'s question at CI tier.
+- **HOW:** `bash scripts/check_proof_seal_currency.sh` (`--self-test` for its sixteen fail-closed cases).
+  On a stale seal it names the remedy: `source_proof_migrate --write` for SourceIR (proof-only), or
+  `scripts/rebuild_stage_cascade.sh --write` for every stage below it (a real content rebuild).
+
 ### 7.2b `scripts/check_corpus_frontier.sh` — the CORPUS-FRONTIER derive-and-diff gate
 - **WHAT:** derives the corpus cohort from each document's persisted SourceIR and diffs it against the explicit,
   disjoint `refreshed`/`remaining` partition in `doctrine/corpus_frontier/census.json`. It checks exact identity,

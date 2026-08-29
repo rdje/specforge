@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12`, `.15` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13`, `.14`, `.16` pending)
+- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12`, `.14`–`.16` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
-- Last updated: `2026-08-28`
+- Last updated: `2026-08-29`
 - Owner: repo-local workflow
 
 ## Goal
@@ -822,7 +822,7 @@ Full result, method, controls, and per-document table:
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.14` (met for SourceIR)
 
 - ID: `SOURCE-IR-REPRODUCIBILITY.16`
-  State: `pending`
+  State: `done` (`2026-08-29`)
   Goal: make the seal debt visible at the moment it is created, not at the push boundary
   Acceptance: the director's call on `.14`'s open question, decided `2026-08-28` on the measurements in
   that leaf — 0.18 s to read every seal and 7.2 s to verify all 24 canonically, against ~20 minutes to
@@ -861,6 +861,53 @@ Full result, method, controls, and per-document table:
   over. Reusable control: a recording-stub binary asserting the gate never invokes `validate`
   (`rebuild_stage_cascade.sh` self-test 13/14, observed RED at 12/14 on the known-bad code)
   Prerequisite: `SOURCE-IR-REPRODUCIBILITY.14`, `SOURCE-IR-REPRODUCIBILITY.15`
+  **Delivered (`2026-08-29`).** `scripts/check_proof_seal_currency.sh`, registered `PROOF-SEAL-CURRENCY`
+  at **gate** tier in `scripts/check_doctrines.sh`. It censuses the seal of every persisted artifact at
+  every one of the five chain stages for the whole proof-carrying stratum — **24/24 persisted and sealed
+  with 1 distinct seal at `source-ir`, `evidence`, `semantic`, `intent`, and `isf-adapter`** — and then
+  asks the current build's own canonical loader whether it still accepts that seal. The census is TOTAL
+  and the probe is REPRESENTATIVE, one per *distinct* seal per stage: representativeness is a measured
+  consequence of the census, not an assumption, so a per-document seal divergence raises the distinct
+  count and earns its own probe. Cost **14.1 s** end to end; the gate tier measured **4 m 21 s** without
+  it and **3 m 02 s** with it, so run-to-run variance dominates that comparison and 14.1 s is the honest
+  figure. Read-only is proved rather than asserted — the composite digest of all 120 in-scope artifacts
+  is byte-identical across a full run.
+  All three of this leaf's design constraints were met, and the third was the one that mattered:
+  the probe is the CONSUMING stage in `--dry-run`, never `specforge validate`. Controls hold it shut
+  behaviourally, not structurally — a recording stub proves the gate asks a `--dry-run` loader and never
+  asks for `validate`.
+  **The end-to-end RED control is the real product loader, not a stub.** Copying one sealed
+  `source_ir.json` into a scratch corpus root and zeroing the ledger's own `ruleset_sha256` makes the
+  current binary emit the exact `.14` diagnostic — `SourceIR proof verification failed: proof ledger
+  ruleset hash is stale` — the gate exits 1, and it classifies the rejection as the stale-seal class and
+  names the owning remedy rather than printing a loader error for the reader to interpret. The same
+  scratch root before tampering passes. Self-test **16/16**; sabotaging the shared seal predicate drives
+  it to **10/16** and the cascade's own to **11/14**, so `scripts/lib/proof_seal_scan.sh` is load-bearing
+  for both callers rather than a dead file.
+  **The cost constraint was met by measurement, and the leaf's own framing needed one correction.** The
+  requirement was to answer "this artifact carries no ledger" without reading the whole file. Proving
+  absence *requires* reading every byte, so what is actually removable is the parser, not the read: a
+  necessary-condition prefilter (`index()` for the `"proof_ledger"` key, one process for the whole list)
+  costs **0.24 s** over all 78 `source_ir.json` where the exact scan costs **2.96 s** on the 54 proofless
+  ones alone. The prefilter is never an authority — every candidate is still decided by the exact scan,
+  and a nested `proof_ledger` is a candidate that the scan rejects. Soundness is measured over the whole
+  persisted corpus: **390 artifacts, 120 prefilter candidates, 120 exact positives, 0 prefilter-negatives
+  that the exact scan would have accepted**.
+  Separately, the exact scan itself was made **5.1x** faster (6.26 s -> 1.23 s on the 24 proof-carrying
+  `source_ir.json`) by matching whole string literals and runs between structural bytes instead of walking
+  the artifact one character at a time. That is a rewrite of a predicate `.15` had already proved, so it
+  is held to an agreement census rather than to review: **390 persisted artifacts compared, 0 mismatches**,
+  exit codes included.
+  Shared, not copied (`.11`): `scan_proof_ledger`, `carries_proof_ledger`, `recorded_ruleset`, and the
+  chain stage/probe table now live once in `scripts/lib/proof_seal_scan.sh`; `rebuild_stage_cascade.sh`
+  sources them and its own `stage_input_path`/`stage_output_path`/`downstream_probe` became thin wrappers,
+  with its **14/14** self-test unchanged as the control that the refactor preserved behaviour.
+  **Two limits are reported rather than papered over.** The terminal `isf-adapter` stage has no consumer,
+  so no read-only canonical probe exists for it at all — and `CHAIN-CURRENCY` does not close that gap
+  either, because its content comparison excludes the proof surface by construction. The only loader that
+  would answer for it is `specforge validate`, which mutates. And a current seal is not content currency:
+  this gate never says an artifact is what the current binary would reproduce, which stays
+  `CHAIN-CURRENCY`'s question at CI tier.
 
 ## Open Questions
 
@@ -891,14 +938,16 @@ Full result, method, controls, and per-document table:
   discharged — `.8` gives the figure-interior population a carrier and `.9` gives the join an exact key — so
   the gate it owns is next, and it must be built to distinguish an artifact written with the carrier from one
   written before it, because a gate at the persisted corpus's numbers still fails closed everywhere.
-- `.16` is now unblocked and is the frontier: `.15` made all four downstream stages current, so the gate it
-  owns will not fail on day one, and `.15` handed it the two constraints that would otherwise have sunk it
-  (never probe with `specforge validate`; answer "carries no ledger" without reading the whole file).
+- `.16` is delivered: `PROOF-SEAL-CURRENCY` runs at gate tier on every commit, so the seal debt `.14` took
+  13 days and 54 commits to notice is now reported by the commit that creates it. What it does NOT cover is
+  stated in the leaf and in the check's own report: the terminal adapter stage has no read-only canonical
+  probe, and content currency remains `CHAIN-CURRENCY`'s question at CI tier.
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-29` | `.16` gate-tier seal check | `check_proof_seal_currency.sh` over the real corpus: **24/24 persisted and sealed with 1 distinct seal** at each of `source-ir`, `evidence`, `semantic`, `intent`, `isf-adapter`; four read-only canonical probes accepted; terminal stage reported unprobed; exit 0 in **14.1 s** (the gate tier measured **4 m 21 s** without this check and **3 m 02 s** with it, so variance dominates that comparison). Read-only proved, not asserted: the composite SHA-256 of all 120 in-scope artifacts is byte-identical across a full run. End-to-end RED with the **real product loader**, not a stub — zeroing one copied artifact's ledger `ruleset_sha256` in a scratch root reproduces `.14`'s exact `proof ledger ruleset hash is stale`, exit 1, classified with the owning remedy; the same root untampered passes. Self-test **16/16**; sabotaging the shared predicate drives this **16/16 -> 10/16** and the cascade's **14/14 -> 11/14**. Predicate rewrite held to an agreement census rather than review: **390 persisted artifacts, 0 mismatches** against the scanner `.15` shipped, exit codes included; **5.1x** faster (6.26 s -> 1.23 s on the 24 proof-carrying `source_ir.json`). Prefilter soundness over the same 390: **120 candidates, 120 exact positives, 0 prefilter-negatives the exact scan would have accepted**; **0.24 s** against **2.96 s** of parser time for the 54 proofless artifacts alone |
 | `2026-08-28` | `.15` chain currency restored | `check_chain_currency.sh` (read-only; every replay is `--dry-run`): **evidence / semantic / intent / isf-adapter each 24 replayed, 24 current, 0 stale**, 54 legacy documents explicitly unmeasurable, retention exactly the declared 24 bundles, exit 0. `.14` left this doctrine green only at `evidence`; the whole chain is now current |
 | `2026-08-28` | `.15` downstream chain rebuilt | `rebuild_stage_cascade.sh --write`: **24 rebuilt / 24 content-identical / 0 content-changed / 24 validated / 0 failed** at every one of `evidence`, `semantic`, `intent`, `isf-adapter`, each seal moving to exactly one new value. Decisive control is independent of the remedy's own bookkeeping: an 842 MB snapshot of all 120 downstream artifacts taken **before any write**, re-compared afterwards with the shared predicate — 24/24 content-identical and 24/24 seal-moved at all four stages. Shared predicate: `compare_stage_artifact`/`compare_emitted_isf` extracted **byte-for-byte** (`diff` of removed vs extracted block is empty) into `scripts/lib/stage_artifact_identity.sh`; sabotaging it drives the ORACLE's own self-test **22/22 -> 20/22**. Cascade `--self-test` **14/14**, with 13/14 observed **RED at 12/14** against the exact known-bad `--check` that probed with `specforge validate`. Root-caused, not classified: `specforge validate` is not idempotent (mutations **4 -> 5 -> 6** over three calls; digest moves each time) while a `--dry-run` consuming-stage replay leaves the artifact **byte-identical** — so the first post-run validate census invalidated the chain it was measuring and forced a second rebuild. Designed behaviour per ADR 0038, not a defect: `proof_ledger.claims` is **480 at one mutation and 480 at four**, and `backannotate_report` is `clear()`+`push()` so `validation_reports` stays at 1 |
 | `2026-08-28` | `.14` SourceIR seal restored | `source_proof_migrate --write` re-sealed all 24 live artifacts. Decisive control is the content diff against an 89.0 MB pre-write snapshot of the 24 `source_ir.json` files, compared field by field with `proof_context`/`proof_ledger` excluded: **24 proof-only, 0 public content changed**. After: `specforge validate` **verified 24/24, failed 0/24**, seal homogeneous across all 24. Chain currency `evidence` **0 current / 24 stale -> 24 replayed / 24 current / 0 stale**; `semantic`/`intent`/`isf-adapter` still 0/24 but on a **different** error (persisted EvidenceIR's *cumulative* seal), which is `.15`. Cost that decided `.16`: 0.18 s to read all 78 seals, 7.2 s to verify all 24 canonically, versus **~20 min** for `check_chain_currency.sh` — and **13 days / 54 commits** of actual latency (sealed `2026-08-15`; earliest possible breaker `29dde0ac` `2026-08-16`, one of only 5 commits in that window touching a stage root or `derivation.rs`) |
@@ -914,6 +963,7 @@ Full result, method, controls, and per-document table:
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.16` | `SOURCE-IR-REPRODUCIBILITY.16 — report the seal debt on the commit that creates it` | `PROOF-SEAL-CURRENCY` at gate tier: total five-stage census, representative read-only probe per distinct seal, terminal gap and content-currency boundary both reported rather than papered over |
 | `.15` | `SOURCE-IR-REPRODUCIBILITY.15 — rebuild the downstream chain the seal could not reach` | 24/24 content-identical at all four stages with every seal moved; one shared identity predicate for remedy and oracle; `.16`'s cost figure corrected before it is designed against |
 | `.8` | `SOURCE-IR-REPRODUCIBILITY.8 — give the text inside a figure somewhere to land` | `interior_texts` on the figure that contains it, membership defined by the converter's own traversal differenced against itself; 255 → 0 on a measured re-ingest with `content_elements` unmoved; opens `.14` |
 | `.14` | `SOURCE-IR-REPRODUCIBILITY.14 — re-seal the SourceIR corpus and size the check that should have caught it` | proof-only re-seal of all 24, 0 content changed; evidence chain currency restored; `.15`/`.16` opened |

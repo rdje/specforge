@@ -66,6 +66,7 @@ other re-derivable trace.
 | `PRODUCTION-GENERICITY` | structural | package direction, exact production inventories and rule joins, compiled raw/identity information flow, protected authority, and proof-only persistence all hold without a named-specification exception |
 | `CORPUS-FRONTIER` | derive-and-diff | the SourceIR-derived corpus cohort is partitioned exactly into explicit refreshed and remaining sets, retained bundles agree, and the task file states the same counts — source-library relocation cannot impersonate a refresh |
 | `CLAIM-VERIFICATION` | structural + oracle | bounded claim records, tracked digest-current artifacts, executed source/known-bad-control commands, complete stale-check coverage, and publication IDs resolve together |
+| `PROOF-SEAL-CURRENCY` | oracle | every persisted artifact under `generated/` records a proof seal today's build still accepts — censused across every stage of the proof-carrying stratum, and probed through the product's own loader by running the consuming stage in dry-run form rather than by validating, which would mutate what it reads |
 | `CHAIN-CURRENCY` | oracle | every proof-current artifact under `generated/` is exactly what today's binary reproduces from verified upstream authority; a legacy/proofless compatibility refusal is reported as an explicit unmeasurable frontier, while a stale current proof still fails — and retained normalized bundles match their declaration exactly |
 
 `CORPUS-FRONTIER` exists because of a defect worth stating plainly. The corpus refresh program tracked its own
@@ -82,9 +83,9 @@ The README guard is unconditional: it evaluates the resulting tree even when a c
 may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
 The project-owned normative contract is `README_POLICY.md`.
 
-Among its focused suites, the live-document gate runs 81 common lifecycle/control cases, 47 neutral derived-state
+Among its focused suites, the live-document gate runs 84 common lifecycle/control cases, 47 neutral derived-state
 classification cases, 25 SpecForge authority-adapter cases, and 15 terminal-task source/route/identity/boundary
-cases, plus 44 active-task source/topology/route/payload/bound/writer cases, 58 fact-catalog source/plan/route/residue/
+cases, plus 44 active-task source/topology/route/payload/bound/writer cases, 60 fact-catalog source/plan/route/residue/
 bound cases, and the projection-specific Knowledge Map contract and portable-bundle integration suite. Generated
 collections must have complete landing membership, exact derive-and-diff content,
 bounded repository-local check workspaces, and no stale parts or temporary residue. Exact current fields are
@@ -247,6 +248,41 @@ pre-write snapshot for attribution. That caution is not theoretical: the ADR 002
 exactly one real content delta across the whole checkable population. The cascade is a remedy, not an
 oracle — after it runs, `scripts/check_chain_currency.sh` is still the only thing that may call the
 corpus current.
+
+### Seeing the seal break on the commit that breaks it
+
+Both remedies above answer *how to get the seal back*. The harder question was *when you find out it is
+gone*. Chain currency reports a stale seal loudly and refuses to be bypassed, but it is a CI-tier
+doctrine, so it first speaks at the push boundary — and a corpus once sat out of seal for weeks and
+dozens of commits before anything said so. Nothing was wrong with the artifacts; nothing an ordinary
+slice ran could observe the transition.
+
+`scripts/check_proof_seal_currency.sh` closes that specific gap at gate tier, on every commit. It reads
+the seal every persisted artifact records, at every stage, for every document in the proof-carrying
+stratum — a total census, not a sample — and then asks today's build whether it still accepts that seal.
+The census is what makes the asking cheap: where every artifact at a stage records the same seal, one
+canonical probe settles the stage, and where seals diverge, each distinct seal earns its own probe. So
+representativeness is measured rather than assumed.
+
+Three properties of that check are worth stating, because each is a mistake it would have been easy to
+make:
+
+- **It asks the product's own loader, and asks it read-only.** `specforge validate` is the obvious way to
+  ask, and it is the wrong one: validation back-annotates the artifact, so each call moves its digest,
+  and every stage below retains its upstream's ledger as an exact prefix. A gate that validated the
+  corpus on every commit would invalidate the chain beneath it on every commit. The read-only way to
+  reach the same verified-load path is to run the *consuming* stage with `--dry-run`, which leaves the
+  artifact byte-identical.
+- **It reports the stage it cannot probe.** The adapter is terminal: it has no consumer, so no read-only
+  canonical probe exists for it at all, and chain currency does not close that gap either because its
+  content comparison excludes the proof surface by construction. That stage is censused and reported as
+  unprobed rather than quietly counted as a pass.
+- **It is narrower than chain currency, deliberately.** A current seal says the persisted proof is one
+  today's build issues. It says nothing about whether the artifact is still the content today's binary
+  would reproduce. That remains chain currency's question, and it remains CI-tier.
+
+A tree with no `generated/` — a fresh clone, or a hosted CI runner — skips loudly and passes, because the
+doctrine has nothing to govern there and silence would read as a verdict.
 
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
 evidence/`.isf` checks, chain currency, the full `cargo` suite, and the mdBook doctest/build pair — are the

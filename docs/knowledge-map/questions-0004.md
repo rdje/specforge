@@ -84,6 +84,8 @@
   > how can SpecForge automatically choose the next task without gaming metrics
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > how can a collection use a membership index outside its own surface
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how can a script ask the SpecForge canonical loader without mutating the artifact
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > how can one compound sentence contain two independent signal facts
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -106,6 +108,8 @@
   > how do I address exactly one converter item
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I change the reviewed source-to-intent fixture projection
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how do I check whether the persisted corpus seal is stale
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how do I count the records in the status ledger
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -294,7 +298,3 @@
   > how does ingest avoid filling the disk on a very large PDF
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > how does production recover explicit inference antecedent state

@@ -1,3 +1,54 @@
+### SOURCE-IR-REPRODUCIBILITY.16 — report the seal debt on the commit that creates it
+
+- Added scripts/check_proof_seal_currency.sh and registered PROOF-SEAL-CURRENCY at GATE tier in
+  scripts/check_doctrines.sh. `.14`'s seal debt stood for 13 days and 54 commits because the only
+  doctrine that reports it, CHAIN-CURRENCY, is CI-tier and first speaks at the push boundary. Now every
+  commit reads the seal of every persisted artifact at all five chain stages and asks the current
+  build's own canonical loader whether it still accepts it.
+- Real corpus, exit 0: 24/24 persisted and sealed with 1 distinct seal at each of source-ir, evidence,
+  semantic, intent, isf-adapter; four read-only canonical probes accepted; terminal stage reported
+  unprobed, in 14.1 s. The gate tier measured 4 m 21 s without it and 3 m 02 s with it, so variance
+  dominates that comparison and 14.1 s is the honest figure.
+- The census is TOTAL and the probe is REPRESENTATIVE — one per DISTINCT seal per stage. That is not a
+  sample: the census is what establishes representativeness, so a per-document divergence raises the
+  distinct count and earns its own probe rather than hiding behind a homogeneous neighbour.
+- Read-only is proved, not asserted. The composite SHA-256 of all 120 in-scope artifacts is
+  byte-identical across a full run, and the probe is the CONSUMING stage in --dry-run, never
+  `specforge validate` — which is not idempotent and would invalidate the chain it claims to read.
+  A recording stub makes that behavioural rather than structural.
+- THE RED CONTROL IS THE REAL PRODUCT LOADER, NOT A STUB. Copying one sealed source_ir.json into a
+  scratch corpus root and zeroing its ledger ruleset_sha256 makes the current binary emit `.14`'s exact
+  diagnostic — "SourceIR proof verification failed: proof ledger ruleset hash is stale" — the gate exits
+  1, and it classifies the rejection as the stale-seal class and names the owning remedy instead of
+  printing a loader error for the reader to interpret. The same root untampered passes.
+- Corrected this leaf's own cost framing before designing against it. It asked for an answer to "carries
+  no ledger" WITHOUT READING THE WHOLE FILE. Proving absence requires reading every byte; what is
+  actually removable is the parser. A necessary-condition prefilter (index() for the "proof_ledger" key,
+  one process for a whole list) costs 0.24 s over all 78 source_ir.json where the exact scan costs
+  2.96 s on the 54 proofless ones alone. It is never an authority: a nested proof_ledger is a candidate
+  the exact scan rejects. Soundness measured over 390 persisted artifacts — 120 candidates,
+  120 exact positives, 0 prefilter-negatives the exact scan would have accepted.
+- Made the exact scan 5.1x faster (6.26 s -> 1.23 s on the 24 proof-carrying source_ir.json) by matching
+  whole string literals and the runs between structural bytes instead of walking one character at a
+  time. Because that rewrites a predicate `.15` had already proved, it is held to an agreement census
+  rather than to review: 390 persisted artifacts, 0 mismatches, exit codes included.
+- Shared, not copied (the `.11` lesson): scan_proof_ledger / carries_proof_ledger / recorded_ruleset and
+  the chain stage+probe table now live once in scripts/lib/proof_seal_scan.sh. rebuild_stage_cascade.sh
+  sources them and its stage table became thin wrappers, with its 14/14 self-test unchanged as the
+  control that the refactor preserved behaviour. Sabotaging the shared predicate drives the new gate
+  16/16 -> 10/16 and the cascade 14/14 -> 11/14, so the library is load-bearing for both.
+- Two limits are reported rather than papered over. The terminal isf-adapter stage has no consumer, so
+  no read-only canonical probe exists for it at all — and CHAIN-CURRENCY does not close that gap either,
+  because its content comparison excludes the proof surface by construction. And a current seal is not
+  content currency: this gate never says an artifact is what the current binary would reproduce.
+- Book: "Seeing the seal break on the commit that breaks it" under doctrine enforcement, plus the new
+  registry row.
+- Corrected a falsified clause in the resume pointer while measuring the above. It said "no gate sees"
+  the 138 leaked live-document-size-tests dirs under generated/. No gate JUDGES them, but
+  check_persisted_artifact_paths.pl (run by the locality gate) WALKS every *.json under generated/ and
+  classifies theirs as `other` — and it FAILED on 2026-08-29 when a fixture run deleted them mid-walk,
+  which is how this was found. The residue still needs its own tree.
+
 ### SOURCE-IR-REPRODUCIBILITY.15 — rebuild the downstream chain the seal could not reach
 
 - Found the baseline was ONE defect, not three. All 72 downstream canonical validates (24 x

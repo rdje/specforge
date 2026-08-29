@@ -347,6 +347,24 @@ the workflow through the mdBook and repository review path.
   repair applies `.6`'s remedy to the registry: the per-commit counters are withdrawn from the assertion and
   the reader is routed to `--report`. This is repair, not closure — `.7` still owns the gate that would have
   observed it, and it must reach claim *assertions*, not only claim-annotated prose
+  Fifth instance (`2026-08-29`, found by `SOURCE-IR-REPRODUCIBILITY.16`'s alignment review, repaired in
+  that commit as a `COMMIT.md` step-3 blocker): **two published suite counts had drifted from their
+  producers, and the two surfaces publishing them disagreed with each other.** Measured at the same
+  commit: `perl scripts/test_live_document_size.pl` reports **84**, `perl
+  scripts/check_fact_card_catalog.pl --self-test` reports **60**. `DOCTRINE_ENFORCEMENT.md` §10 said 84
+  (correct) and 58 (stale); `docs/book/src/reference/doctrine-enforcement.md` said 81 (stale) and 58
+  (stale). The other four counts on the same two sentences were re-derived in the same pass and are
+  correct — 47 (`test_derived_state_contracts.pl`), 25 (`test_derived_state_authorities.pl`), 15
+  (`check_task_tree_archive.pl --self-test`), 44 (`check_active_task_evidence.pl --self-test`).
+  What makes this the sharpest instance yet for `.7`'s design: the book's `81` sits at
+  `doctrine-enforcement.md:86`, which the frozen census does **not** hold a region for, while the `58`
+  sits at line 88, which it **does** — as an `incomplete` region missing all three legs. So one stale
+  count was outside the census's denominator and the other was inside it and explicitly unverified.
+  Neither the digest binding nor the frozen census could observe either, because both prove that a
+  region has not changed, not that its number still re-derives — which is exactly the gate `.7` owns.
+  The disagreement between two surfaces publishing the same count is a second, cheaper signal `.7`
+  could exploit: it needs no producer at all, only the observation that two governed regions state
+  different values for one quantity
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.8`
   Status: `pending` (tracking-only)
@@ -1093,6 +1111,8 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-29` | `.7` fifth stale-count instance | `test_live_document_size.pl`; `check_fact_card_catalog.pl --self-test`; `test_derived_state_contracts.pl`; `test_derived_state_authorities.pl`; `check_task_tree_archive.pl --self-test`; `check_active_task_evidence.pl --self-test` | producers report **84 / 60 / 47 / 25 / 15 / 44**. `DOCTRINE_ENFORCEMENT.md` published 84/**58**; the book published **81**/**58**. Two stale counts repaired; the other four re-derive. The book's stale `81` sits at a line the frozen census holds **no** region for; its stale `58` sits at a line the census holds an **incomplete** region for — one outside the denominator, one inside it and explicitly unverified. Neither a digest binding nor the frozen census can observe either, which is `.7`'s whole point |
+--- |
 | `2026-08-15` | `.0` | full source-standard read; claim/review/derived-state/doctrine/control/tracked-
   producer/capacity census; task catalog; derived-state report; canonical catalogs; live-size self-tests |
   `passed`; mapped 39 current surfaces, 14 derived-state contracts, 33/24 tracked/self-test checkers, zero

@@ -96,132 +96,49 @@ fail_note() { printf '[rebuild-cascade] FAIL: %s\n' "$1" >&2; }
 # certify itself with a comparison the gate would not make (`.11`).
 . "$ROOT/scripts/lib/stage_artifact_identity.sh"
 
+# The ONE seal-read predicate and chain stage table, shared with the PROOF-SEAL-CURRENCY gate
+# (`scripts/check_proof_seal_currency.sh`) for the same reason: the gate that reports the seal debt
+# and the remedy that clears it must select the same stratum, read the same seal, and probe the
+# same loader, or one of them is measuring something the other cannot act on
+# (SOURCE-IR-REPRODUCIBILITY.16). It provides `scan_proof_ledger`, `carries_proof_ledger`,
+# `recorded_ruleset`, `chain_stages`, `chain_stage_artifact_path`, `chain_stage_producer`, and
+# `chain_stage_readonly_probe`, all resolving against this script's `GENERATED_ROOT` and `BIN`.
+. "$ROOT/scripts/lib/proof_seal_scan.sh"
+
 # ── Stratum ─────────────────────────────────────────────────────────────────
 # A document is in scope when its persisted artifact carries a current proof ledger, and the seal
-# it carries is that ledger's own `ruleset_sha256`. Both questions are answered by ONE streaming,
-# depth-aware scan (`scan_proof_ledger`) rather than by matching indented lines: a stage artifact
-# can reach 87 MB, so the file is never parsed whole, but a format-dependent line match would read a
-# compactly-serialized ledger as absent — which would silently drop a sealed document out of scope.
-# The scanner tracks JSON string/escape state and brace depth, so it reads the TOP-LEVEL
-# `proof_ledger` object's DIRECT `ruleset_sha256` member and cannot be fooled by a digest-shaped
-# field elsewhere in the artifact.
-#
-# scan_proof_ledger <artifact.json> — prints the recorded seal, `none` when the ledger has no
-# `ruleset_sha256`, or nothing at all when there is no top-level proof ledger. Exits 0 when a
-# top-level `proof_ledger` object exists, 1 otherwise.
-scan_proof_ledger() {
-  perl - "$1" <<'PERL'
-use strict;
-use warnings;
-
-open my $handle, '<:raw', $ARGV[0] or exit 1;
-binmode $handle;
-
-my $depth        = 0;      # brace/bracket depth; top-level object members sit at depth 1
-my $in_string    = 0;
-my $escaped      = 0;
-my $token        = '';     # the string literal currently being accumulated
-my $pending_key  = undef;  # the most recent string seen in key position
-my $in_ledger    = 0;      # depth at which the proof_ledger object's members live, or 0
-my $found_ledger = 0;
-my $seal;
-my $expect_value = 0;      # the next literal closes `"ruleset_sha256":`
-
-my $chunk;
-CHUNK: while (read($handle, $chunk, 65536)) {
-    for my $ch (split //, $chunk) {
-        if ($in_string) {
-            if ($escaped)        { $escaped = 0; $token .= $ch; next }
-            if ($ch eq '\\')     { $escaped = 1; $token .= $ch; next }
-            if ($ch ne '"')      { $token .= $ch; next }
-            $in_string = 0;
-            if ($expect_value) { $seal = $token; last CHUNK }
-            $pending_key = $token;
-            next;
-        }
-        if ($ch eq '"') { $in_string = 1; $token = ''; next }
-        if ($ch eq '{' || $ch eq '[') {
-            $depth++;
-            if (!$found_ledger && $ch eq '{' && $depth == 2
-                && defined $pending_key && $pending_key eq 'proof_ledger') {
-                $found_ledger = 1;
-                $in_ledger    = $depth;
-            }
-            $pending_key = undef;
-            next;
-        }
-        if ($ch eq '}' || $ch eq ']') {
-            last CHUNK if $in_ledger && $depth == $in_ledger;
-            $depth--;
-            $pending_key = undef;
-            next;
-        }
-        if ($ch eq ':') {
-            $expect_value = ($in_ledger && $depth == $in_ledger
-                             && defined $pending_key && $pending_key eq 'ruleset_sha256') ? 1 : 0;
-            next;
-        }
-        $pending_key = undef if $ch eq ',';
-    }
-}
-close $handle;
-
-exit 1 if !$found_ledger;
-print defined $seal ? "$seal\n" : "none\n";
-exit 0;
-PERL
-}
-
-# carries_proof_ledger <artifact.json> — stratum membership.
-carries_proof_ledger() {
-  scan_proof_ledger "$1" >/dev/null 2>&1
-}
-
-# recorded_ruleset <artifact.json> — the seal the artifact records, or `none` when proofless.
-recorded_ruleset() {
-  local seal
-  if seal="$(scan_proof_ledger "$1" 2>/dev/null)" && [ -n "$seal" ]; then
-    printf '%s\n' "$seal"
-  else
-    printf 'none\n'
-  fi
-}
+# it carries is that ledger's own `ruleset_sha256`. Both questions are answered by
+# `carries_proof_ledger` / `recorded_ruleset` in scripts/lib/proof_seal_scan.sh — a cheap
+# necessary-condition prefilter followed by ONE streaming, depth-aware scan, never a line match: a
+# stage artifact can reach 87 MB, so the file is never parsed whole, but a format-dependent line
+# match would read a compactly-serialized ledger as absent, which would silently drop a sealed
+# document out of scope. The scan tracks JSON string/escape state and brace depth, so it reads the
+# TOP-LEVEL `proof_ledger` object's DIRECT `ruleset_sha256` member and cannot be fooled by a
+# digest-shaped field elsewhere in the artifact. The self-tests below still exercise it here,
+# because this script's stratum selection is what a drift in that predicate would break.
 
 # ── Stage table ─────────────────────────────────────────────────────────────
-# stage_input_path / stage_output_path <stage> <key>: the fixed input the stage reads and the
-# persisted artifact it writes. Mirrors scripts/check_chain_currency.sh's stage table exactly.
+# Derived from the ONE chain table in scripts/lib/proof_seal_scan.sh, so the remedy, the
+# PROOF-SEAL-CURRENCY gate, and anything else that walks the chain cannot disagree about which
+# artifact a stage reads or writes. `stage_input_path` is just "the artifact my producer wrote";
+# `stage_output_path` is "the artifact I write". The self-tests below still prove the composed
+# result is a chain, and still refuse an unknown stage.
 stage_input_path() {
-  case "$1" in
-    evidence)    printf '%s\n' "$GENERATED_ROOT/source_ir/$2/source_ir.json" ;;
-    semantic)    printf '%s\n' "$GENERATED_ROOT/evidence_ir/$2/evidence_ir.json" ;;
-    intent)      printf '%s\n' "$GENERATED_ROOT/semantic_ir/$2/semantic_ir.json" ;;
-    isf-adapter) printf '%s\n' "$GENERATED_ROOT/intent_ir/$2/intent_ir.json" ;;
-    *) return 1 ;;
-  esac
+  local producer
+  producer="$(chain_stage_producer "$1")" || return 1
+  chain_stage_artifact_path "$producer" "$2"
 }
 stage_output_path() {
-  case "$1" in
-    evidence)    printf '%s\n' "$GENERATED_ROOT/evidence_ir/$2/evidence_ir.json" ;;
-    semantic)    printf '%s\n' "$GENERATED_ROOT/semantic_ir/$2/semantic_ir.json" ;;
-    intent)      printf '%s\n' "$GENERATED_ROOT/intent_ir/$2/intent_ir.json" ;;
-    isf-adapter) printf '%s\n' "$GENERATED_ROOT/adapters/isf/$2/adapter.json" ;;
-    *) return 1 ;;
-  esac
+  chain_stage_artifact_path "$1" "$2"
 }
 
 # downstream_probe <stage> <artifact> <errfile> — READ-ONLY canonical acceptance for a persisted
 # artifact: run the stage that CONSUMES it with `--dry-run`, which enters the same verified loader
 # `specforge validate` would and writes nothing. Returns 2 for the terminal stage, which has no
 # consumer and therefore no read-only canonical probe — reported honestly rather than papered over
-# with a `validate` that would mutate the artifact.
+# with a `validate` that would mutate the artifact. Defined once, in the shared library.
 downstream_probe() {
-  case "$1" in
-    evidence)    "$BIN" semantic "$2" --dry-run >/dev/null 2>"$3" ;;
-    semantic)    "$BIN" intent   "$2" --dry-run >/dev/null 2>"$3" ;;
-    intent)      "$BIN" adapt    "$2" --target isf --dry-run >/dev/null 2>"$3" ;;
-    isf-adapter) return 2 ;;
-    *) return 2 ;;
-  esac
+  chain_stage_readonly_probe "$@"
 }
 
 # run_stage <stage> <input> <errfile> — invoke the production CLI surface for one stage.

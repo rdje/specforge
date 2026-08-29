@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > how does production recover explicit inference antecedent state
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > how does register access differ from register field access
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -116,6 +120,8 @@
   > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how expensive is reading the proof seal from the whole persisted corpus
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -237,6 +243,8 @@
   > how is the page-range batch size chosen / adapted
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how is the precision of the broadened (non-gold) extraction measured / estimated
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how is the proof seal read from a large stage artifact
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -289,11 +297,3 @@
   > how many captions does ingest discard
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many captured figure regions does the retained corpus hold
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many converter text items does iterate_items yield across the corpus
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > how many corpus documents carry markdown-escaped underscores in their statements
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how many corpus refreshes are done and how many remain (52 of 57 done and five remaining as of 2026-08-11; re-run the gate rather than trusting an older count)
