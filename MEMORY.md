@@ -6,44 +6,31 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SOURCE-IR-REPRODUCIBILITY.7`, then `.3`/`.4`/`.6`. Open: `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`;
-  `SCRATCH-RESIDUE-CONTAINMENT.1`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
-  `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CLAIM-VERIFICATION-ADOPTION.1a`;
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`. The last six are tracking-only.
-- Current state: `.16` closed the seal-latency hole `.14` measured at 13 days / 54 commits.
-  `PROOF-SEAL-CURRENCY` (`scripts/check_proof_seal_currency.sh`) is registered **gate** tier, so every
-  commit now reads the seal of every persisted artifact at all five chain stages and asks the current
-  build's own loader whether it still accepts it: **24/24 sealed, 1 distinct seal per stage, 4 probes
-  accepted, exit 0 in 14.1 s** (the gate measured 4m21s without it, 3m02s with it — variance
-  dominates that comparison). The census is TOTAL and the probe is
-  REPRESENTATIVE (one per distinct seal), so representativeness is measured, not assumed. Read-only is
-  proved — all 120 in-scope artifacts byte-identical across a run — because the probe is the CONSUMING
-  stage in `--dry-run`, never `specforge validate`. RED control is the real loader, not a stub: zeroing a
-  copied artifact's ledger digest reproduces `.14`'s exact `proof ledger ruleset hash is stale`, exit 1,
-  classified with its remedy. Seal reading is now shared with the remedy in
-  `scripts/lib/proof_seal_scan.sh` (`.11`); sabotaging it drives the gate 16/16 -> 10/16 and the cascade
-  14/14 -> 11/14. Predicate rewrite held to an agreement census, not review: **390 artifacts, 0
-  mismatches**, 5.1x faster; prefilter soundness **120 candidates / 120 exact positives / 0 unsound**.
-  Reported, not papered over: the terminal `isf-adapter` stage has NO read-only canonical probe (and
-  CHAIN-CURRENCY does not close it — its comparison excludes the proof surface), and a current seal is
-  not content currency.
-  `[claim: claim-provenance-gate-active]`
-  `[claim: mdbook-quantitative-census-frozen]`
-  `[claim: current-claim-census-frozen]`
-- Next action: run `SOURCE-IR-REPRODUCIBILITY.7` — the ingest-conservation gate. Its two prerequisites are
-  discharged (`.8` carrier, `.9` exact join key); it must distinguish an artifact written with the carrier
-  from one written before it, or it fails closed everywhere at the persisted corpus's numbers.
-- In-flight uncommitted: none after this commit. This pointer's fixed prose is capped at a derived 12
-  lines (`MEMORY_ARCHITECTURE.md` §6).
-- Blockers: none. Owned, not fixed: `.13` (frozen reviewed fixture not re-derivable),
-  `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/`.9`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`,
-  `SCRATCH-RESIDUE-CONTAINMENT.4`. The `generated/` fixture residue is no longer unowned: `.3` narrowed
-  that tree's `generated/` Non-Goal on a measured falsification (`specforge clean`'s three scopes reach
-  it only via `--scope all-generated`, which discards the corpus) and reclaimed **317 roots / 7,630
-  files / 32 MB, 0 remaining**. Mechanism measured, not inferred: killing the producer leaks every live
-  fixture under SIGKILL and SIGTERM (15/15, 15/15, 20/20 each); killing only the wrapper and orphaning
-  the producer leaks **0**; SIGINT stays honestly unmeasured. `.4` owns prevention — the producer is
-  still signal-unsafe, so the residue recurs. Watch the exposure: `check_persisted_artifact_paths.pl`
-  (locality gate) walks every `*.json` under `generated/` and FAILS if a fixture run deletes one
-  mid-walk, so never run the suite concurrently with the gate.
+- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`, then `.2b`/`.2c`. Open elsewhere:
+  `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION`
+  `.7`/`.8`/`.1a`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
+  `SPEC-TO-INTENT-ALIGNMENT.9`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`;
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`. The last seven are tracking-only.
+- Current state: the director decided (`2026-08-29`) there is to be NO limit on the number of task-trees,
+  and that a completed tree stays as project history. `.2` recorded that; splitting it into executable
+  remedies showed it is not a one-line registry edit. The cap has TWO enforcers —
+  `task_evidence.enforcement_ceilings.files = 160` in `doctrine/live_document_size/surfaces.jsonl`, and an
+  independent `my $MAX_TASKS = 160;` at `scripts/check_task_tree_catalog.pl:18` — so a registry-only change
+  would have read as delivered while the plane stayed capped. Measured at `c1609558`: `task_evidence` is
+  151 files and the gate says `files ... rollover (94.4%) - 9 below its 160 ceiling`, while
+  `task_tree_index` is 404 lines with `lines_each ... warning (84.2%) - 108 below its 512 ceiling` at one
+  catalog row per tree. So `.2a` RELOCATES the nearest stop from 9 trees to about 108, and `.2c` is the
+  half that removes it. Doctrine gate green at `c1609558`: 10/10 executed PASS, CHAIN-CURRENCY deferred.
+- Next action: run `.2a`. Null `task_evidence.files` in both bands behind a DECLARED exemption the checker
+  enforces (every resource axis stays numeric, both bands null together, and a bounded reader-facing route
+  must name a different registered surface covering the index), delete `$MAX_TASKS` in the same
+  transaction, add one exact record to `ceiling_increase_authorities.jsonl` plus an ADR, and observe the
+  four refusals RED in `scripts/test_live_document_size.pl`. `.2b` must then retire that single-use
+  authority, or the very next commit fails on `unused or banked ceiling-increase authority`.
+- In-flight uncommitted: none after this commit.
+- Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/
+  `.9`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`; `SCRATCH-RESIDUE-CONTAINMENT.4` — the `generated/` fixture
+  producer is still signal-unsafe, so the residue recurs. Never run the fixture suite concurrently with the
+  locality gate: `check_persisted_artifact_paths.pl` walks every `*.json` under `generated/` and FAILS if a
+  fixture run deletes one mid-walk. `docs/research/*.md` is 63 of a 64-file ceiling with no rollover, so do
+  not write a research record until `.4` releases that surface.

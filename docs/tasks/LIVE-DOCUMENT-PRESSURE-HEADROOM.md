@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5` done; `.1`–`.4` pending — `.4` re-ranked `2026-08-28` to a reachable stop)
+- Status: `active` (`.0`/`.5` done; `.1`/`.3`/`.4` pending; `.2` split `2026-08-29` into `.2a`/`.2b`/`.2c`)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
-- Last updated: `2026-08-28`
+- Last updated: `2026-08-29`
 - Owner: repo-local workflow
 
 ## Goal
@@ -81,8 +81,9 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `pending`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2`
-  Status: `pending`
+  Status: `active`
   Goal: re-derive task-tree collection and bounded catalog capacity as one profile
+  Children: `.2a`, `.2b`, `.2c`
   Acceptance: exact growth, readers/writers, route cardinality, catalog shape, aggregate reachability, capacity,
   and boundary faults are measured and decided before changing either the file or index authority
   **Measured composition (`2026-08-29`, director question: why is there a cap at all, and can the structure
@@ -147,6 +148,63 @@ repeatable rollover/remedy paths and remain under their existing owners.
   removed rather than left as off-topic weight on a leaf reserved for the cap discussion. Do not re-raise it
   here; if a single tree ever outgrows its per-file bound, that is the existing parts-and-archive remedy and it
   belongs to that tree, not to this one
+  **Found while splitting the decision into remedies (`2026-08-29`): the cap has TWO enforcers, and the
+  measurement above named only one.** `doctrine/live_document_size/surfaces.jsonl` carries
+  `task_evidence.enforcement_ceilings.files = 160`, and `scripts/check_task_tree_catalog.pl:18` independently
+  carries `my $MAX_TASKS = 160;` with its own refusal at line 85. The registry is therefore NOT the single
+  authority for this bound, so setting the registry dimension to `null` alone would leave the plane still
+  capped at 160 by a literal in a different enforcer — a change that reads as delivered and is not. Both move
+  in the same transaction or neither does. The catalog checker's remaining real bounds are its
+  `$MAX_SECTION_BYTES` (49,152) and `$MAX_ROW_BYTES` (512), which bound content rather than cardinality
+  **Relocation, stated plainly, because "removed" would overstate it (`2026-08-29`).** Removing the file cap
+  does not leave the plane unbounded in practice; it moves the binding stop to the derived index, which is the
+  surface the directive itself names as the real reader-facing limit. Measured at `c1609558` from
+  `scripts/check_live_document_size.pl --report`: `task_evidence` is 151 files with the generic gate reporting
+  `files is at or above rollover (94.4%) — 9 below its 160 ceiling`, while `task_tree_index` is 404 lines with
+  `lines_each is at or above warning (84.2%) — 108 below its 512 ceiling`. The index holds one catalog row per
+  tree (150 rows over 162 catalog lines, inside a 22,561-of-49,152-byte section), and 242 of its 404 lines are
+  fixed workflow prose, so its 512-line ceiling admits about 108 further trees. **So `.2a` moves the nearest
+  stop from 9 trees to about 108 and does not abolish it.** That residual stop has no declared rollover, which
+  is the `LIVE-DOC-STOP-RISK` condition, so `.2c` is not optional polish — it is the half of the remedy that
+  makes the directive true rather than deferred
+  Verification: `container — closes when .2a, .2b, and .2c close`
+  Commit: `see child leaves`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`
+  Status: `pending`
+  Goal: apply the no-cardinality-cap task-plane profile through a declared, gated exemption
+  Acceptance: `task_evidence` declares no file-count bound in either band; the removal is a **declared
+  exemption with conditions a checker enforces**, never a bare `null` any surface can adopt — the exempt
+  surface must keep every per-file and aggregate dimension numeric, must null the count in both bands
+  together, and must name a bounded reader-facing route that is a different registered surface covering its
+  declared index; `scripts/check_task_tree_catalog.pl`'s independent `$MAX_TASKS` literal is removed in the
+  same transaction so the plane is not still capped by a second enforcer; the change is authorized by one
+  exact record in `doctrine/live_document_size/ceiling_increase_authorities.jsonl`; an ADR records the
+  rationale; and RED controls prove an undeclared null, a half-declared null, an exemption that also unbounds
+  the resource axes, and an exemption whose route is unregistered or unbounded are each refused
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` measurement and director decision (met)
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b`
+  Status: `pending`
+  Goal: retire the consumed ceiling-increase authority
+  Acceptance: the single-use authority record `.2a` consumed is removed once HEAD already carries the new
+  ceilings, so the registry cannot bank it; the generic gate's own "unused or banked ceiling-increase
+  authority" refusal is the control that proves the retirement was required rather than cosmetic
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c`
+  Status: `pending`
+  Goal: give the derived task index the sharding remedy so its cardinality stops being a stop
+  Acceptance: `docs/TASK_TREE.md` becomes a bounded landing plus derived catalog parts, following the two
+  remedies this repository already proves — the Knowledge Map's landing plus question shards and
+  `fact_card_titles`' six title parts; the catalog stays derive-and-diff generated with no hand-edited member
+  list; every existing route into the index still resolves; and the residual 108-tree stop `.2` measured is
+  replaced by a bound that ordinary compliant work can pass without an authority edit
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`
   Verification: `pending`
   Commit: `pending`
 
@@ -231,9 +289,11 @@ repeatable rollover/remedy paths and remain under their existing owners.
 | --- | --- | --- | --- |
 | 1 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0` | `done` | exact clean pressure and owner boundaries are pinned |
 | 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
-| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` | `pending` | the task plane is already at its 90% file milestone |
-| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | re-ranked `2026-08-28`: `docs/research/*.md` is 63 of a 64-file ceiling with no warning band and no rollover, and two active trees write research records |
-| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
+| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `pending` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
+| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `pending` | a consumed single-use ceiling authority is refused as banked on the very next commit |
+| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `pending` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
+| 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | re-ranked `2026-08-28`: `docs/research/*.md` is 63 of a 64-file ceiling with no warning band and no rollover, and two active trees write research records |
+| 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
 
 ## Decisions
 
@@ -251,6 +311,19 @@ repeatable rollover/remedy paths and remain under their existing owners.
   rollover — the next research record is the last one. `.4` now owns that explicitly. `MEMORY.md` has the
   same shape at 46 of 50 lines, which is why every slice this session had to hand-compress it; `.5` opens
   to decide whether the 18-line fixed preamble belongs inside the bounded pointer at all.
+- `2026-08-29`: split `.2` into `.2a`/`.2b`/`.2c` rather than implement the director's decision inside the
+  leaf that made it. Two reasons, both measured rather than procedural. First, the cap has a **second
+  enforcer** the decision did not name — `scripts/check_task_tree_catalog.pl:18` carries its own
+  `$MAX_TASKS = 160` — so a registry-only edit would have shipped as "cap removed" while the plane stayed
+  capped; that is a real defect the split forced into view before it could land. Second, the remedy is two
+  different transactions on two different surfaces: nulling a registry dimension under a gated exemption, and
+  sharding a derived index. This tree's own Non-Goal forbids combining independent lifecycle remedies into one
+  migration, and the single-use ceiling-increase authority protocol adds a mandatory third commit to retire
+  what `.2a` consumes.
+- `2026-08-29`: state the relocation instead of claiming removal. `.2a` moves the binding stop from 9 trees
+  (`task_evidence` files, 151/160) to about 108 (`task_tree_index`, 404/512 lines at one row per tree). That
+  residual stop has no declared rollover, so calling `.2a` alone "no limit on task-trees" would be false;
+  `.2c` is the leaf that makes the directive true.
 - `2026-08-14`: prioritize the current knowledge card, then the task plane. The card has one line left and is a
   likely `.f` writer target; the task collection is already at 90% but still has 16 opening-boundary slots.
 - `2026-08-14`: record maintained and immutable large-member warnings without assuming they share a remedy.
@@ -294,8 +367,13 @@ repeatable rollover/remedy paths and remain under their existing owners.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0 — own the current live-surface pressure frontier` | one bounded owner over ordered independent remedies |
+| `.5` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5 — stop the resume pointer spending its budget on prose that never changes` | fixed region 19 -> 8 lines; the split is gated at a derived cap |
+| `.2` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2 — split the decided no-cap remedy into the three transactions it actually is` | container; found the second `$MAX_TASKS` enforcer and measured the relocation |
 
 ## Changelog
 
+- `2026-08-29`: `.2` becomes a container over `.2a` (apply the gated no-cap profile), `.2b` (retire the
+  consumed single-use authority), and `.2c` (shard the derived index). Records the second enforcer
+  (`$MAX_TASKS`) and the exact 9-trees -> ~108-trees relocation the decision implies.
 - `2026-08-14`: created from the post-`.2.2` live-size report; pins seven non-rolling pressure axes, excludes the
   separately owned decision plane, and leaves the active alignment migration transaction unchanged.
