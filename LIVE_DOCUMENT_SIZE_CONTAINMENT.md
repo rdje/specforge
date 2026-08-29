@@ -312,7 +312,13 @@ collection's long-term aggregate change according to information role.
 
 Measure the deliberately reviewed live survivor and set independent line,
 byte, and maximum content-line-byte health targets. For collections, also set
-per-part, file-count, and aggregate targets. Maximum line width is a separate
+per-part, file-count, and aggregate targets. A collection may drop its
+file-count bound only through a **declared cardinality exemption**: it nulls
+the count in both bands together, keeps every resource dimension numeric, and
+names a bounded reader-facing route on a different registered surface that
+covers its declared index — so cardinality pressure moves to the surface that
+actually carries the reader's cost instead of disappearing. A bare null is
+refused (ADR 0045). Maximum line width is a separate
 pressure axis: a generated table or dense record can remain pathological while
 the file still passes total-line and total-byte limits. Measure raw content
 bytes deterministically, excluding LF and an optional preceding CR. Do not copy

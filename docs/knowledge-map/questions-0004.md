@@ -84,6 +84,8 @@
   > how can SpecForge automatically choose the next task without gaming metrics
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > how can a collection use a membership index outside its own surface
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > how can a live surface null a size dimension
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how can a script ask the SpecForge canonical loader without mutating the artifact
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -296,5 +298,3 @@
   > how does ground_constraint recover a value the model did not echo
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > how does held out full capture refresh preserve alpha eligibility authority
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how does ingest avoid being RAM-guard-aborted on a small/restricted machine

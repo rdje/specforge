@@ -15,7 +15,11 @@ binmode STDERR, ':encoding(UTF-8)';
 
 my $START = '<!-- task_catalog:start -->';
 my $END = '<!-- task_catalog:end -->';
-my $MAX_TASKS = 160;
+# There is deliberately no task-count cap here. It was a second, independent enforcer of the same 160 that
+# doctrine/live_document_size/surfaces.jsonl declared, so a registry-only removal would have read as delivered
+# while this literal still refused the 161st tree. The cardinality bound now lives in exactly one place — the
+# registry, which nulls it behind a declared, checker-enforced exemption (ADR 0045,
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.2a). The bounds below stay: they bound content, not cardinality.
 my $MAX_SECTION_BYTES = 49_152;
 my $MAX_ROW_BYTES = 512;
 my %VALID_STATUS = map { $_ => 1 }
@@ -82,8 +86,6 @@ sub collect_tasks {
     my @names = sort grep { /\.md\z/ && $_ ne 'TEMPLATE.md' } readdir($dh);
     closedir($dh) or die "cannot close docs/tasks: $!\n";
     die "catalog has no task trees\n" if !@names;
-    die "catalog has " . scalar(@names) . " task trees; limit is $MAX_TASKS\n"
-      if @names > $MAX_TASKS;
 
     my @tasks;
     for my $name (@names) {

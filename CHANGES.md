@@ -1,3 +1,32 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.2a — remove the task-plane cap through a declared exemption
+
+- Removed the 160-file cap on docs/tasks/ per the director's decision that there is no limit on the number of
+  task-trees and a completed tree stays as project history. The measurement supported it on every axis: files
+  were 151/160 (94.4%) while lines_total was 7.5% and bytes_total 6.0%, 160 was authored in cb65d5c7 as
+  current-plus-headroom and never derived, and the surface had no declared rollover — a stop compliant work
+  could reach with no remedy.
+- Did NOT deliver it as a bare null, because that would let any surface opt out of every cardinality control
+  by editing one field. surfaces.jsonl gains a `cardinality_exemption` naming an authority, a work unit, a
+  route surface, and a rationale, and check_live_document_size.pl gains validate_cardinality_exemption, which
+  refuses as separate faults: a null files with no exemption; a null in only one band; an exemption whose
+  surface also nulls a resource dimension; an exemption routed to itself, to an unregistered surface, to one
+  that does not cover the declared index, or to one unbounded in any dimension; and an untracked authority.
+- Moved BOTH enforcers in the same transaction. check_task_tree_catalog.pl carried an independent
+  `my $MAX_TASKS = 160;` with its own refusal, so a registry-only change would have read as delivered while
+  the plane stayed capped by a literal in a different file. It is deleted, with a comment saying why it must
+  not come back. Its section- and row-byte bounds stay: they bound content, not cardinality.
+- Controls: test_live_document_size.pl goes 84 -> 92 cases — one positive (a declared exemption with a bounded
+  external route is accepted) and seven RED, the four the leaf's acceptance names plus route-to-self and
+  untracked-authority. All 92 pass. The published suite count was corrected on both surfaces that carry it
+  (DOCTRINE_ENFORCEMENT.md and the book chapter) in this same commit, which is the discipline .6/.6a/.6b
+  established: the slice that moves a published count fixes every surface publishing it.
+- Stated plainly rather than claimed as delivered: this RELOCATES the stop. docs/TASK_TREE.md now carries the
+  binding limit at one catalog row per tree, 404 of 512 lines with 242 lines of fixed prose, so roughly 108
+  further trees instead of 9. That residual stop has no declared rollover either, which is what .2c must fix
+  by sharding the index. ADR 0045 says so in its own Consequences.
+- .2b must now retire the single-use ceiling-increase authority this consumed, or the next commit fails on
+  the generic gate's unused-or-banked-authority refusal.
+
 ### CLAIM-VERIFICATION-ADOPTION.6b / CHANGES-LEDGER-ROLLOVER.3 — sweep the two surfaces .6 and .6a left
 
 - Finished the sweep `.6` started and `.6a` bounded. `.6`/`.6a` corrected TOOLBOX.md only and said so; two

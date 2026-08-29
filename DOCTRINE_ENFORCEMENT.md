@@ -313,7 +313,7 @@ when the two bands deliberately admit different file counts; both sums are check
 Every warning and rollover line additionally names the absolute distance to the enforcement ceiling, because
 a surface past its health target reports a percentage of a bound it already blew.
 
-Among its focused suites, `LIVE-DOC-SIZE` runs 84 positive and fail-closed lifecycle/control-plane
+Among its focused suites, `LIVE-DOC-SIZE` runs 92 positive and fail-closed lifecycle/control-plane
 cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
 15 neutral terminal-task source/route/identity/boundary cases, and 44 neutral active-task
 source/topology/route/payload/bound/writer cases, plus 60 fact-catalog source/plan/route/residue/bound cases. Test

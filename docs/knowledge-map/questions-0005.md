@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how does ingest avoid crashing the host when memory runs out
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -295,5 +297,3 @@
   > how many USB4 Inter-Domain page sidecars are repository relative
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how many administrative workflow statements were measured
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > how many alignment task owners and routes survive migration

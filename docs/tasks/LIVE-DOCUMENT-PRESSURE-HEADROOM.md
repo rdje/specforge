@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5` done; `.1`/`.3`/`.4` pending; `.2` split `2026-08-29` into `.2a`/`.2b`/`.2c`)
+- Status: `active` (`.0`/`.5`/`.2a` done; `.2b` retires the consumed authority next; `.1`/`.3`/`.4`/`.2c` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-29`
@@ -171,7 +171,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `see child leaves`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a`
-  Status: `pending`
+  Status: `done` (`2026-08-29`)
   Goal: apply the no-cardinality-cap task-plane profile through a declared, gated exemption
   Acceptance: `task_evidence` declares no file-count bound in either band; the removal is a **declared
   exemption with conditions a checker enforces**, never a bare `null` any surface can adopt — the exempt
@@ -183,8 +183,28 @@ repeatable rollover/remedy paths and remain under their existing owners.
   rationale; and RED controls prove an undeclared null, a half-declared null, an exemption that also unbounds
   the resource axes, and an exemption whose route is unregistered or unbounded are each refused
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` measurement and director decision (met)
-  Verification: `pending`
-  Commit: `pending`
+  **Delivered as a declared exemption, not a null.** `doctrine/live_document_size/surfaces.jsonl` gains a
+  `cardinality_exemption` object on `task_evidence` naming `authority` (ADR 0045), `work_unit`,
+  `route_surface_id`, and `rationale`; `scripts/check_live_document_size.pl` gains
+  `validate_cardinality_exemption`, which refuses, as separate faults: a null `files` in either band with no
+  exemption; an exemption that nulls only one band; an exemption whose surface also nulls any resource
+  dimension (`lines_each`, `bytes_each`, `lines_total`, `bytes_total`, `line_bytes_each` all stay numeric); an
+  exemption routed to itself, to an unregistered surface, to one that does not cover the surface's declared
+  `index`, or to one unbounded in any dimension; and an exemption whose authority is not a repository file.
+  `validate_limits` widens its null allowance to exactly these two cases — `maintained_reference` by lifecycle,
+  or a declared exemption — so a bare null stays refused and cannot be adopted by copying a line.
+  **Both enforcers moved in the same transaction.** `scripts/check_task_tree_catalog.pl`'s independent
+  `my $MAX_TASKS = 160;` and its refusal are deleted, with a comment recording why the literal must not come
+  back. Its `$MAX_SECTION_BYTES` (49,152) and `$MAX_ROW_BYTES` (512) stay: they bound content, not cardinality.
+  **One authority, and it is single-use.** `ceiling_increase_authorities.jsonl` carries one exact record whose
+  `old`/`new` match the committed and new bands exactly — the generic gate compares them by canonical encoding,
+  so the null cannot be authorised loosely. `validate_authority_schema` now allows a null inside `new` only,
+  because that exact-match comparison is what actually constrains it. `.2b` must retire the record.
+  Verification: `check_live_document_size.pl` green (888 Markdown files / 55 surfaces) with the exemption
+  active and the ceiling-history check accepting the authority; `check_task_tree_catalog.pl` green at 150
+  trees with no count cap; `test_live_document_size.pl` gains eight cases — one positive and seven RED, the
+  four the acceptance names plus route-to-self and untracked-authority; knowledge map regenerated for ADR 0045
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a — remove the task-plane cap through a declared exemption`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b`
   Status: `pending`

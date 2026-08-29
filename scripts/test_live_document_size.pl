@@ -1006,6 +1006,78 @@ expect_history_case('transition debt rejects a moved immutable baseline', 0, qr/
     save_registry($fixture);
 });
 
+# Cardinality exemption (ADR 0045). A surface may drop its file-count bound, but only behind a declaration
+# whose conditions are checked; a bare null must stay refused, or the exemption is a way to opt out of every
+# cardinality control by editing one field. `routed_titles` is the fixture analogue of `task_evidence`: its
+# declared index lives on a different surface, exactly as docs/TASK_TREE.md does.
+sub declare_exemption {
+    my ($fixture, %override) = @_;
+    my $surface = surface($fixture, 'routed_titles');
+    $surface->{health_targets}{files} = undef;
+    $surface->{enforcement_ceilings}{files} = undef;
+    $surface->{cardinality_exemption} = {
+        authority => 'routed/README.md',
+        work_unit => 'FIXTURE-EXEMPTION.0',
+        route_surface_id => 'routed',
+        rationale => 'fixture exemption',
+        %override,
+    };
+    return $surface;
+}
+
+expect_case('a declared cardinality exemption with a bounded external route is accepted', 1, undef, sub {
+    my ($fixture) = @_;
+    declare_exemption($fixture);
+    save_registry($fixture);
+});
+expect_case('a null file count without a declared exemption is rejected',
+  0, qr/nulls files without a declared cardinality exemption/, sub {
+    my ($fixture) = @_;
+    my $surface = surface($fixture, 'routed_titles');
+    $surface->{health_targets}{files} = undef;
+    $surface->{enforcement_ceilings}{files} = undef;
+    save_registry($fixture);
+});
+expect_case('a half-declared cardinality exemption is rejected',
+  0, qr/must null files in both bands together/, sub {
+    my ($fixture) = @_;
+    my $surface = declare_exemption($fixture);
+    $surface->{enforcement_ceilings}{files} = 16;
+    save_registry($fixture);
+});
+expect_case('a cardinality exemption may not unbound a resource dimension',
+  0, qr/may not unbound resource dimension 'lines_total'/, sub {
+    my ($fixture) = @_;
+    my $surface = declare_exemption($fixture);
+    $surface->{health_targets}{lines_total} = undef;
+    $surface->{enforcement_ceilings}{lines_total} = undef;
+    save_registry($fixture);
+});
+expect_case('a cardinality exemption routed to an unregistered surface is rejected',
+  0, qr/route surface 'absent_route' is not registered/, sub {
+    my ($fixture) = @_;
+    declare_exemption($fixture, route_surface_id => 'absent_route');
+    save_registry($fixture);
+});
+expect_case('a cardinality exemption routed to an unbounded surface is rejected',
+  0, qr/route 'maintained' is unbounded in 'files'/, sub {
+    my ($fixture) = @_;
+    declare_exemption($fixture, route_surface_id => 'maintained');
+    save_registry($fixture);
+});
+expect_case('a cardinality exemption may not route to the exempt surface itself',
+  0, qr/route must be a different registered surface/, sub {
+    my ($fixture) = @_;
+    declare_exemption($fixture, route_surface_id => 'routed_titles');
+    save_registry($fixture);
+});
+expect_case('a cardinality exemption with an untracked authority is rejected',
+  0, qr/authority 'routed\/absent\.md' is not a tracked repository file/, sub {
+    my ($fixture) = @_;
+    declare_exemption($fixture, authority => 'routed/absent.md');
+    save_registry($fixture);
+});
+
 print "1..$test_number\n" if !$quiet;
 if ($failures) {
     print STDERR "live-document-size-tests: $failures of $test_number checks failed\n";

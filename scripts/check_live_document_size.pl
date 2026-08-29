@@ -147,6 +147,7 @@ for my $id (sort keys %surface_by_id) {
     my $metrics = measure_paths($paths);
     $metrics_by_surface{$id} = $metrics;
     validate_limits($surface, $metrics, $id);
+    validate_cardinality_exemption($surface, $id, \%surface_by_id, \%matches_by_surface);
     validate_lifecycle($surface, $paths, $metrics, $id, \%executed_verifier);
     if ($report) {
         print $json->encode({ surface_id => $id, metrics => $metrics }), "\n";
@@ -301,7 +302,7 @@ sub validate_surface_schema {
     reject_unknown_fields(
         $surface,
         "surface '$id'",
-        qw(surface_id targets locator lifecycle state owner health_targets enforcement_ceilings milestones verifier baseline transition currency index index_contract freshness_verifier canonical_inputs sha256 reference_contract archive_manifest aggregate_composition),
+        qw(surface_id targets locator lifecycle state owner health_targets enforcement_ceilings milestones verifier baseline transition currency index index_contract freshness_verifier canonical_inputs sha256 reference_contract archive_manifest aggregate_composition cardinality_exemption),
     );
     validate_aggregate_reachability($surface, $id);
     reject_unknown_fields($surface->{health_targets}, "surface '$id' health_targets", @dimensions);
@@ -318,6 +319,9 @@ sub validate_surface_schema {
         if exists $surface->{currency};
     reject_unknown_fields($surface->{index_contract}, "surface '$id' index_contract", qw(kind verifier route_surface))
         if exists $surface->{index_contract};
+    reject_unknown_fields($surface->{cardinality_exemption}, "surface '$id' cardinality_exemption",
+        qw(authority work_unit route_surface_id rationale))
+        if exists $surface->{cardinality_exemption};
     if (exists $surface->{reference_contract}) {
         my $contract = $surface->{reference_contract};
         reject_unknown_fields($contract, "surface '$id' reference_contract", qw(mandatory_read max_navigation_depth aggregate_change));
@@ -469,7 +473,9 @@ sub validate_authority_schema {
     reject_unknown_fields($authority->{old}, "ceiling authority '$id' old", @dimensions);
     reject_unknown_fields($authority->{new}, "ceiling authority '$id' new", @dimensions);
     numeric_dimensions($authority->{old}, "ceiling authority '$id' old", 0);
-    numeric_dimensions($authority->{new}, "ceiling authority '$id' new", 0);
+    # `new` may carry the null a cardinality exemption introduces; validate_ceiling_history still requires it
+    # to equal the surface's new ceilings exactly, so this cannot authorise a null the registry does not hold.
+    numeric_dimensions($authority->{new}, "ceiling authority '$id' new", 1);
 }
 
 sub markdown_paths {
@@ -591,9 +597,85 @@ sub numeric_dimensions {
     }
 }
 
+# A count bound a surface can reach with no remedy compliant work can take is the LIVE-DOC-STOP-RISK
+# condition. Removing one is legitimate, but a bare `files: null` would let any surface opt out of every
+# cardinality control by editing one field. This makes the removal a DECLARED exemption with four conditions a
+# checker enforces: the count is null in both bands together, every resource dimension stays numeric, and a
+# bounded reader-facing route on a DIFFERENT registered surface covers this surface's declared index
+# (LIVE-DOCUMENT-PRESSURE-HEADROOM.2a, ADR 0045).
+sub validate_cardinality_exemption {
+    my ($surface, $id, $surface_by_id, $matches_by_surface) = @_;
+    my $exemption = $surface->{cardinality_exemption};
+    my $health = $surface->{health_targets};
+    my $ceilings = $surface->{enforcement_ceilings};
+    return if ref($health) ne 'HASH' || ref($ceilings) ne 'HASH';
+    my $health_null = exists $health->{files} && !defined $health->{files};
+    my $ceiling_null = exists $ceilings->{files} && !defined $ceilings->{files};
+    my $lifecycle_allows = ($surface->{lifecycle} // '') eq 'maintained_reference';
+
+    if (!defined $exemption) {
+        problem("surface '$id' nulls files without a declared cardinality exemption")
+            if ($health_null || $ceiling_null) && !$lifecycle_allows;
+        return;
+    }
+    if (ref($exemption) ne 'HASH') {
+        problem("surface '$id' cardinality_exemption must be an object");
+        return;
+    }
+    problem("surface '$id' cardinality exemption must null files in both bands together")
+        if $health_null != $ceiling_null;
+    problem("surface '$id' declares a cardinality exemption while files stays bounded")
+        if !$health_null && !$ceiling_null;
+    for my $dimension (grep { $_ ne 'files' } @dimensions) {
+        problem("surface '$id' cardinality exemption may not unbound resource dimension '$dimension'")
+            if !defined $health->{$dimension} || !defined $ceilings->{$dimension};
+    }
+    for my $field (qw(authority work_unit route_surface_id rationale)) {
+        problem("surface '$id' cardinality exemption lacks '$field'")
+            if !defined($exemption->{$field}) || ref($exemption->{$field}) || $exemption->{$field} eq '';
+    }
+    my $authority = $exemption->{authority};
+    if (defined($authority) && !ref($authority)) {
+        problem("surface '$id' cardinality exemption authority '$authority' is not a tracked repository file")
+            if !safe_relative_pattern($authority) || !-f absolute($authority);
+    }
+    my $route_id = $exemption->{route_surface_id};
+    return if !defined($route_id) || ref($route_id) || $route_id eq '';
+    if ($route_id eq $id) {
+        problem("surface '$id' cardinality exemption route must be a different registered surface");
+        return;
+    }
+    my $route = $surface_by_id->{$route_id};
+    if (ref($route) ne 'HASH') {
+        problem("surface '$id' cardinality exemption route surface '$route_id' is not registered");
+        return;
+    }
+    my $index = $surface->{index};
+    if (!defined($index) || ref($index) || $index eq '') {
+        problem("surface '$id' cardinality exemption requires a declared index for its route to cover");
+    } else {
+        my $covered = grep { $_ eq $index } @{ $matches_by_surface->{$route_id} // [] };
+        problem("surface '$id' cardinality exemption route '$route_id' does not cover its declared index")
+            if !$covered;
+    }
+    my $route_ceilings = $route->{enforcement_ceilings};
+    if (ref($route_ceilings) ne 'HASH') {
+        problem("surface '$id' cardinality exemption route '$route_id' declares no enforcement ceilings");
+        return;
+    }
+    for my $dimension (@dimensions) {
+        problem("surface '$id' cardinality exemption route '$route_id' is unbounded in '$dimension'")
+            if !defined $route_ceilings->{$dimension};
+    }
+}
+
 sub validate_limits {
     my ($surface, $metrics, $id) = @_;
-    my $allow_null = ($surface->{lifecycle} // '') eq 'maintained_reference';
+    # A maintained reference may null a dimension by lifecycle. Any other surface may null one only behind a
+    # declared cardinality exemption, whose conditions validate_cardinality_exemption enforces separately —
+    # so a bare null is still refused and cannot be adopted by copying this line (ADR 0045).
+    my $allow_null = ($surface->{lifecycle} // '') eq 'maintained_reference'
+        || ref($surface->{cardinality_exemption}) eq 'HASH';
     numeric_dimensions($surface->{health_targets}, "surface '$id' health_targets", $allow_null);
     numeric_dimensions($surface->{enforcement_ceilings}, "surface '$id' enforcement_ceilings", $allow_null);
     my $ceilings = $surface->{enforcement_ceilings};
