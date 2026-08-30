@@ -291,24 +291,31 @@ repeatable rollover/remedy paths and remain under their existing owners.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
   Status: `pending` (tracking-only)
-  Goal: give the three warned surfaces that no task tree names an owner, before one of them refuses a write
-  Acceptance: this tree's Opening Pressure Boundary table names five axes and `MEMORY.md` published a
-  five-surface warning set with the conclusion "none is an unowned warning". Neither was enumerated.
-  `CLAIM-VERIFICATION-ADOPTION.11` ran the producer at `9fc76685` on a clean tree: `check_live_document_size.pl`
-  emits 18 warning lines over **13** distinct surfaces, not five, and the two lists do not even agree with each
-  other — the pointer named `rust_analysis` and `workflow_standards`, which the table does not carry, and omitted
-  `knowledge_cards` and `readme_entrypoint`, which it does. Classified before the size was published, by grepping
-  each surface id across `docs/tasks/*.md`: ten are named by at least one tree, and **three are named by none** —
-  `alignment_task_evidence_index` (85.2%), `alignment_task_evidence_parts` (83.8%), and `rust_analysis`
-  lines_each (80.9%). `RUST_CODEBASE_ANALYSIS.md` appears in several trees as a documentation surface to update,
-  never as a pressure owner, so the *warning* is unowned even though the file is not unknown. The leaf must give
-  each of the three a named remedy path or an explicit exemption with its reason, and add the two
-  `alignment_task_evidence_*` axes plus `rust_analysis` to the boundary table so the table stops being shorter
-  than the producer. Note the honest limit of the classifier used: "a tree mentions this surface id" is weaker
-  than "a leaf will act on it", so the ten are a *screened* population, not a verified-owned one; the three with
-  zero mentions are the ones that need an owner first
-  Prerequisite: none; found by `CLAIM-VERIFICATION-ADOPTION.11` while enumerating a different population with
-  the same rule
+  Goal: assign every gate-level live-document warning to an open leaf, by review rather than by grep
+  Acceptance: this leaf was opened by `CLAIM-VERIFICATION-ADOPTION.11` and its premises were corrected by
+  `.11a` the same day, because both the population and the ownership test it used were wrong.
+  **Population.** `.11` measured `perl scripts/check_live_document_size.pl` — 19 warning lines over 15 surfaces
+  plus one `fact-card-catalog` line. The doctrine `LIVE-DOC-SIZE` runs `scripts/check_live_document_size.sh`,
+  which emits **35** warning lines across **four** producers: `live-document-size` 19, `active-task-evidence` 7,
+  `rolling-ledger` 7, `fact-card-catalog` 2. The `active-task-evidence` and `rolling-ledger` lines name no
+  `surface '...'` token at all, so any census keyed on that token cannot see them. The population is the gate's
+  output, and it is derived on each run rather than carried here — the surface count alone moved 13 -> 15 inside
+  `.11`'s own commit when two ledger prepends crossed their warning bands.
+  **Ownership test.** `.11` used `grep -rl <surface> docs/tasks/*.md`, which fails in both directions. It scores
+  a `done` tree as an owner: `corpus_task_evidence_parts` was counted owned by `LIVE-DOC-STOP-RISK`, which is
+  `done`, so a real gap was hidden. And it is satisfied by the act of reporting: `alignment_task_evidence_index`,
+  `alignment_task_evidence_parts`, and `rust_analysis` matched `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md` as
+  soon as that leaf named them in order to say nothing owned them. A screen may find candidates; it may not be
+  published as the answer.
+  **What the leaf must deliver.** An explicit assignment, reviewed per row, binding each warned item from the
+  gate-level run to one open leaf that will act on it, or to a stated exemption with its reason — the form this
+  tree already uses for `decision_records`, which is excluded because `DECISION-RECORD-CAPACITY-HEADROOM` owns
+  its axes. Screened against the 24 open trees, the items with no open owner today are
+  `corpus_task_evidence_parts` (its only namer, `LIVE-DOC-STOP-RISK`, is closed) and the three this leaf already
+  owns: `alignment_task_evidence_index`, `alignment_task_evidence_parts`, and `rust_analysis`. The `Opening
+  Pressure Boundary` table above is **not** a defect and must not be rewritten to match: it is anchored to
+  `92e59c97` and is a dated snapshot, which is exactly why it cannot serve as the current assignment
+  Prerequisite: none; opened by `CLAIM-VERIFICATION-ADOPTION.11`, premises corrected by `.11a`
   Verification: `pending`
   Commit: `pending`
 
@@ -398,7 +405,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
 | 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | re-ranked `2026-08-28`: `docs/research/*.md` is 63 of a 64-file ceiling with no warning band and no rollover, and two active trees write research records |
 | 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
-| 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `pending` | three warned surfaces are named by no tree at all, and both published warning sets were shorter than the producer's |
+| 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `pending` | the gate warns 35 lines across four producers and no reviewed assignment exists; a grep screen cannot serve, since reporting a gap closes it |
 
 ## Decisions
 
@@ -477,6 +484,15 @@ repeatable rollover/remedy paths and remain under their existing owners.
 
 ## Changelog
 
+- `2026-08-30`: corrected `.7`'s premises the same day it was opened, from
+  `CLAIM-VERIFICATION-ADOPTION.11a`. Two of the three facts `.11` used were wrong. The warning population it cited
+  was `check_live_document_size.pl`'s, not the doctrine driver's — the gate emits 35 lines across four producers,
+  and the `active-task-evidence` and `rolling-ledger` lines name no surface token, so they are invisible to any
+  surface-keyed census. And the ownership test was a grep that scores `done` trees as owners (hiding
+  `corpus_task_evidence_parts`, whose only namer `LIVE-DOC-STOP-RISK` is closed) and that the finding satisfied by
+  being written. `.7` now requires a reviewed assignment rather than a screen. One thing `.11` reported as a
+  defect is withdrawn entirely: the `Opening Pressure Boundary (92e59c97)` table is a dated snapshot, correctly
+  anchored, and disagreeing with a current producer is what a dated snapshot is supposed to do.
 - `2026-08-30`: opened `.7` and corrected this tree's own frontier. `CLAIM-VERIFICATION-ADOPTION.11`, running an
   enumerating command over a different population, measured this tree's warning set: the producer warns about
   **13** surfaces and both published lists — the Opening Pressure Boundary table and `MEMORY.md`'s five — were

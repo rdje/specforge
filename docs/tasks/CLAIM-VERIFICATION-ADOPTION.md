@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11` done — the surfaces publishing the census counts
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a` done — the surfaces publishing the census counts
   are now swept against an *enumerated* population rather than a remembered one, and the upstream standard is
   re-adopted with its refusals recorded; `.7` owns the gate that would have observed the drift, now scoped to
   counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot, now
@@ -863,6 +863,74 @@ the workflow through the mdBook and repository review path.
   doctrine gate`
   Commit: `CLAIM-VERIFICATION-ADOPTION.11 — enumerate the surfaces, then withdraw the class`
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.11a`
+  Status: `done` (`2026-08-30`)
+  Goal: re-derive `.11`'s own findings when asked, and correct the five that do not hold
+  Acceptance: the director asked whether `.11`'s findings still held — the question that produced `.6b` and
+  `.10a`, and which has now found a real defect on all three occasions. Every figure was re-derived rather than
+  re-read. **Five defects, four of them in the finding about unenumerated sets.**
+  1. **A mechanism asserted from co-occurrence.** `.11` published "three later commits (`71b6d832`, `3079f945`,
+     `9fc76685`) republished `identity_gated 7`". Re-derived with `git show --name-only`: only **`3079f945`**
+     (`.10`) edited any of the three publishers; `71b6d832` and `9fc76685` touched none of them. They *left* the
+     value standing, which is not republishing it. "Republished" is a claim about what a commit did and it was
+     read off the commit dates. The corrected fact is stronger than the withdrawn one: `.10` edited `TOOLBOX.md`
+     **while adopting the rule that forbids carrying the value**, and did not re-derive the line it was editing.
+  2. **A commit body trusted as evidence.** `.11` published that `d23e8bae` withdrew `current_surfaces` "on all
+     three publishers". It withdrew it from **two**: `TOOLBOX.md` and `current-claim-census-freeze.md` carried
+     `39`, and `docs/book/src/reference/doctrine-enforcement.md` never carried `current_surfaces` at all — the
+     only thing `d23e8bae` changed in that chapter is `92 -> 93` lifecycle cases. "All three publishers" is
+     `d23e8bae`'s own commit-body wording, repeated instead of re-derived. §3 Leg 2 names project history as the
+     cheapest **oracle**; an oracle is a hypothesis to test, not a source to quote. The asymmetry survives and is
+     sharper: both surfaces that carried `current_surfaces` carried `identity_gated` in the same clause, and only
+     the first was withdrawn from each.
+  3. **A census scoped to one producer, published as the doctrine's.** `.11` published "the producer emits 18
+     warning lines over **13** surfaces". That is `perl scripts/check_live_document_size.pl`, and of its 18 lines
+     only **17** named a surface — the eighteenth came from `fact-card-catalog`, so a line count from a mixed
+     population was presented as ranging over a surface set. More important, the doctrine `LIVE-DOC-SIZE` runs
+     `scripts/check_live_document_size.sh`, which emits **35** warning lines across **four** producers
+     (`live-document-size` 19, `active-task-evidence` 7, `rolling-ledger` 7, `fact-card-catalog` 2). So the
+     leaf that exists to enumerate a population took one producer's output as the answer for the gate's — §3
+     Leg 1's granularity rule, in the finding about enumeration.
+  4. **A classifier that a mention satisfies, over a set that includes closed trees.** `.11` published "three are
+     named by no tree" from `grep -rl <surface> docs/tasks/*.md`. That screen is wrong in **both** directions.
+     It counted **`done`** trees as owners — `corpus_task_evidence_parts` was scored owned by `LIVE-DOC-STOP-RISK`,
+     which is `done`, so a genuinely unowned warning was missed and the real gap was four, not three. And
+     publishing the finding **flipped its own classifier**: `alignment_task_evidence_index`,
+     `alignment_task_evidence_parts`, and `rust_analysis` now match `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md`
+     because this leaf names them. A check that the act of writing the finding turns green is a check sharing a
+     parent with the thing it checks — §2's general form, and the reason the remedy is an explicit reviewed
+     assignment rather than a longer grep.
+  5. **A dated snapshot treated as a competing current census.** `.11` said the pointer's list and
+     `LIVE-DOCUMENT-PRESSURE-HEADROOM`'s boundary table "do not even agree". That table is headed
+     `## Opening Pressure Boundary (92e59c97)` and is explicitly anchored to a revision, which §1 exempts. It is
+     not a current census and was never at fault. What survives is only the part about the pointer:
+     `MEMORY.md` asserted "all five are already on" that table, and two of its five — `rust_analysis` and
+     `workflow_standards` — are not on it, so the pointer's conclusion did not follow from the authority it cited.
+  **What re-derives unchanged, checked one by one rather than assumed.** The drift itself:
+  `authority_outcomes.identity_gated` is **8** and was published as **7** on exactly three surfaces. The book
+  chapter's **78 -> 89**. The `.3b.3.3` vector **307/78/221/186 -> 321/89/224/189** in the mdBook fact card. The
+  doctrine card's **10/nine -> 11/10/1** with `PROOF-SEAL-CURRENCY` registered at `1ccb7331`. The sibling
+  frontier calling `.2a`/`.2b`/`.2c` pending. The three carried-but-correct withdrawals. The enumerating
+  population **15 -> 16**. **17** regions relocated and one added, re-derived HEAD against HEAD~1. §10's **11**
+  rows against the driver's **11** entries. The book chapter's complete candidate set of **5** regions.
+  **And this commit's own transaction moved the warned set again**, which is the sixth instance behaving exactly
+  as documented: `.11`'s ledger prepends took `achievement_status` and `change_history` past their warning bands,
+  so the live-document-size surface count is **15**, not the 13 measured at `9fc76685`. Both are owned by open
+  trees (`STATUS-LEDGER-ROLLOVER`, `CHANGES-LEDGER-ROLLOVER`), so neither is a new gap — but the number `.11`
+  published was invalidated by `.11`, again, and the durable artifact is the command rather than the count.
+  **What this costs `.7`.** The self-catch rate for this adoption is now **four**, and three of the four were
+  found only because the director asked a second time. No rule, gate, or review step in this repository found any
+  of them. Two of the four are set claims and two are mechanism claims — which is the split `.10` predicted when
+  it ruled mechanisms out of `.7`'s checker scope and into the reviewer workflow. `.7` should therefore stop
+  treating "a second reader" as a fallback and record it as the primary control for the mechanism half
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.11`
+  Verification: `git show --name-only over 71b6d832/3079f945/9fc76685 and d23e8bae; git show d23e8bae~1:<book> for
+  the absent current_surfaces; check_live_document_size.pl vs check_live_document_size.sh warning populations
+  (19+1 vs 35 across four producers); open-tree ownership screen recomputed over 24 open trees from each tree's
+  own Status line; census/book/claim --check and --report all green and unchanged; 17 relocations re-derived
+  HEAD vs HEAD~1; doctrine gate`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.11a — re-derive .11's findings and correct the five that do not hold`
+
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
   Status: `pending`
   Goal: stop the book quantitative census passing while it cannot see the numbers on the page
@@ -957,10 +1025,22 @@ the workflow through the mdBook and repository review path.
 | 22 | `CLAIM-VERIFICATION-ADOPTION.10` | `done` | upstream re-read section by section; absent rules adopted, refusals recorded, and `.7`'s open scope question answered |
 | 23 | `CLAIM-VERIFICATION-ADOPTION.10a` | `done` | `.10`'s own probe count and one set claim re-derived and corrected; findings two and three verified unchanged |
 | 24 | `CLAIM-VERIFICATION-ADOPTION.11` | `done` | population enumerated by command rather than recalled; six stale publications and three still-correct carried ones withdrawn as one class |
-| 25 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
+| 25 | `CLAIM-VERIFICATION-ADOPTION.11a` | `done` | asked a second time; five of `.11`'s findings re-derived false, including its own ownership classifier and its producer scope |
+| 26 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
 ## Decisions
 
+- `2026-08-30` (`.11a`): an ownership or coverage classifier must be one the finding cannot satisfy by existing.
+  A `grep` over `docs/tasks/` for a surface id turns green the moment a leaf names the surface in order to report
+  that nothing owns it, and it scores `done` trees as owners. Screens are still useful for *finding* candidates;
+  they may not be published as the answer. The publishable form is an explicit reviewed assignment naming an open
+  leaf per warned item.
+- `2026-08-30` (`.11a`): when a census is published about a doctrine, the denominator is the **doctrine's own
+  driver**, not whichever checker was convenient. `check_live_document_size.pl` is a component of `LIVE-DOC-SIZE`;
+  quoting its warning set as the gate's is the container-for-item substitution §3 Leg 1 forbids.
+- `2026-08-30` (`.11a`): a commit body is a hypothesis, not evidence. §3 Leg 2 makes project history the cheapest
+  *oracle* — something to test a finding against — and `.11` quoted `d23e8bae`'s body as a source instead, which
+  is how "two publishers" was published as three.
 - `2026-08-30` (`.11`): a count published on a governed surface is legitimate only when a **control fails if it
   moves** or an **authored decision fixes it**. "A trajectory shows it has held" is neither, and is retired as a
   reason. Where neither applies, the remedy is withdrawal plus the producer's field name — never substitution of
@@ -1658,6 +1738,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-30` | `.11a` | `git show --name-only` over the four attributed commits; `git show d23e8bae~1:<book>`; `check_live_document_size.pl` vs `check_live_document_size.sh` warning populations; open-tree ownership screen recomputed from each tree's own `Status` line; all three claim producers `--check`/`--report`; 17 relocations re-derived HEAD vs HEAD~1; doctrine gate | **five of `.11`'s findings do not hold.** Only **one** of the three commits said to have republished `identity_gated 7` edited a publisher. `d23e8bae` withdrew `current_surfaces` from **two** surfaces, not three — the book chapter never carried it, and "all three" was quoted from that commit's own body. The **18 lines / 13 surfaces** census was one producer's, and only 17 of its lines named a surface; the gate-level producer emits **35** lines across **four**. The ownership screen counted `done` trees as owners, hiding `corpus_task_evidence_parts`, and the act of publishing the finding turned its own classifier green for the three surfaces it named. And the `Opening Pressure Boundary (92e59c97)` table is a **dated** snapshot §1 exempts, not a disagreeing census. Everything else re-derives unchanged: `identity_gated` 8 on three surfaces, 78 -> 89, 307/78/221/186 -> 321/89/224/189, 10/nine -> 11/10/1 at `1ccb7331`, the sibling frontier, the three withdrawals, 15 -> 16, 17 relocated + 1 added, 11 = 11, 5 book regions. `.11`'s own ledger prepends also moved the warned surface count 13 -> **15** (`achievement_status`, `change_history`; both owned) |
 | `2026-08-30` | `.11` | enumerating command over tracked non-archive Markdown (anchored at `9fc76685`); per-revision re-derivation of `identity_gated` from `git show <rev>:doctrine/claim_verification/current_claim_census.jsonl` across 25 revisions; `check_current_claim_census.pl --check`/`--report`; `check_book_quantitative_claims.pl --check`/`--report` before and after the chapter edit; `check_fact_card_catalog.pl --write`/`--check`; knowledge-map derive-and-diff; `check_claim_verification.pl --check`; the three claim self-tests; doctrine gate | the population is **15** surfaces at `9fc76685` and **16** at this commit — writing the change record joins it — so the number is anchored and the command is the durable artifact; either way not the two `.6b` swept. **Six stale publications and three carried-but-correct ones**, withdrawn as one class: `.6`, `.6a`, and `.6b` each swept from memory and none ran an enumerating command. `identity_gated` **7 -> 8** on three surfaces, attributed to `d23e8bae`, which added exactly one `identity_gated` record for the `task_tree_catalog_parts` surface it registered — the same registration whose other effect (`current_surfaces` 39 -> 40) that commit *did* notice and withdraw, one sentence away; the book chapter's **78 -> 89** incomplete regions; the whole `.3b.3.3` vector (**307/78/221/186** -> 321/89/224/189) still carried in `mdbook-quantitative-census-freeze.md`, whose stale twin `.6b` repaired while quoting these numbers off it; and a registry set claim short by one member (**10/nine/ten** -> 11 registered / 10 gate / 1 CI, `PROOF-SEAL-CURRENCY` missing since `1ccb7331`); `MEMORY.md`'s five-surface live-document warning census against a producer that warns about **13**, three named by no tree; and this tree's sibling `LIVE-DOCUMENT-PRESSURE-HEADROOM` frontier still calling `.2a`/`.2b`/`.2c` pending. Three further constants are carried and still correct and go with them — `authority_outcomes.derived`, the mdBook claim assertion's eleven constants, and `control_audit`'s 7/7/6. All withdrawn as one class per §3 Leg 3 rather than replaced with today's values. The survivors are stated with what makes them true: `unresolved` **0** is gated by `validate_candidate_closure`, `views` **5** is authored by `.3a.0`. Book vector **321/8/89/224 identical** across the chapter edit; **17** regions relocated (16 census, one book) and one evidence row added for the new ledger head, derived by diffing both registries against HEAD rather than summing the passes — which first gave 18, `.9`'s ninth instance caught by deriving it; each relocation matched exactly one line and each file's shift equalled the cumulative insertions above it from the diff hunks; catalog valid for 249 cards; Knowledge Map 271 facts / 2152 keys; self-tests 27/27, 27/27, 19/19 |
 | `2026-08-30` | `.10a` correction | replayed the narrow absence probe against `HEAD~1:CLAIM_VERIFICATION.md`; enumerated the census-governed surface set from `current_claim_census.jsonl`; `check_rolling_ledger_protocol.pl --report`; doctrine gate | the narrow probe ran **seventeen** terms, not fifteen — all seventeen zero. Fifteen is the *discriminating* subset and the count the **widened** probe ran; published on four surfaces as the narrow probe's size, which is `.7`'s ninth instance one commit after it was written. Also corrected an unenumerated set claim ("visible to no gate"), now counted: not a registry record, and carrying no numeral, so no candidate grammar reaches it — `MEMORY.md` is a governed census surface with four evidence rows and still produced none. Findings two and three re-derive **unchanged**; the ledger figures come from the producer, which now emits no warning for `development-notes` at all |
 | `2026-08-30` | `.10` | section-by-section re-read of the upstream standard; seventeen-term absence probe over `CLAIM_VERIFICATION.md` alone, then a fifteen-term re-run over all governed claim surfaces; `check_book_quantitative_claims.pl --check` before and after the mdBook edit; knowledge-map derive-and-diff; `check_fact_card_catalog.pl --write`/`--check`; doctrine gate | source unchanged since `.1` (mtime `2026-08-26`), so the gap dates from the original adoption. The narrow probe returned zero hits for all seventeen terms in one file; **widening it to every governed claim surface changed the answer** — ADR 0042 already carried the general form as Context rationale. That is Leg 1's granularity rule catching its own adoption commit, and it is why the published set is scoped to "no home on any governed claim surface" rather than "absent from the standard". Remaining matches classified as unrelated word collisions before publishing. Book census **321/8/89/224 unchanged** across the edit; one region re-pointed 547 -> 580, line SHA-256 identical; Knowledge Map 271 facts / 2148 keys after one question-key collision was resolved in the fact card's favour; catalog valid for 249 cards |
@@ -1736,6 +1817,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
+| `.11a` | `CLAIM-VERIFICATION-ADOPTION.11a — re-derive .11's findings and correct the five that do not hold` | two mechanism claims and two set claims withdrawn; the ownership classifier replaced because publishing the finding satisfied it; producer scope corrected from one checker to the gate |
 | `.11` | `CLAIM-VERIFICATION-ADOPTION.11 — enumerate the surfaces, then withdraw the class` | population derived from a command instead of recalled (15 at the parent, 16 here); six stale publications and three carried-but-correct constants withdrawn as one class; every survivor labelled gated or authored; `.7` tenth instance, `.9` third demonstration |
 | `.10` | `CLAIM-VERIFICATION-ADOPTION.10 — re-adopt the upstream claim standard` | absent upstream rules made normative; non-adoption recorded with reasons; `.7` scope settled to counts; mandatory `DEVELOPMENT_NOTES.md` rollover to segment 0009 |
 | `.10a` | `CLAIM-VERIFICATION-ADOPTION.10a — correct .10's own probe count and set claim` | seventeen-term narrow probe restored on four surfaces; the "no gate sees this" assertion enumerated; findings two and three verified unchanged |
@@ -1764,6 +1846,22 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-30`: closed `.11a`. Asked a second time whether `.11`'s findings held — the question that produced
+  `.6b` and `.10a`, and which has now found a real defect all three times — every figure was re-derived instead
+  of re-read, and **five did not hold**. Two were mechanism claims taken from co-occurrence or from a commit
+  body: only one of three commits actually republished `identity_gated 7`, and `d23e8bae` withdrew
+  `current_surfaces` from two publishers rather than three, because the book chapter never carried it. Two were
+  set claims with the wrong denominator: the warning census was one checker's output presented as the doctrine's,
+  where the gate-level producer emits 35 lines across four producers rather than 18 over 13 surfaces; and the
+  ownership screen both counted `done` trees as owners — hiding `corpus_task_evidence_parts` — and turned green
+  for the three surfaces it named, because publishing the finding is what made `docs/tasks/` mention them. The
+  fifth was a category error: the `Opening Pressure Boundary (92e59c97)` table is a dated snapshot §1 exempts,
+  not a competing census. Everything else re-derives unchanged. The corrections are each **stronger** than what
+  they replace: `.10` edited `TOOLBOX.md` while adopting the rule against carrying the value; the real unowned
+  set was four, not three; and a classifier a finding can satisfy by being written is §2's shared-parent defect,
+  which is why `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` now requires an explicit reviewed assignment over the
+  gate-level population instead of a grep. Self-catch rate for this adoption: **four**, three of them found only
+  because the director asked again, none by any rule, gate, or review step this repository has.
 - `2026-08-30`: closed `.11`. Ran the command that enumerates the population three earlier leaves swept from
   memory — every tracked non-archive Markdown surface citing one of the three claim producers — and it returns
   **15**, where `.6b` had written "two other current-facing surfaces". Six stale publications, none of which any

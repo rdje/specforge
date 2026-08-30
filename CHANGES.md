@@ -1,3 +1,48 @@
+### CLAIM-VERIFICATION-ADOPTION.11a — re-derive .11's findings and correct the five that do not hold
+
+- Asked a second time whether .11's findings held. That question produced .6b and .10a, and it has now found a
+  real defect all three times. Every figure re-derived rather than re-read; FIVE do not hold, and four of them
+  are in the finding about unenumerated sets.
+- Two mechanism claims, both taken from co-occurrence rather than from what a commit changed. "Three later
+  commits republished identity_gated 7" — git show --name-only says only 3079f945 (.10) edited any of the three
+  publishers; 71b6d832 and 9fc76685 touched none. And "d23e8bae withdrew current_surfaces on all three
+  publishers" — it withdrew it from TWO, because docs/book/src/reference/doctrine-enforcement.md never carried
+  current_surfaces at all; the only thing that commit changed in the chapter is 92 -> 93 lifecycle cases. "All
+  three" is d23e8bae's own commit-body wording, repeated instead of re-derived. §3 Leg 2 makes project history the
+  cheapest ORACLE — a hypothesis to test, not a source to quote.
+- Both corrections are stronger than what they replace. .10 edited TOOLBOX.md WHILE adopting the rule that
+  forbids carrying the value, and did not re-derive the line it was editing. And the two surfaces that carried
+  current_surfaces carried identity_gated in the same clause, so only one of a pair was withdrawn from each.
+- Two set claims with the wrong denominator. "18 warning lines over 13 surfaces" is
+  check_live_document_size.pl's output, and only 17 of those lines name a surface — the eighteenth is a
+  fact-card-catalog line. The doctrine LIVE-DOC-SIZE runs check_live_document_size.sh, which emits 35 warning
+  lines across FOUR producers (live-document-size 19, active-task-evidence 7, rolling-ledger 7,
+  fact-card-catalog 2), and the active-task-evidence and rolling-ledger lines carry no surface token at all, so a
+  surface-keyed census cannot see them. Taking one component's output as the gate's answer is the granularity
+  substitution §3 Leg 1 forbids, committed in the leaf about enumeration.
+- The ownership screen was wrong in both directions. grep -rl over docs/tasks/*.md scores a done tree as an
+  owner, so corpus_task_evidence_parts was counted owned by LIVE-DOC-STOP-RISK, which is closed — the real gap
+  was four, not three. And publishing the finding turned the classifier green for the three surfaces it named,
+  because docs/tasks/CLAIM-VERIFICATION-ADOPTION.md now mentions them in order to say nothing owned them. A check
+  the act of writing satisfies is §2's shared-parent defect. LIVE-DOCUMENT-PRESSURE-HEADROOM.7 now requires an
+  explicit reviewed assignment over the gate-level population instead of a screen.
+- One reported defect is withdrawn entirely. The Opening Pressure Boundary table is headed with the revision
+  92e59c97 and is a dated snapshot, which §1 exempts; disagreeing with a current producer is what a dated
+  snapshot is for. What survives is only the pointer's own error: MEMORY.md asserted "all five are already on"
+  that table and two of its five, rust_analysis and workflow_standards, are not.
+- Everything else re-derives unchanged: identity_gated 8 on exactly three surfaces, 78 -> 89, 307/78/221/186 ->
+  321/89/224/189, 10/nine -> 11/10/1 with PROOF-SEAL-CURRENCY at 1ccb7331, the sibling frontier, the three
+  carried-but-correct withdrawals, population 15 -> 16, 17 regions relocated plus one added (HEAD vs HEAD~1),
+  §10's 11 rows against the driver's 11 entries, and the book chapter's 5-region candidate set.
+- .11's own transaction moved the warned surface count again, 13 -> 15: its ledger prepends took
+  achievement_status and change_history past their warning bands. Both are owned by open trees, so neither is a
+  new gap — but the count .11 published was invalidated by .11, which is the sixth instance behaving as
+  documented and the reason the command, not the number, is the durable artifact.
+- What this costs .7: the self-catch rate for this adoption is FOUR, three found only because the director asked
+  again, none by any rule, gate, or review step. Two are set claims and two are mechanism claims — the exact
+  split .10 predicted when it put mechanisms in the reviewer workflow rather than in .7's checker. .7 should
+  record a second reader as the primary control for the mechanism half, not as a fallback.
+
 ### CLAIM-VERIFICATION-ADOPTION.11 — enumerate the surfaces, then withdraw the class
 
 - Ran the command three earlier leaves swept without. .6 swept TOOLBOX.md and said so, .6a swept TOOLBOX.md and
