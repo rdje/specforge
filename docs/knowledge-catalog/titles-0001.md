@@ -49,7 +49,7 @@
 | [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md) | 2026-06-23 | `current` | Cat-4 RISC-V CSR bit-position recovery (DOC-INTENT-TAXONOMY.4d.i) — NOT deterministically recoverable from… |
 | [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
 | [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md) | 2026-08-10 | `current` | CHAIN-CURRENCY replays every persisted corpus artifact against the current binary |
-| [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md) | 2026-08-15 | `current` | Published-claim controls bind exact known-bad evidence and reject scratch producers |
+| [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md) | 2026-08-30 | `current` | Published-claim controls bind exact known-bad evidence and reject scratch producers |
 | [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md) | 2026-08-30 | `current` | The local claim standard is a restatement, so currency is re-read section by section, not diffed |
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |

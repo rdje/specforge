@@ -454,9 +454,14 @@ partition. `CLAIM-VERIFICATION-ADOPTION.6a` measured the totals across 28 consec
 ordinary, unrelated work moves them: a rolling-ledger rollover carries claim-annotated regions out of the live
 window, and any commit that adds or drops a `[claim: <id>]` annotation moves the registered and closure counts.
 So the unit total, the excluded and registered counts, and candidate closure are read from `--report` rather
-than carried here; only `authority_outcomes.derived` (11), `authority_outcomes.identity_gated` (7), the absence
-of an `incomplete` outcome, and zero unresolved candidates have held at every measurement. The five old broad
-anchors for README maintained references, mdBook quantitative claims, workflow/doctrine baselines,
+than carried here. `CLAIM-VERIFICATION-ADOPTION.11` then withdrew the rest of the vector for a stronger reason
+than movement: a value that has merely held is not a constant, only an unmoved one, so a count is published here
+only when a control fails if it moves or an authored decision fixes it. Two qualify. Zero unresolved candidates
+is gated — the checker raises an error for any produced candidate lacking exact evidence or a current registered
+annotation — and the five semantic views are authored by the census design. `authority_outcomes.derived` and
+`authority_outcomes.identity_gated` were carried here until one commit registered a single new surface and moved
+both, and the absence of an `incomplete` outcome is the same class; all three are read from `--report`. The five
+old broad anchors for README maintained references, mdBook quantitative claims, workflow/doctrine baselines,
 knowledge-card references, and FSMGen issue-packet references have narrow identity or registered authority; the
 other units retain their original outcomes. `[claim: current-claim-census-frozen]` Reproduce the result with:
 
@@ -482,8 +487,10 @@ Repair was split by authority rather than by filename count. README, knowledge-c
 anchors first receive exact route/catalog membership evidence, which proves navigation identity but deliberately
 does not certify member prose. The workflow anchor separates authored policy from the already registered
 capacity assertion. Quantitative mdBook prose receives a bounded exact-region contract; the selective book-
-currentness check is not promoted into blanket evidence for the whole manual. The closing leaf now binds those
-authorities atomically while the 78 incomplete assertion-level book regions remain explicitly unverified.
+currentness check is not promoted into blanket evidence for the whole manual. The closing leaf binds those
+authorities atomically, and the assertion-level book regions that remain explicitly unverified are counted by
+`check_book_quantitative_claims.pl --report` under `authority_outcomes.incomplete` — a total the manual moves
+whenever it changes, including the commit you are reading.
 
 The maintained-reference audit found no missing route control. README policy, the routed fact-card catalog, and
 the canonical collection catalog each derive membership from tracked authority and each observes malformed or

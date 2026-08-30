@@ -1,3 +1,73 @@
+### CLAIM-VERIFICATION-ADOPTION.11 — enumerate the surfaces, then withdraw the class
+
+- Ran the command three earlier leaves swept without. .6 swept TOOLBOX.md and said so, .6a swept TOOLBOX.md and
+  said so, and .6b opened on "two other current-facing surfaces publish the same census numbers" and swept two.
+  The enumerating command — every tracked non-archive Markdown surface citing one of the three claim producers —
+  returns FIFTEEN at 9fc76685. The honesty about scope was never the defect; deriving no denominator was.
+- The population is itself a per-commit counter, and this record proves it. At the state this commit lands the
+  same command returns SIXTEEN, because the paragraph below names check_claim_verification.pl and so joins the
+  set it describes. A bare "15" would have been false in its own transaction — the sixth instance, inside the
+  repair for the tenth. The count is anchored to the revision measured and the command is what is durable. For
+  .7 this is a constraint, not a curiosity: the map must derive its governed population at check time and may
+  never store a surface list.
+- Tenth instance, and it is the eighth instance's own commit one sentence over. authority_outcomes.identity_gated
+  was published as 7 on three surfaces (TOOLBOX.md, the mdBook enforcement chapter, the census fact card) and the
+  producer reports 8. Attributed by re-deriving from each revision's own producer input rather than by reading a
+  diff: 7 through efa6dd41, 8 from d23e8bae, which added exactly one identity_gated record — for the
+  task_tree_catalog_parts surface it registered. That is the SAME registration whose other effect, current_surfaces
+  39 -> 40, d23e8bae itself noticed and withdrew on all three publishers. The withdrawal followed the field that
+  was noticed rather than the set the sentence names, and three later commits — all in this tree, all about claim
+  currency — republished the 7.
+- Three more stale, found only because the population was enumerated. The book chapter's "78 incomplete assertion-level
+  book regions" (now 89), correct at be3b12e6 and stale from 4dac5642. The whole .3b.3.3 vector still carried in
+  docs/knowledge/mdbook-quantitative-census-freeze.md, title included — 307 regions / 78 incomplete / 221 excluded
+  / 186 dated, now 321/89/224/189 — which are the exact numbers .6b repaired on the chapter while quoting them off
+  it, in a card two directory entries away that nothing looked for. And a set claim whose own enumeration is short
+  by one: docs/knowledge/doctrine-enforcement-adoption.md publishes "Registered today (10): nine gate-tier" and
+  names nine, missing PROOF-SEAL-CURRENCY since 1ccb7331; the driver has 11 registered / 10 gate / 1 CI.
+- Three more are carried and still CORRECT, and are withdrawn under the same rule, because "correct today" is
+  exactly the state the six stale ones were in before their commit landed. authority_outcomes.derived 11, on
+  the same three surfaces and in the same clause as identity_gated. The mdbook-quantitative-census-frozen
+  registry ASSERTION, which still spells out eleven constants — the one census claim that never received .6's
+  remedy while its sibling did, which is the same asymmetry one layer down, and the reason the enumerating
+  command has to reach doctrine/ and not only *.md. And control_audit's 7 / 7 / 6. Separating that last one meant
+  reading the producer rather than its description: the checker raises "governed producer census contains ignored
+  or untracked candidates" on a nonzero census, so ignored_candidates and untracked_candidates 0 are GATED and
+  stay; and it fails a cited control with no exact RED region, so cited_controls == exact_red_evidence is gated
+  while their common VALUE is not. Publishing the relation and withdrawing the value says more than 7 and 7 did.
+- The remedy is one class, not nine numbers. .10 adopted "a repository-derived constant is derived or gated,
+  never carried" and retired the trajectory licence these were carried under, so authority_outcomes.derived —
+  which has not moved — is withdrawn alongside identity_gated, which has: unmoved is not immovable. Writing 8 for
+  7 was available and refused, because CLAIM_VERIFICATION.md §3 Leg 3 says a right unwatched number replacing a
+  wrong one is not a fix.
+- What may still be published is now stated with what makes it true, verified in the producer rather than assumed.
+  candidate_closure.unresolved 0 stays because it is GATED — validate_candidate_closure raises an error for any
+  candidate lacking exact evidence or a current registered annotation, so --check fails the moment it leaves zero.
+  views 5 stays because it is AUTHORED — .3a.0 froze five required_views. Everything else routes to --report.
+- Recorded, not repaired. scripts/check_doctrines.sh's header calls DOCTRINE_ENFORCEMENT.md §10 its mirror "kept
+  in lockstep" and nothing checks that; check_claim_verification.pl requires only that the single
+  CLAIM-VERIFICATION row exists. Enumerated rather than asserted: §10 has 11 doctrine rows and the DOCTRINES array
+  has 11 entries, so they agree today — an unwatched coupling for .7, not a defect.
+- Both stale book counts sit at lines the frozen mdBook census holds no region for; that chapter's complete
+  candidate set is five lines. .9's third demonstration, and its second on the census's own chapter.
+- Two more of the same class, on surfaces this leaf had to touch anyway. MEMORY.md published "its warnings
+  currently name" five live-document surfaces and concluded "none is an unowned warning"; the producer emits 18
+  warning lines over 13 surfaces, the two published lists disagree with each other, and classifying each surface
+  id against docs/tasks/*.md finds THREE named by no tree — alignment_task_evidence_index,
+  alignment_task_evidence_parts, and rust_analysis. The omitted set includes active_resume at 100% of its
+  rollover band, which is the pointer itself. Layer A must not carry a census, so the sentence is deleted rather
+  than lengthened and LIVE-DOCUMENT-PRESSURE-HEADROOM.7 is opened to own the three. Opening it found the sixth:
+  that tree's Current Frontier still listed .2a, .2b, and .2c as pending while its Task Tree section had them
+  done since 2026-08-29, so a fresh session would have been handed three finished leaves. Both repaired here.
+  Neither is a claim surface — the failure is what happens to any hand-maintained restatement of a derivable
+  set, which is what .7 has to gate.
+- Region maintenance falsified rather than trusted. 17 frozen regions relocated by their recorded SHA-256 — 16
+  census, one book — plus one new evidence row for the new ledger head. Each relocation matched exactly one line
+  and each file's shift was unanimous across its regions and equal to the cumulative insertions above it computed
+  independently from the diff hunks; a region that had matched a duplicate line elsewhere would have shown a
+  delta its neighbours did not. The count itself is derived by diffing both registries against HEAD, not by
+  adding up the relocation passes, which first produced 18 — .9's ninth instance, caught before it landed.
+
 ### CLAIM-VERIFICATION-ADOPTION.10a — correct .10's own probe count and set claim
 
 - Asked a second time whether .10's findings were trusted, re-derived them instead of re-reading, and one number

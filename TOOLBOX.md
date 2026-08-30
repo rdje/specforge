@@ -100,24 +100,34 @@ The active registry is `doctrine/claim_verification/claims.jsonl`. Use
 `--check` for the real gate, and `--self-test` for its positive plus missing/unknown/duplicate/stale/untracked RED
 matrix. Commands are argv arrays and all producer/input/evidence paths are tracked, digest-bound, and covered by
 the declared stale check; the checker never evaluates registry content through a shell. Each falsification
-control also binds one exact known-bad source region. The report exposes 7 cited controls / 7 exact RED regions /
-6 governed producers / 0 ignored / 0 untracked producer candidates. `[claim: claim-provenance-gate-active]`
+control also binds one exact known-bad source region. Two `control_audit` fields are published here because the
+checker fails on any other value: `ignored_candidates` and `untracked_candidates` are **0**, and a nonzero
+result for either raises `governed producer census contains ignored or untracked candidates`. `cited_controls`,
+`exact_red_evidence`, and `governed_producers` are counts nothing fails on, so read them from `--report`; what
+is gated is their *relation* — every cited control must bind an exact RED region, so the first two are always
+equal. `[claim: claim-provenance-gate-active]`
 
 For the current-surface authority sweep, use `perl scripts/check_current_claim_census.pl --check`, `--report`,
-`--produce`, and `--self-test`. Only the fields a per-revision trajectory shows actually hold are carried here:
-`authority_outcomes.derived` **11**, `authority_outcomes.identity_gated` **7**, no `incomplete` outcome,
-`candidate_closure.unresolved` **0**, and **5** views — unchanged at every one of the 28 consecutive revisions
-from `e6f5012d` to this commit, and at the older `50775894` anchor `.6` cited. `current_surfaces` was carried
-here too until `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` registered a new surface and moved it 39 -> 40: a value
-stable across 29 revisions is still not a constant, only an unmoved one, so it is withdrawn to `--report`. **Everything else that report prints is moved by ordinary,
-often unrelated work and is deliberately not published here**: `evidence_units`, `authority_outcomes.excluded`,
-`authority_outcomes.registered`, and the rest of `candidate_closure`. Two measured mechanisms move them. A slice
+`--produce`, and `--self-test`. A field is carried here only when a **control** fails if it moves or an
+**authored decision** fixes it — never because a trajectory shows it has held, which is the licence `.10`
+retired. Exactly two qualify. `candidate_closure.unresolved` **0** is gated: `validate_candidate_closure`
+raises an error for any candidate lacking exact evidence or a current registered annotation, so `--check`
+fails the moment it leaves zero. **5** views is authored: `.3a.0` froze five `required_views` and the registry
+declares them. **Everything else that report prints is a repository-derived constant and is read from
+`--report`**, including `authority_outcomes.derived` and `authority_outcomes.identity_gated`, which were
+carried here on `.6a`'s 29-revision trajectory until `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` registered one
+surface and moved both of them — `current_surfaces` 39 -> 40, noticed and withdrawn in that commit, and
+`identity_gated` 7 -> 8 on the same sentence, missed until `.11` enumerated the population. `evidence_units`,
+`authority_outcomes.excluded`, `authority_outcomes.registered`, and the rest of `candidate_closure` are moved by
+ordinary, often unrelated work, and three measured mechanisms move them. A slice
 that prepends or seals a rolling-ledger record changes the unit and exclusion totals — 15 rises, 2 falls, and 10
 no-changes across the 27 transitions measured from `e6f5012d`, so it is not even monotone. And any commit that adds or drops a
 `[claim: <id>]` annotation moves `registered` and closure: 6 and 86 = 51 + 35 through `fdda3c53`; 5 and
 72 = 50 + 22 from `5fe81128`, whose own `CHANGES.md` rollover carried 14 annotated regions out of the live
 window inside the commit that published the older values; 4 and 69 = 49 + 20 from `1507adbf`, which rewrote the
-resume pointer and dropped its three annotations. Read all of them from `--report`. The 27-case self-test
+resume pointer and dropped its three annotations. And registering a live-document surface adds its evidence
+row, which is what moved `current_surfaces` and `identity_gated` together at `d23e8bae`. Read all of them from
+`--report`. The 27-case self-test
 instantiates every outcome family and challenges all coverage joins. Zero outer incomplete does not certify the
 incomplete assertion regions exposed by the narrower mdBook contract — that count moves whenever the manual
 does, so read it from `check_book_quantitative_claims.pl --report`, `authority_outcomes.incomplete`.
@@ -132,14 +142,16 @@ example/identity, and dated scope separate from registered authority and honest 
 `mdbook-quantitative-census-frozen` claim verifies that mapping only; an `incomplete` region remains unverified.
 
 Every count in this section was re-derived from those three `--report` commands at this commit, and a count is
-carried only where a measured per-revision trajectory shows it holds. That is not a style preference: a
+carried only where a control fails if it moves or an authored decision fixes it. That is not a style preference: a
 `[claim: <id>]` annotation closes its region on the **presence** of the annotation, and the digest gate proves
 only that a governed file has not changed — neither reads the numbers in the sentence. `CLAIM-VERIFICATION-ADOPTION.6`
 corrected three drifted counts here and recorded eight as “confirmed unchanged”; `.6a` re-derived the 28
 consecutive revisions since, each with that commit's own checker, and found four of those eight were already
 false in `.6`'s own commit.
 That is same-transaction invalidation, not slow decay, so the default is withdrawal plus a named producer field.
-`.7` owns making the remaining ones re-derive mechanically.
+The surviving trajectory rule was itself retired by `.10` and its last two beneficiaries withdrawn by `.11`:
+a trajectory shows what has not happened, never what cannot. `.7` owns making the remaining ones re-derive
+mechanically.
 
 ## How to run the SpecForge CLI
 

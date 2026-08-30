@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5`/`.2a`/`.2b`/`.2c` done — `.2` closes; `.1`/`.3`/`.4`/`.6` pending)
+- Status: `active` (`.0`/`.5`/`.2a`/`.2b`/`.2c` done — `.2` closes; `.1`/`.3`/`.4`/`.6`/`.7` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
-- Last updated: `2026-08-29`
+- Last updated: `2026-08-30`
 - Owner: repo-local workflow
 
 ## Goal
@@ -289,6 +289,29 @@ repeatable rollover/remedy paths and remain under their existing owners.
   only by the coverage rule
   Prerequisite: none; found by `.2c` while widening the routed rule
 
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Status: `pending` (tracking-only)
+  Goal: give the three warned surfaces that no task tree names an owner, before one of them refuses a write
+  Acceptance: this tree's Opening Pressure Boundary table names five axes and `MEMORY.md` published a
+  five-surface warning set with the conclusion "none is an unowned warning". Neither was enumerated.
+  `CLAIM-VERIFICATION-ADOPTION.11` ran the producer at `9fc76685` on a clean tree: `check_live_document_size.pl`
+  emits 18 warning lines over **13** distinct surfaces, not five, and the two lists do not even agree with each
+  other — the pointer named `rust_analysis` and `workflow_standards`, which the table does not carry, and omitted
+  `knowledge_cards` and `readme_entrypoint`, which it does. Classified before the size was published, by grepping
+  each surface id across `docs/tasks/*.md`: ten are named by at least one tree, and **three are named by none** —
+  `alignment_task_evidence_index` (85.2%), `alignment_task_evidence_parts` (83.8%), and `rust_analysis`
+  lines_each (80.9%). `RUST_CODEBASE_ANALYSIS.md` appears in several trees as a documentation surface to update,
+  never as a pressure owner, so the *warning* is unowned even though the file is not unknown. The leaf must give
+  each of the three a named remedy path or an explicit exemption with its reason, and add the two
+  `alignment_task_evidence_*` axes plus `rust_analysis` to the boundary table so the table stops being shorter
+  than the producer. Note the honest limit of the classifier used: "a tree mentions this surface id" is weaker
+  than "a leaf will act on it", so the ten are a *screened* population, not a verified-owned one; the three with
+  zero mentions are the ones that need an owner first
+  Prerequisite: none; found by `CLAIM-VERIFICATION-ADOPTION.11` while enumerating a different population with
+  the same rule
+  Verification: `pending`
+  Commit: `pending`
+
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.3`
   Status: `pending`
   Goal: keep the maintained EvidenceIR book chapter current below actionable pressure
@@ -370,11 +393,12 @@ repeatable rollover/remedy paths and remain under their existing owners.
 | --- | --- | --- | --- |
 | 1 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0` | `done` | exact clean pressure and owner boundaries are pinned |
 | 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
-| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `pending` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
-| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `pending` | a consumed single-use ceiling authority is refused as banked on the very next commit |
-| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `pending` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
+| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
+| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
+| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
 | 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | re-ranked `2026-08-28`: `docs/research/*.md` is 63 of a 64-file ceiling with no warning band and no rollover, and two active trees write research records |
 | 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
+| 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `pending` | three warned surfaces are named by no tree at all, and both published warning sets were shorter than the producer's |
 
 ## Decisions
 
@@ -453,6 +477,14 @@ repeatable rollover/remedy paths and remain under their existing owners.
 
 ## Changelog
 
+- `2026-08-30`: opened `.7` and corrected this tree's own frontier. `CLAIM-VERIFICATION-ADOPTION.11`, running an
+  enumerating command over a different population, measured this tree's warning set: the producer warns about
+  **13** surfaces and both published lists — the Opening Pressure Boundary table and `MEMORY.md`'s five — were
+  shorter, disagreed with each other, and carried the conclusion "none is an unowned warning". Classified rather
+  than counted: three surfaces are named by no task tree at all. The pointer sentence is withdrawn there and the
+  gap is owned here. Separately, the Current Frontier still showed `.2a`, `.2b`, and `.2c` as `pending` while the
+  Task Tree section had them `done` since `2026-08-29` — a stale hand-maintained table that would have handed a
+  fresh session three completed leaves; corrected in the same commit that found it.
 - `2026-08-29`: `.2` becomes a container over `.2a` (apply the gated no-cap profile), `.2b` (retire the
   consumed single-use authority), and `.2c` (shard the derived index). Records the second enforcer
   (`$MAX_TASKS`) and the exact 9-trees -> ~108-trees relocation the decision implies.

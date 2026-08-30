@@ -8,6 +8,7 @@ answers:
   - "what blocks a Rust code change from committing in specforge"
   - "where is the acceptance checklist a code change must satisfy"
   - "what is the 4th portable architecture (doctrine enforcement)"
+  - "which doctrines are registered in the SpecForge doctrine driver"
   - "why does the pre-commit hook run check_doctrines.sh"
   - "what does the TASK-ACCEPTANCE check verify / why was my commit blocked"
   - "what debug/diagnostic tools does specforge have (TOOLBOX.md)"
@@ -32,10 +33,15 @@ runs them all and the git gates run the driver.
   (collecting all results, not stopping at the first failure), prints a per-doctrine PASS/FAIL report,
   exits nonzero iff any failed, and **meta-checks** that each registered enforcer exists + is executable
   (so a registry entry can never be a dangling promise).
-- **Registered today (10):** nine gate-tier doctrines — `MEMORY-ARCH`, `KNOWLEDGE-MAP`, `TASK-ACCEPTANCE`,
-  `README-POLICY`, `LIVE-DOC-SIZE`, `PROJECT-DATA-LOCALITY`, `PRODUCTION-GENERICITY`, `CORPUS-FRONTIER`, and
-  `CLAIM-VERIFICATION` — plus CI-tier `CHAIN-CURRENCY`. The default report runs all nine gate rows and names the
-  deferred CI row; `--all` runs all ten.
+- **The registered set is the `DOCTRINES` array itself**, and its size is not carried here: the driver prints
+  `(N registered, tier=…)` on every run, and `DOCTRINE_ENFORCEMENT.md` §10 mirrors the rows in prose. Enumerate
+  it with `grep -c '^  "[A-Z]' scripts/check_doctrines.sh`. The gate-tier rows — `MEMORY-ARCH`,
+  `KNOWLEDGE-MAP`, `TASK-ACCEPTANCE`, `README-POLICY`, `LIVE-DOC-SIZE`, `PROJECT-DATA-LOCALITY`,
+  `PRODUCTION-GENERICITY`, `CORPUS-FRONTIER`, `CLAIM-VERIFICATION`, `PROOF-SEAL-CURRENCY` — run on the default
+  invocation; CI-tier `CHAIN-CURRENCY` is reported as `DEFER` and runs under `--all`. This card carried a count
+  and a short list until `CLAIM-VERIFICATION-ADOPTION.11`: `PROOF-SEAL-CURRENCY` was registered by
+  `SOURCE-IR-REPRODUCIBILITY.16` and the enumeration was never extended, which is a set claim whose own
+  enumeration was short by one member — refutable, and refuted, by a single counterexample.
 - **Wiring:** `.githooks/pre-commit` (E3, activate once with `git config core.hooksPath .githooks`) and
   `scripts/run_ci.sh` (E4) both invoke the driver. The pre-commit regenerates + stages the derived
   knowledge map BEFORE the driver validates it (so map drift is structurally impossible).

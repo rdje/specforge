@@ -33,7 +33,7 @@
 | [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md) | 2026-06-05 | `current` | Text-reasoning gates (NLI, semantic checks) want a strong TEXT LLM, not a VLM; qwen2.5:14b-instruct is viable… |
 | [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md) | 2026-08-08 | `current` | Two mdBook current-state facts are mechanically locked to their code seams |
 | [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md) | 2026-08-08 | `current` | The live book classifies illustrative fences explicitly and passes mdBook doctests |
-| [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md) | 2026-08-15 | `current` | The mdBook quantitative census freezes 307 exact regions and 78 honest incomplete assertions |
+| [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md) | 2026-08-30 | `current` | The mdBook quantitative census verifies the mapping, not the totals, which the manual itself moves |
 | [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md) | 2026-08-15 | `current` | MEMORY.md has an exact 32,768-byte one-read ceiling |
 | [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md) | 2026-06-10 | `current` | message_field_constraints — field-subject obligations are routed, not dropped (CHI TagOp/PBHA live) |
 | [message-field-records-surface](../knowledge/message-field-records-surface.md) | 2026-06-10 | `current` | message_field_records — the typed home for packet/flit message fields (CHI 106, C2C ≤189, CCIX ~50) |

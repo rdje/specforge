@@ -3,10 +3,11 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a` done — every surface publishing the census counts is swept and
-  the upstream standard is re-adopted with its refusals recorded; `.7` owns the gate that would have observed the
-  drift, now scoped to counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate
-  vocabulary's blind spot, now with a second measured demonstration)
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11` done — the surfaces publishing the census counts
+  are now swept against an *enumerated* population rather than a remembered one, and the upstream standard is
+  re-adopted with its refusals recorded; `.7` owns the gate that would have observed the drift, now scoped to
+  counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot, now
+  with a third measured demonstration)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
 - Last updated: `2026-08-30`
@@ -743,6 +744,125 @@ the workflow through the mdBook and repository review path.
   vocabulary, and that `.7`'s cheapest signal is a second reader rather than a richer checker
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.10`
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.11`
+  Status: `done` (`2026-08-30`)
+  Goal: run the enumerating command `.6b` never ran, and withdraw the whole class the standard now forbids carrying
+  Acceptance: `.6` swept `TOOLBOX.md` and said so; `.6a` swept `TOOLBOX.md` and said so; `.6b` opened on "two
+  other current-facing surfaces publish the same census numbers" and swept two. None of the three ran a command
+  that enumerates the population, which is the rule `.10` made normative one commit later: **a claim about a set
+  carries its enumeration, in both directions.** Running it —
+  `git ls-files '*.md' | grep -v '^docs/archive/' | grep -v '^subs/' | xargs grep -ln
+  'check_current_claim_census\.pl\|check_book_quantitative_claims\.pl\|check_claim_verification\.pl'` —
+  returns **15** surfaces at `9fc76685`, the parent commit. `.6b`'s "two" was an impression. Every count on all
+  15 is re-derived here from the three producers' own `--report` output, and each is then classified by what
+  makes it true rather than by whether it happens to be right today.
+  **And the population is itself a per-commit counter, which this leaf proves on itself.** At the tree state
+  this commit lands, the same command returns **16**: writing the `CHANGES.md` record above names
+  `check_claim_verification.pl`, so the record enters the population it describes. Publishing a bare "15" would
+  have made this leaf false in its own transaction — the sixth instance, inside the repair for the tenth. The
+  count is therefore anchored to the revision it was measured at, and the durable artifact is the command. That
+  is a hard constraint on `.7`, not a curiosity: its map must derive the governed population **at check time**
+  and may never store a surface list, because any commit that mentions a producer joins the set
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.10a`
+  **Tenth instance, and it is the eighth instance's own commit one sentence over.** `authority_outcomes.
+  identity_gated` was published as **7** on three surfaces and the producer reports **8**. Attributed by
+  re-deriving from each revision's own producer input (`git show <rev>:doctrine/claim_verification/
+  current_claim_census.jsonl`) rather than by reading a diff: 7 at every revision through `efa6dd41`, 8 from
+  `d23e8bae` (`2026-08-29 23:16`) onward, which added exactly one `identity_gated` evidence record —
+  `evidence-task-tree-catalog-parts-roadmap-controller-projections-0d651dd0cc01`, for the
+  `task_tree_catalog_parts` surface it registered. That is the **same registration, in the same commit**, that
+  moved `current_surfaces` 39 -> 40. `d23e8bae`'s own body records noticing the second value and withdrawing it
+  on all three publishers — and left the first carried, on the same sentence, moved by the same record. So the
+  withdrawal was driven by the field that was noticed rather than by re-deriving the set the sentence names,
+  which is `.6`'s recorded lesson recurring for the third time. Three later commits (`71b6d832`, `3079f945`,
+  `9fc76685`) republished `identity_gated 7`, all three in this tree, all three about claim currency
+  **Findings, enumerated, with the value each producer reports now. Six are stale — the published value differs
+  from the producer today. Three more are carried and still correct, and are withdrawn under the same rule,
+  because "correct today" is exactly the state findings 1 to 4 were in before their commit landed.**
+  1. `authority_outcomes.identity_gated` **7** -> **8** at `TOOLBOX.md:108`,
+     `docs/book/src/reference/doctrine-enforcement.md:457`, and `docs/knowledge/current-claim-census-freeze.md:36`.
+  2. `docs/book/src/reference/doctrine-enforcement.md:486` — "the 78 incomplete assertion-level book regions
+     remain explicitly unverified": **78** -> **89**. Correct when written at `be3b12e6` (`2026-08-16`), stale
+     from `4dac5642` (`2026-08-27 02:14`). Present tense with no dated scope, so §1 governs it; and the
+     repository already adjudicated this exact quantity as current when `.6` corrected its sibling 75 -> 89.
+  3. `docs/knowledge/mdbook-quantitative-census-freeze.md` — the **whole** `.3b.3.3` vector, in its title and
+     twice in its body: regions **307** -> **321**, incomplete **78** -> **89**, excluded **221** -> **224**,
+     dated exclusions **186** -> **189**. Correct at `be3b12e6` and stale from `4dac5642` — the *same commit
+     and the same drift event* `.6b` repaired on the book chapter, quoting these very numbers off it. The card
+     carrying an identical vector was two directory entries away and was not looked for, because nothing looked.
+     Its `39` book files, `21` candidate files, `8` registered, and `26`/`8`/`1` exclusion split do re-derive.
+  4. `docs/knowledge/doctrine-enforcement-adoption.md:35`-`38` — "**Registered today (10):** nine gate-tier
+     doctrines — …" naming nine, "runs all nine gate rows", "`--all` runs all ten". Re-derived from the driver's
+     own `DOCTRINES` array: **11** registered, **10** gate-tier, **1** CI-tier. `PROOF-SEAL-CURRENCY` was
+     registered at `1ccb7331` (`2026-08-29 02:16`) and is missing from the card's named list. This one is a set
+     claim that *did* carry its enumeration and the enumeration is short by one member — the mirror failure of
+     finding 3, and the reason `.10` adopted the rule "in both directions".
+  **Fifth and sixth findings, from applying the same rule to the surfaces this leaf had to touch anyway.** The
+  resume pointer published its own census — "its warnings currently name" five live-document surfaces, "all five
+  are already on `LIVE-DOCUMENT-PRESSURE-HEADROOM`'s opening pressure boundary table, so none is an unowned
+  warning" — and the producer at `9fc76685` on a clean tree emits 18 warning lines over **13** surfaces. The two
+  published lists do not even agree: the pointer names `rust_analysis` and `workflow_standards`, which the table
+  does not carry, and omits `knowledge_cards` and `readme_entrypoint`, which it does. Classified before the size
+  was published, by grepping each surface id across `docs/tasks/*.md`: ten are named by some tree and **three by
+  none** — `alignment_task_evidence_index`, `alignment_task_evidence_parts`, and `rust_analysis`. So the
+  conclusion was false, and the omitted set includes `active_resume` at 100% of its rollover band, which is the
+  pointer itself. The remedy in layer A is deletion, not a longer list: a bounded overwrite-only pointer must not
+  carry a census at all, so the sentence is withdrawn and the gap is owned by a new
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`. Opening it exposed the sixth: that tree's Current Frontier still showed
+  `.2a`, `.2b`, and `.2c` as `pending` while its Task Tree section had them `done` since `2026-08-29` — a stale
+  hand-maintained table that would have handed a fresh session three finished leaves. Both repaired in this
+  commit. Neither is a claim-verification surface, which is the point worth carrying to `.7`: the failure is not
+  specific to counts about claims, it is what happens to any hand-maintained restatement of a derivable set
+  **Seventh, eighth, and ninth: carried but not yet wrong, withdrawn under the same rule.** Applying the rule to
+  the sentence rather than to the number that moved turns up three more carried repository-derived constants that
+  happen to re-derive today. `authority_outcomes.derived` **11**, on the same three surfaces as finding 1 and in
+  the same clause. `mdbook-quantitative-census-frozen`'s own registry **assertion**, which still spells out
+  39/321/21/321/8/89/224/26/8/1/189 — eleven constants, and the one census claim that never received `.6`'s
+  remedy while its sibling `current-claim-census-frozen` did; that asymmetry is finding 3 one layer down, and it
+  is why the enumerating command has to reach `doctrine/` and not only `*.md`, which is a stated limit of the
+  command used here. And `control_audit`'s **7 / 7 / 6**. Separating that last one required reading the producer
+  rather than its description: `check_claim_verification.pl` raises `governed producer census contains ignored or
+  untracked candidates` on a nonzero census, so `ignored_candidates` and `untracked_candidates` **0** are gated
+  and stay; and it fails a cited control with no exact RED region, so `cited_controls` == `exact_red_evidence` is
+  gated while their common **value** is not. Publishing the relation and withdrawing the value is strictly more
+  informative than publishing 7 and 7, because the relation is what the gate actually holds.
+  **The remedy is one class, not nine patches, and the standard already decided it.** `.10` adopted
+  "a repository-derived constant is derived or gated, never carried", and retired the licence under which
+  `derived 11` and `identity_gated 7` were carried in the first place — `.6a`'s 29-revision trajectory. Applying
+  that rule to the sentence rather than to the number that moved: `authority_outcomes.derived` is the same class
+  as `identity_gated` and is withdrawn with it, unmoved rather than immovable; "no `incomplete` outcome" is a set
+  claim over the same producer and is withdrawn; the book vector and the mdBook card's vector go to `--report`.
+  Replacing **7** with **8** was available and is refused, because §3 Leg 3 is explicit that a right unwatched
+  number replacing a wrong one is not a fix.
+  **What may still be published, and why — verified in the producer, not assumed.**
+  `candidate_closure.unresolved` **0** stays, because it is **gated**: `validate_candidate_closure` in
+  `scripts/check_current_claim_census.pl` pushes an error for every candidate lacking exact evidence or a current
+  registered annotation, so `--check` fails the moment it leaves zero. `views` **5** stays, because it is
+  **authored**: `.3a.0` froze five `required_views` and the registry declares them, which §1 exempts as an
+  architecture choice whose authority is a decision. Those two are the only survivors on the census sentence, and
+  each now states which of the two makes it true — so a later reader can tell a gated value from an unmoved one
+  without re-running the trajectory that failed here.
+  **Recorded, not repaired, because both belong to open leaves.** `scripts/check_doctrines.sh`'s header calls
+  `DOCTRINE_ENFORCEMENT.md` §10 its human-readable mirror "kept in lockstep", and **nothing checks that**:
+  `check_claim_verification.pl` requires only that the single `CLAIM-VERIFICATION` row is present. Enumerated
+  rather than asserted — the §10 table has 11 doctrine rows and the `DOCTRINES` array has 11 entries, so they
+  agree today; this is an unwatched coupling for `.7`, not a defect, and it is the exact shape `.7` gates.
+  And findings 1 and 2 sit at book lines 457 and 486, neither of which the frozen mdBook census holds a region
+  for — that chapter's complete candidate set is five lines — so this is `.9`'s **third** demonstration, again on
+  the census's own chapter, with `identity_gated` (7) failing the closed noun list the same way `regions=307` did
+  Verification: `enumerating command run over tracked non-archive Markdown (15 surfaces at 9fc76685, 16 here); identity_gated attributed
+  7 -> 8 at d23e8bae by per-revision re-derivation over 25 revisions of the producer input; check_current_claim_census.pl
+  --check green at 40 surfaces / 66 units with --report unresolved 0 and views 5; check_book_quantitative_claims.pl
+  --check and --report identical before and after the chapter edit, which is the evidence the replacement prose
+  publishes no new quantity; 17 frozen regions relocated by recorded SHA-256 — 16 census, one book — plus one new evidence row for the new
+  ledger head, counted by diffing both registries against HEAD rather than by adding up the relocation passes,
+  which first produced 18; each relocation matched exactly one line, each file's shift was unanimous, and each
+  equalled the cumulative insertions above it computed independently from the diff hunks; check_fact_card_catalog.pl --check
+  valid for 249 cards; knowledge-map derive-and-diff in sync at 271 facts / 2151 keys; check_claim_verification.pl
+  --check green after digest refresh; census --self-test 27/27, claim --self-test 27/27, book --self-test 19/19;
+  doctrine gate`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.11 — enumerate the surfaces, then withdraw the class`
+
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
   Status: `pending`
   Goal: stop the book quantitative census passing while it cannot see the numbers on the page
@@ -836,10 +956,19 @@ the workflow through the mdBook and repository review path.
 | 21 | `CLAIM-VERIFICATION-ADOPTION.6b` | `done` | book chapter, fact card, and `TOOLBOX.md`'s last carried mdBook count now all route to `--report`; drift attributed per registry revision |
 | 22 | `CLAIM-VERIFICATION-ADOPTION.10` | `done` | upstream re-read section by section; absent rules adopted, refusals recorded, and `.7`'s open scope question answered |
 | 23 | `CLAIM-VERIFICATION-ADOPTION.10a` | `done` | `.10`'s own probe count and one set claim re-derived and corrected; findings two and three verified unchanged |
-| 24 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | nine instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
+| 24 | `CLAIM-VERIFICATION-ADOPTION.11` | `done` | population enumerated by command rather than recalled; six stale publications and three still-correct carried ones withdrawn as one class |
+| 25 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
 ## Decisions
 
+- `2026-08-30` (`.11`): a count published on a governed surface is legitimate only when a **control fails if it
+  moves** or an **authored decision fixes it**. "A trajectory shows it has held" is neither, and is retired as a
+  reason. Where neither applies, the remedy is withdrawal plus the producer's field name — never substitution of
+  today's value, which leaves the next drift exactly as unobservable as the last.
+- `2026-08-30` (`.11`): a sweep names its population with a command, not with recall. `.6`, `.6a`, and `.6b` each
+  swept surfaces they remembered and each said honestly how far it went; the defect is not the honesty but that no
+  step derived the denominator. The enumerating command for this class is a grep for the producer paths over
+  tracked non-archive Markdown, and it belongs in the leaf beside the finding.
 - `2026-08-15`: claim verification is additive to task trees, memory, retrieval, and doctrine enforcement. It
   defines what earns a published claim; doctrine enforcement makes that definition mechanically difficult to
   bypass.
@@ -1529,6 +1658,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-30` | `.11` | enumerating command over tracked non-archive Markdown (anchored at `9fc76685`); per-revision re-derivation of `identity_gated` from `git show <rev>:doctrine/claim_verification/current_claim_census.jsonl` across 25 revisions; `check_current_claim_census.pl --check`/`--report`; `check_book_quantitative_claims.pl --check`/`--report` before and after the chapter edit; `check_fact_card_catalog.pl --write`/`--check`; knowledge-map derive-and-diff; `check_claim_verification.pl --check`; the three claim self-tests; doctrine gate | the population is **15** surfaces at `9fc76685` and **16** at this commit — writing the change record joins it — so the number is anchored and the command is the durable artifact; either way not the two `.6b` swept. **Six stale publications and three carried-but-correct ones**, withdrawn as one class: `.6`, `.6a`, and `.6b` each swept from memory and none ran an enumerating command. `identity_gated` **7 -> 8** on three surfaces, attributed to `d23e8bae`, which added exactly one `identity_gated` record for the `task_tree_catalog_parts` surface it registered — the same registration whose other effect (`current_surfaces` 39 -> 40) that commit *did* notice and withdraw, one sentence away; the book chapter's **78 -> 89** incomplete regions; the whole `.3b.3.3` vector (**307/78/221/186** -> 321/89/224/189) still carried in `mdbook-quantitative-census-freeze.md`, whose stale twin `.6b` repaired while quoting these numbers off it; and a registry set claim short by one member (**10/nine/ten** -> 11 registered / 10 gate / 1 CI, `PROOF-SEAL-CURRENCY` missing since `1ccb7331`); `MEMORY.md`'s five-surface live-document warning census against a producer that warns about **13**, three named by no tree; and this tree's sibling `LIVE-DOCUMENT-PRESSURE-HEADROOM` frontier still calling `.2a`/`.2b`/`.2c` pending. Three further constants are carried and still correct and go with them — `authority_outcomes.derived`, the mdBook claim assertion's eleven constants, and `control_audit`'s 7/7/6. All withdrawn as one class per §3 Leg 3 rather than replaced with today's values. The survivors are stated with what makes them true: `unresolved` **0** is gated by `validate_candidate_closure`, `views` **5** is authored by `.3a.0`. Book vector **321/8/89/224 identical** across the chapter edit; **17** regions relocated (16 census, one book) and one evidence row added for the new ledger head, derived by diffing both registries against HEAD rather than summing the passes — which first gave 18, `.9`'s ninth instance caught by deriving it; each relocation matched exactly one line and each file's shift equalled the cumulative insertions above it from the diff hunks; catalog valid for 249 cards; Knowledge Map 271 facts / 2152 keys; self-tests 27/27, 27/27, 19/19 |
 | `2026-08-30` | `.10a` correction | replayed the narrow absence probe against `HEAD~1:CLAIM_VERIFICATION.md`; enumerated the census-governed surface set from `current_claim_census.jsonl`; `check_rolling_ledger_protocol.pl --report`; doctrine gate | the narrow probe ran **seventeen** terms, not fifteen — all seventeen zero. Fifteen is the *discriminating* subset and the count the **widened** probe ran; published on four surfaces as the narrow probe's size, which is `.7`'s ninth instance one commit after it was written. Also corrected an unenumerated set claim ("visible to no gate"), now counted: not a registry record, and carrying no numeral, so no candidate grammar reaches it — `MEMORY.md` is a governed census surface with four evidence rows and still produced none. Findings two and three re-derive **unchanged**; the ledger figures come from the producer, which now emits no warning for `development-notes` at all |
 | `2026-08-30` | `.10` | section-by-section re-read of the upstream standard; seventeen-term absence probe over `CLAIM_VERIFICATION.md` alone, then a fifteen-term re-run over all governed claim surfaces; `check_book_quantitative_claims.pl --check` before and after the mdBook edit; knowledge-map derive-and-diff; `check_fact_card_catalog.pl --write`/`--check`; doctrine gate | source unchanged since `.1` (mtime `2026-08-26`), so the gap dates from the original adoption. The narrow probe returned zero hits for all seventeen terms in one file; **widening it to every governed claim surface changed the answer** — ADR 0042 already carried the general form as Context rationale. That is Leg 1's granularity rule catching its own adoption commit, and it is why the published set is scoped to "no home on any governed claim surface" rather than "absent from the standard". Remaining matches classified as unrelated word collisions before publishing. Book census **321/8/89/224 unchanged** across the edit; one region re-pointed 547 -> 580, line SHA-256 identical; Knowledge Map 271 facts / 2148 keys after one question-key collision was resolved in the fact card's favour; catalog valid for 249 cards |
 | `2026-08-30` | `.6b` correction | re-derived the move count and staleness window from `git show <rev>:doctrine/claim_verification/book_quantitative_claims.jsonl` across its 31 revisions, with commit timestamps | `.6b` published "**seven** registry changes" and "stale for **twelve days**". Both wrong: **six** moves, and the chapter stayed *correct* until `4dac5642` (`2026-08-27 02:14`), repaired at `2b9e8899` (`2026-08-29 22:23`) — **two days and twenty hours** stale. The twelve-day span was writing-to-settling, substituted for staleness. Every other figure in the finding re-derives; corrected on all four live surfaces and logged as `.7`'s ninth instance |
@@ -1606,6 +1736,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
+| `.11` | `CLAIM-VERIFICATION-ADOPTION.11 — enumerate the surfaces, then withdraw the class` | population derived from a command instead of recalled (15 at the parent, 16 here); six stale publications and three carried-but-correct constants withdrawn as one class; every survivor labelled gated or authored; `.7` tenth instance, `.9` third demonstration |
 | `.10` | `CLAIM-VERIFICATION-ADOPTION.10 — re-adopt the upstream claim standard` | absent upstream rules made normative; non-adoption recorded with reasons; `.7` scope settled to counts; mandatory `DEVELOPMENT_NOTES.md` rollover to segment 0009 |
 | `.10a` | `CLAIM-VERIFICATION-ADOPTION.10a — correct .10's own probe count and set claim` | seventeen-term narrow probe restored on four surfaces; the "no gate sees this" assertion enumerated; findings two and three verified unchanged |
 | `.1` | `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract` | normative scope, ADR 0042, discovery, authoring/review contract, and mdBook alignment |
@@ -1633,6 +1764,34 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-30`: closed `.11`. Ran the command that enumerates the population three earlier leaves swept from
+  memory — every tracked non-archive Markdown surface citing one of the three claim producers — and it returns
+  **15**, where `.6b` had written "two other current-facing surfaces". Six stale publications, none of which any
+  gate could see. `authority_outcomes.identity_gated` **7 -> 8**, on `TOOLBOX.md`, the mdBook enforcement chapter,
+  and the census fact card, attributed by per-revision re-derivation to `d23e8bae` — the commit that registered the
+  task-catalog parts surface, noticed that the registration moved `current_surfaces` 39 -> 40, withdrew *that* value
+  on all three publishers, and left `identity_gated` carried on the same sentence. The book chapter's `78` incomplete
+  assertion-level regions (now 89). The entire `.3b.3.3` book vector still carried in
+  `mdbook-quantitative-census-freeze.md`, including its title — the exact numbers `.6b` corrected on the chapter
+  while quoting them off it, in a card two directory entries away that nothing looked for. And a set claim whose own
+  enumeration was short by one: the doctrine-adoption card's registered-doctrine list, missing `PROOF-SEAL-CURRENCY`
+  since `1ccb7331`. Two more of the same class on surfaces the leaf had to touch anyway: `MEMORY.md`'s
+  five-surface live-document warning census against a producer that warns about 13, three of them named by no
+  tree at all; and `LIVE-DOCUMENT-PRESSURE-HEADROOM`'s own frontier still calling `.2a`/`.2b`/`.2c` pending.
+  Three further constants are carried and still *correct* and go with them — `authority_outcomes.derived`,
+  the `mdbook-quantitative-census-frozen` assertion's eleven constants, and `control_audit`'s 7/7/6.
+  **The remedy is one class, not nine numbers.** `.10` adopted "a repository-derived constant is
+  derived or gated, never carried" and retired the trajectory licence these values were carried under, so
+  `authority_outcomes.derived` — which had not moved — is withdrawn with `identity_gated`, which had, because
+  unmoved is not the same as immovable. Writing `8` for `7` was available and refused: §3 Leg 3 says a right
+  unwatched number replacing a wrong one is not a fix. What survives is stated with its reason — `unresolved` **0**
+  because `validate_candidate_closure` raises an error the moment it leaves zero, `views` **5** because `.3a.0`
+  froze them — so a later reader can tell a gated value from an unmoved one without re-running the trajectory that
+  failed here. Recorded and not repaired: nothing checks `DOCTRINE_ENFORCEMENT.md` §10's row set against the
+  driver's `DOCTRINES` array, although the driver's own header calls §10 its mirror "kept in lockstep"; enumerated
+  rather than asserted, the two agree today at 11 each, so it is an unwatched coupling for `.7` rather than a
+  defect. Both stale book counts again sit outside the mdBook census denominator, which is `.9`'s third
+  demonstration and its second on the census's own chapter.
 - `2026-08-30`: closed `.10a`. The director asked a second time whether `.10`'s findings were trusted — the
   question that produced `.6b` — so they were re-derived rather than re-read, and one number was wrong. The narrow
   absence probe ran **seventeen** terms, not fifteen; fifteen is the discriminating subset and the count the

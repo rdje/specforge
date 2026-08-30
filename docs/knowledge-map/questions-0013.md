@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why did 88 CoreSight Base System interfaces disappear
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did APB unexplained_intent_bearing_tables go to zero
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -290,11 +298,3 @@
   > why does a temporal antecedent use PSELX not PSEL
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does adding an extractor change every doc's extraction manifest
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > why does aggregate_composition support different health and ceiling counts
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why does an .isf enum get dropped / held out of the emitted .isf

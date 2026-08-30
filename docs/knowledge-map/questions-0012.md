@@ -28,6 +28,8 @@
   > which caption grammar can supply a unit to every timing row
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > which claim control-audit fields are gated and which must be read from the report
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > which claim family owns captured_region_residuals
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -54,6 +56,8 @@
   > which crate owns the source-to-intent vertical evaluator tests
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which current claim census counts are stable and which ones move
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which current claim census counts may be published and which must be read from the report
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
@@ -68,6 +72,8 @@
   > which doctrine checks the persisted proof seal on every commit
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered in the SpecForge doctrine driver
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -100,6 +106,8 @@
   > which local models are pulled and what are they for
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > which mdBook quantitative assertions still lack claim authority
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > which mdBook quantitative census totals may be published and which must be read from the report
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > which metrics govern specification-to-executable-intent progress
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
@@ -289,11 +297,3 @@
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did 64 AArch64 External Debug interfaces disappear
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why did 88 CoreSight Base System interfaces disappear
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did APB unexplained_intent_bearing_tables go to zero
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set

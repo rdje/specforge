@@ -12,8 +12,9 @@ answers:
   - "how many current governed Markdown surfaces are in the claim census"
   - "how do I reverify the frozen current claim census"
   - "which current claim census counts are stable and which ones move"
+  - "which current claim census counts may be published and which must be read from the report"
   - "why did a current claim census count change without the producer changing"
-date: 2026-08-29
+date: 2026-08-30
 status: current
 tags: [claim-verification, census, authority, currentness, doctrine, task-tree]
 evidence: doctrine/claim_verification/current_claim_census.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.3a.2, .3b.4, and .3c); doctrine/claim_verification/claims.jsonl (current-claim-census-frozen)
@@ -27,16 +28,23 @@ read `current_surfaces` / `included_surfaces` / `excluded_surfaces` from `--repo
 evidence, and every included surface has one, which is the property that does not move.
 
 At the `.3b.4` boundary the result was **56 units: 11 `derived`, seven `identity_gated`, six `registered`,
-zero `incomplete`, and 32 `excluded`**. Only three of those fields are constants.
+zero `incomplete`, and 32 `excluded`**. None of those fields is a constant.
 `CLAIM-VERIFICATION-ADOPTION.6a` measured the whole vector across 28 consecutive revisions and found that
 `evidence_units`, `excluded`, `registered`, and every candidate-closure field move under **ordinary, unrelated
 work** — a rolling-ledger rollover carries claim-annotated regions out of the live window, and any commit that
 adds or drops a `[claim: <id>]` annotation moves the rest. `registered` went 6 -> 5 -> 4 and closure
-86/51/35 -> 72/50/22 -> 69/49/20 across that run, stepping inside `5fe81128` and `1507adbf`. What held at every
-measurement is `derived` **11**, `identity_gated` **7**, the absence of an `incomplete` outcome, zero
-unresolved candidates, and **5** views; read everything else from `--report`. `current_surfaces` held at 39
-for 29 measured revisions and then moved to 40 the moment `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` registered a
-derived task-catalog surface — an unmoved value is not a constant.
+86/51/35 -> 72/50/22 -> 69/49/20 across that run, stepping inside `5fe81128` and `1507adbf`.
+
+The durable rule is **not** "carry what the trajectory shows has held", which is how `derived` **11** and
+`identity_gated` **7** stayed published. `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` registered one derived
+task-catalog surface and moved two fields at once: `current_surfaces` 39 -> 40, withdrawn in that same commit,
+and `identity_gated` 7 -> 8 on the same sentence, which nothing noticed until
+`CLAIM-VERIFICATION-ADOPTION.11` enumerated the 15 surfaces that cite these producers. A count is publishable
+only when a **control** fails if it moves or an **authored decision** fixes it. Exactly two qualify: zero
+unresolved candidates, because `validate_candidate_closure` raises an error for any candidate without exact
+evidence or a current registered annotation, and **5** views, frozen by `.3a.0`. Read everything else,
+`derived` and `identity_gated` included, from `--report`.
+
 The first production pass exposed why view membership cannot be a declaration-only property:
 a candidate keyed by surface + path + line collapsed a second semantic view onto the first. Candidate identity
 now includes surface + view + path + line, and frozen validation independently requires evidence for every
