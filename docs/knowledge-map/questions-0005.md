@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > how does held out full capture refresh preserve alpha eligibility authority
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -176,6 +178,8 @@
   > how is a message field's width kept honest (per-variant widths stay None)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how is a promoted constraint surface visible in the extraction manifest
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > how is a published mechanism or causal account verified in SpecForge
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -293,7 +297,3 @@
   > how many SpecForge mdBook doctests currently fail
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many USB4 Connection Manager page sidecars are repository relative
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how many USB4 Inter-Domain page sidecars are repository relative
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > how many administrative workflow statements were measured

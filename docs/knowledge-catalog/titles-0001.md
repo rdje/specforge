@@ -50,6 +50,7 @@
 | [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
 | [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md) | 2026-08-10 | `current` | CHAIN-CURRENCY replays every persisted corpus artifact against the current binary |
 | [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md) | 2026-08-15 | `current` | Published-claim controls bind exact known-bad evidence and reject scratch producers |
+| [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md) | 2026-08-30 | `current` | The local claim standard is a restatement, so currency is re-read section by section, not diffed |
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
 | [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
@@ -60,4 +61,3 @@
 | [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md) | 2026-06-17 | `current` | The whole local corpus builds to IntentIR — semantic->intent needs only the persisted evidence_ir.json (not… |
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
 | [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |
-| [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |

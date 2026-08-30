@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > how are document keys in the source PDF registry derived from filenames
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
@@ -296,5 +298,3 @@
   > how does extract_discovered_state_value_from_text match a constraint value
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > how does ground_constraint recover a value the model did not echo
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > how does held out full capture refresh preserve alpha eligibility authority

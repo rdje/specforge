@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |
 | [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md) | 2026-08-12 | `current` | CorpusMemory schema 7 cannot route extraction by document identity |
 | [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md) | 2026-06-09 | `current` | Cross-PDF pattern reuse via a DERIVED vendor/layout fingerprint — extend CorpusMemory, advisory + honest |
 | [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md) | 2026-08-09 | `current` | Corpus current-binary refresh completion is independent of normalized-cache retention |
@@ -60,4 +61,3 @@
 | [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md) | 2026-06-14 | `current` | ingest disk pre-flight refuses before launching when free disk is below a source-size-scaled requirement |
 | [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md) | 2026-08-28 | `current` | Ingest used to discard every text the converter put inside a figure; since 2026-08-28 it carries them on the… |
 | [ingest-ram-guard](../knowledge/ingest-ram-guard.md) | 2026-06-14 | `current` | ingest has a built-in autonomous RAM guard that aborts cleanly before the host crosses a danger ceiling |
-| [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | Introducing CoreSight refresh is portable and its apparent relation topology is unauthoritative |

@@ -79,6 +79,22 @@ Use `none` only when the slice publishes or changes no current actionable assert
 may be one named oracle, but repeating the implementation's own classifier or source interpretation is not an
 independent falsification leg.
 
+Four questions decide whether the legs are earned, and each one has caught a real defect in this tree
+(`CLAIM_VERIFICATION.md` §2, §3):
+
+- **What does this check still permit?** A digest over a governed region proves the text did not change, never that
+  the numbers inside it still re-derive — which is how published counts go stale under a green gate. A check and the
+  thing it checks must not share a parent.
+- **Would the competing account have produced this same observation?** If yes, the leg has illustrated, not tested.
+  This binds a published *mechanism* — an account of why a value moved — exactly as it binds the value.
+- **Was this shape already adjudicated here?** The cheapest oracle is the owning task tree and the commit body that
+  introduced the value. If an earlier ruling went the other way, name the difference or the earlier ruling wins.
+- **Is the classifier derived from the producer, or from a description of it?** A vocabulary authored from what a
+  surface is believed to publish is green precisely where it is blind.
+
+Attribute a RED check by revert-and-re-apply, or by re-deriving from each revision's own producer input
+(`git show <rev>:<path>`) — never by reading a diff and inferring the cause.
+
 The active registry is `doctrine/claim_verification/claims.jsonl`. Use
 `perl scripts/check_claim_verification.pl --report` to see status/publication resolution,
 `--check` for the real gate, and `--self-test` for its positive plus missing/unknown/duplicate/stale/untracked RED

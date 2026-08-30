@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why did Arm Debug lose twelve reviewed register facts
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > why did Arm Debug register access disappear before EvidenceIR
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > why did DL disappear from the OpenCAPI Certified Definition
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why did FSMGen pin a51dcdad0 reject SpecForge manager.isf with isf_ambiguous_rule_transaction_drive_priority on AWSNOOP
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > why did ISF renderability fall from 44 to 17
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why did IntentIR proof verification fail after I validated SemanticIR
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did LTI unexplained tables go UP from 5 to 6
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -244,6 +266,8 @@
   > why does a SemanticIR residual packet list only some undeclared signal names
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why does a Wishbone constraint name CYC instead of CYC_O
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > why does a byte diff not prove the local claim standard is current
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why does a document with no declared signals carry more ungrounded rules than one with signals
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -274,27 +298,3 @@
   > why does aggregate_composition support different health and ceiling counts
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > why does an .isf enum get dropped / held out of the emitted .isf
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does an alphabetic constraint value require a word boundary but a numeric value does not
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why does an evidence/converge build OOM on a doc with many multi-word actor names
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why does an incidental 'can' in a source block not drop its other constraints
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > why does caption_text disappear on re-ingest
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > why does cargo test -p specforge not run the trajectory snapshot tests
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why does check_live_document_size not report records

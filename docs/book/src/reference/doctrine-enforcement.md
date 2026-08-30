@@ -327,6 +327,39 @@ case; and tracked producers plus complete artifact identity and a stale-state ga
 check is not the second leg. Missing evidence remains an explicit `incomplete` status rather than being converted
 into “verified.”
 
+### What a check still permits
+
+A green check is evidence only about the defect class it is able to fail on, so the first question a reviewer asks
+of any control is what it still permits. A conservation total permits any redistribution between buckets. A row
+count permits a wrong value in every row. A digest over a governed prose region permits every number inside that
+region going stale while the text stands still — which is exactly how a published count survives a fully green
+gate. Tests written from the same document as the implementation permit every misreading of that document. The
+general form is that a check and the thing it checks must not share a parent: when a control and the thing it
+controls descend from the same understanding, their agreement carries no information.
+
+That general form was already in this repository, as reasoning inside ADR 0042, while the standard carried only
+the instances it generates. `CLAIM-VERIFICATION-ADOPTION.10` promoted it to normative text alongside the rest of
+the upstream material a section-by-section re-reading found to have no local home.
+
+### Illustration is not falsification
+
+A falsification leg fails silently when its evidence is equally consistent with the account being published and
+the account it was supposed to rule out. Predicting the observation is not the test; producing an observation the
+competitor would not have produced is. This binds a claimed **mechanism** — an account of why a value moved — every
+bit as much as it binds the value, which is the correction `CLAIM-VERIFICATION-ADOPTION.6b` had to make to `.6a`
+after an unmeasured causal story was published in place of a measured one.
+
+Three cheap disciplines follow, and each closes a defect this repository has actually made. Consult the project's
+own adjudicated history before publishing a finding: the owning task tree and the commit body that introduced a
+value are the cheapest oracle available, and neither costs a measurement. Derive a classifier or candidate
+vocabulary from the producer that emits the thing, never from a description of that producer, or the control ends
+up green precisely where it is blind. Attribute a red check by revert-and-re-apply, or by re-deriving the value
+from each revision's own producer input, rather than by reading a diff and inferring a cause.
+
+A claim about a set also carries its enumeration, in both directions. “Nothing checks this” is refuted by a single
+counterexample, so the command that enumerated the checkers belongs beside the assertion; and a search hit count is
+a population rather than a count of defects until that population has been classified.
+
 ADR 0042 and `CLAIM_VERIFICATION.md` freeze that author/reviewer contract. The active self-bounded JSONL registry
 stores unique statuses, argv-form commands, complete tracked artifact membership, exact SHA-256 identities,
 refresh ownership, and retained evidence. The gate executes every verified source/control command, rejects digest

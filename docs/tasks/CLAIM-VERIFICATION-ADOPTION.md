@@ -3,12 +3,13 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a`, `.6b` done — every surface publishing the census counts is now swept;
-  `.7` owns the gate that would have observed the drift; `.8` tracks the census registry's own capacity; `.9`
-  owns the candidate vocabulary's blind spot, now with a second measured demonstration)
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10` done — every surface publishing the census counts is swept and
+  the upstream standard is re-adopted with its refusals recorded; `.7` owns the gate that would have observed the
+  drift, now scoped to counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate
+  vocabulary's blind spot, now with a second measured demonstration)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
-- Last updated: `2026-08-29`
+- Last updated: `2026-08-30`
 - Owner: repo-local workflow
 - Owner directive: adopt `/Volumes/SSD/Documents/github/pgen/docs/CLAIM_VERIFICATION.md` if SpecForge has not
   already adopted it.
@@ -529,6 +530,18 @@ the workflow through the mdBook and repository review path.
   reported rather than ignored, so the map cannot silently shrink. RED controls prove a drifted count, a
   count bound to the wrong field, and an unmapped count in a governed region are each observed
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.6`
+  **Scope decision (`2026-08-30`, from `.10`; this narrows `.7` rather than widening it).** The seventh instance
+  left one question open: is a claimed *mechanism* in this gate's scope, or is the hole simply unnamed? It is out
+  of scope, and now for a stated reason rather than by omission. `.10` made the illustration rule normative — an
+  account of why a value moved is earned only by an observation the competing account would not have produced —
+  and no checker can decide whether two accounts predict the same observation, because that is a judgment about
+  hypotheses and not about text. So the mechanism obligation belongs to the reviewer workflow
+  (`CLAIM_VERIFICATION.md` §3 Leg 2, §8), where it is now normative, and `.7` stays on the one thing a checker can
+  actually do: re-derive a published **count** against a named producer field. Two mechanizable residues survive
+  and stay in `.7`'s design: the cross-surface disagreement signal from the fifth instance, which needs no producer
+  at all; and an optional registry field recording which prior adjudication a mechanism claim was checked against
+  — shape, not truth, which is what this repository's gates do well. Had that field existed, `.6a` would have had
+  to name `.6`'s commit body or write `none-found`, and the true account was in that body
   Fourth instance (`2026-08-28`, found by `STATUS-LEDGER-ROLLOVER.4a`'s alignment review, repaired in that
   commit as a `COMMIT.md` blocker): the drift `.6` corrected in `TOOLBOX.md` was also inside the claim
   registry itself. `current-claim-census-frozen`'s own **assertion** carried "56 exact evidence units",
@@ -597,7 +610,7 @@ the workflow through the mdBook and repository review path.
   Prerequisite: none; it blocks nothing today
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.10`
-  Status: `pending`
+  Status: `done` (`2026-08-30`)
   Goal: re-adopt the upstream standard, whose dropped rules would have caught this session's own defect
   Acceptance: directive 17 asks that the source standard be checked for updates after adoption. It had not
   been re-read since `.1`. Read `2026-08-29` at `/Volumes/SSD/Documents/github/pgen/docs/CLAIM_VERIFICATION.md`
@@ -624,6 +637,78 @@ the workflow through the mdBook and repository review path.
   checker, and `.7`'s scope decision becomes evidence-based instead of open
   Prerequisite: none; it blocks nothing mechanically, but it is the cheapest fix for the defect class `.7`
   is trying to gate
+  **Result (`2026-08-30`).** The source is unchanged since `.1` read it — mtime `2026-08-26`, SHA-256
+  `3ac26c365ed6b0c9c4f714fec8c952379ed02c5ac61bd4edcd5a60553de0f85c` — so the gap dates from the original
+  adoption rather than from an upstream revision, and only a re-reading could have found it. **The gap is larger
+  than this leaf predicted**: reading upstream section by section and probing each rule against every governed
+  claim surface found a set of absent normative rules, not three, now tabulated in `CLAIM_VERIFICATION.md` §11
+  with its local home per rule. Both statements are true under different denominators and the leaf is not
+  withdrawn: it named the three that had **already produced a recorded defect here**, which is the stronger
+  filter; §11 enumerates every upstream normative rule with no local home, adopted or explicitly refused. Nine
+  more rules were adopted alongside the three, the loudest being that a repository-derived constant is derived or
+  gated **never carried**, that a set claim carries its enumeration in both directions, and that a classifier is
+  derived from the producer rather than from a description of it — the last being `.9`'s defect stated as a rule.
+  **One adopted rule was already here, demoted.** ADR 0042's Context paragraph states the general form — a check
+  and the thing it checks must not share a parent — while the standard carried only the three instances that form
+  generates. A rule living as decision-record rationale while its examples live in the normative text is
+  under-specified for every reader who does not read ADRs; that is the preface rule the same reading adopted, so
+  the promotion is the correction and the ADR keeps the sentence as reasoning.
+  **The scoping error is recorded because the rule being adopted caught it in the same session.** The first
+  absence probe ran over `CLAIM_VERIFICATION.md` alone and returned zero hits for all fifteen distinguishing
+  terms. Concluding "absent locally" from it would have been a claim about the repository evidenced by data about
+  one file — Leg 1's granularity rule, and the sixth row of the §2 taxonomy, both adopted in this very commit.
+  Widening the probe to `TOOLBOX.md`, `COMMIT.md`, `DOCTRINE_ENFORCEMENT.md`, `AGENTS.md`, the pull-request
+  template, ADRs 0042/0044, and the mdBook enforcement chapter is what surfaced the ADR hit above. Every other
+  term stayed at zero across the widened set, and the remaining matches are unrelated word collisions
+  (`population` in a renaming-behaviour sentence, `revert` in a hook narrative, `container` in a formal-id route)
+  — a population classified before its size was published, per the rule adopted here.
+  **The count of adopted rules is published in exactly one place.** §11's table is the enumeration and the
+  authority; ADR 0042 and the fact card route to it rather than restating a number, because three synchronized
+  copies of one count is the defect Leg 1 now forbids and this commit is the first thing the rule applies to.
+  Deliberately not adopted, with reasons recorded in §11 so a later reading does not re-open each: the upstream
+  reference-deployment measurements (dated evidence about another project; local instances teach the same rules),
+  the five-architecture summary table (a third copy of a fact `README.md` and `DOCTRINE_ENFORCEMENT.md` already
+  carry), §5A's inline provenance-tag syntax (superseded by the executable registry and `[claim: <id>]`), and
+  adoption checklist items 1–5 (executed by `.0`–`.5`).
+  **Second self-catch, same session, different rule.** Drafting the resume pointer, the leaf wrote that the
+  `shipped_behavior` byte warning (`docs/book/src/pipeline/evidenceir.md`) was "untracked by any headroom leaf".
+  That is a set assertion — *nothing owns this* — and it is **false**: `LIVE-DOCUMENT-PRESSURE-HEADROOM`'s opening
+  pressure boundary table has carried that exact surface and file since `92e59c97`, along with the other four
+  warned axes. One `grep` refuted it, which is the whole content of the rule adopted here: a set claim is a census,
+  not an impression, and the enumerating command belongs beside it. Corrected before the pointer was committed.
+  Two independent self-catches in one adoption commit is not a coincidence worth celebrating — it is the measured
+  base rate of this defect class in ordinary work, and it belongs in `.7`'s and `.9`'s evidence.
+  **Census maintenance, and how the re-pointing was falsified rather than trusted.** The prepends shifted 13
+  frozen census regions off their line offsets, in two passes as the ledgers grew. Each was relocated by finding
+  its recorded region SHA-256 elsewhere in the same file rather than by re-hashing whatever now sits at the old
+  offset — the difference between moving a region and silently repointing it at unrelated text, which is `.8`'s
+  blank-line failure. The relocation is falsified by an invariant rather than trusted: within one pass, every
+  region in a file must shift by the **same** delta, because a prepend moves all of them equally. A region that
+  had matched a duplicate line elsewhere in the file would show a delta different from its file's; none did, in
+  either pass. Read the exact per-pass deltas from the commit diff — they are a property of this transaction, not
+  a durable fact, and the invariant is what carries. One region was not a shift at all —
+  `docs/knowledge/INDEX.md:3` moved 248 -> 249 cards — and it is `identity_gated`, so its verifier re-derives the
+  count and refreshing its digest re-affirms a gated value rather than carrying a new one. One new evidence row
+  was added for the new `CHANGES.md` head, which is exactly the per-slice growth `.8` owns.
+  **Mandatory ledger rollover, in-slice, on this tree's own precedent.** The rationale record took
+  `DEVELOPMENT_NOTES.md` past the 90% line rollover milestone — 1,659 -> 1,739 lines against a 1,900-line health
+  target, whose 90% signal is 1,710 — so the doctrine refuses the append unless the same change performs the
+  rollover. The question of whether that needs a separate owning tree was already adjudicated here: `.1` of this
+  tree performed a `DEVELOPMENT_NOTES.md` rollover in its own slice (`claim-verification-adoption-1-development-
+  notes-rollover-plan.jsonl`, segment 0008), and `2b9e8899` committed a slice and a `CHANGES.md` rollover
+  together. Same shape, no difference to name, so the earlier ruling wins and this is `.10`'s own transaction.
+  Sealed 22 whole records into `segment-0009-2026-08-30.md` (354 lines, 28,263 bytes), keeping the 11 newest
+  committed opening records plus this slice's prepend live over the exact 50-record migration suffix. Nothing was
+  trimmed, reordered, or rewritten. Result: 62 records / 1,384 lines / 182,781 bytes — 72.8% of the line target
+  and 73.1% of the byte target, both back under the 80% warning. The dry-run was exact before applying, and it
+  reported `future_prepends: 1`, which is how the in-flight record was proved to survive the cut rather than
+  assumed to.
+  Verification: `check_book_quantitative_claims.pl --check green at 39 book files / 321 candidates / 321 regions,
+  unchanged before and after the mdBook edit, which is the evidence the added chapter prose publishes no new
+  quantity; one frozen region re-pointed 547 -> 580 with its line SHA-256 unchanged; knowledge-map derive-and-diff
+  in sync at 271 facts / 2148 keys after one question-key collision with ADR 0042 was resolved in the fact card's
+  favour; fact-card catalog valid for 249 cards; doctrine gate`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.10 — re-adopt the upstream claim standard`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
   Status: `pending`
@@ -716,7 +801,8 @@ the workflow through the mdBook and repository review path.
 | 19 | `CLAIM-VERIFICATION-ADOPTION.5` | `done` | public workflow, independent audit, and selected full CI close the fifth architecture |
 | 20 | `CLAIM-VERIFICATION-ADOPTION.6a` | `done` | 28-consecutive-revision trajectory proves all four were already false inside `.6`'s own commit; withdrawn with producer fields named |
 | 21 | `CLAIM-VERIFICATION-ADOPTION.6b` | `done` | book chapter, fact card, and `TOOLBOX.md`'s last carried mdBook count now all route to `--report`; drift attributed per registry revision |
-| 22 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | six instances now; the gate that re-derives a published count against its producer is the only thing that can observe this class |
+| 22 | `CLAIM-VERIFICATION-ADOPTION.10` | `done` | upstream re-read section by section; absent rules adopted, refusals recorded, and `.7`'s open scope question answered |
+| 23 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | nine instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
 ## Decisions
 
@@ -1048,6 +1134,32 @@ was added; the stable-path remedy and its consumed authority are complete.
 - **DURABILITY:** ADR 0044, the self-bounded registry, checker, standard, and one doctrine-driver row are tracked;
   each verified record's stale check covers its exact artifact set, and the existing pre-commit/CI driver is the
   only wiring seam.
+
+## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.10`
+
+- [x] **REPRODUCE / MEASURE** — re-read `/Volumes/SSD/Documents/github/pgen/docs/CLAIM_VERIFICATION.md` section by
+  section (same volume, read-only, no copy taken; mtime `2026-08-26`, unchanged since `.1` read it), then probed
+  fifteen distinguishing terms for each upstream rule against every governed claim surface. The absent set and its
+  local homes are tabulated in `CLAIM_VERIFICATION.md` §11.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the local standard is a **restatement, not a copy**, so neither a byte diff
+  nor a digest comparison can answer directive 17's currency question, and nothing had re-read the source since
+  adoption. The gap therefore dates from `.1`, not from an upstream revision. One rule was present but demoted to
+  ADR 0042 rationale while the standard carried only the instances that rule generates.
+- [x] **ADDRESSED (verified)** — every absent rule is now normative in `CLAIM_VERIFICATION.md` (preface, new §2,
+  and the three legs), summarized for authors in `TOOLBOX.md`, taught in the mdBook enforcement chapter, and
+  recorded with its reading boundary and explicit non-adoption set in §11. ADR 0042 records the re-adoption
+  without changing what it decided.
+- [x] **NO REGRESSION** — no product code, doctrine authority, limit, or registry semantics changed. The mdBook
+  census re-derives to the same 39 files / 321 candidates / 321 regions before and after the chapter edit, which
+  is the evidence the added prose publishes no new quantity; the one frozen region that moved was re-pointed
+  547 -> 580 with its line SHA-256 unchanged. The mandatory `DEVELOPMENT_NOTES.md` rollover was applied as an
+  exact whole-record transaction with a dry-run proven exact first, and the rolling-ledger protocol reports all
+  four ledgers lossless afterwards.
+- [x] **GENERICITY** — every adopted rule is stated domain-free, per the preface rule adopted in the same pass;
+  no specification, vendor, protocol, corpus, or signal case appears in any of them.
+- [x] **LOCKSTEP** — standard, ADR, `TOOLBOX.md`, mdBook chapter, fact card, Knowledge Map projection, this tree,
+  the change and engineering ledgers, and the resume pointer all state the same re-adoption boundary, and the
+  count of adopted rules is published in exactly one place so the set cannot drift between them.
 
 ## Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.0`
 
@@ -1383,6 +1495,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-30` | `.10` | section-by-section re-read of the upstream standard; fifteen-term absence probe over `CLAIM_VERIFICATION.md` alone, then re-run over all governed claim surfaces; `check_book_quantitative_claims.pl --check` before and after the mdBook edit; knowledge-map derive-and-diff; `check_fact_card_catalog.pl --write`/`--check`; doctrine gate | source unchanged since `.1` (mtime `2026-08-26`), so the gap dates from the original adoption. The narrow probe returned zero hits for all fifteen terms in one file; **widening it to every governed claim surface changed the answer** — ADR 0042 already carried the general form as Context rationale. That is Leg 1's granularity rule catching its own adoption commit, and it is why the published set is scoped to "no home on any governed claim surface" rather than "absent from the standard". Remaining matches classified as unrelated word collisions before publishing. Book census **321/8/89/224 unchanged** across the edit; one region re-pointed 547 -> 580, line SHA-256 identical; Knowledge Map 271 facts / 2148 keys after one question-key collision was resolved in the fact card's favour; catalog valid for 249 cards |
 | `2026-08-30` | `.6b` correction | re-derived the move count and staleness window from `git show <rev>:doctrine/claim_verification/book_quantitative_claims.jsonl` across its 31 revisions, with commit timestamps | `.6b` published "**seven** registry changes" and "stale for **twelve days**". Both wrong: **six** moves, and the chapter stayed *correct* until `4dac5642` (`2026-08-27 02:14`), repaired at `2b9e8899` (`2026-08-29 22:23`) — **two days and twenty hours** stale. The twelve-day span was writing-to-settling, substituted for staleness. Every other figure in the finding re-derives; corrected on all four live surfaces and logged as `.7`'s ninth instance |
 | `2026-08-29` | `.6b` correcting `.6a` | outcome/row census of `current_claim_census.jsonl` at `fdda3c53` and `5fe81128` from Git blobs | both revisions hold **59** evidence rows and **5** `CHANGES.md` rows, differing by exactly **one removed / one added**. `.6a`'s published mechanism ("sealed 18 while adding 2") is **false**; the total held because one retirement cancelled one addition. Every number `.6a` published re-derives and the withdrawal stands. Recorded as `.7`'s seventh instance: a count-only gate passes a false mechanism |
 | `2026-08-29` | `.6b` | outcome census over 31 registry revisions of `book_quantitative_claims.jsonl`; `check_book_quantitative_claims.pl --check`/`--report`/`--produce`; `check_current_claim_census.pl --check`; knowledge-map derive-and-diff; fact-card catalog; doctrine gate | the book's `regions=307/8/78/221` was **correct when written** at `be3b12e6` (`2026-08-16`) and then moved **six times** to 321/8/89/224 by `fdda3c53`, going stale at the first of those (`4dac5642`, `2026-08-27`) and repaired at `2b9e8899` — stale for two days and twenty hours; "56 exact evidence units" was correct at `50775894` and false from `e6f5012d`. Both withdrawn and routed to `--report`, the fact card retitled, and `TOOLBOX.md`'s last carried mdBook count withdrawn for consistency. Post-edit re-derive: **321/8/89/224 unchanged**, 39 book files / 21 candidate files. One frozen region re-pointed 540 -> 547. For `.9`: the chapter held **5** candidate lines in 557 and none was a drifted one — `units` and backticked `key=value` are both outside the grammar |
@@ -1458,6 +1571,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
+| `.10` | `CLAIM-VERIFICATION-ADOPTION.10 — re-adopt the upstream claim standard` | absent upstream rules made normative; non-adoption recorded with reasons; `.7` scope settled to counts; mandatory `DEVELOPMENT_NOTES.md` rollover to segment 0009 |
 | `.1` | `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract` | normative scope, ADR 0042, discovery, authoring/review contract, and mdBook alignment |
 | `.1a` | `CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity` | tracked measurement, ADR 0043, exact authority, stable explicit topology |
 | `.1b` | `CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority` | one-use authority removed after the 21-file profile became baseline |
@@ -1483,6 +1597,29 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-30`: closed `.10`. Re-read the upstream standard section by section, which directive 17 requires and
+  which nothing had done since `.1`. The source had not moved, so the gap was original to the adoption — and it is
+  wider than `.10` predicted: the leaf named the three rules that had already produced a recorded defect here,
+  while the reading found a larger set with no home on any governed claim surface, now enumerated in
+  `CLAIM_VERIFICATION.md` §11 with each rule's local home. Both statements hold under different denominators, so
+  the leaf's own text stands. Adopted: the taxonomy of what each check class still permits and its general form, the
+  illustration rule, the set-enumeration rule in both directions, the project-history oracle, deriving classifiers
+  from the producer, revert-and-re-apply attribution, granularity matching, one derived source over N copies,
+  derived-or-gated-never-carried, the unwatched-number rule, and the domain-free statement rule. Recorded four
+  deliberate refusals with reasons. One rule was already here but demoted to ADR 0042 rationale while the standard
+  carried only its instances; promoted, with the ADR keeping the sentence as reasoning. The first absence probe was
+  scoped to one file and would have published a claim about the repository on evidence about that file — the
+  granularity rule being adopted in the same commit — so it was widened before anything was published, which is
+  what found the ADR hit. `.7`'s open scope question is answered and it **narrows**: a claimed mechanism is a
+  review obligation under the now-normative illustration rule, because no checker can decide whether two accounts
+  predict the same observation; the gate stays on counts, keeping the cross-surface disagreement signal and an
+  optional prior-adjudication field as its mechanizable residues.
+- `2026-08-30`: `.10` performed the mandatory `DEVELOPMENT_NOTES.md` rollover in its own slice. The rationale
+  record crossed the 90% line milestone, and this tree's `.1` had already adjudicated the same shape by rolling
+  the same ledger inside its own slice; `2b9e8899` did the equivalent for `CHANGES.md`. Segment
+  `development-notes-0009` seals 22 whole records; the live root returns to 62 records / 1,384 lines, under the
+  80% warning on every dimension. The dry-run was proven exact before applying and reported `future_prepends: 1`,
+  which is how the in-flight record was shown to survive the cut rather than assumed to.
 - `2026-08-29`: opened `.6a`. Re-derived `TOOLBOX.md`'s census sentences against their producers at
   `c1609558` and found four of the eight counts `.6` recorded as "confirmed unchanged" no longer hold
   (`6 registered` -> 5; closure `86/51/35` -> `72/50/22`); the other four and the provenance sentence are

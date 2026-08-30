@@ -167,6 +167,8 @@
   > did SB USB and USB4 survive as USB4 Connection Manager interface signals
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > did SpecForge re-adopt the upstream claim-verification standard after ADR 0042
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > did a clean clone prove corpus task continuation after migration
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
@@ -295,5 +297,3 @@
   > does SemanticIR preserve SWD protocol provenance and order
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > does SpecForge classify Markdown inside the FSMGen submodule

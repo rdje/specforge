@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > what eval-extraction tasks score the SWD surfaces
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > what exact semantic delta does the at least timing variant produce
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > what extraction approach does SWD/ADI need
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > what falls outside Docling's segmented bounding boxes on a page
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what field holds the constrained signal name (signal_name vs subject_signal)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -287,13 +297,3 @@
   > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > what is the LTL form of a temporal_rule
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what is the NLI entailment verifier

@@ -4,7 +4,7 @@ title: Actionable published claims require three dimensionally different verific
 date: 2026-08-15
 status: accepted
 scope: claims, verification, doctrine, review, continuity, currentness
-evidence: CLAIM_VERIFICATION.md; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md; COMMIT.md; TOOLBOX.md; .github/PULL_REQUEST_TEMPLATE.md
+evidence: CLAIM_VERIFICATION.md; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md; COMMIT.md; TOOLBOX.md; .github/PULL_REQUEST_TEMPLATE.md; CLAIM_VERIFICATION.md §11
 reverify: "rg -n 'Published-claims:|Re-derive|falsif|durab' CLAIM_VERIFICATION.md COMMIT.md TOOLBOX.md .github/PULL_REQUEST_TEMPLATE.md; perl scripts/check_canonical_collection_catalogs.pl --check; bash scripts/check_doctrines.sh"
 answers:
   - "what is ADR 0042"
@@ -15,6 +15,7 @@ answers:
   - "how are stochastic claims published"
   - "why is repeating the same check not independent verification"
   - "what should an auditor do when re-derivation disagrees with a published value"
+  - "did SpecForge re-adopt the upstream claim-verification standard after ADR 0042"
 ---
 
 # ADR 0042: Actionable published claims require three dimensionally different verification legs
@@ -97,6 +98,21 @@ the current-surface and mdBook quantitative censuses expose silent or incomplete
 binds exact known-bad evidence; ignored or untracked producer candidates fail; and the mdBook teaches the author
 and auditor workflow. This status records implementation of the decision without changing its scope or the
 deliberate boundary that registry validity alone cannot prove semantic truth.
+
+`CLAIM-VERIFICATION-ADOPTION.10` (`2026-08-30`) re-read the upstream source that directive 17 requires be checked
+for updates. The source had not moved since adoption, but the local standard is a restatement rather than a copy,
+and a section-by-section reading found a set of upstream normative rules with no home on any governed claim
+surface — enumerated in `CLAIM_VERIFICATION.md` §11, and including the taxonomy of what each check class still permits, the rule that evidence consistent with both
+hypotheses has illustrated rather than tested, and the rule that the cheapest falsification oracle is the project's
+own adjudicated history. Each is now normative in `CLAIM_VERIFICATION.md`, and §11 records the reading boundary
+plus the upstream material deliberately left upstream, so the next check starts from a boundary rather than from
+scratch.
+
+One of them was already present here, demoted: this ADR's own Context paragraph states the general form —
+a check and the thing it checks must not share a parent — while the standard carried only the three instances that
+form generates. A rule living as ADR rationale while its examples live in the normative text is under-specified for
+every reader who does not read ADRs, which is why §2 now states the form and this paragraph keeps the reasoning.
+This re-adoption changes what the standard says, not what this decision decided.
 
 ## Links
 

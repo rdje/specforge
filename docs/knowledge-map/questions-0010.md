@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > what is the LTL form of a temporal_rule
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what is the NLI entailment verifier
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is the NVMe register-field recall / precision
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
@@ -40,6 +50,8 @@
   > what is the canonical declared signal inventory key on SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > what is the canonical knowledge-map architecture path
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > what is the cheapest falsification oracle available in this repository
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > what is the claim verification registry schema
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -285,15 +297,3 @@
   > what structural surfaces discriminate document class
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what table structure is required before port or pin vocabulary grants signal authority
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what task does the current trajectory controller rank next
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > what temporal logic backs temporal_rules
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what was the HBM2 canonical promotion pilot result
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what was the must_be_value recall gap and how was it closed
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what were the initial 17-document held-out relation outcomes

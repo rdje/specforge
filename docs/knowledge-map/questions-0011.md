@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what task does the current trajectory controller rank next
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > what temporal logic backs temporal_rules
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what was the HBM2 canonical promotion pilot result
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what was the must_be_value recall gap and how was it closed
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what were the initial 17-document held-out relation outcomes
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > what would re-ingesting the corpus cost
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
@@ -14,6 +26,8 @@
   > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > when does presence capture refuse a row vs the whole table
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > when has a falsification leg illustrated instead of tested
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > when is a bracket-slice leading token a field name
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -34,6 +48,8 @@
   > when should message fields join the document class census
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > when should the activate-only ExtractionProfile consume contract be built
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > when was the upstream claim-verification standard last re-read
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > where are Docling models stored for SpecForge
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -256,6 +272,8 @@
   > where is the tiling-gated register bit recovery implemented
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > where is the trailing function-word strip in consolidate_trailing_fragment
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > where is the upstream claim-verification source
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > where is the weak-phrase / NASA ARM ambiguity detector
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
@@ -280,21 +298,3 @@
   > which IntentIR surfaces are lowered to the .isf vs silently dropped
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > which LLM or VLM does SpecForge use
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which Markdown files must the live-document containment registry cover
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > which PDF task history ids exist only as tree-relative shorthand
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > which SWD protocol facts are safe to lower today
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SourceIR and EvidenceIR paths serialize repository relative
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree is next at the live document warning
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree now requires bounded evidence containment
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > which architecture owns work and which one verifies published claims
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > which behavioral genericity transforms cover rich PDF capture

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > what ISF form does SpecForge use for a bounded-eventually contract
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > what ISF idiom describes states and input-driven transitions
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what architecture contains an oversized active task tree
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > what architecture contains the active CORPUS-COVERAGE task tree
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
@@ -105,6 +113,8 @@
   > what changed between stale and current OpenCAPI Ready Definition artifacts
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > what changed between the persisted source_ir and a fresh ingest
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > what class of defect does a given check still permit
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > what confidence axis correlates with extracted-constraint correctness
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -287,13 +297,3 @@
   > what does uncaptured_normative_statement_ids do
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > what dominates the source_ir.json size (content_elements? page_artifacts?)
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > what eval-extraction tasks score the SWD surfaces
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > what exact semantic delta does the at least timing variant produce
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > what extraction approach does SWD/ADI need
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > what falls outside Docling's segmented bounding boxes on a page

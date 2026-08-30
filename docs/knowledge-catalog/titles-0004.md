@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md) | 2026-08-14 | `current` | Proof-bearing chains must validate each stage before building its consumer |
 | [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md) | 2026-08-29 | `current` | The persisted corpus's proof seal is censused totally and probed read-only at gate tier |
 | [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md) | 2026-06-07 | `current` | Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern |
 | [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md) | 2026-06-08 | `current` | Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule |
@@ -60,4 +61,3 @@
 | [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md) | 2026-08-09 | `superseded` | Convergence snapshots retain and count the exact four SWD protocol collections |
 | [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md) | 2026-06-07 | `current` | The SWD/JTAG protocol FSM is a typed surface (ProtocolStateRecord) — states extracted from "<State> state"… |
 | [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md) | 2026-08-09 | `superseded` | SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly |
-| [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md) | 2026-06-07 | `superseded` | SWD serial-frame fields are a distinct typed surface (SerialFrameField), double-gated to serial docs + frame… |

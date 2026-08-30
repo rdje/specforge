@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which Markdown files must the live-document containment registry cover
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > which PDF task history ids exist only as tree-relative shorthand
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > which SWD protocol facts are safe to lower today
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SourceIR and EvidenceIR paths serialize repository relative
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which active task tree is next at the live document warning
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which active task tree now requires bounded evidence containment
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > which architecture owns work and which one verifies published claims
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > which behavioral genericity transforms cover rich PDF capture
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > which boot-volume Rust directories are allowed
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
@@ -150,6 +168,10 @@
   > which tree owns the empty-catalog grounding filter defect
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > which units mark a timing record as decibel domain
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification material is deliberately not adopted
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > which validate metrics/finding surface channel membership
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -275,25 +297,3 @@
   > why did APB unexplained_intent_bearing_tables go to zero
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why did Arm Debug lose twelve reviewed register facts
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > why did Arm Debug register access disappear before EvidenceIR
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > why did DL disappear from the OpenCAPI Certified Definition
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why did FSMGen pin a51dcdad0 reject SpecForge manager.isf with isf_ambiguous_rule_transaction_drive_priority on AWSNOOP
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > why did ISF renderability fall from 44 to 17
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why did IntentIR proof verification fail after I validated SemanticIR

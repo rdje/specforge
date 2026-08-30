@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > does SpecForge classify Markdown inside the FSMGen submodule
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > does SpecForge cycle-schedule the FSM (no — FSMGen does)
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
@@ -295,5 +297,3 @@
   > how are different health and ceiling file counts declared
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how are doctrines enforced in specforge
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > how are document keys in the source PDF registry derived from filenames

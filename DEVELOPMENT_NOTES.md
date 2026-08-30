@@ -1,4 +1,84 @@
 # DEVELOPMENT_NOTES
+## CLAIM-VERIFICATION-ADOPTION.10 (`2026-08-30`) — a restatement cannot be diffed, so it must be re-read
+
+Directive 17 asks that the adopted standard be checked for updates. The obvious reading of that is a diff, and
+the obvious reading is unavailable here: `CLAIM_VERIFICATION.md` is a **restatement** of
+`/Volumes/SSD/Documents/github/pgen/docs/CLAIM_VERIFICATION.md`, not a copy of it. It is shorter, reorganized,
+and carries local registry and gate sections the source has no counterpart for. A byte diff between the two says
+nothing; a digest comparison says only whether the *source* moved, which is a different question from whether the
+local standard still carries what the source teaches. Nothing had re-read it since `.1` published the local one.
+
+Read section by section, the source had indeed not moved — and the local standard was missing a set of its
+normative rules anyway. That is the durable finding: **the gap dated from the original adoption**, so a currency
+check built on "has the upstream changed?" would have returned green every time it ran, forever. The only
+instrument that could observe this class is a reading. `CLAIM_VERIFICATION.md` §11 now records the reading
+boundary — source path, mtime, digest, date, and the previous reading — so the next check starts from a boundary
+instead of from scratch, and §11's table is the single authority for which rules were adopted and where each one
+lives.
+
+The leaf predicted three absent rules; the reading found more. Both are true and the prediction is not withdrawn,
+because they count different things. The leaf named the three that had **already produced a recorded defect in
+this repository** — the taxonomy of what a check still permits, the illustration rule that `.6a` broke, and the
+project-history oracle that `.6a` skipped while the true account sat in `.6`'s commit body. §11 enumerates every
+upstream normative rule with no local home, whether or not it has bitten here yet. Publishing the larger number
+as a correction of the smaller one would have been the auditor's asymmetry defect the standard already warns
+about, one level up: the newer instrument is not automatically authoritative over the thing it contradicts, and
+here neither is wrong.
+
+### The adoption caught itself, which is the part worth keeping
+
+The first absence probe ran fifteen distinguishing terms over `CLAIM_VERIFICATION.md` alone and returned zero
+hits for every one of them. That is a clean, reproducible, entirely misleading result. The claim it was about to
+support — "these rules are absent from this repository" — is a claim about the repository, and the evidence was
+about one file inside it. That is Leg 1's granularity rule and the sixth row of the new §2 taxonomy, both being
+adopted in the same commit that nearly violated them.
+
+Widening the probe to every governed claim surface changed the answer. ADR 0042's Context paragraph already
+carried the general form — *a check and the thing it checks must not share a parent* — while the standard carried
+only the three instances that form generates. So one adopted rule was not absent from the repository at all; it
+was **demoted**, living as decision-record rationale where a reader who does not read ADRs never meets it. That
+is precisely the failure the preface rule names: a rule stated only through its examples is a rule only its
+author can apply. The fix is promotion, and the ADR keeps the sentence as the reasoning that produced the
+decision.
+
+The widened probe's remaining matches were unrelated word collisions — `population` in a renaming-behaviour
+sentence, `revert` in a hook narrative, `container` in a formal-id route. Classifying them before publishing a
+count is the mirror half of the set rule adopted here: a search returning N hits is a population, not a count of
+defects. And the count of adopted rules is published in exactly one place, because three synchronized copies of
+one number is the defect Leg 1 now forbids, and this commit is the first thing that rule applies to.
+
+It happened twice. Drafting the resume pointer for this same commit, the note "untracked by any headroom leaf"
+went next to the `shipped_behavior` byte warning. That is a set assertion — *nothing owns this* — and one `grep`
+refutes it: `LIVE-DOCUMENT-PRESSURE-HEADROOM`'s opening pressure boundary table has carried
+`pipeline/evidenceir.md` on that exact axis since `92e59c97`, together with the other four warned axes. The
+correction cost seconds; the uncorrected sentence would have sent a future session to open a duplicate headroom
+leaf for work already owned.
+
+Two self-catches in one adoption commit, on two different adopted rules, is worth recording as a rate rather than
+as a pair of anecdotes. Both defects are cheap to make, both produce confident and reproducible-looking prose, and
+neither is visible to any gate this repository has. That is the argument for the rules being normative rather than
+advisory, and it is why both instances are logged into `.7`'s and `.9`'s evidence instead of being quietly fixed.
+
+### Why `.7` narrows instead of widening
+
+`.7`'s seventh instance left a real question open: a gate that re-derives a published *count* would have passed
+all three of `.6`/`.6a`'s sentences, because none of them is a count. Does `.7` therefore have to reach a claimed
+**mechanism**?
+
+No, and now for a stated reason rather than by omission. Making the illustration rule normative puts the
+mechanism obligation somewhere a checker cannot go: deciding whether two accounts predict the same observation is
+a judgment about hypotheses, not a property of text, and a checker that tried would either pass everything or
+invent a classifier of exactly the kind Leg 2 forbids deriving from a description. So the obligation belongs to
+the reviewer workflow, where it is now normative, and `.7` keeps the one job mechanization does well: re-derive a
+published count against a named producer field.
+
+Two mechanizable residues survive and stay in `.7`'s design. The cross-surface disagreement signal from the fifth
+instance needs no producer at all — two governed regions stating different values for one quantity is observable
+on its own. And an optional registry field recording which prior adjudication a mechanism claim was checked
+against is shape, not truth, which is the kind of thing this repository's gates enforce well. Had that field
+existed, `.6a` would have had to name `.6`'s commit body or write `none-found` — and the true account was in that
+body.
+
 ## SPEC-TO-INTENT-ALIGNMENT.8c (`2026-08-27`) — a residual for the region, not only for the record
 
 `residual_decisions` explains a record the pipeline refused. It has never been able to explain a source region
@@ -246,361 +326,6 @@ That distinction lets the outer census consume a durable exact map without repea
 future repair can select one incomplete line, earn its evidence, and change exactly that region. Until then, the
 claim gate, fact card, and book all expose the missing re-derivation, independent falsification, and durability
 instead of using a green mapping checker as a semantic oracle.
-
-## CLAIM-VERIFICATION-ADOPTION.3b.3.2 (`2026-08-15`) — scope is exact, uncertainty stays visible
-
-Quantitative syntax cannot decide whether a line is a current product promise, an authored limit, a worked
-example, an identity literal, or a revision-bounded observation. The adjudication therefore uses one exact line
-per region and defaults a present-tense actionable assertion to all three evidence legs missing. Only the
-workflow-capacity subsection had an existing verified claim whose assertion and artifacts matched its numbers;
-no broad book-currentness check was allowed to stand in for the remaining lines.
-
-The first complete replay also demonstrated why bounds must keep their dimensions. `max_records` controls the
-JSONL sequence, whereas `max_array_items` controls arrays nested inside one record. Treating the sequence as an
-array passed inventory and failed only when exact regions arrived. A positive fixture now places more records
-than the nested-array limit while remaining below the record limit, so future refactoring must preserve the
-distinction.
-
-## CLAIM-VERIFICATION-ADOPTION.3b.3.1 (`2026-08-15`) — executable denominators beat transient estimates
-
-The tracked parser found 304 candidate lines where the design-time shell census had recorded 301. Replaying the
-same frozen grammar against the parent revision produced 304 again, proving that no implementation or book edit
-created the delta. The provisional scan itself was neither tracked nor retained, so its undercount cannot be
-more narrowly reconstructed; treating it as authority would make an irreproducible estimate control coverage.
-
-The inventory contract therefore binds membership sources, the frozen grammar, and the executable denominator
-in one check. Its `inventory` phase rejects semantic regions, while `frozen` requires exact-once coverage and
-validates each authority join. That phase split lets adjudication inspect a stable worklist without giving hard
-findings permission to change the worklist.
-
-## CLAIM-VERIFICATION-ADOPTION.3b.3.0 (`2026-08-15`) — syntax discovers; authority adjudicates
-
-A title anchor cannot represent quantitative book coverage, but scanning every digit would confuse dates,
-versions, paths, schema tokens, and examples with current claims. The bounded design uses a higher-signal lexical
-grammar only to create review obligations: prose percentages, fractions, and numeric dimensional units. Fenced
-code is removed before discovery because executable examples have their own doctest authority.
-
-Every discovered line must then belong to one exact non-overlapping region whose semantic outcome is explicit.
-Current actionable regions need a derived/identity verifier, current claim id, or honest missing legs; excluded
-regions retain authored, example/identity, or dated-evidence authority. Inventory, adjudication, and result freeze
-are different leaves so neither the denominator nor the schema can be tuned to make a difficult finding vanish.
-
-## CLAIM-VERIFICATION-ADOPTION.3b.2 (`2026-08-15`) — policy identity and measured capacity are different
-
-The workflow surface is not one homogeneous claim. Its first-line pull-request-template anchor identifies an
-authored normative collection, while the capacity paragraph in `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` makes a
-repository-derived assertion. Treating the title as evidence for the number would give both the wrong region and
-the wrong authority class.
-
-The measured paragraph already has one complete authority: `workflow-standard-capacity-profile`. Its producer
-reads explicit membership and Git history; its controls challenge the strict boundary and catalog/target-array
-alternatives; its stale gate binds the inputs. The census repair can therefore reference that record directly
-and leave the authored title outside claim scope, without storing another copy of the result.
-
-## CLAIM-VERIFICATION-ADOPTION.3b.1 (`2026-08-15`) — reuse route authority at its exact boundary
-
-The maintained-reference gaps did not reveal missing enforcement. README routing already derives its registered
-destinations; the fact-card plane already derives its routed index and title parts; and the canonical collection
-checker already derives the FSMGen issue-packet catalog. Each producer has a controlled failure suite, so adding
-another manifest or checker would create a second authority without improving discrimination.
-
-The eventual census repair will therefore classify each title as document identity and attach a separate
-identity-gated route region to the corresponding producer. That boundary is deliberate: complete navigation can
-prove that every member is reachable, but cannot prove that every statement in every member is currently true.
-
-## CLAIM-VERIFICATION-ADOPTION.3b.0 (`2026-08-15`) — surface identity is not assertion truth
-
-The five incomplete records all use a first-line title as their region. That is a legitimate deterministic
-review anchor, but it cannot carry one authority across three different questions: whether routes enumerate the
-right files, whether authored policy is in force, and whether quantitative prose still matches source state.
-
-The repair therefore follows evidence lineage. Existing README and catalog checks may prove exact navigation
-membership, but not member semantics. The workflow title remains authored policy while its one actionable
-capacity paragraph joins the already verified 14 / 4 / 21 claim. The mdBook gets a bounded exact-region
-quantitative contract because its selective current-truth checker cannot honestly stand for every number in the
-manual. Result identities change only once, after those independent repairs are complete.
-
-## CLAIM-VERIFICATION-ADOPTION.3a.2 (`2026-08-15`) — views need evidence, not only declarations
-
-The inventory contract declared five views, but its first producer key was surface + path + line. A surface that
-belonged to two views therefore emitted only the first anchor: surface coverage passed while semantic-view
-coverage could remain empty. The result freeze fixed the key before accepting any finding and added an
-independent frozen-phase requirement that every required view own at least one exact evidence unit.
-
-The final classifications deliberately preserve uncertainty. Existing projection/currentness authorities earn
-11 derived and four identity-gated units; four explicit publication tags join the claim registry; authored
-intent, navigation, dated evidence, and normative policy account for 27 exclusions. The remaining five broad
-current-reference/baseline surfaces are incomplete because a title anchor cannot establish three-leg coverage
-for every actionable assertion below it. `.3b` receives those exact keys instead of permission to rewrite the
-other 46 units.
-
-## CLAIM-VERIFICATION-ADOPTION.3a.1 (`2026-08-15`) — measure before adjudicating
-
-A current-claim migration cannot define its denominator while repairing its own findings. The inventory contract
-therefore derives lifecycle eligibility from the live surface registry, records one inclusion/exclusion
-disposition for every current surface, and keeps evidence records forbidden while its phase is `inventory`.
-`.3a.2` must change that phase only after every included surface has an exact adjudicated evidence unit.
-
-Region identity uses one-based line ranges plus a hash of the exact bytes. This is intentionally stricter than a
-free-form marker: moving or rewriting the assertion invalidates the result. Authority is a separate join—direct
-argv producer/input execution for derived or identity-gated evidence, a known non-superseded claim ID for
-registered evidence, and explicit missing-leg or exclusion reasons for the two honest non-verified outcomes.
-The producer supplies deterministic surface-review anchors and already-known authority candidates; it does not
-pretend that candidate generation is semantic adjudication.
-
-## CLAIM-VERIFICATION-ADOPTION.2 (`2026-08-15`) — executable evidence needs two closed joins
-
-A digest alone can preserve the wrong producer, while an always-green command can rerun against incomplete input
-identity. The registry therefore closes both joins: every source/control command names a tracked producer and
-explicit inputs that must occur in the exact artifact set, and the stale check must cover that whole set. The
-gate then executes the commands and independently compares the identities.
-
-Commands are argv arrays rather than shell strings. That keeps the registry declarative and reviewable: adding a
-record cannot smuggle quoting, redirection, expansion, or a pipeline into the gate. It also makes the honest limit
-clear. Closed membership catches declared dependency drift; `.3` and `.4` still have to audit whether an author
-omitted a semantic dependency or chose a non-discriminating control.
-
-## CLAIM-VERIFICATION-ADOPTION.1b (`2026-08-15`) — authority is a transaction, not stored permission
-
-Once the 21-file profile is committed, its prior 16-file state remains visible in Git and ADR 0043 remains the
-derivation authority. Keeping the increase row would add no evidence; it would leave reusable permission in the
-live registry. Removing that exact row immediately separates historical rationale from current mutation power.
-
-## CLAIM-VERIFICATION-ADOPTION.1a (`2026-08-15`) — capacity follows measured change shape
-
-The 14/16 warning was real, but it did not imply that workflow policy needed a new topology. Stable explicit
-paths are part of the review contract, the external-membership catalog remains small at the full candidate
-profile, and the registry independently permits 32 targets. The binding dimension was only member count.
-
-Git addition dates provide the repeatable normal-update unit: the largest active day added four standards. The
-smallest profile holding 14 below warning and 18 below rollover is 21, because 20 leaves 18 exactly at the strict
-90% boundary. Keeping the equation and a controlled reproducer in the repository makes the next warning a prompt
-to remeasure growth, not an excuse to reuse 21 as a permanent entitlement.
-
-## CLAIM-VERIFICATION-ADOPTION.1 (`2026-08-15`) — independence is a property of evidence lineage
-
-“Different command” is not the same as different evidence. A check fails to falsify when its classifier,
-allocation rule, or source interpretation descends from the same parent as the claim producer. The local
-contract therefore requires a named competing hypothesis and an observation that separates it, plus a tracked
-known-bad case that makes the control go RED.
-
-The publishing marker is scope-based rather than path-based. Normative code or policy can legitimately declare
-no actionable current claim, while a one-line docs edit to a score or status cannot. That distinction avoids
-turning every literal into provenance ceremony without preserving a docs-only escape hatch for stale numbers.
-
-## DECISION-RECORD-CAPACITY-HEADROOM.2 (`2026-08-15`) — couple every downstream authority
-
-A decision-file capacity change is not local: each additional file is also a possible answers-bearing Knowledge
-Map fact. The implementation therefore changes the file, fact, and question-key authorities together and makes
-both arithmetic joins executable. A mutation that changes only one registry now fails at the catalog boundary.
-
-The 512-key rounding quantum matters even when current content remains far below it. Multiplying 393 facts by
-eight yields 3,144 keys, but 3,144 would invent a new registry step; 3,584 is the next existing quantum and stays
-under the portable 4,096-key hard cap. This preserves both bounded portability and future deterministic review.
-
-## DECISION-RECORD-CAPACITY-HEADROOM.1 (`2026-08-15`) — changed inputs, same derivation
-
-The 44-file profile was not wrong; it was sized from 30 files and a nine-file peak. The population changed.
-Including ADR 0041 itself, 43 current files require a minimum of 58 slots to preserve the same warning/rollover
-contract. This keeps capacity review empirical: a future warning re-runs the trajectory rather than treating 58
-as a permanent entitlement.
-
-The fact plane makes the decision count nonlocal by design. Fifty-eight files imply 57 answers-bearing decision
-slots, so 336 card slots become 393 total facts and the next 512-key quantum is 3,584 question keys. The existing
-projection already funds that shape. Moving records or raising portable hard caps would add risk without solving
-a measured problem.
-
-## CLAIM-VERIFICATION-ADOPTION.0 (`2026-08-15`) — repeated checking is not independent evidence
-
-SpecForge already has many strong ingredients: exact derived-state contracts, deterministic projections,
-controlled mutation self-tests, and one doctrine driver. They do not yet answer the per-claim question “which
-source command reproduced this, which different oracle could make it false, and what tracked dependency makes it
-stale?” The adoption therefore joins those existing mechanisms through a bounded claim registry instead of
-inventing a second enforcement stack.
-
-The census governs actionable current claims, not raw digit syntax. Dates, versions, schema ids, examples,
-authored priorities, and immutable dated evidence have different authority classes. Reusing an old measurement as
-current creates a new claim and triggers the three-leg contract. This boundary keeps the later sweep complete
-without turning every numeric token into ceremonial metadata.
-
-## SPEC-CLARIFICATION-LOOP.2 (`2026-08-15`) — equivalence is declared, not guessed
-
-Question minimization must not become a second semantic extractor. The planner therefore groups only an explicit
-producer-owned equivalence key and rejects a family whose revision, missing-information class, or answer schema
-disagrees. It never clusters diagnostic prose. This makes deduplication reproducible and keeps semantic authority
-at the governed producer boundary.
-
-Autonomy is also structural. A need whose producer supplies an executable governed action becomes an action, not
-a prompt; every dependent need waits for that action and a fresh plan. Blocking classification is conservative
-over the undirected dependency component so no dependency escapes into another packet. Information gain uses
-only blocking reach, affected surfaces, alternatives, and full-pipeline blockage.
-
-Rust 1.95's Clippy newly suggested replacing three explicit proof-persistence error branches with `?`. Those
-branches intentionally route test/test-support artifacts through typed mutation authorization; replacing them
-would remove that behavior. Narrow reason-bearing lint exceptions preserve the design while restoring the
-warning-denied gate.
-
-## SPEC-CLARIFICATION-LOOP.1 (`2026-08-15`) — feedback is evidence, not an oracle
-
-The durable boundary is two-layered. An immutable question definition says exactly what is unresolved and binds
-that meaning to current source/artifact/ruleset digests; mutable lifecycle state can then advance without changing
-what the user answered. Answer revisions and question dependencies use exact definition/content hashes, making
-stale feedback detectable and resume deterministic.
-
-Authority must follow what the response actually contributes. A pointer to overlooked PDF content earns ordinary
-source proof after re-resolution. A new document must enter governed capture first. Only a genuine configuration
-choice may eventually become an external-decision proof premise, narrowly scoped by a registered rule. A generic
-`UserAnswer` premise would incorrectly turn all three into the same kind of truth and was rejected.
-
-The schema intentionally implements no “accepted answer” capability. Current compatibility means only that the
-envelope is structurally eligible for validation; even an accepted lifecycle label has
-`permits_canonical_authority() == false`. `.4` must create an in-memory validation witness, and `.5` must translate
-that witness through the authority-specific proof path before replaying only affected descendants.
-
-## SPEC-CLARIFICATION-LOOP.0 (`2026-08-15`) — autonomous-first interaction boundary
-
-The useful boundary is not “human in the loop everywhere.” That would destroy throughput and make results depend
-on operator patience. SpecForge should exhaust governed autonomous work first, continue unaffected branches, and
-ask only when a missing premise blocks valuable downstream intent. Questions must therefore be deduplicated,
-dependency-ordered, grouped, and ranked by blocking impact and expected information gain.
-
-The opposite mistake is treating an answer as an oracle. A user may provide a design choice, point to overlooked
-source evidence, resolve a genuine specification ambiguity, or simply be wrong. The answer needs its own typed
-authority/currentness/consistency boundary and must enter the proof graph as provenance-bearing evidence. Minimal
-dependency replay then gives the feedback loop its efficiency: invalidate exactly what depended on the answer,
-retain unrelated current facts, and preserve crash-safe status across the exchange.
-
-The new task tree separates this from the existing weak-phrase detector. That detector remains a flag-only input;
-the clarification program owns question planning, interaction, validated answer ingestion, transactional resume,
-and end-to-end assisted PDF-to-FSMGen-ISF qualification.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v (`2026-08-15`) — bounded production-genericity signoff
-
-The final claim is deliberately narrower than “SpecForge is complete.” The production core is now signed off as
-specification-instance-neutral within the governed boundary: its 168 registered proof rules and full compiled
-information-flow surface pass the unconditional structural doctrine and 27 adversarial controls, while
-conformance independently exercises document identity, source-symbol alpha renaming, reviewed paraphrase/layout,
-semantic negatives, held-out inputs, and the complete reviewed population. Conformance labels, expected results,
-fixture identity, and review authority cannot flow back into core.
-
-Behavioral evidence retains denominators instead of collapsing them into one optimistic boolean. Thirty-five
-completed held-out relations pass, zero fail, 16 are unmeasurable because the input exposes no eligible opaque
-alpha surface or is vacuous, and zero are invalid. The clean 12-source / 48-stage population remains 39/0/1
-IntentIR TP/FP/FN with 42/42 provenance, 117/118 conservation, zero fabrication, and one APB canonical miss.
-Required-modality capture is 12/14, modality-document accounting is 5/12, source disposition is 7/14, and
-residual actionability is 4/24. These limits are product work, not genericity exceptions.
-
-The controller therefore remains honestly `unmeasurable` for trajectory convergence because no comparable
-history exists, even though all three hard gates pass. It ranks `.7` first for the missing APB
-`PSEL|must_be_value|HIGH` SourceIR-to-EvidenceIR fact. Parent closure makes that leaf eligible without implying
-that wider PDF-to-ISF automation, recall, modality handling, residual actionability, or adapter behavior is done.
-
-This is an explicitly selected cross-cutting checkpoint under the CI policy. The candidate was frozen first,
-focused consistency checks were used during editing, and the complete repository CI ran once at final signoff.
-No replay or build scratch is retained after verification.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b (`2026-08-15`) — repaired population authority
-
-The clean replay validates the structural repair across the whole reviewed population. All 12 immutable source
-identities and 48 isolated stage outputs completed from production revision `e125aac7`. Docling ran on CPU with
-the explicit, evidence-recorded `SPECFORGE_INGEST_BATCH_THRESHOLD=0` and
-`SPECFORGE_INGEST_BATCH_PAGES=16` policy. A default-path attempt was externally terminated after six documents;
-a second attempt stopped honestly at the 85% RAM guard while unrelated host work held several GiB. Once that
-work released memory, the identical bounded policy completed. This was host-pressure handling, not a semantic
-retry or a disabled safety check.
-
-The new qualified result changes only the two register cells relative to the prior `b977a51f` authority. GIC-400
-moves from 0/1/15 to 15/0/0 TP/FP/FN and becomes fully disposition-accounted. AMD's packed-layout 0/1/0
-fabrication becomes 0/0/0; its formerly spurious table capture is now honestly absent, so exact required-modality
-capture changes 13/14→12/14. Every other reviewed cell is identical, including APB's pre-existing missing
-`PSEL|must_be_value|HIGH` fact. Aggregate IntentIR becomes 39/0/1, provenance 42/42, conservation 117/118,
-source disposition 7/14, modality-document accounting 5/12, and residual actionability 4/24.
-
-The controller therefore has zero replay, fabrication, or canonical-provenance hard-gate violations. Because it
-still has no comparable history, its state is `unmeasurable` rather than a fabricated convergence claim. It ranks
-the one APB source-to-EvidenceIR drop first (`SPEC-TO-INTENT-ALIGNMENT.7`), followed by 20 non-actionable required
-residual observations and five omitted capability islands. Planned `.6e` is superseded: `.f.iv.a` supplied the
-structural repair and `.f.iv.b` supplied its clean population proof.
-
-The promoted manifest pins the bounded policy, all source/stage/tool/result hashes, revision, and exact cleanup.
-The three attempt roots contained 5,616 files / 2,038,580 KiB in total; the successful authority root alone was
-3,094 files / 1,147,260 KiB. All three roots and the runtime absolute-path map were deleted, and an exact
-repo-local residue census is empty. Focused command-builder and conformance snapshot/mutant tests plus the
-mandatory doctrine gate are the ordinary-slice verification set; the next `.f.v` signoff checkpoint owns full
-CI under the project policy.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a (`2026-08-15`) — replay closed structural carriers
-
-A closed vocabulary does not require headers to be byte-identical to their role word. Real specifications often
-put address-selection notation after the role, as `Address (A[3:2], BANK)`. The safe boundary is grammatical:
-the complete head must already be a closed role, followed by exactly one nonempty, balanced parenthesized
-qualifier and nothing else. Rust revalidation and the embedded Docling classifier now implement the same rule;
-an arbitrary suffix remains unknown. This restores Arm Debug `table_0044` without weakening the AMD packed-layout
-negative, which still lacks independent register-name and access structure.
-
-Access carriage uses a similarly closed inference. An explicit `Access` or `R/W` header wins. Otherwise the
-reader selects only one non-name/non-offset/non-reset/non-description/non-bits column whose every body row supplies
-one of the closed register-access literals. GIC-400's `Type` and OpenCAPI's `Attributes` columns therefore survive,
-while a blank/missing value or a register named `RO` cannot authorize the column. The zero-candidate control caught an
-eager `then_some(candidates[0])` index before it reached production; slice-pattern selection now makes the
-exactly-one requirement executable.
-
-The production digest change exposed an audited-maintenance gap. `source_proof_migrate` had enough authority in
-schema-3 `proof_context` to replay the neutral capture, but it only refreshed proof around the stale classified
-fields. Arm consequently failed first on structured-table replay and then on its stale validation report. The
-migrator now reconstructs all three classification surfaces from the captured premises, reapplies grounded
-proposals, clears validation for the initial proof, and restores the exact current validation backannotation.
-It does not rerun Docling or trust the stale conclusion.
-
-ADR 0025 reconciliation used an exact 144-file / 964,185,725-byte rollback snapshot (manifest SHA-256
-`6e27f458f11afd5fd6090fc13de6daf7b07715121d7ca5b305b869c47b80cf76`). SourceIR changes outside proof and
-validation in one of 24 documents only: Arm `table_0044` becomes `register_map`. Evidence/Semantic/Intent change
-only Arm and OpenCAPI Discovery. Arm replaces four section-derived placeholders with 12 table-derived records
-(74→82 total); OpenCAPI keeps one register and adds real per-field `Attributes` access. Only Arm's blocked ISF
-payload changes, from 74→82 storage declarations; its missing clock/reset contract and no-file state remain.
-The independent currency oracle is 24/24 current and zero stale at every stage.
-
-The frozen candidate passes all nine doctrines, all 11 production-genericity components, the exact
-2,275-function / 11,926-edge / 11,396-decision / 1,446-macro flow snapshot, 1,981 Rust tests with eight ignored
-and zero failed, five compile-fail doctests, warning-denied Clippy/Rustdoc, mdBook test/build, and final locality.
-Cleanup removed the five declared roots: 5,112 files / 3,614,756 KiB in total, including the now-expired
-144-file rollback snapshot plus its 96 dry-run comparisons and two control files. All five exact paths are absent;
-the rollback copy is no longer recoverable, while the current generated chain remains reproducible and gated.
-
-Verification sequencing also matters at this scale. This slice invoked the expensive integrated gate before the
-candidate was fully frozen, so later proof-digest and deterministic graph-count updates forced redundant full
-runs. Future slices should freeze implementation first, refresh generated proofs and deterministic snapshots
-second, then use the doctrine gate plus focused checks selected by the changed surfaces. Full CI is a milestone
-gate for push, release/signoff, or another explicitly defined cross-cutting checkpoint—not the routine default
-after each slice. A documentation-only evidence update after a passing full gate needs only its affected doctrine
-and documentation checks unless it changes executable authority.
-
-`.f.iv.b` re-opened the recorded replay-command claim against source before changing production. The claim was
-wrong: `scripts/replay_source_to_intent_population.py` already passes exactly four values after `--`—source,
-output root, prior memory, and `-` for no observed table. The research note had counted the replay root twice;
-optional `env KEY=value` prefixes are also outside the example's positional boundary. The driver now builds the
-command through a named helper, and a focused test pins both the exact four-value suffix and the separate
-environment prefix before the clean publication replay.
-
-## SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv (`2026-08-15`) — replay identity and structural carriers
-
-The bounded evaluation fixture carries two different notions of identity. Its per-stage `original_sha256` is the
-frozen review-era identity used to keep cell queries comparable; it is not the fresh artifact digest. The
-portable replay manifest is the execution-identity authority. Reading the former as the latter briefly made the
-new score look impossible because unchanged stages appeared to evaluate differently. Comparing manifest hashes
-resolved the apparent contradiction: the target SourceIR and every downstream stage really changed.
-
-That distinction exposed a real freshness gap. The tracked 24/2/16 snapshot is honest for revision `b977a51f`,
-but fixed-input chain currency cannot prove what a fresh PDF-to-SourceIR run does. The `.f.iv` replay does: only
-three reviewed cells move. AMD's 4×21 packed layout correctly stops masquerading as a register. GIC-400's summary
-becomes 15 source-named register rows but drops the `Type` access column. Arm Debug loses all 12 correct facts
-because `Address (A a, SELECT.DPBANKSEL)` is not an exact member of the closed address-header vocabulary.
-
-The safe repair remains structural. Parenthesized qualifiers may decorate a closed header role without making
-arbitrary substring matching authoritative. Once a table is independently a register map, the same generic
-access grammar that established that kind must identify its access carrier instead of classifying on body values
-and then discarding the column. The AMD negative is the control: a layout without name/access structure stays
-unknown. `.f.iv.a` owns this repair; `.f.iv.b` owns the next clean publication.
 
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 (`2026-08-08`) — measured adoption decision
 

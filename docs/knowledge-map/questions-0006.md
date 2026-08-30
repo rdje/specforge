@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > how many USB4 Inter-Domain page sidecars are repository relative
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > how many administrative workflow statements were measured
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how many alignment task owners and routes survive migration
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -182,6 +186,8 @@
   > how should Rust version copies be verified across Cargo README book and CI
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > how should a behavior-preserving evidence refactor be verified given the non-determinism
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > how should a red check be attributed to a change
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how should an AXI gold or extraction be structured (per channel)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -274,6 +280,8 @@
   > is SpecForge specification mining
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > is SpecForge still allowed to read chipdoc from the boot volume
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
@@ -290,11 +298,3 @@
   > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > is any corpus document ingested at fewer pages than its source PDF
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap

@@ -1,3 +1,58 @@
+### CLAIM-VERIFICATION-ADOPTION.10 — re-adopt the upstream claim standard
+
+- Directive 17 asks that the source standard be re-checked for updates after adoption; nothing had re-read it
+  since .1 published the local one. The source has not moved (mtime 2026-08-26). That is not the same as the
+  local standard being current, because CLAIM_VERIFICATION.md is a RESTATEMENT, not a copy — so neither a byte
+  diff nor a digest comparison can answer the currency question, and the gap has to be read section by section.
+- Read that way, the gap dates from the original adoption and is wider than the leaf predicted. The leaf named
+  three absent rules — the ones that had already produced a recorded defect here. Reading every section found a
+  larger set with no home on any governed claim surface. Both hold under different denominators, so the leaf
+  stands and the enumeration, with each rule's local home, is now CLAIM_VERIFICATION.md section 11.
+- Adopted: what each check class STILL PERMITS, and its general form — a check and the thing it checks must not
+  share a parent. Evidence consistent with both hypotheses has ILLUSTRATED, not tested, which binds a published
+  mechanism exactly as it binds a number. A set claim carries its enumeration in both directions: an enumerating
+  command beside "nothing checks X", and a classified population before a hit-count is called a defect count.
+  The cheapest oracle is this project's own adjudicated history. Classifiers come from the PRODUCER, never from
+  a description of it. Attribute a red check by revert-and-re-apply, not by reading a diff. Match evidence
+  granularity to claim granularity. Prefer one derived source to N synchronized copies. A repository-derived
+  constant is derived or gated, NEVER carried. A right unwatched number replacing a wrong one is not a fix. And
+  state every rule domain-free, because an example is an instance and never the statement.
+- One of those was already here, DEMOTED: ADR 0042's Context paragraph states the general form while the
+  standard carried only the three instances it generates. A rule living as decision-record rationale while its
+  examples live in the normative text is under-specified for every reader who does not read ADRs — which is the
+  preface rule adopted in the same pass. Promoted; the ADR keeps the sentence as the reasoning behind it.
+- The adoption caught itself. The first absence probe ran over CLAIM_VERIFICATION.md alone and returned zero
+  hits for all fifteen terms; publishing "absent locally" from it would have been a claim about the repository
+  evidenced by data about one file — Leg 1's granularity rule, adopted in this commit. Widening the probe to
+  every governed claim surface is what found the ADR hit, and the leftover matches were classified as unrelated
+  word collisions before their count went anywhere. The number of adopted rules is likewise published in exactly
+  one place, because three synchronized copies of one count is the defect Leg 1 now forbids.
+- It caught itself a second time, on a different rule. The resume-pointer draft said the shipped_behavior byte
+  warning (docs/book/src/pipeline/evidenceir.md) was "untracked by any headroom leaf". False, and refuted by one
+  grep: LIVE-DOCUMENT-PRESSURE-HEADROOM's opening pressure boundary table has carried that exact surface and file
+  since 92e59c97, with the other four warned axes. That is the set rule adopted in the same commit — a set claim
+  is a census, not an impression. Two self-catches in one adoption commit is the base rate of this defect class in
+  ordinary work, not a coincidence, and both are logged into .7's and .9's evidence.
+- The rationale record took DEVELOPMENT_NOTES.md past its 90% line rollover milestone (1,659 -> 1,739 against a
+  1,900-line target signalling at 1,710), so the doctrine refuses the append unless the same change rolls. Whether
+  that needs its own tree was already adjudicated here: .1 of this tree rolled the same ledger in its own slice,
+  and 2b9e8899 committed a slice and a CHANGES.md rollover together. No difference to name, so the earlier ruling
+  wins. Sealed 22 whole records into segment-0009-2026-08-30.md, keeping the 11 newest committed opening records
+  plus this slice's prepend over the exact 50-record migration suffix. Result 62 records / 1,384 lines / 182,781
+  bytes — 72.8% of the line target, back under warning. Nothing trimmed, reordered, or rewritten; the dry-run was
+  exact first and reported future_prepends 1, which is how the in-flight record was proved to survive the cut.
+- Refused deliberately, with reasons recorded so a later reading does not re-open each: the upstream
+  reference-deployment measurements (dated evidence about another project; local instances teach the same
+  rules), the five-architecture summary table (a third copy of what README.md and DOCTRINE_ENFORCEMENT.md
+  already carry), the inline provenance-tag syntax (superseded by the executable registry and [claim: <id>]),
+  and adoption checklist items 1-5 (executed by .0 through .5).
+- .7's open scope question is answered, and it NARROWS the gate rather than widening it. A claimed mechanism is
+  a review obligation under the now-normative illustration rule, because no checker can decide whether two
+  accounts predict the same observation. The gate stays on counts. Two mechanizable residues survive: the
+  cross-surface disagreement signal, which needs no producer at all, and an optional field recording which prior
+  adjudication a mechanism claim was checked against — shape, not truth. Had that field existed, .6a would have
+  had to name .6's commit body or write none-found, and the true account was in that body.
+
 ### CLAIM-VERIFICATION-ADOPTION.6b — correct two derived figures on re-verification
 
 - The director asked a second time whether the findings were trusted. Re-derived, and two numbers .6b
