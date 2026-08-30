@@ -38,4 +38,5 @@
   recurs. Never run the fixture suite concurrently with the locality gate:
   `check_persisted_artifact_paths.pl` walks every `*.json` under `generated/` and FAILS if a fixture run
   deletes one mid-walk. `docs/research/*.md` is 63 of a 64-file ceiling with no rollover, so do not write a
-  research record until `.4` releases that surface. `CHANGES.md` is 68% — about nine records of headroom.
+  research record until `.4` releases that surface. `CHANGES.md` is 69.6% by lines and 74.2% by bytes; lines
+  bind first, leaving 367 lines — about nine records — before the 90% signal forces another rollover.

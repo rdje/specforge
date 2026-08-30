@@ -1,3 +1,21 @@
+### CLAIM-VERIFICATION-ADOPTION.6b — correct two derived figures on re-verification
+
+- The director asked a second time whether the findings were trusted. Re-derived, and two numbers .6b
+  published are wrong. The book chapter moved SIX times after be3b12e6, not seven; and it was CORRECT until
+  4dac5642 (2026-08-27 02:14), so it was stale for two days and twenty hours, not twelve days. The twelve-day
+  figure is the span from writing to drift settling — a real quantity, silently substituted for the one the
+  sentence names.
+- Everything else in that finding re-derives unchanged: the book published 307/8/78/221 against a producer at
+  321/8/89/224, the fact card repeated it, five candidate lines in a 557-line chapter with none on a drifted
+  line, and the vocabulary cause. The remedy — withdrawal to --report on both surfaces — stands.
+- The lesson is narrower than the earlier mechanism error and worth separating from it. Both numbers were
+  computed BY HAND from a table that was itself correct. A derived figure needs its own derivation, or the
+  producer's own output quoted instead of arithmetic over it. Logged as .7's ninth instance: the drift class
+  reaches derived quantities, not only carried ones.
+- Re-verified in the same pass and unchanged: current_surfaces 39 -> 40 across .2c with all three publishers
+  withdrawn (the one remaining 39 is the superseded inventory-phase record, correctly left as history), and
+  the retained migration suffix at 58.6% of the line target and 66.9% of the byte target.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.2c — shard the task index by lifecycle, not by alphabet
 
 - Made the director's no-cap directive true instead of relocated. .2a removed the file-count cap and moved the
@@ -82,8 +100,10 @@
   frozen contract is a TRACKED registry, so counting outcomes in each of the 31 revisions of
   doctrine/claim_verification/book_quantitative_claims.jsonl gives the exact trajectory with no checkout at
   all. 304/8/75/221 through a4a08cd4; 307/8/78/221 at be3b12e6 — which is what the chapter says, and it was
-  RIGHT when written — then 308, 309/80, 318/89, 319, 320, and 321/8/89/224 from fdda3c53 onward. The chapter
-  was never updated after be3b12e6, so it was stale for twelve days across seven registry changes.
+  RIGHT when written — then SIX moves: 308 at 4dac5642, 309/80 at a26c283e, 318/89 at 893c2fba, 319 at
+  e6f5012d, 320 at f9e785ca, 321/8/89/224 at fdda3c53. It went stale at the first of those (4dac5642,
+  2026-08-27 02:14) and was repaired at 2b9e8899 — two days and twenty hours, not the twelve days first
+  published here; see the .6b correction record above.
   When the thing being measured is itself a tracked artifact, its history is already in Git.
 - Applied `.6a`'s remedy rather than fresh numbers: both surfaces now state the old vectors as DATED
   boundaries, name the two mechanisms that move them, and route current truth to `--report`. The card is

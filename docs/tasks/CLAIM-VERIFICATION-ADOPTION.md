@@ -506,10 +506,11 @@ the workflow through the mdBook and repository review path.
   `git show <rev>:doctrine/claim_verification/book_quantitative_claims.jsonl` over the 31 commits that touched
   it gives the exact trajectory. `regions/registered/incomplete/excluded` ran 304/8/75/221 from `467928bb`
   through `a4a08cd4`, then 307/8/78/221 at `be3b12e6` — which is what the chapter says, and it was **right
-  when written** — then 308/8/78/222, 309/8/80/221, 318/8/89/221, 319/8/89/222, 320/8/89/223, and
-  321/8/89/224 from `fdda3c53` onward. The book was never updated after `be3b12e6`. The census sentence has the
-  same story one surface over: "56 exact evidence units" was correct at `50775894` and false from `e6f5012d`.
-  So neither sentence was ever wrong on the day it landed, and both were wrong for twelve days afterwards
+  when written** — then **six** moves: 308/8/78/222 at `4dac5642`, 309/8/80/221 at `a26c283e`, 318/8/89/221
+  at `893c2fba`, 319/8/89/222 at `e6f5012d`, 320/8/89/223 at `f9e785ca`, 321/8/89/224 at `fdda3c53`, unchanged
+  since. The book was never updated after `be3b12e6`. The census sentence has the same story one surface over:
+  "56 exact evidence units" was correct at `50775894` and false from `e6f5012d`. So neither sentence was ever
+  wrong on the day it landed
   Verification: `check_book_quantitative_claims.pl --check green (39 files / 21 candidate files / 321 regions)
   and --report unchanged at 321/8/89/224 after the edit; check_current_claim_census.pl --check green;
   knowledge-map derive-and-diff in sync; fact-card catalog valid for 248 cards; doctrine gate`
@@ -667,9 +668,10 @@ the workflow through the mdBook and repository review path.
   closed noun list, and a backticked `key=value` form such as `regions=307` matches no clause at all. So the
   surface that documents the census is a surface the census cannot see. Duration measured from the tracked
   registry rather than estimated: `regions=307/78/221` was **correct when written** at `be3b12e6`
-  (`2026-08-16`) and then moved seven times — 308/222, 309/80/221, 318/89, 319/222, 320/223, 321/224 — settling
-  at `fdda3c53` (`2026-08-28`), so the chapter was stale for **12 days and 7 registry changes** under a green
-  gate, while the contract honestly reported full coverage of its declared denominator. Same shape as `.7`'s
+  (`2026-08-16`) and then moved **six** times — 308/222, 309/80/221, 318/89, 319/222, 320/223, 321/224 —
+  settling at `fdda3c53` (`2026-08-28`). It went stale at the **first** of those, `4dac5642`
+  (`2026-08-27 02:14`), and was repaired at `2b9e8899` (`2026-08-29 22:23`): **stale for two days and twenty
+  hours**, under a green gate, while the contract honestly reported full coverage of its declared denominator. Same shape as `.7`'s
   fifth instance (a stale count outside the denominator), now with the vocabulary cause and the duration
   measured rather than inferred
   Eighth instance (`2026-08-29`, produced by `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` one commit after `.6a`
@@ -679,6 +681,14 @@ the workflow through the mdBook and repository review path.
   happened, never what cannot.** So "stable across N revisions" is evidence for *withdrawing later* rather
   than a licence to carry, and `.7`'s gate is the only thing that separates the two. All three publishers
   withdrew the value in the same commit that moved it, which is the discipline working
+  Ninth instance (`2026-08-30`, found by the director asking a second time whether the findings were
+  trusted): the drift class reaches **derived quantities**, not just carried ones. `.6b` published that the
+  book chapter was "stale for twelve days across seven registry changes". Re-derived from the same registry
+  blobs: **six** moves, not seven, and the chapter was *correct* until `4dac5642` (`2026-08-27 02:14`), so it
+  was stale for **two days and twenty hours**, not twelve. The twelve-day figure was the span from *writing*
+  to *drift settling* — a real quantity, silently substituted for the one the sentence names. Both numbers
+  were computed by hand from a table that was itself correct, which is the lesson: a derived figure needs its
+  own derivation command, or the producer's own output should be quoted instead of arithmetic over it
   Prerequisite: none
 
 ## Current Frontier
@@ -1373,8 +1383,9 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-30` | `.6b` correction | re-derived the move count and staleness window from `git show <rev>:doctrine/claim_verification/book_quantitative_claims.jsonl` across its 31 revisions, with commit timestamps | `.6b` published "**seven** registry changes" and "stale for **twelve days**". Both wrong: **six** moves, and the chapter stayed *correct* until `4dac5642` (`2026-08-27 02:14`), repaired at `2b9e8899` (`2026-08-29 22:23`) — **two days and twenty hours** stale. The twelve-day span was writing-to-settling, substituted for staleness. Every other figure in the finding re-derives; corrected on all four live surfaces and logged as `.7`'s ninth instance |
 | `2026-08-29` | `.6b` correcting `.6a` | outcome/row census of `current_claim_census.jsonl` at `fdda3c53` and `5fe81128` from Git blobs | both revisions hold **59** evidence rows and **5** `CHANGES.md` rows, differing by exactly **one removed / one added**. `.6a`'s published mechanism ("sealed 18 while adding 2") is **false**; the total held because one retirement cancelled one addition. Every number `.6a` published re-derives and the withdrawal stands. Recorded as `.7`'s seventh instance: a count-only gate passes a false mechanism |
-| `2026-08-29` | `.6b` | outcome census over 31 registry revisions of `book_quantitative_claims.jsonl`; `check_book_quantitative_claims.pl --check`/`--report`/`--produce`; `check_current_claim_census.pl --check`; knowledge-map derive-and-diff; fact-card catalog; doctrine gate | the book's `regions=307/8/78/221` was **correct when written** at `be3b12e6` (`2026-08-16`) and then moved **seven times** to 321/8/89/224 by `fdda3c53`, unedited for 12 days; "56 exact evidence units" was correct at `50775894` and false from `e6f5012d`. Both withdrawn and routed to `--report`, the fact card retitled, and `TOOLBOX.md`'s last carried mdBook count withdrawn for consistency. Post-edit re-derive: **321/8/89/224 unchanged**, 39 book files / 21 candidate files. One frozen region re-pointed 540 -> 547. For `.9`: the chapter held **5** candidate lines in 557 and none was a drifted one — `units` and backticked `key=value` are both outside the grammar |
+| `2026-08-29` | `.6b` | outcome census over 31 registry revisions of `book_quantitative_claims.jsonl`; `check_book_quantitative_claims.pl --check`/`--report`/`--produce`; `check_current_claim_census.pl --check`; knowledge-map derive-and-diff; fact-card catalog; doctrine gate | the book's `regions=307/8/78/221` was **correct when written** at `be3b12e6` (`2026-08-16`) and then moved **six times** to 321/8/89/224 by `fdda3c53`, going stale at the first of those (`4dac5642`, `2026-08-27`) and repaired at `2b9e8899` — stale for two days and twenty hours; "56 exact evidence units" was correct at `50775894` and false from `e6f5012d`. Both withdrawn and routed to `--report`, the fact card retitled, and `TOOLBOX.md`'s last carried mdBook count withdrawn for consistency. Post-edit re-derive: **321/8/89/224 unchanged**, 39 book files / 21 candidate files. One frozen region re-pointed 540 -> 547. For `.9`: the chapter held **5** candidate lines in 557 and none was a drifted one — `units` and backticked `key=value` are both outside the grammar |
 | `2026-08-29` | `.6a` | 28-consecutive-revision worktree trajectory (`e6f5012d` -> `60a81db7`) plus the `50775894` anchor, each with its own `check_current_claim_census.pl --report`; `check_claim_verification.pl --report`; `check_book_quantitative_claims.pl --report`; census `--self-test`; doctrine gate | `registered` **6 -> 5 -> 4** and closure **86/51/35 -> 72/50/22 -> 69/49/20**, stepping at `5fe81128` and `1507adbf`; so all four counts `.6` called confirmed were false **inside `.6`'s own commit**. `.6`'s unit trajectory is also corrected (**59**, not 60, at `5fe81128`) and its "one more excluded unit per rolling-ledger head" rule withdrawn — 15 rises, **2 falls**, 10 no-changes over 27 transitions. Stable across all 29: derived **11**, identity-gated **7**, no `incomplete`, unresolved **0**, surfaces **39**, views **5**; carried with producer fields named. `7/7/6/0/0` control audit and mdBook **89** incomplete re-derive; self-test **27/27** |
 | `2026-08-29` | `.7` fifth stale-count instance | `test_live_document_size.pl`; `check_fact_card_catalog.pl --self-test`; `test_derived_state_contracts.pl`; `test_derived_state_authorities.pl`; `check_task_tree_archive.pl --self-test`; `check_active_task_evidence.pl --self-test` | producers report **84 / 60 / 47 / 25 / 15 / 44**. `DOCTRINE_ENFORCEMENT.md` published 84/**58**; the book published **81**/**58**. Two stale counts repaired; the other four re-derive. The book's stale `81` sits at a line the frozen census holds **no** region for; its stale `58` sits at a line the census holds an **incomplete** region for — one outside the denominator, one inside it and explicitly unverified. Neither a digest binding nor the frozen census can observe either, which is `.7`'s whole point |
 --- |
@@ -1494,7 +1505,7 @@ was added; the stable-path remedy and its consumed authority are complete.
   Attribution came free: the mdBook census's frozen contract is a tracked registry, so counting outcomes in
   each of its 31 revisions gives the exact trajectory with no worktree at all — a cheaper instrument than
   `.6a`'s, and worth reaching for first when the thing being measured is itself a tracked artifact. Both stale
-  sentences were correct on the day they landed and wrong for twelve days after. `.9` gains its second and
+  sentences were correct on the day they landed and wrong afterwards. `.9` gains its second and
   sharper demonstration: the chapter documenting the census held five candidate lines in 557, and none of them
   was a line the census got wrong.
 - `2026-08-28`: `.7` gained its fourth instance and its repair, and `.8` was opened. `STATUS-LEDGER-ROLLOVER.4a`
