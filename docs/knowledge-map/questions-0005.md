@@ -169,6 +169,8 @@
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > how is a Reg.Field cross-reference distinguished from a real constraint subject
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how is a captured table region proven covered or uncovered
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how is a captured visual region proven covered or uncovered
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how is a claim's grounding checked beyond a string match
@@ -295,5 +297,3 @@
   > how many CoreSight Base System page sidecars are repository relative
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how many Introducing CoreSight page paths are repository relative
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how many OpenCAPI AFU address note page paths are repository relative

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > were the 100 stale CoreSight Base System signals authoritative
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > were the 73 stale AArch64 External Debug signals authoritative
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -295,5 +297,3 @@
   > what does the PUBLISHED-ASSERTIONS doctrine prove
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what does the active task evidence checker verify

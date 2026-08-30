@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how many OpenCAPI AFU address note page paths are repository relative
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how many OpenCAPI Certified Definition paths are repository relative
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
@@ -296,5 +298,3 @@
   > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > is SpecForge's constraint extraction over-generating
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection

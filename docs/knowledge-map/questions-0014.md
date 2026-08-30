@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why does a SemanticIR residual packet list only some undeclared signal names
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why does a Wishbone constraint name CYC instead of CYC_O
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > why does a byte diff not prove the local claim standard is current
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
@@ -22,6 +28,8 @@
   > why does a source edit un-seal every persisted artifact
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why does a symbolic bit cell reject the whole table
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why does a table-region residual carry two supporting evidence ids
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > why does a temporal antecedent use PSELX not PSEL
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -290,11 +298,3 @@
   > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > why is a retained bundle count not the same as corpus refresh progress
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > why is a sentence containing when not necessarily a semantic gate
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > why is a stable span after tick zero residual
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why is an ambiguous derived id pairing a fail rather than an invalid alpha transform
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why is an emitted-ISF count from an earlier refresh slice not the current number

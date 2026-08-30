@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > where is the weak-phrase / NASA ARM ambiguity detector
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > where may diagnostic scratch files and comparison lists be written
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > where must SpecForge project artifacts caches and temporary workspaces live
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -30,6 +34,8 @@
   > which SWD protocol facts are safe to lower today
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > which SemanticIR fields carry supporting_table_ids
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > which SourceIR and EvidenceIR paths serialize repository relative
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -266,7 +272,7 @@
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
   > why are stability obligations residuals
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why are table regions excluded from captured-region residuals
+  > why are table regions no longer excluded from captured-region residuals
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why are table-row sources exempt from the pre-bind constraint subject rule
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -291,9 +297,3 @@
   > why can SWD score 100 percent while its protocol is absent downstream
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why can a canonical cell never satisfy its residual actionability observations
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > why can a shipped standalone extractor fail to improve the default end-to-end result
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why can an active task legacy route use a shorthand source literal
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why can an extra blank line fail harmless layout comparison

@@ -1,3 +1,43 @@
+### SPEC-TO-INTENT-ALIGNMENT.9b — generalise the captured-region carrier to captured table regions
+
+- The carrier stops being figure-only. `residual_accountable_region_kind` now excludes only `Unknown`, and
+  `unexplained_captured_visual_regions` is renamed `unexplained_captured_regions`. No public field, claim family
+  or record grammar moved: 41 families / 170 field rules, unchanged.
+- THE LOAD-BEARING CHANGE IS THAT COVERAGE IS NOW A PER-KIND QUESTION, NOT ONE UNION. A visual region is
+  explained by its evidence_id or figure:<asset_id>; a table region by its table id in the new
+  SemanticIr::cited_table_ids. Neither vocabulary can match the other's identifiers, so adding the table
+  population leaves every figure-kind residual .8c published bit-identical BY CONSTRUCTION, not by luck — and
+  both refusal directions are asserted.
+- WHY THAT MATTERED: under the old visual-only test, 354 of 354 AMD IOMMU and 210 of 210 Arm Debug captured
+  table regions read as unexplained, INCLUDING the ones that produced those documents' registers and timing.
+  Lifting the kind exclusion alone would have emitted residuals duplicating promoted keys — the exact
+  self-contradiction the frozen .8a contract forbids. Asked correctly, Arm Debug is 16 cited / 194 unexplained.
+- cited_table_ids is derived from the field declarations rather than from belief about what a table reaches:
+  register_records, timing_constraints, signal_polarities, the observations of signal_polarity_conflicts and
+  signal_semantic_conflicts, and interfaces[].signal_records with their semantic_observations. A test gives each
+  of the seven a distinct id and cross-checks the typed gatherer against the artifact's own serialized
+  provenance, so a surface added later cannot miss silently.
+- A table residual carries BOTH of its real EvidenceIR identities, visual_NNNN and table_NNNN. Each joins a
+  different half of the artifact; naming only one would leave the record unjoinable.
+- FOUND, NOT CAUSED HERE, AND OWNED BY .9d: scripts/validate_residual_actionability_contract.py fails at this
+  commit — the witness no longer pins the tracked current result, and its required_and_absent_cells no longer
+  re-derive. Reverting only .9b's production and fixture changes reproduces both failures. The cause is exact:
+  SOURCE-IR-REPRODUCIBILITY.2 (245b3b60) republished current_result_snapshot.json after .8d (893c2fba) froze the
+  witness, correctly removing source_region_missing_or_ambiguous from the software_guidance cell, and did not
+  re-pin the contract. AND NOTHING EXECUTES THE CHECKER: the whole repository names it only in prose — it is
+  absent from check_doctrines.sh, run_ci.sh, and every test. That is the same defect class .8a repaired on its
+  own evidence path, so the contract drifted for several commits with no gate saying so.
+- CONTAINMENT: the semantic-part collection crossed its mandatory lines_each rollover mid-slice, so this leaf
+  split residual-carrier.md at the .8/.9 task boundary into a new region-kind-generalisation.md part — the same
+  boundary split that produced residual-carrier.md from residual-actionability.md. The collection returns to
+  83.8%; the cost is one active-task-index row, leaving the index at 89.1%, one row from its own rollover.
+- Gates: workspace lib suite 470/168/1,372/4 with zero failures, clean cargo fmt, all five production-genericity
+  components, 24/24 proof-carrying chains rebuilt through semantic/intent/ISF and reported content-identical at
+  all four stages on the closing pass, CHAIN-CURRENCY independently certifying 24 replayed / 24 current / 0
+  stale at all four stages with retention exactly the declared set, and a compiled flow census that moves only
+  its size dimensions
+  (2,370 -> 2,373 functions) with every boundary dimension unchanged.
+
 ### SPEC-TO-INTENT-ALIGNMENT.9b — declare the table-region carrier leaf and roll the bounded root
 
 - .9a fixed the rule and .9b measured it against the retained corpus BEFORE building it. Two of the three legs
@@ -14,11 +54,14 @@
   occurs ZERO times in a complete evidence_ir.json, EvidenceSpan records only span_id plus page/line, and
   ExtractedStatement only statement_id. The reviewed prose cells anchor on elem_00219 and elem_00017, so a
   prose residual cannot name the region the review requires. .9c owns closing that provenance gap first.
-- TWO REVIEWED OBSERVATIONS ARE UNSATISFIABLE AS WRITTEN. The region-scoped projection names a residual
-  <region_id>|<reviewed family>, which is what table_0067|packed_page_table_entry and elem_00219|software_guidance
-  expect. The other two expect table_0004|toc_non_contract and elem_00017|informational_non_contract — review
-  labels naming a cause, not the cell's family. No non-circular projection can produce either spelling, so no
-  correct implementation can meet them. Same defect class as .8b's denominator; it gets its own leaf.
+- TWO OF THE FOUR REQUIRED-AND-ABSENT OBSERVATIONS ARE UNSATISFIABLE AS WRITTEN, and the scope is narrower than
+  it looks: a canonical cell's residual key is correctly the canonical fact key (.8b's rule), and the two
+  analog_channel_loss cells use the fact-scoped timing carrier, so neither is affected. Among the four
+  required-and-absent cells, whose only carrier is region-scoped and whose key law is <region_id>|<reviewed
+  family>, table_0067|packed_page_table_entry and elem_00219|software_guidance follow it while
+  table_0004|toc_non_contract and elem_00017|informational_non_contract do not — review labels naming a cause,
+  not the cell's family. No non-circular projection can produce either spelling, so no correct implementation
+  can meet them. Same defect class as .8b's denominator; it gets its own leaf.
 - AND informational_disclaimer IS UNREACHABLE BY ANY STRUCTURAL RULE regardless of its label: statement_0013's
   class is source_fact, the bucket classify_statement returns when no typed intent shape is found. Including
   that bucket would emit one residual per uncited paragraph (Arm Debug: 6,555 of 6,658 statements uncited,

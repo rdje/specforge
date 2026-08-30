@@ -4,6 +4,37 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-30 — table-region carrier generalisation; `SPEC-TO-INTENT-ALIGNMENT.9b`)
+
+- The region-level residual carrier stops being figure-only. `residual_accountable_region_kind` now excludes
+  only `VisualAssetKind::Unknown`, and `unexplained_captured_visual_regions` is renamed
+  `unexplained_captured_regions` to match what it accounts for. No public field, claim family, or record grammar
+  moved: the registry stays at 41 families / 170 field rules.
+- The load-bearing change is that **coverage is now a per-kind question, not one union**. A captured region is
+  explained only in the provenance vocabulary its own records use — a visual region by its `evidence_id` or
+  `figure:<asset_id>`, a table region by its table id in the new `SemanticIr::cited_table_ids`. Because neither
+  vocabulary can match the other's identifiers, adding the table population leaves every figure-kind residual
+  bit-identical by construction rather than by luck, which is asserted in both refusal directions.
+- `cited_table_ids` is derived from the field declarations, not from belief about what a table reaches: it reads
+  `register_records`, `timing_constraints`, `signal_polarities`, the observations of `signal_polarity_conflicts`
+  and `signal_semantic_conflicts`, and `interfaces[].signal_records` with their `semantic_observations` — every
+  `SemanticIr` surface declaring `supporting_table_ids`. `MessageFieldRecord` and `SignalSemanticHintRecord`
+  declare it too but are `EvidenceIR`-only. A test gives each of the seven a distinct id and cross-checks the
+  typed gatherer against the artifact's own serialized provenance, so a surface added later cannot miss silently.
+- Why that mattered: under the old visual-only test, 354 of 354 AMD IOMMU and 210 of 210 Arm Debug captured
+  table regions read as unexplained, including the ones that produced those documents' registers and timing.
+  Lifting the kind exclusion alone would have emitted residuals duplicating promoted keys. Asked correctly, the
+  current Arm Debug chain is 16 cited / 194 unexplained of 210.
+- A table region's residual carries both `visual_NNNN` and `table_NNNN`. Both are real `EvidenceIR` identities of
+  the same region and each joins a different half of the artifact.
+- Current flow is 2,373 functions / 14,684 helper edges / 12,669 decision sites / 1,466 semantic macros across
+  120 rule roots. Every boundary, rule-root, declassifier, seam, proof-gate, trusted-region and protected-type
+  dimension is unchanged, so the change adds production code without moving a trust boundary.
+- Current risk recorded and owned by `.9d`: `scripts/validate_residual_actionability_contract.py` — the
+  executable form of the frozen required-residual rule — is referenced only in prose. No doctrine, CI step, or
+  test runs it, and it has been failing since `SOURCE-IR-REPRODUCIBILITY.2` republished the current result
+  without re-pinning the contract's witness.
+
 ## Session update (2026-08-27 — captured-region residual carrier; `SPEC-TO-INTENT-ALIGNMENT.8c`)
 
 - The IR gains its second typed residual carrier and its first at the region level. `CapturedRegionResidualRecord`

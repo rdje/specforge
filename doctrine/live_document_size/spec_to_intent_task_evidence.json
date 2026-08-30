@@ -136,13 +136,25 @@
       {
         "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual carrier",
         "metrics": {
-          "bytes": 33375,
+          "bytes": 26045,
           "line_bytes": 138,
-          "lines": 412
+          "lines": 323
         },
         "part_id": "residual-carrier",
         "path": "docs/tasks/spec-to-intent-alignment/residual-carrier.md",
-        "sha256": "48d85e88f130ed478e195fd95f33b2600353f0b42230e35e9552f631c31bf8ea",
+        "sha256": "cc6ef8f3e55239c3635ee42c49dac4d30faf70d7420a85caa3c540ede00b907e",
+        "state": "active"
+      },
+      {
+        "heading": "# SPEC-TO-INTENT-ALIGNMENT — region-kind generalisation",
+        "metrics": {
+          "bytes": 23536,
+          "line_bytes": 125,
+          "lines": 283
+        },
+        "part_id": "region-kind-generalisation",
+        "path": "docs/tasks/spec-to-intent-alignment/region-kind-generalisation.md",
+        "sha256": "cb9c9e239f5f43df8ddf8747e7b646966b528dfe5bbea7893ae1386ec50c2012",
         "state": "active"
       }
     ],
@@ -604,12 +616,17 @@
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9b",
       "origin": "post_migration",
-      "part_id": "residual-carrier"
+      "part_id": "region-kind-generalisation"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9c",
       "origin": "post_migration",
-      "part_id": "residual-carrier"
+      "part_id": "region-kind-generalisation"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9d",
+      "origin": "post_migration",
+      "part_id": "region-kind-generalisation"
     }
   ],
   "limits": {
@@ -783,7 +800,8 @@
       "- ID: `SPEC-TO-INTENT-ALIGNMENT.9`",
       "- ID: `SPEC-TO-INTENT-ALIGNMENT.9a`",
       "- ID: `SPEC-TO-INTENT-ALIGNMENT.9b`",
-      "- ID: `SPEC-TO-INTENT-ALIGNMENT.9c`"
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.9c`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.9d`"
     ]
   },
   "migration_metadata": {

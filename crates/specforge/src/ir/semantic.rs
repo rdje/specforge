@@ -927,15 +927,22 @@ impl SemanticIr {
             proof_context: None,
             proof_ledger: None,
         };
-        // SPEC-TO-INTENT-ALIGNMENT.8c: account every captured region this artifact's own canonical
-        // records do not cite. It runs last, over the assembled artifact, so coverage is a
-        // membership test against the concrete collections that actually shipped.
-        artifact.captured_region_residuals =
-            unexplained_captured_visual_regions(evidence_ir, &artifact.cited_provenance_ids());
+        // SPEC-TO-INTENT-ALIGNMENT.8c/.9b: account every captured region this artifact's own
+        // canonical records do not cite. It runs last, over the assembled artifact, so coverage is a
+        // membership test against the concrete collections that actually shipped. Both provenance
+        // vocabularies are gathered because a region is cited in the one its own kind uses.
+        artifact.captured_region_residuals = unexplained_captured_regions(
+            evidence_ir,
+            &artifact.cited_provenance_ids(),
+            &artifact.cited_table_ids(),
+        );
         Ok(artifact)
     }
 
-    /// Provenance identifiers cited by the record collections a captured visual region can reach.
+    /// Provenance identifiers cited by the record collections a captured *visual* region can reach.
+    ///
+    /// A captured *table* region is answered by [`Self::cited_table_ids`] instead: it is cited
+    /// through `supporting_table_ids`, never through the identifiers gathered here.
     ///
     /// Membership is decided over concrete records, never by scanning the artifact text: a region
     /// counts as explained only when a canonical record names it in its own provenance list. The
@@ -979,6 +986,58 @@ impl SemanticIr {
         }
         for contract in &self.actor_contracts {
             cited.extend(borrow(&contract.provenance.supporting_statement_ids));
+        }
+        cited
+    }
+
+    /// Table identities the artifact's own canonical records cite in their provenance.
+    ///
+    /// The table-side sibling of [`Self::cited_provenance_ids`], and the reason a captured table
+    /// region could not simply join the visual accounting (`SPEC-TO-INTENT-ALIGNMENT.9b`). A
+    /// table-derived record never names the region's `EvidenceIR` `evidence_id` or its
+    /// `figure:<asset_id>` form; it cites the table through `supporting_table_ids`. Asked in the
+    /// visual vocabulary, therefore, *every* captured table region answers "unexplained" — including
+    /// the ones that produced the document's registers and timing — and a residual for one of those
+    /// would duplicate a key the same stage promotes, which the residual contract forbids.
+    ///
+    /// The collections below are every `SemanticIr` surface that declares `supporting_table_ids`,
+    /// derived from the field declarations rather than from what a table is believed to reach.
+    /// `MessageFieldRecord` and `SignalSemanticHintRecord` declare it too but are `EvidenceIR`-only
+    /// and never appear here. Over-inclusion is the safe direction: an extra surface can only
+    /// *remove* a residual, while a missed one emits a residual for a region a promoted record
+    /// already explains.
+    fn cited_table_ids(&self) -> HashSet<&str> {
+        fn borrow(ids: &[String]) -> impl Iterator<Item = &str> {
+            ids.iter().map(String::as_str)
+        }
+
+        let mut cited: HashSet<&str> = HashSet::new();
+        for record in &self.register_records {
+            cited.extend(borrow(&record.supporting_table_ids));
+        }
+        for record in &self.timing_constraints {
+            cited.extend(borrow(&record.supporting_table_ids));
+        }
+        for record in &self.signal_polarities {
+            cited.extend(borrow(&record.supporting_table_ids));
+        }
+        for conflict in &self.signal_polarity_conflicts {
+            for observation in &conflict.observations {
+                cited.extend(borrow(&observation.supporting_table_ids));
+            }
+        }
+        for conflict in &self.signal_semantic_conflicts {
+            for observation in &conflict.observations {
+                cited.extend(borrow(&observation.supporting_table_ids));
+            }
+        }
+        for interface in &self.interfaces {
+            for signal in &interface.signal_records {
+                cited.extend(borrow(&signal.supporting_table_ids));
+                for observation in &signal.semantic_observations {
+                    cited.extend(borrow(&observation.supporting_table_ids));
+                }
+            }
         }
         cited
     }
@@ -10980,34 +11039,40 @@ typed visual observations for this region, then rebuild SemanticIR from the same
 canonical carrier family applies to the region's content, this residual is its terminal \
 disposition.";
 
-/// SPEC-TO-INTENT-ALIGNMENT.8c — the figure-side sibling of the table-side region accounting in
-/// `crate::ir::completeness::unexplained_intent_bearing_tables`.
+/// SPEC-TO-INTENT-ALIGNMENT.8c/.9b — the IR-carried sibling of the validation-time table accounting
+/// in `crate::ir::completeness::unexplained_intent_bearing_tables`.
 ///
-/// A captured visual region that no canonical record cites reached no carrier, so it earns exactly
-/// one typed residual rather than disappearing. Authority is entirely structural: the region's own
+/// A captured region that no canonical record cites reached no carrier, so it earns exactly one
+/// typed residual rather than disappearing. Authority is entirely structural: the region's own
 /// captured kind, its `EvidenceIR` identity, and provenance membership over the artifact's concrete
 /// record collections. No document, vendor, protocol, or review label participates, and the record
 /// asserts only the absence of a carrier — never a canonical value in its place.
-fn unexplained_captured_visual_regions(
+///
+/// `.8c` shipped the visual kinds; `.9b` added table regions, which are captured as visual evidence
+/// under the same `asset_id` their table-derived records cite. The two kinds differ only in which
+/// provenance vocabulary answers "is this region explained?", never in what the record may assert.
+fn unexplained_captured_regions(
     evidence_ir: &EvidenceIr,
     cited_provenance_ids: &HashSet<&str>,
+    cited_table_ids: &HashSet<&str>,
 ) -> Vec<CapturedRegionResidualRecord> {
     evidence_ir
         .visual_evidence
         .iter()
         .filter_map(|item| {
             let region_kind = residual_accountable_region_kind(item.asset_kind)?;
-            let figure_provenance_id =
-                crate::ir::waveform::figure_region_provenance_id(&item.asset_id);
-            let explained = cited_provenance_ids.contains(item.evidence_id.as_str())
-                || cited_provenance_ids.contains(figure_provenance_id.as_str());
-            if explained {
+            if captured_region_is_explained(
+                item,
+                region_kind,
+                cited_provenance_ids,
+                cited_table_ids,
+            ) {
                 return None;
             }
             Some(CapturedRegionResidualRecord {
                 region_id: item.asset_id.clone(),
                 region_kind,
-                supporting_evidence_ids: vec![item.evidence_id.clone()],
+                supporting_evidence_ids: captured_region_evidence_ids(item, region_kind),
                 cause: CapturedRegionResidualCause::NoCanonicalCarrierForCapturedRegion,
                 reason: captured_region_residual_reason(region_kind),
                 first_failing_stage: CapturedRegionBoundary::EvidenceToSemanticIr,
@@ -11017,22 +11082,69 @@ fn unexplained_captured_visual_regions(
         .collect()
 }
 
-/// Which captured visual kinds this accounting owns.
+/// Does any canonical record cite this captured region, in the provenance vocabulary its own kind
+/// uses?
 ///
-/// `TableRegion` is excluded because a table region already reaches canonical carriers through the
-/// register, signal, and timing paths; a residual for one would duplicate a promoted fact, which
-/// is exactly the self-contradiction the residual contract forbids. `Unknown` is excluded for the
-/// same reason the table-side sibling skips unclassified table kinds: capture never established
-/// the region as intent-bearing, so accounting it would assert a region the classifier did not
-/// find. The match is exhaustive so a new visual kind cannot join silently on either side.
+/// The test is kind-scoped rather than a union, so a region can only be explained by a citation a
+/// producer could actually have written for it, and so widening the accounting to tables leaves
+/// every visual region's answer bit-for-bit what `.8c` published.
+///
+/// - a visual region is cited as its `EvidenceIR` `evidence_id` (the projection path threads that
+///   id into every record it emits) or as `figure:<asset_id>` (the mined figure-contract path);
+/// - a table region is cited as its table id in `supporting_table_ids`, which is how every
+///   table-derived record in this pipeline names the table it came from.
+fn captured_region_is_explained(
+    item: &crate::ir::evidence::VisualEvidenceItem,
+    kind: VisualAssetKind,
+    cited_provenance_ids: &HashSet<&str>,
+    cited_table_ids: &HashSet<&str>,
+) -> bool {
+    match kind {
+        VisualAssetKind::TableRegion => cited_table_ids.contains(item.asset_id.as_str()),
+        _ => {
+            let figure_provenance_id =
+                crate::ir::waveform::figure_region_provenance_id(&item.asset_id);
+            cited_provenance_ids.contains(item.evidence_id.as_str())
+                || cited_provenance_ids.contains(figure_provenance_id.as_str())
+        }
+    }
+}
+
+/// The `EvidenceIR` identities the residual cites for a captured region.
+///
+/// A visual region has one: the `evidence_id` of the visual-evidence record that captured it. A
+/// table region has two, and both are real — `visual_NNNN`, under which the rendered region was
+/// captured, and `table_NNNN`, under which every table-derived record in the artifact cites it. A
+/// residual naming only one of those cannot be joined to the other half of the artifact, so the
+/// table case carries both.
+fn captured_region_evidence_ids(
+    item: &crate::ir::evidence::VisualEvidenceItem,
+    kind: VisualAssetKind,
+) -> Vec<String> {
+    match kind {
+        VisualAssetKind::TableRegion => vec![item.evidence_id.clone(), item.asset_id.clone()],
+        _ => vec![item.evidence_id.clone()],
+    }
+}
+
+/// Which captured region kinds this accounting owns.
+///
+/// `Unknown` is excluded for the same reason the validation-time table sibling skips unclassified
+/// table kinds: capture never established the region as intent-bearing, so accounting it would
+/// assert a region the classifier did not find. `TableRegion` joined at `.9b`; `.8c` had excluded
+/// it on the belief that a table region always reaches a register, signal, or timing carrier, and
+/// measurement refuted that — most captured table regions reach none, and the ones that do are now
+/// excluded by the table-provenance coverage test instead of by kind. The match is exhaustive so a
+/// new visual kind cannot join silently on either side.
 fn residual_accountable_region_kind(kind: VisualAssetKind) -> Option<VisualAssetKind> {
     match kind {
         VisualAssetKind::Figure
         | VisualAssetKind::Diagram
         | VisualAssetKind::Chart
         | VisualAssetKind::FormulaRegion
-        | VisualAssetKind::Screenshot => Some(kind),
-        VisualAssetKind::TableRegion | VisualAssetKind::Unknown => None,
+        | VisualAssetKind::Screenshot
+        | VisualAssetKind::TableRegion => Some(kind),
+        VisualAssetKind::Unknown => None,
     }
 }
 
@@ -12636,7 +12748,7 @@ mod tests {
     }
 
     #[test]
-    fn captured_figure_regions_without_a_canonical_carrier_earn_one_typed_residual() -> Result<()> {
+    fn captured_regions_without_a_canonical_carrier_earn_one_typed_residual() -> Result<()> {
         let tempdir = tempdir()?;
         let (evidence_ir, semantic_ir, _) = captured_region_fixture(tempdir.path())?;
 
@@ -12647,8 +12759,8 @@ mod tests {
             .collect();
         assert_eq!(
             regions,
-            vec!["picture_0001", "picture_0002"],
-            "exactly the figure-kind regions are accounted, in capture order"
+            vec!["picture_0001", "picture_0002", "table_0001"],
+            "every captured region kind but `unknown` is accounted, in capture order"
         );
 
         let figure = semantic_ir
@@ -12676,6 +12788,24 @@ mod tests {
             "each residual reports the region's own captured kind"
         );
 
+        let table = &semantic_ir.captured_region_residuals[2];
+        assert_eq!(table.region_kind, VisualAssetKind::TableRegion);
+        assert_eq!(
+            table.supporting_evidence_ids,
+            vec![
+                captured_region_evidence_id(&evidence_ir, "table_0001"),
+                "table_0001".to_string()
+            ],
+            "a table region cites both identities under which the artifact refers to it"
+        );
+        assert_eq!(table.cause, figure.cause);
+        assert_eq!(table.first_failing_stage, figure.first_failing_stage);
+        assert_eq!(
+            table.replay, figure.replay,
+            "the operator route does not depend on the region's kind"
+        );
+        assert!(table.reason.contains("table"));
+
         Ok(())
     }
 
@@ -12685,39 +12815,60 @@ mod tests {
         let (evidence_ir, _, _) = captured_region_fixture(tempdir.path())?;
         let figure_evidence_id = captured_region_evidence_id(&evidence_ir, "picture_0001");
         let figure_provenance_id = crate::ir::waveform::figure_region_provenance_id("picture_0001");
+        let table_evidence_id = captured_region_evidence_id(&evidence_ir, "table_0001");
 
-        let accounted = |cited: &[&str]| -> Vec<String> {
+        let accounted = |cited: &[&str], tables: &[&str]| -> Vec<String> {
             let cited: HashSet<&str> = cited.iter().copied().collect();
-            super::unexplained_captured_visual_regions(&evidence_ir, &cited)
+            let tables: HashSet<&str> = tables.iter().copied().collect();
+            super::unexplained_captured_regions(&evidence_ir, &cited, &tables)
                 .into_iter()
                 .map(|residual| residual.region_id)
                 .collect()
         };
+        let all = || {
+            vec![
+                "picture_0001".to_string(),
+                "picture_0002".to_string(),
+                "table_0001".to_string(),
+            ]
+        };
 
         assert_eq!(
-            accounted(&[]),
-            vec!["picture_0001".to_string(), "picture_0002".to_string()],
-            "no citation leaves both figure regions unexplained"
+            accounted(&[], &[]),
+            all(),
+            "no citation leaves every captured region unexplained"
         );
         assert_eq!(
-            accounted(&[figure_evidence_id.as_str()]),
-            vec!["picture_0002".to_string()],
+            accounted(&[figure_evidence_id.as_str()], &[]),
+            vec!["picture_0002".to_string(), "table_0001".to_string()],
             "a record citing the region's evidence id explains it"
         );
         assert_eq!(
-            accounted(&[figure_provenance_id.as_str()]),
-            vec!["picture_0002".to_string()],
+            accounted(&[figure_provenance_id.as_str()], &[]),
+            vec!["picture_0002".to_string(), "table_0001".to_string()],
             "a figure-region contract citing the region explains it too"
         );
         assert_eq!(
-            accounted(&["visual_9999", "figure:picture_9999"]),
-            vec!["picture_0001".to_string(), "picture_0002".to_string()],
+            accounted(&["visual_9999", "figure:picture_9999"], &["table_9999"]),
+            all(),
             "citing some other region explains nothing here"
         );
         assert_eq!(
-            accounted(&[captured_region_evidence_id(&evidence_ir, "table_0001").as_str()]),
+            accounted(&[], &["table_0001"]),
             vec!["picture_0001".to_string(), "picture_0002".to_string()],
-            "table regions are never accounted, cited or not"
+            "a record citing the table in its table provenance explains the table region"
+        );
+        assert_eq!(
+            accounted(&[table_evidence_id.as_str()], &[]),
+            all(),
+            "the visual vocabulary never explains a table region: that is the whole reason \
+             .8c's coverage test could not simply be reused for it"
+        );
+        assert_eq!(
+            accounted(&[], &["picture_0001"]),
+            all(),
+            "and the table vocabulary never explains a visual region, so widening the accounting \
+             leaves every figure answer exactly as .8c published it"
         );
 
         Ok(())
@@ -12729,7 +12880,13 @@ mod tests {
         let (_, semantic_ir, _) = captured_region_fixture(tempdir.path())?;
 
         let cited = semantic_ir.cited_provenance_ids();
+        let cited_tables = semantic_ir.cited_table_ids();
         for residual in &semantic_ir.captured_region_residuals {
+            assert!(
+                !cited_tables.contains(residual.region_id.as_str()),
+                "{} is both promoted through table provenance and residualized",
+                residual.region_id
+            );
             for evidence_id in &residual.supporting_evidence_ids {
                 assert!(
                     !cited.contains(evidence_id.as_str()),
@@ -12748,6 +12905,167 @@ mod tests {
                 "an unprovenanced residual cannot be reviewed or replayed"
             );
         }
+
+        Ok(())
+    }
+
+    /// Every `SemanticIr` surface that declares `supporting_table_ids` must reach the coverage
+    /// gatherer. A missed surface is the dangerous direction: it emits a residual for a table a
+    /// promoted record already explains, which is the self-contradiction the residual contract
+    /// forbids. Each surface is given a distinct table id, so the assertion names exactly which one
+    /// dropped out, and the same artifact is walked as serialized JSON — the artifact's own
+    /// declaration of where table provenance lives — so a surface added later without joining the
+    /// typed gatherer fails here rather than shipping a contradictory residual.
+    #[test]
+    fn cited_table_ids_gathers_every_declared_table_provenance_surface() -> Result<()> {
+        let tempdir = tempdir()?;
+        let (_, mut semantic_ir, _) = captured_region_fixture(tempdir.path())?;
+        semantic_ir.register_records.clear();
+        semantic_ir.timing_constraints.clear();
+        semantic_ir.signal_polarities.clear();
+        semantic_ir.signal_polarity_conflicts.clear();
+        semantic_ir.signal_semantic_conflicts.clear();
+        semantic_ir.interfaces.clear();
+
+        semantic_ir
+            .register_records
+            .push(crate::ir::source::RegisterRecord {
+                register_id: "reg_table_1000_000".to_string(),
+                register_name: "R".to_string(),
+                access_type: None,
+                offset_address: None,
+                size_bits: None,
+                fields: Vec::new(),
+                supporting_table_ids: vec!["table_1000".to_string()],
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        semantic_ir
+            .timing_constraints
+            .push(crate::ir::source::TimingConstraintRecord {
+                constraint_id: "timing_table_1001_000".to_string(),
+                parameter_name: "t".to_string(),
+                min_value: None,
+                typ_value: None,
+                max_value: None,
+                unit: None,
+                description: None,
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: vec!["table_1001".to_string()],
+                intent_disposition: crate::ir::source::TimingIntentDisposition::Canonical,
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        semantic_ir
+            .signal_polarities
+            .push(crate::ir::evidence::SignalPolarityRecord {
+                signal_name: "S".to_string(),
+                polarity: SignalPolarity::ActiveHigh,
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: vec!["table_1002".to_string()],
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        semantic_ir
+            .signal_polarity_conflicts
+            .push(crate::ir::evidence::SignalPolarityConflictRecord {
+            conflict_id: "polarity_conflict_0001".to_string(),
+            signal_name: "S".to_string(),
+            observations: vec![crate::ir::evidence::SignalPolarityObservationRecord {
+                polarity: SignalPolarity::ActiveLow,
+                source_kind:
+                    crate::ir::evidence::SignalPolarityEvidenceSourceKind::SignalDescriptionTable,
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: vec!["table_1003".to_string()],
+            }],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        semantic_ir
+            .signal_semantic_conflicts
+            .push(crate::ir::evidence::SignalSemanticConflictRecord {
+            conflict_id: "semantic_conflict_0001".to_string(),
+            signal_name: "S".to_string(),
+            observations: vec![
+                crate::ir::evidence::SignalSemanticConflictObservationRecord {
+                    semantic_tags: Vec::new(),
+                    source_kind:
+                        crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable,
+                    source_text: "row".to_string(),
+                    supporting_statement_ids: Vec::new(),
+                    supporting_table_ids: vec!["table_1004".to_string()],
+                    supporting_visual_evidence_ids: Vec::new(),
+                },
+            ],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        semantic_ir.interfaces.push(super::InterfaceRecord {
+            interface_id: "if_0001".to_string(),
+            signals: vec!["S".to_string()],
+            signal_records: vec![super::InterfaceSignalRecord {
+                signal_name: "S".to_string(),
+                direction_hint: None,
+                width_hint: None,
+                resolved_polarity: None,
+                semantic_tags: Vec::new(),
+                semantic_candidates: Vec::new(),
+                semantic_arbitration: None,
+                resolved_semantic_role: None,
+                semantic_grounding_strength: None,
+                semantic_consensus: None,
+                semantic_observations: vec![super::InterfaceSignalSemanticObservationRecord {
+                    semantic_tags: Vec::new(),
+                    source_kind:
+                        crate::ir::evidence::SignalSemanticHintSourceKind::SignalDescriptionTable,
+                    source_text: "row".to_string(),
+                    supporting_statement_ids: Vec::new(),
+                    supporting_table_ids: vec!["table_1006".to_string()],
+                    supporting_visual_evidence_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::Medium,
+                }],
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: vec!["table_1005".to_string()],
+                automation_confidence: AutomationConfidence::Medium,
+            }],
+            supporting_statement_ids: Vec::new(),
+        });
+
+        let expected: BTreeSet<String> = (1000..=1006).map(|n| format!("table_{n}")).collect();
+        let gathered: BTreeSet<String> = semantic_ir
+            .cited_table_ids()
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        assert_eq!(
+            gathered, expected,
+            "one declared table-provenance surface did not reach the coverage gatherer"
+        );
+
+        fn walk(value: &serde_json::Value, found: &mut BTreeSet<String>) {
+            match value {
+                serde_json::Value::Object(map) => {
+                    for (key, child) in map {
+                        if key == "supporting_table_ids" {
+                            if let Some(items) = child.as_array() {
+                                found.extend(
+                                    items
+                                        .iter()
+                                        .filter_map(|id| id.as_str())
+                                        .map(str::to_string),
+                                );
+                            }
+                        } else {
+                            walk(child, found);
+                        }
+                    }
+                }
+                serde_json::Value::Array(items) => items.iter().for_each(|it| walk(it, found)),
+                _ => {}
+            }
+        }
+        let mut serialized = BTreeSet::new();
+        walk(&serde_json::to_value(&semantic_ir)?, &mut serialized);
+        assert_eq!(
+            gathered, serialized,
+            "the typed gatherer and the artifact's own serialized table provenance disagree"
+        );
 
         Ok(())
     }

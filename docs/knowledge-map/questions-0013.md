@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > why can a shipped standalone extractor fail to improve the default end-to-end result
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why can an active task legacy route use a shorthand source literal
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > why can an extra blank line fail harmless layout comparison
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -292,9 +298,3 @@
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > why does Wishbone declare no signals
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > why does a SemanticIR residual packet list only some undeclared signal names
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why does a Wishbone constraint name CYC instead of CYC_O

@@ -330,7 +330,7 @@ left in the artifact to notice. A block diagram showing four trace units feeding
 content, but `SemanticIR` has no collection that can hold "this component sits here and connects there". Before
 this surface existed, such a figure simply stopped at `EvidenceIR` and left no trace downstream.
 
-`SemanticIR.captured_region_residuals` closes that hole. Every captured visual region that **no canonical record
+`SemanticIR.captured_region_residuals` closes that hole. Every captured region that **no canonical record
 cites** earns exactly one typed record:
 
 ```json
@@ -345,12 +345,20 @@ cites** earns exactly one typed record:
 }
 ```
 
-Four properties make the record trustworthy rather than decorative.
+Six properties make the record trustworthy rather than decorative.
 
-**Coverage is provenance, not prose.** A region counts as explained only when a concrete record — a timing
-constraint, signal constraint, conditional rule, state, transition, temporal rule, temporal conflict, or actor
-contract — names it in its own provenance list. The check reads those collections; it never scans the artifact
-for the region's name.
+**Coverage is provenance, not prose.** A region counts as explained only when a concrete record names it in its
+own provenance list. The check reads those collections; it never scans the artifact for the region's name.
+
+**Each kind is asked in its own provenance vocabulary.** A *visual* region is cited by its `EvidenceIR`
+`evidence_id` — threaded into every record the grounded-projection path emits — or as `figure:<asset_id>` by a
+mined figure contract; the collections that can carry either are the timing constraints, signal constraints,
+conditional rules, states, transitions, temporal rules, temporal conflicts, and actor contracts. A *table*
+region is cited by its table id in `supporting_table_ids`, which is how every table-derived record in the
+pipeline names the table it came from — register records, timing constraints, signal polarities and their
+conflict observations, and the interface signal records with their semantic observations. Asking a table region
+in the visual vocabulary would answer "unexplained" for every table a document has, so the two are kept
+separate: the question is always "did a record that could have cited this region actually cite it?".
 
 **A caption is not the figure.** `EvidenceIR` may relate a statement to a visual region because the statement
 *is* that region's caption. Counting those links would explain regions whose content reached nothing: over the
@@ -359,18 +367,25 @@ collections above, and 466 if applied to every collection carrying `supporting_s
 naive implementation takes. The reviewed `picture_0001` falls in the second set, so the looser reading is the
 one that would have reported success on a cell the review requires to fail. They are deliberately not coverage.
 
-**Table regions are excluded.** A `table_region` visual already reaches canonical carriers through the register,
-signal, and timing paths. A residual for one would claim that a fact both did and did not reach `IntentIR` — the
-self-contradiction the residual contract exists to forbid. Unclassified regions are excluded too, for the same
-reason the [table-side sibling](evidenceir.md#completeness-region-accounting--flag-intent-bearing-tables-that-produced-nothing)
-skips unclassified table kinds: capture never established them as intent-bearing.
+**Unclassified regions are excluded.** A region whose captured kind is `unknown` is skipped for the same reason
+the [validation-time table sibling](evidenceir.md#completeness-region-accounting--flag-intent-bearing-tables-that-produced-nothing)
+skips unclassified table kinds: capture never established it as intent-bearing, so accounting it would assert a
+region the classifier never found. That is the only exclusion. Table regions were excluded until
+`SPEC-TO-INTENT-ALIGNMENT.9b`, on the belief that a table always reaches a register, signal, or timing carrier;
+measurement refuted it — most captured table regions reach none — and the ones that do are now excluded by the
+table-provenance coverage test above rather than by their kind, which is the accurate way to say the same thing.
+
+**A table region cites both of its identities.** `supporting_evidence_ids` carries `visual_NNNN`, the
+visual-evidence record that captured the rendered region, *and* `table_NNNN`, the id every table-derived record
+uses. Both are real `EvidenceIR` identities of the same region, and a residual naming only one could not be
+joined to the other half of the artifact.
 
 **Nothing is invented.** The record asserts only the *absence* of a carrier. It never states what the region
 said, so it cannot become a fabricated fact by another name.
 
 The record is carried unchanged into `IntentIR`, because the region gains no carrier at that boundary either.
 
-*Authoritative tracking:* `SPEC-TO-INTENT-ALIGNMENT.8c`, under
+*Authoritative tracking:* `SPEC-TO-INTENT-ALIGNMENT.8c` and `.9b`, under
 [`docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md`](../../tasks/SPEC-TO-INTENT-ALIGNMENT.md).
 
 ## What this stage is trying to resolve

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what does the active task evidence checker verify
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > what does the active task migration roll back after a validation failure
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -208,6 +210,8 @@
   > what is capture_signal_presence_rows and who shares it
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is captured_region_residuals
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is cited_table_ids
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -293,7 +297,3 @@
   > what is the DOC-INTENT-TAXONOMY.1 corpus census
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > what is the Dempster combiner in fusion
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what is the EXTRACTION-QUALITY-GAUGE.FIELD design

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > what reviewed paraphrase and layout calibrations currently pass
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > what should an auditor do when re-derivation disagrees with a published value
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -294,7 +298,3 @@
   > where is the trailing function-word strip in consolidate_trailing_fragment
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > where is the upstream claim-verification source
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > where is the weak-phrase / NASA ARM ambiguity detector
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > where may diagnostic scratch files and comparison lists be written

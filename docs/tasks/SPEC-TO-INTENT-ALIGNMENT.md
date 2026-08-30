@@ -20,7 +20,7 @@ expressiveness as the bottleneck.
 
 - Root children `.0`–`.9`. `.0` through `.8` are complete with every declared descendant, except former
   lane `.6e`, which the later structural repair `.6d.ii.f.iv.a`/`.f.iv.b` supersedes.
-- `.9` is active: `.9a` is complete, `.9b` is active, and `.9c` is declared.
+- `.9` is active: `.9a` and `.9b` are complete, and `.9c`/`.9d` are declared.
 - Per-leaf goal, acceptance, decision, and measurement detail live in the task-evidence parts. This root
   carries the bounded current summary and the executable owner registry only.
 
@@ -39,11 +39,16 @@ residual-actionability parts.
 
 `.9` closes the four required-and-absent cells `.9a` re-derived, by generalising `.8c`'s structural rule —
 one typed residual per captured region no canonical record cites — from figures to the other captured region
-kinds. `.9b` owns the table leg. `.9c` owns the prose leg, which `.9b` measured to be blocked upstream:
+kinds. `.9b` shipped the table leg: coverage for a table region is now asked in the `supporting_table_ids`
+vocabulary its own records use, so a table that reached a carrier is never residualised and one that reached
+none earns a typed residual carrying both of its `EvidenceIR` identities, with every figure-kind residual `.8c`
+published unchanged by construction. `.9c` owns the prose leg, which `.9b` measured to be blocked upstream:
 `EvidenceIR` carries no `SourceIR` content-element identity at all, so a prose residual cannot yet name the
-region the review requires. Two reviewed cells are additionally blocked on a residual label no projection
-can produce, and one cell is not reachable by any structural rule; both findings are recorded in the
-residual-carrier part. The population replay that publishes the comparable result follows the carrier work.
+region the review requires. `.9d` owns a defect `.9b` found and did not cause: the frozen residual-actionability
+contract no longer pins the current result, and nothing executes its checker. Two reviewed cells are
+additionally blocked on a residual label no projection can produce, and one cell is not reachable by any
+structural rule; every finding is recorded in the region-kind-generalisation part. The population replay that publishes
+the comparable result follows the carrier work.
 One regression outside this program stays owned by
 [`SOURCE-IR-REPRODUCIBILITY`](SOURCE-IR-REPRODUCIBILITY.md): reviewed cells are anchored on ordinal SourceIR
 element ids and ingest is not reproducible across time, so exact source regions are 13/14.
@@ -139,11 +144,13 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9a`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9b`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9c`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.9d`
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-30` | `.9b` table-region carrier | table regions join the carrier with coverage read from `supporting_table_ids`; the current Arm Debug chain moves from 210 of 210 unexplained to 16 cited / 194, and every figure residual is unchanged by construction; seven controls, 470/168/1,372/4, clean fmt, five genericity components at 41 families / 170 rules, CHAIN-CURRENCY 24/24 current at all four stages |
 | `2026-08-30` | `.9b` declaration and bounded-root rollover | the bounded active root moves from 89.8% to 81.2% of its declared line target with no measured value lost — every figure the rolled prose carried re-derives from the residual-carrier and residual-actionability parts; `.9b`/`.9c` are declared in the root registry, the index, the containment contract, and the manifest, and the task-evidence contract revalidates clean |
 | `2026-08-27` | `.8d` published population closure | 12 sources / 48 stages replayed at `483e525d`: residual actionability 4/16 to 8/16, disposition 8/14 to 10/14, modality 6/12 to 8/12, provenance 43/43 to 45/45, conservation 120/120, IntentIR 40/0/0, platform-system-ip supported; a frozen-projection control leg reproduces 4/16 so exactly two cells moved; source regions 13/14 on an anchor regression |
 | `2026-08-27` | `.8c` captured-region carrier | one typed residual per uncited captured figure region, carried into IntentIR; two pre-change chains differ only in the new collection; 170 rules over 50/50 fields; all gates pass |
@@ -176,6 +183,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.9b` | `SPEC-TO-INTENT-ALIGNMENT.9b — generalise the captured-region carrier to captured table regions` | ask each region kind in the provenance vocabulary its own records use, so tables join the accounting without residualising the ones that reached a carrier |
 | `.9b` | `SPEC-TO-INTENT-ALIGNMENT.9b — declare the table-region carrier leaf and roll the bounded root` | measure the generalisation before building it, split `.9` by region kind, and free the root's line budget so the leaf can be declared at all |
 | `.8d` | `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure` | replay all 12 reviewed sources through 48 isolated stages, attribute the whole delta with a frozen-projection control leg, and publish 8/16 with platform-system-ip supported |
 | `.8c` | `SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier` | ship the typed captured-region residual across SemanticIR and IntentIR, prove the carrier claim in the frozen contract, and rebuild every retained chain to zero stale |

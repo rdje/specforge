@@ -703,16 +703,24 @@ def project_non_applicable_timing(stage: dict, spec: dict) -> list[dict]:
     return projected
 
 
+# Region kinds production emits a captured-region residual for. Prose is absent because the carrier
+# cannot exist for it yet, not because the reviewed cells do not want one: `EvidenceIR` carries no
+# `SourceIR` content-element identity, so a prose residual cannot name the region a reviewed prose
+# cell anchors on (`SPEC-TO-INTENT-ALIGNMENT.9c` owns closing that gap).
+CAPTURED_REGION_KINDS = ("figure", "table")
+
+
 def project_captured_regions(stage: dict, spec: dict) -> list[dict]:
-    """Project the captured-region carrier: a captured visual region no canonical record cites.
+    """Project the captured-region carrier: a captured region no canonical record cites.
 
     The carrier is region-scoped rather than fact-scoped, which is exactly the question a reviewed
-    figure cell asks — was this region's disposition accounted for. The reviewed family names the
-    key; region identity, `EvidenceIR` provenance, and the three actionability fields are carried
-    verbatim from the production record. A region a canonical record does cite earns no carrier and
-    therefore projects nothing, so an explained region can never read as an accounted one.
+    figure or table cell asks — was this region's disposition accounted for. The reviewed family
+    names the key; region identity, `EvidenceIR` provenance, and the three actionability fields are
+    carried verbatim from the production record. A region a canonical record does cite earns no
+    carrier and therefore projects nothing, so an explained region can never read as an accounted
+    one.
     """
-    if spec["region"][0] != "figure":
+    if spec["region"][0] not in CAPTURED_REGION_KINDS:
         return []
     region_id = spec["region"][1]
     projected = []

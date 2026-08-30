@@ -3,11 +3,12 @@
 - Part ID: `residual-carrier`
 - State: `active`
 
-This part owns the production carrier and the population replay — `SPEC-TO-INTENT-ALIGNMENT.8c` and `.8d`,
-and the `.9b`/`.9c` generalisation of the same carrier to the remaining captured region kinds. The `.8`
-localization, the frozen `.8a` rule, the corrected `.8b` accounting, and the `.9a` re-derivation that route here
-stay in [residual actionability](residual-actionability.md); this part was split from it at that task boundary
-when the combined part reached its declared line-count rollover milestone.
+This part owns the production carrier and the population replay — `SPEC-TO-INTENT-ALIGNMENT.8c` and `.8d`. The
+`.8` localization, the frozen `.8a` rule, and the corrected `.8b` accounting that route here stay in
+[residual actionability](residual-actionability.md); this part was split from it at that task boundary when the
+combined part reached its declared line-count rollover milestone. `.9`'s generalisation of the same carrier to
+the remaining captured region kinds was split out of *this* part at the `.8`/`.9` boundary for the same reason
+and lives in [region-kind generalisation](region-kind-generalisation.md).
 
 ## Owned leaves
 
@@ -57,34 +58,6 @@ when the combined part reached its declared line-count rollover milestone.
   gate-tier doctrines pass, and 3,095 files / 1,158,476 KiB of population scratch plus 4,192 files /
   1,903,200 KiB of diagnostic scratch are removed with an empty residue census`
   Commit: `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure`
-
-- ID: `SPEC-TO-INTENT-ALIGNMENT.9b`
-  State: `active`
-  Goal: generalise the captured-region residual carrier from figures to captured table regions
-  Acceptance: the `.8c` producer's region population widens to `VisualAssetKind::TableRegion` with a coverage
-  test expressed in the vocabulary a table region's own canonical records actually use, so a table that reached
-  a register, timing, polarity, or interface-signal carrier is never residualised and a table that reached none
-  earns exactly one typed residual carrying its region identity, `EvidenceIR` provenance, the closed cause
-  `no_canonical_carrier_for_captured_region`, boundary `evidence_to_semantic_ir`, and an operator replay route;
-  every figure-kind residual already shipped by `.8c` is byte-unchanged; the reviewed vertical fixture projects
-  table-kind regions; authority stays structural, with no document, vendor, protocol, or review label reaching
-  production; focused positive/refusal tests, the workspace suite, warning-denied Clippy, all
-  production-genericity components, and the frozen residual contract self-test pass
-  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.9a`
-  Verification: `pending`
-  Commit: `pending`
-
-- ID: `SPEC-TO-INTENT-ALIGNMENT.9c`
-  State: `pending`
-  Goal: carry the SourceIR prose region identity into EvidenceIR and generalise the carrier to prose
-  Acceptance: `EvidenceIR` records, for every extracted statement, the `SourceIR` content-element identity the
-  statement was split from, so a prose residual can name the region the reviewed cell anchors on; the carrier
-  then emits one typed residual per captured intent-bearing prose statement no canonical record cites, with the
-  fallback statement class excluded on the same "capture never established the region as intent-bearing" rule
-  that already excludes `VisualAssetKind::Unknown`; the schema move is reconciled across every retained chain
-  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.9b`
-  Verification: `pending`
-  Commit: `pending`
 
 ## Reviewed-source availability (`.8d`)
 
@@ -284,69 +257,6 @@ ingest-determinism replays, and one detached worktree at `3d04bde0` — are remo
 `.project-data/tmp/spec-to-intent-external-sources/`: they are 6.3 MiB, git-ignored, digest-pinned in the table
 above, and they are what makes this leaf's own measurement re-runnable.
 
-## Measured generalisation design (`.9b`, before implementation)
-
-`.9a` fixed the rule: one typed residual per captured region that no canonical record cites, asked of table
-regions and prose statements as well as figures. Measuring that rule against the retained corpus *before*
-implementing it establishes three things the pinned result alone could not show, and splits `.9` accordingly.
-
-**The naive widening would residualise regions that already reached a carrier.** `.8c` decides coverage by
-asking whether a canonical `SemanticIR` record cites the region's `evidence_id` or its `figure:<asset_id>`
-form. No table-derived record ever cites either: table provenance in this pipeline is `supporting_table_ids`,
-carried by `RegisterRecord`, `TimingConstraintRecord`, `ConditionalRuleRecord`, `SignalPolarityRecord`, and
-the interface-signal records. Lifting the `TableRegion` exclusion without changing the coverage vocabulary
-therefore reports *every* captured table region as unexplained — 354 of 354 in the AMD IOMMU chain and 210 of
-210 in the Arm Debug chain — including the tables that produced the reviewed register and timing facts. That
-is precisely the "a residual duplicating a promoted canonical key" self-contradiction the frozen `.8a`
-contract forbids. Coverage for a table region must be asked in the table-provenance vocabulary, which is what
-`.9b` builds; measured that way the current Arm Debug chain resolves to 16 cited and 194 unexplained of 210.
-
-**The prose leg is blocked upstream, and not by anything in this program.** `EvidenceIR` carries no `SourceIR`
-content-element identity at all: `elem_\d+` occurs zero times in a complete `evidence_ir.json`, `EvidenceSpan`
-records only `span_id` plus page/line, and `ExtractedStatement` records only `statement_id`. The reviewed
-prose cells anchor on `elem_00219` and `elem_00017`, so a prose residual produced at the
-`evidence_to_semantic_ir` boundary cannot name the region the review requires. `.9c` owns closing that
-provenance gap before the prose carrier can exist.
-
-**Two reviewed observations are unsatisfiable as written.** The region-scoped projection names a residual
-`<region_id>|<reviewed family>`, which is exactly what the two closable cells expect
-(`table_0067|packed_page_table_entry`, `elem_00219|software_guidance`). The other two expect
-`table_0004|toc_non_contract` and `elem_00017|informational_non_contract` — hand-written review labels naming
-a *cause* rather than the cell's own family. No non-circular projection can produce either spelling, so those
-two observations cannot be met by any correct implementation. This is the `.8b` defect class — an observation
-that stays in the denominator while nothing can satisfy it — and it gets its own leaf rather than being
-quietly repaired inside a production slice.
-
-**And one of those two cells is unreachable by any structural rule regardless of its label.**
-`informational_disclaimer` anchors on `statement_0013`, whose class is `source_fact` — the bucket
-`classify_statement` returns when no typed intent shape is found, the prose analogue of
-`VisualAssetKind::Unknown` and of the unclassified table kinds `unexplained_intent_bearing_tables` already
-skips. Excluding that bucket is the same "capture never established the region as intent-bearing" rule the
-carrier already applies; including it would emit one residual per uncited paragraph — in the current Arm Debug
-chain, 6,555 of 6,658 statements are uncited, against 440 of 543 once the fallback class is excluded. Closing
-that cell needs an owner decision about what a disclaimer is, not an implementation.
-
-## Decisions (`.9b`)
-
-- `2026-08-30`: split `.9` by region kind rather than shipping one widening. The table leg is buildable now;
-  the prose leg is blocked on an `EvidenceIR` provenance gap; the two label-blocked observations are an oracle
-  defect. Bundling them would have published one number whose parts have three different causes.
-- `2026-08-30`: express table coverage as `supporting_table_ids` membership rather than as "some record id
-  embeds the table id". The contract's own rule is that a region is explained only when a canonical record
-  *names it in its own provenance list*; an id-embedding test would additionally let a fabricated record
-  suppress a residual, which is the opposite of what the carrier is for.
-- `2026-08-30`: gather table provenance from every `SemanticIR` surface that carries `supporting_table_ids`,
-  not only the ones a table is believed to reach. Over-inclusive coverage can only *remove* residuals, so it
-  fails safe against the contract's duplicate-a-promoted-key prohibition; an under-inclusive list fails unsafe.
-- `2026-08-30`: carry both the visual-evidence id and the table id in a table region's
-  `supporting_evidence_ids`. A table region has two real `EvidenceIR` identities — `visual_NNNN`, under which
-  it was captured, and `table_NNNN`, under which every table-derived record cites it — and a residual that
-  names only one cannot be joined to the other half of the artifact.
-- `2026-08-30`: leave every figure-kind residual `.8c` already publishes byte-unchanged. The generalisation
-  adds a population; it is not licence to restate the shipped one.
-- `2026-08-30`: record the unsatisfiable labels and the unreachable cell as findings on this leaf rather than
-  repairing them here, so the measured movement `.9b` publishes is attributable to the production change alone.
-
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.8d`
 
 - [x] **REPRODUCE / MEASURE** — the tracked `.7c.ii`/`.8b` authority published residual actionability 4/16,
@@ -386,7 +296,8 @@ that cell needs an owner decision about what a disclaimer is, not an implementat
   collection on `SemanticIr` could hold "this region was captured and no carrier accepted it".
 - [x] **ADDRESSED (verified)** — the shared `CapturedRegionResidualRecord`, the closed
   `CapturedRegionResidualCause` / `CapturedRegionBoundary` grammars, the structurally gated
-  `unexplained_captured_visual_regions` producer, the `cited_provenance_ids` membership test, the shared
+  `unexplained_captured_visual_regions` producer (renamed to `unexplained_captured_regions` by `.9b`), the
+  `cited_provenance_ids` membership test, the shared
   `figure_region_provenance_id`, and the new field on both `SemanticIr` and `IntentIr` ship together with their
   rule registrations. The rebuilt CoreSight chain carries `picture_0001` / `visual_0008` /
   `no_canonical_carrier_for_captured_region` / `evidence_to_semantic_ir` with a non-empty reason and replay.
@@ -405,8 +316,8 @@ that cell needs an owner decision about what a disclaimer is, not an implementat
 
 ## Update protocol
 
-`.8c` and `.8d` are complete and closed. `.9b` is active and `.9c` is declared here, so this part stays open
-to the `.9` carrier leaves and to nothing else. A correction to a published metric or route here updates the
-containment contract, index, and manifest in the same commit. Decisions, verification, and commit records for
-the `.8` program stay in [residual actionability](residual-actionability.md) so that program keeps one
-chronology; `.9` records its own decisions and verification here.
+`.8c` and `.8d` are complete and closed, and `.9`'s leaves have moved to
+[region-kind generalisation](region-kind-generalisation.md), so this part is closed to new leaves. A correction
+to a published metric or route here updates the containment contract, index, and manifest in the same commit.
+Decisions, verification, and commit records for the `.8` program stay in
+[residual actionability](residual-actionability.md) so that program keeps one chronology.
