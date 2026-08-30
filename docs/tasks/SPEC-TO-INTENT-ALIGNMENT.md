@@ -18,59 +18,35 @@ expressiveness as the bottleneck.
 
 ## Current Program State
 
-- Root children: `.0`–`.9`; `.9`'s children are `.9a` (done) and `.9b`.
-- `.0` through `.5` are complete, including the `.4a`–`.4c` and `.5a`–`.5b` children.
-- `.6` is complete; its normalized children are `.6a`, `.6b`, `.6c`, and `.6d`, while former lane `.6e` is
-  superseded by the later structural repair and clean population proof.
-- `.6a`, `.6b`, `.6c`, and `.6d` are complete with all of their declared descendants.
-- `.6d.i` and `.6d.ii` are complete; `.6d.ii.a` through `.6d.ii.f` are complete.
-- Every declared descendant of `.6d.ii.d` and `.6d.ii.e` is complete.
-- `.6d.ii.f` is complete; `.f.i` and all `.f.ii` implementation/calibration children are complete, and the
-  corrected `.f.iii` qualification checkpoint is measured. `.f.iii.a` has removed the production symbol-alpha
-  coupling and published clean-revision held-out closure; `.f.iv.a` restored the structural carriers and
-  `.f.iv.b` published their clean 12-source proof. `.f.iv` and final signoff `.f.v` are complete.
-- `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7` and children `.7a` through `.7c` are complete;
-  `.8` is complete with all four children `.8a`–`.8d` complete; `.9` is active with `.9a` complete.
+- Root children `.0`–`.9`. `.0` through `.8` are complete with every declared descendant, except former
+  lane `.6e`, which the later structural repair `.6d.ii.f.iv.a`/`.f.iv.b` supersedes.
+- `.9` is active: `.9a` is complete, `.9b` is active, and `.9c` is declared.
+- Per-leaf goal, acceptance, decision, and measurement detail live in the task-evidence parts. This root
+  carries the bounded current summary and the executable owner registry only.
 
 ## Current Frontier
 
 Active product frontier: `SPEC-TO-INTENT-ALIGNMENT.9`.
 
-Structural and behavioral production-genericity signoff is complete, and canonical recovery is closed: the
-clean `.7c.ii` replay of all 12 reviewed sources and 48 isolated stages publishes 40/0/0 TP/FP/FN at EvidenceIR,
-SemanticIR, and IntentIR with 43/43 provenance, 120/120 conservation, and zero fabrication or unexplained drops.
-Wire-protocol joined physical-link as a supported reviewed category there, and `.8d` has since added
-platform-system-ip on the current 45/45 provenance measurement. The frozen behavioral oracle, its held-out
-matrix, and the exact recovery grammar stay in the behavioral-qualification and canonical-recovery parts; that
-signoff claims one specification-instance-neutral production core, not perfect recovery or a complete
-PDF-to-ISF product.
+Structural genericity signoff (`.6d.ii.e`), behavioral signoff (`.6d.ii.f`), and canonical recovery (`.7`)
+are closed, and `.8` shipped the typed captured-region residual carrier. The published reviewed-population
+result is residual actionability **8/16**, source-region disposition 10/14, required-modality accounting
+8/12, provenance closure 45/45, conservation 120/120, and IntentIR 40/0/0 with zero fabrication and zero
+unexplained drops; wire-protocol, physical-link, and platform-system-ip are supported reviewed categories.
+That signoff claims one specification-instance-neutral production core, not perfect recovery or a complete
+PDF-to-ISF product. The measured derivation and its attribution stay in the residual-carrier and
+residual-actionability parts.
 
-Controller-ranked `.8` is complete. Its former 4/24 residual actionability was a *declared* denominator: two
-OpenCAPI analog cells supplied the four actionable observations, four canonical cells already exact at every
-stage contributed eight observations no correct pipeline can satisfy, and six cells supplied the 12 genuinely
-required observations that no residual record explained. `.8a` froze the required-residual rule as an executable
-contract deriving 17 required and five met observations over 18 closed cases and 19 control classes, and
-repaired the silent-green reproduction command structurally. `.8b` made the evaluator agree with that rule, so
-the published ratio became 4/16 over an affected population of twelve while the frozen first result re-derives
-as 0/82. `.8c` shipped the bounded carrier: a captured figure-kind region that no canonical `SemanticIR` record
-cites earns exactly one typed residual carrying its region identity, evidence provenance, closed cause
-`no_canonical_carrier_for_captured_region`, boundary, and operator replay route, carried unchanged into
-`IntentIR`.
-
-`.8d` replayed all 12 reviewed sources through all 48 isolated stages from clean production at `483e525d` and
-published the comparable result. Residual actionability is **8/16**, source-region disposition 10/14,
-required-modality accounting 8/12, and provenance closure 45/45; conservation stays 120/120, IntentIR stays
-40/0/0, and fabrication and unexplained drops stay zero. `platform-system-ip` joins wire-protocol and
-physical-link as a supported reviewed category — exactly the whole-category closure `.8c`'s family selection was
-chosen to deliver. A control leg re-projecting the same replayed artifacts with the frozen pre-change builder
-reproduces 4/16 exactly, so the entire delta is attributable to the projection and no other reviewed metric
-moved. Four required-and-absent cells remain, and `SPEC-TO-INTENT-ALIGNMENT.9a` re-derived them rather than inheriting
-`.8`'s description: the 8/16 reproduces exactly, and two of `.8`'s statements about the remainder do not survive
-— `packed_page_table_entry` needs `no_canonical_carrier_for_captured_region`, and the reviewed dataset never
-checks the typed cause at all. What the four wait on is `.8c`'s structural rule generalised to prose and table regions, owned by `.9b`. The replay also surfaced one regression outside this program: reviewed cells are
-anchored on ordinal SourceIR element ids and ingest is not reproducible across time, so the Cortex-A76 anchor no
-longer resolves and exact source regions are 13/14;
-[`SOURCE-IR-REPRODUCIBILITY`](SOURCE-IR-REPRODUCIBILITY.md) owns it.
+`.9` closes the four required-and-absent cells `.9a` re-derived, by generalising `.8c`'s structural rule —
+one typed residual per captured region no canonical record cites — from figures to the other captured region
+kinds. `.9b` owns the table leg. `.9c` owns the prose leg, which `.9b` measured to be blocked upstream:
+`EvidenceIR` carries no `SourceIR` content-element identity at all, so a prose residual cannot yet name the
+region the review requires. Two reviewed cells are additionally blocked on a residual label no projection
+can produce, and one cell is not reachable by any structural rule; both findings are recorded in the
+residual-carrier part. The population replay that publishes the comparable result follows the carrier work.
+One regression outside this program stays owned by
+[`SOURCE-IR-REPRODUCIBILITY`](SOURCE-IR-REPRODUCIBILITY.md): reviewed cells are anchored on ordinal SourceIR
+element ids and ingest is not reproducible across time, so exact source regions are 13/14.
 
 ## Detailed task evidence
 
@@ -161,11 +137,14 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8d`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9a`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.9b`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.9c`
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-30` | `.9b` declaration and bounded-root rollover | the bounded active root moves from 89.8% to 81.2% of its declared line target with no measured value lost — every figure the rolled prose carried re-derives from the residual-carrier and residual-actionability parts; `.9b`/`.9c` are declared in the root registry, the index, the containment contract, and the manifest, and the task-evidence contract revalidates clean |
 | `2026-08-27` | `.8d` published population closure | 12 sources / 48 stages replayed at `483e525d`: residual actionability 4/16 to 8/16, disposition 8/14 to 10/14, modality 6/12 to 8/12, provenance 43/43 to 45/45, conservation 120/120, IntentIR 40/0/0, platform-system-ip supported; a frozen-projection control leg reproduces 4/16 so exactly two cells moved; source regions 13/14 on an anchor regression |
 | `2026-08-27` | `.8c` captured-region carrier | one typed residual per uncited captured figure region, carried into IntentIR; two pre-change chains differ only in the new collection; 170 rules over 50/50 fields; all gates pass |
 | `2026-08-27` | `.8d` input supplied | eight of eight authorized external reviewed sources are located by exact SHA-256, copied to a repository-derived same-volume path, and re-verified digest- and byte-identical to the reviewed lock; the orchestrator's map, basename, volume, and coverage predicates pass with zero missing and zero extra |
@@ -197,6 +176,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.9b` | `SPEC-TO-INTENT-ALIGNMENT.9b — declare the table-region carrier leaf and roll the bounded root` | measure the generalisation before building it, split `.9` by region kind, and free the root's line budget so the leaf can be declared at all |
 | `.8d` | `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure` | replay all 12 reviewed sources through 48 isolated stages, attribute the whole delta with a frozen-projection control leg, and publish 8/16 with platform-system-ip supported |
 | `.8c` | `SPEC-TO-INTENT-ALIGNMENT.8c — emit the captured-region residual carrier` | ship the typed captured-region residual across SemanticIR and IntentIR, prove the carrier claim in the frozen contract, and rebuild every retained chain to zero stale |
 | `.8d` | `SPEC-TO-INTENT-ALIGNMENT.8d — admit the supplied external reviewed sources` | verify and record the eight owner-supplied sources by exact digest and clear the population-replay input blocker |

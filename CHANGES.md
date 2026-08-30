@@ -1,3 +1,32 @@
+### SPEC-TO-INTENT-ALIGNMENT.9b — declare the table-region carrier leaf and roll the bounded root
+
+- .9a fixed the rule and .9b measured it against the retained corpus BEFORE building it. Two of the three legs
+  .9a named do not survive that measurement unchanged, so .9 splits by region kind instead of shipping one
+  widening whose parts have three different causes.
+- THE NAIVE WIDENING WOULD RESIDUALISE REGIONS THAT ALREADY REACHED A CARRIER. .8c decides coverage by asking
+  whether a canonical record cites the region's evidence_id or figure:<asset_id>. No table-derived record ever
+  cites either — table provenance here is supporting_table_ids — so lifting the TableRegion exclusion without
+  changing the coverage vocabulary reports every captured table region as unexplained: 354 of 354 in the AMD
+  IOMMU chain and 210 of 210 in the Arm Debug chain, INCLUDING the tables that produced the reviewed register
+  and timing facts. That is the "residual duplicating a promoted canonical key" the frozen .8a contract forbids.
+  Asked in the table-provenance vocabulary the current Arm Debug chain resolves to 16 cited / 194 unexplained.
+- THE PROSE LEG IS BLOCKED UPSTREAM. EvidenceIR carries no SourceIR content-element identity at all: elem_\d+
+  occurs ZERO times in a complete evidence_ir.json, EvidenceSpan records only span_id plus page/line, and
+  ExtractedStatement only statement_id. The reviewed prose cells anchor on elem_00219 and elem_00017, so a
+  prose residual cannot name the region the review requires. .9c owns closing that provenance gap first.
+- TWO REVIEWED OBSERVATIONS ARE UNSATISFIABLE AS WRITTEN. The region-scoped projection names a residual
+  <region_id>|<reviewed family>, which is what table_0067|packed_page_table_entry and elem_00219|software_guidance
+  expect. The other two expect table_0004|toc_non_contract and elem_00017|informational_non_contract — review
+  labels naming a cause, not the cell's family. No non-circular projection can produce either spelling, so no
+  correct implementation can meet them. Same defect class as .8b's denominator; it gets its own leaf.
+- AND informational_disclaimer IS UNREACHABLE BY ANY STRUCTURAL RULE regardless of its label: statement_0013's
+  class is source_fact, the bucket classify_statement returns when no typed intent shape is found. Including
+  that bucket would emit one residual per uncited paragraph (Arm Debug: 6,555 of 6,658 statements uncited,
+  against 440 of 543 once the fallback class is excluded). Closing that cell needs an owner decision.
+- The bounded active root was at 89.8% of its line target, so the next leaf could not be declared without
+  crossing mandatory rollover. Its narrative surface is rolled down to the parts that already own it: 89.8% ->
+  81.2%, every rolled figure still re-deriving from the residual-carrier and residual-actionability parts.
+
 ### SPEC-TO-INTENT-ALIGNMENT.9a — re-derive the remaining residual population before building its carrier
 
 - First product-lane slice after a governance run: 28 consecutive commits had not touched crates/. This leaf

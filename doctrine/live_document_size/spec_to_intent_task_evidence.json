@@ -136,13 +136,13 @@
       {
         "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual carrier",
         "metrics": {
-          "bytes": 25716,
+          "bytes": 33375,
           "line_bytes": 138,
-          "lines": 319
+          "lines": 412
         },
         "part_id": "residual-carrier",
         "path": "docs/tasks/spec-to-intent-alignment/residual-carrier.md",
-        "sha256": "84755b801cfe64bfd291af1415fe27570b570e7399d680f9a7b58fd09c549096",
+        "sha256": "48d85e88f130ed478e195fd95f33b2600353f0b42230e35e9552f631c31bf8ea",
         "state": "active"
       }
     ],
@@ -600,6 +600,16 @@
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9a",
       "origin": "post_migration",
       "part_id": "residual-actionability"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9b",
+      "origin": "post_migration",
+      "part_id": "residual-carrier"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9c",
+      "origin": "post_migration",
+      "part_id": "residual-carrier"
     }
   ],
   "limits": {
@@ -771,7 +781,9 @@
       "- ID: `SPEC-TO-INTENT-ALIGNMENT.8c`",
       "- ID: `SPEC-TO-INTENT-ALIGNMENT.8d`",
       "- ID: `SPEC-TO-INTENT-ALIGNMENT.9`",
-      "- ID: `SPEC-TO-INTENT-ALIGNMENT.9a`"
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.9a`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.9b`",
+      "- ID: `SPEC-TO-INTENT-ALIGNMENT.9c`"
     ]
   },
   "migration_metadata": {

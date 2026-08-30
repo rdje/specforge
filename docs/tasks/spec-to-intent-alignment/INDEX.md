@@ -100,6 +100,8 @@
 | `SPEC-TO-INTENT-ALIGNMENT.8d` | [Residual carrier](residual-carrier.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9a` | [Residual actionability](residual-actionability.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.9b` | [Residual carrier](residual-carrier.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.9c` | [Residual carrier](residual-carrier.md) |
 
 ## Exact provenance
 
