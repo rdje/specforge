@@ -1,3 +1,49 @@
+### CLAIM-VERIFICATION-ADOPTION.7.1 — execute the producer and compare the field
+
+- The gate exists and runs. scripts/check_published_assertions.pl binds a published value in a governed region
+  to a field in a named producer's JSON report, EXECUTES that producer, and compares. That is the leg ten
+  recorded instances went stale for want of: a digest proves a region's bytes have not changed and never that
+  the number inside it still re-derives. Registered as the twelfth doctrine through the existing driver, so hook
+  and CI wiring are untouched.
+- The four outcomes are closed by construction. derived re-executes and compares; gated names the control whose
+  failure would follow the value moving, bound to an exact known-bad region inside that control; authored names
+  a tracked decision; dated names a revision that must resolve through git rev-parse. A fifth outcome is
+  refused, so there is no expressible way to carry a value because a trajectory shows it has held — the licence
+  .10 retired and instance 8 disproved.
+- Two cheap legs catch what the first misses. Two records naming one producer field with different values fail
+  with no producer run at all, which is instance 5. And a membership field is compared as an ENUMERATION,
+  reporting what is unexpected and what is absent, never as a size — a set can drift while its count holds.
+- excludes_self is the rule .11a bought. A record whose enumerator returns its own publishing surface must
+  declare the exclusion, and declaring it without a membership is refused. A screen the act of writing the
+  finding turns green is not a check.
+- Self-test 16/16 on a disposable repository-local fixture: positive across all four outcomes, then drift, a
+  wrong field binding, an unlisted value in a claim-annotated region, a gated record with no known-bad region, a
+  self-referential membership, cross-surface disagreement, an enumeration that drifted at constant size, a stale
+  region digest, an untracked producer, a refused fifth outcome, an orphan excludes_self, a duplicate id, a
+  value absent from its own region, and a bound breach.
+- RED observed on REAL SHIPPED PROSE, not only on fixtures, by revert-and-re-apply. TOOLBOX.md's "**5** views"
+  was bound to check_current_claim_census.pl --report field views (green at 5), the prose edited to "**6**", and
+  the checker reported: assertion 'census-views-derived-probe' is stale: 'views' re-derives to '5', published
+  '6'. Both files restored byte-exact and the probe removed.
+- The gate caught a live drift inside this very commit, unprompted. Adding this leaf's own Knowledge Map fact
+  card moved check_fact_card_catalog.pl --report's card_count 249 -> 250 while the seeded record bound to
+  docs/knowledge/INDEX.md:3 still published 249. All three legs fired together: the region digest went stale,
+  the value no longer appeared in its own region, and the comparison reported "is stale: 'card_count' re-derives
+  to '250', published '249'". That is the same-transaction shape of instances 6 and 10 — the one no reader and
+  no digest control ever caught — observed at commit time on the first commit the gate existed for. Refreshing
+  the record to 250 is not the anti-pattern §3 Leg 3 forbids: the value is now WATCHED, which is exactly the
+  distinction that rule draws.
+- Two implementation findings recorded rather than smoothed over. The coverage grammar first keyed governed
+  regions on the line carrying the [claim: <id>] tag; authors close a PARAGRAPH with that tag, so the values it
+  covers sit above it, and TOOLBOX.md's two tags sit on lines carrying no quantity at all — keyed that way the
+  map would have been blind to exactly the sentences it exists to watch. Now paragraph-scoped, with inline code
+  spans excluded because a backticked literal is an example, not a published quantity. And the first
+  real-content drift probe chose docs/knowledge/INDEX.md, whose producer is derive-and-diff over that same file
+  and therefore exits nonzero before comparing anything: the wrong instrument for this leg, recorded as such.
+- Ships in inventory phase, where an unlisted value in a governed region is reported rather than fatal. .7.2
+  completes the population and flips it to frozen. DOCTRINE_ENFORCEMENT.md §10 and the mdBook doctrine chapter
+  both gain the row in this commit, so the driver's two human-readable mirrors stay in lockstep.
+
 ### CLAIM-VERIFICATION-ADOPTION.7.0 — freeze the published-assertion gate design
 
 - Asked a third time whether the findings held. .11a does NOT fully hold either. Its warning-line total was

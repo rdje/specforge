@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how are doctrines enforced in specforge
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > how are document keys in the source PDF registry derived from filenames
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -48,6 +50,8 @@
   > how are rotated version matrices remapped for presence capture
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how are serial/architecture spec interface signals added to the catalog
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how are set claims and membership lists checked
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how are signal presence matrices captured into typed records
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -148,6 +152,8 @@
   > how do I reverify the frozen current claim census
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how do I reverify the frozen mdBook quantitative census
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how do I reverify the published-assertion gate
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -204,6 +210,8 @@
   > how does SpecForge decide signal direction (input/output) in the emitted .isf
 - [contested-priors](../knowledge/contested-priors.md)
   > how does SpecForge detect contradicting or conflicting priors
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how does SpecForge detect two surfaces disagreeing about one quantity
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge determine what a chip-spec PDF is about / its purpose category
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -246,6 +254,8 @@
   > how does SpecForge resolve a persisted path after the repository moves
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge serialize repository owned paths
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how does SpecForge stop a published count going stale under a green gate
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > how does SpecForge stop a published gap reproduction from silently running no test
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -288,13 +298,3 @@
   > how does converge report per-document extraction quality after stabilization
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > how does de-fragmentation enable the recover-register-bits gate (b)
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > how does derive_register_block_name parse a block out of a register-descriptions section heading
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how does each active task-evidence index invoke its own contract
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > how does extract_discovered_state_value_from_text match a constraint value
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does ground_constraint recover a value the model did not echo

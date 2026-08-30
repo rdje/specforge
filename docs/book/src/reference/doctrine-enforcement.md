@@ -66,8 +66,31 @@ other re-derivable trace.
 | `PRODUCTION-GENERICITY` | structural | package direction, exact production inventories and rule joins, compiled raw/identity information flow, protected authority, and proof-only persistence all hold without a named-specification exception |
 | `CORPUS-FRONTIER` | derive-and-diff | the SourceIR-derived corpus cohort is partitioned exactly into explicit refreshed and remaining sets, retained bundles agree, and the task file states the same counts — source-library relocation cannot impersonate a refresh |
 | `CLAIM-VERIFICATION` | structural + oracle | bounded claim records, tracked digest-current artifacts, executed source/known-bad-control commands, complete stale-check coverage, and publication IDs resolve together |
+| `PUBLISHED-ASSERTIONS` | deterministic-oracle | every published value in a governed prose region re-derives against its named producer field, because the producer is executed and its report compared — the one thing a digest binding cannot do, since a digest proves a region has not changed and never that its numbers still re-derive. A value may instead be gated by a control with a known-bad case, authored by a decision, or anchored to a revision; there is no outcome for a value carried because it has not moved lately. Two surfaces stating different values for one field fail without running anything, a set is compared as an enumeration rather than a size, and a record whose enumeration could include its own publishing surface must declare that exclusion |
 | `PROOF-SEAL-CURRENCY` | oracle | every persisted artifact under `generated/` records a proof seal today's build still accepts — censused across every stage of the proof-carrying stratum, and probed through the product's own loader by running the consuming stage in dry-run form rather than by validating, which would mutate what it reads |
 | `CHAIN-CURRENCY` | oracle | every proof-current artifact under `generated/` is exactly what today's binary reproduces from verified upstream authority; a legacy/proofless compatibility refusal is reported as an explicit unmeasurable frontier, while a stale current proof still fails — and retained normalized bundles match their declaration exactly |
+
+`PUBLISHED-ASSERTIONS` exists because of a defect this manual is itself a past instance of. SpecForge publishes
+counts about its own state — census units, adjudicated regions, registered doctrines — and those counts went
+stale ten separate times while every gate stayed green, twice inside the very commit that published them. The
+reason is structural rather than careless: the controls that watched those sentences were digests, and a digest
+proves that a region's bytes have not changed, never that the number inside it still re-derives. Five rounds of
+prose correction each went stale in turn, which is what finally settled the design.
+
+So the gate executes the producer. A record names the governed region by path, line range and content hash, the
+literal value published there, and a field in a producer's JSON report; the checker runs that producer and
+compares. Three escape hatches exist and each must name its own evidence — a `gated` value points at the control
+whose failure would follow the value moving, plus an exact known-bad region inside that control; an `authored`
+value points at the decision record that fixes it; a `dated` value points at the revision it is anchored to. The
+fourth possibility, a value carried because a trajectory shows it has held, is deliberately not expressible: a
+trajectory shows what has not happened, never what cannot, and this repository has the commit that proved it.
+
+Two further legs cost almost nothing and catch what the first misses. Two records naming one producer field with
+different values fail immediately, with no producer run at all — that is a real recorded case where two surfaces
+published different numbers for one quantity and nothing noticed. And a set claim is compared as an
+**enumeration**, never as a size, because a membership list can drift while its count holds. A record whose
+enumeration could include the very surface that publishes it must declare that exclusion, which is the subtlest
+lesson here: a screen that the act of writing the finding turns green is not a check at all.
 
 `CORPUS-FRONTIER` exists because of a defect worth stating plainly. The corpus refresh program tracked its own
 remaining work as prose that each slice decremented by one, across twenty-two consecutive refreshes — and a

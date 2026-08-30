@@ -300,6 +300,7 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `PRODUCTION-GENERICITY` | structural | gate | `scripts/check_production_genericity.sh` | the product package direction and checker disconnection hold; the complete module/claim/rule/bypass inventories resolve; and the compiled production graph rejects raw/identity-driven semantic control, unregistered canonical mutation, protected-authority forgery, and proofless persistence |
 | `CORPUS-FRONTIER` | derive-and-diff | gate | `scripts/check_corpus_frontier.sh` | the SourceIR-derived corpus cohort is partitioned exactly by explicit root-neutral refreshed/remaining sets, retained bundles agree with that lifecycle declaration, and the counts agree with the root task file — moving a source library cannot silently change refresh status |
 | `CLAIM-VERIFICATION` | structural + oracle | gate | `scripts/check_claim_verification.pl` | the self-bounded claim registry has unique known IDs and honest statuses; every verified claim's tracked producer/input/evidence digests are current; argv-form source and RED-control commands reproduce; stale checks cover every artifact; and the prepared or committed publication declaration resolves exactly |
+| `PUBLISHED-ASSERTIONS` | deterministic-oracle | gate | `scripts/check_published_assertions.pl` | every published value in a governed region **re-derives by executing its named producer and comparing the field** — the leg a digest cannot supply, since a digest proves a region has not changed, never that its numbers still re-derive. A value may instead be `gated`, `authored`, or `dated`, each naming its own evidence; there is no outcome for a value carried on a trajectory. See the paragraph below for the disagreement, enumeration, and self-reference legs |
 | `PROOF-SEAL-CURRENCY` | oracle | gate | `scripts/check_proof_seal_currency.sh` | every persisted corpus artifact records a proof seal the CURRENT build's own canonical loader still accepts. The census is total — all five stages, every in-scope artifact, read with the shared seal predicate `scripts/lib/proof_seal_scan.sh` — and the canonical probe is representative, one per *distinct* seal per stage, so representativeness is established by the census rather than assumed. The probe is the CONSUMING stage in `--dry-run`, never `specforge validate`, which is not idempotent and would invalidate the chain it claims to read; the terminal `adapters/isf` stage has no consumer and its unprobed status is reported rather than counted as a pass. Deliberately narrower than `CHAIN-CURRENCY`: a current seal says nothing about content currency (SOURCE-IR-REPRODUCIBILITY.16) |
 | `CHAIN-CURRENCY` | oracle | ci | `scripts/check_chain_currency.sh` | every persisted corpus artifact is exactly what the current binary reproduces from its persisted input — the evidence, semantic, intent, and `.isf`-adapter stages replayed `--dry-run`, plus each emitted `.isf` against the adapter's rendered `source_text` — and the retained normalized bundles that make a document replayable are exactly the set declared in `doctrine/chain_currency/retained_bundles.json` (ADR 0025 decisions 2 and 3) |
 
@@ -374,6 +375,21 @@ the 512-key registry quantum. It requires the title-part generated-projection re
 legacy state and exact in migrated state. The self-test asserts these derivations, the 56-card part quantum times
 the six-part count, and each aggregate band as its file bound times its per-file bound, so no future raise can
 move one literal and strand another (ADRs 0029 and 0041).
+
+`PUBLISHED-ASSERTIONS` is the answer to a defect this repository recorded ten times and could not close by
+review. Values published about its own state went stale under a fully green gate, twice inside the very commit
+that published them, and five consecutive rounds of prose correction were each invalidated by their own
+transaction. The checker never evaluates a shell string: producers, controls, and enumerators are argv arrays,
+every region/producer/control path is Git-tracked, and each governed region is pinned by a one-based line range
+plus the SHA-256 of those bytes. Its `--self-test` drives the whole fault matrix RED on a disposable
+repository-local fixture — drift, a wrong field binding, an unlisted value in a claim-annotated region, a gated
+record with no known-bad control region, a self-referential membership without `excludes_self`, two surfaces
+disagreeing on one field, an enumeration that drifted while its size held, a stale region digest, an untracked
+producer, an outcome outside the four, a duplicate id, a value absent from its own region, and a bound breach —
+before any PASS on the real tree is trusted. The drift leg was additionally observed RED on **real shipped
+prose** by revert-and-re-apply rather than on a fixture alone. The registry starts in `inventory` phase, where
+an unlisted value in a governed region is reported rather than fatal, and moves to `frozen` when its population
+is complete (`CLAIM-VERIFICATION-ADOPTION.7.2`).
 
 `PROJECT-DATA-LOCALITY` composes three focused shell cases with resulting-tree checks. It proves the
 tracked temp root exists before Cargo starts, all canonical scripts establish the common environment,

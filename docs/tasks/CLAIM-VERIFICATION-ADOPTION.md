@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0` done — the surfaces publishing the census counts
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0`, `.7.1` done — the surfaces publishing the census counts
   are now swept against an *enumerated* population rather than a remembered one, and the upstream standard is
   re-adopted with its refusals recorded; `.7` owns the gate that would have observed the drift, now scoped to
   counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot, now
@@ -645,16 +645,53 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.7.0 — freeze the published-assertion gate design`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.7.1`
-  Status: `pending`
+  Status: `done` (`2026-08-30`)
   Goal: implement the gate and prove every RED case in `.7.0`'s matrix
   Acceptance: `scripts/check_published_assertions.pl` plus a self-bounded
   `doctrine/claim_verification/published_assertions.jsonl`, registered through `scripts/check_doctrines.sh`
   without duplicating hook or CI wiring. The checker never evaluates a shell string; producers are argv arrays;
   every region, producer and input is Git-tracked and digest-bound. `--self-test` instantiates every outcome
   family positively and drives all seven `.7.0` faults RED on a disposable repository-local fixture
+  **Delivered.** The checker executes the named producer and compares its report field to the literal published
+  in the governed region — the leg no existing control supplied. The four outcomes are closed: an outcome outside
+  `derived`/`gated`/`authored`/`dated` is refused, so there is no expressible way to carry a value because a
+  trajectory shows it has held. `gated` requires an exact known-bad region inside the named control; `authored`
+  requires a tracked decision path; `dated` requires a revision that resolves through `git rev-parse`.
+  Cross-surface disagreement fails before any producer runs. A `membership` field is compared as an enumeration
+  and reports what is unexpected and what is absent, never a size. `excludes_self` is refused when declared
+  without a membership, and required when the enumerator returns the record's own publishing surface.
+  **The coverage grammar was corrected during implementation, and the correction matters.** A first version keyed
+  governed regions on the line carrying the `[claim: <id>]` tag. Authors put that tag at the **end** of a
+  paragraph, so the values it covers sit above it: keyed that way, the map would have been blind to exactly the
+  sentences it exists to watch — `TOOLBOX.md`'s two annotated tags sit on lines carrying no quantity at all. The
+  governed region is now the paragraph the tag closes, and inline code spans are excluded because a backticked
+  literal is an example rather than a published quantity.
+  **RED observed on real shipped prose, not only on fixtures.** By revert-and-re-apply: a probe record bound
+  `TOOLBOX.md`'s `**5** views` to `check_current_claim_census.pl --report` field `views`, green at 5; the prose
+  was then edited to `**6**` and the checker reported
+  `assertion 'census-views-derived-probe' is stale: 'views' re-derives to '5', published '6'`; both files were
+  restored byte-exact and the probe removed. A first attempt used `docs/knowledge/INDEX.md`'s card count and is
+  recorded because it failed honestly: `check_fact_card_catalog.pl` is derive-and-diff over that file, so it
+  exited nonzero before the field comparison ran. That is a producer whose report is not stable under prose
+  drift, and it is the wrong instrument for this leg
+  **The gate caught a live drift inside this very commit, unprompted.** Adding this leaf's own Knowledge Map
+  fact card moved `check_fact_card_catalog.pl --report`'s `card_count` **249 -> 250**, and the seeded record
+  bound to `docs/knowledge/INDEX.md:3` still published 249. All three legs fired at once — the region digest went
+  stale, the value no longer appeared in its own region, and the comparison reported
+  `is stale: 'card_count' re-derives to '250', published '249'`. That is the exact same-transaction shape of
+  instances 6 and 10, which ten recorded rounds and five prose corrections could not observe, seen at commit time
+  by a control rather than by a reader. Re-deriving and refreshing the record to 250 is **not** the anti-pattern
+  §3 Leg 3 forbids: the value is now watched, so the distinction that rule draws — between a right unwatched
+  number and a gated one — is the whole point of the record.
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.0`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `--self-test 16/16 (positive x2, drift, wrong-field, unlisted, missing control region,
+  self-reference, cross-surface disagreement, enumeration drift at constant size, stale region digest, untracked
+  producer, refused fifth outcome, orphan excludes_self, duplicate id, value absent from its own region, bound
+  breach); --check green on the real tree at four seeded assertions over two governed regions in inventory phase;
+  drift observed RED on real shipped prose by revert-and-re-apply with both files restored byte-exact; and an UNPROMPTED live catch inside this commit when the new fact card moved card_count 249 -> 250; doctrine
+  driver registers the twelfth entry and runs it through the existing hook/CI wiring; DOCTRINE_ENFORCEMENT.md
+  §10 and the mdBook chapter both gain the row in the same commit`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.7.1 — execute the producer and compare the field`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.7.2`
   Status: `pending`
@@ -1112,7 +1149,7 @@ the workflow through the mdBook and repository review path.
 | 24 | `CLAIM-VERIFICATION-ADOPTION.11` | `done` | population enumerated by command rather than recalled; six stale publications and three still-correct carried ones withdrawn as one class |
 | 25 | `CLAIM-VERIFICATION-ADOPTION.11a` | `done` | asked a second time; five of `.11`'s findings re-derived false, including its own ownership classifier and its producer scope |
 | 26 | `CLAIM-VERIFICATION-ADOPTION.7.0` | `done` | five rounds of correction proved prose cannot close this; the contract that can is frozen before any code |
-| 27 | `CLAIM-VERIFICATION-ADOPTION.7.1` | `pending` | the executable gate and its seven-fault RED matrix |
+| 27 | `CLAIM-VERIFICATION-ADOPTION.7.1` | `done` | the gate executes producers and compares fields; 16/16 RED matrix and a drift observed on real shipped prose |
 | 28 | `CLAIM-VERIFICATION-ADOPTION.7.2` | `pending` | populate the registry and close the unlisted-value report at zero |
 | 29 | `CLAIM-VERIFICATION-ADOPTION.7` | `active` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
@@ -1836,6 +1873,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-30` | `.7.1` | `perl scripts/check_published_assertions.pl --self-test`; `--check` on the real tree; revert-and-re-apply drift probe against `check_current_claim_census.pl --report`; `scripts/check_doctrines.sh` | **the leg no existing control supplied is now executable.** Self-test **16/16** with every `.7.0` fault plus five more driven RED on a disposable repository-local fixture. On the real tree the gate runs green at four seeded assertions over two governed regions in `inventory` phase, reporting unlisted values rather than failing on them until `.7.2` completes the population. **Drift observed RED on real shipped prose**, not a fixture: `TOOLBOX.md`'s `**5** views` bound to the census `views` field, edited to `**6**`, produced `is stale: 'views' re-derives to '5', published '6'`; both files restored byte-exact. A first probe against `docs/knowledge/INDEX.md` is recorded as an honest failure — its producer is derive-and-diff over that same file and exits nonzero before any field comparison, so it cannot demonstrate this leg. The coverage grammar was corrected mid-implementation from tag-line to **paragraph** scope, because a `[claim: <id>]` tag closes a paragraph and `TOOLBOX.md`'s two tags sit on lines carrying no quantity at all — keyed on the tag's own line the map would have been blind to precisely the sentences it exists to watch |
 | `2026-08-30` | `.7.0` + `.11a` re-derivation | re-derived every figure `.11a` published: `git show --name-only` over the four attributed commits; `git show d23e8bae -- <book>` content-line count; `check_live_document_size.pl` warning population; literal match census over tracked non-archive Markdown at `fd09708d~1`; `§10` rows vs `DOCTRINES`; the three claim producers `--check`/`--report` | **`.11a` does not fully hold either.** Its warning-line total was **invalidated by its own commit** — published as 20, and that commit's `CHANGES.md` prepend crossed `change_history lines_each`, making it 21. And "exactly three surfaces" is a *classification*, not a match count: five tracked files carried the literal, two of them dated records §1 exempts; the conclusion holds and the predicate was unstated. Both are withdrawn rather than corrected. Everything else in `.11a` re-derives: the republication attribution, `d23e8bae`'s two changed book lines, the four-producer composition, the `done`-tree and self-satisfying classifier defects, and the dated-table withdrawal. **Five consecutive rounds of correction, each invalidated by its own transaction, is the evidence that closes the design question**: `.7` is split and `.7.0` freezes the contract |
 | `2026-08-30` | `.11a` | `git show --name-only` over the four attributed commits; `git show d23e8bae~1:<book>`; `check_live_document_size.pl` vs `check_live_document_size.sh` warning populations; open-tree ownership screen recomputed from each tree's own `Status` line; all three claim producers `--check`/`--report`; 17 relocations re-derived HEAD vs HEAD~1; doctrine gate | **five of `.11`'s findings do not hold.** Only **one** of the three commits said to have republished `identity_gated 7` edited a publisher. `d23e8bae` withdrew `current_surfaces` from **two** surfaces, not three — the book chapter never carried it, and "all three" was quoted from that commit's own body. The **18 lines / 13 surfaces** census was one producer's, and only 17 of its lines named a surface; the gate-level producer emits **35** lines across **four**. The ownership screen counted `done` trees as owners, hiding `corpus_task_evidence_parts`, and the act of publishing the finding turned its own classifier green for the three surfaces it named. And the `Opening Pressure Boundary (92e59c97)` table is a **dated** snapshot §1 exempts, not a disagreeing census. Everything else re-derives unchanged: `identity_gated` 8 on three surfaces, 78 -> 89, 307/78/221/186 -> 321/89/224/189, 10/nine -> 11/10/1 at `1ccb7331`, the sibling frontier, the three withdrawals, 15 -> 16, 17 relocated + 1 added, 11 = 11, 5 book regions. `.11`'s own ledger prepends also moved the warned surface count 13 -> **15** (`achievement_status`, `change_history`; both owned) |
 | `2026-08-30` | `.11` | enumerating command over tracked non-archive Markdown (anchored at `9fc76685`); per-revision re-derivation of `identity_gated` from `git show <rev>:doctrine/claim_verification/current_claim_census.jsonl` across 25 revisions; `check_current_claim_census.pl --check`/`--report`; `check_book_quantitative_claims.pl --check`/`--report` before and after the chapter edit; `check_fact_card_catalog.pl --write`/`--check`; knowledge-map derive-and-diff; `check_claim_verification.pl --check`; the three claim self-tests; doctrine gate | the population is **15** surfaces at `9fc76685` and **16** at this commit — writing the change record joins it — so the number is anchored and the command is the durable artifact; either way not the two `.6b` swept. **Six stale publications and three carried-but-correct ones**, withdrawn as one class: `.6`, `.6a`, and `.6b` each swept from memory and none ran an enumerating command. `identity_gated` **7 -> 8** on three surfaces, attributed to `d23e8bae`, which added exactly one `identity_gated` record for the `task_tree_catalog_parts` surface it registered — the same registration whose other effect (`current_surfaces` 39 -> 40) that commit *did* notice and withdraw, one sentence away; the book chapter's **78 -> 89** incomplete regions; the whole `.3b.3.3` vector (**307/78/221/186** -> 321/89/224/189) still carried in `mdbook-quantitative-census-freeze.md`, whose stale twin `.6b` repaired while quoting these numbers off it; and a registry set claim short by one member (**10/nine/ten** -> 11 registered / 10 gate / 1 CI, `PROOF-SEAL-CURRENCY` missing since `1ccb7331`); `MEMORY.md`'s five-surface live-document warning census against a producer that warns about **13**, three named by no tree; and this tree's sibling `LIVE-DOCUMENT-PRESSURE-HEADROOM` frontier still calling `.2a`/`.2b`/`.2c` pending. Three further constants are carried and still correct and go with them — `authority_outcomes.derived`, the mdBook claim assertion's eleven constants, and `control_audit`'s 7/7/6. All withdrawn as one class per §3 Leg 3 rather than replaced with today's values. The survivors are stated with what makes them true: `unresolved` **0** is gated by `validate_candidate_closure`, `views` **5** is authored by `.3a.0`. Book vector **321/8/89/224 identical** across the chapter edit; **17** regions relocated (16 census, one book) and one evidence row added for the new ledger head, derived by diffing both registries against HEAD rather than summing the passes — which first gave 18, `.9`'s ninth instance caught by deriving it; each relocation matched exactly one line and each file's shift equalled the cumulative insertions above it from the diff hunks; catalog valid for 249 cards; Knowledge Map 271 facts / 2152 keys; self-tests 27/27, 27/27, 19/19 |
@@ -1916,6 +1954,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
+| `.7.1` | `CLAIM-VERIFICATION-ADOPTION.7.1 — execute the producer and compare the field` | twelfth registered doctrine; 16/16 RED matrix; drift observed on real shipped prose; coverage corrected to paragraph scope; §10 and the mdBook chapter updated in the same commit |
 | `.7.0` | `CLAIM-VERIFICATION-ADOPTION.7.0 — freeze the published-assertion gate design` | eight-element contract traced element-by-element to the instance that defeated the alternative; `.7` split into freeze, gate, and population; `.11a`'s two invalidated figures withdrawn in the same commit |
 | `.11a` | `CLAIM-VERIFICATION-ADOPTION.11a — re-derive .11's findings and correct the five that do not hold` | two mechanism claims and two set claims withdrawn; the ownership classifier replaced because publishing the finding satisfied it; producer scope corrected from one checker to the gate |
 | `.11` | `CLAIM-VERIFICATION-ADOPTION.11 — enumerate the surfaces, then withdraw the class` | population derived from a command instead of recalled (15 at the parent, 16 here); six stale publications and three carried-but-correct constants withdrawn as one class; every survivor labelled gated or authored; `.7` tenth instance, `.9` third demonstration |
@@ -1946,6 +1985,21 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-30`: closed `.7.1`. The gate exists and executes. `scripts/check_published_assertions.pl` runs a
+  record's named producer and compares its report field to the literal published in the governed region — the leg
+  that ten recorded instances went stale for want of, because a digest proves a region has not changed and never
+  that its numbers still re-derive. Registered as the twelfth doctrine through the existing driver, so hook and
+  CI wiring are unchanged. The four outcomes are closed by construction: a fifth is refused, so there is no
+  expressible way to carry a value on a trajectory. Cross-surface disagreement fails before any producer runs;
+  a set is compared as an enumeration rather than a size; and `excludes_self` is required the moment an
+  enumerator returns the record's own publishing surface. Self-test 16/16 on a disposable repository-local
+  fixture, and the drift leg additionally observed RED on **real shipped prose** by revert-and-re-apply rather
+  than on a fixture alone. Two implementation findings are recorded rather than smoothed over: the coverage
+  grammar first keyed on the `[claim: <id>]` tag's own line, which would have been blind to every value the tag
+  actually governs, since authors close a paragraph with it — `TOOLBOX.md`'s two tags sit on lines with no
+  quantity at all; and the first real-content drift probe chose a producer that is derive-and-diff over the file
+  it was meant to watch, so it exited nonzero before comparing anything. The registry ships in `inventory` phase
+  where an unlisted value is reported, not fatal; `.7.2` completes the population and flips it to `frozen`.
 - `2026-08-30`: closed `.7.0` and stopped correcting. Asked a third time whether the findings held, `.11a` was
   re-derived and **it does not fully hold either**: its warning-line total was invalidated by its own commit
   (20 published, 21 after that commit's own prepend crossed a band), and its "exactly three surfaces" was a

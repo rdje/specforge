@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > does SpecForge classify Markdown inside the FSMGen submodule
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
@@ -295,5 +297,3 @@
   > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how are different health and ceiling file counts declared
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how are doctrines enforced in specforge

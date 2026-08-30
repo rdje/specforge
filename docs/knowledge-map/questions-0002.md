@@ -14,6 +14,8 @@
   > are historical measurements governed as current claims
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > are instruction mnemonics in a software optimization guide declared interface signals (no)
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > are mechanism or causal claims mechanically checked
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > are normalized pages page JSON image paths repository relative
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
@@ -295,5 +297,3 @@
   > does SemanticIR keep copyright and license text
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does SemanticIR preserve SWD protocol provenance and order
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')

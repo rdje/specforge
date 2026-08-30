@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the FSMGen issue bundle protocol
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the I2C declared-signal recall / precision
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
@@ -281,19 +297,3 @@
   > what should an auditor do when re-derivation disagrees with a published value
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
   > what should happen when a decision record approaches its per-file bound
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what signals belong to which AXI channel
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what stable order may production use for opaque signal collections
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > what stops a bounded snapshot from accreting chronology
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what structural cue separates a message-field table from a register-field table
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what structural cues recognize transactions universally (section anchors + enumeration tables)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what structural surfaces discriminate document class
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what table structure is required before port or pin vocabulary grants signal authority

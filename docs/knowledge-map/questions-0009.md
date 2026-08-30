@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > what does the corpus frontier refreshed list mean
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > what does the declared_signal_names.is_empty() branch in semantic.rs do
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does the ingest traversal oracle check
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > what does the residual actionability denominator actually count
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does traverse_pictures False do to SpecForge ingest
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does uncaptured_normative_statement_ids do
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > what dominates the source_ir.json size (content_elements? page_artifacts?)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -214,6 +228,8 @@
   > what is document_intent_category / the 6-category purpose recognizer
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_type_declared / front_matter_doc_type_hint
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what is excludes_self and why does a classifier need it
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -281,19 +297,3 @@
   > what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > what is the FSMGen feature request for field-structured storage (declarative (var NAME (width N) (fields (field NAME (bits hi lo) (access ..) (reset ..) (enum ..)))); docs/FSMGEN_FEEDBACK.md 2026-06-22)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the FSMGen issue bundle protocol
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is the I2C declared-signal recall / precision
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip

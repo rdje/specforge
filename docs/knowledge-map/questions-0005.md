@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > how does derive_register_block_name parse a block out of a register-descriptions section heading
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how does each active task-evidence index invoke its own contract
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > how does extract_discovered_state_value_from_text match a constraint value
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > how does ground_constraint recover a value the model did not echo
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > how does held out full capture refresh preserve alpha eligibility authority
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -287,13 +297,3 @@
   > how many OpenCAPI AFU address note page paths are repository relative
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how many OpenCAPI Certified Definition paths are repository relative
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many OpenCAPI Ready Definition paths are repository relative
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many OpenCAPI Ready page paths are repository relative
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > how many SpecForge mdBook doctests currently fail
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many USB4 Connection Manager page sidecars are repository relative
