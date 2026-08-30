@@ -385,8 +385,13 @@ plus the SHA-256 of those bytes. Its `--self-test` drives the whole fault matrix
 repository-local fixture — drift, a wrong field binding, an unlisted value in a claim-annotated region, a gated
 record with no known-bad control region, a self-referential membership without `excludes_self`, two surfaces
 disagreeing on one field, an enumeration that drifted while its size held, a stale region digest, an untracked
-producer, an outcome outside the four, a duplicate id, a value absent from its own region, and a bound breach —
-before any PASS on the real tree is trusted. The drift leg was additionally observed RED on **real shipped
+producer, an outcome outside the four, a duplicate id, a value absent from its own region, a bound breach, a
+compound-adjective value, a ratio-form value, and a record whose value absorbed sentence punctuation — before any
+PASS on the real tree is trusted. The numeral grammar that derives the population is itself part of the contract:
+a value it cannot see is a silent hole rather than an unlisted one, so a numeral closing a compound adjective
+(`27-case`) or a ratio (`15/15`) is a published quantity, only `-` followed by a digit stays an identifier or
+date fragment, and a comma joins a numeral only when it separates exactly three digits
+(`CLAIM-VERIFICATION-ADOPTION.7.1a`). The drift leg was additionally observed RED on **real shipped
 prose** by revert-and-re-apply rather than on a fixture alone. The registry starts in `inventory` phase, where
 an unlisted value in a governed region is reported rather than fatal, and moves to `frozen` when its population
 is complete (`CLAIM-VERIFICATION-ADOPTION.7.2`).

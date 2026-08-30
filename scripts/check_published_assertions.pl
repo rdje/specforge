@@ -346,7 +346,16 @@ sub governed_coverage {
                 my $scan = $lines[$j];
                 $scan =~ s/\[claim:[^\]]*\]//g;   # the tag itself is not a published value
                 $scan =~ s/`[^`]*`//g;             # inline code is a literal, not a published quantity
-                for my $token ($scan =~ /(?<![\w.\/-])(\d[\d,]*(?:\.\d+)?%?)(?![\w.\/-])/g) {
+                # The numeral grammar decides the POPULATION, so its blind spots are values no record can
+                # ever be asked for. Two were measured on this repository's own governed regions (.7.1a):
+                #   * a comma belongs to a numeral only when it separates exactly three digits, so `1,922`
+                #     stays one value while `40, noticed` publishes `40` and not `40,`;
+                #   * a numeral closing a compound adjective (`27-case`) or a ratio (`15/15`) is a published
+                #     quantity. Only `-` followed by a DIGIT stays excluded, because that is a date or an
+                #     identifier fragment (`2026-08-28`, `segment-0013`), never a quantity.
+                # The lookbehind is unchanged: a numeral glued to a preceding word, dot, slash or hyphen is
+                # part of an identifier (`SHA-256`, `.7.2`, `1.95.0`), not a value.
+                for my $token ($scan =~ /(?<![\w.\/-])(\d+(?:,\d{3})*(?:\.\d+)?%?)(?![\w.]|-\d)/g) {
                     next if $listed{"$rel:$line:$token"};
                     push @unlisted, {path => $rel, line => $line, value => $token};
                 }
@@ -680,7 +689,10 @@ sub run_self_test {
         . "\nUnresolved is 0 because the control fails otherwise. [claim: fixture-claim]\n"
         . "\nThere are 5 views by decision. [claim: fixture-claim]\n"
         . "\nMeasured 2 at the boundary. [claim: fixture-claim]\n"
-        . "\nThe governed members are 2 files. [claim: fixture-claim]\n";
+        . "\nThe governed members are 2 files. [claim: fixture-claim]\n"
+        # Punctuation and separators live in one governed paragraph so the numeral grammar is exercised
+        # positively: `40,` publishes 40, `1,922` is one value, and `922` after a space is its own.
+        . "\nPunctuated 40, plus 1,922 and 922 today. [claim: fixture-claim]\n";
     write_raw(absolute($fixture, 'surface.md'), $doc);
     write_raw(absolute($fixture, 'other.md'), "Elsewhere the census reports 8 units. [claim: fixture-claim]\n");
 
@@ -758,7 +770,19 @@ sub run_self_test {
             sha256 => sha256_hex($o0[0])},
         producer => {argv => ['perl', 'scripts/probe.pl'], field => 'counts.units', expected_exit => 0}};
 
-    my @base = ($derived, $gated, $authored, $dated, $membership, $other);
+    # Line 13 is the punctuation/separator paragraph. Before .7.1a the grammar consumed any comma, so the
+    # token was `40,` and the honest record below was reported unlisted; the three records are the positive
+    # side of that repair and the RED case that follows pins the negative side.
+    my $punct_comma = {record_type => 'assertion', schema_version => 1, assertion_id => 'punct-comma-dated',
+        path => 'surface.md', region => $region->(13), value => '40', outcome => 'dated', revision => $rev};
+    my $punct_thousands = {record_type => 'assertion', schema_version => 1,
+        assertion_id => 'punct-thousands-dated', path => 'surface.md', region => $region->(13),
+        value => '1,922', outcome => 'dated', revision => $rev};
+    my $punct_bare = {record_type => 'assertion', schema_version => 1, assertion_id => 'punct-bare-dated',
+        path => 'surface.md', region => $region->(13), value => '922', outcome => 'dated', revision => $rev};
+
+    my @base = ($derived, $gated, $authored, $dated, $membership, $other,
+        $punct_comma, $punct_thousands, $punct_bare);
 
     $case->('positive: all four outcomes plus a membership enumeration', 0, undef, sub { $write->(@base); });
 
@@ -881,6 +905,36 @@ sub run_self_test {
         write_jsonl($abs_contract, [$small, map { clone($_) } @base]);
     });
 
+    # 15 — a numeral closing a compound adjective is a published quantity, not an identifier fragment.
+    # Before .7.1a the lookahead excluded every `-`, so `27-case` was invisible and no record could be
+    # asked for it: a blind spot in the population is worse than an unlisted value, because it is silent.
+    $case->('RED: compound-adjective value is visible to the coverage grammar', 1,
+        qr/published value '27' at surface\.md:\d+ sits/, sub {
+        write_raw(absolute($fixture, 'surface.md'),
+            $doc . "\nThe 27-case self-test covers it. [claim: fixture-claim]\n");
+        $write->(@base);
+    });
+    write_raw(absolute($fixture, 'surface.md'), $doc);
+
+    # 16 — a ratio-form pass count is a published quantity. The same excluded lookahead hid `15/15`.
+    $case->('RED: ratio-form value is visible to the coverage grammar', 1,
+        qr/published value '15' at surface\.md:\d+ sits/, sub {
+        write_raw(absolute($fixture, 'surface.md'),
+            $doc . "\nControls pass 15/15 today. [claim: fixture-claim]\n");
+        $write->(@base);
+    });
+    write_raw(absolute($fixture, 'surface.md'), $doc);
+
+    # 17 — the mirror of the comma repair: a record that absorbed the sentence comma into its value no
+    # longer covers the value actually published, and the gate says so instead of accepting the near-miss.
+    $case->('RED: a record whose value absorbed sentence punctuation covers nothing', 1,
+        qr/published value '40' at surface\.md:\d+ sits/, sub {
+        my $bad = clone($punct_comma);
+        $bad->{value} = '40,';
+        $write->($derived, $gated, $authored, $dated, $membership, $other,
+            $bad, $punct_thousands, $punct_bare);
+    });
+
     $case->('positive: restored contract is green again', 0, undef, sub { $write->(@base); });
 
     remove_tree($fixture);
@@ -895,7 +949,8 @@ sub run_self_test {
         exit 1;
     }
     printf STDERR "%s: self-test %d/%d positive, drift, wrong-field, unlisted, control, self-reference, "
-        . "disagreement, enumeration, region, producer, outcome, duplicate, and bound cases pass.\n",
+        . "disagreement, enumeration, region, producer, outcome, duplicate, bound, compound-adjective, "
+        . "ratio, and absorbed-punctuation cases pass.\n",
         $LABEL, $pass, scalar(@cases);
     exit 0;
 }

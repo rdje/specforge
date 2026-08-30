@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0`, `.7.1` done — the surfaces publishing the census counts
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0`, `.7.1`, `.7.1a` done — the surfaces publishing the census counts
   are now swept against an *enumerated* population rather than a remembered one, and the upstream standard is
   re-adopted with its refusals recorded; `.7` owns the gate that would have observed the drift, now scoped to
   counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot, now
@@ -693,13 +693,88 @@ the workflow through the mdBook and repository review path.
   §10 and the mdBook chapter both gain the row in the same commit`
   Commit: `CLAIM-VERIFICATION-ADOPTION.7.1 — execute the producer and compare the field`
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.7.1a`
+  Status: `done` (`2026-08-30`)
+  Goal: correct the coverage grammar's measured blind spots before `.7.2` closes the population at zero
+  Acceptance: the numeral grammar decides which published values *exist*, so a value it cannot see is worse
+  than an unlisted one — no record can be asked for it, no `--produce` run can report it, and `frozen` phase
+  will call the surface complete anyway. Closing the unlisted report at zero is therefore meaningless while
+  the population is wrong, which is why this precedes `.7.2` instead of following it. Measure the blind spot
+  against an independent tokenizer rather than by reading the regex, repair only what the measurement shows,
+  and bind each repair to a RED case
+  **The oracle was built to disagree with the producer, not to agree with it.** A probe re-enumerated the same
+  governed paragraphs the gate enumerates, kept the gate's own lookbehind, and widened only the lookahead, so
+  every difference it reported is a value the gate drops rather than a value the probe over-reaches for. A
+  first probe without the lookbehind was discarded because it reported `SHA-256` and `H1` — digits inside
+  identifiers, which the gate correctly refuses — and an oracle that reports the control's correct behaviour as
+  a defect cannot separate the two hypotheses (`CLAIM_VERIFICATION.md` §3 Leg 2).
+  **Defect 1 — sentence punctuation absorbed into the value.** `\d[\d,]*` treats every comma as part of the
+  numeral, so `current_surfaces` 39 -> 40, noticed ... published the token `40,`. That token is not a value
+  the prose publishes: an honest record listing `40` would have been reported unlisted, and a record listing
+  `40,` would have bound the gate to punctuation. A comma now belongs to a numeral only when it separates
+  exactly three digits, which keeps `1,922` one value and ends `40` at the comma.
+  **Defect 2 — a numeral closing a compound adjective or a ratio was invisible.** The lookahead excluded every
+  `-` and `/`, so `27-case`, `29-revision`, `56-unit`, `304-region` and `15/15` were dropped entirely. The
+  exclusion exists to keep dates and identifiers out — `2026-08-28`, `segment-0013`, `SHA-256`, `1.95.0`,
+  `.7.2` — and it is now narrowed to `-` followed by a **digit**, which is the form every one of those
+  actually takes. The lookbehind is untouched, so a numeral glued to a preceding word, dot, slash or hyphen
+  stays an identifier fragment.
+  **What the blind spot cost, measured (`2026-08-30`).** Across the four claim-annotated files the gate
+  dropped 19 published values: 16 compound-adjective forms, two ratio halves, and one comma over-capture. Two
+  of them sit on the two *current-facing* governed surfaces, and one of those is live: `TOOLBOX.md`'s "The
+  27-case self-test" is a current count of `check_current_claim_census.pl --self-test`, inside a
+  claim-annotated paragraph, and the gate written to watch that paragraph could not see it. The real-tree
+  unlisted report moves 21 -> 23 as a direct result.
+  **Attribution is by revert-and-re-apply, not by reading the diff.** With the grammar line alone reverted and
+  the rest of the slice identical, 5 of 19 self-test cases fail — both positive cases and all three new ones,
+  the positives on `published value '40,' ... no assertion record lists`. Re-applied, 19/19. The
+  absorbed-punctuation case is the mirror the repair needs: a record whose `value` is `40,` now covers nothing,
+  where before it was accepted
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.1`
+  **The measuring instrument was disposable; the control that replaces it is tracked.** The widened-lookahead
+  probe lived in `.project-data/tmp/` and is deleted, because an oracle that exists only under ignored state
+  cannot support a claim (`CLAIM_VERIFICATION.md` §9). It was the *discovery* instrument, and what it found is
+  now encoded in three tracked RED cases on the self-test's repository-local fixture — a compound-adjective
+  value, a ratio-form value, and a record whose value absorbed punctuation — each observed failing before the
+  repair and passing after it. The probe is named here for reproducibility, not cited as durable evidence.
+  **This leaf's own book edit moved the mdBook census, and the first draft of this line said it had not.** The
+  new chapter paragraph contains `15/15`, which the book census's candidate grammar matches, so `regions`
+  moved 321 -> 322 and `authority_outcomes.excluded` 224 -> 225. The new candidate is adjudicated `excluded`
+  with scope reason `example_or_command_literal` — it is an illustration of the grammar, not a published
+  quantity — and the `mdbook-quantitative-census-frozen` marker and result were re-derived from `--report`
+  rather than edited by arithmetic. Recorded rather than smoothed over: it is the same-transaction shape this
+  tree has now seen eleven times, and it was caught by re-running the gate, not by re-reading the sentence
+  Verification: `perl scripts/check_published_assertions.pl --self-test 19/19 (the 16 .7.1 cases plus
+  compound-adjective, ratio, and absorbed-punctuation, the last three proven grammar-dependent by
+  revert-and-re-apply at 14/19); --check green on the real tree, unlisted 21 -> 23 with 29 at TOOLBOX.md:118
+  and 27 at TOOLBOX.md:130 newly visible; check_current_claim_census.pl --check green at 71 frozen evidence
+  units after one new rolling-ledger head row and 20 line-map re-pins; check_book_quantitative_claims.pl
+  --check green at 322 regions with the new candidate adjudicated excluded; check_claim_verification.pl
+  --check resolves 6 claims and 12 commands; scripts/check_doctrines.sh 11/11 executed doctrines PASS`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.7.1a — measure the coverage grammar's blind spot, then close it`
+
 - ID: `CLAIM-VERIFICATION-ADOPTION.7.2`
   Status: `pending`
   Goal: populate the registry from the current governed regions and close the unlisted-value report at zero
   Acceptance: every published value in a claim-annotated or registered governed region resolves to one record
   with a closed outcome, or the run reports it. The three survivors this tree already labelled are the first
   entries — `candidate_closure.unresolved` `gated`, `views` `authored`, and the producer-census zeroes `gated`
-  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.1`
+  **Two things `.7.1a` measured that this leaf must decide before it can freeze anything.**
+  *(a) `governed_globs` is the stored surface list `.7.0` element 3 forbids.* The registry ships
+  `governed_globs: ["TOOLBOX.md"]`, so flipping `phase` to `frozen` would make exactly one surface fatal and
+  leave `docs/book/src/reference/doctrine-enforcement.md` — the surface instance 5 actually drifted on —
+  outside the map. The population must be selected by a derived rule, not by a listed name; the honest
+  candidates are the current-surface authority `check_current_claim_census.pl` already derives, or a rule that
+  admits every claim-annotated tracked Markdown file and excludes sealed-archive and dated-evidence lifecycles
+  by their lifecycle, not by their path.
+  *(b) the bound and the population disagree.* Measured `2026-08-30` with `.7.1a`'s corrected grammar and
+  `governed_globs: ["**/*.md"]`: 152 unlisted values over 32 governed regions in four files — 85 in this task
+  tree, 40 in `segment-0013`, 23 in `TOOLBOX.md`, four in the book chapter — against a declared
+  `max_records: 128`. So a whole-tree close is not merely laborious, it does not fit, and raising the bound to
+  make it fit is the move `.8` refuses for the census registry. Re-derive both figures from
+  `perl scripts/check_published_assertions.pl --produce` rather than carrying them; they are recorded here as
+  a dated measurement of the decision, not as current state
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.1a`
   Verification: `pending`
   Commit: `pending`
 
@@ -1150,11 +1225,23 @@ the workflow through the mdBook and repository review path.
 | 25 | `CLAIM-VERIFICATION-ADOPTION.11a` | `done` | asked a second time; five of `.11`'s findings re-derived false, including its own ownership classifier and its producer scope |
 | 26 | `CLAIM-VERIFICATION-ADOPTION.7.0` | `done` | five rounds of correction proved prose cannot close this; the contract that can is frozen before any code |
 | 27 | `CLAIM-VERIFICATION-ADOPTION.7.1` | `done` | the gate executes producers and compares fields; 16/16 RED matrix and a drift observed on real shipped prose |
-| 28 | `CLAIM-VERIFICATION-ADOPTION.7.2` | `pending` | populate the registry and close the unlisted-value report at zero |
-| 29 | `CLAIM-VERIFICATION-ADOPTION.7` | `active` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
+| 28 | `CLAIM-VERIFICATION-ADOPTION.7.1a` | `done` | the coverage grammar's blind spot is measured and closed, so the population it reports is the population that exists |
+| 29 | `CLAIM-VERIFICATION-ADOPTION.7.2` | `pending` | decide the derived governed scope, populate the registry, and close the unlisted-value report at zero |
+| 30 | `CLAIM-VERIFICATION-ADOPTION.7` | `active` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
 ## Decisions
 
+- `2026-08-30` (`.7.1a`): the coverage grammar decides the population, so a value it cannot see is a silent
+  hole rather than an unlisted one — no record can be asked for it and `frozen` phase will still call the
+  surface complete. A grammar change is therefore a population change, and it must be measured against an
+  independent tokenizer and bound to RED cases before the population is closed, never adjusted by reading.
+- `2026-08-30` (`.7.1a`): a numeral closing a compound adjective (`27-case`) or a ratio (`15/15`) is a
+  published quantity; only `-` followed by a **digit** is an identifier or date fragment. The exclusion is
+  narrowed to the form those identifiers actually take instead of excluding the whole punctuation class,
+  which is how 19 published values across four claim-annotated files became invisible to the gate.
+- `2026-08-30` (`.7.1a`): a comma joins a numeral only when it separates exactly three digits. Absorbing
+  sentence punctuation into a value binds the gate to prose rather than to a quantity, and it makes the
+  honest record — the one listing the number a reader would act on — report as unlisted.
 - `2026-08-30` (`.7.0`): a value published on a governed surface must carry one of exactly four outcomes —
   `derived` (re-executed and compared against a named producer field), `gated` (a named control fails if it
   moves, and that control has a known-bad case), `authored` (a named decision fixes it), or `dated` (anchored to
@@ -1873,6 +1960,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-30` | `.7.1a` | independent widened-lookahead probe over the same governed paragraphs; `perl scripts/check_published_assertions.pl --self-test`; `--check`/`--produce` on the real tree; revert-and-re-apply of the grammar line alone; `scripts/check_doctrines.sh` | **the gate could not see two of the values it exists to watch.** An oracle built to disagree — the gate's own lookbehind kept, only the lookahead widened — reported **19** published values dropped across the four claim-annotated files: 16 compound-adjective forms (`27-case`, `56-unit`, `304-region`), two ratio halves (`304/304`, `15/15`), and one comma over-capture. A first probe without the lookbehind was **discarded**, not published: it reported `SHA-256` and `H1`, which the gate refuses correctly, and an oracle that calls correct behaviour a defect separates nothing. Two of the 19 sit on the current-facing surfaces and one is live — `TOOLBOX.md`'s "The 27-case self-test" is a current count of `check_current_claim_census.pl --self-test` (27/27 today) inside a claim-annotated paragraph the gate was written to watch. Real-tree unlisted **21 -> 23**. **Attribution by revert-and-re-apply, not by reading**: with the grammar line alone reverted, 5 of 19 self-test cases fail — both positives on `published value '40,' ... no assertion record lists`, and all three new cases; re-applied, **19/19**. The absorbed-punctuation case is the mirror the repair needs: a record whose `value` is `40,` now covers nothing, where before it was accepted |
 | `2026-08-30` | `.7.1` | `perl scripts/check_published_assertions.pl --self-test`; `--check` on the real tree; revert-and-re-apply drift probe against `check_current_claim_census.pl --report`; `scripts/check_doctrines.sh` | **the leg no existing control supplied is now executable.** Self-test **16/16** with every `.7.0` fault plus five more driven RED on a disposable repository-local fixture. On the real tree the gate runs green at four seeded assertions over two governed regions in `inventory` phase, reporting unlisted values rather than failing on them until `.7.2` completes the population. **Drift observed RED on real shipped prose**, not a fixture: `TOOLBOX.md`'s `**5** views` bound to the census `views` field, edited to `**6**`, produced `is stale: 'views' re-derives to '5', published '6'`; both files restored byte-exact. A first probe against `docs/knowledge/INDEX.md` is recorded as an honest failure — its producer is derive-and-diff over that same file and exits nonzero before any field comparison, so it cannot demonstrate this leg. The coverage grammar was corrected mid-implementation from tag-line to **paragraph** scope, because a `[claim: <id>]` tag closes a paragraph and `TOOLBOX.md`'s two tags sit on lines carrying no quantity at all — keyed on the tag's own line the map would have been blind to precisely the sentences it exists to watch |
 | `2026-08-30` | `.7.0` + `.11a` re-derivation | re-derived every figure `.11a` published: `git show --name-only` over the four attributed commits; `git show d23e8bae -- <book>` content-line count; `check_live_document_size.pl` warning population; literal match census over tracked non-archive Markdown at `fd09708d~1`; `§10` rows vs `DOCTRINES`; the three claim producers `--check`/`--report` | **`.11a` does not fully hold either.** Its warning-line total was **invalidated by its own commit** — published as 20, and that commit's `CHANGES.md` prepend crossed `change_history lines_each`, making it 21. And "exactly three surfaces" is a *classification*, not a match count: five tracked files carried the literal, two of them dated records §1 exempts; the conclusion holds and the predicate was unstated. Both are withdrawn rather than corrected. Everything else in `.11a` re-derives: the republication attribution, `d23e8bae`'s two changed book lines, the four-producer composition, the `done`-tree and self-satisfying classifier defects, and the dated-table withdrawal. **Five consecutive rounds of correction, each invalidated by its own transaction, is the evidence that closes the design question**: `.7` is split and `.7.0` freezes the contract |
 | `2026-08-30` | `.11a` | `git show --name-only` over the four attributed commits; `git show d23e8bae~1:<book>`; `check_live_document_size.pl` vs `check_live_document_size.sh` warning populations; open-tree ownership screen recomputed from each tree's own `Status` line; all three claim producers `--check`/`--report`; 17 relocations re-derived HEAD vs HEAD~1; doctrine gate | **five of `.11`'s findings do not hold.** Only **one** of the three commits said to have republished `identity_gated 7` edited a publisher. `d23e8bae` withdrew `current_surfaces` from **two** surfaces, not three — the book chapter never carried it, and "all three" was quoted from that commit's own body. The **18 lines / 13 surfaces** census was one producer's, and only 17 of its lines named a surface; the gate-level producer emits **35** lines across **four**. The ownership screen counted `done` trees as owners, hiding `corpus_task_evidence_parts`, and the act of publishing the finding turned its own classifier green for the three surfaces it named. And the `Opening Pressure Boundary (92e59c97)` table is a **dated** snapshot §1 exempts, not a disagreeing census. Everything else re-derives unchanged: `identity_gated` 8 on three surfaces, 78 -> 89, 307/78/221/186 -> 321/89/224/189, 10/nine -> 11/10/1 at `1ccb7331`, the sibling frontier, the three withdrawals, 15 -> 16, 17 relocated + 1 added, 11 = 11, 5 book regions. `.11`'s own ledger prepends also moved the warned surface count 13 -> **15** (`achievement_status`, `change_history`; both owned) |
@@ -1954,6 +2042,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
+| `.7.1a` | `CLAIM-VERIFICATION-ADOPTION.7.1a — measure the coverage grammar's blind spot, then close it` | 19 published values were invisible to the population scanner; grammar repaired on measurement, 19/19 self-test with three grammar-dependent RED cases, real-tree unlisted 21 -> 23 |
 | `.7.1` | `CLAIM-VERIFICATION-ADOPTION.7.1 — execute the producer and compare the field` | twelfth registered doctrine; 16/16 RED matrix; drift observed on real shipped prose; coverage corrected to paragraph scope; §10 and the mdBook chapter updated in the same commit |
 | `.7.0` | `CLAIM-VERIFICATION-ADOPTION.7.0 — freeze the published-assertion gate design` | eight-element contract traced element-by-element to the instance that defeated the alternative; `.7` split into freeze, gate, and population; `.11a`'s two invalidated figures withdrawn in the same commit |
 | `.11a` | `CLAIM-VERIFICATION-ADOPTION.11a — re-derive .11's findings and correct the five that do not hold` | two mechanism claims and two set claims withdrawn; the ownership classifier replaced because publishing the finding satisfied it; producer scope corrected from one checker to the gate |
@@ -1985,6 +2074,18 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-30`: closed `.7.1a`. **The gate had a blind spot in the one thing it derives itself.** `.7.1`
+  shipped a numeral grammar that excluded every `-` and `/` after a numeral — written to keep dates and
+  identifiers out, and it does — and that also dropped every count closing a compound adjective or a ratio.
+  Measured against an independent tokenizer rather than by reading the regex: **19** published values across
+  the four claim-annotated files were invisible, including `TOOLBOX.md`'s live "The 27-case self-test", a
+  current count of `check_current_claim_census.pl --self-test` sitting inside a paragraph this gate exists to
+  watch. A second defect absorbed sentence commas into values (`40,`), which would have forced records to bind
+  punctuation and reported the honest record as unlisted. Both are repaired to the form the identifiers
+  actually take: a comma joins a numeral only before exactly three digits, and only `-` followed by a digit is
+  excluded. Three new RED cases, all proven grammar-dependent by reverting the single line (14/19 reverted,
+  19/19 re-applied). This is why `.7.2` could not have gone first: closing an unlisted report at zero certifies
+  nothing when the population is wrong.
 - `2026-08-30`: closed `.7.1`. The gate exists and executes. `scripts/check_published_assertions.pl` runs a
   record's named producer and compares its report field to the literal published in the governed region — the leg
   that ten recorded instances went stale for want of, because a digest proves a region has not changed and never

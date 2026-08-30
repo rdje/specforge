@@ -11,11 +11,13 @@ answers:
   - "what is excludes_self and why does a classifier need it"
   - "how does SpecForge detect two surfaces disagreeing about one quantity"
   - "are mechanism or causal claims mechanically checked"
+  - "which numerals in prose does the published-assertion gate treat as published values"
+  - "why is a gate's own numeral grammar part of its contract"
   - "how do I reverify the published-assertion gate"
 date: 2026-08-30
 status: current
 tags: [claim-verification, doctrine, currentness, producer, gate, task-tree]
-evidence: scripts/check_published_assertions.pl; doctrine/claim_verification/published_assertions.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.7.0 and .7.1); DOCTRINE_ENFORCEMENT.md (§10)
+evidence: scripts/check_published_assertions.pl; doctrine/claim_verification/published_assertions.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.7.0, .7.1 and .7.1a); DOCTRINE_ENFORCEMENT.md (§10)
 reverify: perl scripts/check_published_assertions.pl --self-test && perl scripts/check_published_assertions.pl --check && perl scripts/check_published_assertions.pl --report
 ---
 
@@ -57,4 +59,14 @@ The governed population is **derived on every run and never stored**, because a 
 joins it; three commits in a row moved their own published population by describing it. A `[claim: <id>]` tag
 governs the **paragraph it closes**, not the line it sits on — authors put the tag at the end of a block, so
 keying coverage on the tag's own line would be blind to exactly the sentences it exists to watch.
+
+Because the population is derived, **the numeral grammar is part of the contract**: a value the scanner cannot
+see is a silent hole, not an unlisted one, and `frozen` phase will call the surface complete anyway. A numeral
+closing a compound adjective (`27-case`) or a ratio (`15/15`) is a published quantity; only `-` followed by a
+**digit** is a date or identifier fragment (`2026-08-28`, `segment-0013`), and the lookbehind keeps a numeral
+glued to a preceding word, dot, slash or hyphen out (`SHA-256`, `1.95.0`, `.7.2`). A comma joins a numeral only
+when it separates exactly three digits, so `1,922` is one value and `40, noticed` publishes `40`. Both rules were
+measured against an independent tokenizer and are pinned by RED cases, after the first grammar hid 19 published
+values across the four claim-annotated files (`CLAIM-VERIFICATION-ADOPTION.7.1a`).
+
 See [[current-claim-census-freeze]] and [[claim-control-audit-closure]] for the sibling claim doctrines.

@@ -1,3 +1,33 @@
+### CLAIM-VERIFICATION-ADOPTION.7.1a — measure the coverage grammar's blind spot, then close it
+
+- The gate derives its own population, so its numeral grammar decides which published values EXIST. A value the
+  scanner cannot see is a silent hole rather than an unlisted one: no record can be asked for it, no --produce
+  run reports it, and frozen phase would call the surface complete anyway.
+- Measured against an independent tokenizer, not by reading the regex. Keeping the gate's own lookbehind and
+  widening only the lookahead, 19 published values were dropped across the four claim-annotated files: 16
+  compound-adjective forms (27-case, 56-unit, 304-region), two ratio halves (304/304, 15/15), and one comma
+  over-capture. A first probe without the lookbehind was discarded rather than published — it reported SHA-256
+  and H1, which the gate refuses correctly, and an oracle that calls correct behaviour a defect separates
+  nothing.
+- One of the 19 is live: TOOLBOX.md's "The 27-case self-test" is a current count of
+  check_current_claim_census.pl --self-test, inside a claim-annotated paragraph this gate exists to watch.
+- Two repairs, each narrowed to the form the identifiers actually take. A comma joins a numeral only when it
+  separates exactly three digits, so 1,922 stays one value and "40, noticed" publishes 40 rather than "40,".
+  Only a hyphen followed by a DIGIT is excluded, because that is what a date or identifier fragment looks like
+  (2026-08-28, segment-0013); the lookbehind is untouched, so SHA-256, 1.95.0 and .7.2 stay out.
+- Self-test 19/19: the 16 .7.1 cases plus a compound-adjective value, a ratio-form value, and a record whose
+  value absorbed sentence punctuation and now covers nothing. All three proven grammar-dependent by reverting
+  the single grammar line — 14/19 reverted, 19/19 re-applied.
+- Real-tree unlisted moves 21 -> 23; .7.2 still owns the population and the flip to frozen, and now also owns
+  two things this slice measured: governed_globs is the stored surface list .7.0 forbids, and the whole-tree
+  population does not fit the declared record bound.
+- Two honesty corrections recorded rather than smoothed over. The widened-lookahead probe was disposable and is
+  deleted, because an oracle that exists only under ignored state cannot support a claim (§9); what it found is
+  now carried by three tracked RED cases instead. And this slice's own book paragraph contains 15/15, which the
+  mdBook census's candidate grammar matches, so it moved regions 321 -> 322 and excluded 224 -> 225 — the first
+  draft of the leaf's verification line said the census was unchanged. The new candidate is adjudicated
+  excluded as example_or_command_literal, and the claim marker was re-derived from --report, not by arithmetic.
+
 ### CLAIM-VERIFICATION-ADOPTION.7.1 — execute the producer and compare the field
 
 - The gate exists and runs. scripts/check_published_assertions.pl binds a published value in a governed region

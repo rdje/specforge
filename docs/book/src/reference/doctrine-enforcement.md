@@ -92,6 +92,16 @@ published different numbers for one quantity and nothing noticed. And a set clai
 enumeration could include the very surface that publishes it must declare that exclusion, which is the subtlest
 lesson here: a screen that the act of writing the finding turns green is not a check at all.
 
+The grammar that finds the numbers is part of the contract, not an implementation detail. A gate derives its own
+population, so a value its scanner cannot see is worse than one it reports unlisted: no record can be asked for
+it, and a frozen registry will still call the surface complete. That is not hypothetical — the first version
+excluded every hyphen and slash after a numeral, which correctly keeps dates and identifiers such as
+`2026-08-28`, `segment-0013` and `SHA-256` out, and also made every count closing a compound adjective
+(`27-case`, `56-unit`) or a ratio (`15/15`) invisible. Nineteen published values were affected, one of them a
+live self-test count inside a paragraph this gate was written to watch. The rule is now the shape those
+identifiers actually take: only `-` followed by a digit is excluded, and a comma joins a numeral only when it
+separates exactly three digits, so `1,922` stays one value while `40, noticed` publishes `40`.
+
 `CORPUS-FRONTIER` exists because of a defect worth stating plainly. The corpus refresh program tracked its own
 remaining work as prose that each slice decremented by one, across twenty-two consecutive refreshes — and a
 decrement cannot detect an error at its base, so a document stopped being counted and nobody could see it. The
