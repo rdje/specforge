@@ -11,20 +11,19 @@
   `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`/`.7`. The last ten are tracking-only.
-- Current state: `CLAIM-VERIFICATION-ADOPTION.7.2.1` is closed, and with it **`.7`** — **the map is closed and
-  the registry is `frozen`.** Every published value in a governed region resolves to a record with a closed
-  outcome (30 assertions: 1 derived, 2 gated, 1 authored, 26 dated), so an unmapped numeral now fails the
-  build. Three probes on real shipped prose, all restored byte-exact: an unlisted value, a drifted dated value
-  (three legs at once), and a claim-annotated file on an undeclared surface. Two sentences were repaired
-  rather than recorded — an open-ended window now names its closing revision, and a live count whose producer
-  publishes it only as prose lost its numeral. Read every figure from
-  `perl scripts/check_published_assertions.pl --report`; do not carry it here.
-- Next action: **`STATUS-LEDGER-ROLLOVER.2` is now mandatory and must go first.**
-  `LIVE_ACHIEVEMENT_STATUS.md` reached 90.08% of its 115000-byte health target on this slice and was only
-  brought back under (89.9%) by tightening this slice's own entry — the next ordinary append crosses it again.
-  Follow `COMMIT.md`'s rolling-ledger rollover: write a task-owned JSONL plan, dry-run
-  `perl scripts/check_rolling_ledger_protocol.pl --rollover-plan <plan>`, then `--apply-rollover` on the exact
-  green plan. Read the live figures from `--report`; do not carry them here.
+- Current state: `STATUS-LEDGER-ROLLOVER.5` and `CHANGES-LEDGER-ROLLOVER.5` are closed — **both root ledgers
+  are rolled in one transaction**, because the status rollover's own ledger record is what crossed
+  `CHANGES.md`'s 90% line signal and could not be dodged by shortening it. Status root 56 -> 43 records /
+  71,626 bytes (62.3%); change root 93 -> 80 records / 1,179 lines / 182,298 bytes (71.5% bytes, 65.5%
+  lines). Segments `segment-0012-2026-08-30.md` and `segment-0016-2026-08-30.md`; older segments and both
+  source capsules byte-identical. Before them, `CLAIM-VERIFICATION-ADOPTION.7` closed: the published-assertion
+  registry is `frozen` at 0 unlisted values with a discovered, fail-closed scope.
+- Next action: pick the next open unit. The largest untouched body of work is the `SOURCE-IR-REPRODUCIBILITY`
+  lane (`.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`). Nearer: `CLAIM-VERIFICATION-ADOPTION` `.8` (census registry
+  lifecycle), `.9` (candidate vocabulary blind spot), `.12` (the per-slice region re-pin is hand work with a
+  silent-wrong-line hazard), `CHANGES-LEDGER-ROLLOVER.4` and `STATUS-LEDGER-ROLLOVER.2` (both own the same
+  standing limit: a pinned migration suffix that consumes two thirds of the budget before any current record
+  exists, which is why every rollover buys only about a dozen slices).
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/
   `.9`/`.12` (the per-slice region re-pin is hand work with a silent-wrong-line hazard);

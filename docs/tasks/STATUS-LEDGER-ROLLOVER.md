@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `STATUS-LEDGER-ROLLOVER`
-- Status: `active` (`.0`/`.1`/`.3`/`.4`/`.4a` done; `.2` tracking-only)
+- Status: `active` (`.0`/`.1`/`.3`/`.4`/`.4a`/`.5` done; `.2` tracking-only)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-11`
-- Last updated: `2026-08-28`
+- Last updated: `2026-08-30`
 - Owner: repo-local workflow
 
 ## Goal
@@ -63,7 +63,7 @@ pressure axis here, because one status record is one line.
   Status: `active`
   Goal: the status ledger is back inside its warning band through its declared transaction, with no record
   edited and no bound moved, and the structural reason it keeps returning is measured
-  Children: `STATUS-LEDGER-ROLLOVER.0`, `.1`, `.2`, `.3`, `.4`, `.4a`
+  Children: `STATUS-LEDGER-ROLLOVER.0`, `.1`, `.2`, `.3`, `.4`, `.4a`, `.5`
 
 - ID: `STATUS-LEDGER-ROLLOVER.0`
   Status: `done`
@@ -139,6 +139,46 @@ pressure axis here, because one status record is one line.
   budget-sized records. The live-window record mean after the cut is **1,588.3 bytes**, still above budget:
   the suffix averages 1,496.2 and the four kept records average 2,509.5. A rollover cannot fix that, which is
   `.4`'s point.
+
+- ID: `STATUS-LEDGER-ROLLOVER.5`
+  Status: `done` (`2026-08-30`)
+  Goal: roll the status ledger again, sized so the next few slices do not re-cross the signal
+  Acceptance: measured `2026-08-30` at `3ff9e363`, `LIVE_ACHIEVEMENT_STATUS.md` is **103,382 bytes = 89.9%**
+  of its 115,000-byte health target across 56 records. It crossed the 90% mandatory signal earlier in that
+  same commit and was brought back under only by tightening that slice's own entry, which is a reprieve and
+  not a fix: the next ordinary append crosses it again. Perform the declared transaction — a task-owned
+  repository-relative JSONL plan pinning the committed opening blob and an exact whole-record cut, a green
+  dry run before the applied run, root installed last — with no record edited and no bound moved.
+  **Sizing, stated before the plan is written so the choice is reviewable rather than retrofitted.** The
+  pinned 40-record migration suffix is live forever under `validate_retained_suffix` and alone spends 66,720
+  of the 92,000-byte warning budget, so the whole reachable headroom is about 25,000 bytes. Of the 16
+  post-migration records, seven are `2026-08-30`, five are `2026-08-29` and four are `2026-08-28`. Measured
+  from the committed root: keeping all seven same-day records leaves 79,580 bytes and only about **seven**
+  records of headroom, which is the "buys one or two slices" outcome `.3` warns against; keeping **three**
+  leaves 71,626 bytes = 62.3% of the target with about **eleven** records, matching what `.3` achieved.
+  Three is also a principled boundary rather than a count: they are exactly the records that close
+  `CLAIM-VERIFICATION-ADOPTION.7`, and they are the newest three, so the snapshot still opens on the current
+  day. Keeping zero would leave the most headroom and a snapshot whose newest entry is `2026-08-08`, which is
+  the reader cost `.3` already declined to pay
+  **Build the plan by harvesting, not by computing** (`.3`'s recorded lesson): this ledger's grammar is
+  `current_snapshot_bullets_v1`, so the checker re-renders a canonical live view instead of slicing raw
+  bytes, and every hand-computed field was wrong last time. Write placeholder metrics, read each
+  `actual X, expected Y` from the dry run, rewrite, and re-run until exact
+  Prerequisite: none; it blocks the next status-bearing commit
+  Verification: `plan docs/research/status-ledger-rollover-2026-08-30-plan.jsonl pins boundary commit
+  3ff9e363 and opening SHA-256 8ed68c76…451d; the dry run reported "exact and warning-safe" before the
+  applied run, and the applied run installed root-last. Root 56 -> 43 records / 98 -> 85 lines / 103,382 ->
+  71,626 bytes = 62.28% of the byte target, 53.75% of the 80-record window, 15.18% of lines, and an unchanged
+  4,824-byte widest line (that line is inside the pinned suffix, so no cut can reach it). Segment
+  segment-0012-2026-08-30.md holds 13 records / 13 lines / 31,756 bytes at SHA-256 d4c62d84…6e58; git diff
+  proves every older segment and the source capsule byte-identical, with only the root, the new segment, the
+  manifest and the index changed. No limit, milestone, or ceiling moved and no record was edited, reordered,
+  or reflowed. The harvest was cross-checked against one independently predicted figure before the first dry
+  run, exactly as .3 prescribes: the resulting root was predicted at 71,626 bytes from the per-record table
+  and reported as 71,626 by the checker, so the harvest is not self-fulfilling. The mdBook rolling-ledger
+  chapter is deliberately unchanged — .1 removed its stored root sizes and .3 already recorded the harvest
+  procedure, so there is no truth on that surface for this transaction to move`
+  Commit: `STATUS-LEDGER-ROLLOVER.5 / CHANGES-LEDGER-ROLLOVER.5 — roll both root ledgers in one transaction`
 
 - ID: `STATUS-LEDGER-ROLLOVER.4`
   Status: `done` (`2026-08-28`)

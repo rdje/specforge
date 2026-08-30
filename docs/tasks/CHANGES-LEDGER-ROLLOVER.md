@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `CHANGES-LEDGER-ROLLOVER`
-- Status: `active` (`.0`/`.1`/`.2`/`.3` done; `.4` owns the standing limit every rollover keeps hitting)
+- Status: `active` (`.0`/`.1`/`.2`/`.3`/`.5` done; `.4` owns the standing limit every rollover keeps hitting)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-11`
-- Last updated: `2026-08-29`
+- Last updated: `2026-08-30`
 - Owner: repo-local workflow
 
 ## Goal
@@ -130,6 +130,46 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   window is a window over *current* history rather than mostly frozen migration history
   Prerequisite: none; it blocks nothing today, and `.3` bought roughly eleven records of headroom
 
+- ID: `CHANGES-LEDGER-ROLLOVER.5`
+  Status: `done` (`2026-08-30`)
+  Goal: roll the change ledger, which `STATUS-LEDGER-ROLLOVER.5`'s own record pushed past its line signal
+  Acceptance: measured `2026-08-30`, `CHANGES.md` reached **1,639 lines = 91.1%** of its 1,800-line health
+  target, crossing the mandatory 90% signal. It cannot be dodged by shortening the entry that crossed it: the
+  entry would have to fall to five lines, and the ledger would still sit at the threshold. This rollover is
+  therefore performed **inside the same transaction** as `STATUS-LEDGER-ROLLOVER.5` rather than after it,
+  because the status rollover's own ledger record is what crossed the line and a commit cannot be made legal
+  by deferring the gate that blocks it. That is this repository's existing pattern for a blocking pair, not a
+  new one — `2b9e8899` carries `CLAIM-VERIFICATION-ADOPTION.6b / CHANGES-LEDGER-ROLLOVER.3` for the same
+  reason. The task-tree pivot rule is respected in substance: no new work is started, and the tree is brought
+  to a clean, committed state at the first point where that is possible.
+  **Sizing, stated before the plan is written.** The pinned 75-record migration suffix is 1,053 lines and
+  170,695 bytes before a single current record exists — 58.5% of the line target and 66.9% of the byte
+  target — which is the standing limit `.4` owns and no cut can move. Of the reachable third, keeping three of the
+  committed boundary leaves the root at 71.5% of bytes and 65.5% of lines with about eight records of
+  headroom at the measured 2,466-byte mean. Three is chosen for a stated reason: they are exactly the records
+  that close `CLAIM-VERIFICATION-ADOPTION.7`, the same three the status ledger kept in this commit, so the two
+  ledgers open on the same story; this transaction's own two records ride over the cut as future prepends. `CHANGES-LEDGER-ROLLOVER.1`
+  established that the record a rollover itself writes must be inside the kept prefix, and both are.
+  **A plan must pin the COMMITTED boundary, not the working tree — the first attempt was refused for exactly
+  that.** Because this rollover runs in the same transaction as the ledger records that triggered it,
+  `CHANGES.md` was already dirty, and a plan whose `opening_sha256` was the working-tree digest failed with
+  `committed opening blob differs from reconstructed boundary`. The checker's design is better than that
+  workaround: it subtracts records added since `boundary_commit` as `future_prepends`, validates the
+  remaining opening view against the committed blob, and carries the prepends over the cut untouched. So the
+  plan pins 91 committed records and keeps three of them, and this transaction's own two records ride on top
+  — a live root of five current records, reached without pretending the tree was clean.
+  Prerequisite: none; it blocks `STATUS-LEDGER-ROLLOVER.5`'s commit
+  Verification: `plan docs/research/changes-ledger-rollover-2026-08-30-plan.jsonl pins boundary commit
+  3ff9e363 and committed opening SHA-256 eba47525…4522 across 91 records with 2 future prepends; the dry run
+  reported "exact and warning-safe" before the applied run, and the applied run installed root-last. Root
+  93 -> 80 records / 1,655 -> 1,179 lines / 226,925 -> 182,298 bytes = 71.5% of the byte target and 65.5% of
+  the 1,800-line target, back under the 80% warning on every dimension with about eight records of headroom
+  at the measured 2,466-byte mean. Segment segment-0016-2026-08-30.md holds 13 records / 474 lines /
+  45,871 bytes at SHA-256 cdf66321…d208; git diff proves every older segment and the source capsule
+  byte-identical, with only the root, the new segment, the manifest and the index changed. No record was
+  edited, reordered or reflowed and no limit, milestone or ceiling moved`
+  Commit: `STATUS-LEDGER-ROLLOVER.5 / CHANGES-LEDGER-ROLLOVER.5 — roll both root ledgers in one transaction`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -138,7 +178,8 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
 | 2 | `CHANGES-LEDGER-ROLLOVER.1` | `done` | corrected the cut to account for the record the rollover itself writes |
 | 3 | `CHANGES-LEDGER-ROLLOVER.2` | `done` | sealed 18 records so `.6`'s append was legal |
 | 4 | `CHANGES-LEDGER-ROLLOVER.3` | `done` | sealed 12 records so `.6b`'s append was legal; root 61.9% / 69.1% |
-| 5 | `CHANGES-LEDGER-ROLLOVER.4` | `pending` | the frozen migration suffix occupies two thirds of the byte budget, so every rollover buys only a dozen slices |
+| 5 | `CHANGES-LEDGER-ROLLOVER.5` | `done` | sealed 13 records so `STATUS-LEDGER-ROLLOVER.5`'s own record was legal; kept the five this transaction and `.7`'s closure wrote |
+| 6 | `CHANGES-LEDGER-ROLLOVER.4` | `pending` | the frozen migration suffix occupies two thirds of the byte budget, so every rollover buys only a dozen slices |
 
 ## Decisions
 
