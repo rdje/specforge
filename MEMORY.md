@@ -11,27 +11,28 @@
   `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`. The last nine are tracking-only.
-- Current state: `CLAIM-VERIFICATION-ADOPTION.11a` is closed. `.11` enumerated the claim-surface population three
-  earlier leaves swept from memory and withdrew six stale publications plus three carried-but-correct constants as
-  one class. Asked whether those findings held, `.11a` re-derived them and **five did not**. Two mechanism claims
-  read off co-occurrence rather than off what a commit changed: only ONE of three commits republished
-  `identity_gated 7`, and `d23e8bae` withdrew `current_surfaces` from TWO publishers, not three — quoted from that
-  commit's own body instead of re-derived. Two set claims with the wrong denominator: "18 lines / 13 surfaces" is
-  `check_live_document_size.pl`'s output where the doctrine driver emits 35 lines across FOUR producers; and the
-  ownership grep scored `done` trees as owners (hiding `corpus_task_evidence_parts`) and turned green for the
-  three surfaces it named, because writing the finding is what made `docs/tasks/` mention them. One reported
-  defect withdrawn entirely: the `Opening Pressure Boundary (92e59c97)` table is a dated snapshot §1 exempts.
-  Both corrections are STRONGER than what they replace. Everything else re-derives unchanged. `.11`'s own
-  prepends moved the warned surface count 13 -> 15; both new ones are owned.
-- Next action: `CLAIM-VERIFICATION-ADOPTION.7`, unchanged in scope by `.11` and sharpened in evidence. Build the
-  bounded declared map binding each published count in a claim-annotated prose region to its producer command and
-  the exact field of that producer's report, re-deriving and comparing rather than pattern-matching numbers out of
-  prose; an unlisted count in a governed region is reported, not ignored. Keep the two residues `.10` identified
-  (cross-surface disagreement; an optional field naming the prior adjudication a mechanism claim was checked
-  against) and add the one `.11` proves is load-bearing: the map's POPULATION must be derived by a command, since
-  every miss so far came from a remembered surface list rather than a wrong number, and `.11a` adds that a
-  screen the finding itself can satisfy is not a classifier at all. RED controls must prove a
-  drifted count, a count bound to the wrong field, and an unmapped count in a governed region.
+- Current state: `CLAIM-VERIFICATION-ADOPTION.7.0` is closed and the correcting sequence is deliberately over.
+  Asked a third time, `.11a` was re-derived and does NOT fully hold either: its warning-line total was
+  invalidated by its own commit's `CHANGES.md` prepend crossing another band, and its "exactly three surfaces"
+  was a classification published without its predicate (five files carried the literal; two are dated records §1
+  exempts). Both WITHDRAWN, not corrected. Everything else in `.11a` re-derives. Five consecutive rounds —
+  `.6`/`.6a`/`.6b`, `.10`/`.10a`, `.11`/`.11a` — each invalidated by its own transaction, which settles the
+  design question `.7` had left open: prose cannot close this class, so `.7` is split into `.7.0` freeze,
+  `.7.1` gate, `.7.2` population. The frozen contract: execute the producer and compare the named field; four
+  outcomes (`derived`/`gated`/`authored`/`dated`) with NO slot for "a trajectory shows it has held"; the
+  governed population derived at check time and never stored; a declared `excludes_self` because `.11`'s
+  classifier went green for the surfaces it named BECAUSE it named them; cross-surface disagreement with no
+  producer run; membership compared as an enumeration rather than a size; mechanism claims out of scope with an
+  `adjudicated_against` field.
+- Next action: `CLAIM-VERIFICATION-ADOPTION.7.1` — implement `scripts/check_published_assertions.pl` plus a
+  self-bounded `doctrine/claim_verification/published_assertions.jsonl`, registered through
+  `scripts/check_doctrines.sh` with no duplicated hook or CI wiring. Argv-form producers only, never a shell
+  string; every region, producer and input Git-tracked and digest-bound. `--self-test` must instantiate every
+  outcome family positively and drive all seven `.7.0` faults RED on a disposable repository-local fixture: a
+  drifted value; a value bound to the wrong field; a published value in a governed region no record lists; a
+  `gated` record whose control has no known-bad case; a self-referential record without `excludes_self`; two
+  records disagreeing on one producer+field; and a membership record whose enumeration drifted while its size
+  held. The last is the one that separates this gate from a numeral scanner.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/
   `.9`; `CHANGES-LEDGER-ROLLOVER.4`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`/`.6`;

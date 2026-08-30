@@ -1,3 +1,37 @@
+### CLAIM-VERIFICATION-ADOPTION.7.0 — freeze the published-assertion gate design
+
+- Asked a third time whether the findings held. .11a does NOT fully hold either. Its warning-line total was
+  invalidated by its own commit: published as 20, and that same commit's CHANGES.md prepend crossed
+  change_history lines_each, making it 21. And "exactly three surfaces" is a classification, not a match count —
+  five tracked non-archive Markdown files carried the literal at fd09708d~1, two of them dated records §1 exempts
+  (the status-ledger entry and this tree's own .6a leaf text). The conclusion holds; the predicate was unstated.
+- Both are WITHDRAWN rather than corrected, because correcting is exactly what has failed. A warning-line total
+  is a per-commit counter of the same kind as every other value this tree has withdrawn. What survives is the
+  four-producer composition of the LIVE-DOC-SIZE driver, which is a property of the driver rather than the tree.
+- Everything else in .11a re-derives: only 3079f945 touched a publisher; d23e8bae changed exactly two content
+  lines in the book chapter and never carried current_surfaces there; the done-tree and self-satisfying
+  classifier defects; and the withdrawal of the dated Opening Pressure Boundary table as a reported defect.
+- FIVE consecutive rounds of correction — .6/.6a/.6b, .10/.10a, .11/.11a — each invalidated by its own
+  transaction. That settles the design question .7 had left open: a sixth correction would behave identically,
+  so .7 is split into a design freeze (.7.0), the executable gate (.7.1), and the registry population (.7.2), on
+  this tree's own .3a.0/.3a.1/.3a.2 precedent.
+- The frozen contract, every element traced to the instance that defeated the alternative. Execute the producer
+  and compare the named field, because a digest proves a region has not changed and never that its number still
+  re-derives. Four outcomes only — derived, gated (with the control's known-bad case), authored (with the
+  decision), dated (with the revision) — and deliberately no slot for "a trajectory shows it has held", the
+  licence .10 retired and instance 8 disproved. The population is derived at check time and never stored,
+  because three commits in a row moved their own population by describing it. A record whose evidence could
+  include its own surface must declare excludes_self, because .11's ownership screen turned green for the three
+  surfaces it named BECAUSE it named them — a check the act of writing satisfies. Cross-surface disagreement
+  fails with no producer run at all. A membership field is compared as an enumeration, not as a size. Mechanism
+  claims stay explicitly out of scope with an adjudicated_against field instead, since no checker can decide
+  whether two accounts predict the same observation.
+- The RED matrix .7.1 must observe: a drifted value; a value bound to the wrong field; a published value in a
+  governed region that no record lists; a gated record whose control has no known-bad case; a self-referential
+  record without excludes_self; two records disagreeing on one producer+field; and a membership record whose
+  enumeration drifted while its size held. The last is what separates this from a numeral scanner.
+- No code, registry, or gate wiring in this slice. .7.1 implements; .7.2 populates.
+
 ### CLAIM-VERIFICATION-ADOPTION.11a — re-derive .11's findings and correct the five that do not hold
 
 - Asked a second time whether .11's findings held. That question produced .6b and .10a, and it has now found a

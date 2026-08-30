@@ -294,13 +294,14 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Goal: assign every gate-level live-document warning to an open leaf, by review rather than by grep
   Acceptance: this leaf was opened by `CLAIM-VERIFICATION-ADOPTION.11` and its premises were corrected by
   `.11a` the same day, because both the population and the ownership test it used were wrong.
-  **Population.** `.11` measured `perl scripts/check_live_document_size.pl` — 19 warning lines over 15 surfaces
-  plus one `fact-card-catalog` line. The doctrine `LIVE-DOC-SIZE` runs `scripts/check_live_document_size.sh`,
-  which emits **35** warning lines across **four** producers: `live-document-size` 19, `active-task-evidence` 7,
-  `rolling-ledger` 7, `fact-card-catalog` 2. The `active-task-evidence` and `rolling-ledger` lines name no
-  `surface '...'` token at all, so any census keyed on that token cannot see them. The population is the gate's
-  output, and it is derived on each run rather than carried here — the surface count alone moved 13 -> 15 inside
-  `.11`'s own commit when two ledger prepends crossed their warning bands.
+  **Population.** `.11` measured `perl scripts/check_live_document_size.pl`; the doctrine `LIVE-DOC-SIZE` runs
+  `scripts/check_live_document_size.sh`, which composes **four** producers — `live-document-size`,
+  `active-task-evidence`, `rolling-ledger`, and `fact-card-catalog`. The middle two name no `surface '...'` token
+  at all, so any census keyed on that token is structurally blind to them; that composition is the durable fact
+  here because it is a property of the driver. **No line or surface totals are carried in this leaf.** They are
+  per-commit counters: `.11`'s ledger prepends crossed two bands inside its own commit and `.11a`'s crossed
+  another inside its own, which is three same-transaction invalidations in three consecutive commits. Derive the
+  population from the driver at the revision you care about.
   **Ownership test.** `.11` used `grep -rl <surface> docs/tasks/*.md`, which fails in both directions. It scores
   a `done` tree as an owner: `corpus_task_evidence_parts` was counted owned by `LIVE-DOC-STOP-RISK`, which is
   `done`, so a real gap was hidden. And it is satisfied by the act of reporting: `alignment_task_evidence_index`,
