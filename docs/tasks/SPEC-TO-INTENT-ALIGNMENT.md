@@ -20,7 +20,7 @@ expressiveness as the bottleneck.
 
 - Root children `.0`–`.9`. `.0` through `.8` are complete with every declared descendant, except former
   lane `.6e`, which the later structural repair `.6d.ii.f.iv.a`/`.f.iv.b` supersedes.
-- `.9` is active: `.9a`, `.9b`, and `.9d` are complete, and `.9c` is declared.
+- `.9` is active: `.9a`, `.9b`, and `.9d` are complete; `.9e` is active and `.9c` is declared.
 - Per-leaf goal, acceptance, decision, and measurement detail live in the task-evidence parts. This root
   carries the bounded current summary and the executable owner registry only.
 
@@ -37,19 +37,13 @@ That signoff claims one specification-instance-neutral production core, not perf
 PDF-to-ISF product. The measured derivation and its attribution stay in the residual-carrier and
 residual-actionability parts.
 
-`.9` closes the four required-and-absent cells `.9a` re-derived, by generalising `.8c`'s structural rule —
-one typed residual per captured region no canonical record cites — from figures to the other captured region
-kinds. `.9b` shipped the table leg: coverage for a table region is now asked in the `supporting_table_ids`
-vocabulary its own records use, so a table that reached a carrier is never residualised and one that reached
-none earns a typed residual carrying both of its `EvidenceIR` identities, with every figure-kind residual `.8c`
-published unchanged by construction. `.9c` owns the prose leg, which `.9b` measured to be blocked upstream:
-`EvidenceIR` carries no `SourceIR` content-element identity at all, so a prose residual cannot yet name the
-region the review requires. `.9d` is complete: it repaired the frozen residual-actionability
-contract, which had stopped pinning the current result 43 commits earlier, and registered its checker as the
-gate-tier `RESIDUAL-ACTIONABILITY` doctrine so the same drift now blocks the commit that causes it. Two reviewed cells are
-additionally blocked on a residual label no projection can produce, and one cell is not reachable by any
-structural rule; every finding is recorded in the region-kind-generalisation part. The population replay that publishes
-the comparable result follows the carrier work.
+`.9` closes the four required-and-absent cells `.9a` re-derived, by generalising `.8c`'s structural rule — one
+typed residual per captured region no canonical record cites — from figures to the other captured region kinds.
+`.9b` shipped the table leg, `.9d` repaired and gated the frozen residual contract it found red, `.9e`
+re-derived the findings handed forward and withdrew the two that did not hold, and `.9c` owns the prose leg,
+blocked upstream because `EvidenceIR` carries no `SourceIR` content-element identity. Two reviewed cells expect
+a residual label no non-circular projection can produce, owned by `.9e`. Every measurement, decision, and
+withdrawal is in the region-kind-generalisation part; the population replay follows the carrier work.
 One regression outside this program stays owned by
 [`SOURCE-IR-REPRODUCIBILITY`](SOURCE-IR-REPRODUCIBILITY.md): reviewed cells are anchored on ordinal SourceIR
 element ids and ingest is not reproducible across time, so exact source regions are 13/14.
@@ -146,11 +140,13 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9b`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9c`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9d`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.9e`
 
 ## Verification Log
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-30` | `.9e` re-derived carried-forward findings | two of three do not hold and are withdrawn in place: "unreachable by any structural rule" is false (a positional predicate reaches `elem_00017`), and the index arithmetic is off by one — 114 of 128 lines means one added row is 89.84% and legal, two are 90.62%, and `.9c` was already declared so was never blocked. The unproducible-label finding stands and now has an owner |
 | `2026-08-30` | `.9d` contract re-pin and gate | attributed by re-deriving at each revision: digest MATCH at `893c2fba`, MISMATCH at `245b3b60`, differing in exactly `software_guidance.hard_failures`; red for 43 commits. No published scalar moves; `--check` re-derives 8/16 and the self-test is 28/28. `RESIDUAL-ACTIONABILITY` is gate-tier at 0.04s, proven fail-closed twice, registry and §10 mirror lockstep at 13 |
 | `2026-08-30` | `.9b` table-region carrier | table regions join the carrier with coverage read from `supporting_table_ids`; the current Arm Debug chain moves from 210 of 210 unexplained to 16 cited / 194, and every figure residual is unchanged by construction; seven controls, 470/168/1,372/4, clean fmt, five genericity components at 41 families / 170 rules, CHAIN-CURRENCY 24/24 current at all four stages |
 | `2026-08-30` | `.9b` declaration and bounded-root rollover | the bounded active root moves from 89.8% to 81.2% of its declared line target with no measured value lost — every figure the rolled prose carried re-derives from the residual-carrier and residual-actionability parts; `.9b`/`.9c` are declared in the root registry, the index, the containment contract, and the manifest, and the task-evidence contract revalidates clean |
@@ -185,6 +181,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.9e` | `SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the carried-forward findings and withdraw the two that do not hold` | re-derive every statement handed to the owner, withdraw what was asserted rather than derived, and give the surviving finding a leaf instead of a report |
 | `.9d` | `SPEC-TO-INTENT-ALIGNMENT.9d — re-pin the frozen residual contract and put it under a gate` | repair the stale witness from the contract's own decomposition and make the executable contract a doctrine so it cannot drift unobserved again |
 | `.9b` | `SPEC-TO-INTENT-ALIGNMENT.9b — generalise the captured-region carrier to captured table regions` | ask each region kind in the provenance vocabulary its own records use, so tables join the accounting without residualising the ones that reached a carrier |
 | `.9b` | `SPEC-TO-INTENT-ALIGNMENT.9b — declare the table-region carrier leaf and roll the bounded root` | measure the generalisation before building it, split `.9` by region kind, and free the root's line budget so the leaf can be declared at all |

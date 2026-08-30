@@ -104,6 +104,7 @@
 | `SPEC-TO-INTENT-ALIGNMENT.9b` | [Region-kind generalisation](region-kind-generalisation.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9c` | [Region-kind generalisation](region-kind-generalisation.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.9d` | [Region-kind generalisation](region-kind-generalisation.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.9e` | [Region-kind generalisation](region-kind-generalisation.md) |
 
 ## Exact provenance
 

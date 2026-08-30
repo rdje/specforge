@@ -80,6 +80,29 @@ stays there, and the `.9a` re-derivation that routes here stays in
   Verification: `pending`
   Commit: `pending`
 
+- ID: `SPEC-TO-INTENT-ALIGNMENT.9e`
+  State: `active`
+  Goal: re-derive the carried-forward findings, withdraw what does not hold, and own the reviewed-label repair
+  Acceptance: every statement `.9b` and `.9d` carried forward for owner judgement is re-derived from the tracked
+  authorities and either stands with its evidence or is withdrawn in place, naming what was asserted rather than
+  derived; the containment arithmetic is re-derived from the checker's own report instead of restated; and the
+  surviving finding — that `table_of_contents` and `informational_disclaimer` expect residual labels
+  (`table_0004|toc_non_contract`, `elem_00017|informational_non_contract`) that no non-circular projection can
+  produce — gains an owner here rather than remaining a report. The label repair itself must show that the
+  reviewed key is redundant with the cell's own region-and-family predicate before normalising it, and must be
+  proved metric-neutral at the pre-change baseline
+  Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.9d`
+  Verification: `the re-derivation half is complete and is what this leaf publishes: two of the three
+  carried-forward statements do not hold. "informational_disclaimer is unreachable by ANY structural rule" is
+  false — a positional predicate is structural and reaches it (body_text on the first two pages selects nine
+  elements including elem_00017); the defensible claim is that the CARRIER's intent-bearing test cannot reach it.
+  "One further leaf route crosses mandatory rollover" is false — the index is 114 of a 128-line target, so one
+  row is 89.84% and legal and two are 90.62%; and .9c was already declared, so it was never blocked. The third
+  statement stands and is re-derived here: restricted to the four required-and-absent cells, whose only carrier
+  is region-scoped and whose key law is <region_id>|<family>, two follow it and two carry hand-written cause
+  labels no projection can produce. The label repair is this leaf's remaining open half`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the carried-forward findings and withdraw the two that do not hold`
+
 ## Measured generalisation design (`.9b`, before implementation)
 
 `.9a` fixed the rule: one typed residual per captured region that no canonical record cites, asked of table
@@ -119,14 +142,22 @@ stays in the denominator while nothing can satisfy it — and it gets its own le
 repaired inside a production slice. Re-derive with the reviewed dataset's `residual.semantic_ir.expected_keys`
 against each cell's own region predicate and `semantic_family`.
 
-**And one of those two cells is unreachable by any structural rule regardless of its label.**
-`informational_disclaimer` anchors on `statement_0013`, whose class is `source_fact` — the bucket
-`classify_statement` returns when no typed intent shape is found, the prose analogue of
-`VisualAssetKind::Unknown` and of the unclassified table kinds `unexplained_intent_bearing_tables` already
-skips. Excluding that bucket is the same "capture never established the region as intent-bearing" rule the
-carrier already applies; including it would emit one residual per uncited paragraph — in the current Arm Debug
-chain, 6,555 of 6,658 statements are uncited, against 440 of 543 once the fallback class is excluded. Closing
-that cell needs an owner decision about what a disclaimer is, not an implementation.
+**And one of those two cells is out of reach of the carrier's own rule.** `informational_disclaimer` anchors on
+`statement_0013`, whose class is `source_fact` — the bucket `classify_statement` returns when no typed intent
+shape is found, the prose analogue of `VisualAssetKind::Unknown` and of the unclassified table kinds
+`unexplained_intent_bearing_tables` already skips. The carrier's population test is "capture typed this region
+as intent-bearing", and capture did not, so the carrier cannot reach it. Admitting the fallback class instead
+would emit one residual per uncited paragraph — in the current Arm Debug chain, 6,555 of 6,658 statements are
+uncited, against 440 of 543 once the fallback is excluded.
+
+*(`.9e` withdrew a stronger claim here. This paragraph first read "unreachable by **any** structural rule",
+which does not hold and was asserted rather than derived: a purely positional predicate is structural, reads no
+English, and does reach the region — in this document `body_text` on the first two pages selects nine elements
+including `elem_00017`. What is true is narrower and is what makes this an owner decision: such a predicate
+would assert `non_contract_region` — "states no implementable obligation" — from position alone, over eight
+other front-matter elements about which it has no evidence, which is exactly the positive structural
+demonstration `.9a` ruled prose cannot supply. The choice between admitting the fallback class, accepting a
+weaker warrant, and leaving the cell permanently unmet is the owner's.)*
 
 ## Decisions (`.9b`)
 
@@ -337,10 +368,14 @@ metric or route here updates the containment contract, index, and manifest in th
 and verification for the `.9` program stay in this part so it keeps one chronology, and the bounded root
 carries only the current summary.
 
-**Containment, measured at the `.9b` boundary.** Splitting this part out of
+**Containment, re-derived by `.9e`.** Splitting this part out of
 [residual carrier](residual-carrier.md) returned the semantic-part collection to 83.8% of its `lines_each`
-target, but it cost one row on the active task index, which is now at **89.1%** — a single further leaf route
-crosses its mandatory rollover. `.9c` and `.9d` must therefore roll the index before declaring any new leaf.
-Read both figures from
-`perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --check`
-rather than trusting this sentence.
+target at the cost of one row on the active task index. `.9b` then recorded that "a single further leaf route
+crosses its mandatory rollover" and that `.9c`/`.9d` must roll the index before declaring a leaf. **Both halves
+of that are wrong and `.9e` withdraws them.** The arithmetic: the index is 114 lines against a 128-line health
+target, so rollover begins at 115.2 lines — one added row is 115 (89.84%, legal) and *two* are 116 (90.62%,
+which trips). And `.9c` was already declared with its route and index row by the `.9b` declaration commit, so it
+was never blocked at all; the pressure only binds when a leaf beyond the declared set is added. Declaring `.9e`
+consumes the one legal row, which leaves the index at 115 lines: **the next new leaf after `.9e` is the one that
+must roll the index first.** Re-derive rather than trusting this sentence:
+`perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --report`.

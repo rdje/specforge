@@ -469,6 +469,11 @@
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9d",
       "origin": "post_migration",
       "part_id": "region-kind-generalisation"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9e",
+      "origin": "post_migration",
+      "part_id": "region-kind-generalisation"
     }
   ],
   "marker_prefix": "spec-to-intent-task-source-region",
@@ -610,13 +615,13 @@
     {
       "heading": "# SPEC-TO-INTENT-ALIGNMENT — region-kind generalisation",
       "metrics": {
-        "bytes": 29107,
-        "line_bytes": 125,
-        "lines": 346
+        "bytes": 32549,
+        "line_bytes": 127,
+        "lines": 381
       },
       "part_id": "region-kind-generalisation",
       "path": "docs/tasks/spec-to-intent-alignment/region-kind-generalisation.md",
-      "sha256": "209746978ab9526b1837b53dec489975d06e88f1da12021ccea8c5e3c6c6f71c",
+      "sha256": "34d5b664a4a006f12932a510c371f69e58be1e546d61b49ece7badd44f4f492e",
       "state": "active"
     }
   ],

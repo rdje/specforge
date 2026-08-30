@@ -1,3 +1,32 @@
+### SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the carried-forward findings and withdraw the two that do not hold
+
+- The owner asked whether the statements .9b and .9d handed forward still stood. Re-deriving them instead of
+  restating them, TWO OF THREE DO NOT. Both sealed records above stay as written and are withdrawn here, which
+  is the idiom .11a and .7.2.1a used.
+- WITHDRAWN: "informational_disclaimer is unreachable by ANY structural rule". That was asserted, not derived. A
+  purely positional predicate is structural, reads no English, and DOES reach the region — in the GIC guide,
+  body_text on the first two pages selects nine elements including elem_00017. The defensible claim is narrower
+  and is what actually makes it an owner decision: the CARRIER's population test is "capture typed this region
+  as intent-bearing" and capture did not, so the carrier cannot reach it; a positional predicate could, but only
+  by asserting non_contract_region from position alone over eight other front-matter elements it has no evidence
+  about — the positive structural demonstration .9a ruled prose cannot supply.
+- WITHDRAWN: "the active task index sits at 89.1%, one further leaf route crosses mandatory rollover, so the
+  index must be rolled before declaring a leaf". Off by one in the arithmetic and wrong about who it binds. The
+  index is 114 lines against a 128-line health target, so rollover begins at 115.2: one added row is 115 lines
+  (89.84%, LEGAL) and two are 116 (90.62%, which trips). And .9c already carried its route and index row from
+  the .9b declaration commit, so .9c was never blocked. Declaring .9e consumes the one legal row and leaves the
+  index at 115, so the NEXT new leaf after .9e is the one that must roll it — measured, not predicted: the
+  checker reports 89.8% after this commit.
+- STANDS, and now has an owner instead of a report: restricted to the four required-and-absent cells, whose only
+  carrier is region-scoped and whose key law is <region_id>|<family>, two follow it
+  (table_0067|packed_page_table_entry, elem_00219|software_guidance) and two carry hand-written cause labels no
+  non-circular projection can produce (table_0004|toc_non_contract, elem_00017|informational_non_contract).
+  .9e owns the repair; its acceptance requires showing the reviewed key is redundant with the cell's own
+  region-and-family predicate before normalising it, and proving metric-neutrality at the pre-change baseline.
+- The lesson is the one CLAIM_VERIFICATION.md already states and this session had to relearn: a statement handed
+  to the owner for judgement is a published claim, and "no rule can reach it" and "one more row trips it" are
+  exactly the shapes that sound derived while being asserted.
+
 ### SPEC-TO-INTENT-ALIGNMENT.9d — re-pin the frozen residual contract and put it under a gate
 
 - .9b found the frozen .8a required-residual contract red and did not cause it. This leaf repairs both halves,
