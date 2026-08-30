@@ -20,7 +20,13 @@
   deliberate refusals with reasons. The adoption caught itself: the first absence probe covered one file and would
   have published a claim about the repository on evidence about that file — Leg 1's granularity rule, adopted in
   the same commit. Widening it found ADR 0042 already carrying the general form as rationale while the standard
-  carried only its instances, so that rule was DEMOTED here rather than absent.
+  carried only its instances, so that rule was DEMOTED here rather than absent. `.10a` then corrected `.10`
+  itself: asked a second time whether the findings held, the narrow probe re-derived to SEVENTEEN terms, not the
+  fifteen published on four surfaces (fifteen is the discriminating subset, and the widened probe's count) — a
+  real quantity substituted for the one the sentence names, `.7`'s ninth instance one commit later. A second
+  defect in the same paragraph, "visible to no gate this repository has", was a set claim without its
+  enumeration. Both corrected. The self-catch rate for this adoption is THREE, two of them set claims, and the
+  third was found only because the director asked again.
 - Next action: `CLAIM-VERIFICATION-ADOPTION.7` — its scope question is now answered and the leaf NARROWS. A claimed
   mechanism is a review obligation under the now-normative illustration rule, because no checker can decide whether
   two accounts predict the same observation; the gate stays on counts. Build the bounded declared map binding each

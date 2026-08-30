@@ -1,3 +1,28 @@
+### CLAIM-VERIFICATION-ADOPTION.10a — correct .10's own probe count and set claim
+
+- Asked a second time whether .10's findings were trusted, re-derived them instead of re-reading, and one number
+  is wrong. The narrow absence probe ran SEVENTEEN terms over CLAIM_VERIFICATION.md alone, not fifteen; all
+  seventeen returned zero. Fifteen is a real quantity — the discriminating subset, after dropping "derived or
+  gated" and "domain free", which return zero upstream too and separate nothing — and it is the count the WIDENED
+  probe ran. A real quantity silently substituted for the one the sentence names: .7's ninth instance, committed
+  one commit after that instance was written up. Corrected on all four publishing surfaces.
+- The corrected account is strictly better than the original, not just less wrong: it explains WHY the two probes
+  have different term counts, which "fifteen" everywhere concealed.
+- Second defect in the same paragraph. DEVELOPMENT_NOTES.md published "neither is visible to any gate this
+  repository has" — refuted by one counterexample, so a census rather than an impression, and exactly the rule
+  .10 made normative in the same commit. Now enumerated: neither sentence is a claim registry record, so the
+  claim-verification gate never reaches it, and neither carries a numeral, so no census candidate grammar makes
+  it a candidate — MEMORY.md is a governed census surface with four evidence rows and the sentence still produced
+  none. The conclusion survives; it was asserted where it should have been counted.
+- Findings two and three re-derive UNCHANGED. .7's scope decision checks out against the seventh instance's own
+  text. Every rollover figure comes from check_rolling_ledger_protocol.pl --report — 62 records / 1,384 lines /
+  182,781 bytes — and the producer now emits no warning for that ledger at all, including the record-budget
+  warning it emitted before the cut.
+- What this costs .7 and .9: the self-catch rate .10 published as "twice in one commit" is really THREE times,
+  two of them set claims, and the third was caught only because the director asked again — not by any rule, gate,
+  or review step. That is the sharpest argument yet that .9's alarm should not depend on a vocabulary, and that
+  .7's cheapest available signal is a second reader rather than a richer checker.
+
 ### CLAIM-VERIFICATION-ADOPTION.10 — re-adopt the upstream claim standard
 
 - Directive 17 asks that the source standard be re-checked for updates after adoption; nothing had re-read it
@@ -21,8 +46,8 @@
   standard carried only the three instances it generates. A rule living as decision-record rationale while its
   examples live in the normative text is under-specified for every reader who does not read ADRs — which is the
   preface rule adopted in the same pass. Promoted; the ADR keeps the sentence as the reasoning behind it.
-- The adoption caught itself. The first absence probe ran over CLAIM_VERIFICATION.md alone and returned zero
-  hits for all fifteen terms; publishing "absent locally" from it would have been a claim about the repository
+- The adoption caught itself. The first absence probe ran SEVENTEEN terms over CLAIM_VERIFICATION.md alone and
+  returned zero hits for every one; publishing "absent locally" from it would have been a claim about the repository
   evidenced by data about one file — Leg 1's granularity rule, adopted in this commit. Widening the probe to
   every governed claim surface is what found the ADR hit, and the leftover matches were classified as unrelated
   word collisions before their count went anywhere. The number of adopted rules is likewise published in exactly

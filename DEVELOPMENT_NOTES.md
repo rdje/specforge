@@ -27,8 +27,11 @@ here neither is wrong.
 
 ### The adoption caught itself, which is the part worth keeping
 
-The first absence probe ran fifteen distinguishing terms over `CLAIM_VERIFICATION.md` alone and returned zero
-hits for every one of them. That is a clean, reproducible, entirely misleading result. The claim it was about to
+The first absence probe ran **seventeen** terms over `CLAIM_VERIFICATION.md` alone and returned zero hits for
+every one of them. Two of the seventeen — `derived or gated` and `domain free` — return zero upstream as well, so
+they discriminate nothing and the widened probe dropped them, running fifteen. That is why the two probes have
+different term counts, and it is the fact the first published version of this record concealed by calling the
+narrow probe a fifteen-term one. That is a clean, reproducible, entirely misleading result. The claim it was about to
 support — "these rules are absent from this repository" — is a claim about the repository, and the evidence was
 about one file inside it. That is Leg 1's granularity rule and the sixth row of the new §2 taxonomy, both being
 adopted in the same commit that nearly violated them.
@@ -56,7 +59,12 @@ leaf for work already owned.
 
 Two self-catches in one adoption commit, on two different adopted rules, is worth recording as a rate rather than
 as a pair of anecdotes. Both defects are cheap to make, both produce confident and reproducible-looking prose, and
-neither is visible to any gate this repository has. That is the argument for the rules being normative rather than
+neither is reachable by the two mechanisms that could plausibly see prose: neither sentence sits in a claim
+registry record, so the claim-verification gate's execution, digest, and publication legs never touch it; and
+neither carries a numeral, so no census candidate grammar makes it a candidate — `MEMORY.md` is a governed census
+surface with evidence rows, and the sentence still produced none. That enumeration is the point: the earlier
+draft of this paragraph asserted "not visible to any gate this repository has" without it, which is the same set
+rule failing a third time in the same record. That is the argument for the rules being normative rather than
 advisory, and it is why both instances are logged into `.7`'s and `.9`'s evidence instead of being quietly fixed.
 
 ### Why `.7` narrows instead of widening

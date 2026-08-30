@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10` done — every surface publishing the census counts is swept and
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a` done — every surface publishing the census counts is swept and
   the upstream standard is re-adopted with its refusals recorded; `.7` owns the gate that would have observed the
   drift, now scoped to counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate
   vocabulary's blind spot, now with a second measured demonstration)
@@ -654,9 +654,10 @@ the workflow through the mdBook and repository review path.
   under-specified for every reader who does not read ADRs; that is the preface rule the same reading adopted, so
   the promotion is the correction and the ADR keeps the sentence as reasoning.
   **The scoping error is recorded because the rule being adopted caught it in the same session.** The first
-  absence probe ran over `CLAIM_VERIFICATION.md` alone and returned zero hits for all fifteen distinguishing
-  terms. Concluding "absent locally" from it would have been a claim about the repository evidenced by data about
-  one file — Leg 1's granularity rule, and the sixth row of the §2 taxonomy, both adopted in this very commit.
+  absence probe ran **seventeen** terms over `CLAIM_VERIFICATION.md` alone and returned zero hits for every one
+  of them; two of the seventeen discriminate nothing (they return zero upstream too) and the widened probe
+  dropped them, which is why it ran fifteen. Concluding "absent locally" from it would have been a claim about
+  the repository evidenced by data about one file — Leg 1's granularity rule, and the sixth row of the §2 taxonomy, both adopted in this very commit.
   Widening the probe to `TOOLBOX.md`, `COMMIT.md`, `DOCTRINE_ENFORCEMENT.md`, `AGENTS.md`, the pull-request
   template, ADRs 0042/0044, and the mdBook enforcement chapter is what surfaced the ADR hit above. Every other
   term stayed at zero across the widened set, and the remaining matches are unrelated word collisions
@@ -709,6 +710,38 @@ the workflow through the mdBook and repository review path.
   in sync at 271 facts / 2148 keys after one question-key collision with ADR 0042 was resolved in the fact card's
   favour; fact-card catalog valid for 249 cards; doctrine gate`
   Commit: `CLAIM-VERIFICATION-ADOPTION.10 — re-adopt the upstream claim standard`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.10a`
+  Status: `done` (`2026-08-30`)
+  Goal: correct a false count and an unenumerated set claim that `.10` published while adopting the rules against both
+  Acceptance: the director asked a second time whether `.10`'s findings were trusted — the same question that
+  produced `.6b` — so every figure was re-derived instead of re-read. Two defects, both in the finding about
+  `.10` catching itself:
+  1. **A false count.** `.10` published the narrow absence probe as a **fifteen**-term probe on four surfaces.
+     Replaying the exact command against `HEAD~1:CLAIM_VERIFICATION.md` returns **seventeen** terms, all zero.
+     Fifteen is a real quantity — the *discriminating* terms, after dropping `derived or gated` and `domain free`,
+     which return zero upstream as well and so separate nothing — and it is the count the **widened** probe ran.
+     A real quantity silently substituted for the one the sentence names: `.7`'s ninth instance exactly, committed
+     one commit after that instance was written up. The corrected account is strictly better than the original
+     because it also explains *why* the two probes have different term counts, which "fifteen" everywhere hid.
+  2. **A set claim without its enumeration.** `DEVELOPMENT_NOTES.md` published "neither is visible to any gate
+     this repository has" — refuted by one counterexample, so a census rather than an impression, and the rule
+     `.10` made normative in the same commit. Now enumerated: neither sentence is a claim registry record, so the
+     claim-verification gate's execution/digest/publication legs never reach it; and neither carries a numeral, so
+     no census candidate grammar makes it a candidate — `MEMORY.md` is a governed census surface with four
+     evidence rows and the sentence still produced none. The conclusion survives; it was simply asserted where it
+     should have been counted.
+  Corrected on all four publishing surfaces (`docs/tasks/CLAIM-VERIFICATION-ADOPTION.md` in three places,
+  `CHANGES.md`, `DEVELOPMENT_NOTES.md`, and the acceptance checklist's fifteen left standing because it correctly
+  describes the widened probe). Findings two and three of the same report re-derive **unchanged**: `.7`'s scope
+  decision is verified against the seventh instance's own text, and every rollover figure comes from
+  `check_rolling_ledger_protocol.pl --report` — 62 records / 1,384 lines / 182,781 bytes — with the producer now
+  emitting **no** warning at all for that ledger, including the record-budget warning it emitted before the cut.
+  **What this costs `.7` and `.9`:** the self-catch rate `.10` published as "twice in one commit" is now **three
+  times**, and the third was caught only because the director asked again — not by any rule, gate, or review step.
+  Two of the three are set claims. That is the sharpest argument yet that `.9`'s alarm should not depend on a
+  vocabulary, and that `.7`'s cheapest signal is a second reader rather than a richer checker
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.10`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
   Status: `pending`
@@ -802,7 +835,8 @@ the workflow through the mdBook and repository review path.
 | 20 | `CLAIM-VERIFICATION-ADOPTION.6a` | `done` | 28-consecutive-revision trajectory proves all four were already false inside `.6`'s own commit; withdrawn with producer fields named |
 | 21 | `CLAIM-VERIFICATION-ADOPTION.6b` | `done` | book chapter, fact card, and `TOOLBOX.md`'s last carried mdBook count now all route to `--report`; drift attributed per registry revision |
 | 22 | `CLAIM-VERIFICATION-ADOPTION.10` | `done` | upstream re-read section by section; absent rules adopted, refusals recorded, and `.7`'s open scope question answered |
-| 23 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | nine instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
+| 23 | `CLAIM-VERIFICATION-ADOPTION.10a` | `done` | `.10`'s own probe count and one set claim re-derived and corrected; findings two and three verified unchanged |
+| 24 | `CLAIM-VERIFICATION-ADOPTION.7` | `pending` | nine instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
 ## Decisions
 
@@ -1495,7 +1529,8 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-08-30` | `.10` | section-by-section re-read of the upstream standard; fifteen-term absence probe over `CLAIM_VERIFICATION.md` alone, then re-run over all governed claim surfaces; `check_book_quantitative_claims.pl --check` before and after the mdBook edit; knowledge-map derive-and-diff; `check_fact_card_catalog.pl --write`/`--check`; doctrine gate | source unchanged since `.1` (mtime `2026-08-26`), so the gap dates from the original adoption. The narrow probe returned zero hits for all fifteen terms in one file; **widening it to every governed claim surface changed the answer** — ADR 0042 already carried the general form as Context rationale. That is Leg 1's granularity rule catching its own adoption commit, and it is why the published set is scoped to "no home on any governed claim surface" rather than "absent from the standard". Remaining matches classified as unrelated word collisions before publishing. Book census **321/8/89/224 unchanged** across the edit; one region re-pointed 547 -> 580, line SHA-256 identical; Knowledge Map 271 facts / 2148 keys after one question-key collision was resolved in the fact card's favour; catalog valid for 249 cards |
+| `2026-08-30` | `.10a` correction | replayed the narrow absence probe against `HEAD~1:CLAIM_VERIFICATION.md`; enumerated the census-governed surface set from `current_claim_census.jsonl`; `check_rolling_ledger_protocol.pl --report`; doctrine gate | the narrow probe ran **seventeen** terms, not fifteen — all seventeen zero. Fifteen is the *discriminating* subset and the count the **widened** probe ran; published on four surfaces as the narrow probe's size, which is `.7`'s ninth instance one commit after it was written. Also corrected an unenumerated set claim ("visible to no gate"), now counted: not a registry record, and carrying no numeral, so no candidate grammar reaches it — `MEMORY.md` is a governed census surface with four evidence rows and still produced none. Findings two and three re-derive **unchanged**; the ledger figures come from the producer, which now emits no warning for `development-notes` at all |
+| `2026-08-30` | `.10` | section-by-section re-read of the upstream standard; seventeen-term absence probe over `CLAIM_VERIFICATION.md` alone, then a fifteen-term re-run over all governed claim surfaces; `check_book_quantitative_claims.pl --check` before and after the mdBook edit; knowledge-map derive-and-diff; `check_fact_card_catalog.pl --write`/`--check`; doctrine gate | source unchanged since `.1` (mtime `2026-08-26`), so the gap dates from the original adoption. The narrow probe returned zero hits for all seventeen terms in one file; **widening it to every governed claim surface changed the answer** — ADR 0042 already carried the general form as Context rationale. That is Leg 1's granularity rule catching its own adoption commit, and it is why the published set is scoped to "no home on any governed claim surface" rather than "absent from the standard". Remaining matches classified as unrelated word collisions before publishing. Book census **321/8/89/224 unchanged** across the edit; one region re-pointed 547 -> 580, line SHA-256 identical; Knowledge Map 271 facts / 2148 keys after one question-key collision was resolved in the fact card's favour; catalog valid for 249 cards |
 | `2026-08-30` | `.6b` correction | re-derived the move count and staleness window from `git show <rev>:doctrine/claim_verification/book_quantitative_claims.jsonl` across its 31 revisions, with commit timestamps | `.6b` published "**seven** registry changes" and "stale for **twelve days**". Both wrong: **six** moves, and the chapter stayed *correct* until `4dac5642` (`2026-08-27 02:14`), repaired at `2b9e8899` (`2026-08-29 22:23`) — **two days and twenty hours** stale. The twelve-day span was writing-to-settling, substituted for staleness. Every other figure in the finding re-derives; corrected on all four live surfaces and logged as `.7`'s ninth instance |
 | `2026-08-29` | `.6b` correcting `.6a` | outcome/row census of `current_claim_census.jsonl` at `fdda3c53` and `5fe81128` from Git blobs | both revisions hold **59** evidence rows and **5** `CHANGES.md` rows, differing by exactly **one removed / one added**. `.6a`'s published mechanism ("sealed 18 while adding 2") is **false**; the total held because one retirement cancelled one addition. Every number `.6a` published re-derives and the withdrawal stands. Recorded as `.7`'s seventh instance: a count-only gate passes a false mechanism |
 | `2026-08-29` | `.6b` | outcome census over 31 registry revisions of `book_quantitative_claims.jsonl`; `check_book_quantitative_claims.pl --check`/`--report`/`--produce`; `check_current_claim_census.pl --check`; knowledge-map derive-and-diff; fact-card catalog; doctrine gate | the book's `regions=307/8/78/221` was **correct when written** at `be3b12e6` (`2026-08-16`) and then moved **six times** to 321/8/89/224 by `fdda3c53`, going stale at the first of those (`4dac5642`, `2026-08-27`) and repaired at `2b9e8899` — stale for two days and twenty hours; "56 exact evidence units" was correct at `50775894` and false from `e6f5012d`. Both withdrawn and routed to `--report`, the fact card retitled, and `TOOLBOX.md`'s last carried mdBook count withdrawn for consistency. Post-edit re-derive: **321/8/89/224 unchanged**, 39 book files / 21 candidate files. One frozen region re-pointed 540 -> 547. For `.9`: the chapter held **5** candidate lines in 557 and none was a drifted one — `units` and backticked `key=value` are both outside the grammar |
@@ -1572,6 +1607,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
 | `.10` | `CLAIM-VERIFICATION-ADOPTION.10 — re-adopt the upstream claim standard` | absent upstream rules made normative; non-adoption recorded with reasons; `.7` scope settled to counts; mandatory `DEVELOPMENT_NOTES.md` rollover to segment 0009 |
+| `.10a` | `CLAIM-VERIFICATION-ADOPTION.10a — correct .10's own probe count and set claim` | seventeen-term narrow probe restored on four surfaces; the "no gate sees this" assertion enumerated; findings two and three verified unchanged |
 | `.1` | `CLAIM-VERIFICATION-ADOPTION.1 — publish the claim-verification contract` | normative scope, ADR 0042, discovery, authoring/review contract, and mdBook alignment |
 | `.1a` | `CLAIM-VERIFICATION-ADOPTION.1a — re-derive workflow-standard capacity` | tracked measurement, ADR 0043, exact authority, stable explicit topology |
 | `.1b` | `CLAIM-VERIFICATION-ADOPTION.1b — retire the consumed workflow-capacity authority` | one-use authority removed after the 21-file profile became baseline |
@@ -1597,6 +1633,17 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-30`: closed `.10a`. The director asked a second time whether `.10`'s findings were trusted — the
+  question that produced `.6b` — so they were re-derived rather than re-read, and one number was wrong. The narrow
+  absence probe ran **seventeen** terms, not fifteen; fifteen is the discriminating subset and the count the
+  widened probe ran. A real quantity substituted for the one the sentence names, which is `.7`'s ninth instance
+  committed one commit after that instance was described. A second defect in the same paragraph: "visible to no
+  gate this repository has" is a set claim published without its enumeration, the rule `.10` had just made
+  normative. Both corrected on every publishing surface; the corrected probe account is strictly better because it
+  explains why the two probes differ, which the single number hid. Findings two and three re-derive unchanged, with
+  every rollover figure taken from the producer rather than from arithmetic. The self-catch rate is therefore
+  **three** in this adoption, two of them set claims, and the third was caught only because the director asked
+  again — not by any rule, gate, or review step this repository has.
 - `2026-08-30`: closed `.10`. Re-read the upstream standard section by section, which directive 17 requires and
   which nothing had done since `.1`. The source had not moved, so the gap was original to the adoption — and it is
   wider than `.10` predicted: the leaf named the three rules that had already produced a recorded defect here,
