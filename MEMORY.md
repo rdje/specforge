@@ -11,21 +11,20 @@
   `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`/`.7`. The last ten are tracking-only.
-- Current state: `CLAIM-VERIFICATION-ADOPTION.7.2.0` is closed — **the gate's scope is derived and fails
-  closed.** It was about to freeze on `governed_globs: ["TOOLBOX.md"]`, a stored list of one that would have
-  called the map complete while the mdBook doctrine chapter sat outside it. Membership is now discovered by
-  scanning every tracked Markdown file for a claim tag and resolved through
-  `doctrine/live_document_size/surfaces.jsonl` (digest-bound); an undeclared surface, or a file no surface
-  owns, is an error. Only a surface's disposition is authored. Two exemptions state their reasons (dated task
-  evidence; sealed archive segments) and each is proven load-bearing by flipping it to `governed` and watching
-  the same value turn fatal. Self-test 25/25; 2 governed / 2 exempt files, 6 governed regions, 27 unlisted,
-  still `inventory` phase.
-- Next action: `CLAIM-VERIFICATION-ADOPTION.7.2.1` — repair, then populate, then freeze. Two TOOLBOX
-  sentences take no closed outcome as written: "the 27 transitions measured from `e6f5012d`" names an
-  open-ended window whose boundary has moved (39 commits now), and "The 27-case self-test" is a live count
-  whose producer reports it only as prose on stderr. Repair those, give every remaining governed value a
-  closed outcome, then flip `phase` to `frozen`. Read the unlisted set from
-  `perl scripts/check_published_assertions.pl --produce`; do not carry its size anywhere.
+- Current state: `CLAIM-VERIFICATION-ADOPTION.7.2.1` is closed, and with it **`.7`** — **the map is closed and
+  the registry is `frozen`.** Every published value in a governed region resolves to a record with a closed
+  outcome (30 assertions: 1 derived, 2 gated, 1 authored, 26 dated), so an unmapped numeral now fails the
+  build. Three probes on real shipped prose, all restored byte-exact: an unlisted value, a drifted dated value
+  (three legs at once), and a claim-annotated file on an undeclared surface. Two sentences were repaired
+  rather than recorded — an open-ended window now names its closing revision, and a live count whose producer
+  publishes it only as prose lost its numeral. Read every figure from
+  `perl scripts/check_published_assertions.pl --report`; do not carry it here.
+- Next action: **`STATUS-LEDGER-ROLLOVER.2` is now mandatory and must go first.**
+  `LIVE_ACHIEVEMENT_STATUS.md` reached 90.08% of its 115000-byte health target on this slice and was only
+  brought back under (89.9%) by tightening this slice's own entry — the next ordinary append crosses it again.
+  Follow `COMMIT.md`'s rolling-ledger rollover: write a task-owned JSONL plan, dry-run
+  `perl scripts/check_rolling_ledger_protocol.pl --rollover-plan <plan>`, then `--apply-rollover` on the exact
+  green plan. Read the live figures from `--report`; do not carry them here.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/
   `.9`/`.12` (the per-slice region re-pin is hand work with a silent-wrong-line hazard);

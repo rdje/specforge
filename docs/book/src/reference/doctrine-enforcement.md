@@ -111,6 +111,15 @@ evidence are captures whose currentness is not asserted. And each exemption is p
 test suite flips an exempt surface to governed and requires the same value to become fatal, because a quiet
 green run is otherwise equally consistent with the file never having been found.
 
+The map is now closed. Every published value in a governed region resolves to a record with one of the four
+outcomes, so a numeral nobody accounted for fails the build rather than being reported and forgotten. Closing
+it took two prose repairs rather than two more records, and both are worth knowing about because the same
+shapes recur. A measurement window that names where it started but not where it ended cannot be anchored to
+anything — it silently grows — so it now names its closing revision. And a live count whose producer publishes
+it only as human-readable output fits no outcome at all: it cannot be compared to a report field and nothing
+fails when it moves, so the numeral was removed and the reader runs the command instead. Deleting a value is a
+legitimate repair; what the standard forbids is swapping one unwatched number for another.
+
 `CORPUS-FRONTIER` exists because of a defect worth stating plainly. The corpus refresh program tracked its own
 remaining work as prose that each slice decremented by one, across twenty-two consecutive refreshes — and a
 decrement cannot detect an error at its base, so a document stopped being counted and nobody could see it. The

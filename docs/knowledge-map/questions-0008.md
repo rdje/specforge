@@ -185,6 +185,8 @@
   > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > what distinguishes converging stalled divergent mixed and unmeasurable
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what do I do with a published count no claim outcome fits
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > what do leading_section_number and is_descendant_section_number do
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -295,5 +297,3 @@
   > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what does the active task evidence checker verify
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > what does the active task migration roll back after a validation failure

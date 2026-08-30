@@ -1,3 +1,31 @@
+### CLAIM-VERIFICATION-ADOPTION.7.2.1 — close the population at zero and freeze
+
+- The map is closed and the registry is FROZEN. 30 assertions — 1 derived, 2 gated, 1 authored, 26 dated —
+  over 6 governed regions in 2 governed and 2 exempt claim-annotated files, with 0 unlisted values. A numeral
+  nobody accounted for now fails the build instead of being reported and forgotten. That closes .7, the class
+  this repository recorded ten times and could not shut with five rounds of prose correction.
+- Two sentences were REPAIRED rather than recorded, because no closed outcome fitted them, and both shapes
+  generalise. A measurement window that names where it started but not where it ended cannot be anchored — it
+  silently grows — so "the 27 transitions measured from e6f5012d" now names its closing revision 60a81db7; its
+  boundary had already moved, 39 commits now separating e6f5012d from HEAD. And "The 27-case self-test" is a
+  live count whose producer publishes it only as prose on stderr, so it is neither derived (nothing to
+  compare) nor gated (nothing fails when it moves); the numeral is removed and the reader runs the command,
+  which is the remedy the same paragraph already applies to every other census figure.
+- Deleting a published value is a legitimate repair. §3 Leg 3 forbids replacing one unwatched number with
+  another unwatched number; nothing is stale about a number a surface no longer publishes.
+- A near-contradiction was ADJUDICATED, not corrected. TOOLBOX.md says .6a's trajectory was 29 revisions and
+  the book says 28 consecutive revisions. Both are right and the task tree says why — 28 consecutive
+  revisions e6f5012d -> 60a81db7 plus the older 50775894 anchor .6 had cited, which is 29 measurements. No
+  difference could be named against the earlier ruling, so neither surface was touched.
+- All 26 remaining values are dated, and that is stated rather than glossed. dated is the weakest of the four
+  outcomes — the checker proves only that the revision resolves — so this is a surface publishing how the
+  counters moved, deliberately, and the gate now keeps that history attached to the revisions it describes.
+- THREE PROBES ON REAL SHIPPED PROSE, each restored byte-exact. An unmapped numeral added to a governed
+  paragraph produced "published value '41' at TOOLBOX.md:122 ... no assertion record lists". Editing a dated
+  value 39 -> 38 fired three legs at once: absent from its own region, stale region digest, and a new unlisted
+  value. And a claim-annotated file staged under research_records produced "belongs to surface
+  'research_records', which declares no disposition" — .7.2.0's fail-closed leg, observed on the real tree.
+
 ### CLAIM-VERIFICATION-ADOPTION.7.2.0 — derive the governed scope, and fail closed on an undeclared surface
 
 - The gate was about to freeze on a stored list of one. governed_globs named TOOLBOX.md and nothing else, so

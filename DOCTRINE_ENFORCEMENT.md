@@ -392,9 +392,9 @@ a value it cannot see is a silent hole rather than an unlisted one, so a numeral
 (`27-case`) or a ratio (`15/15`) is a published quantity, only `-` followed by a digit stays an identifier or
 date fragment, and a comma joins a numeral only when it separates exactly three digits
 (`CLAIM-VERIFICATION-ADOPTION.7.1a`). The drift leg was additionally observed RED on **real shipped
-prose** by revert-and-re-apply rather than on a fixture alone. The registry starts in `inventory` phase, where
-an unlisted value in a governed region is reported rather than fatal, and moves to `frozen` when its population
-is complete (`CLAIM-VERIFICATION-ADOPTION.7.2.1`). Its scope is **fail-closed**: every tracked Markdown file
+prose** by revert-and-re-apply rather than on a fixture alone. The registry is **`frozen`**: its population is
+complete, so an unlisted value in a governed region is fatal rather than reported
+(`CLAIM-VERIFICATION-ADOPTION.7.2.1`). Its scope is **fail-closed**: every tracked Markdown file
 carrying a claim tag is discovered by scanning and resolved to the live-document surface that owns it, and a
 file whose surface declares no disposition — or that no surface owns — is an error. Only a surface's
 disposition is authored, never its membership, and an exemption must state its reason; a glob list was replaced

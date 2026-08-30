@@ -15,11 +15,13 @@ answers:
   - "why is a gate's own numeral grammar part of its contract"
   - "how does the published-assertion gate decide which surfaces are watched"
   - "why is a glob list not enough to scope a claim gate"
+  - "what do I do with a published count no claim outcome fits"
+  - "why must a measurement window name the revision that closes it"
   - "how do I reverify the published-assertion gate"
 date: 2026-08-30
 status: current
 tags: [claim-verification, doctrine, currentness, producer, gate, task-tree]
-evidence: scripts/check_published_assertions.pl; doctrine/claim_verification/published_assertions.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.7.0, .7.1, .7.1a and .7.2.0); DOCTRINE_ENFORCEMENT.md (§10)
+evidence: scripts/check_published_assertions.pl; doctrine/claim_verification/published_assertions.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.7.0, .7.1, .7.1a, .7.2.0 and .7.2.1); DOCTRINE_ENFORCEMENT.md (§10)
 reverify: perl scripts/check_published_assertions.pl --self-test && perl scripts/check_published_assertions.pl --check && perl scripts/check_published_assertions.pl --report
 ---
 
@@ -79,5 +81,13 @@ glued to a preceding word, dot, slash or hyphen out (`SHA-256`, `1.95.0`, `.7.2`
 when it separates exactly three digits, so `1,922` is one value and `40, noticed` publishes `40`. Both rules were
 measured against an independent tokenizer and are pinned by RED cases, after the first grammar hid 19 published
 values across the four claim-annotated files (`CLAIM-VERIFICATION-ADOPTION.7.1a`).
+
+The registry is **frozen**, so an unlisted value in a governed region is fatal rather than reported. Closing it
+required two repairs no record could substitute for, and both generalise: a **measurement window that names its
+start but not its end** cannot be anchored, because it silently grows, so it must name the revision that closes
+it; and a **live count whose producer publishes it only as human-readable output** fits no outcome at all —
+nothing to compare, nothing that fails when it moves — so the numeral is removed and the reader runs the
+command. Deleting a published value is a legitimate repair; what §3 Leg 3 forbids is replacing one unwatched
+number with another.
 
 See [[current-claim-census-freeze]] and [[claim-control-audit-closure]] for the sibling claim doctrines.

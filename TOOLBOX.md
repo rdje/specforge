@@ -121,13 +121,13 @@ surface and moved both of them — `current_surfaces` 39 -> 40, noticed and with
 `authority_outcomes.excluded`, `authority_outcomes.registered`, and the rest of `candidate_closure` are moved by
 ordinary, often unrelated work, and three measured mechanisms move them. A slice
 that prepends or seals a rolling-ledger record changes the unit and exclusion totals — 15 rises, 2 falls, and 10
-no-changes across the 27 transitions measured from `e6f5012d`, so it is not even monotone. And any commit that adds or drops a
+no-changes across the 27 transitions measured from `e6f5012d` to `60a81db7`, so it is not monotone. And any commit that adds or drops a
 `[claim: <id>]` annotation moves `registered` and closure: 6 and 86 = 51 + 35 through `fdda3c53`; 5 and
 72 = 50 + 22 from `5fe81128`, whose own `CHANGES.md` rollover carried 14 annotated regions out of the live
 window inside the commit that published the older values; 4 and 69 = 49 + 20 from `1507adbf`, which rewrote the
 resume pointer and dropped its three annotations. And registering a live-document surface adds its evidence
 row, which is what moved `current_surfaces` and `identity_gated` together at `d23e8bae`. Read all of them from
-`--report`. The 27-case self-test
+`--report`. The self-test
 instantiates every outcome family and challenges all coverage joins. Zero outer incomplete does not certify the
 incomplete assertion regions exposed by the narrower mdBook contract — that count moves whenever the manual
 does, so read it from `check_book_quantitative_claims.pl --report`, `authority_outcomes.incomplete`.
