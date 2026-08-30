@@ -1,3 +1,30 @@
+### CLAIM-VERIFICATION-ADOPTION.7.2.1a — re-derive .7.2.1's findings and withdraw the three that do not hold
+
+- Asked a third time whether the findings held. This tree's answer has been "not entirely" every time
+  (.6 -> .6a -> .6b, .10 -> .10a, .11 -> .11a), so every figure was re-derived with a command at the revision
+  it describes rather than re-read. Three of five do not hold.
+- THE ELEVENTH INSTANCE IS MINE. .7.2.1 published "39 commits now separating e6f5012d from HEAD" — inside the
+  sentence explaining that a window naming its start but not its end cannot be anchored BECAUSE IT SILENTLY
+  GROWS. It is 43 four commits later. The prior record in this ledger is left sealed and is withdrawn here,
+  which is the idiom .11a used; the count is replaced by the command (git rev-list --count e6f5012d..HEAD)
+  rather than re-measured, because a re-measured count is stale on the next commit.
+- "20 and then 24 rows re-pinned" were the repair script's own run counters from repeated runs within a slice,
+  so they answered a different question than the sentence asked. Re-derived per commit from Git: 21, 22, 23,
+  20. The substance — that this is unautomated hand work with a silent-wrong-line hazard — is unaffected and
+  stays with .12.
+- "A pinned migration suffix that consumes two thirds of each byte budget" is true of changes (66.9%) and
+  false of live-achievement-status (59.2%). One number was measured on one ledger against the warning budget
+  and restated across both against the health budget. Withdrawn; MEMORY.md now routes to --report.
+- Two findings re-derive EXACTLY, which is worth stating as plainly as the failures. The coverage blind spot
+  reproduces at a88b91a3~1 as 19 dropped / 16 compound-adjective / 2 ratio / 1 comma over-capture, the
+  published decomposition to the value. And at 3c17ae5c~1 governed_globs was exactly ["TOOLBOX.md"] while the
+  book chapter carried four claim tags that none of the four records named.
+- A first mechanism for the eleventh instance was DISCARDED BEFORE PUBLICATION: "commits is missing from the
+  closed noun vocabulary" describes the BOOK census, a different producer governing docs/book/src/** only.
+  Derived from the producers instead: --produce yields exactly one CHANGES.md candidate (its first non-blank
+  line, basis surface_review) and zero governed values (that surface carries zero claim tags). So CHANGES.md:56
+  is outside every governed population — which bounds what .7 closed, and is now owned by new leaf .13.
+
 ### CHANGES-LEDGER-ROLLOVER.5 — roll the change ledger in the same transaction that crossed its signal
 
 - STATUS-LEDGER-ROLLOVER.5's own ledger record took CHANGES.md to 1,639 lines = 91.1% of its 1,800-line health

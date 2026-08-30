@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0`, `.7.1`, `.7.1a`, `.7.2.0`, `.7.2.1` done — the surfaces publishing the census counts
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0`, `.7.1`, `.7.1a`, `.7.2.0`, `.7.2.1`, `.7.2.1a` done — the surfaces publishing the census counts
   are now swept against an *enumerated* population rather than a remembered one, and the upstream standard is
   re-adopted with its refusals recorded; `.7` owns the gate that would have observed the drift, now scoped to
   counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot, now
@@ -522,7 +522,7 @@ the workflow through the mdBook and repository review path.
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.7`
   Status: `done` (`2026-08-30`, via `.7.0`/`.7.1`/`.7.1a`/`.7.2.0`/`.7.2.1`)
-  Children: `.7.0`, `.7.1`, `.7.1a`, `.7.2.0`, `.7.2.1`
+  Children: `.7.0`, `.7.1`, `.7.1a`, `.7.2.0`, `.7.2.1`, `.7.2.1a`
   Goal: make a claim-annotated prose count re-derive against its producer, so this drift is observed
   **Split (`2026-08-30`, after `.11a`).** Ten instances and five consecutive rounds of correction — `.6` -> `.6a`
   -> `.6b`, then `.10` -> `.10a`, then `.11` -> `.11a` — have established that this cannot be closed by prose.
@@ -819,7 +819,10 @@ the workflow through the mdBook and repository review path.
   **Two sentences were repaired rather than recorded, because no closed outcome fitted them as written.**
   *(1) A window with no end.* "the 27 transitions measured from `e6f5012d`" named only where the measurement
   started, so a `dated` record would have anchored it to a revision the sentence does not describe — and the
-  boundary had already moved, 39 commits now separating `e6f5012d` from `HEAD`. The task tree holds the closed
+  boundary had already moved, because `e6f5012d..HEAD` names a different window every time it is read.
+  (**`.7.2.1a` withdrew a count from this sentence.** It said "39 commits now separating `e6f5012d` from
+  `HEAD`", which was true when written and false four commits later. Count today's with
+  `git rev-list --count e6f5012d..HEAD`; the point was never the number.) The task tree holds the closed
   window (`.6a` measured 28 consecutive revisions `e6f5012d` -> `60a81db7`, which is 27 transitions, and
   15 + 2 + 10 = 27 checks out), so the repair names the end revision and the value is then honestly `dated`.
   *(2) A live count no outcome fits.* "The 27-case self-test" is a current count of
@@ -852,15 +855,85 @@ the workflow through the mdBook and repository review path.
   disposition`. census/book/claim --check green; scripts/check_doctrines.sh`
   Commit: `CLAIM-VERIFICATION-ADOPTION.7.2.1 — close the population at zero and freeze`
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.7.2.1a`
+  Status: `done` (`2026-08-30`)
+  Goal: re-derive `.7.2.1`'s published findings on a third reading, and correct the three that do not hold
+  Acceptance: the director asked whether the findings still hold. This tree's answer has been "not entirely"
+  every time it has been asked — `.6` -> `.6a` -> `.6b`, `.10` -> `.10a`, `.11` -> `.11a` — so the obligation
+  is to re-derive with a command, never to re-read the claim. Each figure is re-derived at the revision it
+  describes, and anything that does not reproduce is withdrawn rather than quietly restated.
+  **Two findings re-derive exactly.** The blind-spot measurement was reproduced from each file's content at
+  `a88b91a3~1` with the old grammar against a widened lookahead, lookbehind held constant: **19 dropped, 16
+  compound-adjective, 2 ratio, 1 comma over-capture** — the published decomposition, to the value. And the
+  scope finding holds: at `3c17ae5c~1` the registry's `governed_globs` was exactly `["TOOLBOX.md"]`, the book
+  chapter carried four claim tags, and none of the four assertion records pointed at it, so freezing then
+  would have left the surface instance 5 drifted on outside the map.
+  **Finding three does not hold, and it is the eleventh instance of this tree's own class.** `.7.2.1`
+  published "39 commits now separating `e6f5012d` from `HEAD`" — in the sentence explaining that a window
+  naming its start but not its end cannot be anchored *because it silently grows*. It is 43 four commits
+  later. **The defect was committed inside the sentence diagnosing the defect**, on three surfaces, and this
+  is now the fourth consecutive correction round in which a slice invalidated its own publication.
+  **Finding four's numbers do not hold; its substance does.** "20 and then 24 rows re-pinned" were the repair
+  script's counters from repeated runs *within* a slice, so they answered a different question than the
+  sentence asked (§3 Leg 1's granularity rule). Re-derived per commit from Git: 21 / 22 / 23 / 20. The claim
+  that this is unautomated hand work with a silent-wrong-line hazard is unaffected and stays with `.12`.
+  **Finding five does not hold as generalised.** "a pinned migration suffix that consumes two thirds of each
+  byte budget" is true of `changes` (66.9%) and false of `live-achievement-status` (**59.2%**). The
+  two-thirds figure was measured on one ledger against the *warning* budget and then restated across both
+  against the *health* budget — one number, two denominators, two populations. The generalisation is
+  withdrawn and `MEMORY.md` now routes to `--report` instead of carrying either share.
+  **The mechanism for the eleventh instance was derived from the producers, not read off the code.** A first
+  account — "`commits` is missing from the census's closed noun vocabulary" — was **discarded before
+  publication**: that vocabulary belongs to `check_book_quantitative_claims.pl`, which governs only
+  `docs/book/src/**`, and the current-claim census does not scan prose for `number + noun` at all. What the
+  producers actually report: `check_current_claim_census.pl --produce` yields exactly **one** `CHANGES.md`
+  candidate, on basis `surface_review`, which is its first non-blank line; and
+  `check_published_assertions.pl --produce` yields **zero**, because `CHANGES.md` carries **zero** claim tags
+  and so never enters the discovered population. `CHANGES.md:56` was therefore outside every governed
+  population, which is the fact `.13` now owns
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.2.1`
+  Verification: `git rev-list --count e6f5012d..HEAD` = 43 against the published 39; blind-spot probe
+  re-derived at `a88b91a3~1` = 19/16/2/1 exactly; `git show 3c17ae5c~1:doctrine/claim_verification/published_assertions.jsonl`
+  confirms `governed_globs: ["TOOLBOX.md"]` and four records none of which name the book chapter, while
+  `git show 3c17ae5c~1:<book chapter> | grep -c 'claim: '` = 4; per-commit re-pin counts re-derived from four
+  `git show ... | grep -c '^-{'` runs; `check_rolling_ledger_protocol.pl --report` gives 66.9% and 59.2%;
+  `--produce` on both census producers gives one `CHANGES.md` candidate and zero governed values. Ledger
+  records are corrected by appending, never by editing a sealed record, which is the idiom `.11a` used
+  (`git show 3895226e -- CHANGES.md | grep -c '^-'` = 0). Doctrine gate green`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.7.2.1a — re-derive .7.2.1's findings and withdraw the three that do not hold`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.13`
+  Status: `pending` (tracking-only)
+  Goal: decide what watches a published value on a surface that carries no claim tag
+  Acceptance: the eleventh instance landed on `CHANGES.md:56` and **no governed population reaches it**,
+  which bounds what `.7` closed. Derived from the producers rather than from the code: the current-claim
+  census yields exactly one `CHANGES.md` candidate, its first non-blank line, on basis `surface_review`; the
+  published-assertion gate yields none, because that surface carries zero `[claim: <id>]` tags and the
+  discovered population is *files carrying a tag*; and the book census governs `docs/book/src/**` only. So
+  the published-assertion gate's population is gated on an author remembering to write a tag — the check and
+  the thing it checks share a parent, which is the general form `CLAIM_VERIFICATION.md` §2 names, applied to
+  this repository's newest gate. This is **not** `.9`, which is the *book* census's closed noun vocabulary,
+  a different producer and a different mechanism; state the difference in any decision rather than folding
+  the two together. Candidate directions, none yet chosen: extend the discovered population from
+  tag-bearing files to whole governed surfaces; or accept the bound explicitly and say so wherever `.7` is
+  described as closed, which `.7.2.1a` has done as an interim. Do not close this by widening a glob
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.2.1a`
+  Verification: `pending`
+  Commit: `pending`
+
 - ID: `CLAIM-VERIFICATION-ADOPTION.12`
   Status: `pending` (tracking-only)
   Goal: make the per-slice registry re-pin a tracked instrument instead of an ad-hoc rewrite each time
   Acceptance: three registries pin regions by one-based line range plus SHA-256 —
   `current_claim_census.jsonl`, `book_quantitative_claims.jsonl`, and `published_assertions.jsonl` — so **every
   slice that prepends to a rolling ledger or edits a governed file invalidates every row below the edit**, and
-  the repair is currently performed by hand or by a throwaway script. Measured on `.7.1a` and `.7.2.0`: 20 and
-  then 24 rows re-pinned, plus one new ledger-head row and a fan of `sha256` refreshes across
-  `claims.jsonl`, per slice. That is mechanical work with a correctness hazard — a re-pin that silently lands
+  the repair is currently performed by hand or by a throwaway script. Re-derived per commit rather than from
+  a running counter (`git show <rev> -- doctrine/claim_verification/current_claim_census.jsonl | grep -c
+  '^-{'`): `a88b91a3` 21, `3c17ae5c` 22, `3ff9e363` 23, `4529d535` 20 — every slice rewrites about twenty
+  evidence rows in that one registry, plus a new ledger-head row and a fan of `sha256` refreshes across
+  `claims.jsonl`. (**`.7.2.1a` withdrew "20 and then 24".** Those were the repair script's own counters from
+  repeated runs *within* a slice, so they answered a different question than the sentence asked — the
+  granularity rule in `CLAIM_VERIFICATION.md` §3 Leg 1. The per-commit figures above re-derive from Git.) That is mechanical work with a correctness hazard — a re-pin that silently lands
   on the *wrong* line is invisible, because the digest it was moved to match is the digest it now has.
   **The failure mode is specific, not hypothetical.** A row whose recorded content is a blank line has digest
   `01ba4719…546b`, which matches every blank line in the file, so a content search re-pins it to an arbitrary
@@ -1323,10 +1396,25 @@ the workflow through the mdBook and repository review path.
 | 29 | `CLAIM-VERIFICATION-ADOPTION.7.2.0` | `done` | scope is derived and fail-closed: an undeclared surface is an error, and each exemption states its reason |
 | 30 | `CLAIM-VERIFICATION-ADOPTION.7.2.1` | `done` | two sentences repaired, 26 dated records written, unlisted closed at zero, and the registry is frozen |
 | 31 | `CLAIM-VERIFICATION-ADOPTION.12` | `pending` | the per-slice region re-pin is hand work with a silent-wrong-line hazard; make it a tracked instrument |
-| 32 | `CLAIM-VERIFICATION-ADOPTION.7` | `done` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
+| 32 | `CLAIM-VERIFICATION-ADOPTION.7.2.1a` | `done` | asked a third time; two findings re-derive exactly, three do not and are withdrawn |
+| 33 | `CLAIM-VERIFICATION-ADOPTION.13` | `pending` | a published value on a surface with no claim tag is watched by nothing; that bounds what `.7` closed |
+| 34 | `CLAIM-VERIFICATION-ADOPTION.7` | `done` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
 ## Decisions
 
+- `2026-08-30` (`.7.2.1a`): **`HEAD` is not an anchor.** A published range ending at `HEAD` names a different
+  window every time it is read, so it is the open-ended-window defect regardless of how the sentence is
+  phrased. The repair is to drop the count and name the command, not to re-measure it — a re-measured count
+  is stale again on the next commit.
+- `2026-08-30` (`.7.2.1a`): a count harvested from a repair script's own run counter answers "how many times
+  did the loop fire", not "how many rows did this commit change". Publish the per-commit measure with the
+  command that re-derives it; the two are not interchangeable even when they are close.
+- `2026-08-30` (`.7.2.1a`): a share measured on one ledger against one budget may not be restated across two
+  ledgers against a different budget. `changes` is 66.9% of its health target and `live-achievement-status`
+  is 59.2%; "two thirds of each" was one number wearing two denominators.
+- `2026-08-30` (`.7.2.1a`): when a gate is described as closing a class, **name the population it closes it
+  over**. `.7`'s control watches two governed files; the eleventh instance landed on a surface none of the
+  three producers reaches.
 - `2026-08-30` (`.7.2.1`): a sentence that no closed outcome fits is **repaired, not recorded**. An
   open-ended measurement window is anchored to the revision that closes it, and a live count whose producer
   publishes it only as prose is removed so the reader runs the command. Removing a value is not the
@@ -2076,7 +2164,8 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-08-30` | `.7.2.1` | `perl scripts/check_published_assertions.pl --check`/`--self-test`; three revert-and-re-apply probes on real shipped prose; census/book/claim `--check`; `scripts/check_doctrines.sh` | **the population is closed and the registry is frozen.** 30 assertions — 1 derived, 2 gated, 1 authored, **26 dated** — over 6 governed regions in 2 governed and 2 exempt files, **0 unlisted**. Two sentences were repaired rather than recorded: an open-ended window ("the 27 transitions measured from `e6f5012d`", whose boundary had already moved 39 commits) now names its closing revision `60a81db7`, and "The 27-case self-test" lost its numeral because that producer publishes the count only as prose on stderr, so neither `derived` nor `gated` fits it. A near-contradiction was **adjudicated, not corrected** — `TOOLBOX.md`'s 29 and the book's 28 are both right (28 consecutive revisions plus the older `50775894` anchor = 29 measurements), so neither was touched. **Three probes on REAL prose, each restored byte-exact**: an unmapped numeral gave `published value '41' at TOOLBOX.md:122 ... no assertion record lists`; editing a dated 39 -> 38 fired three legs at once (absent from its own region, stale digest, new unlisted value); and a claim-annotated file staged under `research_records` gave `belongs to surface 'research_records', which declares no disposition` — the fail-closed leg `.7.2.0` built, observed on the real tree |
+| `2026-08-30` | `.7.2.1a` | `git rev-list --count e6f5012d..HEAD`; blind-spot probe re-derived at `a88b91a3~1`; `git show 3c17ae5c~1:...` for the registry and the book chapter's tag count; four `git show <rev> -- <census> | grep -c '^-{'` runs; `check_rolling_ledger_protocol.pl --report`; `--produce` on both census producers; `scripts/check_doctrines.sh` | **asked a third time, and three of five findings do not hold.** The two that do re-derive exactly: the blind spot is **19 dropped, 16 compound / 2 ratio / 1 comma** at `a88b91a3~1`, and at `3c17ae5c~1` `governed_globs` was `["TOOLBOX.md"]` while the book chapter carried four claim tags no record named. **The eleventh instance is my own**: `.7.2.1` published "39 commits now separating `e6f5012d` from `HEAD`" — 43 four commits later — *in the sentence explaining that an open-ended window silently grows*. Withdrawn on three surfaces, and the count is replaced by the command rather than re-measured. "20 and then 24 rows re-pinned" were a run counter, not a per-commit measure; re-derived as 21/22/23/20. "Two thirds of each byte budget" is 66.9% for `changes` and **59.2%** for the status ledger — one number wearing two denominators. A first mechanism for the eleventh instance ("`commits` is missing from the closed noun list") was **discarded before publication**: that vocabulary is the *book* census's, and `--produce` shows the current-claim census takes one `CHANGES.md` candidate (its first non-blank line) while the assertion gate takes none (zero claim tags) |
+| `2026-08-30` | `.7.2.1` | `perl scripts/check_published_assertions.pl --check`/`--self-test`; three revert-and-re-apply probes on real shipped prose; census/book/claim `--check`; `scripts/check_doctrines.sh` | **the population is closed and the registry is frozen.** 30 assertions — 1 derived, 2 gated, 1 authored, **26 dated** — over 6 governed regions in 2 governed and 2 exempt files, **0 unlisted**. Two sentences were repaired rather than recorded: an open-ended window ("the 27 transitions measured from `e6f5012d`", whose boundary had already moved its range grows with every commit) now names its closing revision `60a81db7`, and "The 27-case self-test" lost its numeral because that producer publishes the count only as prose on stderr, so neither `derived` nor `gated` fits it. A near-contradiction was **adjudicated, not corrected** — `TOOLBOX.md`'s 29 and the book's 28 are both right (28 consecutive revisions plus the older `50775894` anchor = 29 measurements), so neither was touched. **Three probes on REAL prose, each restored byte-exact**: an unmapped numeral gave `published value '41' at TOOLBOX.md:122 ... no assertion record lists`; editing a dated 39 -> 38 fired three legs at once (absent from its own region, stale digest, new unlisted value); and a claim-annotated file staged under `research_records` gave `belongs to surface 'research_records', which declares no disposition` — the fail-closed leg `.7.2.0` built, observed on the real tree |
 | `2026-08-30` | `.7.2.0` | `perl scripts/check_published_assertions.pl --self-test`; `--check`/`--report` on the real tree; lifecycle and census-disposition candidate rules measured against the four claim-annotated files; `scripts/check_doctrines.sh` | **the scope is now derived and fails closed.** Membership is discovered by scanning every tracked Markdown file for a claim tag and resolved through `doctrine/live_document_size/surfaces.jsonl`, digest-bound by a `source` record; an undeclared surface, a file no surface owns, a reasonless exemption, an unknown surface id, and a stale surface-registry digest are each RED. Self-test **25/25**. **The exemption is proven load-bearing**, not incidental: flipping `change_history_archive_segments` from `exempt` to `governed` makes the very same value fatal, which separates "deliberately skipped" from "never discovered" — two accounts that predict the same green run. On the real tree: **2 governed and 2 exempt** claim-annotated files over **6** governed regions, unlisted **23 -> 27**, because the book chapter is now in scope where the glob list had silently excluded the one surface instance 5 actually drifted on. Two candidate rules were measured and rejected with reasons — lifecycle cannot separate `TOOLBOX.md` from the task tree, and the census's disposition would admit 85 dated evidence values |
 | `2026-08-30` | `.7.1a` | independent widened-lookahead probe over the same governed paragraphs; `perl scripts/check_published_assertions.pl --self-test`; `--check`/`--produce` on the real tree; revert-and-re-apply of the grammar line alone; `scripts/check_doctrines.sh` | **the gate could not see two of the values it exists to watch.** An oracle built to disagree — the gate's own lookbehind kept, only the lookahead widened — reported **19** published values dropped across the four claim-annotated files: 16 compound-adjective forms (`27-case`, `56-unit`, `304-region`), two ratio halves (`304/304`, `15/15`), and one comma over-capture. A first probe without the lookbehind was **discarded**, not published: it reported `SHA-256` and `H1`, which the gate refuses correctly, and an oracle that calls correct behaviour a defect separates nothing. Two of the 19 sit on the current-facing surfaces and one is live — `TOOLBOX.md`'s "The 27-case self-test" is a current count of `check_current_claim_census.pl --self-test` (27/27 today) inside a claim-annotated paragraph the gate was written to watch. Real-tree unlisted **21 -> 23**. **Attribution by revert-and-re-apply, not by reading**: with the grammar line alone reverted, 5 of 19 self-test cases fail — both positives on `published value '40,' ... no assertion record lists`, and all three new cases; re-applied, **19/19**. The absorbed-punctuation case is the mirror the repair needs: a record whose `value` is `40,` now covers nothing, where before it was accepted |
 | `2026-08-30` | `.7.1` | `perl scripts/check_published_assertions.pl --self-test`; `--check` on the real tree; revert-and-re-apply drift probe against `check_current_claim_census.pl --report`; `scripts/check_doctrines.sh` | **the leg no existing control supplied is now executable.** Self-test **16/16** with every `.7.0` fault plus five more driven RED on a disposable repository-local fixture. On the real tree the gate runs green at four seeded assertions over two governed regions in `inventory` phase, reporting unlisted values rather than failing on them until `.7.2` completes the population. **Drift observed RED on real shipped prose**, not a fixture: `TOOLBOX.md`'s `**5** views` bound to the census `views` field, edited to `**6**`, produced `is stale: 'views' re-derives to '5', published '6'`; both files restored byte-exact. A first probe against `docs/knowledge/INDEX.md` is recorded as an honest failure — its producer is derive-and-diff over that same file and exits nonzero before any field comparison, so it cannot demonstrate this leg. The coverage grammar was corrected mid-implementation from tag-line to **paragraph** scope, because a `[claim: <id>]` tag closes a paragraph and `TOOLBOX.md`'s two tags sit on lines carrying no quantity at all — keyed on the tag's own line the map would have been blind to precisely the sentences it exists to watch |
@@ -2160,6 +2249,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
+| `.7.2.1a` | `CLAIM-VERIFICATION-ADOPTION.7.2.1a — re-derive .7.2.1's findings and withdraw the three that do not hold` | two findings re-derive exactly; an open-ended `HEAD` window, a run-counter figure, and a two-denominator share withdrawn; `.13` owns the population bound |
 | `.7.2.1` | `CLAIM-VERIFICATION-ADOPTION.7.2.1 — close the population at zero and freeze` | two sentences repaired, 26 dated records, unlisted closed at zero, phase frozen, three real-prose probes RED and restored |
 | `.7.2.0` | `CLAIM-VERIFICATION-ADOPTION.7.2.0 — derive the governed scope, and fail closed on an undeclared surface` | stored glob list replaced by discovered membership plus authored per-surface disposition; six new RED cases at 25/25; the book chapter enters scope |
 | `.7.1a` | `CLAIM-VERIFICATION-ADOPTION.7.1a — measure the coverage grammar's blind spot, then close it` | 19 published values were invisible to the population scanner; grammar repaired on measurement, 19/19 self-test with three grammar-dependent RED cases, real-tree unlisted 21 -> 23 |
@@ -2194,8 +2284,21 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
-- `2026-08-30`: closed `.7.2.1`, and with it `.7`. **The class that ran for ten recorded instances and five
-  invalidated rounds of prose correction is now under a control that fails.** Every published value in a
+- `2026-08-30`: closed `.7.2.1a`. **Asked a third time whether the findings held, and three of five did not.**
+  The sharpest is the eleventh instance of this tree's own class, and it is mine: `.7.2.1` published a count
+  of commits between a fixed revision and `HEAD` *inside the sentence explaining that a window with no end
+  silently grows*. Four commits later it was wrong. That is the fourth consecutive round in which a slice
+  invalidated its own publication, and the pattern is now specific enough to name: **the defect a slice is
+  describing is the defect it is most likely to commit while describing it.** The repair replaces the count
+  with the command rather than re-measuring it, because a re-measured count is stale on the next commit. Two
+  findings re-derived exactly, which is worth saying too — the blind-spot decomposition to the value, and the
+  scope finding at its own revision. `.13` now owns what this exposed: the eleventh instance landed where no
+  governed population reaches, so `.7` closed the class over two files and the sentences saying so now say
+  which two.
+- `2026-08-30`: closed `.7.2.1`, and with it `.7`. **The class is now under a control that fails — on the two
+  governed surfaces.** (`.7.2.1a` bounded this sentence, which first read "the class that ran for ten recorded
+  instances ... is now under a control that fails" with no scope at all. The governed population is two files;
+  the eleventh instance landed in `CHANGES.md`, which no population reaches.) Every published value in a
   governed region resolves to a record with a closed outcome, the registry is `frozen`, and an unmapped
   numeral, a drifted value, or a claim-annotated file on an undeclared surface each turn the gate RED — all
   three observed on real shipped prose, not fixtures, and restored byte-exact. Two sentences were repaired

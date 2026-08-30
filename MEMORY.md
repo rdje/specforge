@@ -6,27 +6,29 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CLAIM-VERIFICATION-ADOPTION.7`. Open: `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`/`.9`/`.12`;
+- Active unit: none in flight; `CLAIM-VERIFICATION-ADOPTION.7` is closed. Open: `SOURCE-IR-REPRODUCIBILITY`
+  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`;
   `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`/`.7`. The last ten are tracking-only.
-- Current state: `STATUS-LEDGER-ROLLOVER.5` and `CHANGES-LEDGER-ROLLOVER.5` are closed — **both root ledgers
-  are rolled in one transaction**, because the status rollover's own ledger record is what crossed
-  `CHANGES.md`'s 90% line signal and could not be dodged by shortening it. Status root 56 -> 43 records /
-  71,626 bytes (62.3%); change root 93 -> 80 records / 1,179 lines / 182,298 bytes (71.5% bytes, 65.5%
-  lines). Segments `segment-0012-2026-08-30.md` and `segment-0016-2026-08-30.md`; older segments and both
-  source capsules byte-identical. Before them, `CLAIM-VERIFICATION-ADOPTION.7` closed: the published-assertion
-  registry is `frozen` at 0 unlisted values with a discovered, fail-closed scope.
-- Next action: pick the next open unit. The largest untouched body of work is the `SOURCE-IR-REPRODUCIBILITY`
-  lane (`.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`). Nearer: `CLAIM-VERIFICATION-ADOPTION` `.8` (census registry
-  lifecycle), `.9` (candidate vocabulary blind spot), `.12` (the per-slice region re-pin is hand work with a
-  silent-wrong-line hazard), `CHANGES-LEDGER-ROLLOVER.4` and `STATUS-LEDGER-ROLLOVER.2` (both own the same
-  standing limit: a pinned migration suffix that consumes two thirds of the budget before any current record
-  exists, which is why every rollover buys only about a dozen slices).
+- Current state: `CLAIM-VERIFICATION-ADOPTION.7.2.1a` is closed — **`.7.2.1`'s findings were re-derived on a
+  third reading and three of five did not hold.** The sharpest is this tree's eleventh instance and it is
+  mine: `.7.2.1` published a commit count ending at `HEAD` inside the sentence explaining that an open-ended
+  window silently grows. Withdrawn on three surfaces, with the command replacing the count. A run-counter
+  figure and a share restated across two ledgers against a different budget were also withdrawn; the coverage
+  blind spot (19/16/2/1) and the `governed_globs` scope finding re-derive exactly. `.7` is closed **over two
+  governed files**, which is now stated wherever it is described.
+- Next action: `CLAIM-VERIFICATION-ADOPTION.13` is the finding this exposed and the natural next unit — a
+  published value on a surface carrying no `[claim: <id>]` tag is reached by no governed population, so the
+  assertion gate's population is gated on an author remembering to write a tag. Decide whether the population
+  extends from tag-bearing files to whole governed surfaces, or whether the bound is accepted explicitly.
+  It is **not** `.9` (that is the book census's noun vocabulary, a different producer). Otherwise:
+  `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`, or the `SOURCE-IR-REPRODUCIBILITY` lane
+  (`.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`), which is the largest untouched body of work and wants a full
+  roadmap and mdBook read first.
 - In-flight uncommitted: none after this commit.
-- Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/
-  `.9`/`.12` (the per-slice region re-pin is hand work with a silent-wrong-line hazard);
+- Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/
+  `.12` (per-slice region re-pin is hand work with a silent-wrong-line hazard) / `.13`;
   `CHANGES-LEDGER-ROLLOVER.4`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`/`.6`/`.7`;
   `SCRATCH-RESIDUE-CONTAINMENT.4` — the `generated/` fixture producer is still signal-unsafe, so the residue
   recurs. Never run the fixture suite concurrently with the locality gate:
