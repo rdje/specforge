@@ -7,29 +7,29 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: `CLAIM-VERIFICATION-ADOPTION.7`. Open: `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`/`.9`;
+  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.7`/`.8`/`.9`/`.12`;
   `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`/`.7`. The last ten are tracking-only.
-- Current state: `CLAIM-VERIFICATION-ADOPTION.7.1a` is closed — **the gate's own population scanner had a blind
-  spot, and it is measured and closed.** `check_published_assertions.pl` derives its governed population, so its
-  numeral grammar decides which published values exist; a value the scanner cannot see is a silent hole, not an
-  unlisted one, and `frozen` phase would have called the surface complete anyway. An independent tokenizer
-  (the gate's own lookbehind kept, only the lookahead widened) found 19 dropped values across the four
-  claim-annotated files, one of them live — `TOOLBOX.md`'s "The 27-case self-test". Repaired: a comma joins a
-  numeral only before exactly three digits, and only a hyphen followed by a digit is excluded. Self-test 19/19,
-  all three new cases proven grammar-dependent by revert-and-re-apply at 14/19. Real-tree unlisted 21 -> 23.
-  The registry still ships in `inventory` phase.
-- Next action: `CLAIM-VERIFICATION-ADOPTION.7.2` — it now has three parts, not one. (1) Replace
-  `governed_globs: ["TOOLBOX.md"]`, which is the stored surface list `.7.0` element 3 forbids, with a derived
-  rule; as shipped, freezing would make one surface fatal and leave the book chapter — instance 5's own
-  surface — unwatched. (2) Give every value in the resulting population a closed outcome. (3) Flip `phase` to
-  `frozen`. Note the whole-tree population does not fit `max_records: 128`, and raising the bound to make it
-  fit is the move `.8` refuses. Read the current unlisted set from
+- Current state: `CLAIM-VERIFICATION-ADOPTION.7.2.0` is closed — **the gate's scope is derived and fails
+  closed.** It was about to freeze on `governed_globs: ["TOOLBOX.md"]`, a stored list of one that would have
+  called the map complete while the mdBook doctrine chapter sat outside it. Membership is now discovered by
+  scanning every tracked Markdown file for a claim tag and resolved through
+  `doctrine/live_document_size/surfaces.jsonl` (digest-bound); an undeclared surface, or a file no surface
+  owns, is an error. Only a surface's disposition is authored. Two exemptions state their reasons (dated task
+  evidence; sealed archive segments) and each is proven load-bearing by flipping it to `governed` and watching
+  the same value turn fatal. Self-test 25/25; 2 governed / 2 exempt files, 6 governed regions, 27 unlisted,
+  still `inventory` phase.
+- Next action: `CLAIM-VERIFICATION-ADOPTION.7.2.1` — repair, then populate, then freeze. Two TOOLBOX
+  sentences take no closed outcome as written: "the 27 transitions measured from `e6f5012d`" names an
+  open-ended window whose boundary has moved (39 commits now), and "The 27-case self-test" is a live count
+  whose producer reports it only as prose on stderr. Repair those, give every remaining governed value a
+  closed outcome, then flip `phase` to `frozen`. Read the unlisted set from
   `perl scripts/check_published_assertions.pl --produce`; do not carry its size anywhere.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.7`/`.8`/
-  `.9`; `CHANGES-LEDGER-ROLLOVER.4`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`/`.6`/`.7`;
+  `.9`/`.12` (the per-slice region re-pin is hand work with a silent-wrong-line hazard);
+  `CHANGES-LEDGER-ROLLOVER.4`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`/`.6`/`.7`;
   `SCRATCH-RESIDUE-CONTAINMENT.4` — the `generated/` fixture producer is still signal-unsafe, so the residue
   recurs. Never run the fixture suite concurrently with the locality gate:
   `check_persisted_artifact_paths.pl` walks every `*.json` under `generated/` and FAILS if a fixture run

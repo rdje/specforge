@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CLAIM-VERIFICATION-ADOPTION`
-- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0`, `.7.1`, `.7.1a` done — the surfaces publishing the census counts
+- Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0`, `.7.1`, `.7.1a`, `.7.2.0` done — the surfaces publishing the census counts
   are now swept against an *enumerated* population rather than a remembered one, and the upstream standard is
   re-adopted with its refusals recorded; `.7` owns the gate that would have observed the drift, now scoped to
   counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot, now
@@ -522,7 +522,7 @@ the workflow through the mdBook and repository review path.
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.7`
   Status: `active`
-  Children: `.7.0`, `.7.1`, `.7.2`
+  Children: `.7.0`, `.7.1`, `.7.1a`, `.7.2.0`, `.7.2.1`
   Goal: make a claim-annotated prose count re-derive against its producer, so this drift is observed
   **Split (`2026-08-30`, after `.11a`).** Ten instances and five consecutive rounds of correction — `.6` -> `.6a`
   -> `.6b`, then `.10` -> `.10a`, then `.11` -> `.11a` — have established that this cannot be closed by prose.
@@ -753,28 +753,90 @@ the workflow through the mdBook and repository review path.
   --check resolves 6 claims and 12 commands; scripts/check_doctrines.sh 11/11 executed doctrines PASS`
   Commit: `CLAIM-VERIFICATION-ADOPTION.7.1a — measure the coverage grammar's blind spot, then close it`
 
-- ID: `CLAIM-VERIFICATION-ADOPTION.7.2`
+- ID: `CLAIM-VERIFICATION-ADOPTION.7.2.0`
+  Status: `done` (`2026-08-30`)
+  Goal: replace the stored scope list with a fail-closed derived one, before any value is written down
+  Acceptance: `.7.1a` measured that `governed_globs: ["TOOLBOX.md"]` is the stored surface list `.7.0`
+  element 3 forbids. Freezing on it would have made exactly one surface fatal and left
+  `docs/book/src/reference/doctrine-enforcement.md` — the surface instance 5 actually drifted on — outside
+  the map entirely. Replace it with a rule under which membership is discovered and only a **surface's
+  disposition** is authored, and prove the new failure modes RED before populating anything
+  **What element 3 actually wants is fail-closed, and that is what a glob list cannot give.** The checker now
+  discovers every tracked Markdown file carrying a `[claim: <id>]` tag, resolves each to the live-document
+  surface that owns it, and **errors** if that surface declares no disposition or if no surface claims the
+  file at all. So a new claim-annotated file joins the map by itself, and nothing leaves the map without
+  someone writing down which surface it left through. A glob list fails open in exactly the direction that
+  matters: a file nobody listed is a file nobody checks, and nothing says so.
+  **The classifier is derived from the producer, not from a description of it** (`CLAIM_VERIFICATION.md` §3
+  Leg 2). Surface membership comes from `doctrine/live_document_size/surfaces.jsonl`, the registry that
+  already owns which surface a path belongs to, bound by a `source` record so the scope cannot drift under a
+  stale identity. A disposition naming a surface that registry does not have is refused, so a typo cannot
+  quietly govern nothing.
+  **Two exemptions, each with its reason, because an exemption is how a population legitimately shrinks.**
+  `task_evidence` is exempt: every claim-annotated region on it is a verification-log row whose first column
+  is the date it was measured, which §1 exempts as an observation scoped to its original boundary.
+  `change_history_archive_segments` is exempt: a sealed segment is an immutable capture whose currentness is
+  not asserted, and the rollover protocol forbids editing one, so a value inside it cannot be re-derived in
+  place. `workflow_standards` and `shipped_behavior` are governed. An exemption without a stated reason is
+  refused.
+  **A lifecycle-based rule was tried first and does not work — recorded so it is not tried again.** The
+  obvious derived predicate is the live-document `lifecycle` field, but `TOOLBOX.md` and this task tree share
+  one (`partitioned_canonical`), so lifecycle cannot separate a governed surface from an exempt one. Reusing
+  the census's own `disposition` fails differently: it marks `task_evidence` **included**, which would put 85
+  dated verification-log values in scope and exceed the registry's own record bound. Both are honest
+  candidates that a reader would reach for, and both are wrong for a stated reason rather than by omission
+  **The exemption is proven load-bearing, not incidental.** A green run with an exempt file's value
+  unreported is equally consistent with that file never having been discovered — evidence consistent with
+  both hypotheses is no evidence. So the matrix flips one surface from `exempt` to `governed` and requires
+  the very same value to become fatal
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.1a`
+  Verification: `perl scripts/check_published_assertions.pl --self-test 25/25 — the 19 .7.1a cases plus an
+  undeclared surface, a file no surface owns, a reasonless exemption, a disposition naming an unknown
+  surface, a stale surface-registry source digest, and the load-bearing-exemption flip; --check green on the
+  real tree at 2 governed and 2 exempt claim-annotated files over 6 governed regions, unlisted 23 -> 27
+  because the book chapter is now in scope where the glob list had excluded it; scripts/check_doctrines.sh`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.7.2.0 — derive the governed scope, and fail closed on an undeclared surface`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.7.2.1`
   Status: `pending`
   Goal: populate the registry from the current governed regions and close the unlisted-value report at zero
   Acceptance: every published value in a claim-annotated or registered governed region resolves to one record
   with a closed outcome, or the run reports it. The three survivors this tree already labelled are the first
   entries — `candidate_closure.unresolved` `gated`, `views` `authored`, and the producer-census zeroes `gated`
-  **Two things `.7.1a` measured that this leaf must decide before it can freeze anything.**
-  *(a) `governed_globs` is the stored surface list `.7.0` element 3 forbids.* The registry ships
-  `governed_globs: ["TOOLBOX.md"]`, so flipping `phase` to `frozen` would make exactly one surface fatal and
-  leave `docs/book/src/reference/doctrine-enforcement.md` — the surface instance 5 actually drifted on —
-  outside the map. The population must be selected by a derived rule, not by a listed name; the honest
-  candidates are the current-surface authority `check_current_claim_census.pl` already derives, or a rule that
-  admits every claim-annotated tracked Markdown file and excludes sealed-archive and dated-evidence lifecycles
-  by their lifecycle, not by their path.
-  *(b) the bound and the population disagree.* Measured `2026-08-30` with `.7.1a`'s corrected grammar and
-  `governed_globs: ["**/*.md"]`: 152 unlisted values over 32 governed regions in four files — 85 in this task
-  tree, 40 in `segment-0013`, 23 in `TOOLBOX.md`, four in the book chapter — against a declared
-  `max_records: 128`. So a whole-tree close is not merely laborious, it does not fit, and raising the bound to
-  make it fit is the move `.8` refuses for the census registry. Re-derive both figures from
-  `perl scripts/check_published_assertions.pl --produce` rather than carrying them; they are recorded here as
-  a dated measurement of the decision, not as current state
-  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.1a`
+  **Scope is settled by `.7.2.0` and is no longer this leaf's problem.** What remains is the population.
+  Two TOOLBOX sentences cannot honestly take a record as written and must be repaired first, not recorded:
+  "the 27 transitions measured from `e6f5012d`" names an **open-ended** window — measured `2026-08-30`, 39
+  commits now separate `e6f5012d` from `HEAD`, so the sentence's own boundary has moved since it was written
+  and a `dated` record would anchor it to a revision it does not describe; and "The 27-case self-test" is a
+  **live** count of `check_current_claim_census.pl --self-test` which no closed outcome fits, because that
+  producer reports its case count only as prose on stderr, so it is neither `derived` nor `gated` today.
+  *(b) the bound.* Measured `2026-08-30` with `.7.1a`'s corrected grammar and every surface governed: 152
+  unlisted values over 32 governed regions in four files, against a declared `max_records: 128`. Under
+  `.7.2.0`'s two exemptions the governed population is far smaller and fits; if a later slice governs a
+  further surface, raising the bound to make it fit is the move `.8` refuses for the census registry.
+  Re-derive both figures from `perl scripts/check_published_assertions.pl --produce` rather than carrying
+  them; they are recorded here as a dated measurement of the decision, not as current state
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.2.0`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.12`
+  Status: `pending` (tracking-only)
+  Goal: make the per-slice registry re-pin a tracked instrument instead of an ad-hoc rewrite each time
+  Acceptance: three registries pin regions by one-based line range plus SHA-256 —
+  `current_claim_census.jsonl`, `book_quantitative_claims.jsonl`, and `published_assertions.jsonl` — so **every
+  slice that prepends to a rolling ledger or edits a governed file invalidates every row below the edit**, and
+  the repair is currently performed by hand or by a throwaway script. Measured on `.7.1a` and `.7.2.0`: 20 and
+  then 24 rows re-pinned, plus one new ledger-head row and a fan of `sha256` refreshes across
+  `claims.jsonl`, per slice. That is mechanical work with a correctness hazard — a re-pin that silently lands
+  on the *wrong* line is invisible, because the digest it was moved to match is the digest it now has.
+  **The failure mode is specific, not hypothetical.** A row whose recorded content is a blank line has digest
+  `01ba4719…546b`, which matches every blank line in the file, so a content search re-pins it to an arbitrary
+  one; `.8` already recorded two dead rows that had drifted onto blank lines exactly this way. Any tracked
+  instrument must therefore report ambiguity rather than resolve it, and must refuse rather than guess.
+  Deliver a tracked script with its own RED matrix — ambiguous match, no match, a row whose content genuinely
+  left the file — and route `COMMIT.md` to it. Do not widen a bound or relax a pin to avoid the work
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.2.1`
   Verification: `pending`
   Commit: `pending`
 
@@ -1226,11 +1288,25 @@ the workflow through the mdBook and repository review path.
 | 26 | `CLAIM-VERIFICATION-ADOPTION.7.0` | `done` | five rounds of correction proved prose cannot close this; the contract that can is frozen before any code |
 | 27 | `CLAIM-VERIFICATION-ADOPTION.7.1` | `done` | the gate executes producers and compares fields; 16/16 RED matrix and a drift observed on real shipped prose |
 | 28 | `CLAIM-VERIFICATION-ADOPTION.7.1a` | `done` | the coverage grammar's blind spot is measured and closed, so the population it reports is the population that exists |
-| 29 | `CLAIM-VERIFICATION-ADOPTION.7.2` | `pending` | decide the derived governed scope, populate the registry, and close the unlisted-value report at zero |
-| 30 | `CLAIM-VERIFICATION-ADOPTION.7` | `active` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
+| 29 | `CLAIM-VERIFICATION-ADOPTION.7.2.0` | `done` | scope is derived and fail-closed: an undeclared surface is an error, and each exemption states its reason |
+| 30 | `CLAIM-VERIFICATION-ADOPTION.7.2.1` | `pending` | repair the two sentences no outcome fits, populate the governed population, and flip to frozen |
+| 31 | `CLAIM-VERIFICATION-ADOPTION.12` | `pending` | the per-slice region re-pin is hand work with a silent-wrong-line hazard; make it a tracked instrument |
+| 32 | `CLAIM-VERIFICATION-ADOPTION.7` | `active` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
 ## Decisions
 
+- `2026-08-30` (`.7.2.0`): the governed scope is **fail-closed**, not listed. Every tracked Markdown file
+  carrying a claim tag is discovered, resolved to its live-document surface, and refused if that surface
+  declares no disposition or if no surface owns the file. Only a surface's disposition is authored; its
+  membership never is. A glob list fails open in the one direction that matters — a file nobody listed is a
+  file nobody checks, and nothing says so.
+- `2026-08-30` (`.7.2.0`): an exemption must state its reason, and the exemption must be proven load-bearing
+  by flipping the surface to governed and observing the same value become fatal. A green run with an exempt
+  value unreported is otherwise equally consistent with that file never having been discovered.
+- `2026-08-30` (`.7.2.0`): lifecycle cannot decide this scope — `TOOLBOX.md` and the task tree share
+  `partitioned_canonical` — and the census's own disposition marks `task_evidence` included, which would put
+  85 dated verification-log values in scope. Both are recorded as tried and rejected for a stated reason,
+  so the next reader does not reach for them again.
 - `2026-08-30` (`.7.1a`): the coverage grammar decides the population, so a value it cannot see is a silent
   hole rather than an unlisted one — no record can be asked for it and `frozen` phase will still call the
   surface complete. A grammar change is therefore a population change, and it must be measured against an
@@ -1960,6 +2036,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-30` | `.7.2.0` | `perl scripts/check_published_assertions.pl --self-test`; `--check`/`--report` on the real tree; lifecycle and census-disposition candidate rules measured against the four claim-annotated files; `scripts/check_doctrines.sh` | **the scope is now derived and fails closed.** Membership is discovered by scanning every tracked Markdown file for a claim tag and resolved through `doctrine/live_document_size/surfaces.jsonl`, digest-bound by a `source` record; an undeclared surface, a file no surface owns, a reasonless exemption, an unknown surface id, and a stale surface-registry digest are each RED. Self-test **25/25**. **The exemption is proven load-bearing**, not incidental: flipping `change_history_archive_segments` from `exempt` to `governed` makes the very same value fatal, which separates "deliberately skipped" from "never discovered" — two accounts that predict the same green run. On the real tree: **2 governed and 2 exempt** claim-annotated files over **6** governed regions, unlisted **23 -> 27**, because the book chapter is now in scope where the glob list had silently excluded the one surface instance 5 actually drifted on. Two candidate rules were measured and rejected with reasons — lifecycle cannot separate `TOOLBOX.md` from the task tree, and the census's disposition would admit 85 dated evidence values |
 | `2026-08-30` | `.7.1a` | independent widened-lookahead probe over the same governed paragraphs; `perl scripts/check_published_assertions.pl --self-test`; `--check`/`--produce` on the real tree; revert-and-re-apply of the grammar line alone; `scripts/check_doctrines.sh` | **the gate could not see two of the values it exists to watch.** An oracle built to disagree — the gate's own lookbehind kept, only the lookahead widened — reported **19** published values dropped across the four claim-annotated files: 16 compound-adjective forms (`27-case`, `56-unit`, `304-region`), two ratio halves (`304/304`, `15/15`), and one comma over-capture. A first probe without the lookbehind was **discarded**, not published: it reported `SHA-256` and `H1`, which the gate refuses correctly, and an oracle that calls correct behaviour a defect separates nothing. Two of the 19 sit on the current-facing surfaces and one is live — `TOOLBOX.md`'s "The 27-case self-test" is a current count of `check_current_claim_census.pl --self-test` (27/27 today) inside a claim-annotated paragraph the gate was written to watch. Real-tree unlisted **21 -> 23**. **Attribution by revert-and-re-apply, not by reading**: with the grammar line alone reverted, 5 of 19 self-test cases fail — both positives on `published value '40,' ... no assertion record lists`, and all three new cases; re-applied, **19/19**. The absorbed-punctuation case is the mirror the repair needs: a record whose `value` is `40,` now covers nothing, where before it was accepted |
 | `2026-08-30` | `.7.1` | `perl scripts/check_published_assertions.pl --self-test`; `--check` on the real tree; revert-and-re-apply drift probe against `check_current_claim_census.pl --report`; `scripts/check_doctrines.sh` | **the leg no existing control supplied is now executable.** Self-test **16/16** with every `.7.0` fault plus five more driven RED on a disposable repository-local fixture. On the real tree the gate runs green at four seeded assertions over two governed regions in `inventory` phase, reporting unlisted values rather than failing on them until `.7.2` completes the population. **Drift observed RED on real shipped prose**, not a fixture: `TOOLBOX.md`'s `**5** views` bound to the census `views` field, edited to `**6**`, produced `is stale: 'views' re-derives to '5', published '6'`; both files restored byte-exact. A first probe against `docs/knowledge/INDEX.md` is recorded as an honest failure — its producer is derive-and-diff over that same file and exits nonzero before any field comparison, so it cannot demonstrate this leg. The coverage grammar was corrected mid-implementation from tag-line to **paragraph** scope, because a `[claim: <id>]` tag closes a paragraph and `TOOLBOX.md`'s two tags sit on lines carrying no quantity at all — keyed on the tag's own line the map would have been blind to precisely the sentences it exists to watch |
 | `2026-08-30` | `.7.0` + `.11a` re-derivation | re-derived every figure `.11a` published: `git show --name-only` over the four attributed commits; `git show d23e8bae -- <book>` content-line count; `check_live_document_size.pl` warning population; literal match census over tracked non-archive Markdown at `fd09708d~1`; `§10` rows vs `DOCTRINES`; the three claim producers `--check`/`--report` | **`.11a` does not fully hold either.** Its warning-line total was **invalidated by its own commit** — published as 20, and that commit's `CHANGES.md` prepend crossed `change_history lines_each`, making it 21. And "exactly three surfaces" is a *classification*, not a match count: five tracked files carried the literal, two of them dated records §1 exempts; the conclusion holds and the predicate was unstated. Both are withdrawn rather than corrected. Everything else in `.11a` re-derives: the republication attribution, `d23e8bae`'s two changed book lines, the four-producer composition, the `done`-tree and self-satisfying classifier defects, and the dated-table withdrawal. **Five consecutive rounds of correction, each invalidated by its own transaction, is the evidence that closes the design question**: `.7` is split and `.7.0` freezes the contract |
@@ -2042,6 +2119,7 @@ was added; the stable-path remedy and its consumed authority are complete.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `CLAIM-VERIFICATION-ADOPTION.0 — own and map three-leg claim verification` | standard/local seam audit; implementation remains pending |
+| `.7.2.0` | `CLAIM-VERIFICATION-ADOPTION.7.2.0 — derive the governed scope, and fail closed on an undeclared surface` | stored glob list replaced by discovered membership plus authored per-surface disposition; six new RED cases at 25/25; the book chapter enters scope |
 | `.7.1a` | `CLAIM-VERIFICATION-ADOPTION.7.1a — measure the coverage grammar's blind spot, then close it` | 19 published values were invisible to the population scanner; grammar repaired on measurement, 19/19 self-test with three grammar-dependent RED cases, real-tree unlisted 21 -> 23 |
 | `.7.1` | `CLAIM-VERIFICATION-ADOPTION.7.1 — execute the producer and compare the field` | twelfth registered doctrine; 16/16 RED matrix; drift observed on real shipped prose; coverage corrected to paragraph scope; §10 and the mdBook chapter updated in the same commit |
 | `.7.0` | `CLAIM-VERIFICATION-ADOPTION.7.0 — freeze the published-assertion gate design` | eight-element contract traced element-by-element to the instance that defeated the alternative; `.7` split into freeze, gate, and population; `.11a`'s two invalidated figures withdrawn in the same commit |
@@ -2074,6 +2152,16 @@ was added; the stable-path remedy and its consumed authority are complete.
 
 ## Changelog
 
+- `2026-08-30`: closed `.7.2.0`. **The gate was about to freeze on a stored list of one.** `governed_globs`
+  named `TOOLBOX.md` and nothing else, so flipping to `frozen` would have declared the map complete while the
+  book chapter — the surface instance 5 actually drifted on — sat outside it. Membership is now discovered by
+  scanning for claim tags and resolved through the live-document surface registry, and an undeclared surface
+  is an error rather than a silent omission, which is the property `.7.0` element 3 wanted and a glob list
+  cannot supply. Two exemptions, each with its reason, and the exemption is proven load-bearing by flipping a
+  surface to governed and watching the same value turn fatal. Two candidate rules were measured and rejected
+  rather than left unmentioned: lifecycle cannot separate `TOOLBOX.md` from the task tree, and the census's
+  own disposition would admit 85 dated verification rows. `.7.2.1` now owns the population, plus two TOOLBOX
+  sentences that no closed outcome fits as written.
 - `2026-08-30`: closed `.7.1a`. **The gate had a blind spot in the one thing it derives itself.** `.7.1`
   shipped a numeral grammar that excluded every `-` and `/` after a numeral — written to keep dates and
   identifiers out, and it does — and that also dropped every count closing a compound adjective or a ratio.

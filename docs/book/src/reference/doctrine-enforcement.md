@@ -102,6 +102,15 @@ live self-test count inside a paragraph this gate was written to watch. The rule
 identifiers actually take: only `-` followed by a digit is excluded, and a comma joins a numeral only when it
 separates exactly three digits, so `1,922` stays one value while `40, noticed` publishes `40`.
 
+Which surfaces are watched is decided the same way — by discovery, with omission treated as an error. The gate
+scans every tracked Markdown file for a claim tag and asks the live-document surface registry which surface
+owns it; a file whose surface has declared no disposition, or that no surface owns at all, fails the run.
+Authors write down what a *surface* is for, never which files belong to it, so a new annotated file joins the
+watched set by itself. Exemptions exist and must say why: sealed archive segments and dated engineering
+evidence are captures whose currentness is not asserted. And each exemption is proven to be doing work — the
+test suite flips an exempt surface to governed and requires the same value to become fatal, because a quiet
+green run is otherwise equally consistent with the file never having been found.
+
 `CORPUS-FRONTIER` exists because of a defect worth stating plainly. The corpus refresh program tracked its own
 remaining work as prose that each slice decremented by one, across twenty-two consecutive refreshes — and a
 decrement cannot detect an error at its base, so a document stopped being counted and nobody could see it. The

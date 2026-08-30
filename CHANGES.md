@@ -1,3 +1,32 @@
+### CLAIM-VERIFICATION-ADOPTION.7.2.0 — derive the governed scope, and fail closed on an undeclared surface
+
+- The gate was about to freeze on a stored list of one. governed_globs named TOOLBOX.md and nothing else, so
+  flipping phase to frozen would have declared the map complete while docs/book/src/reference/
+  doctrine-enforcement.md — the surface instance 5 actually drifted on — sat outside it entirely.
+- Membership is now DISCOVERED and omission is an ERROR. Every tracked Markdown file carrying a claim tag is
+  found by scanning and resolved to the live-document surface that owns it; a file whose surface declares no
+  disposition, or that no surface owns, fails the run in both phases. Only a surface's disposition is
+  authored, never its membership, so a new annotated file joins the map by itself. That is the property .7.0
+  element 3 wanted: a glob list fails open in the one direction that matters, because a file nobody listed is
+  a file nobody checks and nothing says so.
+- The classifier is derived from the producer, not from a description of it. Surface membership comes from
+  doctrine/live_document_size/surfaces.jsonl, bound by a source record so the scope cannot drift under a stale
+  identity, and a disposition naming a surface that registry does not have is refused.
+- Two exemptions, each stating its reason: task_evidence, whose claim-annotated regions are verification-log
+  rows dated in their first column, and change_history_archive_segments, whose sealed segments are immutable
+  captures the rollover protocol forbids editing. An exemption without a reason is refused.
+- THE EXEMPTION IS PROVEN LOAD-BEARING, not incidental. A green run with an exempt value unreported is equally
+  consistent with that file never having been discovered, so the suite flips one surface from exempt to
+  governed and requires the very same value to become fatal.
+- Two candidate rules were measured and rejected with reasons rather than left unmentioned: live-document
+  lifecycle cannot separate TOOLBOX.md from the task tree (both partitioned_canonical), and the current-claim
+  census's own disposition marks task_evidence included, which would put 85 dated verification-log values in
+  scope and exceed the registry's record bound.
+- Self-test 25/25; --check green at 2 governed and 2 exempt claim-annotated files over 6 governed regions,
+  unlisted 23 -> 27 because the book chapter is now watched. .7.2.1 owns the population and the flip to
+  frozen, plus two TOOLBOX sentences that no closed outcome fits as written: an open-ended measurement window
+  and a live self-test count whose producer reports it only as prose.
+
 ### CLAIM-VERIFICATION-ADOPTION.7.1a — measure the coverage grammar's blind spot, then close it
 
 - The gate derives its own population, so its numeral grammar decides which published values EXIST. A value the

@@ -394,7 +394,12 @@ date fragment, and a comma joins a numeral only when it separates exactly three 
 (`CLAIM-VERIFICATION-ADOPTION.7.1a`). The drift leg was additionally observed RED on **real shipped
 prose** by revert-and-re-apply rather than on a fixture alone. The registry starts in `inventory` phase, where
 an unlisted value in a governed region is reported rather than fatal, and moves to `frozen` when its population
-is complete (`CLAIM-VERIFICATION-ADOPTION.7.2`).
+is complete (`CLAIM-VERIFICATION-ADOPTION.7.2.1`). Its scope is **fail-closed**: every tracked Markdown file
+carrying a claim tag is discovered by scanning and resolved to the live-document surface that owns it, and a
+file whose surface declares no disposition — or that no surface owns — is an error. Only a surface's
+disposition is authored, never its membership, and an exemption must state its reason; a glob list was replaced
+because it fails open in the one direction that matters, a file nobody listed being a file nobody checks
+(`CLAIM-VERIFICATION-ADOPTION.7.2.0`).
 
 `PROJECT-DATA-LOCALITY` composes three focused shell cases with resulting-tree checks. It proves the
 tracked temp root exists before Cargo starts, all canonical scripts establish the common environment,

@@ -76,10 +76,10 @@ if ($mode eq 'produce') {
 } else {
     my $s = $result->{summary};
     printf STDERR "%s: %d assertion(s) — %d derived, %d gated, %d authored, %d dated — over %d governed "
-        . "region(s) in '%s' phase with %d unlisted value(s).\n",
+        . "region(s) in %d governed and %d exempt claim-annotated file(s), '%s' phase, %d unlisted value(s).\n",
         $LABEL, $s->{assertions}, $s->{outcomes}{derived}, $s->{outcomes}{gated},
-        $s->{outcomes}{authored}, $s->{outcomes}{dated}, $s->{governed_regions}, $s->{phase},
-        $s->{unlisted};
+        $s->{outcomes}{authored}, $s->{outcomes}{dated}, $s->{governed_regions},
+        $s->{governed_files}, $s->{exempt_files}, $s->{phase}, $s->{unlisted};
 }
 exit 0;
 
@@ -101,20 +101,33 @@ sub validate_registry {
 
     reject_unknown($meta, "$LABEL registry record", \@errors,
         qw(record_type schema_version phase max_records max_bytes max_record_bytes max_array_items
-           max_scalar_bytes governed_globs));
+           max_scalar_bytes));
     exact_scalar($meta->{record_type}, 'registry', "$LABEL registry record_type", \@errors);
     exact_scalar($meta->{schema_version}, 1, "$LABEL registry schema_version", \@errors);
     my $phase = $meta->{phase} // '';
     push @errors, "$LABEL registry phase must be 'inventory' or 'frozen'"
         if $phase ne 'inventory' && $phase ne 'frozen';
-    my $globs = scalar_array($meta->{governed_globs}, "$LABEL registry governed_globs", \@errors);
-    push @errors, "$LABEL registry governed_globs must list at least one pattern" if !@$globs;
 
     my $tracked = tracked_paths($base, \@errors);
 
-    my (@assertions, %by_id, %by_field);
+    my (@assertions, %by_id, %by_field, %disposition, %reason, $surface_source);
     for my $rec (@$records) {
         my $type = $rec->{record_type} // '';
+        if ($type eq 'source') {
+            $surface_source = validate_surface_source($base, $rec, $tracked, \@errors);
+            next;
+        }
+        if ($type eq 'surface_disposition') {
+            my ($sid, $d, $why) = validate_disposition($rec, \@errors);
+            next if !defined $sid;
+            if (exists $disposition{$sid}) {
+                push @errors, "$LABEL surface_disposition '$sid' is declared twice";
+                next;
+            }
+            $disposition{$sid} = $d;
+            $reason{$sid} = $why;
+            next;
+        }
         if ($type ne 'assertion') {
             push @errors, "$LABEL record_type '$type' is unknown";
             next;
@@ -140,7 +153,25 @@ sub validate_registry {
             . join(' vs ', map { "'$_'" } sort keys %values);
     }
 
-    my ($regions, $unlisted) = governed_coverage($base, $globs, \@assertions, $tracked);
+    # The scope is FAIL-CLOSED, which is the property .7.0 element 3 actually wants and a glob list cannot
+    # give. Every tracked Markdown file carrying a claim tag is discovered by scanning, then resolved to the
+    # live-document surface that owns it; a file whose surface has no declared disposition — or that no
+    # surface claims at all — is an ERROR in both phases. So a new claim-annotated file joins the map by
+    # itself, and nothing can leave the map without someone writing down which surface it left through.
+    my $surfaces = load_surface_map($base, $surface_source, \@errors);
+    my ($claim_files, $unclassified) =
+        classify_claim_files($base, $tracked, $surfaces, \%disposition, \@errors);
+    push @errors, @$unclassified;
+    for my $sid (sort keys %disposition) {
+        push @errors, "$LABEL surface_disposition '$sid' names no surface in the live-document registry"
+            if $surfaces && !$surfaces->{by_id}{$sid};
+    }
+
+    my @governed_files = sort grep { ($disposition{$claim_files->{$_}} // '') eq 'governed' }
+        keys %$claim_files;
+    my @exempt_files = sort grep { ($disposition{$claim_files->{$_}} // '') eq 'exempt' } keys %$claim_files;
+
+    my ($regions, $unlisted) = governed_coverage($base, \@governed_files, \@assertions);
     if (@$unlisted) {
         my $msg = "$LABEL published value '%s' at %s:%d sits in a claim-annotated region that no assertion "
             . "record lists";
@@ -158,10 +189,117 @@ sub validate_registry {
             assertions => scalar(@assertions),
             outcomes => \%outcomes,
             governed_regions => scalar(@$regions),
+            governed_files => scalar(@governed_files),
+            exempt_files => scalar(@exempt_files),
             unlisted => scalar(@$unlisted),
             phase => $phase,
         },
     };
+}
+
+# The disposition of a SURFACE is authored; the membership of that surface is not. That is the whole
+# distinction: a commit cannot move the population by mentioning a producer, because files are discovered,
+# and it cannot quietly drop a surface either, because an undeclared one is fatal.
+sub validate_disposition {
+    my ($rec, $errors) = @_;
+    reject_unknown($rec, "$LABEL surface_disposition", $errors,
+        qw(record_type schema_version surface_id disposition reason));
+    exact_scalar($rec->{schema_version}, 1, "$LABEL surface_disposition schema_version", $errors);
+    # Surface ids are the live-document registry's own identifiers, which are snake_case; validating them
+    # against this checker's slug shape would reject every real surface, so the producer's form wins.
+    my $sid = required_scalar($rec, 'surface_id', "$LABEL surface_disposition", $errors);
+    if (defined($sid) && $sid !~ /\A[a-z0-9][a-z0-9_]*\z/) {
+        push @$errors, "$LABEL surface_disposition surface_id '$sid' is not a lowercase snake_case identifier";
+        return (undef);
+    }
+    return (undef) if !defined $sid;
+    my $d = required_scalar($rec, 'disposition', "$LABEL surface_disposition '$sid'", $errors) // '';
+    push @$errors, "$LABEL surface_disposition '$sid' disposition '$d' is not 'governed' or 'exempt'"
+        if $d ne 'governed' && $d ne 'exempt';
+    my $why = $rec->{reason};
+    if ($d eq 'exempt') {
+        # An exemption without a stated reason is how a population silently shrinks.
+        push @$errors, "$LABEL surface_disposition '$sid' is exempt and must state a reason"
+            if !defined($why) || ref($why) || $why !~ /\S/;
+    } elsif (defined $why) {
+        push @$errors, "$LABEL surface_disposition '$sid' is governed and must not state an exemption reason";
+    }
+    return ($sid, $d, $why);
+}
+
+sub validate_surface_source {
+    my ($base, $rec, $tracked, $errors) = @_;
+    reject_unknown($rec, "$LABEL source", $errors, qw(record_type schema_version source_id path sha256));
+    exact_scalar($rec->{schema_version}, 1, "$LABEL source schema_version", $errors);
+    exact_scalar($rec->{source_id}, 'surface_registry', "$LABEL source source_id", $errors);
+    my $path = required_scalar($rec, 'path', "$LABEL source", $errors);
+    return undef if !defined $path;
+    push @$errors, "$LABEL source path '$path' is not repository-tracked" if !$tracked->{$path};
+    my $abs = absolute($base, $path);
+    if (!-f $abs || -l $abs) {
+        push @$errors, "$LABEL source path '$path' is missing or not a regular file";
+        return undef;
+    }
+    my $want = $rec->{sha256};
+    if (!defined($want) || ref($want) || $want !~ /\A[0-9a-f]{64}\z/) {
+        push @$errors, "$LABEL source sha256 must be 64 lowercase hex characters";
+        return undef;
+    }
+    my $actual = sha256_hex(read_raw($abs, $errors, "$LABEL source"));
+    push @$errors, "$LABEL source '$path' is stale: SHA-256 $actual != $want" if $actual ne $want;
+    return $path;
+}
+
+# Membership is derived FROM THE PRODUCER — the live-document surface registry that already owns which
+# surface a path belongs to — never from a description of it (CLAIM_VERIFICATION.md §3 Leg 2).
+sub load_surface_map {
+    my ($base, $source_path, $errors) = @_;
+    if (!defined $source_path) {
+        push @$errors, "$LABEL contract must declare one 'surface_registry' source record";
+        return undef;
+    }
+    my $raw = read_raw(absolute($base, $source_path), $errors, "$LABEL surface registry");
+    my (%by_id, @rules);
+    for my $line (split /\n/, $raw) {
+        next if $line !~ /\S/;
+        my $rec = eval { JSON::PP->new->decode($line) };
+        if ($@ || ref($rec) ne 'HASH') {
+            push @$errors, "$LABEL surface registry has a line that is not one JSON object";
+            return undef;
+        }
+        my $sid = $rec->{surface_id};
+        next if !defined($sid) || ref($sid);
+        $by_id{$sid} = 1;
+        for my $target (@{$rec->{targets} || []}) {
+            next if ref($target);
+            push @rules, [$sid, glob_regex($target)];
+        }
+    }
+    return {by_id => \%by_id, rules => \@rules};
+}
+
+sub classify_claim_files {
+    my ($base, $tracked, $surfaces, $disposition, $errors) = @_;
+    my (%owner, @problems);
+    for my $rel (sort keys %$tracked) {
+        next if $rel !~ /\.md\z/;
+        my $abs = absolute($base, $rel);
+        next if !-f $abs || -l $abs;
+        my $raw = read_raw($abs, undef, $rel);
+        next if !defined($raw) || $raw !~ /\[claim:\s*[a-z0-9][a-z0-9-]*\s*\]/;
+        my @owners = $surfaces ? (grep { $rel =~ $_->[1] } @{$surfaces->{rules}}) : ();
+        if (!@owners) {
+            push @problems, "$LABEL claim-annotated file '$rel' belongs to no live-document surface, so its "
+                . "disposition cannot be decided";
+            next;
+        }
+        my $sid = $owners[0][0];
+        $owner{$rel} = $sid;
+        push @problems, "$LABEL claim-annotated file '$rel' belongs to surface '$sid', which declares no "
+            . "disposition"
+            if !exists $disposition->{$sid};
+    }
+    return (\%owner, \@problems);
 }
 
 sub validate_assertion {
@@ -313,8 +451,7 @@ sub validate_assertion {
 # the set, so a carried member list is wrong at the moment it lands.
 
 sub governed_coverage {
-    my ($base, $globs, $assertions, $tracked) = @_;
-    my @patterns = map { glob_regex($_) } @$globs;
+    my ($base, $files, $assertions) = @_;
     my %listed;
     for my $a (@$assertions) {
         my $start = $a->{region}{start_line} // 0;
@@ -324,9 +461,7 @@ sub governed_coverage {
         }
     }
     my (@regions, @unlisted);
-    for my $rel (sort keys %$tracked) {
-        next if $rel !~ /\.md\z/;
-        next if !grep { $rel =~ $_ } @patterns;
+    for my $rel (@$files) {
         my $abs = absolute($base, $rel);
         next if !-f $abs || -l $abs;
         my @lines = split /\n/, read_raw($abs, [], $rel), -1;
@@ -695,6 +830,9 @@ sub run_self_test {
         . "\nPunctuated 40, plus 1,922 and 922 today. [claim: fixture-claim]\n";
     write_raw(absolute($fixture, 'surface.md'), $doc);
     write_raw(absolute($fixture, 'other.md'), "Elsewhere the census reports 8 units. [claim: fixture-claim]\n");
+    # A claim-annotated file on an EXEMPT surface. Its 4321 must never be reported, and the moment its
+    # surface loses its declared disposition the run must fail rather than quietly stop scanning it.
+    write_raw(absolute($fixture, 'archive.md'), "Sealed on 2026-01-01: 4321 units. [claim: fixture-claim]\n");
 
     command_ok($fixture, ['git', 'init', '-q']);
     command_ok($fixture, ['git', 'config', 'user.email', 'assertions-self-test@example.invalid']);
@@ -713,8 +851,26 @@ sub run_self_test {
     my @control_lines = split_lines(read_raw(absolute($fixture, 'scripts/control.pl'), [], 'control'));
 
     my $meta = {record_type => 'registry', schema_version => 1, phase => 'frozen',
-        max_records => 32, max_bytes => 32_768, max_record_bytes => 4_096,
-        max_array_items => 8, max_scalar_bytes => 512, governed_globs => ['*.md']};
+        max_records => 64, max_bytes => 32_768, max_record_bytes => 4_096,
+        max_array_items => 8, max_scalar_bytes => 512};
+    # The scope is resolved through the live-document surface registry, so the fixture carries one.
+    my $surface_rel = 'doctrine/live_document_size/surfaces.jsonl';
+    my $surface_body = join('', map { JSON::PP->new->canonical(1)->encode($_) . "\n" }
+        ({surface_id => 'fixture_governed', targets => ['surface.md', 'other.md']},
+         {surface_id => 'fixture_exempt', targets => ['archive.md']}));
+    write_raw(absolute($fixture, $surface_rel), $surface_body);
+    command_ok($fixture, ['git', 'add', '-A']);
+    command_ok($fixture, ['git', 'commit', '-q', '-m', 'FIXTURE.1 — surface registry']);
+    my $surface_source = sub {
+        return {record_type => 'source', schema_version => 1, source_id => 'surface_registry',
+            path => $surface_rel,
+            sha256 => sha256_hex(read_raw(absolute($fixture, $surface_rel), [], 'surfaces'))};
+    };
+    my $gov_disp = {record_type => 'surface_disposition', schema_version => 1,
+        surface_id => 'fixture_governed', disposition => 'governed'};
+    my $exempt_disp = {record_type => 'surface_disposition', schema_version => 1,
+        surface_id => 'fixture_exempt', disposition => 'exempt',
+        reason => 'Sealed dated evidence capture whose currentness is not asserted.'};
 
     my $derived = {record_type => 'assertion', schema_version => 1, assertion_id => 'units-derived',
         path => 'surface.md', region => $region->(3), value => '8', outcome => 'derived',
@@ -747,7 +903,13 @@ sub run_self_test {
     my $abs_contract = absolute($fixture, $contract);
     my $write = sub {
         my (@records) = @_;
-        write_jsonl($abs_contract, [clone($meta), map { clone($_) } @records]);
+        write_jsonl($abs_contract,
+            [clone($meta), $surface_source->(), clone($gov_disp), clone($exempt_disp),
+             map { clone($_) } @records]);
+    };
+    my $write_scope = sub {
+        my ($scope, @records) = @_;
+        write_jsonl($abs_contract, [clone($meta), @$scope, map { clone($_) } @records]);
     };
     my $run = sub {
         return validate_registry(root => $fixture, contract_rel => $contract, execute => 1);
@@ -935,6 +1097,60 @@ sub run_self_test {
             $bad, $punct_thousands, $punct_bare);
     });
 
+    # 18 — a claim-annotated file whose surface declares no disposition. This is the property a glob list
+    # could not give: the map cannot shrink by omission, because omission is the error.
+    $case->('RED: claim-annotated file on a surface with no declared disposition', 1,
+        qr/declares no disposition/, sub {
+        $write_scope->([$surface_source->(), clone($gov_disp)], @base);
+    });
+
+    # 19 — a claim-annotated file that no surface claims at all. Its disposition cannot be decided, so it
+    # is an error rather than a silent pass; a file outside every surface is exactly what nobody notices.
+    $case->('RED: claim-annotated file owned by no live-document surface', 1,
+        qr/belongs to no live-document surface/, sub {
+        write_raw(absolute($fixture, 'orphan.md'), "An orphan publishes 77 units. [claim: fixture-claim]\n");
+        command_ok($fixture, ['git', 'add', 'orphan.md']);
+        $write->(@base);
+    });
+    unlink absolute($fixture, 'orphan.md');
+    command_ok($fixture, ['git', 'rm', '-q', '--cached', 'orphan.md']);
+
+    # 20 — an exemption with no stated reason. An exemption is how a population legitimately shrinks, so
+    # the reason is the only thing standing between that and shrinking it by preference.
+    $case->('RED: exempt surface without a stated reason', 1, qr/must state a reason/, sub {
+        my $bad = clone($exempt_disp);
+        delete $bad->{reason};
+        $write_scope->([$surface_source->(), clone($gov_disp), $bad], @base);
+    });
+
+    # 21 — a disposition naming a surface the live-document registry does not have. Without this a typo
+    # exempts nothing and governs nothing, and the run still passes.
+    $case->('RED: disposition names an unknown surface', 1, qr/names no surface in the live-document/, sub {
+        my $bad = clone($exempt_disp);
+        $bad->{surface_id} = 'fixture_typo';
+        $write_scope->([$surface_source->(), clone($gov_disp), clone($exempt_disp), $bad], @base);
+    });
+
+    # 22 — the surface registry moved without the contract being re-derived. The scope is derived FROM that
+    # registry, so its identity is a dependency of every classification this checker makes.
+    $case->('RED: surface registry moved under a stale source digest', 1, qr/source .* is stale/, sub {
+        my $stale = $surface_source->();
+        $stale->{sha256} = sha256_hex('not the surface registry');
+        $write_scope->([$stale, clone($gov_disp), clone($exempt_disp)], @base);
+    });
+
+    # 23 — the exemption is load-bearing, not incidental. The positive cases pass with archive.md's 4321
+    # unreported; flipping that one surface to `governed` must make the very same value fatal. Without this
+    # the green above would be equally consistent with the file never having been discovered at all, which
+    # is evidence consistent with both hypotheses and therefore no evidence (CLAIM_VERIFICATION.md §3 Leg 2).
+    $case->('RED: a value under an exemption is reported the moment that surface is governed', 1,
+        qr/published value '4321' at archive\.md:1 sits/, sub {
+        my $flip = clone($exempt_disp);
+        $flip->{disposition} = 'governed';
+        delete $flip->{reason};
+        $write_scope->([$surface_source->(), clone($gov_disp), $flip], @base);
+    });
+
     $case->('positive: restored contract is green again', 0, undef, sub { $write->(@base); });
 
     remove_tree($fixture);
@@ -950,7 +1166,8 @@ sub run_self_test {
     }
     printf STDERR "%s: self-test %d/%d positive, drift, wrong-field, unlisted, control, self-reference, "
         . "disagreement, enumeration, region, producer, outcome, duplicate, bound, compound-adjective, "
-        . "ratio, and absorbed-punctuation cases pass.\n",
+        . "ratio, absorbed-punctuation, undeclared-surface, orphan-file, reasonless-exemption, "
+        . "unknown-surface, stale-surface-source, and load-bearing-exemption cases pass.\n",
         $LABEL, $pass, scalar(@cases);
     exit 0;
 }

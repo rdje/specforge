@@ -120,6 +120,8 @@
   > how does the measurable corpus population grow
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > how does the no-re-ingest canonical promotion protocol stay in place
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how does the published-assertion gate decide which surfaces are watched
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how does the register reader recover a field name with no name column
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -295,5 +297,3 @@
   > how many Introducing CoreSight page paths are repository relative
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how many OpenCAPI AFU address note page paths are repository relative
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many OpenCAPI Certified Definition paths are repository relative

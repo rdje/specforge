@@ -13,11 +13,13 @@ answers:
   - "are mechanism or causal claims mechanically checked"
   - "which numerals in prose does the published-assertion gate treat as published values"
   - "why is a gate's own numeral grammar part of its contract"
+  - "how does the published-assertion gate decide which surfaces are watched"
+  - "why is a glob list not enough to scope a claim gate"
   - "how do I reverify the published-assertion gate"
 date: 2026-08-30
 status: current
 tags: [claim-verification, doctrine, currentness, producer, gate, task-tree]
-evidence: scripts/check_published_assertions.pl; doctrine/claim_verification/published_assertions.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.7.0, .7.1 and .7.1a); DOCTRINE_ENFORCEMENT.md (§10)
+evidence: scripts/check_published_assertions.pl; doctrine/claim_verification/published_assertions.jsonl; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.7.0, .7.1, .7.1a and .7.2.0); DOCTRINE_ENFORCEMENT.md (§10)
 reverify: perl scripts/check_published_assertions.pl --self-test && perl scripts/check_published_assertions.pl --check && perl scripts/check_published_assertions.pl --report
 ---
 
@@ -54,6 +56,15 @@ it checks, which is how an ownership grep reported three surfaces as unowned and
 predict the same observation. A record may carry `adjudicated_against` to name the prior ruling a mechanism was
 checked against — shape, not truth. Mechanisms remain a reviewer obligation under `CLAIM_VERIFICATION.md` §3
 Leg 2 and §8.
+
+The **scope is fail-closed**: the gate discovers every tracked Markdown file carrying a claim tag and resolves
+each to the live-document surface that owns it, and a file whose surface declares no disposition — or that no
+surface owns — is an error rather than a silent omission. Only a surface's disposition is authored; membership
+never is, so a new annotated file joins by itself. An exemption must state its reason, and the suite proves each
+exemption load-bearing by flipping the surface to `governed` and requiring the same value to turn fatal. Two
+candidate rules are recorded as tried and rejected: live-document `lifecycle` cannot separate `TOOLBOX.md` from
+the task tree, and the current-claim census's own disposition marks task evidence current, which would admit 85
+dated verification rows.
 
 The governed population is **derived on every run and never stored**, because a commit that annotates a region
 joins it; three commits in a row moved their own published population by describing it. A `[claim: <id>]` tag
