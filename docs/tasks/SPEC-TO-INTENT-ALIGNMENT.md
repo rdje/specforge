@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: extraction quality and breadth
 - Created: `2026-08-11`
-- Last updated: `2026-08-27`
+- Last updated: `2026-08-30`
 - Owner: project owner and repo-local workflow
 
 ## Goal
@@ -18,7 +18,7 @@ expressiveness as the bottleneck.
 
 ## Current Program State
 
-- Root children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`.
+- Root children: `.0`–`.9`; `.9`'s children are `.9a` (done) and `.9b`.
 - `.0` through `.5` are complete, including the `.4a`–`.4c` and `.5a`–`.5b` children.
 - `.6` is complete; its normalized children are `.6a`, `.6b`, `.6c`, and `.6d`, while former lane `.6e` is
   superseded by the later structural repair and clean population proof.
@@ -30,7 +30,7 @@ expressiveness as the bottleneck.
   coupling and published clean-revision held-out closure; `.f.iv.a` restored the structural carriers and
   `.f.iv.b` published their clean 12-source proof. `.f.iv` and final signoff `.f.v` are complete.
 - `.6e` is superseded by `.f.iv.a`/`.f.iv.b`; `.7` and children `.7a` through `.7c` are complete;
-  `.8` is complete with all four children `.8a`–`.8d` complete, and `.9` is pending.
+  `.8` is complete with all four children `.8a`–`.8d` complete; `.9` is active with `.9a` complete.
 
 ## Current Frontier
 
@@ -64,11 +64,13 @@ required-modality accounting 8/12, and provenance closure 45/45; conservation st
 physical-link as a supported reviewed category — exactly the whole-category closure `.8c`'s family selection was
 chosen to deliver. A control leg re-projecting the same replayed artifacts with the frozen pre-change builder
 reproduces 4/16 exactly, so the entire delta is attributable to the projection and no other reviewed metric
-moved. Four required-and-absent cells remain, all needing carriers for the still-unbuilt `non_contract_region`
-cause. The replay also surfaced one regression outside this program: reviewed cells are anchored on ordinal
-SourceIR element ids and ingest is not reproducible across time, so the Cortex-A76 anchor no longer resolves and
-exact source regions are 13/14; [`SOURCE-IR-REPRODUCIBILITY`](SOURCE-IR-REPRODUCIBILITY.md) owns it. `.9` is the
-next root child.
+moved. Four required-and-absent cells remain, and `SPEC-TO-INTENT-ALIGNMENT.9a` re-derived them rather than inheriting
+`.8`'s description: the 8/16 reproduces exactly, and two of `.8`'s statements about the remainder do not survive
+— `packed_page_table_entry` needs `no_canonical_carrier_for_captured_region`, and the reviewed dataset never
+checks the typed cause at all. What the four wait on is `.8c`'s structural rule generalised to prose and table regions, owned by `.9b`. The replay also surfaced one regression outside this program: reviewed cells are
+anchored on ordinal SourceIR element ids and ingest is not reproducible across time, so the Cortex-A76 anchor no
+longer resolves and exact source regions are 13/14;
+[`SOURCE-IR-REPRODUCIBILITY`](SOURCE-IR-REPRODUCIBILITY.md) owns it.
 
 ## Detailed task evidence
 
@@ -158,6 +160,7 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8c`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8d`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.9a`
 
 ## Verification Log
 

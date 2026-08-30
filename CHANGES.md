@@ -1,3 +1,29 @@
+### SPEC-TO-INTENT-ALIGNMENT.9a — re-derive the remaining residual population before building its carrier
+
+- First product-lane slice after a governance run: 28 consecutive commits had not touched crates/. This leaf
+  does not ship Rust either, but it is the design that .9b ships, and it exists because .8's description of the
+  remaining work does not survive re-derivation.
+- The published 8/16 reproduces exactly from current_result_snapshot.json. Eight cells carry an unmet
+  observation but only four are REQUIRED; the other four are canonical cells that promote every reviewed key
+  and require nothing. The four are informational_disclaimer, software_guidance, table_of_contents, and
+  packed_page_table_entry — four cells at two promoted stages is the eight unmet observations.
+- .8 RECORDED THAT ALL FOUR NEED THE non_contract_region CAUSE. That is wrong for packed_page_table_entry,
+  whose expected disposition is residual and whose oracle describes an intent-bearing packed bit-layout: it
+  needs no_canonical_carrier_for_captured_region. Building to the recorded cause name would have produced the
+  wrong carrier for that cell.
+- AND NO CELL IS WAITING ON THE CAUSE TAXONOMY AT ALL. The reviewed dataset never references "cause" (zero
+  occurrences); build_fixture.py projects only region_id/family/fact_key, source_ids, and the three
+  ACTIONABILITY_FIELDS. An observation is met by identity, provenance, and actionability.
+- So the buildable rule is .8c's, generalised by region kind rather than a second mechanism: one residual per
+  captured region no canonical record cites, asked of prose statements and table regions as well as figures.
+  project_captured_regions is gated on spec["region"][0] != "figure", which is the exact widening .9b needs.
+- Cause assignment is conservative and one cause stays unbuilt on purpose. no_canonical_carrier_for_captured_region
+  is the default because it asserts only what the structural test established. non_contract_region needs a
+  positive structural demonstration; a table of contents has one (every row is a title/page-number pair), prose
+  does not without a deontic grammar this project deliberately lacks, so it stays declared-unbuilt for prose.
+- Recorded and not claimed: table_of_contents and packed_page_table_entry also show empty
+  evidence_capture.matched_keys, a separate leg .9b must not claim it has moved.
+
 ### CLAIM-VERIFICATION-ADOPTION.7.2.1a — re-derive .7.2.1's findings and withdraw the three that do not hold
 
 - Asked a third time whether the findings held. This tree's answer has been "not entirely" every time

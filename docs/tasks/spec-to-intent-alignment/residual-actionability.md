@@ -300,6 +300,57 @@ matched-key path.
   the frozen contract, the mdBook contract and trajectory chapters, this part, the bounded root, the resume
   pointer, and the live status agree that the published ratio is `4/16` and that `.8c` is next.
 
+## Re-derived population and frozen carrier design (`SPEC-TO-INTENT-ALIGNMENT.9a`)
+
+`.8` recorded that the four remaining required-and-absent cells "need carriers for the `non_contract_region`
+cause". Re-derived from the pinned current result rather than restated, that premise is wrong for at least one
+cell and the design it implies is wrong for three.
+
+**The accounting re-derives exactly.** Eight cells carry an unmet observation, but only four are *required*:
+the other four are `canonical` cells that promote every reviewed key and therefore require nothing. The four
+required-and-absent cells are `informational_disclaimer` (prose, `non_applicable`), `software_guidance` (prose,
+`non_applicable`), `table_of_contents` (table, `non_applicable`), and `packed_page_table_entry` (table,
+**`residual`**). Four cells at two promoted stages is eight unmet observations; the four met cells contribute
+eight; 8 + 8 = the published 16. Reproduce with the per-cell `residual.semantic_actionable` /
+`residual.intent_actionable` fields of `current_result_snapshot.json`.
+
+**`packed_page_table_entry` is not a non-contract region.** Its reviewed oracle reads "the bit-layout is a
+packed page-table entry with address and NX/PAT/AVL/G/D/A/PCD/PWT/U-S/R-W/P fields, not a register named for
+one address slice", and its expected disposition is `residual`, not `non_applicable`. That region is captured
+and intent-bearing; what it lacks is a carrier family, which is the definition of
+`no_canonical_carrier_for_captured_region`, not of `non_contract_region` ("navigational, informational, or
+advisory and states no implementable obligation"). Building to the recorded cause name would have produced the
+wrong carrier for that cell.
+
+**The typed cause does not gate the metric.** The reviewed dataset never mentions `cause`: `build_fixture.py`
+projects `region_id`, `family`, `fact_key`, `source_ids` and exactly the three `ACTIONABILITY_FIELDS`, and
+`json.dumps(reviewed_dataset).count('"cause"')` is `0`. An observation is met by identity, nonempty
+provenance, and populated actionability — so the cause taxonomy is an honesty obligation to the frozen
+contract, not the thing the four cells are waiting on. This is why the design below does not need to classify
+prose meaning.
+
+**The buildable rule is `.8c`'s, generalised by region kind.** `.8c` emits one residual per captured *visual*
+region that no canonical record cites, and its authority is entirely structural — it asks only whether any
+canonical record cites the region, never what the region means. The same question is well-formed for the other
+two captured region kinds, so `.9` generalises the rule to prose statements and table regions rather than
+inventing a second mechanism. `project_captured_regions` is correspondingly gated on
+`spec["region"][0] != "figure"` today and must widen with it.
+
+**Cause assignment is settled conservatively, and one cause stays unbuilt on purpose.**
+`no_canonical_carrier_for_captured_region` is the default, because it asserts exactly what the structural test
+established and nothing more. `non_contract_region` requires a *positive structural* demonstration that a
+region states no implementable obligation; for a table one exists — every row is a title/page-number pair,
+which is a table of contents by shape rather than by label — and for prose none exists without a deontic
+grammar this project deliberately does not have ("do not try to program a general reader of English"). So
+prose regions take the default cause and `non_contract_region` remains declared-unbuilt for prose, which the
+frozen contract's `existing_carrier: null` must continue to say honestly.
+
+**Two of the four also fail at capture, and that is a separate leg.** `table_of_contents` and
+`packed_page_table_entry` both show `evidence_capture.matched_keys == []`, because `capture_records` resolves a
+table region through `project_canonical`, which returns nothing for them. The residual carrier does not depend
+on that leg — a residual cites its own region and evidence identity — but the disposition dimension does, so
+`.9b` must not claim a capture move it has not made.
+
 ## Decisions
 
 - `2026-08-27`: treat the published 4/24 as a *declared* denominator, not a required one. The contract's
@@ -402,10 +453,16 @@ matched-key path.
 ## Open Questions
 
 - None for `.8`. The rule is frozen, the evaluator agrees with it, the bounded production carrier ships, and the
-  population replay has measured it at 8/16. The four remaining required-and-absent cells — two prose
-  non-contract regions, one table-of-contents region, and one packed programming structure — need carriers for
-  the `non_contract_region` cause, which no leaf owns yet and which the frozen contract still declares
-  unbuilt.
+  population replay has measured it at 8/16. (**`.9a` corrected this entry's second half.** It read that the
+  four remaining required-and-absent cells "need carriers for the `non_contract_region` cause". Re-derived,
+  `packed_page_table_entry` is an intent-bearing region with expected disposition `residual`, so it needs
+  `no_canonical_carrier_for_captured_region`; and because the reviewed dataset never checks `cause` at all, no
+  cell is waiting on that taxonomy. What the four are waiting on is a residual carrier for prose and table
+  regions. See the `.9a` section above.)
+- For `.9`: whether `non_contract_region` should ever be claimed for a prose region. `.9a` decided not,
+  because no structural predicate distinguishes advisory prose from normative prose without a deontic grammar,
+  and a cause asserted on a review label rather than on structure is exactly what the contract's authority rule
+  forbids. Revisit only if `NLP-SHALLOW-PARSE` supplies that grammar.
 
 ## Blockers
 
@@ -418,6 +475,7 @@ matched-key path.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-30` | `.9a` re-derived population and frozen design | the published 8/16 reproduces exactly from `current_result_snapshot.json`: eight cells carry an unmet observation but only four are required, the other four being `canonical` cells that promote every reviewed key, so four required cells at two promoted stages is the eight unmet observations and the four met cells supply the rest; the four are `informational_disclaimer`, `software_guidance`, `table_of_contents` and `packed_page_table_entry`; `.8`'s recorded cause assignment is wrong for the last of these, whose expected disposition is `residual` and whose oracle describes an intent-bearing packed bit-layout, so it needs `no_canonical_carrier_for_captured_region`; the reviewed dataset never references `cause` (`0` occurrences) and `build_fixture.py` projects only identity, `source_ids` and the three `ACTIONABILITY_FIELDS`, so no cell is blocked on the cause taxonomy; `project_captured_regions` is gated on `spec["region"][0] != "figure"`, which is the exact widening `.9b` needs; and `table_of_contents` and `packed_page_table_entry` additionally show empty `evidence_capture.matched_keys`, a separate leg `.9b` must not claim |
 | `2026-08-27` | `.8d` published population closure | all 12 reviewed sources and all 48 isolated stages replay from clean production at `483e525d` under unchanged reviewed authority; residual actionability moves 4/16 to 8/16, disposition 8/14 to 10/14, modality accounting 6/12 to 8/12, provenance 43/43 to 45/45, and `platform-system-ip` becomes the third supported category, while conservation stays 120/120, IntentIR stays 40/0/0, and fabrication and unexplained drops stay zero; a control leg re-projecting the same artifacts with the frozen pre-change builder reproduces 4/16 exactly, so exactly two cells moved and the whole delta is the projection's; the published result is the replay's own output byte for byte; the contract self-test is 28/28, the workspace suite is 470/168/1,369/4, Clippy is clean, all nine gate-tier doctrines pass, and 3,095 files / 1,158,476 KiB of population scratch plus 4,192 files / 1,903,200 KiB of diagnostic scratch are removed residue-free; the replay surfaced a reviewed-anchor regression (exact source regions 13/14) routed to `SOURCE-IR-REPRODUCIBILITY` |
 | `2026-08-27` | `.8c` captured-region carrier | the producer emits one typed residual per captured figure-kind region no canonical record cites; the reviewed CoreSight chain carries `picture_0001` / `visual_0008` / `no_canonical_carrier_for_captured_region` / `evidence_to_semantic_ir`; two pre-change chains compared field-by-field differ only in `captured_region_residuals` (I2S 20, I2C 103) at both SemanticIR and IntentIR; the registry is 170 rules over 50 SemanticIR and 50 IntentIR fields; four focused positive/refusal tests, the workspace suite, Clippy, all five genericity components, and the 24/24 contract self-test pass |
 | `2026-08-27` | `.8d` input supplied | all eight authorized external sources are located by exact SHA-256 in the sibling repository, copied to a repository-derived path on the same volume, and re-verified: eight of eight digests and byte counts match the reviewed lock, and the orchestrator's own map-path, absolute-path, basename, same-volume, and coverage predicates pass with zero missing and zero extra entries |

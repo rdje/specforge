@@ -449,6 +449,11 @@
       "origin": "structural",
       "part_id": "current-and-future",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.9"
+    },
+    {
+      "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9a",
+      "origin": "post_migration",
+      "part_id": "residual-actionability"
     }
   ],
   "marker_prefix": "spec-to-intent-task-source-region",
@@ -566,13 +571,13 @@
     {
       "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual actionability",
       "metrics": {
-        "bytes": 40355,
-        "line_bytes": 1099,
-        "lines": 444
+        "bytes": 46357,
+        "line_bytes": 1204,
+        "lines": 502
       },
       "part_id": "residual-actionability",
       "path": "docs/tasks/spec-to-intent-alignment/residual-actionability.md",
-      "sha256": "31ba07568250cd9e4b919fe4a147da790ac6900368944e7a95814010e34ea390",
+      "sha256": "b6cdf74fdfa9e2c0cce2436dee4254ce0232b626cbf2864f5d70d2a36f3f1388",
       "state": "active"
     },
     {

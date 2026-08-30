@@ -6,26 +6,28 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: none in flight; `CLAIM-VERIFICATION-ADOPTION.7` is closed. Open: `SOURCE-IR-REPRODUCIBILITY`
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.9` (`.9a` done, `.9b` next). Open: `SOURCE-IR-REPRODUCIBILITY`
   `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`;
-  `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `SPEC-TO-INTENT-ALIGNMENT.9`;
+  `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`/`.7`. The last ten are tracking-only.
-- Current state: `CLAIM-VERIFICATION-ADOPTION.7.2.1a` is closed — **`.7.2.1`'s findings were re-derived on a
-  third reading and three of five did not hold.** The sharpest is this tree's eleventh instance and it is
-  mine: `.7.2.1` published a commit count ending at `HEAD` inside the sentence explaining that an open-ended
-  window silently grows. Withdrawn on three surfaces, with the command replacing the count. A run-counter
-  figure and a share restated across two ledgers against a different budget were also withdrawn; the coverage
-  blind spot (19/16/2/1) and the `governed_globs` scope finding re-derive exactly. `.7` is closed **over two
-  governed files**, which is now stated wherever it is described.
-- Next action: `CLAIM-VERIFICATION-ADOPTION.13` is the finding this exposed and the natural next unit — a
-  published value on a surface carrying no `[claim: <id>]` tag is reached by no governed population, so the
-  assertion gate's population is gated on an author remembering to write a tag. Decide whether the population
-  extends from tag-bearing files to whole governed surfaces, or whether the bound is accepted explicitly.
-  It is **not** `.9` (that is the book census's noun vocabulary, a different producer). Otherwise:
-  `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`, or the `SOURCE-IR-REPRODUCIBILITY` lane
-  (`.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`), which is the largest untouched body of work and wants a full
-  roadmap and mdBook read first.
+- Current state: **pivoted to the product lane.** Measured first: 6 of the last 60 commits touched `crates/` and
+  28 consecutive commits had not, so governance had become the program rather than its foundation. Director's
+  rule now standing — governance only when it is required for product progress. `SPEC-TO-INTENT-ALIGNMENT.9a`
+  is closed: the remaining residual population is re-derived and `.8`'s description of it does not hold.
+  8/16 reproduces exactly; the four required cells are `informational_disclaimer`, `software_guidance`,
+  `table_of_contents`, `packed_page_table_entry`. `.8` said all four need `non_contract_region`; that is wrong
+  for the last (it is intent-bearing, disposition `residual`), and no cell is waiting on the cause taxonomy at
+  all because the reviewed dataset never checks `cause`.
+- Next action: `SPEC-TO-INTENT-ALIGNMENT.9b` — ship the carrier. Generalise `.8c`'s structural rule by region
+  kind (one residual per captured region no canonical record cites, for prose statements and table regions,
+  not only figures) in `crates/specforge/src/ir/semantic.rs`; widen `project_captured_regions` in
+  `crates/specforge/test_data/source_to_intent_vertical/build_fixture.py` past its `spec["region"][0] !=
+  "figure"` gate; keep `non_contract_region` declared-unbuilt for prose in
+  `doctrine/spec_to_intent/residual_actionability_contract.json`. Then replay the population with
+  `scripts/replay_source_to_intent_population.py` — the eight external sources are retained under
+  `.project-data/tmp/spec-to-intent-external-sources/`. Do not claim an evidence-capture move: two of the four
+  cells also have empty `evidence_capture.matched_keys`, which is a separate leg.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/
   `.12` (per-slice region re-pin is hand work with a silent-wrong-line hazard) / `.13`;
