@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > how are different health and ceiling file counts declared
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how are doctrines enforced in specforge
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
@@ -110,6 +112,8 @@
   > how do Continued from previous page fragments find their home
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I add a new enforced doctrine / doctrine check
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > how do I add a reviewed residual gold key
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -294,7 +298,3 @@
   > how does collapse_section_header_register_identity decide same-register vs different-register
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > how does converge report integrated scheduled and omitted production capabilities
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how does converge report per-document extraction quality after stabilization
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > how does de-fragmentation enable the recover-register-bits gate (b)

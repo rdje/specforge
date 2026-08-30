@@ -116,7 +116,7 @@
             "semantic_ir": {
               "actual_keys": [],
               "expected_keys": [
-                "elem_00017|informational_non_contract"
+                "elem_00017|informational_disclaimer"
               ],
               "matched_keys": [],
               "actual_total": 0,
@@ -131,7 +131,7 @@
             "intent_ir": {
               "actual_keys": [],
               "expected_keys": [
-                "elem_00017|informational_non_contract"
+                "elem_00017|informational_disclaimer"
               ],
               "matched_keys": [],
               "actual_total": 0,
@@ -522,7 +522,7 @@
             "semantic_ir": {
               "actual_keys": [],
               "expected_keys": [
-                "table_0004|toc_non_contract"
+                "table_0004|table_of_contents"
               ],
               "matched_keys": [],
               "actual_total": 0,
@@ -537,7 +537,7 @@
             "intent_ir": {
               "actual_keys": [],
               "expected_keys": [
-                "table_0004|toc_non_contract"
+                "table_0004|table_of_contents"
               ],
               "matched_keys": [],
               "actual_total": 0,

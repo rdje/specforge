@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > was the repaired reviewed population published
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > was the warning-safe rolling ledger transaction independently audited from a clean clone
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > were DL and TL diagram labels signal declarations
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > were TL and DL diagram labels signal declarations
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > were the 100 stale CoreSight Base System signals authoritative
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
@@ -139,6 +147,8 @@
   > what debug/diagnostic tools does specforge have (TOOLBOX.md)
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what determines the fact_key of a projected captured-region residual
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -249,6 +259,8 @@
   > what does SpecForge take from the spec-mining literature and what does it leave out
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what does a fast category recognizer need beyond surface counts (wire-relation shape, front-matter/self-declared type, topology cue)
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what does a review label in a gold key cost
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > what does byte_offset mean on a message field record when bit_range is None
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
@@ -285,15 +297,3 @@
   > what does resolve_indexed_signal_family do
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what does scripts/check_chain_currency.sh check
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does signal_table_covered_by_inventory do
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > what does source_literal mean in the active task evidence contract
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what does synthesize_signal_declarations do when the body is rotated
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > what does the PUBLISHED-ASSERTIONS doctrine prove
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked

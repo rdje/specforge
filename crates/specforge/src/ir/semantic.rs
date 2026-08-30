@@ -12964,26 +12964,25 @@ mod tests {
                 supporting_table_ids: vec!["table_1002".to_string()],
                 automation_confidence: AutomationConfidence::Medium,
             });
-        semantic_ir
-            .signal_polarity_conflicts
-            .push(crate::ir::evidence::SignalPolarityConflictRecord {
-            conflict_id: "polarity_conflict_0001".to_string(),
-            signal_name: "S".to_string(),
-            observations: vec![crate::ir::evidence::SignalPolarityObservationRecord {
+        semantic_ir.signal_polarity_conflicts.push(
+            crate::ir::evidence::SignalPolarityConflictRecord {
+                conflict_id: "polarity_conflict_0001".to_string(),
+                signal_name: "S".to_string(),
+                observations: vec![crate::ir::evidence::SignalPolarityObservationRecord {
                 polarity: SignalPolarity::ActiveLow,
                 source_kind:
                     crate::ir::evidence::SignalPolarityEvidenceSourceKind::SignalDescriptionTable,
                 supporting_statement_ids: Vec::new(),
                 supporting_table_ids: vec!["table_1003".to_string()],
             }],
-            automation_confidence: AutomationConfidence::Medium,
-        });
-        semantic_ir
-            .signal_semantic_conflicts
-            .push(crate::ir::evidence::SignalSemanticConflictRecord {
-            conflict_id: "semantic_conflict_0001".to_string(),
-            signal_name: "S".to_string(),
-            observations: vec![
+                automation_confidence: AutomationConfidence::Medium,
+            },
+        );
+        semantic_ir.signal_semantic_conflicts.push(
+            crate::ir::evidence::SignalSemanticConflictRecord {
+                conflict_id: "semantic_conflict_0001".to_string(),
+                signal_name: "S".to_string(),
+                observations: vec![
                 crate::ir::evidence::SignalSemanticConflictObservationRecord {
                     semantic_tags: Vec::new(),
                     source_kind:
@@ -12994,8 +12993,9 @@ mod tests {
                     supporting_visual_evidence_ids: Vec::new(),
                 },
             ],
-            automation_confidence: AutomationConfidence::Medium,
-        });
+                automation_confidence: AutomationConfidence::Medium,
+            },
+        );
         semantic_ir.interfaces.push(super::InterfaceRecord {
             interface_id: "if_0001".to_string(),
             signals: vec!["S".to_string()],

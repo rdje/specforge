@@ -47,6 +47,18 @@ def canonical_table_cell(
 def residual_cell(
     family: str, residual_gold: list[str], oracle: str, scope: str
 ) -> dict:
+    """A cell whose reviewed disposition is answered by a residual rather than a canonical fact.
+
+    A gold key names a record some carrier must actually be able to emit. For a region-scoped
+    carrier the emitted key is a function of the region and the family alone -- see
+    `project_captured_regions` -- so the only satisfiable gold is `<region_id>|<family>`. A key
+    that instead spells out *why* the region carries no obligation states a review conclusion, and
+    no carrier can produce it without a review label reaching production; the cell would then be
+    unsatisfiable by construction and its unmet observation would measure the gold, not the
+    pipeline. The cause belongs to the record's own typed `cause`/`reason` fields, and the
+    disposition to `expected_disposition`, both of which the evaluator already scores separately.
+    `SPEC-TO-INTENT-ALIGNMENT.9e` normalised the two golds that had been written the other way.
+    """
     return {
         "family": family,
         "disposition": "residual",
@@ -309,7 +321,7 @@ DOCS = [
         "cells": [
             non_applicable_cell(
                 "table_of_contents",
-                ["table_0004|toc_non_contract"],
+                ["table_0004|table_of_contents"],
                 "All 20 rows are table-of-contents titles plus page numbers; none is a timing parameter or executable fact.",
                 "Complete review of all 20 TOC rows in SourceIR table_0004.",
             )
@@ -459,7 +471,7 @@ DOCS = [
         "cells": [
             non_applicable_cell(
                 "informational_disclaimer",
-                ["elem_00017|informational_non_contract"],
+                ["elem_00017|informational_disclaimer"],
                 "The region explicitly says the document is informational and disclaims normative obligation.",
                 "Complete review of the informational-only disclaimer in SourceIR elem_00017.",
             )

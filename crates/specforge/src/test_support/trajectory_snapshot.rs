@@ -53,9 +53,9 @@ const OBJECTIVE_CONTRACT_SHA256: &str =
 const CAPABILITY_OBSERVATION_SHA256: &str =
     "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e";
 const POPULATION_REPLAY_EVIDENCE_SHA256: &str =
-    "dfec4bd523960281a892b7e5d690680fe70da5e66d45a54672a96916cee2efc3";
+    "4978490a4af5e7ca5ccef9a3ecbd0c95fbf7cb0c33f0bbefcec9d90449389d5c";
 const REPLAY_VERTICAL_RESULT_SHA256: &str =
-    "74528e5087b4c6911932a947816c2615c7c7d57747daf1f5edb91025313b625d";
+    "3f5d3314d2fa9db51171f1bfea5ee9c9836b6bd4afc148a5f53eccfe23deb9ce";
 const REVIEWED_DATASET_SHA256: &str =
     "c743bcda27e4d08c322efc55ccf2f3465e9b53bb8339e83ee90c946e4ad39185";
 const POPULATION_REPLAY_ORCHESTRATOR_SHA256: &str =
@@ -785,7 +785,7 @@ fn validate_population_replay_evidence(
     if !replay.current_result.path.starts_with(&dataset_prefix)
         || replay.current_result.published_path != CURRENT_REPLAY_VERTICAL_RESULT_PATH
         || replay.current_result.sha256 != REPLAY_VERTICAL_RESULT_SHA256
-        || replay.current_result.byte_count != 103_394
+        || replay.current_result.byte_count != 103_392
     {
         problems.push("published current replay result identity is invalid".to_string());
     }

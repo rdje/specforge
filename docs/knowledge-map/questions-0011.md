@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what real PDF proves the FigureRegion vertical path
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what remains before the repaired reviewed population can be published
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > what remains under-extracted in OpenCAPI Discovery Configuration
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what replaced ProtocolFamily in CorpusMemory schema 7
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > what replaced the SWD-specific EvidenceIR carrier
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > what reports that the persisted corpus is out of seal
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what research did SpecForge leave out and why
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -282,19 +298,3 @@
   > where is the set of retained normalized bundles declared
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > where is the shared section-heading container-walk that .10f and .10g both use
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > where is the sole source to EvidenceIR canonical loss
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > where is the source-to-Intent vertical evaluation schema
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > where is the spawn+poll+kill memory guard in materialize_pdf
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > where is the structural gate that drops function-word-led and verb-led actor candidates
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > where is the tiling-gated register bit recovery implemented
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > where is the trailing function-word strip in consolidate_trailing_fragment
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > where is the upstream claim-verification source

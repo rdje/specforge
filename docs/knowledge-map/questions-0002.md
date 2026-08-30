@@ -88,6 +88,8 @@
   > can a declared semantic delta hide another undeclared change
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > can a reviewed gold key name the reason a region is not a contract
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > can a section-title shape alone license a signal declaration
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -295,5 +297,3 @@
   > does PhaseRecord remain schema compatible
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > does SemanticIR keep copyright and license text
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > does SemanticIR preserve SWD protocol provenance and order

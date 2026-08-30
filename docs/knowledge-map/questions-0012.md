@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > where is the shared section-heading container-walk that .10f and .10g both use
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > where is the sole source to EvidenceIR canonical loss
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > where is the source-to-Intent vertical evaluation schema
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > where is the spawn+poll+kill memory guard in materialize_pdf
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > where is the structural gate that drops function-word-led and verb-led actor candidates
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > where is the tiling-gated register bit recovery implemented
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > where is the trailing function-word strip in consolidate_trailing_fragment
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > where is the upstream claim-verification source
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > where is the weak-phrase / NASA ARM ambiguity detector
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
@@ -162,6 +178,8 @@
   > which reviewed categories are currently supported
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which reviewed category did the captured-region carrier close
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > which reviewed cells are region-scoped and which are fact-scoped
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which reviewed cells still need a typed actionable residual
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -279,21 +297,3 @@
   > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > why are the AHB gold negatives for statements 0561 and 0678 there
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the fired: behavioral features mostly empty in the clustering today
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why are there 82 retained phase records but 101 on a current rule replay
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > why are two containment records at the bottom of CHANGES
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why can CORPUS-COVERAGE not accept refresh 49 yet
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > why can SWD protocol records not be lowered directly to ISF
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > why can SWD score 100 percent while its protocol is absent downstream
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why can a canonical cell never satisfy its residual actionability observations

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does scripts/check_chain_currency.sh check
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does signal_table_covered_by_inventory do
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > what does source_literal mean in the active task evidence contract
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what does synthesize_signal_declarations do when the body is rotated
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what does the PUBLISHED-ASSERTIONS doctrine prove
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what does the active task evidence checker verify
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
@@ -266,6 +278,8 @@
   > what is recovered_trapped_data_rows and who shares it
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what is residual_gold_law
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what is scripts/check_doctrines.sh / the doctrine driver
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -282,18 +296,3 @@
   > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what is the .2m candidate (deterministic AXI-family channel-membership lever)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the .5.ii sentence-spine member-fragment predicate (a synthesized enum member_name is a prose fragment if any _-token is an English sentence-spine word — copula/aux/modal IS/ARE/BE/HAS/MUST/SHALL, article/demonstrative THE/THIS/THAT, relativizer/subordinator WHICH/WHEN/IF/BECAUSE — EXCLUDING the .1a collisions A/I/ITS/CAN/MAY/AM. Precision 1.000 (0/115 clean-anchor
-  > flagged), recall 1.000 (269/269 junk-anchor caught), 30.2% of members drop; universal grammar ADR-0006, no name list)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the .5.iii _WIDTH parameter-leak gate / is it landed / is it ADR-0006 safe (LANDED 2026-06-24: is_width_parameter_leak_member + a continue-skip in synthesize_encoding_declarations_for_enum after the .5.ii spine gate, known_signals threaded from the signal-match caller. Drops a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name
-  > — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. AXI manager.isf now (BRESP (OKAY 0)(EXOKAY 1)...) + (AWCMO (CLEAN_AND_INVALIDATE
-  > 0)(CLEAN_ONLY 1)); false RRESP/AXSNOOP/RCHUNK* _WIDTH enums gone; FSMGen --strict success/0; WIRE-BASED-100 1.000 before==after; kg-bench 156/156; run_ci GREEN lib 1718 +2)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is the 4th portable architecture (doctrine enforcement)
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what is the AXI signal naming convention (channel prefix)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what is the DOC-INTENT-TAXONOMY.1 corpus census
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge

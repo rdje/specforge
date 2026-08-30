@@ -180,7 +180,7 @@ remaining leaves as follows:
 2. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
 
 The metric recommendation is `.8`. Its four `.8a`–`.8d` children are complete: the remaining eight observations
-belong to four cells whose typed cause, `non_contract_region`, has no production carrier yet. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
+belong to four cells; `.9a` re-derived that they do not all wait on the unbuilt `non_contract_region` cause. Planned `.6e` is superseded because `.f.iv.a` supplied the structural repair
 and `.f.iv.b` supplied its whole-population proof. Final behavioral `.f.v` remains a release-signoff invariant.
 All task IDs exist in the task tree, the complete metric ordering remains in the report, and canonical recovery
 is closed.
@@ -394,9 +394,14 @@ carrier moved no reviewed metric and every difference belongs to the fixture pro
 Exactly two cells changed.
 
 The remaining eight observations belong to four cells — two prose non-contract regions, one table-of-contents
-region, and one packed programming structure. All four need a carrier for the typed cause
-`non_contract_region`, which the frozen contract still declares unbuilt. That is why the ratio is `8/16` and
-not higher: the rule refuses to credit an observation no production record explains.
+region, and one packed programming structure. `.8` recorded that all four wait on the typed cause
+`non_contract_region`; `.9a` re-derived that and it does not hold, so the ratio is `8/16` for a different
+reason: the reviewed dataset never mentions a cause at all, and what each cell needs is a residual for the
+region it anchors on, with the two prose cells waiting on `.9c`. `.9e` repaired a further obstacle — two of
+the four expected a gold key spelling out a review conclusion rather than the `<region_id>|<family>` key the
+region-scoped carrier can emit, so no correct carrier could ever have met them. That repair moved no published
+value, both cells being unmet before and after, but they are now satisfiable. The rule still refuses to credit
+an observation no production record explains.
 
 A published gap now has to be reproducible. The snapshot composer derives which package owns a test filter from
 the conformance crate's own module declarations and refuses to compose a gap whose reproduction command is not

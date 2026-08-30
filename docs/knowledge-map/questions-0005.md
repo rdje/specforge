@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > how does converge report per-document extraction quality after stabilization
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > how does de-fragmentation enable the recover-register-bits gate (b)
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -275,6 +279,8 @@
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how is the protocol initiator actor identified structurally without a name list
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > how is the published current result kept in agreement with the reviewed gold
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how is the purpose category different from document_class (richer 6-way semantic taxonomy vs coarse 4-way structural proxy; consumes document_class as one input, never replaces it)
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -291,9 +297,3 @@
   > how is workflow-standard file capacity derived
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how many AArch64 External Debug page sidecars are repository relative
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > how many CoreSight Base System page sidecars are repository relative
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how many Introducing CoreSight page paths are repository relative

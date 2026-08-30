@@ -567,13 +567,13 @@
     {
       "heading": "# SPEC-TO-INTENT-ALIGNMENT — behavioral qualification",
       "metrics": {
-        "bytes": 53600,
+        "bytes": 53893,
         "line_bytes": 439,
-        "lines": 536
+        "lines": 540
       },
       "part_id": "behavioral-qualification",
       "path": "docs/tasks/spec-to-intent-alignment/behavioral-qualification.md",
-      "sha256": "0d7415ca6188ef0827b554bf1e180ce4fd1a7bcc76b17dc6a389c616ec67c54b",
+      "sha256": "025ec0c8995069dabd52cd8344e6131467b82eb506703e2d5d11011a1ea3a96a",
       "state": "active"
     },
     {
@@ -615,13 +615,13 @@
     {
       "heading": "# SPEC-TO-INTENT-ALIGNMENT — region-kind generalisation",
       "metrics": {
-        "bytes": 32549,
+        "bytes": 40860,
         "line_bytes": 127,
-        "lines": 381
+        "lines": 476
       },
       "part_id": "region-kind-generalisation",
       "path": "docs/tasks/spec-to-intent-alignment/region-kind-generalisation.md",
-      "sha256": "34d5b664a4a006f12932a510c371f69e58be1e546d61b49ece7badd44f4f492e",
+      "sha256": "381ca1959dffad74f8fe30c7ff1098b98bd32fc50d382e56fd4a6a6311bf085e",
       "state": "active"
     }
   ],

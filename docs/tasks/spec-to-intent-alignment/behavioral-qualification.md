@@ -482,6 +482,10 @@ preflight unmeasurables, zero failures, and zero invalid attempts. `.f.iv` now o
 
 ## Verification Log
 
+This part is the sole verification record for every `.6d.ii.f*` unit. `SPEC-TO-INTENT-ALIGNMENT.9e`
+rolled the bounded root's eleven summary rows for this lane out at the `.9` task boundary after checking
+that every distinctive figure, digest, and revision they carried already appears here.
+
 | Date | Unit | Result |
 | --- | --- | --- |
 | `2026-08-14` | `.f` activation | 66 owners/routes; 44/44 active-task and 84/84 live-size cases; trajectory owner lookup; 220 cards; 236 facts / 1,817 keys; mdBook and cleanup pass |

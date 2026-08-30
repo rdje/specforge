@@ -311,6 +311,14 @@ See [Trajectory And Automatic Steering](quality/trajectory.md) for the composed 
 Neither result means every unreviewed region has the same rates, and neither claims the retrospective population
 was historically unseen. Both establish a reproducible baseline and a first-failing-stage direction without
 extractor tuning. Two limits are current and published rather than implied: the remaining eight required
-residual observations need a carrier for the `non_contract_region` cause that production has not built, and one
+residual observations belong to four cells that still reach no captured-region residual at all, and one
 reviewed source region no longer resolves because reviewed cells are anchored on ordinal `SourceIR` element ids
 while ingest is not reproducible across time, which is why exact source-region capture reads 13/14.
+
+A reviewed gold key is now checked against what a carrier could emit. The captured-region carrier is
+region-scoped: it emits at most one record per region and family and builds that record's key from those two
+values, so a reviewed cell pinning one region and one family can only be met by the key
+`<region_id>|<family>`. Two reviewed golds had instead been written as review conclusions and were therefore
+unsatisfiable by construction; `SPEC-TO-INTENT-ALIGNMENT.9e` normalised them without moving any published
+value, and the frozen contract's `residual_gold_law` now refuses a gold that is neither its own region law nor
+declared with the differently scoped carrier that owns it.

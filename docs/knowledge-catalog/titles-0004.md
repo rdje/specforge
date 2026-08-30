@@ -27,6 +27,7 @@
 | [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
 | [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md) | 2026-08-28 | `current` | Changing the reviewed fixture builder is a three-way lockstep, not a one-file edit |
 | [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md) | 2026-08-15 | `current` | Fresh reviewed replay carrier gaps are repaired and clean publication is complete |
+| [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md) | 2026-08-31 | `current` | A reviewed residual gold key must be one a carrier can emit, and the captured-region carrier's key is <region… |
 | [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md) | 2026-08-08 | `current` | The roadmap has a bounded current view and exact history capsule |
 | [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md) | 2026-08-08 | `current` | The four root rolling ledgers use three explicit whole-record grammars |
 | [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md) | 2026-08-08 | `current` | Root user and architecture documents are bounded pointers to mdBook product contracts |
@@ -60,4 +61,3 @@
 | [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md) | 2026-06-07 | `current` | SWD protocol derivation is scored 100% across frame, operation, state, and interface-edge timing tasks |
 | [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md) | 2026-06-07 | `current` | SWD's intent = its packet protocol + line state machine on SWDIO (read from spec Chapter B4) |
 | [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md) | 2026-08-09 | `superseded` | Convergence snapshots retain and count the exact four SWD protocol collections |
-| [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md) | 2026-06-07 | `current` | The SWD/JTAG protocol FSM is a typed surface (ProtocolStateRecord) — states extracted from "<State> state"… |

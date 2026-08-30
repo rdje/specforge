@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > how many CoreSight Base System page sidecars are repository relative
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how many Introducing CoreSight page paths are repository relative
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how many OpenCAPI AFU address note page paths are repository relative
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -292,9 +298,3 @@
   > is SpecForge converging diverging stalled mixed or unmeasurable
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > is SpecForge specification mining
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > is SpecForge still allowed to read chipdoc from the boot volume
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > is SpecForge's constraint extraction over-generating

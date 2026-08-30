@@ -1,3 +1,50 @@
+### SPEC-TO-INTENT-ALIGNMENT.9e — normalise the two reviewed golds no carrier can emit
+
+- THE DEFECT IS THAT THE CELL COULD NEVER BE MET, not that the label was ugly. project_captured_regions builds
+  a projected captured-region residual as fact(region_id, cell["family"], f'{region_id}|{cell["family"]}', ...),
+  so BOTH the /family a residual query matches on and the /fact_key it keys on come from the reviewed cell
+  itself. For a cell whose residual query pins one region and one family the key is therefore already
+  determined by the predicates, and a gold naming anything else is unsatisfiable BY CONSTRUCTION. That is the
+  redundancy the acceptance demanded be shown before normalising, derived from the producer rather than argued.
+- THE COST IS CONCRETE. .9c could ship a perfect prose carrier and still not close informational_disclaimer. And
+  once .9b's table carrier reaches table_0004 the projection emits table_0004|table_of_contents against a gold
+  of table_0004|toc_non_contract — a false positive AND a false negative, worse than the unmet cell it replaces.
+- NOTHING IS LOST. The disposition is pinned by expected_disposition and the cause by the record's own typed
+  cause/reason fields, both scored separately. .9a had already ruled non_contract_region must stay
+  declared-unbuilt for prose, so a gold demanding a non_contract label demands exactly the thing that ruling
+  forbids, and would need a review label to reach production to be satisfiable.
+- METRIC-NEUTRALITY IS EXECUTED, NOT ASSERTED. The evaluator run on the repaired dataset reproduces
+  result_snapshot.json BYTE-EXACTLY, and a leaf-by-leaf comparison against the pre-change file gives an
+  identical leaf-path set with exactly four differing leaves — all four the echoed gold string, none of them
+  non-string, both published global blocks byte-identical. 8/16 does not move; both cells are unmet before and
+  after. What changed is that they are now SATISFIABLE.
+- TWO CONTROLS SEPARATE THE COMPETING HYPOTHESIS that the key carried discriminating power. An arbitrary THIRD
+  key on the same two cells is equally inert — the byte-exact test still passes — while moving only the gold of
+  a key that IS matched turns the same test RED. So inertness is a property of these two empty-actual cells,
+  not of a blind evaluator. A FIRST ATTEMPT AT THAT RED CONTROL WENT GREEN because it substituted in the dataset
+  AND the result, moving the record together with the gold; it is recorded as this slice's own instance of
+  CLAIM_VERIFICATION.md §2 — a control that shares a parent with the thing it checks carries no information.
+- THE PUBLISHED RESULT IS RE-SUMMARIZED IN PLACE under the mechanism .8b established, not re-stamped:
+  current_result keeps the as-replayed digest in replay_sha256 with resummarized_by naming .9e, and the
+  published sha256/byte_count describe the published file. The review-locked gold and the published gold stay
+  ONE value rather than two synchronized copies.
+- THE REPAIR IS A GATE, NOT A CORRECTED LITERAL. residual_gold_law refuses any required reviewed gold that is
+  neither its own region law nor declared with a differently scoped production carrier and that carrier's exact
+  keys, and requires the published result's gold to equal the dataset's. Attributed by revert-and-re-apply: at
+  the pre-change revision it reports RED and NAMES both defective cells; re-applying returns it green.
+  Self-test 38/38, up from 28. It still permits a declared fact-scoped entry naming a real carrier that could
+  not in fact emit its keys — that carrier's key law is pinned, not re-derived, and the contract says so.
+- SEPARATELY: .9b's PUBLISHED "clean fmt" CLAIM WAS FALSE. cargo fmt --all --check fails at 0a703cc0 and passes
+  at its parent 2a5a0526, attributed by running the real check in a git worktree at each revision rather than
+  by reading a diff. Full CI has therefore been red for three commits, which the ordinary-commit CI policy is
+  exactly designed to trade away. Withdrawn in place in .9b's record and repaired here; the repair is identical
+  modulo whitespace and rustfmt trailing commas.
+- CONTAINMENT: the bounded root reached mandatory rollover at 90.3% and was rolled at the .9 task boundary —
+  eleven closed-lane .6d.ii.f verification rows removed after checking that every distinctive figure, digest,
+  and revision they carried already appears in the behavioral-qualification part, which holds a more detailed
+  row for each of those units. Root is 79.8% of its byte target. The active task index is still 115 of 128
+  lines, so the next NEW leaf must roll it first.
+
 ### SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the carried-forward findings and withdraw the two that do not hold
 
 - The owner asked whether the statements .9b and .9d handed forward still stood. Re-deriving them instead of

@@ -68,7 +68,7 @@
     "no_fabrication_rule": "a residual records that a captured region did not reach a canonical carrier and never asserts a canonical value in its place"
   },
   "witness": {
-    "current_result_sha256": "74528e5087b4c6911932a947816c2615c7c7d57747daf1f5edb91025313b625d",
+    "current_result_sha256": "3f5d3314d2fa9db51171f1bfea5ee9c9836b6bd4afc148a5f53eccfe23deb9ce",
     "declared_cells": 12,
     "declared_observations": 24,
     "actionable_observations": 8,
@@ -211,7 +211,7 @@
         "modality": "prose",
         "expected_disposition": "non_applicable",
         "reviewed_residual_keys": [
-          "elem_00017|informational_non_contract"
+          "elem_00017|informational_disclaimer"
         ],
         "hard_failures": [
           "required_residual_missing_or_inactionable",
@@ -226,7 +226,7 @@
         "modality": "table",
         "expected_disposition": "non_applicable",
         "reviewed_residual_keys": [
-          "table_0004|toc_non_contract"
+          "table_0004|table_of_contents"
         ],
         "hard_failures": [
           "required_modality_capture_failed",
@@ -820,5 +820,41 @@
       "reviewed canonical true positives, provenance closure, and fabrication counts do not regress",
       "the complete 12-source result and comparable trajectory snapshot are refreshed together"
     ]
+  },
+  "residual_gold_law": {
+    "law": "a reviewed gold key names a record some carrier must be able to emit; a key outside its owning carrier's key law is unsatisfiable by construction, so the cell's unmet observation measures the gold rather than the pipeline and the published ratio it feeds cannot be read as a capability",
+    "region_scoped_law": "a region-scoped carrier emits at most one record per region and family and derives that record's key from those two values alone, so the only satisfiable gold for a cell whose residual query pins exactly one region and one family is <region_id>|<family>",
+    "region_scoped_carrier": "CapturedRegionResidualRecord",
+    "required_disposition_values": [
+      "residual",
+      "non_applicable"
+    ],
+    "region_scoped_cells": [
+      "198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide__01_informational_disclaimer",
+      "1_0_1_2026_02_22_risc_v_iommu_architecture_specification__01_static_component_topology",
+      "1_0_2025_03_12_risc_v_advanced_interrupt_architecture__01_table_of_contents",
+      "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry",
+      "den0068_2018_07_23_coresight_base_system_architecture__01_static_component_topology",
+      "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance"
+    ],
+    "fact_scoped_cells": [
+      {
+        "cell_id": "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss",
+        "carrier": "TimingIntentDisposition::NonApplicable",
+        "keys": [
+          "IL(f)|max=21|unit=dB",
+          "ILD(f)|max=0.45|unit=dB_RMS"
+        ]
+      },
+      {
+        "cell_id": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss",
+        "carrier": "TimingIntentDisposition::NonApplicable",
+        "keys": [
+          "IL(f)|max=30|unit=dB"
+        ]
+      }
+    ],
+    "published_result_agreement": "the published current result echoes the gold it was scored against, so its residual expected_keys must equal the review-locked dataset's for every declaring cell at both promoted stages; the two are synchronized copies of one value and each can go stale alone",
+    "what_this_still_permits": "a declared fact-scoped entry naming a real carrier that could not in fact emit its keys: the carrier's own key law is not re-derived here, only pinned, so this refuses an undeclared or drifted gold and a review conclusion written as a key, not a wrong key inside a declared fact-scoped set"
   }
 }

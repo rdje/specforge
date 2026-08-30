@@ -35,6 +35,7 @@ EXPECTED_TOP_LEVEL = {
     "cases",
     "reproduction",
     "reconciliation",
+    "residual_gold_law",
 }
 EXPECTED_AUTHORITIES = {
     "reviewed_dataset",
@@ -161,6 +162,17 @@ EXPECTED_REPRODUCTION_FIELDS = {
     "control_tests",
     "published_authorities",
 }
+EXPECTED_GOLD_LAW_FIELDS = {
+    "law",
+    "region_scoped_law",
+    "region_scoped_carrier",
+    "required_disposition_values",
+    "region_scoped_cells",
+    "fact_scoped_cells",
+    "published_result_agreement",
+    "what_this_still_permits",
+}
+EXPECTED_FACT_SCOPED_FIELDS = {"cell_id", "carrier", "keys"}
 
 
 def read_json(path: Path) -> Any:
@@ -601,8 +613,175 @@ def validate_reconciliation(
         errors.append("publication invariants must remain complete")
 
 
+def region_scoped_gold_key(query: Any) -> str | None:
+    """The only key a region-scoped carrier could emit for this query's own predicate pair.
+
+    A region-scoped carrier emits at most one record per region and family and builds that record's
+    key from those two values alone, so a query that pins both has already determined the key its
+    gold may name. Returns `None` when the query pins anything else, because then this law says
+    nothing about the cell and the cell has to be governed by a differently scoped carrier.
+    """
+    if not isinstance(query, dict):
+        return None
+    pinned: dict[str, Any] = {}
+    for predicate in query.get("predicates", []):
+        if not isinstance(predicate, dict) or predicate.get("operator") != "equals":
+            return None
+        field = predicate.get("field")
+        if field in pinned:
+            return None
+        pinned[field] = predicate.get("value")
+    if set(pinned) != {"/region_id", "/family"}:
+        return None
+    region, family = pinned["/region_id"], pinned["/family"]
+    if not isinstance(region, str) or not isinstance(family, str):
+        return None
+    return f"{region}|{family}"
+
+
+def reviewed_residual_gold(report: dict[str, Any]) -> dict[tuple[str, str, str], list[str]]:
+    """Every residual gold key set a dataset or a scored report declares, by cell and stage."""
+    gold: dict[tuple[str, str, str], list[str]] = {}
+    for document in report.get("documents", []):
+        for cell in document.get("cells", []):
+            residual = cell.get("residual")
+            if not isinstance(residual, dict):
+                continue
+            for stage in EXPECTED_PROMOTED_STAGES:
+                query = residual.get(stage)
+                if isinstance(query, dict):
+                    gold[(document.get("document_key"), cell.get("cell_id"), stage)] = sorted(
+                        query.get("expected_keys", [])
+                    )
+    return gold
+
+
+def validate_published_gold_agreement(
+    dataset: dict[str, Any], current: dict[str, Any], errors: list[str]
+) -> None:
+    """The published result's reviewed gold must still be the review-locked gold.
+
+    A scored report echoes the gold it was scored against, so the review-locked dataset and the
+    published result hold synchronized copies of one value, and each can go stale on its own. This
+    compares them; it is the only control that observes a gold repair which reached one copy and
+    not the other. It says nothing about whether either copy is *right* — that is the key law
+    above — only that there is one of them.
+    """
+    reviewed, published = reviewed_residual_gold(dataset), reviewed_residual_gold(current)
+    if set(reviewed) != set(published):
+        errors.append(
+            "the published current result and the review-locked dataset declare different residual "
+            "cells"
+        )
+        return
+    stale = sorted(key for key in reviewed if reviewed[key] != published[key])
+    if stale:
+        errors.append(
+            "the published current result carries a reviewed gold the review-locked dataset no "
+            f"longer declares: {[f'{cell}@{stage}' for _, cell, stage in stale]}"
+        )
+
+
+def validate_residual_gold_law(
+    contract: dict[str, Any],
+    dataset: dict[str, Any],
+    current: dict[str, Any],
+    errors: list[str],
+) -> None:
+    """A reviewed gold key must name a record some carrier can actually emit.
+
+    A gold key outside its owning carrier's key law is unsatisfiable by construction: no correct
+    pipeline can meet the cell, so the cell's unmet observation measures the gold rather than the
+    pipeline, and the ratio it feeds cannot be read as a capability. Every required reviewed cell
+    must therefore either satisfy the region law derived from its own predicates, or be declared
+    here with the differently scoped carrier that owns it and the exact keys that carrier must
+    emit. SPEC-TO-INTENT-ALIGNMENT.9e added this after two golds had been written as review
+    conclusions ("this region is not a contract") that no carrier could produce without a review
+    label reaching production.
+    """
+    law = contract.get("residual_gold_law")
+    if not isinstance(law, dict) or set(law) != EXPECTED_GOLD_LAW_FIELDS:
+        errors.append("residual_gold_law fields differ from the closed schema")
+        return
+    for field in ("law", "region_scoped_law", "published_result_agreement", "what_this_still_permits"):
+        if not isinstance(law.get(field), str) or not law[field].strip():
+            errors.append(f"residual_gold_law.{field} must be a non-empty statement")
+    region_carrier = law.get("region_scoped_carrier")
+    if region_carrier not in CARRIER_DECLARATIONS:
+        errors.append("residual_gold_law.region_scoped_carrier must name a declared carrier")
+    dispositions = law.get("required_disposition_values")
+    if (
+        not isinstance(dispositions, list)
+        or not dispositions
+        or any(not isinstance(value, str) for value in dispositions)
+    ):
+        errors.append("residual_gold_law.required_disposition_values must be a non-empty name list")
+        return
+
+    following: list[str] = []
+    fact_scoped: dict[str, list[str]] = {}
+    for document in dataset.get("documents", []):
+        for cell in document.get("cells", []):
+            residual = cell.get("residual")
+            if not isinstance(residual, dict):
+                continue
+            if cell.get("expected_disposition") not in dispositions:
+                continue
+            cell_id = cell.get("cell_id")
+            derived = {region_scoped_gold_key(residual.get(stage)) for stage in EXPECTED_PROMOTED_STAGES}
+            declared = {
+                tuple(sorted(residual.get(stage, {}).get("expected_keys", [])))
+                for stage in EXPECTED_PROMOTED_STAGES
+            }
+            if len(derived) != 1 or len(declared) != 1:
+                errors.append(
+                    f"residual gold or predicates differ between promoted stages: {cell_id}"
+                )
+                continue
+            expected, gold = derived.pop(), list(declared.pop())
+            if expected is not None and gold == [expected]:
+                following.append(cell_id)
+            else:
+                fact_scoped[cell_id] = gold
+
+    declared_region = law.get("region_scoped_cells")
+    if not isinstance(declared_region, list) or sorted(declared_region) != sorted(following):
+        errors.append(
+            "residual_gold_law.region_scoped_cells must be exactly the required cells whose gold is "
+            f"their own <region_id>|<family>: {sorted(following)}"
+        )
+    declared_fact = law.get("fact_scoped_cells")
+    if not isinstance(declared_fact, list) or any(
+        not isinstance(entry, dict) or set(entry) != EXPECTED_FACT_SCOPED_FIELDS
+        for entry in declared_fact
+    ):
+        errors.append(
+            "residual_gold_law.fact_scoped_cells entries must declare cell_id, carrier and keys"
+        )
+        return
+    declared_by_id = {entry["cell_id"]: entry for entry in declared_fact}
+    if len(declared_by_id) != len(declared_fact) or sorted(declared_by_id) != sorted(fact_scoped):
+        errors.append(
+            "every required reviewed gold outside the region law must be declared once with the "
+            "carrier that owns it; undeclared or stale: "
+            f"{sorted(set(declared_by_id) ^ set(fact_scoped))}"
+        )
+    for cell_id, entry in declared_by_id.items():
+        if cell_id in fact_scoped and sorted(entry["keys"]) != fact_scoped[cell_id]:
+            errors.append(f"declared fact-scoped gold no longer matches the dataset: {cell_id}")
+        if entry["carrier"] not in CARRIER_DECLARATIONS:
+            errors.append(f"fact-scoped carrier is not a declared production carrier: {cell_id}")
+        elif entry["carrier"] == region_carrier:
+            errors.append(f"the region-scoped carrier cannot own a fact-scoped gold: {cell_id}")
+
+    validate_published_gold_agreement(dataset, current, errors)
+
+
 def validate_contract(
-    contract: dict[str, Any], current: dict[str, Any], retained: dict[str, Any]
+    contract: dict[str, Any],
+    current: dict[str, Any],
+    retained: dict[str, Any],
+    dataset: dict[str, Any],
 ) -> tuple[list[str], tuple[int, int, int]]:
     errors: list[str] = []
     if not isinstance(contract, dict) or set(contract) != EXPECTED_TOP_LEVEL:
@@ -627,21 +806,25 @@ def validate_contract(
     validate_witness(contract, current, errors)
     validate_reproduction(contract, errors)
     validate_reconciliation(contract, retained, errors)
+    validate_residual_gold_law(contract, dataset, current, errors)
     return errors, totals
 
 
-def load_authorities(contract: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+def load_authorities(
+    contract: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     authorities = contract["authorities"]
     return (
         read_json(Path(authorities["current_result"])),
         read_json(Path(authorities["retained_chains"])),
+        read_json(Path(authorities["reviewed_dataset"])),
     )
 
 
 def run_check() -> int:
     contract = read_json(CONTRACT_PATH)
-    current, retained = load_authorities(contract)
-    errors, (cases, required, met) = validate_contract(contract, current, retained)
+    current, retained, dataset = load_authorities(contract)
+    errors, (cases, required, met) = validate_contract(contract, current, retained, dataset)
     if errors:
         for error in errors:
             print(f"residual-actionability-contract: FAIL: {error}")
@@ -656,26 +839,36 @@ def run_check() -> int:
         f"{cases} rule cases derive {required} required / {met} met; "
         f"{len(contract['record_grammar']['typed_causes'])} typed causes; "
         f"{contract['reconciliation']['affected_chain_count']} affected chains / "
-        f"{contract['reconciliation']['reviewed_replay_attempts']} reviewed stage attempts: PASS"
+        f"{contract['reconciliation']['reviewed_replay_attempts']} reviewed stage attempts; "
+        f"{len(contract['residual_gold_law']['region_scoped_cells'])} region-law + "
+        f"{len(contract['residual_gold_law']['fact_scoped_cells'])} fact-scoped reviewed golds, "
+        "published gold in agreement: PASS"
     )
     return 0
 
 
 def run_self_test() -> int:
     contract = read_json(CONTRACT_PATH)
-    current, retained = load_authorities(contract)
-    baseline_errors, _ = validate_contract(contract, current, retained)
+    current, retained, dataset = load_authorities(contract)
+    baseline_errors, _ = validate_contract(contract, current, retained, dataset)
     if baseline_errors:
         for error in baseline_errors:
             print(f"residual-actionability-contract: FAIL baseline: {error}")
         return 1
 
-    mutations: list[tuple[str, dict[str, Any], dict[str, Any], dict[str, Any]]] = []
+    mutations: list[
+        tuple[str, dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]]
+    ] = []
 
     def mutate(name: str, apply) -> None:
         value = copy.deepcopy(contract)
         apply(value)
-        mutations.append((name, value, current, retained))
+        mutations.append((name, value, current, retained, dataset))
+
+    def mutate_dataset(name: str, apply) -> None:
+        value = copy.deepcopy(dataset)
+        apply(value)
+        mutations.append((name, contract, current, retained, value))
 
     def case_by_id(value: dict[str, Any], case_id: str) -> dict[str, Any]:
         return next(case for case in value["cases"] if case["case_id"] == case_id)
@@ -798,6 +991,73 @@ def run_self_test() -> int:
         "unbound-reproduction-control",
         lambda value: value["reproduction"]["control_tests"].append("tests::absent_control"),
     )
+    # The gold law. Its whole purpose is to refuse a reviewed key no carrier could emit, so the
+    # first case reinstates the exact defect SPEC-TO-INTENT-ALIGNMENT.9e repaired: a gold written as
+    # a review conclusion rather than as the key the cell's own predicates already determine.
+    def gold_cell(value: dict[str, Any], cell_id: str) -> dict[str, Any]:
+        return next(
+            cell
+            for document in value["documents"]
+            for cell in document["cells"]
+            if cell["cell_id"] == cell_id
+        )
+
+    TOC_CELL = "1_0_2025_03_12_risc_v_advanced_interrupt_architecture__01_table_of_contents"
+    ANALOG_CELL = "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss"
+
+    def set_gold(value: dict[str, Any], cell_id: str, keys: list[str]) -> None:
+        for stage in EXPECTED_PROMOTED_STAGES:
+            gold_cell(value, cell_id)["residual"][stage]["expected_keys"] = list(keys)
+
+    mutate_dataset(
+        "reinstated-unproducible-review-label",
+        lambda value: set_gold(value, TOC_CELL, ["table_0004|toc_non_contract"]),
+    )
+    mutate_dataset(
+        "region-gold-renamed-to-another-region",
+        lambda value: set_gold(value, TOC_CELL, ["table_0009|table_of_contents"]),
+    )
+    mutate_dataset(
+        "region-gold-widened-past-one-record",
+        lambda value: set_gold(
+            value, TOC_CELL, ["table_0004|table_of_contents", "table_0004|extra"]
+        ),
+    )
+    mutate_dataset(
+        "declared-fact-scoped-gold-drifted",
+        lambda value: set_gold(value, ANALOG_CELL, ["IL(f)|max=99|unit=dB"]),
+    )
+    mutate_dataset(
+        "gold-differs-between-promoted-stages",
+        lambda value: gold_cell(value, TOC_CELL)["residual"]["intent_ir"].update(
+            {"expected_keys": ["table_0004|other"]}
+        ),
+    )
+    # The published result echoes the gold it was scored against, so a repair that reaches the
+    # review-locked dataset and not the published copy has to be visible.
+    stale_current = copy.deepcopy(current)
+    set_gold(stale_current, TOC_CELL, ["table_0004|toc_non_contract"])
+    mutations.append(("published-gold-left-behind", contract, stale_current, retained, dataset))
+    mutate(
+        "region-law-cell-dropped-from-declaration",
+        lambda value: value["residual_gold_law"]["region_scoped_cells"].remove(TOC_CELL),
+    )
+    mutate(
+        "fact-scoped-cell-claims-the-region-carrier",
+        lambda value: value["residual_gold_law"]["fact_scoped_cells"][0].update(
+            {"carrier": value["residual_gold_law"]["region_scoped_carrier"]}
+        ),
+    )
+    mutate(
+        "fact-scoped-cell-claims-an-absent-carrier",
+        lambda value: value["residual_gold_law"]["fact_scoped_cells"][0].update(
+            {"carrier": "NeverShippedResidual"}
+        ),
+    )
+    mutate(
+        "gold-law-required-dispositions-emptied",
+        lambda value: value["residual_gold_law"].update({"required_disposition_values": []}),
+    )
     mutate("partial-chain-set", lambda value: value["reconciliation"].update({"affected_chain_count": 23}))
     mutate("partial-replay", lambda value: value["reconciliation"].update({"reviewed_replay_attempts": 47}))
 
@@ -810,7 +1070,7 @@ def run_self_test() -> int:
                 residual["intent_ir"]["false_negatives"] = 0
                 residual["semantic_actionable"] = True
                 residual["intent_actionable"] = True
-    mutations.append(("witness-no-longer-red", contract, mutated_current, retained))
+    mutations.append(("witness-no-longer-red", contract, mutated_current, retained, dataset))
 
     # A closed family may not leave a residual gap behind in its own category. Regress exactly one
     # of its reviewed cells and require the `closed` declaration to be refused.
@@ -835,12 +1095,16 @@ def run_self_test() -> int:
     if not regressed:
         print("residual-actionability-contract: FAIL self-test could not build the category-gap case")
         return 1
-    mutations.append(("closed-family-leaves-category-gap", contract, regressed_current, retained))
+    mutations.append(
+        ("closed-family-leaves-category-gap", contract, regressed_current, retained, dataset)
+    )
 
     failures = [
         name
-        for name, mutated_contract, mutated_current_result, mutated_retained in mutations
-        if not validate_contract(mutated_contract, mutated_current_result, mutated_retained)[0]
+        for name, mutated_contract, mutated_result, mutated_retained, mutated_dataset in mutations
+        if not validate_contract(
+            mutated_contract, mutated_result, mutated_retained, mutated_dataset
+        )[0]
     ]
     if failures:
         print(f"residual-actionability-contract: FAIL self-test accepted mutations: {failures}")
@@ -848,7 +1112,8 @@ def run_self_test() -> int:
     print(
         "residual-actionability-contract: self-test "
         f"{len(mutations)}/{len(mutations)} denominator, fail-closed, duplicate, actionability, "
-        "grammar, coverage, witness, family, reproduction, chain, and replay RED cases pass."
+        "grammar, coverage, witness, family, reproduction, chain, replay, and gold-law RED cases "
+        "pass."
     )
     return 0
 

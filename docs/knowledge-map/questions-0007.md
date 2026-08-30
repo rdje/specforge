@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > is SpecForge still allowed to read chipdoc from the boot volume
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -194,6 +200,8 @@
   > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > is the reviewed residual expected_keys redundant with its predicates
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > is the reviewed source-to-intent dataset historically unseen
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -290,11 +298,3 @@
   > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > was the fresh SWD 29 of 29 artifact promoted
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > was the repaired reviewed population published
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > was the warning-safe rolling ledger transaction independently audited from a clean clone
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > were DL and TL diagram labels signal declarations
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > were TL and DL diagram labels signal declarations

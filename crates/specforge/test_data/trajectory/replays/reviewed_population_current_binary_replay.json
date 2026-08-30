@@ -477,8 +477,10 @@
   },
   "current_result": {
     "path": ".project-data/tmp/source-ir-repro-2-publish/current_result.json",
-    "sha256": "74528e5087b4c6911932a947816c2615c7c7d57747daf1f5edb91025313b625d",
-    "byte_count": 103394,
+    "sha256": "3f5d3314d2fa9db51171f1bfea5ee9c9836b6bd4afc148a5f53eccfe23deb9ce",
+    "byte_count": 103392,
+    "replay_sha256": "74528e5087b4c6911932a947816c2615c7c7d57747daf1f5edb91025313b625d",
+    "resummarized_by": "SPEC-TO-INTENT-ALIGNMENT.9e",
     "published_path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json"
   },
   "cleanup": {

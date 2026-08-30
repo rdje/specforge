@@ -34,7 +34,9 @@ stays there, and the `.9a` re-derivation that routes here stays in
   figure-kind residual `.8c` published bit-identical. The gatherer-completeness control gives each of the seven
   declared table-provenance surfaces a distinct id and cross-checks the typed gatherer against the artifact's own
   serialized provenance. `cargo test --workspace --lib` is 470 / 168 / 1,372 / 4 with zero failures, `cargo fmt`
-  is clean, all five production-genericity components pass at an unchanged 41 families / 170 field rules, and the
+  is clean — **withdrawn by `.9e`: false. `cargo fmt --all --check` fails from this commit and passes at its
+  parent `2a5a0526`, attributed by running the real check in a worktree at each revision. `.9e` repaired it** —
+  all five production-genericity components pass at an unchanged 41 families / 170 field rules, and the
   compiled flow census moves only its size dimensions — 2,370 to 2,373 functions, 14,681 to 14,684 helper edges,
   12,656 to 12,669 decision sites, 1,464 to 1,466 semantic macros — while every boundary, rule-root, seam,
   proof-gate, trusted-region and protected-type dimension is unchanged. All 24 proof-carrying chains rebuild
@@ -81,27 +83,52 @@ stays there, and the `.9a` re-derivation that routes here stays in
   Commit: `pending`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9e`
-  State: `active`
-  Goal: re-derive the carried-forward findings, withdraw what does not hold, and own the reviewed-label repair
+  State: `done`
+  Goal: re-derive the carried-forward findings, withdraw what does not hold, and repair the reviewed golds no
+  carrier can emit
   Acceptance: every statement `.9b` and `.9d` carried forward for owner judgement is re-derived from the tracked
   authorities and either stands with its evidence or is withdrawn in place, naming what was asserted rather than
   derived; the containment arithmetic is re-derived from the checker's own report instead of restated; and the
   surviving finding — that `table_of_contents` and `informational_disclaimer` expect residual labels
   (`table_0004|toc_non_contract`, `elem_00017|informational_non_contract`) that no non-circular projection can
   produce — gains an owner here rather than remaining a report. The label repair itself must show that the
-  reviewed key is redundant with the cell's own region-and-family predicate before normalising it, and must be
-  proved metric-neutral at the pre-change baseline
+  reviewed key is redundant with the cell's own region-and-family predicate before normalising it, must be
+  proved metric-neutral at the pre-change baseline, and must be carried by a gate that refuses the same shape
+  again rather than by a corrected literal. Any `.9b`/`.9d` verification claim found not to hold is withdrawn
+  in place and repaired here
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.9d`
-  Verification: `the re-derivation half is complete and is what this leaf publishes: two of the three
-  carried-forward statements do not hold. "informational_disclaimer is unreachable by ANY structural rule" is
-  false — a positional predicate is structural and reaches it (body_text on the first two pages selects nine
-  elements including elem_00017); the defensible claim is that the CARRIER's intent-bearing test cannot reach it.
-  "One further leaf route crosses mandatory rollover" is false — the index is 114 of a 128-line target, so one
-  row is 89.84% and legal and two are 90.62%; and .9c was already declared, so it was never blocked. The third
-  statement stands and is re-derived here: restricted to the four required-and-absent cells, whose only carrier
-  is region-scoped and whose key law is <region_id>|<family>, two follow it and two carry hand-written cause
-  labels no projection can produce. The label repair is this leaf's remaining open half`
-  Commit: `SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the carried-forward findings and withdraw the two that do not hold`
+  Verification: `both halves are complete. The re-derivation half withdrew two of the three carried-forward
+  statements: "informational_disclaimer is unreachable by ANY structural rule" is false (a positional predicate
+  is structural and reaches elem_00017; only the CARRIER's intent-bearing test cannot), and "one further leaf
+  route crosses mandatory rollover" is false (the index was 114 of 128 lines, so one row is 89.84% and legal,
+  and .9c was already declared). The third stands and this leaf repaired it. Redundancy is proved from the
+  producer, not argued: project_captured_regions stamps BOTH the family and the fact_key of a projected
+  captured-region residual from the reviewed cell itself, so within the query's own (region, family) predicate
+  pair the key is already determined and the gold can only agree with <region_id>|<family> or be unsatisfiable.
+  Metric-neutrality is executed, not asserted: the evaluator run on the repaired dataset reproduces
+  result_snapshot.json BYTE-EXACTLY, and a leaf-by-leaf comparison against the pre-change file shows an
+  identical leaf-path set with exactly four differing leaves, all of them the echoed gold string and none of
+  them non-string; both published global blocks are byte-identical. Two controls separate the competing
+  hypothesis that the key carried discriminating power: an arbitrary THIRD key on the same two cells is equally
+  inert (the byte-exact test still passes), while moving only the gold of a key that IS matched turns the same
+  test RED — so inertness is a property of these two empty-actual cells, not of a blind evaluator. A first
+  attempt at that RED control substituted in the dataset AND the result, moving the record with the gold, and
+  went green; it is recorded as this leaf's own instance of a control sharing a parent with the thing it checks.
+  The published current result is re-summarized in place under the mechanism .8b established — current_result
+  keeps the as-replayed digest in replay_sha256 with resummarized_by naming this leaf — so the review-locked
+  gold and the published gold stay one value. Durability is a new gate, not a fixed number: residual_gold_law
+  refuses any required reviewed gold that is neither its own region law nor declared with a differently scoped
+  production carrier and its exact keys, and requires the published result's gold to equal the dataset's.
+  Attributed by revert-and-re-apply — at HEAD the gate reports RED and NAMES both defective cells; re-applying
+  returns it green. --check passes, the self-test is 38/38 (28 before), all 12 gate-tier doctrines pass, the
+  workspace suite is 470 / 168 / 1,372 / 4 with zero failures, and Clippy is warning-clean. Separately, .9b's
+  published "clean fmt" claim was re-derived and does not hold: cargo fmt --all --check fails at 0a703cc0 and
+  passes at its parent 2a5a0526, measured by running the real check in a worktree at each revision rather than
+  by reading a diff. Repaired here; the repair is identical modulo whitespace and rustfmt trailing commas, and
+  the whole tree is fmt-clean again. This leaf also rolled eleven closed-lane .6d.ii.f rows out of the bounded
+  root after checking that every distinctive figure, digest and revision they carried already appears in the
+  behavioral-qualification part, taking the root from 90.3% to 79.8% of its byte target`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.9e — normalise the two reviewed golds no carrier can emit`
 
 ## Measured generalisation design (`.9b`, before implementation)
 
@@ -360,6 +387,74 @@ a fix.
 - [x] **LOCKSTEP** — the driver registry, the `DOCTRINE_ENFORCEMENT.md` §10 mirror (verified equal, 13 entries,
   same order), the mdBook doctrine-enforcement chapter, this part, the bounded root, the resume pointer, and the
   change ledger agree that the contract is repaired and gated.
+
+## Reviewed-gold repair (`.9e`)
+
+`.9a` left four required-and-absent cells. Two carry a gold key the pipeline can produce
+(`table_0067|packed_page_table_entry`, `elem_00219|software_guidance`); two carry a *review conclusion*
+written where a key belongs (`table_0004|toc_non_contract`, `elem_00017|informational_non_contract`).
+
+The distinction is not a matter of taste, and it is not read off the strings. `project_captured_regions` in
+`crates/specforge/test_data/source_to_intent_vertical/build_fixture.py` builds a projected residual as
+`fact(region_id, cell["family"], f'{region_id}|{cell["family"]}', ...)`. Both the `/family` a residual query
+matches on and the `/fact_key` it keys on come from the reviewed cell itself. So for any cell whose residual
+query pins exactly one region and one family, the projected key is *already determined* by the predicates, and
+a gold naming anything else is unsatisfiable by construction: no correct carrier can meet it.
+
+That has a concrete cost rather than being untidy. `.9c` may ship a perfect prose carrier and still not close
+`informational_disclaimer`. And once `.9b`'s table carrier reaches `table_0004`, the projection emits
+`table_0004|table_of_contents` against a gold of `table_0004|toc_non_contract` — a false positive *and* a false
+negative, which is worse than the unmet cell it replaces.
+
+Nothing is lost by normalising. The disposition the review asserted is pinned by `expected_disposition`, and
+the cause by the record's own typed `cause`/`reason` fields, both scored separately. `.9a` had already ruled
+that `non_contract_region` must stay declared-unbuilt for prose because no structural predicate separates
+advisory from normative prose without a deontic grammar — so a gold demanding a `non_contract` label demands
+exactly the thing that ruling forbids, and would need a review label to reach production to be satisfiable.
+
+### What this repair does not establish
+
+The two repaired cells stay **unmet**, before and after: `table_0004` never reaches capture
+(`required_modality_capture_failed`) and prose has no carrier until `.9c`. The published `8/16` does not move,
+and no other published scalar moves. What changed is that the cells are now *satisfiable* — their unmet
+observation has become a statement about the pipeline instead of a statement about the gold.
+
+### The gate
+
+`residual_gold_law` in the frozen contract carries the rule, and
+`scripts/validate_residual_actionability_contract.py` executes it: every required reviewed cell must either
+satisfy its own region law or be declared with the differently scoped production carrier that owns it and that
+carrier's exact keys, and the published result's gold must equal the review-locked dataset's. The contract
+records what it still permits — a declared fact-scoped entry naming a real carrier that could not in fact emit
+its keys, because that carrier's key law is pinned here rather than re-derived.
+
+## Acceptance Checklist (enforced) - `SPEC-TO-INTENT-ALIGNMENT.9e`
+
+- [x] **REPRODUCE / MEASURE** - all 12 residual-declaring reviewed cells enumerated against the region law
+  derived from their own predicates: 6 of the 8 required cells follow `<region_id>|<family>`, 2 are the
+  physical-link analog cells owned by the timing carrier, and 2 carry review conclusions. Baseline agreement
+  between the review-locked gold and both scored results is 0 disagreements over 24 residual queries.
+- [x] **ROOT CAUSE (WHY + WHERE)** - `build_fixture.py:project_captured_regions` stamps both `family` and
+  `fact_key` of a projected captured-region residual from the reviewed cell, so the query's `(region, family)`
+  predicate pair already determines the key; a gold outside it cannot be emitted by any carrier that does not
+  take a review label into production. The two offending golds are `build_fixture.py` lines 324 and 474.
+- [x] **ADDRESSED (verified)** - the two golds become `table_0004|table_of_contents` and
+  `elem_00017|informational_disclaimer`; the evaluator run on the repaired dataset reproduces
+  `result_snapshot.json` byte-exactly, and a leaf-path comparison against the pre-change file gives an
+  identical path set with exactly four differing leaves, all echoed gold strings, none non-string. The
+  published current result is re-summarized the same way under `.8b`'s mechanism, keeping the as-replayed
+  digest in `replay_sha256`.
+- [x] **NO REGRESSION** - `cargo test --offline --workspace --lib` 470 / 168 / 1,372 / 4, zero failures;
+  `cargo clippy --workspace --all-targets -- -D warnings` clean; `cargo fmt --all --check` clean (it was not,
+  before this leaf repaired `.9b`'s breach); `bash scripts/check_doctrines.sh` all 12 gate-tier doctrines PASS;
+  `validate_residual_actionability_contract.py --check` re-derives the unchanged 8/16 and `--self-test` is
+  38/38; every published global block in both scored results is byte-identical.
+- [x] **GENERICITY (ADR 0006)** - no production source changed for the repair; the fixture-side rule is the
+  region-and-family key law the projector already implements, and the gate's populations are derived from the
+  dataset's own predicates rather than from a list of families, documents, or vendors. The `semantic.rs` change
+  is rustfmt layout only, proved identical modulo whitespace and trailing commas.
+- [x] **LOCKSTEP** - bounded root, this part, the task-evidence contract and manifest, `MEMORY.md`,
+  `CHANGES.md`, the mdBook contract chapter, and a Knowledge Map fact card are updated in this commit.
 
 ## Update protocol
 

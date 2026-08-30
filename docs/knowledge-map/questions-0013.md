@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why are the fired: behavioral features mostly empty in the clustering today
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > why are there 82 retained phase records but 101 on a current rule replay
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > why are two containment records at the bottom of CHANGES
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why can CORPUS-COVERAGE not accept refresh 49 yet
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD protocol records not be lowered directly to ISF
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD score 100 percent while its protocol is absent downstream
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why can a canonical cell never satisfy its residual actionability observations
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > why can a shipped standalone extractor fail to improve the default end-to-end result
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
@@ -280,21 +298,3 @@
   > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > why does ROADMAP.md have per-section line bounds
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > why does SpecForge keep normalized bundles instead of reclaiming them
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does USB 3.2 declare no signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does Wishbone declare no signals

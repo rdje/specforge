@@ -1903,7 +1903,7 @@
                   "col_count": 2
                 },
                 "reviewed_source_facts": [
-                  "table_0004|toc_non_contract"
+                  "table_0004|table_of_contents"
                 ]
               }
             ]
@@ -2431,7 +2431,7 @@
                 "/fact_key"
               ],
               "expected_keys": [
-                "table_0004|toc_non_contract"
+                "table_0004|table_of_contents"
               ],
               "provenance_fields": [
                 "/source_ids"
@@ -2458,7 +2458,7 @@
                 "/fact_key"
               ],
               "expected_keys": [
-                "table_0004|toc_non_contract"
+                "table_0004|table_of_contents"
               ],
               "provenance_fields": [
                 "/source_ids"
@@ -4229,7 +4229,7 @@
                 "modality": "prose",
                 "source_excerpt": "The content of this document is informational only. Any solutions presented herein are subject to changing conditions, information, scope, and data. This document was produced using reasonable efforts based on information available as of the date of issue of this document. The scope of information in this document may exceed that which Arm is required to provide, and such additional information is merely intended to further assist the recipient and does not represent Arm's view of the scope of its obligations. You acknowledge and agree that you possess the necessary expertise in system security and functional safety and that you shall be solely responsible for compliance with all legal, regulatory, safety and security related requirements concerning your products, notwithstanding any information or support that may be provided by Arm herein. In addition, you are responsible for any applications which are used in conjunction with any Arm technology described in this document, and to minimize risks, adequate design and operating safeguards should be provided for by you.",
                 "reviewed_source_facts": [
-                  "elem_00017|informational_non_contract"
+                  "elem_00017|informational_disclaimer"
                 ]
               }
             ]
@@ -4412,7 +4412,7 @@
                 "/fact_key"
               ],
               "expected_keys": [
-                "elem_00017|informational_non_contract"
+                "elem_00017|informational_disclaimer"
               ],
               "provenance_fields": [
                 "/source_ids"
@@ -4439,7 +4439,7 @@
                 "/fact_key"
               ],
               "expected_keys": [
-                "elem_00017|informational_non_contract"
+                "elem_00017|informational_disclaimer"
               ],
               "provenance_fields": [
                 "/source_ids"

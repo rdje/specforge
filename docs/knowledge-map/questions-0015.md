@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why is a figure caption not coverage for the figure
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why is a file-level line ceiling not enough for a bounded snapshot
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a gate's own numeral grammar part of its contract
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > why is a gerund after while/when not a condition (action coordination)
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a glob list not enough to scope a claim gate
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why is a multi-caller named drive kept without actor priority
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > why is a retained bundle count not the same as corpus refresh progress
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > why is a reviewed residual cell unmet no matter what production does
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > why is a sentence containing when not necessarily a semantic gate
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -188,10 +208,14 @@
   > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why was corpus task maximum line width corrected from 4747 to 4746
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > why was elem_00017|informational_non_contract changed
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > why was nearest-heading anchoring rejected for capless table adoption
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > why was table_0004|toc_non_contract changed
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)

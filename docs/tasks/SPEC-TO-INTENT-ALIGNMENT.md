@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: extraction quality and breadth
 - Created: `2026-08-11`
-- Last updated: `2026-08-30`
+- Last updated: `2026-08-31`
 - Owner: project owner and repo-local workflow
 
 ## Goal
@@ -20,7 +20,7 @@ expressiveness as the bottleneck.
 
 - Root children `.0`–`.9`. `.0` through `.8` are complete with every declared descendant, except former
   lane `.6e`, which the later structural repair `.6d.ii.f.iv.a`/`.f.iv.b` supersedes.
-- `.9` is active: `.9a`, `.9b`, and `.9d` are complete; `.9e` is active and `.9c` is declared.
+- `.9` is active: `.9a`, `.9b`, `.9d`, and `.9e` are complete; `.9c` is declared.
 - Per-leaf goal, acceptance, decision, and measurement detail live in the task-evidence parts. This root
   carries the bounded current summary and the executable owner registry only.
 
@@ -40,10 +40,10 @@ residual-actionability parts.
 `.9` closes the four required-and-absent cells `.9a` re-derived, by generalising `.8c`'s structural rule — one
 typed residual per captured region no canonical record cites — from figures to the other captured region kinds.
 `.9b` shipped the table leg, `.9d` repaired and gated the frozen residual contract it found red, `.9e`
-re-derived the findings handed forward and withdrew the two that did not hold, and `.9c` owns the prose leg,
-blocked upstream because `EvidenceIR` carries no `SourceIR` content-element identity. Two reviewed cells expect
-a residual label no non-circular projection can produce, owned by `.9e`. Every measurement, decision, and
-withdrawal is in the region-kind-generalisation part; the population replay follows the carrier work.
+withdrew two carried-forward findings and normalised the two reviewed golds no carrier could emit, and `.9c`
+owns the prose leg, blocked upstream because `EvidenceIR` carries no `SourceIR` content-element identity.
+Every measurement, decision, and withdrawal is in the region-kind-generalisation part; the population replay
+follows the carrier work.
 One regression outside this program stays owned by
 [`SOURCE-IR-REPRODUCIBILITY`](SOURCE-IR-REPRODUCIBILITY.md): reviewed cells are anchored on ordinal SourceIR
 element ids and ingest is not reproducible across time, so exact source regions are 13/14.
@@ -146,6 +146,7 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-31` | `.9e` reviewed-label repair | the two unsatisfiable golds become the region law: only the four echoed strings move, every scalar and global byte-identical, an arbitrary third key equally inert, a matched key RED. The new gold-law gate names both cells at the pre-change revision; self-test 38/38. `.9b`'s "clean fmt" was false from `0a703cc0`, repaired token-identically |
 | `2026-08-30` | `.9e` re-derived carried-forward findings | two of three do not hold and are withdrawn in place: "unreachable by any structural rule" is false (a positional predicate reaches `elem_00017`), and the index arithmetic is off by one — 114 of 128 lines means one added row is 89.84% and legal, two are 90.62%, and `.9c` was already declared so was never blocked. The unproducible-label finding stands and now has an owner |
 | `2026-08-30` | `.9d` contract re-pin and gate | attributed by re-deriving at each revision: digest MATCH at `893c2fba`, MISMATCH at `245b3b60`, differing in exactly `software_guidance.hard_failures`; red for 43 commits. No published scalar moves; `--check` re-derives 8/16 and the self-test is 28/28. `RESIDUAL-ACTIONABILITY` is gate-tier at 0.04s, proven fail-closed twice, registry and §10 mirror lockstep at 13 |
 | `2026-08-30` | `.9b` table-region carrier | table regions join the carrier with coverage read from `supporting_table_ids`; the current Arm Debug chain moves from 210 of 210 unexplained to 16 cited / 194, and every figure residual is unchanged by construction; seven controls, 470/168/1,372/4, clean fmt, five genericity components at 41 families / 170 rules, CHAIN-CURRENCY 24/24 current at all four stages |
@@ -163,17 +164,6 @@ detail-routing authority.
 | `2026-08-16` | `.7a` contract freeze | exact current witness plus a closed grammar/refusal matrix, source-local appositive grounding, opaque-identifier no-alias and unknown-polarity controls, shared polarity truth table, 24-chain currency scope, 48-stage replay obligation, and 11/11 RED controls pass without production change; `.7b` is next |
 | `2026-08-16` | `.7` activation | APB first-boundary loss is causally localized; compiled precision control, exact task/claim/book/live/KM gates and mdBook pass; bounded contract, implementation/currency, and replay/signoff children route `.7a` first |
 | `2026-08-14` | task-evidence containment input closure | 21 exact regions and 58 exact routes reproduce from the locked source; full CI passes |
-| `2026-08-14` | `.6d.ii.f` activation | bounded behavioral children and `.f.i` design frontier are routed through the active part; target contract and doctrines pass |
-| `2026-08-14` | `.6d.ii.f.i` oracle freeze | exact 24-row source/capture population, six relations, five proof-bearing stages, 17-row prospective holdout, and 8/8 contract mutations pass |
-| `2026-08-14` | `.6d.ii.f.ii.a` identity/alpha harness | deterministic normalized-text alpha and provider-backed full-PDF adversarial identity calibrations pass all five stages; semantic-role and partial-stage controls reject |
-| `2026-08-14` | `.6d.ii.f.ii.b` reviewed paraphrase/layout | one equivalent sentence and heading/table/whitespace/formatting variants pass all five stages under exact recipes; unsupported and ambiguous transforms reject |
-| `2026-08-14` | `.6d.ii.f.ii.c` semantic-negative sensitivity | one real assertion/proof negative and all nine synthetic fault classes reject ordinary invariance while the exact declared complement passes |
-| `2026-08-14` | `.6d.ii.f.iii` initial prospective execution | 51/51 attempts execute; unchanged replay passes 17/17, while 32 fail / one invalid expose two conformance-oracle defects and one vacuous row remains unmeasurable; no signoff claimed |
-| `2026-08-14` | `.6d.ii.f.iii` corrected qualification | 34 pass / one fail / 16 unmeasurable / zero invalid; both PDF relations pass 17/17; the sole measurable six-signal I2C alpha pair fails below SourceIR and routes `.f.iii.a` |
-| `2026-08-15` | `.6d.ii.f.iii.a` production ordering | four alpha-sensitive production mechanisms are removed; exact retained-chain reconciliation, all doctrines, all production-genericity components, 1,976 Rust tests / eight ignored / zero failed, mdBook, and final locality pass |
-| `2026-08-15` | `.6d.ii.f.iii.a` clean-revision closure | exact I2C alpha passes 5/5 stages; refreshed held-out evidence is 35/0/16/0 with all completed attempts fresh under `2cdcd131`; aggregate SHA `06e2358c199ca80559811be0fee38c368892ec21a46603fe3648a12fb9cd68a1` |
-| `2026-08-15` | `.6d.ii.f.iv.a` structural carrier repair | qualified closed-role parity, unique access carriage, real Arm/GIC/AMD proof, SourceIR migration replay, exact 144-file comparison, and 24/24 zero-stale currency pass; `.f.iv.b` owns clean publication |
-| `2026-08-15` | `.6d.ii.f.iv.b` repaired population publication | 12/12 sources and 48/48 stages publish 39/0/1 TP/FP/FN, 42/42 provenance, zero fabrications, zero hard-gate violations, `.7` ranking, and exact residue-free cleanup; `.f.v` is next |
 | `2026-08-14` | `.6d.ii.e.vii` alignment | roadmap, implementation, doctrines, live truth, and mdBook agree; full CI passes |
 | `2026-08-13` | `.6d.ii.e.vi` structural qualification | generated witness and controlled mutants prove the production genericity boundary; full CI passes |
 
@@ -181,6 +171,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.9e` | `SPEC-TO-INTENT-ALIGNMENT.9e — normalise the two reviewed golds no carrier can emit` | make the unsatisfiable cells satisfiable without moving a measurement, and gate the key law |
 | `.9e` | `SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the carried-forward findings and withdraw the two that do not hold` | re-derive every statement handed to the owner, withdraw what was asserted rather than derived, and give the surviving finding a leaf instead of a report |
 | `.9d` | `SPEC-TO-INTENT-ALIGNMENT.9d — re-pin the frozen residual contract and put it under a gate` | repair the stale witness from the contract's own decomposition and make the executable contract a doctrine so it cannot drift unobserved again |
 | `.9b` | `SPEC-TO-INTENT-ALIGNMENT.9b — generalise the captured-region carrier to captured table regions` | ask each region kind in the provenance vocabulary its own records use, so tables join the accounting without residualising the ones that reached a carrier |

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md) | 2026-06-07 | `current` | The SWD/JTAG protocol FSM is a typed surface (ProtocolStateRecord) — states extracted from "<State> state"… |
 | [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md) | 2026-08-09 | `superseded` | SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly |
 | [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md) | 2026-06-07 | `superseded` | SWD serial-frame fields are a distinct typed surface (SerialFrameField), double-gated to serial docs + frame… |
 | [task-tree-catalog](../knowledge/task-tree-catalog.md) | 2026-08-08 | `current` | The task-tree catalog is a bounded derived navigation layer |
