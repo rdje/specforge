@@ -44,7 +44,7 @@ stays there, and the `.9a` re-derivation that routes here stays in
   Commit: `SPEC-TO-INTENT-ALIGNMENT.9b — generalise the captured-region carrier to captured table regions`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9d`
-  State: `pending`
+  State: `done`
   Goal: re-pin the frozen residual-actionability witness and put its executable contract under a gate
   Acceptance: the `.8a` contract's `witness` pins the tracked current result again and its
   `required_and_absent_cells` re-derive from it, with the change limited to what
@@ -53,8 +53,20 @@ stays there, and the `.9a` re-derivation that routes here stays in
   contract stale without failing a gate; its self-test is green and its RED matrix covers the exact staleness
   this leaf repairs
   Prerequisite: `SPEC-TO-INTENT-ALIGNMENT.9b`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the staleness is attributed by re-deriving at each revision from its own producer, never from a
+  diff: over the only two commits that touched either authority since the freeze, the witness digest MATCHES at
+  893c2fba and MISMATCHES at 245b3b60, and the contract's own decomposition run against each revision's own
+  snapshot is identical at the freeze and differs at the repair in exactly one field —
+  software_guidance.hard_failures losing source_region_missing_or_ambiguous. It had been red for 43 commits. The
+  re-pin re-derives the three cell collections from the contract's own decompose_current_result rather than
+  hand-editing them, and no published scalar moves: 12 declared cells, 24/8/8/8 observations and corrected 16/8
+  are all unchanged, so the diff is exactly the identity plus that one hard-failure entry. --check now passes
+  and re-derives the published 8/16; the self-test is 28/28. Registered gate-tier at 0.04s, and proven
+  fail-closed in both shapes: a drifted witness identity makes the driver report FAIL and block the commit, and
+  a silently edited published count is rejected with the derived value named; the contract restores byte-exact
+  after both. The driver registry and the DOCTRINE_ENFORCEMENT.md section-10 mirror are verified in lockstep at
+  13 entries in the same order`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.9d — re-pin the frozen residual contract and put it under a gate`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.9c`
   State: `pending`
@@ -266,6 +278,57 @@ states checked, and 24 normalized bundles on disk matching the declared retained
   SemanticIR chapter, the Knowledge Map fact card and its regenerated projection, the fact-card catalog, this
   part, the bounded root, the resume pointer, and the change ledger agree that the carrier now covers captured
   table regions and that the prose leg is blocked on `EvidenceIR` provenance.
+
+## Repaired contract and its gate (`.9d`)
+
+The `.9b` finding had two halves and they are not the same defect.
+
+**The witness was stale, and the attribution is mechanical.** Over the only two commits that touched either
+authority since the freeze, the pinned digest MATCHES at `893c2fba` and MISMATCHES at `245b3b60`, and running
+each revision's *own* `decompose_current_result` against that revision's *own* snapshot is identical at the
+freeze and differs at the repair in exactly one field: `software_guidance.hard_failures` loses
+`source_region_missing_or_ambiguous`. That is `SOURCE-IR-REPRODUCIBILITY.2` correctly repairing the Cortex-A76
+anchor regression `.8d` had recorded. The contract was red for **43 commits**. The re-pin re-derives all three
+cell collections from the contract's own decomposition rather than hand-editing a field, so the change cannot
+quietly carry anything else, and no published scalar moves — 12 declared cells, 24 declared / 8 actionable /
+8 not-required / 8 required-and-absent observations, corrected 16/8 — leaving a diff of exactly the identity
+plus that one hard-failure entry.
+
+**The gate is the half that matters.** `.8a` made the rule executable so it could not drift; nothing ran it, so
+it drifted anyway. `RESIDUAL-ACTIONABILITY` is now a gate-tier doctrine in `scripts/check_doctrines.sh` at
+0.04s, and it is proven fail-closed in both shapes rather than assumed: a drifted witness identity makes the
+driver print `FAIL RESIDUAL-ACTIONABILITY` and `commit/merge blocked`, and a silently edited published count is
+rejected naming the value the result actually derives. Both restore the contract byte-exact. The driver registry
+and the `DOCTRINE_ENFORCEMENT.md` §10 mirror are verified equal and in the same order at 13 entries — the
+lockstep §10 claims and nothing had been checking.
+
+Had this gate existed, `SOURCE-IR-REPRODUCIBILITY.2` would have been blocked and forced to re-examine the
+frozen contract in the same commit. That is the whole point, and it is why the repair alone would not have been
+a fix.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.9d`
+
+- [x] **REPRODUCE / MEASURE** — `./scripts/validate_residual_actionability_contract.py` exits `1` with
+  `witness no longer pins the tracked current-result identity` and
+  `witness.required_and_absent_cells differs from the current-result derivation`; `git rev-list --count
+  245b3b60..HEAD` is 43.
+- [x] **ROOT CAUSE (WHY + WHERE)** — attributed by re-deriving at each revision from its own producer input,
+  never by reading a diff: digest MATCH at `893c2fba` → MISMATCH at `245b3b60`, and the per-revision
+  decomposition differs in exactly `software_guidance.hard_failures`. The second, deeper cause is that the
+  checker had **zero** executable references — absent from `scripts/check_doctrines.sh`, `scripts/run_ci.sh`,
+  and every test — so no gate required the contract to be re-examined when the result was republished.
+- [x] **ADDRESSED (verified)** — the witness re-pins to the tracked snapshot and its cell collections are
+  re-derived from the contract's own decomposition; `--check` passes and re-derives the published `8/16`, and
+  the self-test is 28/28. `RESIDUAL-ACTIONABILITY` is registered gate-tier and the driver executes it.
+- [x] **NO REGRESSION** — no published scalar moves (12 / 24 / 8 / 8 / 8 / 16 / 8 all unchanged), so the diff is
+  the identity plus one hard-failure entry; `scripts/check_doctrines.sh` passes all 12 executed gate-tier
+  doctrines; the two RED controls prove the new gate blocks a drifted identity and a forged count and restore
+  the contract byte-exact; `cargo` is untouched by this leaf, which changes no Rust.
+- [x] **GENERICITY (ADR 0006 / ADR 0037)** — no production source changes; the contract is conformance/doctrine
+  authority and carries no document, vendor, or protocol identity.
+- [x] **LOCKSTEP** — the driver registry, the `DOCTRINE_ENFORCEMENT.md` §10 mirror (verified equal, 13 entries,
+  same order), the mdBook doctrine-enforcement chapter, this part, the bounded root, the resume pointer, and the
+  change ledger agree that the contract is repaired and gated.
 
 ## Update protocol
 

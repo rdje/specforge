@@ -610,13 +610,13 @@
     {
       "heading": "# SPEC-TO-INTENT-ALIGNMENT — region-kind generalisation",
       "metrics": {
-        "bytes": 23536,
+        "bytes": 29107,
         "line_bytes": 125,
-        "lines": 283
+        "lines": 346
       },
       "part_id": "region-kind-generalisation",
       "path": "docs/tasks/spec-to-intent-alignment/region-kind-generalisation.md",
-      "sha256": "cb9c9e239f5f43df8ddf8747e7b646966b528dfe5bbea7893ae1386ec50c2012",
+      "sha256": "209746978ab9526b1837b53dec489975d06e88f1da12021ccea8c5e3c6c6f71c",
       "state": "active"
     }
   ],

@@ -1,3 +1,28 @@
+### SPEC-TO-INTENT-ALIGNMENT.9d — re-pin the frozen residual contract and put it under a gate
+
+- .9b found the frozen .8a required-residual contract red and did not cause it. This leaf repairs both halves,
+  and they are NOT the same defect.
+- THE ATTRIBUTION IS MECHANICAL, re-derived at each revision from its own producer rather than read off a diff.
+  Over the only two commits that touched either authority since the freeze, the pinned digest MATCHES at
+  893c2fba and MISMATCHES at 245b3b60; running each revision's OWN decompose_current_result against that
+  revision's OWN snapshot is identical at the freeze and differs at the repair in exactly one field,
+  software_guidance.hard_failures losing source_region_missing_or_ambiguous. That is SOURCE-IR-REPRODUCIBILITY.2
+  correctly repairing the Cortex-A76 anchor regression .8d recorded. The contract had been red for 43 COMMITS.
+- The re-pin re-derives all three cell collections from the contract's own decomposition rather than editing a
+  field by hand, so it cannot quietly carry anything else. NO PUBLISHED SCALAR MOVES — 12 declared cells,
+  24 declared / 8 actionable / 8 not-required / 8 required-and-absent observations, corrected 16/8 — leaving a
+  diff of exactly the identity plus that one hard-failure entry. --check re-derives the published 8/16 and the
+  self-test is 28/28.
+- THE GATE IS THE HALF THAT MATTERS. .8a made the rule executable so it could not drift; nothing ran it, so it
+  drifted anyway. RESIDUAL-ACTIONABILITY is now a gate-tier doctrine at 0.04s, PROVEN fail-closed rather than
+  assumed: a drifted witness identity makes the driver print FAIL and block the commit, and a silently edited
+  published count is rejected naming the value the result actually derives; the contract restores byte-exact
+  after both. Had this gate existed, SOURCE-IR-REPRODUCIBILITY.2 would have been blocked and forced to
+  re-examine the contract in the same commit.
+- Lockstep closed on the way past: the driver registry and the DOCTRINE_ENFORCEMENT.md section-10 mirror are now
+  verified equal at 13 entries in the same order. Section 10 has always CLAIMED to be that mirror and nothing
+  checked it; this leaf at least leaves the two in agreement.
+
 ### SPEC-TO-INTENT-ALIGNMENT.9b — generalise the captured-region carrier to captured table regions
 
 - The carrier stops being figure-only. `residual_accountable_region_kind` now excludes only `Unknown`, and

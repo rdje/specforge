@@ -20,7 +20,7 @@ expressiveness as the bottleneck.
 
 - Root children `.0`–`.9`. `.0` through `.8` are complete with every declared descendant, except former
   lane `.6e`, which the later structural repair `.6d.ii.f.iv.a`/`.f.iv.b` supersedes.
-- `.9` is active: `.9a` and `.9b` are complete, and `.9c`/`.9d` are declared.
+- `.9` is active: `.9a`, `.9b`, and `.9d` are complete, and `.9c` is declared.
 - Per-leaf goal, acceptance, decision, and measurement detail live in the task-evidence parts. This root
   carries the bounded current summary and the executable owner registry only.
 
@@ -44,8 +44,9 @@ vocabulary its own records use, so a table that reached a carrier is never resid
 none earns a typed residual carrying both of its `EvidenceIR` identities, with every figure-kind residual `.8c`
 published unchanged by construction. `.9c` owns the prose leg, which `.9b` measured to be blocked upstream:
 `EvidenceIR` carries no `SourceIR` content-element identity at all, so a prose residual cannot yet name the
-region the review requires. `.9d` owns a defect `.9b` found and did not cause: the frozen residual-actionability
-contract no longer pins the current result, and nothing executes its checker. Two reviewed cells are
+region the review requires. `.9d` is complete: it repaired the frozen residual-actionability
+contract, which had stopped pinning the current result 43 commits earlier, and registered its checker as the
+gate-tier `RESIDUAL-ACTIONABILITY` doctrine so the same drift now blocks the commit that causes it. Two reviewed cells are
 additionally blocked on a residual label no projection can produce, and one cell is not reachable by any
 structural rule; every finding is recorded in the region-kind-generalisation part. The population replay that publishes
 the comparable result follows the carrier work.
@@ -150,6 +151,7 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-30` | `.9d` contract re-pin and gate | attributed by re-deriving at each revision: digest MATCH at `893c2fba`, MISMATCH at `245b3b60`, differing in exactly `software_guidance.hard_failures`; red for 43 commits. No published scalar moves; `--check` re-derives 8/16 and the self-test is 28/28. `RESIDUAL-ACTIONABILITY` is gate-tier at 0.04s, proven fail-closed twice, registry and §10 mirror lockstep at 13 |
 | `2026-08-30` | `.9b` table-region carrier | table regions join the carrier with coverage read from `supporting_table_ids`; the current Arm Debug chain moves from 210 of 210 unexplained to 16 cited / 194, and every figure residual is unchanged by construction; seven controls, 470/168/1,372/4, clean fmt, five genericity components at 41 families / 170 rules, CHAIN-CURRENCY 24/24 current at all four stages |
 | `2026-08-30` | `.9b` declaration and bounded-root rollover | the bounded active root moves from 89.8% to 81.2% of its declared line target with no measured value lost — every figure the rolled prose carried re-derives from the residual-carrier and residual-actionability parts; `.9b`/`.9c` are declared in the root registry, the index, the containment contract, and the manifest, and the task-evidence contract revalidates clean |
 | `2026-08-27` | `.8d` published population closure | 12 sources / 48 stages replayed at `483e525d`: residual actionability 4/16 to 8/16, disposition 8/14 to 10/14, modality 6/12 to 8/12, provenance 43/43 to 45/45, conservation 120/120, IntentIR 40/0/0, platform-system-ip supported; a frozen-projection control leg reproduces 4/16 so exactly two cells moved; source regions 13/14 on an anchor regression |
@@ -183,6 +185,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.9d` | `SPEC-TO-INTENT-ALIGNMENT.9d — re-pin the frozen residual contract and put it under a gate` | repair the stale witness from the contract's own decomposition and make the executable contract a doctrine so it cannot drift unobserved again |
 | `.9b` | `SPEC-TO-INTENT-ALIGNMENT.9b — generalise the captured-region carrier to captured table regions` | ask each region kind in the provenance vocabulary its own records use, so tables join the accounting without residualising the ones that reached a carrier |
 | `.9b` | `SPEC-TO-INTENT-ALIGNMENT.9b — declare the table-region carrier leaf and roll the bounded root` | measure the generalisation before building it, split `.9` by region kind, and free the root's line budget so the leaf can be declared at all |
 | `.8d` | `SPEC-TO-INTENT-ALIGNMENT.8d — publish the reviewed population residual closure` | replay all 12 reviewed sources through 48 isolated stages, attribute the whole delta with a frozen-projection control leg, and publish 8/16 with platform-system-ip supported |

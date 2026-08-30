@@ -69,6 +69,7 @@ DOCTRINES=(
   "CORPUS-FRONTIER|gate|the corpus refresh frontier is derived from persisted evidence and agrees exactly with its declaration, retention, and the root task file|scripts/check_corpus_frontier.sh"
   "CLAIM-VERIFICATION|gate|bounded claim records, tracked current evidence, executed source/RED controls, complete stale coverage, and publication IDs resolve together|scripts/check_claim_verification.pl"
   "PUBLISHED-ASSERTIONS|gate|every published value in a governed region re-derives against its named producer field, or is gated by a control with a known-bad case, authored by a decision, or anchored to a revision — and no two surfaces disagree on one field (CLAIM-VERIFICATION-ADOPTION.7)|scripts/check_published_assertions.pl"
+  "RESIDUAL-ACTIONABILITY|gate|the frozen required-residual contract still pins the tracked current result, re-derives its own cell decomposition and published ratio from it, and resolves every typed cause to a real production carrier (SPEC-TO-INTENT-ALIGNMENT.8a/.9d)|scripts/validate_residual_actionability_contract.py"
   "PROOF-SEAL-CURRENCY|gate|every persisted corpus artifact records a proof seal the current build's own canonical loader still accepts, censused across the whole proof-carrying stratum and probed read-only|scripts/check_proof_seal_currency.sh"
   "CHAIN-CURRENCY|ci|every persisted corpus artifact is exactly what the current binary reproduces from its persisted input (ADR 0025)|scripts/check_chain_currency.sh"
 )
