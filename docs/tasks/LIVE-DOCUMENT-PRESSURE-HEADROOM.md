@@ -368,6 +368,66 @@ repeatable rollover/remedy paths and remain under their existing owners.
   the condition `LIVE-DOC-STOP-RISK` exists to prevent: a bound a surface can reach with no remedy
   compliant work can take. Note the `.jsonl` rollover plans under the same directory do **not** count —
   the surface targets `*.md` only.
+  Children: `.4a`, `.4b`, `.4c`, `.4d`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a`
+  Status: `done` (`2026-08-31`)
+  Goal: remove the research-plane file count behind a declared, gated exemption
+  Acceptance: `research_records` declares no `files` bound in either band, behind an ADR 0045
+  `cardinality_exemption` naming this decision, this leaf, and `canonical_collection_indexes` as the route
+  that covers its declared index; every resource dimension stays numeric. The measurement must support the
+  removal rather than quiet a warning (this tree's Non-Goal): at `276abfc3` the collection is **63 of 64
+  files = 98.4%** with `health_targets.files == enforcement_ceilings.files`, so there is no warning band,
+  while `lines_total` is **10,840 of 40,960 = 26.5%** and `bytes_total` **740,829 of 4,194,304 = 17.7%**.
+  The aggregates bound the resource that exists and bind first: at the measured 172-line / 11.8 KB record
+  mean they admit about 238 records against the catalog's ~374 rows, so the relocation is to a *resource*
+  bound with a live warning band rather than to another countdown. Nulling a ceiling is an increase, so the
+  transaction consumes one exact single-use `ceiling_increase_authorities.jsonl` record in the same commit
+  Prerequisite: none
+  **No new decision record.** ADR 0045's Decision section is written as the general mechanism — the exemption
+  object, its four required fields, and the four separate refusals — so applying it is not a new decision, and
+  the per-surface measurement lives where the gate can read it: the registry's own `rationale` field and this
+  leaf. A second near-duplicate ADR would also spend `decision_records.files`, an axis already at 82.8%.
+  Verification: `research_records files 63/64 -> unbounded in both bands behind the declared exemption;
+  lines_total 10,840/40,960 (26.5%) and bytes_total 740,829/4,194,304 (17.7%) unchanged and still numeric,
+  as are lines_each, bytes_each and line_bytes_each; route canonical_collection_indexes covers
+  docs/catalogs/research-records.md and is bounded in every dimension; one exact single-use authority added
+  and consumed (old/new enforcement_ceilings match byte-for-byte); the three research warnings are gone from
+  bash scripts/check_live_document_size.sh, which reports 901 Markdown files / 57 governed surfaces and
+  exits 0; census 41 surfaces / 74 evidence units; book claims 39 files / 325 adjudicated lines`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b`
+  Status: `pending`
+  Goal: retire the single-use authority `.4a` consumes
+  Acceptance: the ceiling-increase authority record is removed once HEAD carries the new bands, because the
+  generic gate refuses an unused or banked authority on the very next commit; nothing else moves. This is the
+  same mandatory second transaction `.2b` performed for `.2a`
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`
+  Status: `pending`
+  Goal: release the per-record line stop the file-count exemption does not touch
+  Acceptance: `docs/research/production-genericity-pipeline-audit.md` is **639 of a 640-line per-file
+  ceiling**, again with `health_targets.lines_each == enforcement_ceilings.lines_each`, so a one-line
+  correction to that record is refused. Decide from measurement whether the remedy is a lossless split at a
+  section boundary (the partitioned-canonical remedy, which costs one catalog row and therefore needs `.4a`
+  first) or a re-derived per-file profile, and preserve every byte either way
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d`
+  Status: `pending`
+  Goal: classify and remedy the validation-snapshot and README member warnings
+  Acceptance: `validation_snapshot` lines_each (544 of 640) and `readme_entrypoint` line_bytes_each (108 of
+  120, already at its rollover milestone) each get a lifecycle-correct local remedy or a measured reason the
+  surface is healthy; no generic warning is merely suppressed and README stays inside `README_POLICY.md`
+  Prerequisite: none
   Verification: `pending`
   Commit: `pending`
 
@@ -681,10 +741,18 @@ owner's `Status` line rather than from any mention of the surface.
 | 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
 | 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `done` | the gate warns 35 lines across four producers and no reviewed assignment exists; a grep screen cannot serve, since reporting a gap closes it |
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
-| 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `pending` | seven instances of the closed-owner class in one session is the evidence that review does not hold the invariant |
-| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | `research_records` is 1 file and 1 line from two hard ceilings with no rollover route |
+| 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
+| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `pending` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
+| 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `pending` | seven instances of the closed-owner class in one session is the evidence that review does not hold the invariant |
 
 ## Decisions
+
+- `2026-08-31`: split `.4` into `.4a`/`.4b`/`.4c`/`.4d` and apply ADR 0045 rather than raise the research
+  ceiling. The measurement carries the decision on every axis this tree's Non-Goal cares about: the count is
+  at 98.4% with no warning band and no rollover while the aggregates are at 26.5% and 17.7%, and at the
+  measured record mean those aggregates bind at about 238 records — before the catalog's own row capacity.
+  So the stop relocates to a resource bound that still has a live warning band, not to another countdown.
+  Raising 64 to some larger number would have moved the countdown and left the no-rollover defect intact.
 
 - `2026-08-31`: split `.14` into `.14a`/`.14b`/`.14c` before implementing any of it. `.7` assigned three rows
   to one leaf, but they are three different lifecycles — a bounded snapshot whose size is a pure function of
@@ -762,6 +830,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-31` | `.4a` | `check_live_document_size.sh`; the generic size checker with the authority registry; census, book-claim and doctrine gates | research files **63/64 -> unbounded** behind the declared exemption; every resource dimension stays numeric; the single-use authority is added and consumed in the same commit; the composed gate reports **901 Markdown files / 57 governed surfaces** and exits 0 with no research warning. The stop relocates to `lines_total`/`bytes_total`, which at the measured record mean bind at ~238 records and still have a warning band |
 | `2026-08-31` | `.14a` | `check_active_task_evidence.pl --self-test`; the three contracts `--check`; `--write` round-trip; `check_live_document_size.sh`; census, book-claim, knowledge-map and doctrine gates | index **115 -> 43 lines** (89.8% -> 33.6%), clear of the 90% milestone that refused the next leaf; 83 routes = 3 open / 80 closed in one 93-line catalog part; self-test **61/61** with eleven new RED cases and a writer round-trip plus preflight refusal; live-size **900 files / 57 surfaces**; census 41 surfaces / 73 evidence units; book claims 325/325; Knowledge Map 274 facts / 2,193 keys |
 | `2026-08-31` | `.14a` cross-check | first run of the declared-vs-observed lifecycle rule over all 83 alignment routes | **two findings on adoption.** `.8` was `active` in its part while its four children were `done` and the root records `.0`-`.8` complete — the landing would have published it open; corrected. `.9a` has no node record in any part, the one route no evidence corroborates, pinned by `max_unverified_routes: 1` and owned by `.16` |
 | `2026-08-31` | `.7` self-orphan | re-read the assignment table against the leaf's own closing `Status` | the three rows `.7` assigned to itself were orphaned by closing it — the class this leaf exists to eliminate, committed inside the commit that eliminated it, and the seventh instance overall. Rows move to `.14`; `.15` makes the invariant mechanical because review demonstrably does not hold it |
@@ -773,6 +842,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.4a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption` | ADR 0045 applied to a second surface; `.4b` must retire the consumed authority next |
 | `.14a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a — shard the task-evidence index by lifecycle` | ADR 0046; the stop relocates to `max_leaf_routes` and `.17` says so |
 | `.7` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — assign every gate-level warning by review` | the leaf found its own documented trap inside itself; ownership now reads the owner's `Status`, not a mention |
 | `.7` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen` | the leaf's own four-producer premise is corrected a third time; the reviewed per-row assignment is the open half |
@@ -781,6 +851,11 @@ owner's `Status` line rather than from any mention of the surface.
 | `.2` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2 — split the decided no-cap remedy into the three transactions it actually is` | container; found the second `$MAX_TASKS` enforcer and measured the relocation |
 
 ## Changelog
+
+- `2026-08-31`: `.4` becomes a container over `.4a` (the membership stop, done), `.4b` (retire the consumed
+  authority), `.4c` (the 639-of-640 per-record line stop) and `.4d` (validation snapshot and README). Also
+  corrected a duplicated `.4` row the `.14a` commit left in the Current Frontier table — the same stale
+  hand-maintained-table defect this tree already caught once on `.2a`/`.2b`/`.2c`.
 
 - `2026-08-31`: `.14` becomes a container over `.14a`/`.14b`/`.14c`, and `.14a` lands the lifecycle shard with
   ADR 0046. Opened by the work rather than by review: `.16` (`.9a` has no node record anywhere), `.17` (the

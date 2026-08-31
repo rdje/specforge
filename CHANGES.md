@@ -1,3 +1,27 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption
+
+- THE NEXT RESEARCH RECORD WAS THE LAST ONE. docs/research/*.md was 63 of a 64-file ceiling with
+  health_targets.files == enforcement_ceilings.files, so no warning band, and the surface declares NO
+  rollover transaction at all: a bound compliant work can reach with a remedy compliant work cannot take.
+  Two active trees write research records as their normal output.
+- ONLY THE COUNT WAS LOADED. lines_total 10,840/40,960 = 26.5% and bytes_total 740,829/4,194,304 = 17.7%.
+  At the measured 172-line / 11.8 KB record mean those aggregates admit about 238 records, which is fewer
+  than the catalog's own row capacity — so the resource bound binds first and still has a warning band. That
+  is the ADR 0045 shape exactly, and it is why the cap is removed rather than raised: raising 64 to a larger
+  number moves the countdown and leaves the no-rollover defect in place, which this tree's Non-Goal forbids.
+- APPLIED THROUGH THE GATED EXEMPTION, NOT A BARE NULL. research_records nulls files in both bands behind a
+  cardinality_exemption naming ADR 0045, this leaf, and canonical_collection_indexes as the route that
+  covers docs/catalogs/research-records.md and is itself bounded in every dimension. Every resource
+  dimension stays numeric. Nulling a ceiling is an increase, so the transaction adds and consumes one exact
+  single-use ceiling_increase_authorities.jsonl record whose old/new match the registry byte-for-byte.
+- .4b MUST FOLLOW IMMEDIATELY. Once HEAD carries the new bands the consumed authority reads as banked and
+  the generic gate refuses it, exactly as .2b had to follow .2a.
+- NO SECOND DECISION RECORD. ADR 0045's Decision is written as the general mechanism, so applying it is not
+  a new decision; the per-surface measurement lives in the registry's own gated rationale field and in the
+  leaf. A near-duplicate ADR would also spend decision_records.files, already at 82.8%.
+- .4 is now a container over .4a (this), .4b, .4c (one research record is 639 of a 640-line per-file ceiling,
+  so a one-line correction to it is still refused) and .4d (validation snapshot and README).
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.14a — shard the task-evidence index by lifecycle
 
 - THE ALIGNMENT INDEX WAS ONE LEAF FROM A HARD REFUSAL. It routed every leaf the tree had ever declared, one

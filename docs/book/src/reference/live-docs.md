@@ -822,6 +822,13 @@ lifetime, so its line ceiling becomes a cap on how much history the project may 
 lists open trees grows with concurrent work in flight, which ordinary work reduces by finishing trees. There
 is no limit on the number of task-trees (ADR 0045); a finished tree stays as project history in the parts.
 
+The same exemption now covers the research plane. `docs/research/` declares no file count either, and for the
+same measured reason its registry entry records: only the count was loaded, while the line and byte aggregates
+that bound the resource actually consumed sat far below their targets, and the count had no rollover a
+compliant author could take. `docs/catalogs/research-records.md` remains the bounded route, so what stays
+bounded is the reader's path rather than the project's history. Every exemption is declared in the registry and
+gated — a bare `null` is still refused, and the resource dimensions must stay numeric.
+
 The doctrine now distinguishes internal membership from `external_membership`. An external index must
 be one safe repository-relative Markdown file outside the member surface, must itself belong to a
 separately classified bounded surface, and must link every member directly. This lets a large fixture
