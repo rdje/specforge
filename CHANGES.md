@@ -1,3 +1,24 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — repair the self-orphan the assignment created
+
+- THE ASSIGNMENT BOUND THREE ROWS TO .7 AND THE SAME COMMIT CLOSED .7. alignment_task_evidence_index,
+  alignment_task_evidence_parts and rust_analysis were left owned by a done leaf — the exact defect .7 exists
+  to eliminate, committed inside the commit that eliminated it, and including the row that gates .9c.
+- THAT IS THE SEVENTH INSTANCE OF THE CLASS IN ONE SESSION. Five historical citations name closed trees;
+  CLAIM-VERIFICATION-ADOPTION.11 produced a sixth by screening with grep -rl; .7 produced the seventh at full
+  attention, immediately after writing the warning about it. A class that survives being reviewed, documented,
+  and guarded against by its own author is not a discipline problem. It is a missing mechanical check.
+- .14 CARRIES THE THREE ROWS and does the alignment index shard by .2c's proven form — lifecycle, not alphabet,
+  so the bound measures concurrent work in flight rather than project age. Measured: 77 of 83 route rows are
+  closed lanes, 54 in lane .6 alone.
+- .14 ALSO RECORDS THE GENERAL RULE as a decision record in the same commit, because all three task-evidence
+  contracts share a destinations shape with a rollover route for the root and the parts and NONE for the index,
+  whose size is a pure function of leaf count. corpus-coverage is at 68% of the same un-routed bound and
+  pdf-variant-digestion at 49.4%, so the third tree inherits the answer instead of rediscovering it. The
+  generalisation follows the instance rather than preceding it, which is this repository's own idiom.
+- .15 MAKES "A CITED OWNER IS STILL OPEN" MECHANICAL, with the owner's own Status line as authority, a known-bad
+  case observed RED before green is claimed, and an explicit statement of what it still permits: it can prove an
+  owner is open, never that the open owner is the right one.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — assign every gate-level warning by review
 
 - THE LEAF FOUND ITS OWN DOCUMENTED TRAP INSIDE ITSELF. .7 exists because .11 screened ownership with

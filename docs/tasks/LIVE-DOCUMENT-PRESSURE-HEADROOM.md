@@ -481,6 +481,40 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Verification: `pending`
   Commit: `pending`
 
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14`
+  Status: `pending`
+  Goal: carry the three rows `.7` assigned to itself, and shard the alignment task-evidence index
+  Acceptance: `alignment_task_evidence_index` comes back under its mandatory-rollover milestone by the remedy
+  `.2c` proved — shard by lifecycle, not by alphabet, so the bound measures concurrent work in flight rather
+  than project age — with the complete route set still resolving and no hand-edited member list; measured, 77
+  of 83 route rows belong to closed lanes and 54 to lane `.6` alone, so the lifecycle cut is the one that
+  frees the budget. `alignment_task_evidence_parts` and `rust_analysis` come back under warning by remedies
+  their own drivers support. **The general rule is recorded as a decision record in the same commit**, because
+  all three task-evidence contracts share a `destinations` shape with a rollover route for the root and the
+  parts and none for the index, whose size is a pure function of leaf count — `corpus-coverage` sits at 68% of
+  the same un-routed bound and `pdf-variant-digestion` at 49.4%, so the third tree must inherit the answer
+  rather than rediscover it, and `.10` consumes it rather than re-deriving it
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.15`
+  Status: `pending`
+  Goal: make "a cited owner is still open" a mechanical check instead of a review habit
+  Acceptance: a gate refuses any ownership citation that names a `done` or `superseded` tree or leaf, over the
+  assignment surfaces that carry them, with the owner's own `Status` line as the authority and a known-bad
+  case observed RED before it is claimed green; the check states what it still permits — it can prove an owner
+  is open, never that the open owner is the right one. **The population that justifies it is enumerated, not
+  impressionistic:** five historical citations named closed trees (`DECISION-RECORD-CAPACITY-HEADROOM`,
+  `FACT-CARD-CAPACITY-HEADROOM`, `FACT-CARD-CATALOG-CONTAINMENT`, `CORPUS-TASK-EVIDENCE-CONTAINMENT`,
+  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`), `CLAIM-VERIFICATION-ADOPTION.11` produced a sixth by screening
+  with `grep -rl`, and `.7` produced a seventh by closing itself while holding three of its own rows — the
+  last under full attention, immediately after documenting the class. That is the evidence that review does
+  not hold this invariant and a gate must
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 
 Derived at `5ceb27c8` from `bash scripts/check_live_document_size.sh`, deduplicated to 39 distinct items.
@@ -495,9 +529,9 @@ and each per-file warning was resolved to the file actually driving it. No total
 | `research_records` files / lines_each / bytes_each | `docs/research/` (63 of 64 files; widest 639 of 640) | `.4` |
 | `validation_snapshot` lines_each | `VALIDATION_SNAPSHOT.md` | `.4` |
 | `readme_entrypoint` line_bytes_each | `README.md` | `.4` |
-| `alignment_task_evidence_index` lines_each; active task index lines | `spec-to-intent-alignment/INDEX.md` | `.7` |
-| `alignment_task_evidence_parts` lines_each; semantic part lines_each | alignment parts collection | `.7` |
-| `rust_analysis` lines_each | `RUST_CODEBASE_ANALYSIS.md` | `.7` |
+| `alignment_task_evidence_index` lines_each; active task index lines | `spec-to-intent-alignment/INDEX.md` | `.14` |
+| `alignment_task_evidence_parts` lines_each; semantic part lines_each | alignment parts collection | `.14` |
+| `rust_analysis` lines_each | `RUST_CODEBASE_ANALYSIS.md` | `.14` |
 | `change_history` bytes_each / lines_each; ledger `changes` ×2 | `CHANGES.md` | `CHANGES-LEDGER-ROLLOVER.4` |
 | ledger `live-achievement-status` ×2 | `LIVE_ACHIEVEMENT_STATUS.md` | `STATUS-LEDGER-ROLLOVER.2` |
 | bounded active root bytes / line_bytes / lines | `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` | `SPEC-TO-INTENT-ALIGNMENT` |
@@ -515,6 +549,13 @@ gave the resume pointer a deliberate band and the whole point of a band is to be
 work moves it back down, demonstrated this session when rewriting the pointer took it from **94.0% to 80.0%**
 of `lines_each` without any authority edit. A surface that ordinary work already regulates does not need a
 remedy leaf; it needs the band it has. Re-open this only if a rewrite ever fails to recover it.
+
+**Corrected the same day, and the correction is the finding.** The three rows above first read `.7`, which
+this commit closes — so closing the leaf that assigned rows to itself orphaned them, which is the exact defect
+this leaf exists to eliminate, committed inside the commit that eliminated it. `.7` delivered the assignment;
+the *remedies* for the rows it assigned to itself need an open owner, and that is `.14`. A class that survives
+being reviewed, documented, and guarded against by its own author at full attention is not a discipline
+problem, it is a missing mechanical check — `.15` supplies it.
 
 **Four owners named in this tree or in `COMMIT.md` are `done` trees, so their rows were unowned.** Read from
 each tree's own `Status`: `DECISION-RECORD-CAPACITY-HEADROOM`, `FACT-CARD-CAPACITY-HEADROOM`,
@@ -605,6 +646,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-31` | `.7` self-orphan | re-read the assignment table against the leaf's own closing `Status` | the three rows `.7` assigned to itself were orphaned by closing it — the class this leaf exists to eliminate, committed inside the commit that eliminated it, and the seventh instance overall. Rows move to `.14`; `.15` makes the invariant mechanical because review demonstrably does not hold it |
 | `2026-08-31` | `.7` assignment | 39 rows reviewed per row against open trees; owner status read from each owner's own `Status` line; every per-file warning resolved to its driving file | 23 rows bind to eight open owners, 15 to `.8`-`.13` opened here, one exempt with reason (23+15+1=39). **Five named owners are `done` trees**, including `DECISION-RECORD-CAPACITY-HEADROOM`, which this leaf cited as its model exclusion and whose row is the most pressured in the population |
 | `2026-08-31` | `.7` population | `bash scripts/check_live_document_size.sh` at `057710cd`, deduplicated and classified by emitting producer | 22 producers emit, **five** emit warnings — not the four this leaf recorded — and 39 distinct warned items remain after removing three double-emissions; the missed producer `roadmap-projection` uses uppercase `WARNING` with no colon, so a `warning:`-keyed census reads 38 of 42 lines and is blind to all of its rows |
 | `2026-08-14` | `.0` ownership | exact metrics; Knowledge Map routing; existing owner census; task catalog; content/authority diffs; live-size/doctrine | seven axes pinned; ownership-only resulting tree 145 task files / 398 index lines; no governed content or bound change |
