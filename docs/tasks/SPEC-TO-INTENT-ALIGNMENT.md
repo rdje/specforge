@@ -146,6 +146,7 @@ detail-routing authority.
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-08-31` | `.9e` findings re-derived | one of three does not hold: the root did not arrive over rollover — 88.3% at `f34ce77a`, 424 bytes of headroom against 583 for this slice's own two rows, so it triggered what it cleared. Both other findings reproduce. New limit: every reviewed `/family` predicate is satisfied by construction |
 | `2026-08-31` | `.9e` reviewed-label repair | the two unsatisfiable golds become the region law: only the four echoed strings move, every scalar and global byte-identical, an arbitrary third key equally inert, a matched key RED. The new gold-law gate names both cells at the pre-change revision; self-test 38/38. `.9b`'s "clean fmt" was false from `0a703cc0`, repaired token-identically |
 | `2026-08-30` | `.9e` re-derived carried-forward findings | two of three do not hold and are withdrawn in place: "unreachable by any structural rule" is false (a positional predicate reaches `elem_00017`), and the index arithmetic is off by one — 114 of 128 lines means one added row is 89.84% and legal, two are 90.62%, and `.9c` was already declared so was never blocked. The unproducible-label finding stands and now has an owner |
 | `2026-08-30` | `.9d` contract re-pin and gate | attributed by re-deriving at each revision: digest MATCH at `893c2fba`, MISMATCH at `245b3b60`, differing in exactly `software_guidance.hard_failures`; red for 43 commits. No published scalar moves; `--check` re-derives 8/16 and the self-test is 28/28. `RESIDUAL-ACTIONABILITY` is gate-tier at 0.04s, proven fail-closed twice, registry and §10 mirror lockstep at 13 |
@@ -171,6 +172,7 @@ detail-routing authority.
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.9e` | `SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the published findings and correct the containment account` | hold the leaf's own published findings to the standard it applied to `.9b`, and state the limit the reviewed queries still permit |
 | `.9e` | `SPEC-TO-INTENT-ALIGNMENT.9e — normalise the two reviewed golds no carrier can emit` | make the unsatisfiable cells satisfiable without moving a measurement, and gate the key law |
 | `.9e` | `SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the carried-forward findings and withdraw the two that do not hold` | re-derive every statement handed to the owner, withdraw what was asserted rather than derived, and give the surviving finding a leaf instead of a report |
 | `.9d` | `SPEC-TO-INTENT-ALIGNMENT.9d — re-pin the frozen residual contract and put it under a gate` | repair the stale witness from the contract's own decomposition and make the executable contract a doctrine so it cannot drift unobserved again |

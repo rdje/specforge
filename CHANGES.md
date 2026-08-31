@@ -1,3 +1,34 @@
+### SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the published findings and correct the containment account
+
+- The owner asked whether the findings .9e published still held. Re-deriving them rather than restating them,
+  ONE OF THREE DOES NOT, and the correction is the same idiom .9e used on .9b: withdraw in place, name what was
+  asserted rather than derived, and keep the sealed entry above as written.
+- WITHDRAWN: "the bounded task root had ALREADY reached mandatory rollover and would have blocked any commit".
+  The 90.3% was real but it was not inherited. Re-deriving the root size at each revision from its own blob:
+  2a5a0526 79.5%, 0a703cc0 84.4%, 2f4959de 87.6%, f34ce77a 88.3% — every one UNDER the 90% rollover. At
+  f34ce77a the root had 424 bytes of headroom and .9e's own two mandatory log rows cost 583, so THIS SLICE
+  triggered the rollover it then cleared. The durable fact is more useful than the one withdrawn: an ordinary
+  slice's own bookkeeping now costs more than the bounded root's remaining headroom, so the next slice should
+  expect to roll again.
+- STANDS: .9b's "clean fmt" claim is false. 2a5a0526 is confirmed the parent of 0a703cc0, cargo fmt --all
+  --check is CLEAN there and DIRTY at 0a703cc0 and every commit after, and run_ci.sh line 18 runs that check
+  unconditionally under set -euo pipefail. Tightened to what was actually derived: run_ci.sh COULD NOT HAVE
+  PASSED at those three revisions. It was never executed at them, so "CI was observed red" was not measured.
+- STANDS: the pre-change RED attribution reproduces from the committed gate — restoring f34ce77a's gold makes
+  --check exit 1 naming both cells, and restoring the repair returns it to 0.
+- NEW, and it is a limit on what the published ratio means: EVERY reviewed query's /family predicate is
+  satisfied by construction. capture_records sets capture_key to cell["family"] and the canonical and
+  captured-region projections set each record's family to the same value, so the predicate can never exclude a
+  record. This is NOT a fixture defect — production carries VisualAssetKind, VisualEvidenceRole and
+  CapturedRegionResidualRecord.region_kind, but nothing comparable to a reviewed semantic_family, because a
+  residual asserts only that no carrier cited the region and makes no claim about what the region is. The
+  consequence, previously unstated anywhere: NO REVIEWED CELL TESTS WHETHER PRODUCTION CLASSIFIED A REGION INTO
+  THE RIGHT SEMANTIC FAMILY. The residual and capture queries test region-level reachability and accounting
+  only. Closing it needs production to emit a family classification first, which is a product decision and not
+  a fixture repair, so no leaf is opened for it.
+- It does not weaken the .9e gate: residual_gold_law constrains AUTHORED GOLD against the key law the projector
+  will actually apply, which is real whether or not the family predicate discriminates at scoring time.
+
 ### SPEC-TO-INTENT-ALIGNMENT.9e — normalise the two reviewed golds no carrier can emit
 
 - THE DEFECT IS THAT THE CELL COULD NEVER BE MET, not that the label was ugly. project_captured_regions builds

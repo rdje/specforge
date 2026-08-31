@@ -27,9 +27,12 @@
   it did not. The population replay follows the carrier work and is what republishes
   `current_result_snapshot.json`, which still predates `.9b`'s table carrier.
 - In-flight uncommitted: none after this commit.
-- Blockers: none. CONTAINMENT, re-derived: the bounded root was AT mandatory rollover (90.3%) and `.9e` rolled it
-  to **79.8%** by removing eleven closed-lane `.6d.ii.f` verification rows, after checking every distinctive
-  figure they carried already appears in the behavioral-qualification part. The **active task index is still
+- Blockers: none. CONTAINMENT, re-derived from each revision's own blob rather than restated: the bounded root
+  did **not** arrive over rollover. It was 21,694 bytes (**88.3%**) at `f34ce77a` with **424 bytes of headroom**,
+  and `.9e`'s own two mandatory log rows cost **583** — so an ordinary slice's own bookkeeping now exceeds the
+  root's headroom, which is the durable fact. `.9e` cleared it to **79.8%** by removing eleven closed-lane
+  `.6d.ii.f` verification rows, after checking every distinctive figure they carried already appears in the
+  behavioral-qualification part. Expect the same pressure next slice. The **active task index is still
   115 of 128 lines (89.8%)** and rollover begins at 115.2, so the **next new leaf** must roll the index first —
   this is unchanged and still binding. Read every figure from
   `perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --report`

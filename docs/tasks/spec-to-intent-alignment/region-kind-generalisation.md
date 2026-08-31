@@ -127,7 +127,12 @@ stays there, and the `.9a` re-derivation that routes here stays in
   by reading a diff. Repaired here; the repair is identical modulo whitespace and rustfmt trailing commas, and
   the whole tree is fmt-clean again. This leaf also rolled eleven closed-lane .6d.ii.f rows out of the bounded
   root after checking that every distinctive figure, digest and revision they carried already appears in the
-  behavioral-qualification part, taking the root from 90.3% to 79.8% of its byte target`
+  behavioral-qualification part, taking the root from 90.3% to 79.8% of its byte target. CORRECTED after
+  publication, by re-deriving the root size at each revision from its own blob rather than restating it: the
+  root did NOT arrive at this slice over rollover. It was 21,694 bytes (88.3%) at f34ce77a with 424 bytes of
+  headroom, and .9e's own two mandatory log rows cost 583 — so this slice TRIGGERED the rollover it then
+  cleared, and the durable fact is that the bounded root had less headroom than one ordinary slice's own
+  bookkeeping requires`
   Commit: `SPEC-TO-INTENT-ALIGNMENT.9e — normalise the two reviewed golds no carrier can emit`
 
 ## Measured generalisation design (`.9b`, before implementation)
@@ -427,6 +432,31 @@ satisfy its own region law or be declared with the differently scoped production
 carrier's exact keys, and the published result's gold must equal the review-locked dataset's. The contract
 records what it still permits — a declared fact-scoped entry naming a real carrier that could not in fact emit
 its keys, because that carrier's key law is pinned here rather than re-derived.
+
+### What the reviewed residual queries still permit (`.9e`, re-derived after publication)
+
+Asking what a check still permits is what `CLAIM_VERIFICATION.md` §2 requires before trusting it, and the
+answer here is sharper than the gold law alone.
+
+`capture_records` sets each projected capture's `capture_key` to `cell["family"]`, and
+`project_captured_regions` and `project_canonical` set each projected record's `family` to the same value.
+Every reviewed query's `/family` predicate is therefore satisfied **by construction** and can never exclude a
+record. Only the region identity and the record's presence are answered by the artifact.
+
+This is not a fixture defect. Production carries `VisualAssetKind` and `VisualEvidenceRole` on a captured
+region and `region_kind` on `CapturedRegionResidualRecord`, but nothing comparable to a reviewed
+`semantic_family`: a captured-region residual asserts only that no canonical record cited the region, and
+makes no claim about what the region *is*. There is simply nothing on the production side to compare.
+
+The consequence is a real limit on what the published ratio measures, stated here rather than implied: **no
+reviewed cell tests whether production classified a region into the right semantic family.** The residual and
+capture queries test region-level reachability and accounting only. Closing that would require production to
+emit a semantic-family classification first — a product decision, not a fixture repair — so no leaf is opened
+for it here.
+
+It does not weaken this leaf's gate. `residual_gold_law` constrains **authored gold** against the key law the
+projector will actually apply; that constraint is real whether or not the family predicate discriminates at
+scoring time.
 
 ## Acceptance Checklist (enforced) - `SPEC-TO-INTENT-ALIGNMENT.9e`
 
