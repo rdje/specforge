@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does automatic task ranking keep hard failures ahead of breadth work
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > how does behavioral genericity normalize renamed stable ids safely
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -218,6 +222,8 @@
   > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how is a roadmap rollover capsule verified
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > how is a task-tree leaf written in docs/tasks (two forms: the absolute `- ID: `TREE.x` · Status: ...` line used by most trees, and a nested relative ` - `.x` · Status: ...` line used for children written inline under their parent, e.g. DOC-INTENT-TAXONOMY .3b/.3c under .3)
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is a valid post-migration active task continuation verified
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
@@ -291,9 +297,3 @@
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how is the protocol initiator actor identified structurally without a name list
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > how is the published current result kept in agreement with the reviewed gold
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how is the purpose category different from document_class (richer 6-way semantic taxonomy vs coarse 4-way structural proxy; consumes document_class as one input, never replaces it)
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)

@@ -727,7 +727,8 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   `[[feedback_not_complete_attack_substantive_gaps]]`.
 
 - ID: `KG-ISF-COMPLETENESS.5` · Status: `active` (umbrella; **measurement DONE `2026-06-24`**, read-only,
-  docs-only; code → `.5.i`/`.5.ii`/`.5.iii` all LANDED `2026-06-24`) · Goal: **enum-surface fidelity (bar #6) — the generic-`TABLE`
+  docs-only; code → `.5.i`/`.5.ii`/`.5.iii` all LANDED `2026-06-24`; `.5.iv` measured `2026-08-11`; the one
+  open child is `.5.iv.a`, given its node by `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`) · Goal: **enum-surface fidelity (bar #6) — the generic-`TABLE`
   mega-enum conflation.** Surfaced by the `CORPUS-COVERAGE.2` re-ingests of JEDEC HBM2 (#28) and AMBA CHI C2C
   (#29), explicitly deferred by `.2a.iv` (Lever F) as "a future extraction-precision lever". **Measured
   (read-only, current binary + 78-doc persisted corpus; reproducer in the report):** the `.isf` emits a
@@ -919,6 +920,33 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   old-versus-new replay, and FSMGen `--strict` on every changed `.isf` — the same high-stakes gate-code rule
   `.5.i` was run under. No code changed in this leaf. Report
   `docs/research/generic-enum-conflation-results.md` §`.5.iv measurement`; KM `[[generic-enum-conflation]]`.
+
+- ID: `KG-ISF-COMPLETENESS.5.iv.a` · Status: `pending` (CODE; the only unwritten leaf of `.5`) · Goal: **let an
+  encoding table's own column header SOURCE an enum name, not merely veto one.** `.5.iv` named this slice as its
+  frontier and measured it GO, but it was never given a node — so the lane's named next step had no owning leaf
+  and could not legally be started (`docs/decisions/0003-task-tree-and-commit-doctrine.md`). Found and owned by
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` while auditing the writer set of the report these leaves append to; the
+  leaf records what `.5.iv` already decided rather than re-opening it.
+  **Scope, from the `.5.iv` measurement.** Widen `derive_encoding_enum_name` (`crates/specforge/src/ir/evidence.rs`
+  :4698-4703 draws candidates from `caption_text`/section title only; :4715-4733 validates against
+  `known_signals` + the header) so a single-header-row `<FIELD> value | Description` table may take its name from
+  the header. GO is on the lever, **NO-GO on the naive predicate**: of the 134 corpus tables that would mint a
+  non-empty enum, four measured junk classes must be excluded first — `OFFSET`-headed register-offset tables
+  (3, CoreSight SDC-600) where the header names a column concept and not a field; `*_WIDTH` self-named
+  pseudo-enums whose only member is `LEGAL_VALUES` (the `.5.iii` honest residual, re-entering from the header
+  side); garbled members (`AXADDR` → `VA_40`, `NUM_2_0_A`); and 12 `RESERVED`-only enums carrying no intent.
+  The exclusion predicate must itself be measured FP-free before it lands, exactly as `.5.iii`'s `_WIDTH` gate
+  was. Merge-by-name is safe here and this is measured, not assumed: 0 of 28 same-name collision groups conflict
+  on any shared value.
+  **Gate (high-stakes, same rule `.5.i` ran under).** It is byte-changing on a scored document — it mints a new
+  `AWATOP` enum on the AXI wire gold `ihi0022_l` — so it carries the full before/after WIRE-BASED-100 protocol
+  on rebuilt gold evidence, a corpus-wide old-versus-new replay, FSMGen `--strict --check --json` on every
+  changed `.isf`, `kg-bench`, and `run_ci.sh`; it belongs in its own focused/fresh slice, not at the tail of
+  another. ADR 0006 applies: the name must come from the document, never from a vocabulary list.
+  Prerequisite: `KG-ISF-COMPLETENESS.5.iv` (met). Report
+  `docs/research/generic-enum-conflation-results.md`; KM `[[generic-enum-conflation]]`.
+  Verification: `pending`
+  Commit: `pending`
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.ii` — DONE `2026-06-24`
 - [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted IntentIR docs (561 enums / 12 509 members). The `.5.i` name-gate cannot reach enums whose NAME is a real signal but whose MEMBERS are junk: AXI-gold `BRESP` is 16 members = 7 prose fragments + `BRESP_WIDTH` FUSED with the 8 genuine codes; AHB-gold `HPROT` has value-restart but 15 clean members. Report `docs/research/generic-enum-conflation-results.md` §`.5.ii measurement`.

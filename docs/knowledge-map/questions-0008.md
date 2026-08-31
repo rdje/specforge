@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > should specforge record a residual for every typed rule that does not lower to .isf
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > should specforge record an adapter residual for rules whose subject is not a declared signal
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > should the drifted SourceIR documents be re-ingested
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > temporal rule eval false positives root cause
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -24,6 +32,8 @@
   > was the repaired reviewed population published
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > was the warning-safe rolling ledger transaction independently audited from a clean clone
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > was there ever a task-tree lane whose named next step had no owning leaf (yes, exactly one: KG-ISF-COMPLETENESS.5.iv.a, named as the frontier by .5.iv on 2026-08-11 but never given a node; found and owned 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e while auditing that report's writer set)
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > were DL and TL diagram labels signal declarations
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
@@ -287,13 +297,3 @@
   > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > what does check_rolling_ledger_protocol --report actually measure
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what does converge --promote-constraints-llm do and when does it run
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > what does converge do after stabilization
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > what does current_snapshot_bullets_v1 treat as one record
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > what does drop_unconditional_overlap_conflicts / unconditional_overlap_residual_packet do in ir/isf_ir.rs
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > what does drop_ungrounded_rule_transaction_conflicts do

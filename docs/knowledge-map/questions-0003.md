@@ -118,6 +118,8 @@
   > does enrich / audit-extraction / recover-register-bits read full-page images or region images
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > does eval-extraction rebuild evidence or load the persisted file
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > does every Frontier -> .x mention in a task tree resolve to a real leaf
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does every SWD protocol record receive an ISF adapter disposition
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
@@ -295,5 +297,3 @@
   > how are bits | name | function tables extracted
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are byte location | size | register description tables extracted
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > how are caption-less page fragments of a split table stitched together

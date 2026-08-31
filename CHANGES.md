@@ -1,3 +1,33 @@
+### KG-ISF-COMPLETENESS.5.iv.a — give the lane's named next step an owning leaf
+
+- FOUND WHILE COUNTING A WRITER SET, NOT WHILE LOOKING FOR IT. LIVE-DOCUMENT-PRESSURE-HEADROOM.4e had to
+  measure how much writing was left in KG-ISF-COMPLETENESS.5 to choose between partition and rollover. That
+  count turned up an ownership gap: .5.iv closed on 2026-08-11 with "Frontier -> .5.iv.a (CODE)" and .5.iv.a
+  was never given a node. Under docs/decisions/0003 the lane's named next step therefore could not legally be
+  started, and nothing detected it.
+- OWNED, NOT JUST REPORTED. .5.iv.a now has a pending leaf carrying what .5.iv already decided: widen
+  derive_encoding_enum_name so a single-header-row <FIELD> value|Description table may take its name from the
+  header; exclude the four measured junk classes first (OFFSET-headed register-offset tables, *_WIDTH
+  self-named pseudo-enums, garbled members, RESERVED-only enums) with the exclusion predicate itself measured
+  FP-free; and run the full before/after WIRE-BASED-100 protocol because it mints a new AWATOP enum on the AXI
+  wire gold ihi0022_l. Merge-by-name is safe here by measurement, not assumption: 0 of 28 same-name collision
+  groups conflict on any shared value.
+- THE FIRST AUDIT WAS WRONG AND THE CORRECTION IS THE REUSABLE PART. A detector matching only the absolute
+  "- ID: `TREE.x`" node form reported THREE trees with an unowned frontier. Two were false positives:
+  DOC-INTENT-TAXONOMY .3b/.3c and BOOK-USER-FRIENDLY-BACKFILL .2.b-.2.f are written in a second, equally
+  legitimate nested relative form ("  - `.3b` · Status: ..."), and they own their leaves. Corrected, exactly
+  ONE tree had a real gap. Fact card task-tree-node-forms records both forms and carries the corrected
+  detector, so the next audit does not repeat the false positive.
+- Fact-card projection regenerated (253 cards, bounded landing plus 5 title parts) and its planned_outputs
+  contract updated in the same transaction, since adding a card changes the pinned title-part metrics;
+  Knowledge Map 276 facts / 2,214 keys over 16 shards; canonical catalogs verified at 266 members.
+- THE PUBLISHED-ASSERTIONS GATE CAUGHT THE REST, AND THAT IS THE POINT. The first commit attempt was REFUSED:
+  adding one card moves docs/knowledge/INDEX.md's published card count, and published_assertions.jsonl still
+  pinned 252 with the old region digest — "value '252' does not appear in its own governed region" and
+  "'card_count' re-derives to '253', published '252'". The value was corrected by re-running the named
+  producer (check_fact_card_catalog.pl --report, field card_count) rather than by hand, which is the whole
+  contract: a published number is only allowed to move when its producer says so.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.4e — partition the composite enum-conflation record at its chronology seam
 
 - .4c RELOCATED THE RESEARCH MAXIMUM ONTO A RECORD WITH A LIVE WRITER, and .4e owns that successor:

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are caption-less page fragments of a split table stitched together
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how are cited falsification controls bound to known-bad RED evidence
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -124,6 +126,8 @@
   > how do I address exactly one converter item
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I change the reviewed source-to-intent fixture projection
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > how do I check whether a named frontier has an owning task-tree leaf
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how do I check whether the persisted corpus seal is stale
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -294,7 +298,3 @@
   > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > how does an unknown-kind Continued from previous page table fragment get a kind
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does automatic task ranking keep hard failures ahead of breadth work
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > how does behavioral genericity normalize renamed stable ids safely
