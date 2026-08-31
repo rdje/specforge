@@ -6,7 +6,7 @@
 ## Active residual actionability
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.8`
-  State: `active`
+  State: `done`
   Goal: make required promotion-loss residuals typed, source-linked, and actionable
   Acceptance: a bounded residual family gains exact source linkage, typed cause, and operator action at
   SemanticIR and IntentIR; the vertical evaluator records the disposition without relabeling missing canonical

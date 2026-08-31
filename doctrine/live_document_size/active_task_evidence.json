@@ -699,6 +699,7 @@
       }
    ],
    "route_basis" : "boundary_path_commit_subject_ids",
+   "route_catalog_state" : "inline",
    "schema_version" : 1,
    "source" : {
       "boundary_commit" : "f04db37ac0a4d9935f373b2d2887e647ba6f4c4d",

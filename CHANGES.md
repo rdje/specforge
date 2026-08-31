@@ -1,3 +1,39 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.14a — shard the task-evidence index by lifecycle
+
+- THE ALIGNMENT INDEX WAS ONE LEAF FROM A HARD REFUSAL. It routed every leaf the tree had ever declared, one
+  row each, so its length was a pure function of project age: 115 of a 128-line health target = 89.8%, against
+  a 90% milestone that is an error, not a warning. destinations gives the root a rollover route and the parts a
+  rollover route and gives the index none. Of its 83 rows, 78 were done or superseded and 54 belonged to one
+  finished lane. It also gated the product frontier SPEC-TO-INTENT-ALIGNMENT.9c, which needs child leaves.
+- THE CUT IS BY LIFECYCLE, NOT BY ALPHABET, following .2c. The landing carries the OPEN leaves and links a
+  derived route catalog carrying complete membership with each leaf's lifecycle. Index 115 -> 43 lines
+  (33.6%); 83 routes = 3 open / 80 closed in one 93-line catalog part. Both files are derive-and-diff
+  generated, --write is the only writer, and an unplanned routes-*.md is refused by name. Part bounds come from
+  the generator's own shape: a structurally full part sits BELOW its own 80% warning, never a bound with no
+  remedy. ADR 0046 records the rule so corpus-coverage and pdf-variant-digestion inherit it.
+- THE LANDING'S LIFECYCLE CLAIM IS RE-DERIVED, NOT ASSERTED. Where a leaf's primary part declares it as a node,
+  the contract's open/closed must agree with that part's own State:/Status: line. THE CROSS-CHECK FOUND TWO
+  THINGS ON ITS FIRST RUN: .8 was active in residual-actionability while all four children were done and the
+  root records .0-.8 complete — the new landing would have published as open a leaf the root publishes as
+  closed; and .9a is routed and registered as an owner but has NO node record in any part. .9a is the single
+  uncorroborated route, pinned by max_unverified_routes: 1 so the population can only shrink, owned by .16.
+- ADOPTION IS STAGED FOR AN EVIDENTIAL REASON, NOT A SCHEDULING ONE. pdf-variant-digestion and corpus-coverage
+  stay inline: their parts record leaves as prose with no node blocks, so the cross-check has no authority
+  there, and declaring 52 and 56 lifecycles by hand would put an unverifiable claim on their landings.
+  route_catalog_state declares the shape the way migration_state already stages this doctrine.
+- THE STOP RELOCATES AND THE RECORD SAYS SO. The nearest structural bound is now limits.manifest.max_leaf_routes,
+  fixed at 128 by the portable cap against 83 declared routes, with no declared rollover. Calling this "the
+  index bound is removed" would repeat the error .2 caught in .2a; .17 owns the residual.
+- FOUND WHILE REFRESHING THE CLAIM PINS: check_claim_verification.pl executes rederive.commands and
+  falsification.controls but NEVER durability.stale_check, so every claim's staleness gate is decorative. The
+  proof is that current-claim-census-frozen pinned "39 current surfaces" while the producer printed 40 before
+  this slice. That one pin is repaired to the stable phrase the claim's own assertion requires; .18 owns the
+  general gap. A third instance surfaced in the same pass and failed loudly, which is the system working:
+  mdbook-quantitative-census-frozen's EXECUTED rederive marker pinned "regions":322 while its own assertion
+  says those totals are per-commit counters read from --report. It is withdrawn to a marker carrying no count.
+- .14 is now a container over .14a (this), .14b (the semantic-part collection) and .14c (the Rust analysis
+  ledger), because those are three lifecycles and this tree's Non-Goal forbids combining them.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — repair the self-orphan the assignment created
 
 - THE ASSIGNMENT BOUND THREE ROWS TO .7 AND THE SAME COMMIT CLOSED .7. alignment_task_evidence_index,

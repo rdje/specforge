@@ -75,20 +75,7 @@ perl "$ROOT/scripts/check_task_tree_archive.pl" \
   --contract doctrine/live_document_size/task_tree_archive.json \
   --check || fail=1
 
-perl "$ROOT/scripts/check_active_task_evidence.pl" \
-  --root "$ROOT" \
-  --contract doctrine/live_document_size/active_task_evidence.json \
-  --check || fail=1
-
-perl "$ROOT/scripts/check_active_task_evidence.pl" \
-  --root "$ROOT" \
-  --contract doctrine/live_document_size/corpus_task_evidence.json \
-  --check || fail=1
-
-perl "$ROOT/scripts/check_active_task_evidence.pl" \
-  --root "$ROOT" \
-  --contract doctrine/live_document_size/spec_to_intent_task_evidence.json \
-  --check || fail=1
+"$ROOT/scripts/check_task_evidence_contracts.sh" --root "$ROOT" || fail=1
 
 perl "$ROOT/scripts/check_live_document_size.pl" \
   --root "$ROOT" \

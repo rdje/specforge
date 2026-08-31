@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5`/`.2a`/`.2b`/`.2c` done — `.2` closes; `.1`/`.3`/`.4`/`.6`/`.7` pending)
+- Status: `active` (`.0`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.14a` done; `.1`/`.3`/`.4`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
-- Last updated: `2026-08-30`
+- Last updated: `2026-08-31`
 - Owner: repo-local workflow
 
 ## Goal
@@ -62,7 +62,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
   Status: `active`
   Goal: keep non-rolling current-facing canonical surfaces writable without losing evidence
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`
+  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0`
   Status: `done`
@@ -482,18 +482,75 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `pending`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14`
-  Status: `pending`
-  Goal: carry the three rows `.7` assigned to itself, and shard the alignment task-evidence index
+  Status: `active`
+  Goal: carry the three rows `.7` assigned to itself, on three separate lifecycle transactions
+  Children: `.14a`, `.14b`, `.14c`
+  Acceptance: each surface `.7` orphaned returns under its own milestone by a remedy legal for that surface's
+  lifecycle, and the three do not land as one migration — this tree's own Non-Goal forbids combining
+  independent lifecycle remedies, and `.2` was split into `.2a`/`.2b`/`.2c` for exactly that reason. The
+  measured split: `alignment_task_evidence_index` is a bounded snapshot whose size is a pure function of
+  lifetime leaf count (`.14a`), `alignment_task_evidence_parts` is a partitioned canonical collection whose
+  remedy is a further part split (`.14b`), and `rust_analysis` is a rolling ledger with a declared rollover
+  (`.14c`). Only `.14a` blocks `SPEC-TO-INTENT-ALIGNMENT.9c`
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a`
+  Status: `done` (`2026-08-31`)
+  Goal: shard the alignment task-evidence index by lifecycle, and record the general rule for the other two trees
   Acceptance: `alignment_task_evidence_index` comes back under its mandatory-rollover milestone by the remedy
   `.2c` proved — shard by lifecycle, not by alphabet, so the bound measures concurrent work in flight rather
   than project age — with the complete route set still resolving and no hand-edited member list; measured, 77
   of 83 route rows belong to closed lanes and 54 to lane `.6` alone, so the lifecycle cut is the one that
-  frees the budget. `alignment_task_evidence_parts` and `rust_analysis` come back under warning by remedies
-  their own drivers support. **The general rule is recorded as a decision record in the same commit**, because
-  all three task-evidence contracts share a `destinations` shape with a rollover route for the root and the
-  parts and none for the index, whose size is a pure function of leaf count — `corpus-coverage` sits at 68% of
-  the same un-routed bound and `pdf-variant-digestion` at 49.4%, so the third tree must inherit the answer
-  rather than rediscover it, and `.10` consumes it rather than re-deriving it
+  frees the budget. The landing carries the open leaves and routes the complete catalog to derived route
+  parts; the index is derive-and-diff generated, an unplanned route part is refused, and each route's declared
+  lifecycle is cross-checked against its primary part's own node status so the landing's claim is provable
+  rather than asserted. **The general rule is recorded as a decision record in the same commit**, because all
+  three task-evidence contracts share a `destinations` shape with a rollover route for the root and the parts
+  and none for the index, whose size is a pure function of leaf count — `corpus-coverage` sits at 68% of the
+  same un-routed bound and `pdf-variant-digestion` at 49.4%, so the third tree must inherit the answer rather
+  than rediscover it, and `.10` consumes it rather than re-deriving it
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  **Two things the adoption found on its first run, and they are the reason the cross-check exists.** `.8` was
+  `State: active` in `residual-actionability.md` while all four of its children were `done` and the bounded root
+  records `.0`-`.8` complete; without the cross-check the new landing would have published as open a leaf the
+  root publishes as closed. And `.9a` is routed by the index and declared in the root's owner registry but has
+  **no node record in any part** — it is a section heading only, the single route whose lifecycle no evidence
+  corroborates. `max_unverified_routes` is pinned at `1` so the population cannot grow; `.16` writes the record.
+  **Adoption is staged, and the reason is evidential.** `pdf-variant-digestion` and `corpus-coverage` stay
+  `inline`: their parts record leaves as prose with no `- ID:`/`State:` node blocks, so the cross-check has no
+  authority there and declaring 52 and 56 lifecycles by hand would put an unverifiable claim on their landings.
+  Their indexes are at 49.4% and 67.2% of the same un-routed bound, so the shape is the defect, not the schedule.
+  Verification: `index 115 -> 43 lines (89.8% -> 33.6% of its 128-line health target, clear of the 90%
+  mandatory-rollover milestone that refused the next leaf); routes 83 = 3 open / 80 closed, complete set in one
+  93-line route catalog part (58.1% of 160, 1 of 6 files); check_active_task_evidence.pl --self-test 61/61 with
+  eleven new RED cases (derived-index drift, closed leaf on the landing, route-catalog drift, unplanned route
+  file, capacity below route count, health admitting no full part, missing/invalid lifecycle, ratchet breach,
+  lifecycle disagreeing with its primary part, inline positives and inline field refusals) plus a --write
+  round-trip and its preflight refusal; all three contracts --check green; live-size 900 Markdown files / 57
+  governed surfaces with no alignment_task_evidence_index warning; claim census 41 current surfaces / 73 frozen
+  evidence units; book claims 39 files / 325 adjudicated candidate lines; Knowledge Map 274 facts / 2,193 keys`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a — shard the task-evidence index by lifecycle`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14b`
+  Status: `pending`
+  Goal: bring the alignment semantic-part collection back under warning
+  Acceptance: `alignment_task_evidence_parts` lines_each (`behavioral-qualification.md`, 540 of a 640 health
+  target) and the collection's `lines_total` return under warning by the split the contract already supports —
+  a further semantic part, exactly as `residual-carrier` was split out of `residual-actionability` at that
+  task boundary — with every pinned region digest and route preserved and no bound moved
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14c`
+  Status: `pending`
+  Goal: bring the Rust analysis ledger back under its record and line budgets
+  Acceptance: `rust_analysis` lines_each returns under warning and the `rust-codebase-analysis` rolling ledger
+  stops reporting 18 of 57 live records above its derived 1,872-byte budget, through the declared rollover
+  transaction in `COMMIT.md` rather than a widened window; the record-budget half is the same finding `.11`
+  carries for `development-notes`, so whichever lands first states the shared derivation
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
   Verification: `pending`
   Commit: `pending`
@@ -515,6 +572,49 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Verification: `pending`
   Commit: `pending`
 
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.16`
+  Status: `pending`
+  Goal: give `SPEC-TO-INTENT-ALIGNMENT.9a` the node record its routes already promise
+  Acceptance: `.9a` is declared in the alignment root's owner registry and routed by the task-evidence index
+  to `residual-actionability`, but no semantic part declares it as a node — it exists only as a section
+  heading, so it is the one leaf route in the tree whose lifecycle cannot be cross-checked against its own
+  evidence. Reconstruct the node record from tracked authority (the root's `.9` summary, the `.9a` section,
+  and its commit rows), so the `.14a` cross-check covers every route with no declared exception. Found by
+  `.14a` while deriving lifecycle from the parts; not fixed there because `residual-actionability.md` is at
+  78.4% of its 640-line health target and the record would push the part into `.14b`'s warning band
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14b`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17`
+  Status: `pending`
+  Goal: give a migrated task tree's leaf-route capacity a declared rollover
+  Acceptance: `.14a` moved the alignment tree's nearest structural stop from the index's 115.2-line
+  mandatory-rollover milestone to `limits.manifest.max_leaf_routes`, which `enforce_portable_caps` fixes at
+  **128** against 83 declared routes — 45 leaves of headroom, in both bands, with no declared rollover: the
+  `LIVE-DOC-STOP-RISK` shape. Decide from measurement whether the manifest's route array is the resource that
+  needs bounding at all (the route catalog parts now carry the same membership under a `max_parts` x
+  `routes_per_part` capacity with a declared remedy), and either give the bound a rollover route or remove it
+  the way ADR 0045 removed the task-plane file count. State the relocation rather than claiming a removal
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.18`
+  Status: `pending`
+  Goal: execute the staleness gate every claim declares, or stop calling it a gate
+  Acceptance: `scripts/check_claim_verification.pl` executes `rederive.commands` and
+  `falsification.controls` under `--execute` but **never** `durability.stale_check`; it only schema-validates it
+  and checks that its `inputs` cover the watched artifacts. So every claim's staleness gate is decorative, and
+  the proof is that `current-claim-census-frozen`'s pinned `stdout_contains` read `current-claim-census: 39
+  current surfaces` while the producer printed 40 before this slice and 41 after — a marker that would have
+  refused for at least one prior commit had anything run it. `.14a` repaired that one pin to the stable phrase
+  the claim's own assertion requires (the denominator is read from `--report`, never carried); this leaf
+  decides whether the stale gate is executed, folded into the rederive commands, or removed. The durable owner
+  is `CLAIM-VERIFICATION-ADOPTION`; it is carried here because that tree is at **91.2%** of its
+  `task_evidence.bytes_each` ceiling and a new leaf there spends the axis its own commit must protect
+  Prerequisite: none; found by `.14a` while refreshing the claim pins its inputs moved
+
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 
 Derived at `5ceb27c8` from `bash scripts/check_live_document_size.sh`, deduplicated to 39 distinct items.
@@ -529,9 +629,9 @@ and each per-file warning was resolved to the file actually driving it. No total
 | `research_records` files / lines_each / bytes_each | `docs/research/` (63 of 64 files; widest 639 of 640) | `.4` |
 | `validation_snapshot` lines_each | `VALIDATION_SNAPSHOT.md` | `.4` |
 | `readme_entrypoint` line_bytes_each | `README.md` | `.4` |
-| `alignment_task_evidence_index` lines_each; active task index lines | `spec-to-intent-alignment/INDEX.md` | `.14` |
-| `alignment_task_evidence_parts` lines_each; semantic part lines_each | alignment parts collection | `.14` |
-| `rust_analysis` lines_each | `RUST_CODEBASE_ANALYSIS.md` | `.14` |
+| `alignment_task_evidence_index` lines_each; active task index lines | `spec-to-intent-alignment/INDEX.md` | `.14a` |
+| `alignment_task_evidence_parts` lines_each; semantic part lines_each | alignment parts collection | `.14b` |
+| `rust_analysis` lines_each | `RUST_CODEBASE_ANALYSIS.md` | `.14c` |
 | `change_history` bytes_each / lines_each; ledger `changes` ×2 | `CHANGES.md` | `CHANGES-LEDGER-ROLLOVER.4` |
 | ledger `live-achievement-status` ×2 | `LIVE_ACHIEVEMENT_STATUS.md` | `STATUS-LEDGER-ROLLOVER.2` |
 | bounded active root bytes / line_bytes / lines | `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` | `SPEC-TO-INTENT-ALIGNMENT` |
@@ -579,9 +679,25 @@ owner's `Status` line rather than from any mention of the surface.
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
 | 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | re-ranked `2026-08-28`: `docs/research/*.md` is 63 of a 64-file ceiling with no warning band and no rollover, and two active trees write research records |
 | 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
-| 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `pending` | the gate warns 35 lines across four producers and no reviewed assignment exists; a grep screen cannot serve, since reporting a gap closes it |
+| 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `done` | the gate warns 35 lines across four producers and no reviewed assignment exists; a grep screen cannot serve, since reporting a gap closes it |
+| 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
+| 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `pending` | seven instances of the closed-owner class in one session is the evidence that review does not hold the invariant |
+| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | `research_records` is 1 file and 1 line from two hard ceilings with no rollover route |
 
 ## Decisions
+
+- `2026-08-31`: split `.14` into `.14a`/`.14b`/`.14c` before implementing any of it. `.7` assigned three rows
+  to one leaf, but they are three different lifecycles — a bounded snapshot whose size is a pure function of
+  lifetime leaf count, a partitioned canonical collection, and a rolling ledger — and this tree's own Non-Goal
+  forbids combining independent lifecycle remedies into one migration. `.2` was split for the same reason.
+- `2026-08-31`: `.14a` shards by lifecycle and stages adoption per tree rather than migrating all three
+  contracts at once. The schema change is one mechanism, but the *lifecycle* it publishes needs an authority:
+  only the alignment parts carry `- ID:`/`State:` node blocks. Migrating the other two would have meant
+  authoring 108 lifecycle values no evidence can corroborate, which is a worse defect than the bound being
+  fixed. `route_catalog_state` declares the shape, exactly as `migration_state` already stages this doctrine.
+- `2026-08-31`: state the relocation. `.14a` moves the alignment tree's nearest structural stop from the
+  index's 115.2-line milestone to `limits.manifest.max_leaf_routes` at 128 against 83 declared routes. Calling
+  it "the index bound is removed" would repeat the error `.2` caught in `.2a`; `.17` owns the residual.
 
 - `2026-08-14`: open one pressure-frontier tree rather than one task per warning. The surfaces need distinct
   remediation transactions, but one bounded owner can preserve the exact measured ordering without consuming
@@ -646,6 +762,8 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-31` | `.14a` | `check_active_task_evidence.pl --self-test`; the three contracts `--check`; `--write` round-trip; `check_live_document_size.sh`; census, book-claim, knowledge-map and doctrine gates | index **115 -> 43 lines** (89.8% -> 33.6%), clear of the 90% milestone that refused the next leaf; 83 routes = 3 open / 80 closed in one 93-line catalog part; self-test **61/61** with eleven new RED cases and a writer round-trip plus preflight refusal; live-size **900 files / 57 surfaces**; census 41 surfaces / 73 evidence units; book claims 325/325; Knowledge Map 274 facts / 2,193 keys |
+| `2026-08-31` | `.14a` cross-check | first run of the declared-vs-observed lifecycle rule over all 83 alignment routes | **two findings on adoption.** `.8` was `active` in its part while its four children were `done` and the root records `.0`-`.8` complete — the landing would have published it open; corrected. `.9a` has no node record in any part, the one route no evidence corroborates, pinned by `max_unverified_routes: 1` and owned by `.16` |
 | `2026-08-31` | `.7` self-orphan | re-read the assignment table against the leaf's own closing `Status` | the three rows `.7` assigned to itself were orphaned by closing it — the class this leaf exists to eliminate, committed inside the commit that eliminated it, and the seventh instance overall. Rows move to `.14`; `.15` makes the invariant mechanical because review demonstrably does not hold it |
 | `2026-08-31` | `.7` assignment | 39 rows reviewed per row against open trees; owner status read from each owner's own `Status` line; every per-file warning resolved to its driving file | 23 rows bind to eight open owners, 15 to `.8`-`.13` opened here, one exempt with reason (23+15+1=39). **Five named owners are `done` trees**, including `DECISION-RECORD-CAPACITY-HEADROOM`, which this leaf cited as its model exclusion and whose row is the most pressured in the population |
 | `2026-08-31` | `.7` population | `bash scripts/check_live_document_size.sh` at `057710cd`, deduplicated and classified by emitting producer | 22 producers emit, **five** emit warnings — not the four this leaf recorded — and 39 distinct warned items remain after removing three double-emissions; the missed producer `roadmap-projection` uses uppercase `WARNING` with no colon, so a `warning:`-keyed census reads 38 of 42 lines and is blind to all of its rows |
@@ -655,6 +773,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.14a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a — shard the task-evidence index by lifecycle` | ADR 0046; the stop relocates to `max_leaf_routes` and `.17` says so |
 | `.7` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — assign every gate-level warning by review` | the leaf found its own documented trap inside itself; ownership now reads the owner's `Status`, not a mention |
 | `.7` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen` | the leaf's own four-producer premise is corrected a third time; the reviewed per-row assignment is the open half |
 | `.0` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0 — own the current live-surface pressure frontier` | one bounded owner over ordered independent remedies |
@@ -662,6 +781,12 @@ owner's `Status` line rather than from any mention of the surface.
 | `.2` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2 — split the decided no-cap remedy into the three transactions it actually is` | container; found the second `$MAX_TASKS` enforcer and measured the relocation |
 
 ## Changelog
+
+- `2026-08-31`: `.14` becomes a container over `.14a`/`.14b`/`.14c`, and `.14a` lands the lifecycle shard with
+  ADR 0046. Opened by the work rather than by review: `.16` (`.9a` has no node record anywhere), `.17` (the
+  stop relocated to `max_leaf_routes` 128 against 83 declared routes) and `.18` (`durability.stale_check` is
+  declared and schema-validated but never executed, proven by a pin reading `39 current surfaces` against a
+  producer printing 40 before this slice).
 
 - `2026-08-30`: corrected `.7`'s premises the same day it was opened, from
   `CLAIM-VERIFICATION-ADOPTION.11a`. Two of the three facts `.11` used were wrong. The warning population it cited

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > how does converge report integrated scheduled and omitted production capabilities
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > how does converge report per-document extraction quality after stabilization
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -192,6 +194,8 @@
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > how is a leaf route lifecycle verified
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how is a message field's width kept honest (per-variant widths stay None)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -293,7 +297,3 @@
   > how is the terminal task source archive boundary verified
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how is transaction membership kept boundary-precise across read vs write (bar #3)
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > how is workflow-standard file capacity derived
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > how many AArch64 External Debug page sidecars are repository relative

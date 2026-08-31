@@ -83,5 +83,4 @@
 
 ## Verification
 
-Run `perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/corpus_task_evidence.json --check`
-from the repository root.
+Run `perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/corpus_task_evidence.json --check` from the repository root.

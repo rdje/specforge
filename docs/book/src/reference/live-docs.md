@@ -1350,6 +1350,62 @@ This is containment, not documentation reduction: material removed from the old 
 already duplicated by richer canonical homes. The user manual remains the complete maintained product
 surface, while task state and rationale remain available through their dedicated continuity layers.
 
+## A task-evidence index lists open leaves, not every leaf
+
+A migrated task tree (ADR 0039) keeps its detail in semantic parts and its navigation in a small
+`INDEX.md`. That index used to route **every** leaf the tree had ever declared, one table row each, so
+its length grew with the tree's age and never shrank. `destinations` gives the root a rollover route and
+the parts a rollover route; it gave the index none. On `2026-08-31` the alignment index reached 115 of a
+128-line health target — 89.8%, against a 90% milestone that is a hard refusal — so the next leaf
+declaration would have failed the gate. Of its 83 rows, 78 were `done` or `superseded` and 54 belonged to
+one finished lane.
+
+[ADR 0046](../../../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md) cuts the index by
+lifecycle, the way `docs/TASK_TREE.md` was already cut. The landing carries the leaves you can still act
+on; the complete set moves to a derived route catalog beside it:
+
+```text
+docs/tasks/spec-to-intent-alignment/
+├── INDEX.md          # semantic parts, OPEN leaf routes, link to the catalog
+├── routes-0001.md    # every leaf ever declared, with its lifecycle
+├── manifest.json
+└── <semantic parts>.md
+```
+
+As a reader: open `INDEX.md` to see what is in flight, and open the route catalog part when you have a
+leaf id — including a closed one — and want the part that documents it. Both files say which is which,
+and the catalog part carries a `Lifecycle` column.
+
+As an author you never edit either by hand. Both are derive-and-diff generated from the contract, and the
+only writer is:
+
+```bash
+perl scripts/check_active_task_evidence.pl \
+  --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --write
+```
+
+`--check` rejects any byte the contract does not derive, and refuses a `routes-*.md` file the contract
+did not plan. Route-catalog bounds come from the generator's own shape rather than from another
+surface's numbers: a structurally full part is `routes_per_part` rows plus ten fixed lines, and the
+health target is chosen so a full part sits below its own 80% warning — a full part must never be a
+bound with no remedy.
+
+The lifecycle a landing publishes is checked, not asserted. Where a leaf's primary semantic part declares
+it as a node, the contract's `open`/`closed` must agree with that part's own `State:`/`Status:` line; a
+disagreement fails the gate. Adopting the rule immediately caught one:
+`SPEC-TO-INTENT-ALIGNMENT.8` was still `active` in its part while all four of its children were `done`
+and the tree root recorded `.0`–`.8` complete. Leaves whose part declares no node at all cannot be
+checked; those are counted and capped by `max_unverified_routes`, pinned at today's exact number so the
+population can only shrink.
+
+Two trees stay on the older `inline` shape, and the contract says so in `route_catalog_state`.
+`pdf-variant-digestion` and `corpus-coverage` record their leaves as prose rather than as node blocks, so
+there is nothing for the cross-check to read; declaring their lifecycles by hand would put an
+unverifiable claim on their landing pages. They adopt the shard once their parts carry node records.
+Their indexes were at 49.4% and 67.2% of the same bound on `2026-08-31`, so the shape is the defect,
+not the schedule.
+
+
 ## Closed task trees — how each was implemented and verified
 
 ### `MDBOOK-DOCTEST-HYGIENE` — executable examples stay executable

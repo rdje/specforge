@@ -21,11 +21,15 @@ binmode STDERR, ':encoding(UTF-8)';
 # Nested exact evidence may be as wide as the repository's direct task-evidence
 # surface, while each task-specific contract remains free to set a tighter cap.
 my $TASK_EVIDENCE_LINE_BYTES_CAP = 6_400;
+# Heading, generated-artifact warning, landing pointer, and table header of a rendered route
+# catalog part; a structurally full part is this many lines plus its declared routes per part.
+my $ROUTE_PART_FIXED_LINES = 10;
 my $DEFAULT_CONTRACT_REL = 'doctrine/live_document_size/active_task_evidence.json';
 my $root;
 my $contract_rel = $DEFAULT_CONTRACT_REL;
 my $report = 0;
 my $self_test = 0;
+my $write = 0;
 my $migrate_template_rel;
 
 while (@ARGV) {
@@ -40,6 +44,8 @@ while (@ARGV) {
         $report = 1;
     } elsif ($arg eq '--self-test') {
         $self_test = 1;
+    } elsif ($arg eq '--write') {
+        $write = 1;
     } elsif ($arg eq '--migrate') {
         $migrate_template_rel = shift @ARGV // usage();
     } else {
@@ -49,7 +55,8 @@ while (@ARGV) {
 
 my $project_root = abs_path(File::Spec->catdir(dirname(abs_path($0)), '..'))
     // die "active-task-evidence: cannot resolve repository root\n";
-usage() if defined($migrate_template_rel) && ($self_test || $report);
+usage() if defined($migrate_template_rel) && ($self_test || $report || $write);
+usage() if $write && ($self_test || $report);
 if ($self_test) {
     run_self_test($project_root);
     exit 0;
@@ -59,6 +66,10 @@ $root //= $project_root;
 $root = abs_path($root) // die "active-task-evidence: root does not exist\n";
 if (defined $migrate_template_rel) {
     materialize_migration($root, $contract_rel, $migrate_template_rel, 0);
+    exit 0;
+}
+if ($write) {
+    materialize_derived($root, $contract_rel, 0);
     exit 0;
 }
 my ($errors, $result) = validate_tree($root, $contract_rel);
@@ -76,7 +87,7 @@ if ($report) {
 exit 0;
 
 sub usage {
-    die "Usage: $0 [--root DIR] [--contract PATH] [--check|--report|--self-test|--migrate ROOT_TEMPLATE]\n";
+    die "Usage: $0 [--root DIR] [--contract PATH] [--check|--report|--write|--self-test|--migrate ROOT_TEMPLATE]\n";
 }
 
 sub verifier_command_for {
@@ -266,8 +277,8 @@ sub compare_metrics {
 }
 
 sub validate_limit_pair {
-    my ($spec, $label, $errors, $fields) = @_;
-    reject_unknown($spec, $label, $errors, qw(health_targets enforcement_ceilings milestones));
+    my ($spec, $label, $errors, $fields, $extra) = @_;
+    reject_unknown($spec, $label, $errors, qw(health_targets enforcement_ceilings milestones), @{$extra // []});
     my $health = metric_object($spec->{health_targets}, "$label health_targets", $errors, @$fields);
     my $ceilings = metric_object($spec->{enforcement_ceilings}, "$label enforcement_ceilings", $errors, @$fields);
     for my $field (@$fields) {
@@ -503,7 +514,7 @@ sub validate_contract_schema {
         $contract,
         'contract',
         $errors,
-        qw(schema_version contract_id migration_state input_state current_path identity current_frontier migration_metadata source source_requirements destinations regions leaf_routes route_basis marker_prefix limits migrated_requirements verifier),
+        qw(schema_version contract_id migration_state input_state current_path identity current_frontier migration_metadata source source_requirements destinations regions leaf_routes route_basis route_catalog_state marker_prefix limits migrated_requirements verifier),
     );
     push @$errors, 'contract schema_version must be 1'
         if !defined($contract->{schema_version}) || ref($contract->{schema_version}) || $contract->{schema_version} != 1;
@@ -526,6 +537,10 @@ sub validate_contract_schema {
     my $route_basis = required_scalar($contract, 'route_basis', 'contract', $errors);
     push @$errors, "contract route_basis must be 'boundary_path_commit_subject_ids'"
         if defined($route_basis) && $route_basis ne 'boundary_path_commit_subject_ids';
+    my $catalog_state = required_scalar($contract, 'route_catalog_state', 'contract', $errors);
+    push @$errors, "contract has invalid route_catalog_state '$catalog_state'"
+        if defined($catalog_state) && $catalog_state ne 'inline' && $catalog_state ne 'sharded';
+    my $sharded = (($catalog_state // '') eq 'sharded') ? 1 : 0;
     my $marker_prefix = required_scalar($contract, 'marker_prefix', 'contract', $errors);
     push @$errors, 'contract marker_prefix must use lowercase letters, digits, and hyphens only'
         if defined($marker_prefix) && $marker_prefix !~ /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/;
@@ -573,7 +588,7 @@ sub validate_contract_schema {
         $destinations,
         'contract destinations',
         $errors,
-        qw(collection_directory index manifest parts archive_directory source_capsule),
+        qw(collection_directory index manifest parts archive_directory source_capsule route_part_prefix),
     );
     my %paths;
     $paths{$current} = 1 if defined $current;
@@ -592,6 +607,21 @@ sub validate_contract_schema {
     }
     push @$errors, 'contract source_capsule is not below archive_directory'
         if $archive_directory ne '' && index(($destinations->{source_capsule} // ''), "$archive_directory/") != 0;
+    my $route_prefix;
+    if (!$sharded) {
+        push @$errors, 'inline route catalog must not declare a route_part_prefix'
+            if exists $destinations->{route_part_prefix};
+    } else {
+        $route_prefix = required_scalar($destinations, 'route_part_prefix', 'contract destinations', $errors);
+    }
+    if (defined $route_prefix) {
+        push @$errors, 'contract destination route_part_prefix is unsafe'
+            if !safe_relative_path("${route_prefix}0001.md");
+        push @$errors, 'contract destination route_part_prefix is not below collection_directory'
+            if $collection_directory ne '' && index($route_prefix, "$collection_directory/") != 0;
+        push @$errors, 'contract destination route_part_prefix must end with a hyphenated stem'
+            if $route_prefix !~ m{/[a-z0-9]+(?:-[a-z0-9]+)*-\z};
+    }
 
     my $parts = $destinations->{parts};
     if (ref($parts) ne 'ARRAY' || !@$parts) {
@@ -634,7 +664,7 @@ sub validate_contract_schema {
     }
 
     my $limits = $contract->{limits};
-    reject_unknown($limits, 'contract limits', $errors, qw(root index parts capsule_exact manifest));
+    reject_unknown($limits, 'contract limits', $errors, qw(root index parts route_parts capsule_exact manifest));
     validate_limit_pair($limits->{root}, 'contract root limits', $errors, [qw(lines bytes line_bytes)]);
     validate_limit_pair($limits->{index}, 'contract index limits', $errors, [qw(lines bytes line_bytes)]);
     validate_limit_pair(
@@ -668,6 +698,64 @@ sub validate_contract_schema {
         'contract parts enforcement ceiling',
         $errors,
     );
+    my ($routes_per_part, $max_route_parts);
+    if (!$sharded) {
+        push @$errors, 'inline route catalog must not declare route_parts limits'
+            if exists $limits->{route_parts};
+    } else {
+        validate_limit_pair(
+            $limits->{route_parts},
+            'contract route_parts limits',
+            $errors,
+            [qw(files lines_each bytes_each line_bytes_each lines_total bytes_total)],
+            [qw(routes_per_part max_parts max_unverified_routes)],
+        );
+        $routes_per_part = positive_integer(
+            $limits->{route_parts}, 'routes_per_part', 'contract route_parts limits', $errors,
+        );
+        $max_route_parts = positive_integer(
+            $limits->{route_parts}, 'max_parts', 'contract route_parts limits', $errors,
+        );
+        my $max_unverified = $limits->{route_parts}{max_unverified_routes};
+        push @$errors, 'contract route_parts limits lacks a non-negative max_unverified_routes'
+            if !defined($max_unverified) || ref($max_unverified) || $max_unverified !~ /\A\d+\z/;
+        enforce_portable_caps(
+            $limits->{route_parts}{enforcement_ceilings},
+            {
+                files => 16,
+                lines_each => 256,
+                bytes_each => 32_768,
+                line_bytes_each => 768,
+                lines_total => 4_096,
+                bytes_total => 524_288,
+            },
+            'contract route_parts enforcement ceiling',
+            $errors,
+        );
+        enforce_portable_caps(
+            {routes_per_part => $routes_per_part, max_parts => $max_route_parts},
+            {routes_per_part => 128, max_parts => 16},
+            'contract route_parts limit',
+            $errors,
+        );
+        # A route catalog part must stay below its own warning band when structurally full, so a full part is
+        # never a bound the writer can reach with no compliant remedy (LIVE-DOCUMENT-PRESSURE-HEADROOM.2c).
+        if (defined($routes_per_part)
+            && ref($limits->{route_parts}{health_targets}) eq 'HASH'
+            && ref($limits->{route_parts}{milestones}) eq 'HASH') {
+            my $target = $limits->{route_parts}{health_targets}{lines_each};
+            my $warning = $limits->{route_parts}{milestones}{warning_pct};
+            my $full = $routes_per_part + $ROUTE_PART_FIXED_LINES;
+            push @$errors, "contract route_parts health lines_each admits no full part below its warning band"
+                if defined($target) && defined($warning) && $target > 0
+                && 100 * $full / $target >= $warning;
+        }
+        if (defined($max_route_parts) && defined($routes_per_part)) {
+            push @$errors, 'contract route catalog capacity is below the declared leaf route count'
+                if ref($contract->{leaf_routes}) eq 'ARRAY'
+                && scalar(@{$contract->{leaf_routes}}) > $max_route_parts * $routes_per_part;
+        }
+    }
     my $capsule_exact = metric_object(
         $limits->{capsule_exact},
         'contract capsule_exact',
@@ -750,7 +838,7 @@ sub validate_contract_schema {
         if ($input_state // '') eq 'complete' && !@$routes;
     my (%route_ids, %route_parts);
     for my $route (@$routes) {
-        reject_unknown($route, 'contract leaf route', $errors, qw(leaf_id part_id origin source_literal));
+        reject_unknown($route, 'contract leaf route', $errors, qw(leaf_id part_id origin source_literal lifecycle));
         my $leaf_id = required_scalar($route, 'leaf_id', 'contract leaf route', $errors);
         my $part_id = required_scalar($route, 'part_id', 'contract leaf route', $errors);
         my $origin = required_scalar($route, 'origin', 'contract leaf route', $errors);
@@ -760,6 +848,14 @@ sub validate_contract_schema {
             if defined($part_id) && !$part_ids{$part_id};
         push @$errors, "contract leaf route '$leaf_id' has invalid origin '$origin'"
             if defined($origin) && $origin ne 'legacy' && $origin ne 'structural' && $origin ne 'post_migration';
+        if (!$sharded) {
+            push @$errors, "inline contract leaf route '$leaf_id' must not declare a lifecycle"
+                if exists $route->{lifecycle};
+        } else {
+            my $lifecycle = required_scalar($route, 'lifecycle', 'contract leaf route', $errors);
+            push @$errors, "contract leaf route '$leaf_id' has invalid lifecycle '$lifecycle'"
+                if defined($lifecycle) && $lifecycle ne 'open' && $lifecycle ne 'closed';
+        }
         push @$errors, "source-locked contract cannot declare post-migration leaf route '$leaf_id'"
             if ($migration_state // '') eq 'source_locked' && ($origin // '') eq 'post_migration';
         if (($origin // '') eq 'legacy' || ($origin // '') eq 'structural') {
@@ -967,10 +1063,11 @@ sub validate_manifest {
 }
 
 sub validate_part_and_regions {
-    my ($base, $contract, $part, $region_raw, $seen_regions, $errors) = @_;
+    my ($base, $contract, $part, $region_raw, $seen_regions, $errors, $part_raw) = @_;
     my $path = $part->{path};
     my $raw = read_regular($base, $path, "semantic part '$part->{part_id}'", $errors);
     return if !defined $raw;
+    $part_raw->{$path} = $raw if ref($part_raw) eq 'HASH';
     my $actual = metrics($raw);
     compare_metrics($actual, $part->{metrics}, "semantic part '$part->{part_id}'", $errors, qw(lines bytes line_bytes));
     push @$errors, "semantic part '$part->{part_id}' sha256 mismatch"
@@ -1031,6 +1128,232 @@ sub validate_part_and_regions {
     return $actual;
 }
 
+sub writer_command_for {
+    my ($contract) = @_;
+    my $command = raw_scalar($contract->{verifier} // '');
+    $command =~ s/--check\z/--write/;
+    return $command;
+}
+
+sub route_catalog_is_sharded {
+    my ($contract) = @_;
+    return (($contract->{route_catalog_state} // '') eq 'sharded') ? 1 : 0;
+}
+
+sub route_part_paths {
+    my ($contract) = @_;
+    return () if !route_catalog_is_sharded($contract);
+    my $prefix = $contract->{destinations}{route_part_prefix};
+    my $per_part = $contract->{limits}{route_parts}{routes_per_part};
+    return () if !defined($prefix) || ref($prefix) || !defined($per_part) || ref($per_part) || $per_part < 1;
+    my $routes = ref($contract->{leaf_routes}) eq 'ARRAY' ? scalar(@{$contract->{leaf_routes}}) : 0;
+    my $count = int(($routes + $per_part - 1) / $per_part);
+    $count = 1 if $count < 1;
+    return map { sprintf('%s%04d.md', $prefix, $_) } 1 .. $count;
+}
+
+# The routes a sharded landing carries. An inline landing still carries every declared route, so its
+# index grows with the tree's lifetime; that is the shape ADR 0046 retires tree by tree.
+sub landing_leaf_routes {
+    my ($contract) = @_;
+    return @{$contract->{leaf_routes} // []} if !route_catalog_is_sharded($contract);
+    return grep { ($_->{lifecycle} // '') eq 'open' } @{$contract->{leaf_routes} // []};
+}
+
+# The lifecycle a leaf's own primary part records, or undef when that part declares no node for it.
+# Ownership is read from the owner's own status line, never inferred from a mention
+# (LIVE-DOCUMENT-PRESSURE-HEADROOM.7).
+sub declared_node_statuses {
+    my ($raw, $leaf_id) = @_;
+    my @statuses;
+    return \@statuses if !defined($raw) || !defined($leaf_id) || $leaf_id eq '';
+    my $needle = raw_scalar("- ID: `$leaf_id`");
+    while ($raw =~ /^\Q$needle\E[ \t]*\r?\n((?:[^\r\n]*\r?\n){0,2})/mg) {
+        my $tail = $1 // '';
+        push @statuses, ($tail =~ /^[ \t]+(?:State|Status): `([^`\r\n]+)`/m) ? $1 : undef;
+    }
+    return \@statuses;
+}
+
+sub render_index {
+    my ($contract) = @_;
+    my $path = $contract->{destinations}{index};
+    my %part_by_id = map { $_->{part_id} => $_ } @{$contract->{destinations}{parts}};
+    my $raw = "# $contract->{identity}{tree_id} task-evidence index\n\n";
+    $raw .= '- [Current root](' . relative_markdown_link($path, $contract->{current_path}) . ")\n";
+    $raw .= '- [Manifest](' . relative_markdown_link($path, $contract->{destinations}{manifest}) . ")\n\n";
+    $raw .= "## Semantic parts\n\n";
+    for my $part (@{$contract->{destinations}{parts}}) {
+        my $label = part_display_label($part->{part_id});
+        $raw .= "- [$label](" . relative_markdown_link($path, $part->{path}) . ")\n";
+    }
+    if (route_catalog_is_sharded($contract)) {
+        $raw .= "\n## Open leaf routes\n\n";
+        $raw .= "Every leaf a session can still act on \x{2014} one this tree does not record as `done` or\n";
+        $raw .= "`superseded`. The complete route set for every leaf the tree has ever declared is in the\n";
+        $raw .= "route catalog below, so this landing measures work in flight rather than project age.\n\n";
+    } else {
+        $raw .= "\n## Primary leaf routes\n\n";
+    }
+    $raw .= "| Leaf | Primary detail |\n| --- | --- |\n";
+    for my $route (landing_leaf_routes($contract)) {
+        my $part = $part_by_id{$route->{part_id} // ''} or next;
+        my $label = part_display_label($route->{part_id});
+        $raw .= "| `$route->{leaf_id}` | [$label]("
+            . relative_markdown_link($path, $part->{path}) . ") |\n";
+    }
+    my @route_paths = route_part_paths($contract);
+    if (@route_paths) {
+        $raw .= "\n## Complete route catalog\n\n";
+        for my $position (0 .. $#route_paths) {
+            $raw .= sprintf(
+                "- [Route catalog part %04d](%s)\n",
+                $position + 1,
+                relative_markdown_link($path, $route_paths[$position]),
+            );
+        }
+    }
+    $raw .= "\n## Exact provenance\n\n";
+    $raw .= '- [Source](' . relative_markdown_link($path, $contract->{destinations}{source_capsule}) . ")\n\n";
+    $raw .= "## Verification\n\nRun `$contract->{verifier}` from the repository root.\n";
+    return raw_scalar($raw);
+}
+
+sub render_route_part {
+    my ($contract, $position, $route_paths) = @_;
+    my $path = $route_paths->[$position];
+    my %part_by_id = map { $_->{part_id} => $_ } @{$contract->{destinations}{parts}};
+    my $per_part = $contract->{limits}{route_parts}{routes_per_part};
+    my @routes = @{$contract->{leaf_routes} // []};
+    my $first = $position * $per_part;
+    my $last = $first + $per_part - 1;
+    $last = $#routes if $last > $#routes;
+    my $raw = sprintf("# %s route catalog part %04d\n\n", $contract->{identity}{tree_id}, $position + 1);
+    $raw .= "> **AUTO-GENERATED \x{2014} DO NOT EDIT.** Regenerate with\n";
+    $raw .= '> `' . writer_command_for($contract) . "`.\n\n";
+    $raw .= "Complete membership for this range, closed leaves included. The bounded landing is\n";
+    $raw .= '[the task-evidence index](' . relative_markdown_link($path, $contract->{destinations}{index})
+        . "); it carries the open leaves only.\n\n";
+    $raw .= "| Leaf | Lifecycle | Primary detail |\n| --- | --- | --- |\n";
+    for my $position_in_range ($first .. $last) {
+        my $route = $routes[$position_in_range];
+        my $part = $part_by_id{$route->{part_id} // ''} or next;
+        my $label = part_display_label($route->{part_id});
+        my $lifecycle = $route->{lifecycle} // '';
+        $raw .= "| `$route->{leaf_id}` | `$lifecycle` | [$label]("
+            . relative_markdown_link($path, $part->{path}) . ") |\n";
+    }
+    return raw_scalar($raw);
+}
+
+sub validate_route_parts {
+    my ($base, $contract, $errors, $result) = @_;
+    return if !route_catalog_is_sharded($contract);
+    my @route_paths = route_part_paths($contract);
+    my $spec = $contract->{limits}{route_parts};
+    if (!@route_paths) {
+        push @$errors, 'contract declares no derivable route catalog part';
+        return;
+    }
+    push @$errors, 'route catalog part count exceeds its declared max_parts'
+        if @route_paths > ($spec->{max_parts} // 0);
+    my %declared_paths = (
+        ($contract->{destinations}{index} // '') => 'index',
+        ($contract->{destinations}{manifest} // '') => 'manifest',
+        map { ($_->{path} // '') => "semantic part '$_->{part_id}'" } @{$contract->{destinations}{parts}},
+    );
+    my ($files, $lines_total, $bytes_total, $max_lines, $max_bytes, $max_line_bytes) = (0, 0, 0, 0, 0, 0);
+    for my $position (0 .. $#route_paths) {
+        my $path = $route_paths[$position];
+        if ($declared_paths{$path}) {
+            push @$errors, "route catalog part '$path' collides with the declared $declared_paths{$path}";
+            next;
+        }
+        my $raw = read_regular($base, $path, "route catalog part '$path'", $errors);
+        next if !defined $raw;
+        push @$errors, "route catalog part '$path' differs from its derived form; regenerate with "
+            . writer_command_for($contract)
+            if $raw ne render_route_part($contract, $position, \@route_paths);
+        my $actual = metrics($raw);
+        $files++;
+        $lines_total += $actual->{lines};
+        $bytes_total += $actual->{bytes};
+        $max_lines = $actual->{lines} if $actual->{lines} > $max_lines;
+        $max_bytes = $actual->{bytes} if $actual->{bytes} > $max_bytes;
+        $max_line_bytes = $actual->{line_bytes} if $actual->{line_bytes} > $max_line_bytes;
+    }
+    for my $stale (unplanned_route_part_paths($base, $contract, \@route_paths, $errors)) {
+        push @$errors, "unplanned route catalog file '$stale' is not derived by the contract";
+    }
+    my $actual = {
+        files => $files,
+        lines_each => $max_lines,
+        bytes_each => $max_bytes,
+        line_bytes_each => $max_line_bytes,
+        lines_total => $lines_total,
+        bytes_total => $bytes_total,
+    };
+    my %identity_map = map { $_ => $_ } keys %$actual;
+    enforce_ceilings($actual, $spec->{enforcement_ceilings}, 'route catalog collection', $errors, \%identity_map);
+    apply_live_pressure($actual, $spec, 'route catalog collection', \%identity_map, $errors, $result->{warnings});
+    $result->{route_part_collection_metrics} = $actual;
+}
+
+sub unplanned_route_part_paths {
+    my ($base, $contract, $route_paths, $errors) = @_;
+    my $prefix = $contract->{destinations}{route_part_prefix} // '';
+    return () if $prefix eq '';
+    my $directory = dirname($prefix);
+    my $stem = $prefix;
+    $stem =~ s{\A\Q$directory\E/}{};
+    my %planned = map { $_ => 1 } @$route_paths;
+    my $handle;
+    if (!opendir($handle, absolute($base, $directory))) {
+        push @$errors, "cannot read route catalog directory '$directory'";
+        return ();
+    }
+    my @unplanned;
+    for my $entry (sort readdir $handle) {
+        next if $entry !~ /\A\Q$stem\E[^\/]*\.md\z/;
+        my $candidate = "$directory/$entry";
+        push @unplanned, $candidate if !$planned{$candidate};
+    }
+    closedir $handle;
+    return @unplanned;
+}
+
+# The landing claims a lifecycle for every route; where the primary part declares that leaf as a node,
+# the claim must agree with the part's own status line, so the claim is re-derived rather than asserted.
+sub validate_route_lifecycles {
+    my ($contract, $part_raw, $errors, $result) = @_;
+    return if !route_catalog_is_sharded($contract);
+    my %part_path = map { $_->{part_id} => $_->{path} } @{$contract->{destinations}{parts}};
+    my $unverified = 0;
+    for my $route (@{$contract->{leaf_routes} // []}) {
+        my $path = $part_path{$route->{part_id} // ''} // '';
+        my $statuses = declared_node_statuses($part_raw->{$path}, $route->{leaf_id});
+        if (@$statuses > 1) {
+            push @$errors, "leaf route '$route->{leaf_id}' is declared " . scalar(@$statuses)
+                . " times in its primary part '$route->{part_id}'";
+            next;
+        }
+        my $status = @$statuses ? $statuses->[0] : undef;
+        if (!defined $status) {
+            $unverified++;
+            next;
+        }
+        my $observed = ($status eq 'done' || $status eq 'superseded') ? 'closed' : 'open';
+        push @$errors, "leaf route '$route->{leaf_id}' declares lifecycle '"
+            . ($route->{lifecycle} // '') . "' but its primary part records status '$status'"
+            if $observed ne ($route->{lifecycle} // '');
+    }
+    my $allowed = $contract->{limits}{route_parts}{max_unverified_routes};
+    push @$errors, "$unverified leaf routes declare a lifecycle their primary part does not corroborate, "
+        . "above the declared max_unverified_routes $allowed"
+        if defined($allowed) && !ref($allowed) && $unverified > $allowed;
+    $result->{routes_without_declared_status} = $unverified;
+}
+
 sub validate_index {
     my ($base, $contract, $errors, $result) = @_;
     my $path = $contract->{destinations}{index};
@@ -1049,6 +1372,9 @@ sub validate_index {
         $result->{warnings},
     );
     validate_required_literals($raw, $contract->{migrated_requirements}{index_required_literals}, 'active task index', $errors);
+    push @$errors, 'active task index differs from its derived form; regenerate with '
+        . writer_command_for($contract)
+        if $raw ne render_index($contract);
 
     my $links = link_counts($raw, $path, 'active task index', $errors);
     my %expected = (
@@ -1057,6 +1383,7 @@ sub validate_index {
         $contract->{destinations}{source_capsule} => 1,
     );
     $expected{$_->{path}}++ for @{$contract->{destinations}{parts}};
+    $expected{$_}++ for route_part_paths($contract);
     my (%part_path, %route_rows);
     $part_path{$_->{part_id}} = $_->{path} for @{$contract->{destinations}{parts}};
     while ($raw =~ /^\| `([^`]+)` \| \[[^\]\r\n]+\]\(([^)\r\n]+)\) \|\s*$/mg) {
@@ -1070,6 +1397,12 @@ sub validate_index {
         my $leaf_id = $route->{leaf_id};
         my $expected_path = $part_path{$route->{part_id}} // '';
         my $rows = $route_rows{$leaf_id} // [];
+        if (route_catalog_is_sharded($contract) && ($route->{lifecycle} // '') ne 'open') {
+            push @$errors, "active task index must not route closed leaf '$leaf_id'; "
+                . 'a closed leaf belongs to the route catalog'
+                if @$rows;
+            next;
+        }
         push @$errors, "active task index must route leaf '$leaf_id' exactly once"
             if @$rows != 1;
         push @$errors, "active task index leaf '$leaf_id' routes to '$rows->[0]', expected '$expected_path'"
@@ -1090,7 +1423,8 @@ sub validate_index {
 }
 
 sub validate_migrated {
-    my ($base, $contract, $source_raw, $region_raw, $errors, $result) = @_;
+    my ($base, $contract, $source_raw, $region_raw, $errors, $result, $options) = @_;
+    $options //= {};
     my $root_raw = read_regular($base, $contract->{current_path}, 'bounded active root', $errors);
     if (defined $root_raw) {
         my $actual = metrics($root_raw);
@@ -1123,11 +1457,15 @@ sub validate_migrated {
         $result->{root_metrics} = $actual;
     }
 
-    validate_index($base, $contract, $errors, $result);
+    validate_index($base, $contract, $errors, $result) if !$options->{skip_derived};
+    validate_route_parts($base, $contract, $errors, $result) if !$options->{skip_derived};
     my %seen_regions;
+    my %part_raw;
     my ($files, $lines_total, $bytes_total, $max_lines, $max_bytes, $max_line_bytes) = (0, 0, 0, 0, 0, 0);
     for my $part (@{$contract->{destinations}{parts}}) {
-        my $actual = validate_part_and_regions($base, $contract, $part, $region_raw, \%seen_regions, $errors);
+        my $actual = validate_part_and_regions(
+            $base, $contract, $part, $region_raw, \%seen_regions, $errors, \%part_raw,
+        );
         next if !defined $actual;
         $files++;
         $lines_total += $actual->{lines};
@@ -1161,11 +1499,13 @@ sub validate_migrated {
         $result->{warnings},
     );
     $result->{part_collection_metrics} = $part_actual;
-    validate_manifest($base, $contract, $errors, $result);
+    validate_route_lifecycles($contract, \%part_raw, $errors, $result);
+    validate_manifest($base, $contract, $errors, $result) if !$options->{skip_derived};
 }
 
 sub validate_tree {
-    my ($base, $relative_contract) = @_;
+    my ($base, $relative_contract, $options) = @_;
+    $options //= {};
     my @errors;
     if (!safe_relative_path($relative_contract)) {
         push @errors, 'contract path is absolute, escaping, or malformed';
@@ -1192,7 +1532,7 @@ sub validate_tree {
     if ($locked) {
         validate_destinations_absent($base, $contract, \@errors);
     } elsif (($contract->{migration_state} // '') eq 'migrated' && defined $source_raw) {
-        validate_migrated($base, $contract, $source_raw, $region_raw, \@errors, \%result);
+        validate_migrated($base, $contract, $source_raw, $region_raw, \@errors, \%result, $options);
     }
     return (\@errors, \%result);
 }
@@ -1229,31 +1569,6 @@ sub render_semantic_part {
     # line after the final region.
     $raw =~ s/\n\n\z/\n/;
     return $raw;
-}
-
-sub render_migration_index {
-    my ($contract) = @_;
-    my $path = $contract->{destinations}{index};
-    my %part_by_id = map { $_->{part_id} => $_ } @{$contract->{destinations}{parts}};
-    my $raw = "# $contract->{identity}{tree_id} task-evidence index\n\n";
-    $raw .= '- [Current root](' . relative_markdown_link($path, $contract->{current_path}) . ")\n";
-    $raw .= '- [Manifest](' . relative_markdown_link($path, $contract->{destinations}{manifest}) . ")\n\n";
-    $raw .= "## Semantic parts\n\n";
-    for my $part (@{$contract->{destinations}{parts}}) {
-        my $label = part_display_label($part->{part_id});
-        $raw .= "- [$label](" . relative_markdown_link($path, $part->{path}) . ")\n";
-    }
-    $raw .= "\n## Primary leaf routes\n\n| Leaf | Primary detail |\n| --- | --- |\n";
-    for my $route (@{$contract->{leaf_routes}}) {
-        my $part = $part_by_id{$route->{part_id}};
-        my $label = part_display_label($route->{part_id});
-        $raw .= "| `$route->{leaf_id}` | [$label]("
-            . relative_markdown_link($path, $part->{path}) . ") |\n";
-    }
-    $raw .= "\n## Exact provenance\n\n";
-    $raw .= '- [Source](' . relative_markdown_link($path, $contract->{destinations}{source_capsule}) . ")\n\n";
-    $raw .= "## Verification\n\nRun `$contract->{verifier}` from the repository root.\n";
-    return raw_scalar($raw);
 }
 
 sub validate_migration_root_template {
@@ -1318,7 +1633,9 @@ sub build_migration_outputs {
         $part->{metrics} = metrics($raw);
         $outputs{$part->{path}} = $raw;
     }
-    $outputs{$migrated->{destinations}{index}} = render_migration_index($migrated);
+    $outputs{$migrated->{destinations}{index}} = render_index($migrated);
+    my @route_paths = route_part_paths($migrated);
+    $outputs{$route_paths[$_]} = render_route_part($migrated, $_, \@route_paths) for 0 .. $#route_paths;
     my $manifest = manifest_expected_subset($migrated);
     $outputs{$migrated->{destinations}{manifest}}
         = raw_scalar(JSON::PP->new->canonical(1)->pretty(1)->encode($manifest));
@@ -1397,6 +1714,7 @@ sub materialize_migration {
     my @write_order = (
         $migrated->{destinations}{source_capsule},
         (map { $_->{path} } @{$migrated->{destinations}{parts}}),
+        route_part_paths($migrated),
         $migrated->{destinations}{index},
         $migrated->{destinations}{manifest},
         $relative_contract,
@@ -1419,6 +1737,74 @@ sub materialize_migration {
     my $part_count = scalar @{$migrated->{destinations}{parts}};
     print "active-task-evidence migration: wrote bounded root ($root_metrics->{lines} lines / "
         . "$root_metrics->{bytes} bytes), $part_count semantic parts, index, manifest, and exact source capsule.\n"
+        if !$quiet;
+}
+
+# Regenerate every derived surface the contract owns - the bounded landing, the complete route
+# catalog, and the manifest - as one transaction that restores the exact previous bytes on failure.
+# Canonical evidence (root, semantic parts, capsule, contract) is never written here.
+sub materialize_derived {
+    my ($base, $relative_contract, $quiet) = @_;
+    my ($preflight_errors) = validate_tree($base, $relative_contract, {skip_derived => 1});
+    die "active-task-evidence writer: preflight failed:\n"
+        . join("\n", map { "- $_" } @$preflight_errors) . "\n"
+        if @$preflight_errors;
+    my @read_errors;
+    my ($contract) = read_json_object($base, $relative_contract, 'writer contract', 131_072, \@read_errors);
+    die "active-task-evidence writer: contract read failed:\n" . join("\n", @read_errors) . "\n"
+        if @read_errors || !defined $contract;
+    die "active-task-evidence writer: contract must be migrated/complete\n"
+        if ($contract->{migration_state} // '') ne 'migrated'
+        || ($contract->{input_state} // '') ne 'complete';
+
+    my @route_paths = route_part_paths($contract);
+    die "active-task-evidence writer: sharded contract derives no route catalog part\n"
+        if route_catalog_is_sharded($contract) && !@route_paths;
+    my %outputs = ($contract->{destinations}{index} => render_index($contract));
+    $outputs{$route_paths[$_]} = render_route_part($contract, $_, \@route_paths) for 0 .. $#route_paths;
+    $outputs{$contract->{destinations}{manifest}} = raw_scalar(
+        JSON::PP->new->canonical(1)->pretty(1)->encode(manifest_expected_subset($contract)),
+    );
+    my @scan_errors;
+    my @stale = unplanned_route_part_paths($base, $contract, \@route_paths, \@scan_errors);
+    die "active-task-evidence writer: cannot enumerate route catalog parts:\n"
+        . join("\n", map { "- $_" } @scan_errors) . "\n"
+        if @scan_errors;
+
+    my %previous;
+    for my $relative (sort(keys %outputs), @stale) {
+        my @ignored;
+        $previous{$relative} = read_regular($base, $relative, 'writer preimage', \@ignored);
+    }
+    my $write_error;
+    eval {
+        write_raw_atomic($base, $_, $outputs{$_}) for sort keys %outputs;
+        for my $relative (@stale) {
+            unlink absolute($base, $relative)
+                or die "cannot remove stale route catalog part '$relative': $!\n";
+        }
+        1;
+    } or $write_error = $@;
+    my ($post_errors) = $write_error ? ([]) : validate_tree($base, $relative_contract);
+    if ($write_error || @$post_errors) {
+        my $reason = $write_error || join("\n", map { "- $_" } @$post_errors);
+        eval {
+            for my $relative (sort keys %previous) {
+                if (defined $previous{$relative}) {
+                    write_raw_atomic($base, $relative, $previous{$relative});
+                } elsif (-e absolute($base, $relative)) {
+                    unlink absolute($base, $relative);
+                }
+            }
+            1;
+        } or $reason .= "\nrollback failed: $@";
+        die "active-task-evidence writer: transaction failed and was rolled back:\n$reason\n";
+    }
+    my $removed = scalar @stale;
+    print 'active-task-evidence writer: wrote the bounded index ('
+        . scalar(landing_leaf_routes($contract)) . ' routed of '
+        . scalar(@{$contract->{leaf_routes}}) . ' leaf routes), '
+        . scalar(@route_paths) . " route catalog part(s), and the manifest; removed $removed stale part(s).\n"
         if !$quiet;
 }
 
@@ -1483,12 +1869,14 @@ sub fixture_contract {
             index => 'docs/tasks/program/INDEX.md',
             manifest => 'docs/tasks/program/manifest.json',
             parts => \@parts,
+            route_part_prefix => 'docs/tasks/program/routes-',
             archive_directory => 'docs/archive/tasks/program',
             source_capsule => 'docs/archive/tasks/program/source.md',
         },
         regions => \@regions,
         leaf_routes => [],
         route_basis => 'boundary_path_commit_subject_ids',
+        route_catalog_state => 'sharded',
         marker_prefix => 'active-task-source-region',
         limits => {
             root => {
@@ -1506,13 +1894,21 @@ sub fixture_contract {
                 enforcement_ceilings => {files => 12, lines_each => 96, bytes_each => 6144, line_bytes_each => 512, lines_total => 512, bytes_total => 32768},
                 milestones => {warning_pct => 80, rollover_pct => 90},
             },
+            route_parts => {
+                health_targets => {files => 4, lines_each => 32, bytes_each => 4096, line_bytes_each => 256, lines_total => 128, bytes_total => 16384},
+                enforcement_ceilings => {files => 6, lines_each => 48, bytes_each => 6144, line_bytes_each => 384, lines_total => 192, bytes_total => 24576},
+                milestones => {warning_pct => 80, rollover_pct => 90},
+                routes_per_part => 8,
+                max_parts => 4,
+                max_unverified_routes => 2,
+            },
             capsule_exact => $source_metrics,
             manifest => {bytes => 32768, line_bytes => 1024, scalar_bytes => 512, max_parts => 8, max_regions => 8, max_leaf_routes => 16},
         },
         migrated_requirements => {
             root_required_literals => ['# PROGRAM: fixture', '- Tree ID: `PROGRAM`', '- Status: `active`', '- ID: `PROGRAM`', '- ID: `PROGRAM.1`', '## Current Frontier', 'No eligible frontier.', '## Detailed task evidence', '## Verification Log', '## Commit Log'],
             root_forbidden_literals => ['- Status: `done`'],
-            index_required_literals => ['# PROGRAM task-evidence index', '## Semantic parts', '## Primary leaf routes', '## Exact provenance', '## Verification'],
+            index_required_literals => ['# PROGRAM task-evidence index', '## Semantic parts', '## Open leaf routes', '## Complete route catalog', '## Exact provenance', '## Verification'],
         },
         verifier => 'perl scripts/check_active_task_evidence.pl --check',
     };
@@ -1534,8 +1930,8 @@ sub complete_fixture_inputs {
         $region->{metrics} = metrics($raw);
     }
     $contract->{leaf_routes} = [
-        {leaf_id => 'PROGRAM.1', part_id => 'activity', origin => 'legacy', source_literal => '.1'},
-        {leaf_id => 'PROGRAM', part_id => 'foundation', origin => 'structural', source_literal => 'PROGRAM'},
+        {leaf_id => 'PROGRAM.1', part_id => 'activity', origin => 'legacy', source_literal => '.1', lifecycle => 'closed'},
+        {leaf_id => 'PROGRAM', part_id => 'foundation', origin => 'structural', source_literal => 'PROGRAM', lifecycle => 'open'},
     ];
 }
 
@@ -1586,37 +1982,36 @@ Committed.
 ROOT
 }
 
-sub fixture_index {
-    return <<'INDEX';
-# PROGRAM task-evidence index
+sub convert_fixture_to_inline {
+    my ($base, $contract) = @_;
+    $contract->{route_catalog_state} = 'inline';
+    delete $contract->{destinations}{route_part_prefix};
+    delete $contract->{limits}{route_parts};
+    delete $_->{lifecycle} for @{$contract->{leaf_routes}};
+    $contract->{migrated_requirements}{index_required_literals} = [
+        '# PROGRAM task-evidence index', '## Semantic parts', '## Primary leaf routes',
+        '## Exact provenance', '## Verification',
+    ];
+    unlink absolute($base, 'docs/tasks/program/routes-0001.md');
+    write_fixture_derived($base, $contract);
+}
 
-- [Current root](../PROGRAM.md)
-- [Manifest](manifest.json)
-
-## Semantic parts
-
-- [Foundation](foundation.md)
-- [Activity](activity.md)
-
-## Primary leaf routes
-
-| Leaf | Primary detail |
-| --- | --- |
-| `PROGRAM.1` | [Activity](activity.md) |
-| `PROGRAM` | [Foundation](foundation.md) |
-
-## Exact provenance
-
-[Source](../../archive/tasks/program/source.md)
-
-## Verification
-
-Run the declared verifier.
-INDEX
+sub write_fixture_derived {
+    my ($base, $contract) = @_;
+    write_raw($base, $contract->{destinations}{index}, render_index($contract));
+    my @route_paths = route_part_paths($contract);
+    write_raw($base, $route_paths[$_], render_route_part($contract, $_, \@route_paths))
+        for 0 .. $#route_paths;
+    write_raw(
+        $base,
+        $contract->{destinations}{manifest},
+        JSON::PP->new->canonical(1)->pretty(1)->encode(manifest_expected_subset($contract)),
+    );
 }
 
 sub append_fixture_activity {
-    my ($base, $contract) = @_;
+    my ($base, $contract, $node_status) = @_;
+    $node_status //= 'pending';
     my $part = {
         part_id => 'activity-02',
         path => 'docs/tasks/program/activity-02.md',
@@ -1625,7 +2020,7 @@ sub append_fixture_activity {
     };
     my $part_raw = raw_scalar(
         "$part->{heading}\n\n- Part ID: `$part->{part_id}`\n- State: `$part->{state}`\n\n"
-        . "## PROGRAM.2\n\nNew bounded activity.\n",
+        . "## PROGRAM.2\n\n- ID: `PROGRAM.2`\n  State: `$node_status`\n  Goal: new bounded activity\n",
     );
     $part->{sha256} = sha256_hex($part_raw);
     $part->{metrics} = metrics($part_raw);
@@ -1634,6 +2029,7 @@ sub append_fixture_activity {
         leaf_id => 'PROGRAM.2',
         part_id => $part->{part_id},
         origin => 'post_migration',
+        lifecycle => ($node_status eq 'done' || $node_status eq 'superseded') ? 'closed' : 'open',
     };
     $contract->{current_frontier} = {
         mode => 'eligible',
@@ -1650,12 +2046,7 @@ sub append_fixture_activity {
     $root_raw =~ s/No eligible frontier\./Eligible frontier: PROGRAM.2./;
     write_raw($base, $contract->{current_path}, $root_raw);
     write_raw($base, $part->{path}, $part_raw);
-    write_raw($base, $contract->{destinations}{index}, render_migration_index($contract));
-    write_raw(
-        $base,
-        $contract->{destinations}{manifest},
-        JSON::PP->new->canonical(1)->pretty(1)->encode(manifest_expected_subset($contract)),
-    );
+    write_fixture_derived($base, $contract);
 }
 
 sub init_fixture_git {
@@ -1699,15 +2090,7 @@ sub seed_fixture {
             $part->{metrics} = metrics($raw);
             write_raw($base, $part->{path}, $raw);
         }
-        write_raw($base, $contract->{destinations}{index}, fixture_index());
-        my $manifest = manifest_expected_subset($contract);
-        $manifest->{migrated_on} = '2026-08-09';
-        $manifest->{reason} = 'fixture migration';
-        write_raw(
-            $base,
-            $contract->{destinations}{manifest},
-            JSON::PP->new->canonical(1)->pretty(1)->encode($manifest),
-        );
+        write_fixture_derived($base, $contract);
     }
     $mutator->($base, $contract, $source_raw) if defined $mutator;
     write_raw(
@@ -1791,8 +2174,23 @@ sub run_self_test {
         ['root owner declaration missing', 'migrated', 'complete', sub { my $raw = fixture_root(); $raw =~ s/^- ID: `PROGRAM\.1`\n//m; write_raw($_[0], $_[1]{current_path}, $raw) }, qr/lacks required literal '- ID: `PROGRAM\.1`'/],
         ['root frontier missing', 'migrated', 'complete', sub { my $raw = fixture_root(); $raw =~ s/No eligible frontier\./Frontier unknown./; write_raw($_[0], $_[1]{current_path}, $raw) }, qr/frontier/],
         ['root mandatory rollover', 'migrated', 'complete', sub { $_[1]{limits}{root}{health_targets}{lines} = 20 }, qr/mandatory rollover/],
-        ['index part route missing', 'migrated', 'complete', sub { my $raw = fixture_index(); $raw =~ s/^- \[Foundation\].*\n//m; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/links 'docs\/tasks\/program\/foundation.md'/],
-        ['index leaf misroute', 'migrated', 'complete', sub { my $raw = fixture_index(); $raw =~ s/\[Activity\]\(activity\.md\) \|/\[Foundation\](foundation.md) |/; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/leaf 'PROGRAM\.1' routes/],
+        ['index part route missing', 'migrated', 'complete', sub { my $raw = render_index($_[1]); $raw =~ s/^- \[Foundation\]\(foundation\.md\)\n//m; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/links 'docs\/tasks\/program\/foundation.md'/],
+        ['index leaf misroute', 'migrated', 'complete', sub { my $raw = render_index($_[1]); $raw =~ s/\[Foundation\]\(foundation\.md\) \|/\[Activity](activity.md) |/; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/leaf 'PROGRAM' routes/],
+        ['index derived drift', 'migrated', 'complete', sub { my $raw = render_index($_[1]); $raw =~ s/measures work in flight/measures nothing in particular/; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/index differs from its derived form/],
+        ['index carries a closed leaf', 'migrated', 'complete', sub { my $raw = render_index($_[1]); my $row = '| `PROGRAM.1` | [Activity](activity.md) |'; $raw =~ s/^(\Q| `PROGRAM` | [Foundation](foundation.md) |\E\n)/$1$row\n/m; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/must not route closed leaf 'PROGRAM\.1'/],
+        ['route catalog drift', 'migrated', 'complete', sub { my @paths = route_part_paths($_[1]); my $raw = render_route_part($_[1], 0, \@paths); $raw =~ s/`closed`/`open`/; write_raw($_[0], $paths[0], $raw) }, qr/route catalog part '[^']+' differs from its derived form/],
+        ['unplanned route catalog part', 'migrated', 'complete', sub { write_raw($_[0], 'docs/tasks/program/routes-0002.md', "# stray\n") }, qr/unplanned route catalog file 'docs\/tasks\/program\/routes-0002.md'/],
+        ['route catalog capacity below route count', 'migrated', 'complete', sub { $_[1]{limits}{route_parts}{max_parts} = 1; $_[1]{limits}{route_parts}{routes_per_part} = 1 }, qr/route catalog capacity is below the declared leaf route count/],
+        ['route part health admits no full part', 'migrated', 'complete', sub { $_[1]{limits}{route_parts}{health_targets}{lines_each} = 20 }, qr/admits no full part below its warning band/],
+        ['leaf route lifecycle missing', 'migrated', 'complete', sub { delete $_[1]{leaf_routes}[0]{lifecycle} }, qr/lacks non-empty scalar 'lifecycle'/],
+        ['leaf route lifecycle invalid', 'migrated', 'complete', sub { $_[1]{leaf_routes}[0]{lifecycle} = 'retired' }, qr/has invalid lifecycle 'retired'/],
+        ['uncorroborated routes exceed their ratchet', 'migrated', 'complete', sub { $_[1]{limits}{route_parts}{max_unverified_routes} = 1 }, qr/above the declared max_unverified_routes 1/],
+        ['inline route catalog positive', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]) }, undef],
+        ['inline route catalog with a lifecycle', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); $_[1]{leaf_routes}[0]{lifecycle} = 'closed' }, qr/must not declare a lifecycle/],
+        ['inline route catalog with a route prefix', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); $_[1]{destinations}{route_part_prefix} = 'docs/tasks/program/routes-' }, qr/must not declare a route_part_prefix/],
+        ['unknown route catalog state', 'migrated', 'complete', sub { $_[1]{route_catalog_state} = 'partitioned' }, qr/invalid route_catalog_state 'partitioned'/],
+        ['post-migration closed append positive', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done') }, undef],
+        ['leaf route lifecycle disagrees with its primary part', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done'); $_[1]{leaf_routes}[-1]{lifecycle} = 'open'; write_fixture_derived($_[0], $_[1]) }, qr/declares lifecycle 'open' but its primary part records status 'done'/],
         ['part payload mutation', 'migrated', 'complete', sub { my $part = $_[1]{destinations}{parts}[1]; my $raw = fixture_part_raw($_[1], $_[2], $part); $raw =~ s/- ID: `\.1`/- ID: `.2`/; write_raw($_[0], $part->{path}, $raw) }, qr/semantic part|payload differs/],
         ['manifest identity drift', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'fixture migration'; $manifest->{source}{sha256} = 'f' x 64; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/manifest field 'source' disagrees/],
         ['manifest scalar overflow', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'x' x 600; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/scalar above 512 bytes/],
@@ -1909,5 +2307,35 @@ sub run_self_test {
     remove_tree($writer_fixture);
     die $refusal_failure if defined $refusal_failure;
     $passed++;
+
+    make_path($writer_fixture);
+    my $derived_failure;
+    eval {
+        seed_fixture($writer_fixture, 'migrated', 'complete', undef);
+        write_raw($writer_fixture, 'docs/tasks/program/INDEX.md', "# PROGRAM task-evidence index\n");
+        write_raw($writer_fixture, 'docs/tasks/program/routes-0007.md', "# stray\n");
+        materialize_derived($writer_fixture, $DEFAULT_CONTRACT_REL, 1);
+        die "active-task-evidence self-test 'derived writer positive' left a stray route catalog part\n"
+            if -e File::Spec->catfile($writer_fixture, 'docs', 'tasks', 'program', 'routes-0007.md');
+        my ($derived_errors) = validate_tree($writer_fixture, $DEFAULT_CONTRACT_REL);
+        die "active-task-evidence self-test 'derived writer positive' failed:\n"
+            . join("\n", @$derived_errors) . "\n"
+            if @$derived_errors;
+        my $preimage = read_regular($writer_fixture, 'docs/tasks/program/routes-0001.md', 'derived writer part', \my @unused);
+        write_raw($writer_fixture, 'docs/tasks/program/foundation.md', "corrupted\n");
+        my $refused = eval { materialize_derived($writer_fixture, $DEFAULT_CONTRACT_REL, 1); '' };
+        $refused = $@ if $@;
+        die "active-task-evidence self-test 'derived writer refusal' unexpectedly passed\n" if !$refused;
+        die "active-task-evidence self-test 'derived writer refusal' missed diagnostic\n"
+            if $refused !~ /writer: preflight failed/;
+        my $after = read_regular($writer_fixture, 'docs/tasks/program/routes-0001.md', 'derived writer part', \@unused);
+        die "active-task-evidence self-test 'derived writer refusal' changed a derived surface\n"
+            if ($after // '') ne ($preimage // '');
+        1;
+    } or $derived_failure = $@
+        || "active-task-evidence self-test 'derived writer positive' failed without a diagnostic\n";
+    remove_tree($writer_fixture);
+    die $derived_failure if defined $derived_failure;
+    $passed += 2;
     print "active-task-evidence self-test: $passed/$passed source/topology/route/payload/bound cases pass.\n";
 }

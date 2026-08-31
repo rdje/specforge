@@ -146,6 +146,8 @@
   > how do I read the labels inside a diagram
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > how do I rebuild every retained chain after a production change
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > how do I regenerate a task-evidence index
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I regenerate controller_input.json and trajectory_report.json
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
@@ -296,5 +298,3 @@
   > how does claim evidence become stale
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how does collapse_section_header_register_identity decide same-register vs different-register
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > how does converge report integrated scheduled and omitted production capabilities

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > is SpecForge converging diverging stalled mixed or unmeasurable
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > is SpecForge specification mining
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > is SpecForge still allowed to read chipdoc from the boot volume
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -294,7 +298,3 @@
   > was any USB4 pipeline artifact changed by the source locality probe
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > was the (contract ... eventually ...) ISF clause removed
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > was the first vertical population historically unseen
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > was the fresh SWD 29 of 29 artifact promoted

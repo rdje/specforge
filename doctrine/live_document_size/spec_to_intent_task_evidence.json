@@ -124,13 +124,13 @@
       {
         "heading": "# SPEC-TO-INTENT-ALIGNMENT — residual actionability",
         "metrics": {
-          "bytes": 46357,
+          "bytes": 46355,
           "line_bytes": 1204,
           "lines": 502
         },
         "part_id": "residual-actionability",
         "path": "docs/tasks/spec-to-intent-alignment/residual-actionability.md",
-        "sha256": "b6cdf74fdfa9e2c0cce2436dee4254ce0232b626cbf2864f5d70d2a36f3f1388",
+        "sha256": "d5bdfecd0f3a0689d1f9f03a579d7d64c72dfd52d295bd94bba7bd21ede06de0",
         "state": "active"
       },
       {
@@ -158,6 +158,7 @@
         "state": "active"
       }
     ],
+    "route_part_prefix": "docs/tasks/spec-to-intent-alignment/routes-",
     "source_capsule": "docs/archive/tasks/spec-to-intent-alignment/source-through-2026-08-14.md"
   },
   "identity": {
@@ -169,467 +170,550 @@
   "leaf_routes": [
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT",
+      "lifecycle": "open",
       "origin": "structural",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.0",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.0"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.1",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.1"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.2",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.2"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.3",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.3"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.4",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.4"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.4a",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.4a"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.4b",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.4b"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.4c",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.4c"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.5",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.5"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.5a",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.5a"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.5b",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "program-foundation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.5b"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6a",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6a"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.i",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.i"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.ii",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.ii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.a",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.a"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6b.iii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6b.iii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6c",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6c"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6c.i",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6c.i"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6c.ii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6c.ii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.i",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "qualification-and-repair",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.i"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.a",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "genericity-remediation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.a"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.b",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "genericity-remediation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.b"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.c",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "genericity-remediation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.c"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "genericity-remediation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "genericity-remediation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "genericity-remediation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "genericity-remediation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "genericity-remediation",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v",
+      "lifecycle": "closed",
       "origin": "structural",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii",
+      "lifecycle": "closed",
       "origin": "legacy",
       "part_id": "structural-proof",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.i",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.a",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.b",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.ii.c",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii.a",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.6e",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "behavioral-qualification"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "canonical-recovery"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7a",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "canonical-recovery"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7b",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "canonical-recovery"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7c",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "canonical-recovery"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7c.i",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "canonical-recovery"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.7c.ii",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "canonical-recovery"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "residual-actionability"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8a",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "residual-actionability"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8b",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "residual-actionability"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8c",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "residual-carrier"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.8d",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "residual-carrier"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9",
+      "lifecycle": "open",
       "origin": "structural",
       "part_id": "current-and-future",
       "source_literal": "SPEC-TO-INTENT-ALIGNMENT.9"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9a",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "residual-actionability"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9b",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "region-kind-generalisation"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9c",
+      "lifecycle": "open",
       "origin": "post_migration",
       "part_id": "region-kind-generalisation"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9d",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "region-kind-generalisation"
     },
     {
       "leaf_id": "SPEC-TO-INTENT-ALIGNMENT.9e",
+      "lifecycle": "closed",
       "origin": "post_migration",
       "part_id": "region-kind-generalisation"
     }
@@ -701,6 +785,31 @@
         "rollover_pct": 90,
         "warning_pct": 80
       }
+    },
+    "route_parts": {
+      "enforcement_ceilings": {
+        "bytes_each": 32768,
+        "bytes_total": 196608,
+        "files": 6,
+        "line_bytes_each": 384,
+        "lines_each": 256,
+        "lines_total": 1536
+      },
+      "health_targets": {
+        "bytes_each": 16384,
+        "bytes_total": 65536,
+        "files": 4,
+        "line_bytes_each": 256,
+        "lines_each": 160,
+        "lines_total": 640
+      },
+      "max_parts": 6,
+      "max_unverified_routes": 1,
+      "milestones": {
+        "rollover_pct": 90,
+        "warning_pct": 80
+      },
+      "routes_per_part": 96
     }
   },
   "marker_prefix": "spec-to-intent-task-source-region",
@@ -708,7 +817,8 @@
     "index_required_literals": [
       "# SPEC-TO-INTENT-ALIGNMENT task-evidence index",
       "## Semantic parts",
-      "## Primary leaf routes",
+      "## Open leaf routes",
+      "## Complete route catalog",
       "## Exact provenance",
       "## Verification"
     ],
@@ -1070,6 +1180,7 @@
     }
   ],
   "route_basis": "boundary_path_commit_subject_ids",
+  "route_catalog_state": "sharded",
   "schema_version": 1,
   "source": {
     "boundary_commit": "38b793957d26d259a0abce5c84de9273d597d391",
