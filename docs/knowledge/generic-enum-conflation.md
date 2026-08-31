@@ -26,10 +26,11 @@ answers:
   - "does header-sourced enum naming re-create the merge-by-name conflation (NO — 28 of 28 collision groups agree on every shared value, 0 conflicts. Structural, not lucky: a caption keyword like Table is shared by unrelated tables, but a header names the actual field and a field encodes the same way throughout a document. Worked example SMMU SH: 11 tables in ihi0070_e_a, every shared value identical 0b00=NON_SHAREABLE/0b10=OUTER_SHAREABLE/0b11=INNER_SHAREABLE/0b01=RESERVED — the merge IS the correct encoding)"
   - "what must .5.iv.a exclude before header-sourced naming can land (four measured junk classes among the 134: OFFSET-headed register-offset tables where the header names a column concept not a field (3, CoreSight SDC-600); *_WIDTH self-named pseudo-enums whose only member is LEGAL_VALUES (the .5.iii honest residual, reappearing from the header side); garbled members (AXADDR -> VA_40/NUM_2_0_A); and 12 RESERVED-only enums carrying no intent. It is byte-changing on the AXI wire gold ihi0022_l (a new AWATOP enum) so it needs the full before/after WIRE-BASED-100 protocol)"
   - "would header-sourced naming have recovered the Arm SMMU guide's SEC_SID enum (NO — honest correction recorded at .5.iv: that table's members are whole description sentences, so the .5.ii spine gate drops them all and the enum empties however it is named. The lever is real but does not help the document that surfaced it)"
+  - "where are the KG-ISF-COMPLETENESS.5 per-leaf enum-gate results / where did the .5.i-.5.iii LANDED and .5.ii-.5.iv measurement sections move to (docs/research/generic-enum-conflation-results.md, partitioned out of generic-enum-conflation-measurement.md on 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e when that record reached 559/640 lines with .5.iv.a still to report; the measurement retains the defect, origin, corpus census, member-quality finding, decision, reproducer, conclusion and an Outcome section, and the results record holds every per-leaf section byte-identically in its original appended order)"
   - "why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest residuals)"
 date: 2026-08-11
 tags: [kg-isf-completeness, isf, enum, extraction, evidence-ir, semantic-ir, emitter, adr-0006, corpus-coverage, measurement, fidelity, bar-6]
-evidence: crates/specforge/src/ir/evidence.rs (derive_encoding_enum_name :4457-4461 caption-keyword fallback; is_hardware_signal_token :7106 accepts 'TABLE'; synthesize_encoding_declarations_for_enum :11898/:11952 member synthesis); crates/specforge/src/ir/semantic.rs (build_symbol_definitions :2782-2789 merge-by-name, record :2865-2877); crates/specforge/src/ir/intent.rs (:189 verbatim copy to IntentIR); crates/specforge/src/ir/isf_ir.rs (:889-912 faithful enum lowering; :403-409 unconditional types block = orphan-type bug; :376 Lever-F value gate); docs/research/generic-enum-conflation-measurement.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5 node); scripts/measure_encoding_enum_header_naming.py (.5.iv reproducer)
+evidence: crates/specforge/src/ir/evidence.rs (derive_encoding_enum_name :4457-4461 caption-keyword fallback; is_hardware_signal_token :7106 accepts 'TABLE'; synthesize_encoding_declarations_for_enum :11898/:11952 member synthesis); crates/specforge/src/ir/semantic.rs (build_symbol_definitions :2782-2789 merge-by-name, record :2865-2877); crates/specforge/src/ir/intent.rs (:189 verbatim copy to IntentIR); crates/specforge/src/ir/isf_ir.rs (:889-912 faithful enum lowering; :403-409 unconditional types block = orphan-type bug; :376 Lever-F value gate); docs/research/generic-enum-conflation-measurement.md; docs/research/generic-enum-conflation-results.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5 node); scripts/measure_encoding_enum_header_naming.py (.5.iv reproducer)
 reverify: "RAM-safe, no VLM/Docling/rebuild. target/release/specforge adapt generated/intent_ir/jesd235a_2015_11_hbm2_dram/intent_ir.json --target isf; grep '(type TABLE' generated/adapters/isf/jesd235a_2015_11_hbm2_dram/hbm.isf -> '(type TABLE (bits 6))'. Corpus census: for each generated/intent_ir/*/intent_ir.json, count SymbolDefinition enums whose symbol_name is a doc-structure token (TABLE/FIGURE/DATA/COLUMN/ANNEX/NOTE/...) -> 96 generic across 56 docs vs 493 real. HBM2 TABLE: 57 members, 7 value-restart runs (dup 0..N seven times), 30 sentence-fragment member names. Wire golds: grep '(type TABLE' over generated/adapters/isf/{ihi0024_*,ihi0033_c,ihi0022_l,*swp*}/*.isf -> each emits a junk TABLE."
 ---
 
@@ -90,7 +91,7 @@ of Contents", gic_600 `DATA`) → `.5.ii` residuals. WIRE-BASED-100 **1.000 befo
 before/after `eval-extraction` on rebuilt gold evidence); nvme-registers + i2c golds identical;
 `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1712); all affected `.isf` FSMGen-`--strict` 0 diagnostics.
 ADR-0006 proven structural: `DATA` KEPT where a real gic_600 signal, DROPPED where a bare HBM2 caption
-word. Report `docs/research/generic-enum-conflation-measurement.md` §`.5.i LANDED`.
+word. Report `docs/research/generic-enum-conflation-results.md` §`.5.i LANDED`.
 
 ## `.5.ii` measurement (`2026-06-24`) — member-quality gate is PER-MEMBER
 
@@ -109,7 +110,7 @@ per the `.1a` discipline: `A`/`I`/`ITS`/`CAN`/`MAY`/`AM`. **Precision 1.000** (0
 / **recall 1.000** (269/269 junk anchor caught); 30.2 % of members drop. Honest residuals deferred:
 glossary `SEE…`, front-matter/ToC, section-caption `B2_3_1_…`, `_WIDTH` leaks, restart-of-clean. **GO**
 — land at `synthesize_encoding_declarations_for_enum` (`evidence.rs`); byte-changing on wire golds →
-before/after WIRE-BASED-100 eval required. Report §`.5.ii measurement`.
+before/after WIRE-BASED-100 eval required. Report `docs/research/generic-enum-conflation-results.md` §`.5.ii measurement`.
 
 **`.5.ii` LANDED (`2026-06-24`).** `is_prose_fragment_member_name` + `PROSE_SENTENCE_SPINE_WORDS`
 (`ir/evidence.rs`) gate the member loop in `synthesize_encoding_declarations_for_enum` (one seam → both
@@ -119,7 +120,7 @@ recovered from the 16-member prose-fused enum). WIRE-BASED-100 **1.000 before==a
 evidence rebuilt with baseline vs gated binary; scored surface byte-identical); FSMGen `--strict` `success`
 on AXI+APB; `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1716, +4 tests). `.5` enum-surface fidelity now
 built; deeper member-quality classes (glossary/front-matter/section-caption/`_WIDTH`/restart-of-clean) are
-honest residuals. Report §`.5.ii LANDED`.
+honest residuals. Report `docs/research/generic-enum-conflation-results.md` §`.5.ii LANDED`.
 
 ## `.5.iii` measurement (`2026-06-24`) — the `_WIDTH` parameter-leak is the one buildable deeper residual
 
@@ -138,7 +139,7 @@ value exists; `FULL`/`HALF` are never declared signals so a real link-width enum
 not per-enum (keeps BRESP's codes; empties RRESP/AXSNOOP → honest residual). **NO-GO** on section-caption
 (leading `[A-Z]?digit` collides with real codes `D1`/`L2`), restart-of-clean (no defect), glossary/
 front-matter (tiny). Byte-changing on the AXI gold → the code slice needs a before/after WIRE-BASED-100
-eval. Report §`.5.iii measurement`.
+eval. Report `docs/research/generic-enum-conflation-results.md` §`.5.iii measurement`.
 
 **`.5.iii` LANDED (`2026-06-24`).** `is_width_parameter_leak_member` (`ir/evidence.rs`) + a `continue`-skip
 in `synthesize_encoding_declarations_for_enum`'s member loop after the `.5.ii` spine gate; `known_signals`
@@ -149,7 +150,7 @@ leaks (statements 6414→6407; non-Enum statement set byte-identical); `manager.
 `_WIDTH`-only enums are gone; FSMGen `--strict` success/0. WIRE-BASED-100 **1.000 before==after** (AXI eval
 identical; APB/AHB/SWD/i2c evidence byte-identical → gate inert); `kg-bench` 156/156; `run_ci.sh` GREEN
 (lib 1718, +2). The `SECSID_WIDTH`/`SID_WIDTH`/`SSID_WIDTH` self-named pseudo-enums stay an honest residual.
-Report §`.5.iii LANDED`.
+Report `docs/research/generic-enum-conflation-results.md` §`.5.iii LANDED`.
 
 Links: [[isf-enum-value-literal-emit-gate]] (Lever F — the value-literal gate that deferred
 this), [[behavior-temporal-lowering-broader-corpus]] (`.4`, which spun out enum/signal

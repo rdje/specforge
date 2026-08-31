@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how does chain currency distinguish a checked blocked adapter from an emitted ISF file
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how does claim evidence become stale
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -293,7 +297,3 @@
   > how is the purpose category different from document_class (richer 6-way semantic taxonomy vs coarse 4-way structural proxy; consumes document_class as one input, never replaces it)
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how is the required free disk for an ingest estimated
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)

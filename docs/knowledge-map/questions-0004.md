@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how are cited falsification controls bound to known-bad RED evidence
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
@@ -126,6 +128,8 @@
   > how do I check whether the persisted corpus seal is stale
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how do I count the records in the status ledger
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > how do I decide between partitioning a research record and declaring a rollover for it
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -294,7 +298,3 @@
   > how does automatic task ranking keep hard failures ahead of breadth work
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > how does behavioral genericity normalize renamed stable ids safely
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how does chain currency distinguish a checked blocked adapter from an emitted ISF file

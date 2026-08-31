@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-PRESSURE-HEADROOM.4e (`2026-08-31`) — a live writer does not decide the remedy; the size of the writer set does
+
+`.4c` closed by reporting that the split had relocated the research maximum onto a record with a **live**
+writer, and that framing invites a wrong inference: that liveness is itself the thing that makes a partition
+insufficient, so a live surface needs a rollover. It does not, and `.4e` is the case that separates the two.
+
+Liveness is binary and tells you almost nothing. The number that decides is **how much writing is left**, and
+it is usually countable. Here the writer is `KG-ISF-COMPLETENESS.5`, and its remaining set is exactly one leaf:
+`.5.iv.a`, the CODE slice `.5.iv` deliberately deferred; `.5` and `.5.i`–`.5.iv` are all `done` and the
+umbrella has no other child. The record's own history then bounds what that one leaf can cost — seven commits
+took it 149 → 559 lines in six appends of +72/+105/+38/+96/+33/+66, mean 68 and max 105. A 428-line successor
+absorbs the worst append this lane has ever produced and lands at 533/640 (83%), inside the band, after which
+the lane closes and the record becomes ordinary immutable evidence.
+
+That is the general rule worth keeping: **partition when the residual writers fit the successor's band with
+margin; declare a rollover when the writer set is open-ended.** The cost asymmetry makes the distinction
+matter rather than being academic — a rollover here would have meant new registry surfaces, new checker logic,
+and an ADR spent against `decision_records` axes already at 82.8% files / 92.6% lines / 97.1% bytes, all built
+to serve a single append.
+
+One correction the audit case did not have to make. `.4c` reported that no inbound route broke because all 14
+references cited the file as a whole. That was luck, not a property of partitions. This record carried eight
+deep-links into sections that moved, and repairing them needed a rule for which references are *authorities*
+and which are *history*: current-facing surfaces — task-tree nodes, enforced acceptance checklists, fact cards
+— were repointed; dated ledger entries here, in `CHANGES.md`, and in the rolling archives were not, because
+rewriting a dated entry to fix an address falsifies what was written on that date. The measurement's new
+`Outcome` section is what makes that safe: every stale bare-section reference lands on the retained record and
+is routed one hop from there.
+
 ## LIVE-DOCUMENT-PRESSURE-HEADROOM.4c (`2026-08-31`) — a size stop is a symptom; classify the growth driver first
 
 The leaf offered two remedies for a record one line under its ceiling — split it, or re-derive the per-file

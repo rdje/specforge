@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how is the required free disk for an ingest estimated
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is the terminal task source archive boundary verified
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -294,7 +298,3 @@
   > is PDF to SourceIR conservation measured
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling

@@ -14,10 +14,12 @@ answers:
   - "does docs/research have a file-count ceiling"
   - "how do I prove a live-document partition is lossless"
   - "what is the remedy when a research record reaches its per-file line ceiling"
+  - "does a research record with a live writer need a rollover instead of a partition"
+  - "how do I decide between partitioning a research record and declaring a rollover for it"
 date: 2026-08-31
 status: current
 tags: [documentation, containment, doctrine, research, genericity]
-evidence: doctrine/live_document_size/surfaces.jsonl; docs/research/production-genericity-pipeline-audit.md; docs/research/production-genericity-qualification-results.md; docs/catalogs/research-records.md; docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md; docs/decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md; scripts/check_live_document_size.sh
+evidence: doctrine/live_document_size/surfaces.jsonl; docs/research/production-genericity-pipeline-audit.md; docs/research/production-genericity-qualification-results.md; docs/research/generic-enum-conflation-results.md; docs/catalogs/research-records.md; docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md; docs/decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md; scripts/check_live_document_size.sh
 reverify: find docs/research -name '*.md' -exec wc -l {} \; | awk '{print $1}' | sort -n | awk '{a[NR]=$1; s+=$1} END {printf "n=%d mean=%.1f median=%d p95=%d max=%d\n", NR, s/NR, a[int(NR*0.5)], a[int(NR*0.95)], a[NR]}'; bash scripts/check_live_document_size.sh 2>&1 | grep research_records
 ---
 
@@ -62,5 +64,16 @@ separately — anchor deep-links and intra-document back-references ("the findin
 content-preserving move can still break.
 
 A split relocates the maximum rather than removing it, so the successor must be inspected for a **live
-writer**. Here it is `generic-enum-conflation-measurement.md` at 559/640 (87.3%), still being appended to by
-the active `KG-ISF-COMPLETENESS.5` lane; `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` owns it.
+writer**. `production-genericity-qualification-results.md` has none; the audit's `.6d.ii` chronology is closed.
+The next-largest record did: `generic-enum-conflation-measurement.md` reached 559/640 (87.3%) while
+`KG-ISF-COMPLETENESS.5` was still appending. `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` partitioned it on the same
+seam into [`generic-enum-conflation-results.md`](../research/generic-enum-conflation-results.md).
+
+**A live writer does not by itself change the remedy — the size of the remaining writer SET does.** Measure it
+before choosing. Partition is the right answer when the residual writers fit inside the successor's band with
+margin; a declared rollover is what an *unbounded* writer set needs. Here the `.5` lane had exactly one
+unwritten leaf left (`.5.iv.a`, the deferred CODE slice; `.5` and `.5.i`-`.5.iv` are all done) against a
+measured append distribution of mean 68 / max 105 lines over six appends — so one worst-case append lands the
+428-line successor at 533/640 (83%), inside the band, and the lane then closes. Had the writer set been open,
+partition would only have restarted the countdown. After it, the surface maximum is the already-partitioned
+audit at 467/640 (73.0%) and the research line warning clears.

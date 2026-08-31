@@ -28,6 +28,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/empty-signal-catalog-classification.md](../../docs/research/empty-signal-catalog-classification.md) | Empty signal catalogs: honest absence vs capture miss |
 | [docs/research/full-page-capture-gap.md](../../docs/research/full-page-capture-gap.md) | Full-Page Intent-Capture Gap — measured report (`FULL-PAGE-INTENT-CAPTURE.1`) |
 | [docs/research/generic-enum-conflation-measurement.md](../../docs/research/generic-enum-conflation-measurement.md) | Generic-`TABLE` mega-enum conflation — measurement (`KG-ISF-COMPLETENESS.5`) |
+| [docs/research/generic-enum-conflation-results.md](../../docs/research/generic-enum-conflation-results.md) | Generic-enum conflation — per-leaf gate results |
 | [docs/research/generic-gate-authority-retirement-measurement.md](../../docs/research/generic-gate-authority-retirement-measurement.md) | Generic whole-statement gate retirement measurement — `CORPUS-COVERAGE.2.43b` |
 | [docs/research/generic-section-phase-retirement-measurement.md](../../docs/research/generic-section-phase-retirement-measurement.md) | Generic section-phase retirement measurement — `CORPUS-COVERAGE.2.43a.i` |
 | [docs/research/grounding/README.md](../../docs/research/grounding/README.md) | Literature grounding — synthesis map & reach-full-potential backlog |

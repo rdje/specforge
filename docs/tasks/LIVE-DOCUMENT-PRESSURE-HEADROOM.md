@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.14a` done; `.1`/`.3`/`.4`/`.4d`/`.4e`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
+- Status: `active` (`.0`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.14a` done; `.1`/`.3`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-31`
@@ -450,7 +450,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`
-  Status: `pending`
+  Status: `done` (`2026-08-31`)
   Goal: own the research-line frontier `.4c` relocated the maximum onto
   Acceptance: `.4c` removed the stop but did not leave the axis quiet, and the successor is not a dormant
   record. `docs/research/generic-enum-conflation-measurement.md` is **559 of 640 lines (87.3%)**, above the
@@ -461,8 +461,47 @@ repeatable rollover/remedy paths and remain under their existing owners.
   next measurement lands: either the same chronology/result partition `.4c` applied, or a declared per-record
   rollover the measurement lane can take. Do not raise the ceiling
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`
-  Verification: `pending`
-  Commit: `pending`
+  **Decided: partition, and the deciding measurement is the size of the remaining WRITER SET, not the fact
+  that a writer is live.** The acceptance offered a declared per-record rollover as the alternative, and a
+  live writer is what makes that alternative look necessary. It is not, here, and the reason is countable.
+  `KG-ISF-COMPLETENESS.5` has exactly **one** unwritten leaf left — `.5.iv.a`, the CODE slice `.5.iv`
+  deliberately deferred; `.5.i`, `.5.ii`, `.5.iii` and `.5.iv` are all `done` and the `.5` umbrella carries no
+  other child. The record's own history bounds what that leaf can cost: seven commits took it 149 → 559 lines,
+  six appends of **+72 / +105 / +38 / +96 / +33 / +66** (mean 68, max 105). A rollover lifecycle — new
+  surfaces, checker logic, and an ADR against `decision_records` axes already at 82.8% files / 92.6% lines /
+  97.1% bytes — would be built to serve one append. Partition is the surface's own `partitioned_canonical`
+  remedy and it fits the residual writer set with margin: the successor opens at 428 lines, and the worst
+  append this lane has ever produced lands it at 533/640 (83%), inside the band, after which `.5` closes and
+  the record becomes ordinary immutable evidence. **This is the general rule the leaf establishes:** partition
+  when the residual writers fit the successor's band; declare a rollover when the writer set is open-ended.
+  The seam is the same composite seam `.4c` found — a `2026-06-24` measurement (defect, extraction-side
+  origin, corpus census, member-quality finding, decomposed decision, reproducer, conclusion) followed by a
+  chronology of four `.5.x` measurement/LANDED cycles appended over seven weeks
+  Verification: `the partition is EXHAUSTIVE, which is a stronger proof than .4c's: the retained prefix
+  (original lines 1-149) concatenated with the moved block (original lines 150-559, 410 lines) reproduces the
+  committed HEAD file byte-for-byte under cmp, so no line is dropped, duplicated or reordered. Independently:
+  sha256 of the base record's first 149 lines equals sha256 of HEAD lines 1-149
+  (61a02615fc9a...); sha256 of the results record's lines 19-428 equals sha256 of HEAD lines 150-559
+  (1999b496e29f...); and the multiset difference original-minus-(base union results) is 0 lines.
+  research_records lines_each 559/640 (87.3%) -> measurement 176/640 (27.5%) and results 428/640 (66.9%); the
+  surface maximum relocates to production-genericity-pipeline-audit.md at 467/640 (73.0%), below the 80%
+  warning, so the research line warning CLEARS and the axis has 173 lines of band. Routes: 8 inbound
+  deep-links whose target section moved were repaired to the results record - KG-ISF-COMPLETENESS
+  .5.ii/.5.iii/.5.iv nodes and the .5.ii/.5.iii-MEASUREMENT/.5.iii-CODE/
+  .5.iv enforced acceptance checklists - while the 3 whole-record citations (.5 node, .5.i checklist measure
+  step, Changelog entry) correctly still name the measurement, whose cited content stayed. The dated Changelog
+  bare-section refs are not rewritten; the measurement's new Outcome section routes them one hop. Fact card
+  generic-enum-conflation repointed its five Report routes and gained a where-did-it-move answer key;
+  research-record-size-profile records the writer-set rule. One catalog row by
+  perl scripts/check_canonical_collection_catalogs.pl --write (5 indexes, 266 members). Prepending the ledger
+  record shifted all 12 line-pinned CHANGES.md census regions, re-anchored by CONTENT and re-verified, and
+  needed ONE NEW census row for the new ledger head - a row the previous rollover also had to add, so it is
+  the rule and not an exception. The first staged measurement showed the resume pointer itself had crossed
+  into warning at 41/50 lines; MEMORY.md was tightened to 36 rather than accepting a warning on a surface
+  this slice does not own. Gate reports 905 Markdown files / 57 governed surfaces with NO research_records
+  and NO active_resume warning; scripts/check_doctrines.sh reports ALL 12 executed doctrines PASS
+  (13 registered, tier=gate; CHAIN-CURRENCY deferred to CI per the standing CI policy)`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e — partition the composite enum-conflation record at its chronology seam`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d`
   Status: `pending`

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > is SWD at 100% and on what metric
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -294,7 +298,3 @@
   > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > should the drifted SourceIR documents be re-ingested
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > temporal rule eval false positives root cause
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > temporal rule predicate atom vocabulary

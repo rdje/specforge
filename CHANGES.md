@@ -1,3 +1,46 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.4e — partition the composite enum-conflation record at its chronology seam
+
+- .4c RELOCATED THE RESEARCH MAXIMUM ONTO A RECORD WITH A LIVE WRITER, and .4e owns that successor:
+  docs/research/generic-enum-conflation-measurement.md at 559 of 640 lines (87.3%), on a surface whose
+  health_targets.lines_each equals its enforcement_ceilings.lines_each, so there is no band above the
+  warning — and unlike the audit, KG-ISF-COMPLETENESS.5 was still appending to it.
+- THE DECIDING MEASUREMENT IS THE SIZE OF THE REMAINING WRITER SET, NOT THE FACT THAT A WRITER IS LIVE.
+  The .4e acceptance offered a declared per-record rollover as the alternative remedy, and a live writer is
+  what makes that look necessary. It is not here, and the reason is countable: .5 has exactly ONE unwritten
+  leaf left — .5.iv.a, the CODE slice .5.iv deferred; .5 and .5.i–.5.iv are all done — and the record's own
+  history bounds what that leaf costs. Seven commits took it 149 -> 559 lines in six appends of
+  +72/+105/+38/+96/+33/+66 (mean 68, max 105). A rollover lifecycle, with new surfaces, checker logic and an
+  ADR spent against decision_records axes already at 82.8% files / 92.6% lines / 97.1% bytes, would have been
+  built to serve one append.
+- SO PARTITION, THE SURFACE'S OWN partitioned_canonical REMEDY, ON THE SAME SEAM .4c FOUND: a 2026-06-24
+  measurement (defect, extraction-side origin, corpus census, member-quality finding, decomposed decision,
+  reproducer, conclusion) followed by a chronology of four .5.x measurement/LANDED cycles appended over seven
+  weeks. Original lines 150-559 move verbatim and in order into
+  docs/research/generic-enum-conflation-results.md; the measurement keeps lines 1-149 and gains an Outcome
+  section stating the composed result by derivation.
+- THE PARTITION IS EXHAUSTIVE, which is a stronger proof than .4c's: concatenating the retained prefix with
+  the moved block reproduces the committed HEAD file byte-for-byte under cmp, so no line is dropped,
+  duplicated or reordered. Independently, sha256 of the base record's first 149 lines equals sha256 of HEAD
+  lines 1-149; sha256 of the results record's lines 19-428 equals sha256 of HEAD lines 150-559; and the
+  multiset difference original-minus-(base union results) is zero lines.
+- CONTENT-PRESERVING IS NOT ROUTE-PRESERVING, and this record had the deep-links the audit did not. Eight
+  inbound citations named a section that moved and were repointed at the results record — the .5.ii/.5.iii/
+  .5.iv task-tree nodes and the .5.ii, .5.iii-MEASUREMENT, .5.iii-CODE and .5.iv enforced acceptance
+  checklists — while the three whole-record citations (.5 node, .5.i checklist measure step, Changelog
+  entry) correctly still name the measurement, whose cited content stayed. The dated Changelog's bare-section
+  references are not rewritten; the measurement's Outcome section routes them one hop.
+- RESULT: lines_each 559/640 (87.3%) -> measurement 176/640 (27.5%) and results 428/640 (66.9%). The surface
+  maximum falls back to the already-partitioned audit at 467/640 (73.0%), below the 80% warning, so the
+  research line warning clears and the axis has 173 lines of band. One catalog row added by
+  check_canonical_collection_catalogs.pl --write (5 indexes, 266 members).
+- TWO CENSUS OBLIGATIONS, NOT ONE. Prepending this record shifted all 12 line-pinned CHANGES.md regions in
+  current_claim_census.jsonl, re-anchored by CONTENT and re-verified against sha256(line bytes + newline);
+  it also required ONE NEW row for the new ledger head, which the 4c rollover had to add too — so it is the
+  rule, not an exception. Staging then showed the resume pointer had itself crossed into warning at 41/50
+  lines, so MEMORY.md was tightened to 36 rather than leaving a warning on a surface this slice does not own.
+  Gate: 905 Markdown files / 57 governed surfaces with no research_records and no active_resume warning;
+  check_doctrines.sh ALL 12 executed doctrines PASS.
+
 ### CHANGES-LEDGER-ROLLOVER.6 — roll the change ledger in the same transaction that filled it
 
 - LIVE-DOCUMENT-PRESSURE-HEADROOM.4c's own record took CHANGES.md to 1,636 lines = 90.9% of its 1,800-line

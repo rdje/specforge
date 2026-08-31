@@ -52,6 +52,8 @@
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > does a research record with a live writer need a rollover instead of a partition
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > does a valid claim registry record prove the assertion true
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -295,5 +297,3 @@
   > how are byte location | size | register description tables extracted
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are caption-less page fragments of a split table stitched together
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how are cited falsification controls bound to known-bad RED evidence
