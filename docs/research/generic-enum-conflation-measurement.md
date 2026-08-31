@@ -174,3 +174,43 @@ Open, and reporting into the results record: `.5.iv` measured that an encoding t
 conflation for header-sourced names. That is GO on the lever and NO-GO on the naive predicate; the code slice
 `.5.iv.a` must first exclude four measured junk classes and carries the full before/after WIRE-BASED-100
 protocol because it is byte-changing on the AXI wire gold.
+
+## Moved sections (link targets retained)
+
+The six per-leaf sections below were partitioned out on `2026-08-31`
+(`LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`) and are retained verbatim in
+[`generic-enum-conflation-results.md`](generic-enum-conflation-results.md). Their headings are kept here as
+redirects so that every `§` deep link written before the partition still resolves. Seven such links sit inside
+sealed rolling-ledger archive segments, which the `COMMIT.md` rollover doctrine forbids editing — so the
+source end of those links can never be repaired, and repairing the target end is the only available remedy.
+It costs no dated entry a rewrite.
+
+### `.5.i` LANDED — moved
+
+The name-gate and emitter orphan-`(type)` result →
+[results record](generic-enum-conflation-results.md).
+
+### `.5.ii` measurement — moved
+
+The per-member member-quality calibration →
+[results record](generic-enum-conflation-results.md).
+
+### `.5.ii` LANDED — moved
+
+The sentence-spine fragment gate result →
+[results record](generic-enum-conflation-results.md).
+
+### `.5.iii` measurement — moved
+
+The deeper-residual census →
+[results record](generic-enum-conflation-results.md).
+
+### `.5.iii` LANDED — moved
+
+The `_WIDTH` parameter-leak gate result →
+[results record](generic-enum-conflation-results.md).
+
+### `.5.iv` measurement — moved
+
+The header-as-name-source census →
+[results record](generic-enum-conflation-results.md).

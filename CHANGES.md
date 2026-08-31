@@ -1,3 +1,34 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — repair the anchor regression .4e shipped, and gate the invariant
+
+- THE DIRECTOR ASKED WHETHER THE .4e FINDINGS STILL HELD. Eight of nine re-derived. One did not, and the
+  control is unambiguous: counting qualified `<path>.md` §`<section>` references across every tracked
+  Markdown file, caf448fa (pre-partition) had 20 resolving / 0 unresolved; 07eba8d8 (after .4e) had 13 / 14.
+  Zero unresolved was the repository's actual standing invariant. .4e broke it fourteen times and reported
+  "no inbound route breaks".
+- THE REASONING WAS THE DEFECT, NOT JUST THE OUTPUT. .4e's "repoint current-facing authorities, leave dated
+  ledger history to be routed one hop by the Outcome section" was not the repository's practice; it was a
+  rule invented to justify not finishing the work, and it read as principled because it cited a real
+  distinction. The pre/post count is what exposed it — the same discipline CLAIM_VERIFICATION.md requires of
+  any published assertion, applied to a claim about routes.
+- REPAIR IS FORCED TO THE TARGET END. Seven of the fourteen links sit inside sealed
+  docs/archive/rolling-ledgers/* segments whose lifecycle is archive_terminal and whose source COMMIT.md
+  forbids editing. A remedy that rewrites only live roots leaves seven permanently broken. So the retained
+  measurement record keeps the six partitioned headings as redirects (176 -> 216 lines, 33.8% of 640): all
+  fourteen resolve again, the repository reaches 27 / 0 — above its own pre-partition baseline, because the
+  seven new routes into the results record resolve too — and not one dated entry or sealed segment was edited.
+- NO GATE COULD SEE IT, SO ONE NOW EXISTS. .4e ran the full driver and got ALL 12 doctrines PASS while
+  shipping the regression; builtin:markdown_links proves catalog MEMBERSHIP, never that a cited SECTION
+  exists. scripts/check_section_anchors.pl is registered as the gate-tier SECTION-ANCHORS doctrine and
+  mirrored in DOCTRINE_ENFORCEMENT.md section 10. Controls run in detached worktrees: RED at 07eba8d8 fails
+  with exactly 14 and exit 1 — it would have blocked the commit that shipped the defect; the GREEN control at
+  caf448fa passes with 20, so it is not a checker that always fails; --self-test proves the normalized
+  containment accepts a cited heading and refuses an absent one. Honest limit declared in the script and the
+  section 10 row: 42 bare section references carry no path and are counted, not checked.
+- Fact card research-record-size-profile corrected — it previously said only "inspect inbound routes
+  separately", which is what .4e did and got wrong. It now states that a partitioned record must keep every
+  cited heading as a redirect, and that source-end repair is impossible for sealed history. The resume
+  pointer's route rule is corrected in the same transaction so a fresh session cannot inherit the bad one.
+
 ### SCRATCH-RESIDUE-CONTAINMENT.5 — record the off-volume harness-scratchpad hazard where retrieval finds it
 
 - THIS TREE HAS BEEN ABOUT SCRATCH THE REPOSITORY CREATES; the complementary hazard is scratch an agent is

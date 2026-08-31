@@ -23,10 +23,12 @@
   removed a count because the aggregates already bound the resource; `.4c` kept the line bound because the
   population fits it (mean 172, p95 372); `.4e` chose partition over rollover because **the remaining WRITER
   SET was countable at one leaf** (`.5.iv.a`) against a mean-68/max-105 append — liveness never decides, only
-  open-endedness does. Prove a partition against HEAD mechanically (best: exhaustive, via `cmp`), then inspect
-  routes separately: repoint current-facing authorities (task nodes, enforced checklists, fact cards), leave
-  dated ledger history as written, and give the retained record an `Outcome` section routing stale refs one
-  hop. Prepending to `CHANGES.md` shifts 12 line-pinned regions in `current_claim_census.jsonl` (re-anchor by
+  open-endedness does. Prove a partition against HEAD mechanically (best: exhaustive, via `cmp`) — **but
+  losslessness is not route-safety**: `.4e` was byte-exact, passed all 12 doctrines, and still took the repo
+  from 20/0 to 13/14 resolving section anchors. `.4f` repaired it and registered `SECTION-ANCHORS`. When you
+  partition, keep every moved heading in the retained record as a **redirect**; source-end repair is
+  impossible for links inside sealed archive segments. Prepending to `CHANGES.md` shifts 12 line-pinned
+  regions in `current_claim_census.jsonl` (re-anchor by
   CONTENT, re-verify `sha256(line + "\n")`, never by offsets) and needs one NEW census row for the new ledger
   head. Editing `CHANGES.md`/`DEVELOPMENT_NOTES.md`/`MEMORY.md` stales whole-file `durability.artifacts`
   digests in three `claims.jsonl` claims; refresh them last. Never infer ownership from a mention — read the

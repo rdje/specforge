@@ -13,13 +13,15 @@ answers:
   - "which research record is closest to its line ceiling"
   - "does docs/research have a file-count ceiling"
   - "how do I prove a live-document partition is lossless"
+  - "what happens to section deep-links when I partition a record (they break unless the retained record keeps the moved headings as redirects; SECTION-ANCHORS gates it, and links inside sealed archive segments can only ever be repaired at the target end)"
+  - "is losslessness enough when partitioning a canonical record (no — .4e proved a byte-exact partition can still break 14 section anchors while every doctrine passes)"
   - "what is the remedy when a research record reaches its per-file line ceiling"
   - "does a research record with a live writer need a rollover instead of a partition"
   - "how do I decide between partitioning a research record and declaring a rollover for it"
 date: 2026-08-31
 status: current
 tags: [documentation, containment, doctrine, research, genericity]
-evidence: doctrine/live_document_size/surfaces.jsonl; docs/research/production-genericity-pipeline-audit.md; docs/research/production-genericity-qualification-results.md; docs/research/generic-enum-conflation-results.md; docs/catalogs/research-records.md; docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md; docs/decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md; scripts/check_live_document_size.sh
+evidence: scripts/check_section_anchors.pl; doctrine/live_document_size/surfaces.jsonl; docs/research/production-genericity-pipeline-audit.md; docs/research/production-genericity-qualification-results.md; docs/research/generic-enum-conflation-results.md; docs/catalogs/research-records.md; docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md; docs/decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md; scripts/check_live_document_size.sh
 reverify: find docs/research -name '*.md' -exec wc -l {} \; | awk '{print $1}' | sort -n | awk '{a[NR]=$1; s+=$1} END {printf "n=%d mean=%.1f median=%d p95=%d max=%d\n", NR, s/NR, a[int(NR*0.5)], a[int(NR*0.95)], a[NR]}'; bash scripts/check_live_document_size.sh 2>&1 | grep research_records
 ---
 
@@ -62,6 +64,16 @@ destination; the retained prefix and suffix of the source are byte-identical to 
 multiset difference of original lines minus (new source ∪ destination) is empty. Inspect inbound routes
 separately — anchor deep-links and intra-document back-references ("the findings above") are what a
 content-preserving move can still break.
+
+**Routes are now gated, and the repair goes at the TARGET end.** `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` proved
+by counterexample that author care is not enough: it repointed the current-facing citations, argued the rest
+were dated history that a pointer section would route "one hop", passed all 12 doctrines, and still took the
+repository from **20 resolving / 0 unresolved** section anchors to **13 / 14**. Zero unresolved was the
+standing invariant, so that was a regression, not a policy. `.4f` repaired it and registered
+`SECTION-ANCHORS` (`scripts/check_section_anchors.pl`) so a partition cannot break a route silently again.
+Repair at the source end is not always possible — seven of those fourteen links were inside sealed
+`archive_terminal` ledger segments the rollover doctrine forbids editing — so **a partitioned record must keep
+every cited heading as a redirect**, which repairs all inbound links at once and rewrites no dated entry.
 
 A split relocates the maximum rather than removing it, so the successor must be inspected for a **live
 writer**. `production-genericity-qualification-results.md` has none; the audit's `.6d.ii` chronology is closed.

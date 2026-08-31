@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.14a` done; `.1`/`.3`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
+- Status: `active` (`.0`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.3`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-31`
@@ -502,6 +502,44 @@ repeatable rollover/remedy paths and remain under their existing owners.
   and NO active_resume warning; scripts/check_doctrines.sh reports ALL 12 executed doctrines PASS
   (13 registered, tier=gate; CHAIN-CURRENCY deferred to CI per the standing CI policy)`
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e — partition the composite enum-conflation record at its chronology seam`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f`
+  Status: `done` (`2026-08-31`)
+  Goal: repair the section-anchor regression `.4e` introduced, and make the invariant mechanical
+  Acceptance: `.4e` claimed its routes were handled by repointing current-facing authorities and leaving dated
+  ledger history to be routed "one hop" by the retained record's `Outcome` section. **A pre/post control
+  disproves that claim.** Counting qualified `` `<path>.md` §`<section>` `` references across every tracked
+  Markdown file: `caf448fa` (pre-partition) had **20 resolving / 0 unresolved**; `07eba8d8` (after `.4e`) had
+  **13 / 14**. The repository's actual standing invariant was ZERO unresolved anchors, and `.4e` broke it
+  fourteen times. The "current authorities versus dated history" split was reasoning invented to justify the
+  gap, not the repository's practice
+  **Repair belongs at the TARGET end, and that is forced rather than chosen.** Seven of the fourteen links sit
+  inside sealed `docs/archive/rolling-ledgers/*` segments, whose lifecycle is `archive_terminal` and whose
+  source `COMMIT.md` forbids editing ("Never edit a segment"). The source end of a link written by sealed
+  history can never be repaired, so any remedy that only rewrites live roots leaves seven permanently broken.
+  Keeping the cited headings resolvable at the target — as redirects when the content moved — repairs all
+  fourteen and rewrites no dated entry
+  **The deeper finding is that no gate could see it.** `.4e` ran a full `scripts/check_doctrines.sh` and got
+  ALL 12 executed doctrines PASS while shipping the regression. `builtin:markdown_links` proves catalog
+  MEMBERSHIP (an index links every member file); nothing proved a cited SECTION exists. A route rule enforced
+  only by the author's care is exactly the "trust me" `DOCTRINE_ENFORCEMENT.md` exists to remove, so the leaf
+  registers it rather than recording a lesson
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`
+  Verification: `docs/research/generic-enum-conflation-measurement.md gains a Moved sections block holding the
+  six partitioned headings as redirects (176 -> 216 lines, 33.8% of 640); every one of the 14 broken links
+  resolves again and the repository goes to 27 resolving / 0 unresolved, above its own pre-partition baseline
+  of 20/0 because the 7 new routes into the results record resolve too. No dated ledger entry and no sealed
+  archive segment was edited. scripts/check_section_anchors.pl registered as the SECTION-ANCHORS gate-tier
+  doctrine in scripts/check_doctrines.sh and mirrored in DOCTRINE_ENFORCEMENT.md section 10 (new row 777
+  bytes, below the 877-byte surface maximum, so workflow_standards line_bytes_each stays at its pre-existing
+  85.6%). CONTROLS, run in detached worktrees on the repository volume: RED at 07eba8d8 -> FAILED with
+  exactly 14 unresolved references, exit 1, so the checker would have blocked the very commit that shipped
+  the defect; GREEN control at caf448fa -> 20 resolve, exit 0, so it is not a checker that merely always
+  fails; current tree -> 27 resolve, exit 0; --self-test proves the normalized containment accepts a cited
+  heading and refuses an absent section. Honest limit declared in the script and the section 10 row: 40 bare
+  section references carry no path, are resolved from prose context, and are counted but not checked.
+  scripts/check_doctrines.sh: ALL 13 executed doctrines PASS (14 registered, tier=gate)`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — repair the anchor regression .4e shipped and gate the invariant`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d`
   Status: `pending`
