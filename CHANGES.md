@@ -1,3 +1,13 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority
+
+- THE SINGLE-USE PROTOCOL IS PROVEN IN BOTH DIRECTIONS. .4a's authority was consumed by the commit that
+  nulled research_records.files; once HEAD carried the new bands the generic gate refused it as banked —
+  observed RED at 3cf7f6d0 with "surface 'research_records' has unused or banked ceiling-increase
+  authority", 1 violation. Removing the record returns the gate to green at 901 Markdown files / 57
+  governed surfaces. The surface bands, the exemption object, and every other authority are untouched.
+- This is the mandatory second transaction .2b performed for .2a, and it is why a cardinality exemption
+  costs two commits rather than one: the authority must exist for exactly the commit that spends it.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption
 
 - THE NEXT RESEARCH RECORD WAS THE LAST ONE. docs/research/*.md was 63 of a 64-file ceiling with

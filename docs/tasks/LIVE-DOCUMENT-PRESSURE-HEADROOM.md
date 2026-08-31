@@ -400,14 +400,17 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b`
-  Status: `pending`
+  Status: `done` (`2026-08-31`)
   Goal: retire the single-use authority `.4a` consumes
   Acceptance: the ceiling-increase authority record is removed once HEAD carries the new bands, because the
   generic gate refuses an unused or banked authority on the very next commit; nothing else moves. This is the
   same mandatory second transaction `.2b` performed for `.2a`
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the refusal was observed RED at 3cf7f6d0 before the fix — "surface 'research_records' has
+  unused or banked ceiling-increase authority", the generic gate failing with 1 violation — and green after,
+  at 901 Markdown files / 57 governed surfaces with no research warning. The authority registry is back to
+  its bare registry record; the surface bands, the exemption, and every other authority are untouched`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`
   Status: `pending`
@@ -742,7 +745,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `done` | the gate warns 35 lines across four producers and no reviewed assignment exists; a grep screen cannot serve, since reporting a gap closes it |
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
 | 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
-| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `pending` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
+| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `pending` | seven instances of the closed-owner class in one session is the evidence that review does not hold the invariant |
 
 ## Decisions
@@ -830,6 +833,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-31` | `.4b` | generic live-size checker before and after removing the record | RED observed first at `3cf7f6d0`: "unused or banked ceiling-increase authority", 1 violation. Green after: 901 files / 57 surfaces. The single-use protocol is therefore proven in both directions, not just claimed |
 | `2026-08-31` | `.4a` | `check_live_document_size.sh`; the generic size checker with the authority registry; census, book-claim and doctrine gates | research files **63/64 -> unbounded** behind the declared exemption; every resource dimension stays numeric; the single-use authority is added and consumed in the same commit; the composed gate reports **901 Markdown files / 57 governed surfaces** and exits 0 with no research warning. The stop relocates to `lines_total`/`bytes_total`, which at the measured record mean bind at ~238 records and still have a warning band |
 | `2026-08-31` | `.14a` | `check_active_task_evidence.pl --self-test`; the three contracts `--check`; `--write` round-trip; `check_live_document_size.sh`; census, book-claim, knowledge-map and doctrine gates | index **115 -> 43 lines** (89.8% -> 33.6%), clear of the 90% milestone that refused the next leaf; 83 routes = 3 open / 80 closed in one 93-line catalog part; self-test **61/61** with eleven new RED cases and a writer round-trip plus preflight refusal; live-size **900 files / 57 surfaces**; census 41 surfaces / 73 evidence units; book claims 325/325; Knowledge Map 274 facts / 2,193 keys |
 | `2026-08-31` | `.14a` cross-check | first run of the declared-vs-observed lifecycle rule over all 83 alignment routes | **two findings on adoption.** `.8` was `active` in its part while its four children were `done` and the root records `.0`-`.8` complete — the landing would have published it open; corrected. `.9a` has no node record in any part, the one route no evidence corroborates, pinned by `max_unverified_routes: 1` and owned by `.16` |
@@ -842,6 +846,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.4b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority` | the banked-authority refusal observed RED at `3cf7f6d0` first |
 | `.4a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption` | ADR 0045 applied to a second surface; `.4b` must retire the consumed authority next |
 | `.14a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a — shard the task-evidence index by lifecycle` | ADR 0046; the stop relocates to `max_leaf_routes` and `.17` says so |
 | `.7` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — assign every gate-level warning by review` | the leaf found its own documented trap inside itself; ownership now reads the owner's `Status`, not a mention |

@@ -6,19 +6,20 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM` — `.14a` and `.4a` are done. Open in this tree:
-  `.1`/`.3`/`.4b`-`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`. Also open: `SOURCE-IR-REPRODUCIBILITY`
+- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM` — `.14a`, `.4a` and `.4b` are done. Open in this tree:
+  `.1`/`.3`/`.4c`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`. Also open: `SOURCE-IR-REPRODUCIBILITY`
   `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`;
   `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`;
   `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`.
 - Current state: `.14a` sharded the alignment task-evidence index by lifecycle (ADR 0046); `.4a` removed the
-  research-plane file count behind ADR 0045's gated exemption, consuming one single-use ceiling authority.
-- Next action: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` — **mandatory and immediate**: retire the consumed
-  authority record for `research_records` in `doctrine/live_document_size/ceiling_increase_authorities.jsonl`.
-  Once HEAD carries the new bands the generic gate refuses it as banked, so the tree is RED until `.4b` lands.
-  Then `.4c` (one research record is 639 of a 640-line per-file ceiling) and `.15`.
-- In-flight uncommitted: none after this commit, but see the blocker above — `.4b` is a required follow-up.
-- Blockers: `.4b` as above. Never infer ownership from a mention: read the owner's own `Status`, and check
+  research-plane file count behind ADR 0045's gated exemption; `.4b` retired the consumed authority
+  after observing its banked-refusal RED.
+- Next action: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` — one research record is **639 of a 640-line** per-file
+  ceiling with health == ceiling, so a one-line correction to it is still refused; decide between a lossless
+  split at a section boundary (now affordable, the file count is unbounded) and a re-derived per-file profile.
+  Then `.4d` (validation snapshot 544/640, README 108/120) and `.15` (the closed-owner gate).
+- In-flight uncommitted: none after this commit.
+- Blockers: none. Never infer ownership from a mention: read the owner's own `Status`, and check
   that a leaf you close holds no assignment rows. Prepending to `CHANGES.md` or editing a book chapter moves
   pinned census regions: read the file BEFORE opening it for write, prove the prepend is pure, shift, then
   re-verify each `sha256(line bytes + "\n")` by CONTENT anchor, never by offset arithmetic. Owned, not fixed:
