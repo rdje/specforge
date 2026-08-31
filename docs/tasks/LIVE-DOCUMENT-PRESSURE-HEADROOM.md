@@ -290,7 +290,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Prerequisite: none; found by `.2c` while widening the routed rule
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
-  Status: `active` (population derived `2026-08-31`; the reviewed assignment is the open half)
+  Status: `done` (`2026-08-31`)
   Goal: assign every gate-level live-document warning to an open leaf, by review rather than by grep
   Acceptance: this leaf was opened by `CLAIM-VERIFICATION-ADOPTION.11` and its premises were corrected by
   `.11a` the same day, because both the population and the ownership test it used were wrong.
@@ -331,9 +331,17 @@ repeatable rollover/remedy paths and remain under their existing owners.
   `active-task-evidence` (7), `rolling-ledger` (7), `roadmap-projection` (2), and `fact-card-catalog` (1).
   No totals are carried forward from this note: they are per-commit counters, exactly as this leaf already
   records, and the derivation command is the authority.
-  Verification: `derived at 057710cd from bash scripts/check_live_document_size.sh: 22 producers emit, five
-  emit warnings, 39 distinct warned items after removing the three double-emissions; grep 'warning:' returns
-  38 of 42 lines and misses every roadmap-projection row. The reviewed per-row assignment is the open half`
+  **The assignment is delivered above, and it found the trap this leaf was opened to fix, inside this leaf.**
+  Ownership was read from each owner's own `Status` line rather than from any mention of the surface, and five
+  named owners turned out to be `done` trees — including `DECISION-RECORD-CAPACITY-HEADROOM`, which this
+  leaf's own acceptance cites as the model form of a clean exclusion. Its row is the most pressured item in
+  the population. Twenty-three rows bind to eight open owners, fifteen are bound to six leaves opened here,
+  and exactly one — `active_resume` — is exempt with its reason.
+  Verification: `derived at 5ceb27c8 from bash scripts/check_live_document_size.sh: 22 producers emit, five
+  emit warnings, 39 distinct warned items after removing three double-emissions; grep 'warning:' returns 38 of
+  42 lines and misses every roadmap-projection row. All 39 rows assigned: 23 to open owners, 15 to .8-.13
+  opened here, 1 exempt; 23+15+1 = 39. Every per-file warning resolved to its driving file. Five named owners
+  re-read from their own Status lines are done trees`
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.3`
@@ -410,6 +418,114 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Acceptance: `the fixed region is measured and capped at a derived share of the pointer cap; the mutable marker is required; the four resume fields still validate; every routed line is proven to resolve upstream; a known-bad pointer is observed RED; every registry pin on a routed line is repointed at surviving content, not restored as a literal`
   Verification: `fixed region 19 -> 8 lines, mutable budget 31 -> 42; four RED/boundary cases observed — the exact pre-change pointer at HEAD fails at 19 > 12 (a control observed failing on real shipped content, not a fixture), a missing '## Current state' marker fails as "no overwritable resume signal", 13 lines fails and exactly 12 passes; check_memory_architecture.sh green after; the eight preamble tokens each verified present in AGENTS.md or MEMORY_ARCHITECTURE.md before removal`
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.5 — stop the resume pointer spending its budget on prose that never changes`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8`
+  Status: `pending`
+  Goal: restore writable headroom for the decision-record surface, whose named owner is closed
+  Acceptance: `decision_records` bytes_each and lines_each come back under their rollover milestones by a
+  remedy the surface can sustain, not by widening a bound; `DECISION-RECORD-CAPACITY-HEADROOM` being `done` is
+  recorded as the reason this axis has no owner, and either that tree is reopened or this leaf carries the axis
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.9`
+  Status: `pending`
+  Goal: restore title-part headroom for the fact-card catalog, whose two named owners are both closed
+  Acceptance: `fact_card_titles` files and the catalog's planned title-part count come back under warning by a
+  derived remedy following `.2c`'s form — bounds set so a structurally full part sits below its own warning —
+  with no hand-edited member list
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.10`
+  Status: `pending`
+  Goal: carry the corpus task-evidence containment axis its closed owner left behind
+  Acceptance: `corpus_task_evidence_parts` files and the corpus semantic-part collection come back under
+  warning; `CORPUS-TASK-EVIDENCE-CONTAINMENT` being `done` is recorded as the reason, and the corpus index is
+  checked for the same cardinality stop the alignment index has
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.11`
+  Status: `pending`
+  Goal: give the two rolling ledgers outside `CHANGES-LEDGER-ROLLOVER` an owner for their record-budget breach
+  Acceptance: the `development-notes` and `rust-codebase-analysis` ledgers either meet their derived per-record
+  budgets or their windows are re-derived from measured record means, using the same reasoning the `changes`
+  ledger warning already states — that the byte dimension binds first and a rollover only resets the clock;
+  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4` being `done` is recorded as the reason this had no owner
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.12`
+  Status: `pending`
+  Goal: bring the workflow-standards line budget back under warning
+  Acceptance: `workflow_standards` line_bytes_each returns under its milestone; the driving line is
+  `DOCTRINE_ENFORCEMENT.md` at 877 of 1024 bytes, so the remedy is a routing or wrapping change to that
+  surface, never a bound edit
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.13`
+  Status: `pending`
+  Goal: relieve the two roadmap root sections the projection contract reports over budget
+  Acceptance: `Current strategic priorities` (96.4% of 56 lines) and `Objective` (85.7% of 14) come back under
+  their bounds by the remedy the checker itself names — route per-leaf detail to its owning `docs/tasks/` tree,
+  or roll the root per ADR 0030 — and the uppercase `WARNING` token these rows use is noted wherever a census
+  keys on warning text
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
+  Verification: `pending`
+  Commit: `pending`
+
+## Reviewed Warning Assignment (`.7`, `2026-08-31`)
+
+Derived at `5ceb27c8` from `bash scripts/check_live_document_size.sh`, deduplicated to 39 distinct items.
+Reviewed per row against the open trees; **not** screened by grep, because that test scores a `done` tree as
+an owner and is satisfied by the act of reporting. Owner status was read from each tree's own `Status` line
+and each per-file warning was resolved to the file actually driving it. No totals are carried: re-derive.
+
+| Warned item | Driver | Assigned owner |
+| --- | --- | --- |
+| `knowledge_cards` lines_each | `docs/knowledge/production-genericity-boundary.md` | `.1` |
+| `shipped_behavior` bytes_each | `docs/book/src/pipeline/evidenceir.md` | `.3` |
+| `research_records` files / lines_each / bytes_each | `docs/research/` (63 of 64 files; widest 639 of 640) | `.4` |
+| `validation_snapshot` lines_each | `VALIDATION_SNAPSHOT.md` | `.4` |
+| `readme_entrypoint` line_bytes_each | `README.md` | `.4` |
+| `alignment_task_evidence_index` lines_each; active task index lines | `spec-to-intent-alignment/INDEX.md` | `.7` |
+| `alignment_task_evidence_parts` lines_each; semantic part lines_each | alignment parts collection | `.7` |
+| `rust_analysis` lines_each | `RUST_CODEBASE_ANALYSIS.md` | `.7` |
+| `change_history` bytes_each / lines_each; ledger `changes` ×2 | `CHANGES.md` | `CHANGES-LEDGER-ROLLOVER.4` |
+| ledger `live-achievement-status` ×2 | `LIVE_ACHIEVEMENT_STATUS.md` | `STATUS-LEDGER-ROLLOVER.2` |
+| bounded active root bytes / line_bytes / lines | `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` | `SPEC-TO-INTENT-ALIGNMENT` |
+| `task_evidence` bytes_each / lines_each | `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md` (254,031 B) | `CLAIM-VERIFICATION-ADOPTION` |
+| `decision_records` bytes_each / lines_each / files | `docs/decisions/0038-…kernel.md` (97.1%) | `.8` (opened here) |
+| `fact_card_titles` files; catalog planned title parts | `docs/knowledge-catalog/` (5 of 6) | `.9` (opened here) |
+| `corpus_task_evidence_parts` files; corpus part files / lines_total | `corpus-coverage/` parts | `.10` (opened here) |
+| ledger `development-notes` ×2; ledger `rust-codebase-analysis` | `DEVELOPMENT_NOTES.md`, `RUST_CODEBASE_ANALYSIS.md` | `.11` (opened here) |
+| `workflow_standards` line_bytes_each | `DOCTRINE_ENFORCEMENT.md` (877 of 1024) | `.12` (opened here) |
+| roadmap `Current strategic priorities` 96.4%; `Objective` 85.7% | `ROADMAP.md` | `.13` (opened here) |
+| `active_resume` lines_each / line_bytes_each | `MEMORY.md` | **exempt** — see below |
+
+**The exemption, with its reason.** `active_resume` is the one surface whose pressure is *by design*. `.5`
+gave the resume pointer a deliberate band and the whole point of a band is to be lived in; ordinary compliant
+work moves it back down, demonstrated this session when rewriting the pointer took it from **94.0% to 80.0%**
+of `lines_each` without any authority edit. A surface that ordinary work already regulates does not need a
+remedy leaf; it needs the band it has. Re-open this only if a rewrite ever fails to recover it.
+
+**Four owners named in this tree or in `COMMIT.md` are `done` trees, so their rows were unowned.** Read from
+each tree's own `Status`: `DECISION-RECORD-CAPACITY-HEADROOM`, `FACT-CARD-CAPACITY-HEADROOM`,
+`FACT-CARD-CATALOG-CONTAINMENT`, `CORPUS-TASK-EVIDENCE-CONTAINMENT` and
+`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION` are all closed. **`.7`'s own acceptance cites `decision_records` as
+the model form of a clean exclusion — "excluded because `DECISION-RECORD-CAPACITY-HEADROOM` owns its axes" —
+and that tree is `done`.** So the row this leaf held up as correctly-owned was in fact unowned, and it is the
+most pressured item in the population at 97.1% of bytes and 92.6% of lines. This leaf fell into the exact trap
+it was opened to fix, on the exact row it used as its example. That is why ownership is now read from the
+owner's `Status` line rather than from any mention of the surface.
+
 
 ## Current Frontier
 
@@ -489,6 +605,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-31` | `.7` assignment | 39 rows reviewed per row against open trees; owner status read from each owner's own `Status` line; every per-file warning resolved to its driving file | 23 rows bind to eight open owners, 15 to `.8`-`.13` opened here, one exempt with reason (23+15+1=39). **Five named owners are `done` trees**, including `DECISION-RECORD-CAPACITY-HEADROOM`, which this leaf cited as its model exclusion and whose row is the most pressured in the population |
 | `2026-08-31` | `.7` population | `bash scripts/check_live_document_size.sh` at `057710cd`, deduplicated and classified by emitting producer | 22 producers emit, **five** emit warnings — not the four this leaf recorded — and 39 distinct warned items remain after removing three double-emissions; the missed producer `roadmap-projection` uses uppercase `WARNING` with no colon, so a `warning:`-keyed census reads 38 of 42 lines and is blind to all of its rows |
 | `2026-08-14` | `.0` ownership | exact metrics; Knowledge Map routing; existing owner census; task catalog; content/authority diffs; live-size/doctrine | seven axes pinned; ownership-only resulting tree 145 task files / 398 index lines; no governed content or bound change |
 
@@ -496,6 +613,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.7` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — assign every gate-level warning by review` | the leaf found its own documented trap inside itself; ownership now reads the owner's `Status`, not a mention |
 | `.7` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen` | the leaf's own four-producer premise is corrected a third time; the reviewed per-row assignment is the open half |
 | `.0` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0 — own the current live-surface pressure frontier` | one bounded owner over ordered independent remedies |
 | `.5` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5 — stop the resume pointer spending its budget on prose that never changes` | fixed region 19 -> 8 lines; the split is gated at a derived cap |

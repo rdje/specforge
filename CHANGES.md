@@ -1,3 +1,30 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — assign every gate-level warning by review
+
+- THE LEAF FOUND ITS OWN DOCUMENTED TRAP INSIDE ITSELF. .7 exists because .11 screened ownership with
+  grep -rl, which "scores a done tree as an owner ... so a real gap was hidden". Reviewing the 39 rows by
+  reading each candidate owner's own Status line, FIVE named owners are done trees:
+  DECISION-RECORD-CAPACITY-HEADROOM, FACT-CARD-CAPACITY-HEADROOM, FACT-CARD-CATALOG-CONTAINMENT,
+  CORPUS-TASK-EVIDENCE-CONTAINMENT and LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION. The first of those is the one
+  .7's OWN ACCEPTANCE cites as the model form of a clean exclusion — "excluded because
+  DECISION-RECORD-CAPACITY-HEADROOM owns its axes". That tree is closed, so the row held up as correctly-owned
+  was unowned, and it is the most pressured item in the whole population at 97.1% of bytes and 92.6% of lines.
+- OWNERSHIP IS NOW READ FROM THE OWNER, NOT FROM A MENTION. Every assignment reads the candidate tree's own
+  Status line; every per-file warning was resolved to the file actually driving it rather than to its surface,
+  which is what makes the row actionable — knowledge_cards is production-genericity-boundary.md at 296 lines,
+  shipped_behavior is the EvidenceIR chapter, task_evidence is docs/tasks/CLAIM-VERIFICATION-ADOPTION.md at
+  254,031 bytes, decision_records is 0038-proof-carrying-genericity-kernel.md.
+- THE ARITHMETIC IS CLOSED: 23 rows bind to eight open owners, 15 to .8-.13 opened here, one is exempt.
+  23 + 15 + 1 = 39.
+- EXACTLY ONE EXEMPTION, AND IT IS EARNED. active_resume is the one surface whose pressure is by design: .5
+  gave the resume pointer a band, and ordinary compliant work moves it back down — demonstrated this session
+  when rewriting the pointer took it from 94.0% to 80.0% of lines_each with no authority edit. A surface that
+  ordinary work already regulates needs the band it has, not a remedy leaf.
+- SIX LEAVES OPENED, COSTING NO INDEX LINE. LIVE-DOCUMENT-PRESSURE-HEADROOM is a plain single-file tree at
+  17.6% of its target with no collection index, so declaring owners here is free — unlike the alignment tree,
+  whose index is the stop that started this.
+- research_records remains the closest thing to a hard stop: its health targets ARE its enforcement ceilings
+  (64 files, 640 lines_each, no absorb band), and it sits at 63 files with a 639-line widest file. Owned by .4.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen
 
 - SELECTED BECAUSE .9c CANNOT PROCEED WITHOUT IT, which was measured rather than assumed. ExtractedStatement

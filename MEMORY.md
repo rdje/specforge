@@ -6,22 +6,21 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` (population derived; the reviewed per-row assignment is its
-  open half). Product frontier `SPEC-TO-INTENT-ALIGNMENT.9` is BLOCKED behind it: `.9c` needs child leaves and
-  every child costs one line of an index already at 115 of a 115.2 threshold. Also open:
+- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM` — `.7` is done; `.8`-`.13` were opened by its assignment and
+  `.1`/`.3`/`.4`/`.6` remain. Product frontier `SPEC-TO-INTENT-ALIGNMENT.9` is still BLOCKED: `.9c` needs child
+  leaves and every child costs one line of an index at 115 of a 115.2 threshold, owned by `.7`'s assignment to
+  itself. Also open:
   `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION`
   `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`.
-- Current state: `SPEC-TO-INTENT-ALIGNMENT.9e` is closed across two commits. `.7` was selected by measurement,
-  not preference: `.9c` touches 11 production and 93 test `ExtractedStatement` sites, a serialized schema, and
-  24 proof-carrying chains, so it needs decomposition. `.2c` (done) already shipped the remedy shape — shard by
-  lifecycle, not alphabet — and `.7` already owns `alignment_task_evidence_index`. 77 of 83 route rows are
-  closed lanes, 54 in `.6` alone, so the lifecycle cut fits.
-- Next action: `.7`'s open half — the reviewed per-row assignment binding each of the 39 derived warned items to
-  one OPEN leaf or a stated exemption. Do not screen by grep: `.7`'s own record shows that test scores `done`
-  trees as owners and is satisfied by the act of reporting. Re-derive the population first; it is a per-commit
-  counter. Then apply `.2c`'s lifecycle shard to `alignment_task_evidence_index` so `.9c` can decompose.
+- Current state: `.9e` closed across two commits; `.7` closed across two more. `.7`'s assignment bound all 39
+  warned rows — 23 to open owners, 15 to `.8`-`.13`, one exempt — and found that **five named owners are `done`
+  trees**, including the one `.7` itself cited as its model exclusion. Never infer ownership from a mention;
+  read the owner's own `Status` line.
+- Next action: apply `.2c`'s lifecycle shard to `alignment_task_evidence_index` (77 of 83 route rows are CLOSED
+  lanes, 54 in `.6` alone) — that is the row `.7` assigned to itself and the one blocking `.9c`'s decomposition.
+  Then `.9c`. `.8`-`.13` are declared and can wait; `.4` carries `research_records`, the closest hard stop.
 - In-flight uncommitted: none after this commit.
 - Blockers: none, but two are close. `research_records` is at **99.8%** of `lines_each` and **98.4%** of files —
   one line and one file from a hard ceiling, with no rollover route. `active_resume` (this file) is at 94.0% of
