@@ -290,7 +290,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Prerequisite: none; found by `.2c` while widening the routed rule
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
-  Status: `pending` (tracking-only)
+  Status: `active` (population derived `2026-08-31`; the reviewed assignment is the open half)
   Goal: assign every gate-level live-document warning to an open leaf, by review rather than by grep
   Acceptance: this leaf was opened by `CLAIM-VERIFICATION-ADOPTION.11` and its premises were corrected by
   `.11a` the same day, because both the population and the ownership test it used were wrong.
@@ -317,8 +317,24 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Pressure Boundary` table above is **not** a defect and must not be rewritten to match: it is anchored to
   `92e59c97` and is a dated snapshot, which is exactly why it cannot serve as the current assignment
   Prerequisite: none; opened by `CLAIM-VERIFICATION-ADOPTION.11`, premises corrected by `.11a`
-  Verification: `pending`
-  Commit: `pending`
+  **Population derived, and it corrects this leaf's own premise a third time.** Run at `057710cd`,
+  `scripts/check_live_document_size.sh` composes **22** producers that emit a line and **five** that emit a
+  warning — not the four recorded above. The fifth is `roadmap-projection`, and it is missed for a reason
+  worth more than the count: it emits `WARNING section ...` in **uppercase with no colon**, so a census keyed
+  on the lowercase `warning:` token reads 38 of 42 lines and is blind to all four of its rows. `.11` was
+  blind to two producers by the `surface '...'` token; the same class of blindness reappears here on the
+  warning token itself, which is why the population must be derived from the driver's own output rather than
+  from any keyed screen.
+  **The driver also double-emits.** `fact-card-catalog` and `roadmap-projection` each run twice — once in the
+  block guarded by `[ "$ROOT" = "$ADAPTER_ROOT" ]` and once in the gate path — so three rows appear twice. A
+  naive count reports 42 warned items; deduplicated the population is **39**, from `live-document-size` (22),
+  `active-task-evidence` (7), `rolling-ledger` (7), `roadmap-projection` (2), and `fact-card-catalog` (1).
+  No totals are carried forward from this note: they are per-commit counters, exactly as this leaf already
+  records, and the derivation command is the authority.
+  Verification: `derived at 057710cd from bash scripts/check_live_document_size.sh: 22 producers emit, five
+  emit warnings, 39 distinct warned items after removing the three double-emissions; grep 'warning:' returns
+  38 of 42 lines and misses every roadmap-projection row. The reviewed per-row assignment is the open half`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.3`
   Status: `pending`
@@ -473,12 +489,14 @@ repeatable rollover/remedy paths and remain under their existing owners.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-31` | `.7` population | `bash scripts/check_live_document_size.sh` at `057710cd`, deduplicated and classified by emitting producer | 22 producers emit, **five** emit warnings — not the four this leaf recorded — and 39 distinct warned items remain after removing three double-emissions; the missed producer `roadmap-projection` uses uppercase `WARNING` with no colon, so a `warning:`-keyed census reads 38 of 42 lines and is blind to all of its rows |
 | `2026-08-14` | `.0` ownership | exact metrics; Knowledge Map routing; existing owner census; task catalog; content/authority diffs; live-size/doctrine | seven axes pinned; ownership-only resulting tree 145 task files / 398 index lines; no governed content or bound change |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.7` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen` | the leaf's own four-producer premise is corrected a third time; the reviewed per-row assignment is the open half |
 | `.0` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0 — own the current live-surface pressure frontier` | one bounded owner over ordered independent remedies |
 | `.5` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5 — stop the resume pointer spending its budget on prose that never changes` | fixed region 19 -> 8 lines; the split is gated at a derived cap |
 | `.2` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2 — split the decided no-cap remedy into the three transactions it actually is` | container; found the second `$MAX_TASKS` enforcer and measured the relocation |

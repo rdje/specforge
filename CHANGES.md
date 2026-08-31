@@ -1,3 +1,29 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen
+
+- SELECTED BECAUSE .9c CANNOT PROCEED WITHOUT IT, which was measured rather than assumed. ExtractedStatement
+  carries no SourceIR element identity; adding it touches 11 production and 93 test construction sites, changes
+  a serialized schema, and reconciles 24 proof-carrying chains — so .9c needs child leaves, every child costs
+  exactly one line of docs/tasks/spec-to-intent-alignment/INDEX.md, and that index sits at 115 lines against a
+  115.2 mandatory-rollover threshold. The index is on .9c's critical path, not beside it.
+- AND THE PROJECT HAD ALREADY SOLVED IT. Before declaring new work under .9, the prior-adjudication check found
+  LIVE-DOCUMENT-PRESSURE-HEADROOM.2c (done) shipped the remedy for "a derived index whose cardinality is a
+  stop" — shard by lifecycle, not by alphabet — and .7 (pending) already names alignment_task_evidence_index as
+  one of the three surfaces it owns. Declaring a leaf under .9 would have duplicated a shipped design and
+  stepped on an existing owner. The measurement says the remedy fits: 77 of 83 route rows belong to CLOSED
+  lanes, 54 to lane .6 alone.
+- THE POPULATION CORRECTS THIS LEAF'S OWN PREMISE A THIRD TIME. .11 got it wrong, .11a corrected it, and now
+  the recorded "four producers" is wrong too. Derived at 057710cd: the driver composes 22 producers that emit a
+  line and FIVE that emit a warning. The missing one is roadmap-projection, and the reason matters more than
+  the count — it emits "WARNING section ..." in UPPERCASE WITH NO COLON, so a census keyed on the lowercase
+  "warning:" token reads 38 of 42 lines and is blind to every one of its rows. .11 was blind by the
+  surface '...' token; the identical failure reappears on the warning token itself.
+- THE DRIVER ALSO DOUBLE-EMITS. fact-card-catalog and roadmap-projection each run twice — once inside the block
+  guarded by [ "$ROOT" = "$ADAPTER_ROOT" ] and once in the gate path — so three rows appear twice. A naive
+  count reports 42 warned items; deduplicated it is 39: live-document-size 22, active-task-evidence 7,
+  rolling-ledger 7, roadmap-projection 2, fact-card-catalog 1.
+- NO TOTALS ARE CARRIED. They are per-commit counters, as this leaf already records; the derivation command is
+  the authority. The reviewed per-row assignment against the open trees is the leaf's remaining half.
+
 ### SPEC-TO-INTENT-ALIGNMENT.9e — re-derive the published findings and correct the containment account
 
 - The owner asked whether the findings .9e published still held. Re-deriving them rather than restating them,

@@ -6,42 +6,35 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.9` (`.9a`/`.9b`/`.9d`/`.9e` complete). Open in `.9`: `.9c` (prose leg)
-  and the population replay. Also open: `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`;
-  `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`;
-  `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`/`.7`. The last ten are tracking-only.
-- Current state: product lane. `.9e` closed both halves: it withdrew two carried-forward findings, then repaired
-  the two reviewed golds no carrier could emit (`table_0004|toc_non_contract`, `elem_00017|informational_non_contract`
-  → `<region_id>|<family>`) and put the key law under the `RESIDUAL-ACTIONABILITY` gate as `residual_gold_law`.
-  Metric-neutral by execution, not assertion: the evaluator reproduces `result_snapshot.json` byte-exactly and
-  only four echoed gold strings move. The published current result was re-summarized in place under `.8b`'s
-  mechanism (`replay_sha256` + `resummarized_by`). `.9e` also found and repaired a real breach: `.9b`'s
-  published "clean fmt" claim was false — `cargo fmt --all --check` failed from `0a703cc0` — so full CI had been
-  red for three commits.
-- Next action: `SPEC-TO-INTENT-ALIGNMENT.9c` — carry the `SourceIR` content-element identity into `EvidenceIR`
-  so a prose residual can name the region a reviewed prose cell anchors on (`elem_\d+` occurs zero times in a
-  complete `evidence_ir.json`), then generalise the carrier to prose and reconcile the schema move across all 24
-  proof-carrying chains. `.9c` now has a satisfiable gold (`elem_00017|informational_disclaimer`); before `.9e`
-  it did not. The population replay follows the carrier work and is what republishes
-  `current_result_snapshot.json`, which still predates `.9b`'s table carrier.
+- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` (population derived; the reviewed per-row assignment is its
+  open half). Product frontier `SPEC-TO-INTENT-ALIGNMENT.9` is BLOCKED behind it: `.9c` needs child leaves and
+  every child costs one line of an index already at 115 of a 115.2 threshold. Also open:
+  `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION`
+  `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
+  `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.3`/`.4`/`.6`.
+- Current state: `SPEC-TO-INTENT-ALIGNMENT.9e` is closed across two commits. `.7` was selected by measurement,
+  not preference: `.9c` touches 11 production and 93 test `ExtractedStatement` sites, a serialized schema, and
+  24 proof-carrying chains, so it needs decomposition. `.2c` (done) already shipped the remedy shape — shard by
+  lifecycle, not alphabet — and `.7` already owns `alignment_task_evidence_index`. 77 of 83 route rows are
+  closed lanes, 54 in `.6` alone, so the lifecycle cut fits.
+- Next action: `.7`'s open half — the reviewed per-row assignment binding each of the 39 derived warned items to
+  one OPEN leaf or a stated exemption. Do not screen by grep: `.7`'s own record shows that test scores `done`
+  trees as owners and is satisfied by the act of reporting. Re-derive the population first; it is a per-commit
+  counter. Then apply `.2c`'s lifecycle shard to `alignment_task_evidence_index` so `.9c` can decompose.
 - In-flight uncommitted: none after this commit.
-- Blockers: none. CONTAINMENT, re-derived from each revision's own blob rather than restated: the bounded root
-  did **not** arrive over rollover. It was 21,694 bytes (**88.3%**) at `f34ce77a` with **424 bytes of headroom**,
-  and `.9e`'s own two mandatory log rows cost **583** — so an ordinary slice's own bookkeeping now exceeds the
-  root's headroom, which is the durable fact. `.9e` cleared it to **79.8%** by removing eleven closed-lane
-  `.6d.ii.f` verification rows, after checking every distinctive figure they carried already appears in the
-  behavioral-qualification part. Expect the same pressure next slice. The **active task index is still
-  115 of 128 lines (89.8%)** and rollover begins at 115.2, so the **next new leaf** must roll the index first —
-  this is unchanged and still binding. Read every figure from
-  `perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --report`
-  and `perl scripts/check_live_document_size.pl` rather than carrying it here. Editing a book chapter re-pins
-  frozen census regions: do it by CONTENT anchor and recompute `sha256(line bytes + "\n")`, never by offset
-  arithmetic, and keep a pinned quantity on its own pinned line. Owned, not fixed:
+- Blockers: none, but two are close. `research_records` is at **99.8%** of `lines_each` and **98.4%** of files —
+  one line and one file from a hard ceiling, with no rollover route. `active_resume` (this file) is at 94.0% of
+  `lines_each`, three lines below its 50 ceiling, so keep this block tight. CONTAINMENT of the alignment tree,
+  re-derived from each revision's own blob: the bounded root did not arrive over rollover — 88.3% at
+  `f34ce77a` with 424 bytes of headroom against 583 for `.9e`'s own two log rows, so an ordinary slice's
+  bookkeeping now exceeds the root's headroom. Read every figure from
+  `bash scripts/check_live_document_size.sh` and
+  `perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/spec_to_intent_task_evidence.json --report`.
+  Editing a book chapter re-pins frozen census regions: do it by CONTENT anchor, recompute
+  `sha256(line bytes + "\n")`, never by offset arithmetic. A CHANGES.md prepend shifts every pinned region:
+  verify it is a pure prepend, shift, then re-verify each digest. Owned, not fixed:
   `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`; `CHANGES-LEDGER-ROLLOVER.4`;
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`/`.6`/`.7`; `SCRATCH-RESIDUE-CONTAINMENT.4` — the `generated/` fixture
-  producer is still signal-unsafe. Never run the fixture suite concurrently with the locality gate:
-  `check_persisted_artifact_paths.pl` walks every `*.json` under `generated/` and FAILS if a fixture run deletes
-  one mid-walk. `docs/research/*.md` is 63 of a 64-file ceiling with no rollover. `DOCTRINE_ENFORCEMENT.md` §10
-  is in lockstep with the driver at 13 entries, but nothing checks that it stays so.
+  `SCRATCH-RESIDUE-CONTAINMENT.4` — the `generated/` fixture producer is still signal-unsafe. Never run the
+  fixture suite concurrently with the locality gate. `DOCTRINE_ENFORCEMENT.md` §10 is in lockstep with the
+  driver at 13 entries, but nothing checks that it stays so.
