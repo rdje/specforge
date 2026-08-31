@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how is the composition-frame grammar kept free of corpus false positives
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how is the corpus distributed across the document intent categories
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > how is the decision-record file bound derived
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how is the figure-interior drop mechanism verified
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > how is the ingest DISK footprint bounded for very large PDFs
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > how is the live-document containment checker tested
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how is the page-range batch size chosen / adapted
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -284,17 +298,3 @@
   > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > how will SpecForge automatically detect convergence or divergence
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > how will the million-byte Knowledge Map be sharded without losing question retrieval
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > how will the oversized SpecForge roadmap be made bounded without losing its history
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > how will the shared rolling ledger archive index be partitioned
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > in what order do I rebuild a retained corpus chain
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is 'X, which connects to Y, drives Z and W' clause distribution handled
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > is 64 the status ledger record count

@@ -1359,6 +1359,14 @@ the workflow through the mdBook and repository review path.
   to *drift settling* — a real quantity, silently substituted for the one the sentence names. Both numbers
   were computed by hand from a table that was itself correct, which is the lesson: a derived figure needs its
   own derivation command, or the producer's own output should be quoted instead of arithmetic over it
+  Third demonstration of the vocabulary blind spot (`2026-08-31`, produced by `KG-ISF-COMPLETENESS.5.iv.a`
+  and caught only because that slice looked): a draft book paragraph in `pipeline/isf-adapter.md` published
+  "the rule accepts 285 tables in nine documents", and the frozen census still reported **325 candidate
+  lines / 325 adjudicated regions and passed**. `tables` is one of the nouns this leaf already names as
+  absent, and `nine` is spelled, so neither clause fires — two independent misses in one sentence. The
+  author withdrew the count into the measurement record rather than register a region, which is the right
+  interim move but is exactly the "gate is gated on the author noticing" shape `.13` describes. Worth adding
+  to this leaf's measurement input: spelled numerals are a second gap, orthogonal to the noun list
   Prerequisite: none
 
 ## Current Frontier

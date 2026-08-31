@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which source modalities are represented in the first vertical population
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > which source-to-IntentIR categories are supported incomplete or unmeasurable
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > which stage has no read-only canonical probe
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > which stale roadmap statuses were found before migration
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > which strategy is message_fields.byte_location_table
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > which surface bounds the number of task trees now
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > which task does the trajectory controller recommend first
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > which task owns deterministic Rust tests under repository-local TMPDIR
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > which task owns fact-card catalog containment
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > which task owns mdBook fence classification and doctest enforcement
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > which task owns the SourceIR reproducibility gap
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > which task owns the ingest conservation gap
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > which task owns the re-ingest decision
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -175,6 +199,9 @@
   > why did OpenCAPI email review become an IntentIR behavior
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why did RESERVED-only NOT ship as a header-naming exclusion (two measurements overturned .5.iv: build_symbol_definitions keys members by NAME and drops any member whose value conflicts, so the five multi-row RESERVED-only cases self-eliminate downstream with no name-side gate; and the seven single-row cases are structurally indistinguishable from 31 legitimate
+  > single-distinct-member tables (TTL 0b00=NO_LEVEL_HINT_INFORMATION, CD2L, S1P, PRI, GRAN4K...), leaving only the word RESERVED itself as a discriminator — exactly the spec-assigned value vocabulary ADR 0006 forbids. In the merge they are not even vacuous: CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding)
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
@@ -271,29 +298,3 @@
   > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > why did the register-at-offset placement-map hypothesis get overturned
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why did the residual actionability denominator change from 24 to 16
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why did the task_evidence aggregate ceiling become 480000
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why did transaction_phases contain called edge or positive
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > why did validating a copied rollback backannotate the canonical chain
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why do AMD DTE / NVMe command dword tables go to message fields and not registers
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why do APB tables 0016 0017 0018 produce no signal records
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why do CCIX-class docs extract hundreds of register fields now
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do Docling source tests fail when TMPDIR is inside the repository
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why do FPs appear in eval that the current code does not produce
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why do I2C SDA USDA and SDAH remain signals

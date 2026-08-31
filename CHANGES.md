@@ -1,3 +1,48 @@
+### KG-ISF-COMPLETENESS.5.iv.a — let an encoding table's own header source its enum name
+
+- THE ASYMMETRY, CLOSED. derive_encoding_enum_name drew its candidate from caption_text or the section
+  title and only then validated it against known_signals and the header, so the header was a VETO and never
+  a SOURCE: `SEC_SID value | Description` minted nothing because its caption carried no field token. Added
+  derive_header_sourced_enum_name (ir/evidence.rs), called LAST after both existing paths decline — strictly
+  additive, so no enum minted today changes name or disappears.
+- RE-MEASURING THE SHIPPED PATH CORRECTED .5.iv THREE TIMES, and that is the substance of this slice.
+  (1) THE POPULATION IS TWICE WHAT .5.iv COUNTED. It censused table_kind == encoding only, but
+  scan_encoding_tables_by_signal_anchor skips just signal-description/register-map/timing-parameter and
+  table_looks_like_encoding then admits any name+value header — so unknown-kind tables are in scope. 9,828
+  tables visited, 994 reach the header shape, 285 accepted in 9 documents; not 134 in 10.
+  (2) THE FOUR EXCLUSION CLASSES .5.iv NAMED ARE THE WRONG LIST. The dominant junk is POSITIONAL headers —
+  Bytes/Offset/Index/bits, where the column holds a POSITION so the table is a field LAYOUT — which removes
+  448 candidates alone and subsumes the OFFSET and garbled-AXADDR classes. A second clause, at least one
+  value cell must PARSE as an encoding literal, subsumes the *_WIDTH class AND the glossary / notation /
+  abbreviation class .5.iv never saw at all (Term|Meaning, Acronym|Description, Notation|Meaning).
+  (3) RESERVED-ONLY DID NOT SHIP AS AN EXCLUSION. Five of the twelve self-eliminate in
+  build_symbol_definitions' conflicting-value rule; the other seven are structurally indistinguishable from
+  31 legitimate single-distinct-member tables (TTL, CD2L, S1P, PRI, GRAN4K...), leaving only the word
+  RESERVED as a discriminator — the spec-assigned value vocabulary ADR 0006 forbids. In the merge they are
+  not even vacuous: CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding.
+- THE NODE'S OWN GATE PREDICTION WAS FALSE, and the corpus is why. ihi0022_l already carries AWATOP with 13
+  members, and it CANNOT BE REBUILT: its SourceIR is legacy schema 1, refused as inspection-only, one of 54
+  legacy chains against 24 current. Exactly ONE accepted table sits in a rebuildable document — the SMMU
+  guide Table 3-1 that opened .5.iv — and it mints nothing because .5.ii drops its sentence members, the
+  mechanical confirmation of the honest correction .5.iv wrote in prose.
+- INERTNESS PROVEN, NOT ASSUMED. check_chain_currency.sh replays all 24 rebuildable documents against the
+  patched binary: 24 replayed / 24 current / 0 stale at evidence, semantic, intent AND isf-adapter — every
+  persisted artifact byte-identical. kg-bench 156/156; cargo test green (+8 tests); check_doctrines.sh GREEN.
+  The production-genericity flow census moved only analyzed_functions 2,373->2,376, helper_edges
+  14,684->14,737 and decision_sites 12,669->12,696; rule_roots, grammar_declassifiers, canonical_seams,
+  proof_gates, trusted_regions and every protected_* count are UNCHANGED — no new decision authority.
+- FOUND WHILE GATING THIS SLICE, NOT CAUSED BY IT: THE SCORING ORACLE IS DOWN. eval-extraction refuses every
+  document in the corpus, on the PRE-change 2026-08-28 binary too — the 54 legacy chains as proofless
+  inspection-only, the 24 current ones as `registered derivation 'evidence.claim.schema_version.root' output
+  or input topology is stale`. Isolated read-only: rewriting ONLY an EvidenceIR's artifact_layout, every
+  other byte identical, fails canonical verification, while the byte-identical copy that keeps its layout
+  verifies and runs — and extract_on_copy must relocate so the corpus is never mutated. So no WIRE-BASED-100
+  number can be re-derived today. Opened as WIRE-BASED-100.8 with fact card
+  evidence-proof-binds-artifact-location, rather than absorbed here.
+- .5 IS COMPLETE: .5.i name gate, .5.ii spine member gate, .5.iii _WIDTH member gate, .5.iv header-naming
+  measurement, .5.iv.a header source. Reproducer scripts/measure_header_sourced_enum_naming.py; report
+  docs/research/generic-enum-conflation-results.md §.5.iv.a; book pipeline/isf-adapter.md.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i — classify both member warnings; README's dimension does not accumulate
 
 - TWO WARNINGS, TWO KINDS OF DIMENSION — and NOT maximum-versus-total, which is how this entry first put

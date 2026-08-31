@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > qwen2.5vl vs qwen3-vl which model
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > should I build an isf lowering-completeness verifier for temporal rules
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > should I fix the PSEL valid when PSEL asserted temporal rule
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > should NLP-SHALLOW-PARSE.2f build coordination distribution
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > should NLP-SHALLOW-PARSE.2h add new passive/verb-sense direction code
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > should SpecForge add a whole-page VLM read / full-page capture path
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > should SpecForge build a conditional-rule lowering lever or file an FSMGen FR (NO — the adapter already lowers the 516 cleanly-grounded conditional obligations corpus-wide; the shortfall is honest residual; the only upside is upstream extraction quality, not an ISF construct)
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > should SpecForge expand ISF before filling IntentIR from PDFs
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > should SpecForge file an FSMGen FR for CPU-ISA instructions/privilege/exceptions (NO — software-visible ISA semantics are not synthesizable hardware intent; ISF has no construct + FSMGen lists none; honest non-target; conditional-future only if FSMGen's SV/UVM path scopes ISA-model verification)
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > should SpecForge file an FSMGen FR for a declarative static-topology ISF construct (NO / not yet — DOC-INTENT-TAXONOMY.4c.i: the bottleneck is upstream extraction-recall, not the missing ISF abstraction; an FR on a 12x-too-sparse / three-quarters-half-connected capture would be unfalsifiable — feedback_verify_fsmgen_before_fr)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -44,6 +62,9 @@
   > was any USB4 pipeline artifact changed by the source locality probe
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > was the (contract ... eventually ...) ISF clause removed
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > was the .5.iv prediction that header naming is byte-changing on the AXI wire gold correct (NO, twice over: ihi0022_l already carries an AWATOP enum with 13 members so the lever could only add members, and ihi0022_l cannot be rebuilt at all — its persisted SourceIR is legacy schema 1, refused as inspection-only, and its normalized bundle is not retained. It is one of 54 legacy
+  > chains against 24 current ones)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -276,25 +297,3 @@
   > what does KG-ISF-TRANSACTIONS.2k add
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what does MessageFieldRecord.bit_range mean and when is it set
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > what does MessageFieldRecord.byte_offset mean
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > what does PROOF-SEAL-CURRENCY prove and not prove
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do

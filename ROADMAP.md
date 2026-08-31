@@ -80,7 +80,9 @@
 The near-term north star is a complete, faithful `IntentIR` knowledge graph that lowers to strict-valid `.isf`:
 all real agents, relations, constraints, behaviors, transactions, symbols, and storage must be represented without
 fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-ISF-COMPLETENESS.md) and [`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar;
-[`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md) is the hard wire-protocol gate.
+[`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md) is the hard wire-protocol gate. That gate is currently
+unexecutable and the fact is published rather than assumed: `eval-extraction` refuses every persisted
+document, so no wire score can be re-derived on demand until `WIRE-BASED-100.8` restores it.
 
 The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical `IntentIR` before adapter expressiveness can be called the blocker.
 ISF/FSMGen remains the eventual executable boundary, but SpecForge does not anticipate a language gap without a source-grounded value. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).

@@ -84,9 +84,9 @@ mod tests {
         assert_eq!(first.trusted_regions, 11);
         assert_eq!(first.non_authoritative_regions, 6);
         assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_373);
-        assert_eq!(first.helper_edges, 14_684);
-        assert_eq!(first.decision_sites, 12_669);
+        assert_eq!(first.analyzed_functions, 2_376);
+        assert_eq!(first.helper_edges, 14_737);
+        assert_eq!(first.decision_sites, 12_696);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
         assert_eq!(first.semantic_macros, 1_466);

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [ingest-ram-guard](../knowledge/ingest-ram-guard.md) | 2026-06-14 | `current` | ingest has a built-in autonomous RAM guard that aborts cleanly before the host crosses a danger ceiling |
 | [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | Introducing CoreSight refresh is portable and its apparent relation topology is unauthoritative |
 | [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md) | 2026-06-23 | `current` | The `.isf` emitter drops an enum whose member value is a bare binary-looking token (only `0`/`1` digits, leng… |
 | [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md) | 2026-06-07 | `current` | ISF CAN describe a state machine — proven idiom is storage-var + switch + select + rule-trigger (FSMGen low… |
@@ -60,4 +61,3 @@
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
-| [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-15 | `current` | Production genericity is structural and behaviorally invariant |

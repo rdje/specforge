@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are TRM register bit assignments tables without access/reset columns handled
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > how are authored examples identity literals and dated book measurements excluded
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how are bit location | register description | attributes tables extracted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -96,6 +102,9 @@
   > how are unknown tables reclassified by the VLM
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how big does source_ir.json get / how does it scale with page count
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how big is the header-sourced naming population really (994 candidates / 285 accepted in 9 documents, NOT the 134 in 10 that .5.iv reported. .5.iv censused table_kind == encoding only, but scan_encoding_tables_by_signal_anchor skips just signal-description/register-map/timing-parameter and table_looks_like_encoding then admits any name+value header, so unknown-kind tables are
+  > in scope — and they carry the glossary/notation/abbreviation junk class .5.iv never saw. Reproducer scripts/measure_header_sourced_enum_naming.py)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how big may one LIVE_ACHIEVEMENT_STATUS record be
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
@@ -174,6 +183,8 @@
   > how do I regenerate controller_input.json and trajectory_report.json
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > how do I reproduce the artifact-relocation proof failure read-only (copy an evidence_ir.json, rewrite only its artifact_layout artifact_root and evidence_ir_path to the new directory, and run specforge entity-type on it: it fails. Run the same command on a byte-identical copy that keeps the original layout: it succeeds)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I resolve a reviewed region by content
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -188,6 +199,9 @@
   > how do I run a Docling ingest or re-ingest on this machine
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how do I see which ingested PDFs form structural families (the corpus-cluster command)
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. This one passes the seal check — 24/24 accepted — and passes chain currency and specforge semantic --dry-run; it fails only when the artifact is read
+  > from a different location than the one recorded in its artifact_layout)
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -284,17 +298,3 @@
   > how does SpecForge serialize repository owned paths
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how does SpecForge stop a published count going stale under a green gate
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > how does SpecForge stop a published gap reproduction from silently running no test
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how does SpecForge verify an extracted claim semantically / catch hallucination
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > how does a VLM timing note become a FigureRegion
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how does a deliberate normalized-bundle reclamation get authorized
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > how does a future SpecForge session retrieve and re-run a current claim
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > how does a heterogeneous collection declare its legal maximum

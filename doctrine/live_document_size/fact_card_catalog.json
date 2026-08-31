@@ -73,13 +73,13 @@
    "planned_outputs": [
       {
          "metrics": {
-            "bytes": 1051,
+            "bytes": 1031,
             "line_bytes": 190,
             "lines": 11
          },
          "path": "docs/knowledge/INDEX.md",
          "role": "landing",
-         "sha256": "fc6a47f37dde735b47d9a1d3a27dbb08b76ed84db6a89c9be8dfd998d157c189"
+         "sha256": "6c74e745652ede7d242f1328e216218a2f582b2fcd9ba8915ce04457bbdcd177"
       },
       {
          "metrics": {
@@ -93,43 +93,43 @@
       },
       {
          "metrics": {
-            "bytes": 12529,
+            "bytes": 12582,
             "line_bytes": 276,
             "lines": 63
          },
          "path": "docs/knowledge-catalog/titles-0002.md",
          "role": "title_part",
-         "sha256": "7f3e1b4d7120f9b88d51af6bdbcc4199c594b92309091b05d0a61ae726160da4"
+         "sha256": "8592b63b5925f0a7cb6ed1c40e50c81941d19a3b593b8a2b83611083ecf6b4ae"
       },
       {
          "metrics": {
-            "bytes": 12168,
+            "bytes": 12181,
             "line_bytes": 255,
             "lines": 63
          },
          "path": "docs/knowledge-catalog/titles-0003.md",
          "role": "title_part",
-         "sha256": "eb49b8f6eb05f3ad7986e93687d4a01c53247e81de5ca38e75ce44290f140d3f"
+         "sha256": "2ff2f6195d0d6605d585ebd4f0c831d8a92980cb163c592a42772418ed191968"
       },
       {
          "metrics": {
-            "bytes": 12507,
+            "bytes": 12452,
             "line_bytes": 260,
             "lines": 63
          },
          "path": "docs/knowledge-catalog/titles-0004.md",
          "role": "title_part",
-         "sha256": "661e1e2c9c7a1a826cb9ed6a1a28b710b66b4f4f61e2180d4e4e140f3f84c572"
+         "sha256": "26966c7fc7636ecfa91198148dc8120e138d620afaf45f547883141477d48052"
       },
       {
          "metrics": {
-            "bytes": 7000,
+            "bytes": 7230,
             "line_bytes": 256,
-            "lines": 38
+            "lines": 39
          },
          "path": "docs/knowledge-catalog/titles-0005.md",
          "role": "title_part",
-         "sha256": "dd119eafd5a6e5b8932bbc33bf8440ffe381eace3c8bc6cb9319e2158a342473"
+         "sha256": "ac66de9907a09ccc75cbbbd5c13839988653e188e95c82c34624688816d1c558"
       }
    ],
    "schema_version": 1,

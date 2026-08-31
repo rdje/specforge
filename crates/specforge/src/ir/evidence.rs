@@ -5512,6 +5512,208 @@ fn collect_discovered_enum_values(statement_groups: &[&[ExtractedStatement]]) ->
     values
 }
 
+/// `KG-ISF-COMPLETENESS.5.iv.a` — document-STRUCTURE words a table header cell may carry. A header
+/// cell naming one of these names a place in the document, never a hardware field, so it is stripped
+/// before the remaining token is read as the field name. Same closed word class the `.5.i` caption gate
+/// exists to defeat; universal document grammar, not a chip/vendor/protocol list (ADR 0006). A token
+/// like `data` that genuinely IS a declared signal never reaches here — the signal-match loop at the
+/// top of `derive_encoding_enum_name` already returned it.
+const HEADER_DOCUMENT_STRUCTURE_WORDS: &[&str] = &[
+    "table", "figure", "page", "annex", "section", "chapter", "appendix", "note", "column", "row",
+    "record", "data", "na",
+];
+
+/// `KG-ISF-COMPLETENESS.5.iv.a` — column-ROLE words. They say what a column HOLDS (`SEC_SID value`,
+/// `HTRANS encoding`), so they qualify the field rather than name it and are stripped before the single
+/// remaining token is read as the field name.
+const HEADER_COLUMN_ROLE_WORDS: &[&str] = &[
+    "value",
+    "values",
+    "description",
+    "descriptions",
+    "desc",
+    "meaning",
+    "encoding",
+    "encodings",
+    "name",
+    "field",
+    "function",
+    "notes",
+    "type",
+    "setting",
+    "settings",
+    "state",
+    "reset",
+    "access",
+    "comment",
+    "comments",
+    "definition",
+];
+
+/// `KG-ISF-COMPLETENESS.5.iv.a` — POSITIONAL column-role words. Unlike the roles above these do not
+/// merely qualify the field: they declare that the left column holds a POSITION or an ADDRESS — a bit
+/// index, a byte offset, a register offset, a structure index — so the table lays out WHERE a field
+/// sits, not WHAT its values mean. Such a table is a field-LAYOUT table and has no encoding to name,
+/// which is why one of these words makes the header path decline outright instead of stripping.
+/// Measured: this single class removes 99 of the 134 junk candidates corpus-wide, including every NVMe
+/// `Bytes | Description` structure table, the CoreSight `Offset | Description` register-offset tables,
+/// and the AXI `AxADDR bits` table whose members `.5.iv` recorded as garbled.
+const HEADER_POSITIONAL_COLUMN_WORDS: &[&str] = &[
+    "bit",
+    "bits",
+    "byte",
+    "bytes",
+    "offset",
+    "index",
+    "address",
+    "addresses",
+    "range",
+    "position",
+];
+
+/// `KG-ISF-COMPLETENESS.5.iv.a` — the right-hand header cell of a two-column encoding table states what
+/// the row MEANS. Requiring it keeps the header path on the one table shape the `.5.iv` census measured
+/// (`<FIELD> value | Description`) instead of guessing at arbitrary two-column tables.
+const HEADER_DESCRIPTION_COLUMN_WORDS: &[&str] = &[
+    "description",
+    "descriptions",
+    "meaning",
+    "comment",
+    "comments",
+    "function",
+    "definition",
+];
+
+/// Identifier-shaped tokens of a header cell: an ASCII letter followed by at least one more
+/// identifier character. A one-character run is not a field name, and a digit-led run (`0b00`, `7`) is
+/// a value rather than an identifier.
+fn header_identifier_tokens(text: &str) -> Vec<&str> {
+    let bytes = text.as_bytes();
+    let mut tokens = Vec::new();
+    let mut index = 0usize;
+    while index < bytes.len() {
+        if !bytes[index].is_ascii_alphabetic() {
+            index += 1;
+            continue;
+        }
+        let start = index;
+        index += 1;
+        while index < bytes.len() && (bytes[index].is_ascii_alphanumeric() || bytes[index] == b'_')
+        {
+            index += 1;
+        }
+        if index - start >= 2 {
+            tokens.push(&text[start..index]);
+        }
+    }
+    tokens
+}
+
+/// `KG-ISF-COMPLETENESS.5.iv.a` — true when a value cell states a POSITIONAL RANGE (`03:02`, `[2:0]`,
+/// `15:00`): the span of bits or bytes a field occupies. A range is never one encoded value, so a table
+/// whose value column carries one is a field-LAYOUT table and mints no enum. Measured corpus-wide: every
+/// table with such a cell is a layout table (NVMe `Bytes`, OpenCAPI `PA`, AXI `AxADDR`) and no genuine
+/// encoding table has one, so the false-positive set is empty.
+fn is_positional_range_cell(text: &str) -> bool {
+    let trimmed = text.trim().trim_start_matches('[').trim_end_matches(']');
+    let Some((high, low)) = trimmed.split_once(':') else {
+        return false;
+    };
+    let (high, low) = (high.trim(), low.trim());
+    !high.is_empty()
+        && !low.is_empty()
+        && high.chars().all(|c| c.is_ascii_digit())
+        && low.chars().all(|c| c.is_ascii_digit())
+}
+
+/// `KG-ISF-COMPLETENESS.5.iv.a` — derive an enum name from the encoding table's OWN column header.
+///
+/// WHY. `derive_encoding_enum_name` draws its candidate from the caption or the section title and then
+/// validates it against the declared signals and the header. The header is therefore a veto and never a
+/// source: a table captioned without a field token mints nothing even when its header names the field
+/// outright. This path closes that asymmetry, and it runs LAST so it can only add.
+///
+/// WHAT IS SAFE. The objection `.5.i` makes load-bearing is not that the name looks wrong but that
+/// `build_symbol_definitions` merges members BY NAME, which is how one caption keyword fused unrelated
+/// tables into the generic `TABLE` mega-enum. That failure mode does not reproduce for header-sourced
+/// names, and structurally so: a caption keyword is shared by tables with nothing in common, whereas a
+/// header names the actual field and a field encodes the same way throughout a document. Measured: 0 of
+/// 28 same-name collision groups conflict on any shared value (`.5.iv`).
+///
+/// THE PREDICATE (each clause measured against the whole persisted corpus, report §`.5.iv.a`):
+/// 1. one header row of exactly two cells — the shape the census measured;
+/// 2. the right cell names a DESCRIPTION role, so the row's second column states a meaning;
+/// 3. the left cell carries no POSITIONAL role and, after document-structure and column-role words are
+///    stripped, leaves exactly ONE identifier — the field;
+/// 4. no value cell is a positional RANGE (that marks a field-layout table); and
+/// 5. at least one value cell PARSES as an encoding literal, so the table actually presents a
+///    document-grounded encoded value rather than a glossary, a notation legend, or a parameter range.
+///
+/// Clause 5 is what disqualifies the classes a name-shape rule cannot see: `Term | Meaning` glossaries,
+/// `Notation | Meaning` legends, `Acronym | Description` abbreviation tables, and the `<X>_Width value
+/// | Description` parameter tables whose sole member is a legal-value range. None of them encodes
+/// anything, so none of them has a parseable value cell.
+///
+/// ADR 0006: the name is the document's own header token in the document's own spelling; the gates are
+/// document-structure grammar and value NOTATION, with no chip, vendor, protocol, or document key.
+fn derive_header_sourced_enum_name(
+    table: &crate::ir::source::StructuredTableRecord,
+) -> Option<String> {
+    let [header_row] = table.header_rows.as_slice() else {
+        return None;
+    };
+    let [field_cell, description_cell] = header_row.as_slice() else {
+        return None;
+    };
+
+    let description_role = description_cell
+        .text
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join("_")
+        .to_ascii_lowercase();
+    if !HEADER_DESCRIPTION_COLUMN_WORDS.contains(&description_role.as_str()) {
+        return None;
+    }
+
+    let mut field: Option<&str> = None;
+    for token in header_identifier_tokens(&field_cell.text) {
+        let lowered = token.to_ascii_lowercase();
+        if HEADER_POSITIONAL_COLUMN_WORDS.contains(&lowered.as_str()) {
+            return None;
+        }
+        if HEADER_COLUMN_ROLE_WORDS.contains(&lowered.as_str())
+            || HEADER_DOCUMENT_STRUCTURE_WORDS.contains(&lowered.as_str())
+        {
+            continue;
+        }
+        if field.replace(token).is_some() {
+            return None;
+        }
+    }
+    let field = field?;
+
+    let (_name_column, value_column) = infer_encoding_column_indices(table, field);
+    let mut carries_encoding_literal = false;
+    for row in &table.body_rows {
+        let Some(cell) = row.get(value_column) else {
+            continue;
+        };
+        let text = cell.text.trim();
+        if text.is_empty() {
+            continue;
+        }
+        if is_positional_range_cell(text) {
+            return None;
+        }
+        if parse_encoding_numeric_literal(text).is_some() {
+            carries_encoding_literal = true;
+        }
+    }
+
+    carries_encoding_literal.then(|| field.to_string())
+}
+
 fn derive_encoding_enum_name(
     table: &crate::ir::source::StructuredTableRecord,
     section_title: &str,
@@ -5548,15 +5750,15 @@ fn derive_encoding_enum_name(
     }
 
     let enum_name_source = table.caption_text.as_deref().unwrap_or(section_title);
-    let candidate = enum_name_source
+    let caption_candidate = enum_name_source
         .split_whitespace()
         .map(|token| {
             token.trim_matches(|character: char| {
                 !character.is_ascii_alphanumeric() && character != '_'
             })
         })
-        .find(|token| is_hardware_signal_token(token))?
-        .to_string();
+        .find(|token| is_hardware_signal_token(token))
+        .map(str::to_string);
 
     // KG-ISF-COMPLETENESS.5.i — the fallback must NOT name an encoding table after a mere
     // document-structure caption keyword (`Table`/`Figure`/`Column`/`Data`/`Annex`/…) or a stray
@@ -5570,25 +5772,32 @@ fn derive_encoding_enum_name(
     // `None` → no enum minted → honest residual). Universal structural rule, NOT a structure-word or
     // chip-name list (ADR 0006): a token like `DATA` that genuinely IS a declared signal in some
     // document is still accepted there, and a token a table actually columns on is accepted anywhere.
-    let candidate_lower = candidate.to_ascii_lowercase();
-    let is_declared_signal = known_signals
-        .and_then(|set| resolve_declared_signal_identifier(&candidate, set))
-        .is_some();
-    let header_lower = table
-        .header_rows
-        .iter()
-        .flatten()
-        .map(|cell| cell.text.as_str())
-        .collect::<Vec<_>>()
-        .join(" ")
-        .to_ascii_lowercase();
-    let is_column_header = contains_reference_token(&header_lower, &candidate_lower)
-        || header_lower.contains(&format!("{candidate_lower}["));
-    if is_declared_signal || is_column_header {
-        Some(candidate)
-    } else {
-        None
+    if let Some(candidate) = caption_candidate {
+        let candidate_lower = candidate.to_ascii_lowercase();
+        let is_declared_signal = known_signals
+            .and_then(|set| resolve_declared_signal_identifier(&candidate, set))
+            .is_some();
+        let header_lower = table
+            .header_rows
+            .iter()
+            .flatten()
+            .map(|cell| cell.text.as_str())
+            .collect::<Vec<_>>()
+            .join(" ")
+            .to_ascii_lowercase();
+        let is_column_header = contains_reference_token(&header_lower, &candidate_lower)
+            || header_lower.contains(&format!("{candidate_lower}["));
+        if is_declared_signal || is_column_header {
+            return Some(candidate);
+        }
     }
+
+    // KG-ISF-COMPLETENESS.5.iv.a — the table's OWN header may now SOURCE the name the caption could
+    // not supply. Everything above reads the header only as a VETO, so a table captioned without a
+    // field token minted nothing even when its header named the field outright (`SEC_SID value |
+    // Description`). This last resort runs only after both earlier paths declined, so it is strictly
+    // ADDITIVE: no enum that is minted today changes name or disappears.
+    derive_header_sourced_enum_name(table)
 }
 
 fn infer_encoding_column_indices(
@@ -22329,6 +22538,226 @@ mod tests {
             super::derive_encoding_enum_name(&ambiguous_table, "", Some(&declared)),
             None
         );
+    }
+
+    // --- header-SOURCED enum naming (KG-ISF-COMPLETENESS.5.iv.a) ---
+
+    /// A two-column encoding table with an explicit header and body. Rows are `(value, meaning)`,
+    /// matching the `<FIELD> value | Description` shape the `.5.iv` census measured. Every fixture
+    /// below is copied from a real persisted table so the tests exercise document shapes rather than
+    /// invented ones (ADR 0006 permits real names in fixtures; they are data, not logic).
+    fn header_encoding_table(
+        headers: [&str; 2],
+        rows: &[(&str, &str)],
+        caption: Option<&str>,
+    ) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: caption.map(str::to_string),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Encoding,
+            header_rows: vec![headers.iter().map(|h| make_table_cell(h, true)).collect()],
+            body_rows: rows
+                .iter()
+                .map(|(value, meaning)| {
+                    vec![
+                        make_table_cell(value, false),
+                        make_table_cell(meaning, false),
+                    ]
+                })
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: 2,
+        }
+    }
+
+    #[test]
+    fn header_sourced_enum_name_recovers_the_field_the_caption_never_names() {
+        // The asymmetry `.5.iv` measured: the header names the field outright, but it was read only as
+        // a veto, so a caption without a field token minted nothing. The header now sources the name.
+        let table = header_encoding_table(
+            ["SEC_SID value", "Description"],
+            &[("0b0", "Non-secure Stream"), ("0b1", "Secure Stream")],
+            None,
+        );
+        assert_eq!(
+            super::derive_encoding_enum_name(&table, "Stream Security determination", None),
+            Some("SEC_SID".to_string())
+        );
+
+        // A bare field header (no `value` qualifier) is the same shape.
+        let bare = header_encoding_table(
+            ["ContFormat", "Description"],
+            &[("0b1011", "Format 11"), ("Others", "Reserved")],
+            None,
+        );
+        assert_eq!(
+            super::derive_encoding_enum_name(&bare, "", None),
+            Some("ContFormat".to_string())
+        );
+    }
+
+    #[test]
+    fn header_sourced_enum_name_declines_positional_layout_tables() {
+        // A POSITIONAL header declares the left column to hold a position or an address, so the table
+        // says WHERE a field sits and not what its values mean. NVMe `Bytes | Description` structure
+        // tables (85 corpus candidates) and the AXI `AxADDR bits` table `.5.iv` recorded as garbled.
+        let bytes = header_encoding_table(
+            ["Bytes", "Description"],
+            &[("01", "Opcode"), ("15", "Reserved")],
+            None,
+        );
+        assert_eq!(super::derive_encoding_enum_name(&bytes, "", None), None);
+
+        let bit_layout = header_encoding_table(
+            ["AxADDR bits", "Description"],
+            &[("[3]", "VA[40]"), ("[2:0]", "num[2:0] = A")],
+            None,
+        );
+        assert_eq!(
+            super::derive_encoding_enum_name(&bit_layout, "", None),
+            None
+        );
+
+        // A register-offset table: `Offset` names a column concept, never a field.
+        let offsets = header_encoding_table(
+            ["Offset", "Description"],
+            &[("0x000", "ROMENTRY0"), ("0xFFC - 0xFB8", "Reserved")],
+            None,
+        );
+        assert_eq!(super::derive_encoding_enum_name(&offsets, "", None), None);
+    }
+
+    #[test]
+    fn header_sourced_enum_name_declines_a_positional_range_value_column() {
+        // Even without a positional header word, a value cell spanning `high:low` is the extent of a
+        // field, not one encoded value — the table is a layout table.
+        let table = header_encoding_table(
+            ["Descriptor", "Description"],
+            &[("03:02", "Namespace Identifier"), ("00", "Opcode")],
+            None,
+        );
+        assert_eq!(super::derive_encoding_enum_name(&table, "", None), None);
+    }
+
+    #[test]
+    fn header_sourced_enum_name_declines_tables_that_encode_nothing() {
+        // Clause 5 — no value cell parses as an encoding literal, so the table presents no encoded
+        // value. This is the class a name-shape rule cannot see, and it is the majority of the junk:
+        // glossaries, notation legends, and width-PARAMETER tables whose sole member is a range.
+        let glossary = header_encoding_table(
+            ["Acronym", "Description"],
+            &[("LSB", "Least significant bit"), ("MCU", "Microcontroller")],
+            Some("Table 16. Abbreviations"),
+        );
+        assert_eq!(super::derive_encoding_enum_name(&glossary, "", None), None);
+
+        let legend = header_encoding_table(
+            ["Notation", "Meaning"],
+            &[("+", "Two's complement addition")],
+            None,
+        );
+        assert_eq!(super::derive_encoding_enum_name(&legend, "", None), None);
+
+        // The `.5.iii` width-parameter residual, re-entering from the header side.
+        let parameter = header_encoding_table(
+            ["NodeID_Width value", "Description"],
+            &[("7 to 11", "Legal values")],
+            None,
+        );
+        assert_eq!(super::derive_encoding_enum_name(&parameter, "", None), None);
+    }
+
+    #[test]
+    fn header_sourced_enum_name_declines_an_ambiguous_field_header() {
+        // Two field-like tokens leave no single field to name; the shape is not the measured one.
+        let table = header_encoding_table(
+            ["Stream security state", "Description"],
+            &[("0b0", "Non-secure")],
+            None,
+        );
+        assert_eq!(super::derive_encoding_enum_name(&table, "", None), None);
+    }
+
+    #[test]
+    fn header_sourced_enum_name_is_strictly_additive() {
+        // The header path runs only after both earlier paths decline, so a name that is minted today
+        // is unchanged: the caption's column-header candidate still wins over the header token, and a
+        // declared signal still wins over both.
+        let table = header_encoding_table(
+            ["HTRANS[1:0]", "Description"],
+            &[("0b00", "IDLE"), ("0b10", "NONSEQ")],
+            Some("HTRANS transfer type encoding"),
+        );
+        assert_eq!(
+            super::derive_encoding_enum_name(&table, "", None),
+            Some("HTRANS".to_string())
+        );
+
+        let declared = ["HBURST".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        assert_eq!(
+            super::derive_encoding_enum_name(&table, "HBURST encodings", Some(&declared)),
+            Some("HBURST".to_string())
+        );
+    }
+
+    #[test]
+    fn header_sourced_enum_name_mints_the_document_grounded_members() {
+        // End to end through the member seam: the recovered name reaches
+        // `synthesize_encoding_declarations_for_enum`, whose `.5.ii`/`.5.iii` gates still apply, and the
+        // values are the document's own literals rather than row indices.
+        let table = header_encoding_table(
+            ["AWATOP value", "Description"],
+            &[
+                ("0b000000", "NonAtomic"),
+                ("0b010000", "AtomicStore"),
+                ("0b100000", "AtomicLoad"),
+            ],
+            None,
+        );
+        let name =
+            super::derive_encoding_enum_name(&table, "", None).expect("header sources a name");
+        let mut counter = 0usize;
+        let statements =
+            super::synthesize_encoding_declarations_for_enum(&table, &name, None, &mut counter);
+        let texts: Vec<&str> = statements.iter().map(|s| s.text.as_str()).collect();
+        assert_eq!(
+            texts,
+            vec![
+                "Enum AWATOP NONATOMIC = 0.",
+                "Enum AWATOP ATOMICSTORE = 16.",
+                "Enum AWATOP ATOMICLOAD = 32.",
+            ]
+        );
+    }
+
+    #[test]
+    fn header_column_word_classes_stay_disjoint_and_positional() {
+        // Drift guard. The POSITIONAL class is load-bearing (it removes 99 of 134 junk candidates), so
+        // a word may not drift into the merely-stripped role class, where it would stop vetoing.
+        for positional in super::HEADER_POSITIONAL_COLUMN_WORDS {
+            assert!(
+                !super::HEADER_COLUMN_ROLE_WORDS.contains(positional),
+                "`{positional}` must veto the header path, not be stripped from it"
+            );
+            assert!(
+                !super::HEADER_DOCUMENT_STRUCTURE_WORDS.contains(positional),
+                "`{positional}` must veto the header path, not be stripped from it"
+            );
+        }
+        // A description role must also be a strippable column role, so `<FIELD> description` cannot be
+        // read as a two-token header.
+        for description in super::HEADER_DESCRIPTION_COLUMN_WORDS {
+            assert!(
+                super::HEADER_COLUMN_ROLE_WORDS.contains(description),
+                "`{description}` names a column role and must be strippable"
+            );
+        }
     }
 
     // --- per-member sentence-spine fragment gate (KG-ISF-COMPLETENESS.5.ii) ---

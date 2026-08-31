@@ -536,6 +536,58 @@ and `(AWCMO (CLEAN_AND_INVALIDATE 0) (CLEAN_ONLY 1))` — no duplicate-value col
 that were *only* a width parameter simply disappear (an honest absence). The wire-protocol golds' scored
 facts stayed identical and the emitted `.isf` stayed FSMGen-strict-clean.
 
+### When only the table's own header knows the field's name
+
+The three gates above all *remove* something. This one adds. Naming an enum starts at the table's
+caption and section title, and the column headers were used only to confirm a name — never to supply one.
+That left an odd blind spot. Consider a table captioned *"Table 3-1: Stream Security determination"* whose
+header row reads:
+
+```text
+| SEC_SID value | Description |
+```
+
+The caption contains no field name, so the fallback found nothing to keep and the table minted no enum at
+all — even though the header names the field outright, one column to the left of the meanings it encodes.
+SpecForge now reads that header as a **source** of the name, not only as a veto. The clause runs last, after
+the declared-signal match and the caption fallback have both declined, so nothing that was already named
+changes: this can only recover encodings that were previously lost.
+
+Reading a header is weaker evidence than matching a declared signal, so the table has to look like an
+encoding before its header is trusted. Four checks decide it, and each one exists because a real corpus
+table failed it:
+
+- **The left column must name a field, not a position.** A header word such as `Bytes`, `Offset`, `Index`
+  or `bits` says the column holds *where* something sits — a byte offset in a data structure, a register
+  offset in a block, a bit range in a field. That is a layout table, and it has no encoding to name. This
+  single check accounts for most of the rejections.
+- **No value cell may be a range.** A cell like `03:02` or `[2:0]` spans several bit or byte positions, so
+  it is an extent rather than one encoded value — the same layout tables, caught from the other side.
+- **At least one value must actually parse as an encoding literal** (`0b10`, `0x3`, `11`, `4'hF`). This is
+  the check that keeps glossaries out. An abbreviation table (`Acronym | Description`), a notation legend
+  (`Notation | Meaning`), and a terminology table (`Term | Meaning`) all have exactly the two-column shape
+  an encoding table has — and none of them encodes anything, so none has a parseable value. The same check
+  removes parameter tables such as `Data_Width value | Description`, whose only "value" is a legal range
+  like *128, 256, and 512*.
+- **The header must leave exactly one field name** once role words (`value`, `description`, `bits`) and
+  document-structure words (`Table`, `Figure`, `Section`) are set aside. Two candidate names means the
+  shape was not understood, and SpecForge declines rather than guessing.
+
+Nothing here is a list of chip or protocol names: the name comes from the document, and the gates are
+ordinary document grammar plus the notation values are written in. Names recovered this way merge across a
+document exactly as declared-signal names do, and that turns out to be the right behaviour rather than a
+risk — the Arm SMMU specification describes its `SH` shareability field in eleven separate tables, and every
+value the eleven share agrees, so merging them reconstructs one correct encoding instead of fusing
+strangers. Measured across the corpus, the rule recovers field encodings such as `AWATOP`, `ENDIAN`,
+`EXCL`, `RESPERR`, `ARCHID`, `CD2L`, `VMID16` and `PRI` that had no name before; the exact population and
+per-class rejection counts live in the measurement record rather than here.
+
+One honest note about what you will see today. Most of the documents this reaches were ingested by an
+older version of SpecForge, and their stored pipeline artifacts cannot be replayed by the current build —
+they have to be re-ingested from the PDF first. Until then the recovered enums exist in the code path but not in
+the artifacts on disk, and every stored `.isf` in the repository is byte-for-byte what it was before. The
+`specforge ingest` command is what closes that gap, per document.
+
 ## Register reset values
 
 When a chip-spec PDF documents a register map, SpecForge captures each register's

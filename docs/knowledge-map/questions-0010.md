@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is aggregate_composition in surfaces.jsonl
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is capture_signal_presence_rows and who shares it
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is captured_region_residuals
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is cited_table_ids
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what is content-based name-column detection / rotation offset remapping
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is continuation_inherited_table_heads and what grounds the join
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 47 and why is its adapter honestly blocked
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 49
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is declared_signal_complete_gold_precision
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -275,25 +297,3 @@
   > what is the remedy when a research record reaches its per-file line ceiling
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > what is the rolling ledger archive protocol
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > what is the semantic_ungrounded_records_not_promoted residual packet
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > what is the size-immunity binding constraint for source_ir.json at extreme page counts
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what is the source-to-IntentIR completeness contract
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is the standing per-doc quality report wired into converge/CI
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is the table-kind precision estimate and the flagged-mismatch list
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > what is the transaction phase qualifier authority rule
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)

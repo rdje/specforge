@@ -37,6 +37,7 @@
 | [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |
 | [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md) | 2026-06-07 | `current` | eval-extraction scores the PERSISTED evidence_ir.json — rebuild before trusting a baseline (it can be stale) |
 | [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md) | 2026-06-09 | `current` | EvidenceIR build determinism — two HashSet-iteration leaks (relations + enum name) found & FIXED (EVIDENCE-… |
+| [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md) | 2026-08-31 | `current` | An EvidenceIR's proof binds the artifact's own storage location, so relocating a byte-identical copy fails ca… |
 | [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md) | 2026-08-09 | `current` | Evidence signal-declaration catalogs panic when a match follows a multi-byte bullet |
 | [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md) | 2026-08-11 | `current` | EvidenceIR statement text comes from the normalized markdown, where `_` is escaped, so every underscore-beari… |
 | [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md) | 2026-08-13 | `current` | EvidenceIR protocol structure is document-derived and schema-3 proof-carrying |
@@ -50,7 +51,7 @@
 | [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md) | 2026-06-17 | `current` | FSMGen --strict --check does NOT validate or use a signal's declared direction (input/output) — driving a d… |
 | [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md) | 2026-06-04 | `current` | SpecForge emits bounded-eventually as (assert (monitor (within s N))) into .isf (fsmgen pin 43b29f5c) |
 | [full-page-capture-gap](../knowledge/full-page-capture-gap.md) | 2026-06-14 | `current` | SpecForge captures a page's intent-bearing content; the residual outside Docling regions is decoration/furnit… |
-| [generic-enum-conflation](../knowledge/generic-enum-conflation.md) | 2026-08-11 | `current` | The `.isf` generic-`TABLE` (and `FIGURE`/`DATA`/…) mega-enum is an EXTRACTION-born conflation — `derive_e… |
+| [generic-enum-conflation](../knowledge/generic-enum-conflation.md) | 2026-08-31 | `current` | The `.isf` generic-`TABLE` (and `FIGURE`/`DATA`/…) mega-enum is an EXTRACTION-born conflation — `derive_e… |
 | [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The GIC Overview Guide carries interrupt constraints, not an 83-interface hardware surface |
 | [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md) | 2026-06-11 | `current` | Header-trapped SIGNAL tables — shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-… |
 | [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md) | 2026-08-09 | `superseded` | Historical blocker: the corpus host-library route still named the boot-volume checkout |
@@ -60,4 +61,3 @@
 | [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md) | 2026-06-14 | `current` | ingest sizes each page-range batch to the host's total physical RAM so a small machine completes |
 | [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md) | 2026-06-14 | `current` | ingest disk pre-flight refuses before launching when free disk is below a source-size-scaled requirement |
 | [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md) | 2026-08-28 | `current` | Ingest used to discard every text the converter put inside a figure; since 2026-08-28 it carries them on the… |
-| [ingest-ram-guard](../knowledge/ingest-ram-guard.md) | 2026-06-14 | `current` | ingest has a built-in autonomous RAM guard that aborts cleanly before the host crosses a danger ceiling |

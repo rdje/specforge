@@ -2,6 +2,32 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why did the residual actionability denominator change from 24 to 16
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why did the task_evidence aggregate ceiling become 480000
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > why did transaction_phases contain called edge or positive
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > why did validating a copied rollback backannotate the canonical chain
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why do AMD DTE / NVMe command dword tables go to message fields and not registers
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why do APB tables 0016 0017 0018 produce no signal records
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why do CCIX-class docs extract hundreds of register fields now
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why do Docling source tests fail when TMPDIR is inside the repository
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why do FPs appear in eval that the current code does not produce
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why do I2C SDA USDA and SDAH remain signals
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -188,6 +214,9 @@
   > why does docs/tasks have no file count cap
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > why does eval-extraction fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because extract_on_copy relocates the artifact into a temp root so the corpus is never mutated, and the EvidenceIR proof binds the artifact's own artifact_layout into a derivation's topology — rewriting only
+  > artifact_root/evidence_ir_path, every other byte identical, fails verification)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > why does ingest still generate page images if it does not save them
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
@@ -268,33 +297,3 @@
   > why does the corpus task reuse the active task evidence checker
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why does the eMMC actor count drop 153 to 138 after .1c.i
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why does the emitted .isf default ~98% of signals to output and width 1
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why does the fact-card file count differ from the Knowledge Map fact count
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why does the fact-card landing have one line per card
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > why does the feedback protocol self test block derived state closure
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why does the live-document report show lines below the ceiling
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > why does the pre-commit hook run check_doctrines.sh
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does the project README get spurious ahb_transfer/apb_transfer transactions
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why does the reviewed prose sit at elem_00230 instead of elem_00219
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > why does the roadmap archive hold more than one capsule

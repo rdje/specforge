@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > does IntentIR preserve SWD protocol provenance and order
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > does PhaseRecord remain schema compatible
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -183,6 +185,9 @@
   > does specforge write to the input path I pass or to a canonical generated path
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > does suffix spelling authorize a PSEL to PSELX alias
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > does the .5.iv.a header lever change any persisted artifact (NO — it is inert on the whole measurable stratum, proven not assumed: check_chain_currency.sh replays evidence/semantic/intent/isf-adapter for all 24 rebuildable documents against the patched binary and every persisted artifact is byte-identical. Exactly 1 of the 285 accepted tables sits in a rebuildable document
+  > — the SMMU guide Table 3-1 that opened .5.iv — and it mints nothing because .5.ii drops its sentence members. The other 8 documents are legacy schema-1 chains the current binary refuses for canonical use until re-ingest)
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > does the Certified sibling confirm the OpenCAPI Ready glossary result
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
@@ -253,6 +258,8 @@
   > does the vertical evaluator make a category support claim yet
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
   > does the workflow catalog fit the full 21-file profile
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > does this break repository portability (not for a repository move — artifact_layout stores repository-root-relative paths and tools derive absolute paths at runtime. It breaks relocation WITHIN the repository, which is what a read-only evaluation on a temp copy needs)
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > does transaction phase precision change phase membership or ISF output
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -291,9 +298,3 @@
   > how are SWCLK and SWDIO captured if they are not in a signal table
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > how are SpecForge live documents kept bounded
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are TRM register bit assignments tables without access/reset columns handled
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > how are authored examples identity literals and dated book measurements excluded

@@ -281,6 +281,39 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   normative ones ("must/shall…"). Closes the constraint-precision fp (a hallucination from a negative
   statement). Reuse the NLI gate as the grounding check.
 
+- ID: `WIRE-BASED-100.8` · Status: `active` · Goal: **restore the scoring oracle — `eval-extraction` refuses
+  every document in the corpus, so no WIRE-BASED-100 number can currently be re-derived.** Found
+  `2026-08-31` while gating `KG-ISF-COMPLETENESS.5.iv.a`, whose inherited gate is "before/after
+  WIRE-BASED-100 on rebuilt gold evidence"; that protocol could not be executed at all. **Not caused by that
+  slice** — the same failure reproduces on the pre-change `target/release/specforge` built `2026-08-28`.
+  **Two failure modes, whole corpus.** The 54 legacy documents (APB `ihi0024_e`, AHB `ihi0033_c`, AXI
+  `ihi0022_l`, NVMe, RISC-V debug …) fail as `EvidenceIR schema version 2 is legacy/proofless and
+  inspection-only; rebuild it from verified SourceIR`. The 24 current documents (including the SWD/ADI and
+  I2C golds, which ARE rebuildable) fail as `EvidenceIR proof verification failed: registered derivation
+  'evidence.claim.schema_version.root' output or input topology is stale`.
+  **ROOT CAUSE, isolated read-only.** The second mode is not seal staleness. Rewriting only an EvidenceIR's
+  `artifact_layout` (`artifact_root` + `evidence_ir_path`) and leaving every other byte identical fails
+  canonical verification with that exact diagnostic, while a byte-identical copy that KEEPS its original
+  layout verifies and runs (`specforge entity-type` on both; `specforge semantic --dry-run` also replays the
+  original fine, and `check_chain_currency.sh` reports 24/24 current). So the EvidenceIR proof binds the
+  artifact's own storage LOCATION into a derivation's topology — and `extract_on_copy`
+  (`crates/specforge/src/commands/eval_extraction.rs:157-163`) must relocate the artifact into a temp root
+  precisely so the corpus is never mutated. Every `eval-extraction` task therefore fails before scoring.
+  **Why this is a gate-integrity defect, not a nuisance.** `WIRE-BASED-100`'s governing principle is no fake
+  scoring, and `KG-ISF-COMPLETENESS` requires a before/after eval on every extraction change that touches a
+  scored document. A published `1.000` that cannot be re-derived on demand is exactly the claim
+  `CLAIM_VERIFICATION.md` refuses. The last re-derivation of record is `SWD-SERIAL-EXTRACTION` (`2026-08-09`).
+  Acceptance: `eval-extraction --provider skip` runs to a score on at least the two rebuildable golds
+  (`ihi0074_a` SWD/ADI, `um10204` I2C) with the relocation defect fixed at its cause rather than by
+  mutating the corpus; the legacy-stratum refusal is stated as an explicit UNMEASURABLE disposition with its
+  own re-ingest route rather than presented as a score; and a regression control pins that relocating a
+  verified artifact preserves verification. Split before implementing if the proof-kernel change and the
+  `eval-extraction` change are separately reviewable.
+  Non-goal: re-ingesting the 54 legacy chains (owned by the corpus refresh frontier); changing any gold.
+  Prerequisite: none. KM `[[evidence-proof-binds-artifact-location]]`.
+  Verification: `pending`
+  Commit: `pending`
+
 ## `.5d` — durable in-repo source PDFs (owner directive `2026-06-07`)
 
 - ID: `WIRE-BASED-100.5d` · Status: `in_progress` · Goal: **copy the wire-based source PDFs into the repo
@@ -405,6 +438,15 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 recall, full-doc completeness) harden it; then roll the same set to AHB → AXI → SWD (`.5`).
 
 ## Changelog
+
+- `2026-08-31` (`.8` opened): **the scoring oracle itself is down.** `eval-extraction` refuses every document
+  in the corpus — the 54 legacy chains as proofless/inspection-only, the 24 current ones as
+  `registered derivation 'evidence.claim.schema_version.root' output or input topology is stale` — and it
+  reproduces on the pre-change `2026-08-28` binary, so it is not a regression from the slice that found it
+  (`KG-ISF-COMPLETENESS.5.iv.a`). Isolated read-only: rewriting only an EvidenceIR's `artifact_layout` fails
+  canonical verification while the byte-identical copy that keeps its layout verifies, and `extract_on_copy`
+  must relocate so the corpus is never mutated. Recorded as a gate-integrity defect because a published
+  `1.000` that cannot be re-derived is precisely the claim `CLAIM_VERIFICATION.md` refuses.
 
 - `2026-08-09` (`.5j` delegated closure): `SWD-SERIAL-EXTRACTION` completed the serial-specific work that the
   parallel-bus tree correctly deferred: fresh 29/29 scoring at 1.000, exact canonical 11/4/13/1 projection,

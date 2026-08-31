@@ -82,6 +82,9 @@
   > can SpecForge use FSMGen's (stable …) sampled-value predicate
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > can WIRE-BASED-100 scores be re-derived right now (NO — eval-extraction refuses every document in the corpus as of 2026-08-31: the 54 legacy chains as EvidenceIR schema version 2 is legacy/proofless and inspection-only, and the 24 current ones as the artifact_layout topology failure. Owned by WIRE-BASED-100.8; the last re-derivation of record is SWD-SERIAL-EXTRACTION on
+  > 2026-08-09)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > can a SourceIR element contain text from two places
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -295,5 +298,3 @@
   > does GateRecord remain schema compatible
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > does I2C extraction remain invariant under opaque signal renaming
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > does IntentIR preserve SWD protocol provenance and order

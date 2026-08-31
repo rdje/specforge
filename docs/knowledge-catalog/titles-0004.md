@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-15 | `current` | Production genericity is structural and behaviorally invariant |
 | [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md) | 2026-08-08 | `current` | Project-owned temp, cache, dependency, and subprocess data resolves from the current repository |
 | [project-scratch-location](../knowledge/project-scratch-location.md) | 2026-08-31 | `current` | Temporary files go in `.project-data/tmp/` on the repository volume — never in an agent harness's own scrat… |
 | [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md) | 2026-08-14 | `current` | Proof-bearing chains must validate each stage before building its consumer |
@@ -60,4 +61,3 @@
 | [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md) | 2026-06-17 | `current` | validate emits a stage_staleness Warning when a downstream IR carries 0 actor_signal_relations while its upst… |
 | [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md) | 2026-08-28 | `current` | The status ledger's record count is bounded but unreported, and its per-record budget is overhead-net |
 | [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md) | 2026-08-09 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |
-| [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md) | 2026-08-09 | `superseded` | The canonical SWD chain contains all 29 scored protocol facts through the adapter boundary |

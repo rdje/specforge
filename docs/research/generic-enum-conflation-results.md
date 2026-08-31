@@ -1,6 +1,6 @@
 # Generic-enum conflation — per-leaf gate results
 
-Status: **retained verbatim from the conflation measurement; `.5.i`/`.5.ii`/`.5.iii` LANDED, `.5.iv` measured**
+Status: **retained verbatim from the conflation measurement; `.5.i`/`.5.ii`/`.5.iii`/`.5.iv.a` LANDED, `.5.iv` measured**
 Owner: `KG-ISF-COMPLETENESS.5`
 Partitioned: 2026-08-31 (`LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`)
 Measurement of record: [`generic-enum-conflation-measurement.md`](generic-enum-conflation-measurement.md)
@@ -14,8 +14,8 @@ moved from and appear in its original order, which is the order they were append
 merged, or dropped.
 
 The measurement retains its defect statement, extraction-side origin, corpus census, member-quality finding,
-decomposed decision, reproducer, and conclusion, and states the composed result under `Outcome`. The open
-`.5.iv.a` CODE slice reports here.
+decomposed decision, reproducer, and conclusion, and states the composed result under `Outcome`. The
+`.5.iv.a` CODE slice reports here, and its section corrects three things `.5.iv` recorded.
 
 ---
 
@@ -426,3 +426,100 @@ extractor and would mint a new `AWATOP` enum on the AXI wire gold `ihi0022_l`, s
 scored document and requires the before/after WIRE-BASED-100 protocol on rebuilt gold evidence, a corpus-wide
 old-versus-new `--dry-run` replay, and FSMGen `--strict --check --json` on every changed `.isf`. The exclusion
 predicate must itself be measured FP-free before it lands, exactly as `.5.iii`'s `_WIDTH` gate was.
+
+---
+
+## `.5.iv.a` LANDED (`2026-08-31`) — the header sources the name, and the measured junk classes were wrong
+
+The `.5.iv` census answered its own question correctly and named the wrong exclusions. Re-measuring the
+population the SHIPPED scan actually visits — not the one `.5.iv` sampled — changed both the size of the
+lever and the predicate it needs.
+
+### Correction 1 — the population is twice what `.5.iv` counted
+
+`.5.iv` filtered on `table_kind == "encoding"`. The shipped scan does not:
+`scan_encoding_tables_by_signal_anchor` skips only signal-description, register-map, and timing-parameter
+tables, and `table_looks_like_encoding` then admits any table whose header carries a name column and a value
+column. `unknown`-kind tables are therefore in scope, and they carry a junk class `.5.iv` never saw at all.
+
+| Population (all visited kinds) | Count |
+| --- | ---: |
+| tables the scan visits | 9,828 |
+| …reaching the header path (one header row, two cells, a description-role right cell) | 994 |
+| …**accepted** — an enum name is sourced | **285** in 9 documents, 164 distinct names |
+| …declined: positional header | 448 |
+| …declined: no encoding literal in the value column | 115 |
+| …declined: ambiguous header (no single field token) | 146 |
+
+Reproducer: `scripts/measure_header_sourced_enum_naming.py` (read-only over the persisted SourceIRs; mirrors
+the shipped predicate clause for clause; `--json` for the machine-readable census).
+
+### Correction 2 — the four classes `.5.iv` named are not the junk that matters
+
+Measured against the whole population rather than the `encoding`-kind sample:
+
+- **The dominant class is POSITIONAL, and `.5.iv` did not name it.** A header word such as `Bytes`, `Offset`,
+  `Index`, or `bits` declares the left column to hold a position or an address, so the table lays out *where*
+  a field sits rather than *what* its values mean. One clause removes 448 of the 709 declined candidates,
+  including every NVMe `Bytes | Description` structure table, the CoreSight SDC-600 `Offset | Description`
+  tables `.5.iv` listed, and the AXI `AxADDR bits` table whose members `.5.iv` recorded as "garbled".
+- **The second class is "encodes nothing", and it subsumes two more of the four.** A glossary
+  (`Term | Meaning`), a notation legend (`Notation | Meaning`), an abbreviation table
+  (`Acronym | Description`), and a `<X>_Width value | Description` parameter table all share one structural
+  property: **no value cell parses as an encoding literal**. Requiring at least one parseable value therefore
+  disqualifies the `*_WIDTH` pseudo-enums `.5.iv` named *and* the glossary class it never saw, without a
+  word list for either. This is the clause that keeps the I2C, OpenCAPI, and CoreSight-BSA glossary tables
+  out — and those are the only accepted-shape tables in a document whose chain can still be rebuilt.
+- **`RESERVED`-only is NOT an exclusion, and the record is corrected.** `.5.iv` called the twelve
+  `RESERVED`-only enums junk that "carry no intent". Two measurements overturn it. First,
+  `build_symbol_definitions` keys members by NAME and drops any member whose value conflicts, so the five
+  multi-row cases self-eliminate downstream with no name-side gate. Second, the seven single-row cases are
+  structurally indistinguishable from 31 legitimate single-distinct-member tables in the same population
+  (`TTL 0b00 = NO_LEVEL_HINT_INFORMATION`, `CD2L 0b1 = 2_LEVEL_CD_TABLE_SUPPORTED`, `S1P`, `PRI`, `GRAN4K`…)
+  — the only discriminator is the word `RESERVED` itself, which is exactly the spec-assigned value
+  vocabulary ADR 0006 forbids. And in the merge they are not even vacuous: CHI `DataSource` fuses a
+  meaning row with a reserved row into the field's correct encoding. So no `RESERVED` clause shipped.
+
+### The predicate that shipped
+
+`derive_header_sourced_enum_name` (`crates/specforge/src/ir/evidence.rs`) runs LAST, only after the
+signal-match loop and the `.5.i`-gated caption fallback have both declined, so it is strictly additive: no
+enum minted today changes name or disappears. Its five clauses are the corrections above:
+
+1. one header row of exactly two cells;
+2. the right cell names a description role;
+3. the left cell carries no POSITIONAL role and, after document-structure and column-role words are stripped,
+   leaves exactly one identifier — the field;
+4. no value cell is a positional range (`03:02`, `[2:0]`), which marks a field-layout table; and
+5. at least one value cell parses as an encoding literal.
+
+### Correction 3 — the leaf's own prediction was false
+
+`.5.iv` handed the code slice a gate: "byte-changing on a scored document — it mints a new `AWATOP` enum on
+the AXI wire gold `ihi0022_l`". Both halves are wrong, and the reason is the corpus, not the lever:
+
+- `ihi0022_l` already carries an `AWATOP` enum with 13 members, so the lever could at most add members.
+- **`ihi0022_l` cannot be rebuilt at all.** Its persisted SourceIR is legacy schema 1, which the current
+  binary refuses for canonical use (`legacy proofless SourceIR schema 1 … is inspection-only and must be
+  rebuilt before canonical use`), and its normalized bundle is not retained. It is one of the 54 legacy
+  chains, against 24 current ones.
+- Of the 285 accepted tables, **1** sits in a rebuildable document — the Arm SMMU Software Guide's
+  `Table 3-1: Stream Security determination`, the very table that opened `.5.iv` — and it mints nothing,
+  because its members are description sentences the `.5.ii` spine gate drops. `.5.iv` predicted exactly that
+  in prose; this is the mechanical confirmation.
+
+So the change is **inert on the whole measurable stratum**, and the corpus-wide replay proves it rather than
+assuming it: `check_chain_currency.sh` replays evidence, semantic, intent, and the ISF adapter for all 24
+rebuildable documents against the patched binary and finds every persisted artifact byte-identical — and
+states its own limit in the same line: `0 emitted .isf file(s), 24 blocked/no-file state(s)`, so the FSMGen
+`--strict` leg has nothing to run on here and is vacuous by construction rather than passed. The capability
+is real and reaches those 8 documents the moment their chains are re-ingested.
+
+### Found while gating this slice — the WIRE-BASED-100 scoring oracle cannot run
+
+The before/after WIRE-BASED-100 protocol this leaf inherited could not be executed, and not because of this
+change: `eval-extraction` refuses **every** document in the corpus, on the pre-change binary too. Isolated to
+a two-line probe — relocating an EvidenceIR by rewriting only its `artifact_layout`, every other byte
+identical, fails canonical verification with `registered derivation 'evidence.claim.schema_version.root'
+output or input topology is stale`, while the byte-identical copy that keeps its original layout verifies
+— and `extract_on_copy` must relocate, so the corpus is never mutated. Owned by `WIRE-BASED-100.8`.

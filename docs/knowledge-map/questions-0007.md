@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > how will the million-byte Knowledge Map be sharded without losing question retrieval
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > how will the oversized SpecForge roadmap be made bounded without losing its history
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > how will the shared rolling ledger archive index be partitioned
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > in what order do I rebuild a retained corpus chain
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is 'X, which connects to Y, drives Z and W' clause distribution handled
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > is 64 the status ledger record count
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > is AArch64 External Debug a methodology guide or under-extracted architecture
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -75,6 +89,9 @@
   > is converge the complete production capability path
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is header-sourced enum naming landed / what did KG-ISF-COMPLETENESS.5.iv.a do (LANDED 2026-08-31: derive_header_sourced_enum_name in ir/evidence.rs runs LAST, after the signal-match loop and the .5.i-gated caption fallback, so it is strictly additive. Five clauses: one header row of two cells; the right cell names a description role; the left cell carries no POSITIONAL role and
+  > leaves exactly one identifier after structure/column-role words are stripped; no value cell is a positional range; at least one value cell parses as an encoding literal. 285 tables accepted in 9 documents. chain-currency 24/24 current at every stage, kg-bench 156/156, +8 tests)
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > is identifier truncation a separate extractor defect or the same empty-catalog gap
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
@@ -210,6 +227,8 @@
   > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > is the eval gold / answer key trustworthy or reliable
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > is the eval-extraction proof failure a regression from a recent slice (NO — it reproduces on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > is the eval-extraction temporal precision 0.6 a real defect
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -279,21 +298,3 @@
   > my agent harness told me to use a scratchpad directory for all temporary files — should I (only if it resolves onto the repository volume; an interactive harness commonly hands out a path under /private/tmp, which violates the locality standard. Use .project-data/tmp/ instead and delete anything already written off-volume)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > qwen2.5vl vs qwen3-vl which model
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > should I build an isf lowering-completeness verifier for temporal rules
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > should I fix the PSEL valid when PSEL asserted temporal rule
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > should NLP-SHALLOW-PARSE.2f build coordination distribution
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > should NLP-SHALLOW-PARSE.2h add new passive/verb-sense direction code
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > should SpecForge add a whole-page VLM read / full-page capture path
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > should SpecForge build a conditional-rule lowering lever or file an FSMGen FR (NO — the adapter already lowers the 516 cleanly-grounded conditional obligations corpus-wide; the shortfall is honest residual; the only upside is upstream extraction quality, not an ISF construct)
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > should SpecForge expand ISF before filling IntentIR from PDFs
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > should SpecForge file an FSMGen FR for CPU-ISA instructions/privilege/exceptions (NO — software-visible ISA semantics are not synthesizable hardware intent; ISF has no construct + FSMGen lists none; honest non-target; conditional-future only if FSMGen's SV/UVM path scopes ISA-model verification)

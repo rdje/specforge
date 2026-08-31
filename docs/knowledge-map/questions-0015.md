@@ -2,6 +2,36 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > why does the eMMC actor count drop 153 to 138 after .1c.i
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why does the emitted .isf default ~98% of signals to output and width 1
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why does the fact-card file count differ from the Knowledge Map fact count
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > why does the fact-card landing have one line per card
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > why does the feedback protocol self test block derived state closure
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why does the live-document report show lines below the ceiling
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > why does the pre-commit hook run check_doctrines.sh
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does the project README get spurious ahb_transfer/apb_transfer transactions
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why does the reviewed prose sit at elem_00230 instead of elem_00219
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > why does the roadmap archive hold more than one capsule
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why does the same token AXI interface merge in one doc but not another
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -267,34 +297,3 @@
   > why must terminal task tree containment use two commits
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > why must the invariant comparator reject a semantic negative first
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why not CTL for temporal behavior
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why not create a new corpus coverage continuation tree
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it,
-  > sub-enum splitting deferred)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > why should corpus counts leave MEMORY md
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why was APB write_transfer / read_transfer membership only PCLK
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > why was MAX_TASKS removed from check_task_tree_catalog.pl
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)

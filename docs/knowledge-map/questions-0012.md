@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > where does the specforge chipdoc host library symlink currently resolve
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > where is FigureRegion stored in EvidenceIR
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > where is actor-signal relation drive/read direction decided in evidence.rs
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > where is adaptive_batch_pages / BatchSizePolicy in the code
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > where is build_fixture.py digest pinned
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > where is coordinated-object actor-signal relation extraction implemented
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > where is current binary replay evidence stored
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -162,6 +184,8 @@
   > which collection order changes may the behavioral comparator normalize
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > which command produces the document_class metric
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > which commands still work on a persisted EvidenceIR that eval-extraction refuses (specforge entity-type, specforge semantic --dry-run, and the whole check_chain_currency.sh replay — they read the artifact in place, so the recorded layout still matches)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > which conditional rules survive when a document declares no signals
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -274,27 +298,3 @@
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > which source modalities and IntentIR surfaces are required per chip-spec category
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which source modalities are represented in the first vertical population
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > which source-to-IntentIR categories are supported incomplete or unmeasurable
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > which stage has no read-only canonical probe
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > which stale roadmap statuses were found before migration
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > which strategy is message_fields.byte_location_table
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > which surface bounds the number of task trees now
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > which task does the trajectory controller recommend first
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > which task owns deterministic Rust tests under repository-local TMPDIR
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > which task owns fact-card catalog containment
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > which task owns mdBook fence classification and doctest enforcement
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > which task owns the SourceIR reproducibility gap
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > which task owns the ingest conservation gap

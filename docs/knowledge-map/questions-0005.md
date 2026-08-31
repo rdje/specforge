@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > how does SpecForge stop a published gap reproduction from silently running no test
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > how does SpecForge verify an extracted claim semantically / catch hallucination
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > how does a VLM timing note become a FigureRegion
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how does a deliberate normalized-bundle reclamation get authorized
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > how does a future SpecForge session retrieve and re-run a current claim
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > how does a heterogeneous collection declare its legal maximum
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -283,17 +297,3 @@
   > how is the SWDIO sampling and drive-change edge scored
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is the composition-frame grammar kept free of corpus false positives
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how is the corpus distributed across the document intent categories
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > how is the decision-record file bound derived
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how is the figure-interior drop mechanism verified
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > how is the ingest DISK footprint bounded for very large PDFs
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > how is the live-document containment checker tested

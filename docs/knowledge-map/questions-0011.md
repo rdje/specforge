@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > what is the semantic_ungrounded_records_not_promoted residual packet
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > what is the size-immunity binding constraint for source_ir.json at extreme page counts
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what is the source-to-IntentIR completeness contract
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what is the standing per-doc quality report wired into converge/CI
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is the table-kind precision estimate and the flagged-mismatch list
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > what is the transaction phase qualifier authority rule
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
@@ -37,8 +59,8 @@
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > what moved residual actionability from 4 of 16 to 8 of 16
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what must .5.iv.a exclude before header-sourced naming can land (four measured junk classes among the 134: OFFSET-headed register-offset tables where the header names a column concept not a field (3, CoreSight SDC-600); *_WIDTH self-named pseudo-enums whose only member is LEGAL_VALUES (the .5.iii honest residual, reappearing from the header side); garbled members (AXADDR ->
-  > VA_40/NUM_2_0_A); and 12 RESERVED-only enums carrying no intent. It is byte-changing on the AXI wire gold ihi0022_l (a new AWATOP enum) so it needs the full before/after WIRE-BASED-100 protocol)
+  > what must .5.iv.a exclude before header-sourced naming can land (the four classes .5.iv named are the WRONG list — see the .5.iv.a corrections below. What shipped: a POSITIONAL header word (bit/bits/byte/bytes/offset/index/address/range/position) vetoes outright because the column holds a position, so the table is a field LAYOUT; a positional RANGE value cell (03:02, [2:0])
+  > vetoes for the same reason; and at least one value cell must PARSE as an encoding literal. RESERVED-only did NOT ship as an exclusion)
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what must SpecForge derive to fully capture SWD; what are the gaps
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -276,25 +298,3 @@
   > where does the first reviewed source-to-IntentIR population fail
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > where does the specforge chipdoc host library symlink currently resolve
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > where is FigureRegion stored in EvidenceIR
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > where is actor-signal relation drive/read direction decided in evidence.rs
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > where is adaptive_batch_pages / BatchSizePolicy in the code
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > where is build_fixture.py digest pinned
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > where is coordinated-object actor-signal relation extraction implemented

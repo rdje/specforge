@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what does MessageFieldRecord.bit_range mean and when is it set
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > what does MessageFieldRecord.byte_offset mean
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > what does PROOF-SEAL-CURRENCY prove and not prove
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what does SPECFORGE_INGEST_RAM_SAMPLE_SECS do
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -276,25 +298,3 @@
   > what is a contested prior
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is a route catalog part
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > what is aggregate_composition in surfaces.jsonl
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is capture_signal_presence_rows and who shares it
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is captured_region_residuals
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is cited_table_ids
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what is content-based name-column detection / rotation offset remapping
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is continuation_inherited_table_heads and what grounds the join
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 47 and why is its adapter honestly blocked
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 49
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
