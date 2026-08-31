@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SCRATCH-RESIDUE-CONTAINMENT`
-- Status: `active` (`.0`, `.3` complete; `.1`, `.2`, `.4` pending)
+- Status: `active` (`.0`, `.3`, `.5` complete; `.1`, `.2`, `.4` pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-08-29`
+- Last updated: `2026-08-31`
 - Owner: repo-local workflow
 
 ## Goal
@@ -141,6 +141,30 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   remedy actually survives the kill shape `.3` measured, and the gate-walk exposure must be closed or
   explicitly accepted with a reason
   Prerequisite: `SCRATCH-RESIDUE-CONTAINMENT.3`
+
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.5`
+  State: `done` (`2026-08-31`)
+  Goal: make the agent-harness scratch conflict discoverable before an agent writes off-volume, not after
+  Acceptance: this tree has been about scratch the repository CREATES. The complementary hazard is scratch an
+  agent is INSTRUCTED to create somewhere else: an interactive harness can hand a session a scratchpad
+  directory outside the repository volume and tell it to use that for all temporary files, which is exactly
+  what `PROJECT_DATA_LOCALITY.md` forbids ("must never default to `/private/tmp`, `/tmp`, user-home caches, or
+  another off-volume location"). No gate can see this — the files never enter the repository, so
+  `check_project_data_locality` has nothing to walk, and the residue is invisible to the census `.3` built.
+  The only workable control is retrieval: the fact must be findable in the Knowledge Map at the moment an
+  agent is deciding where to put a temporary file, which is before it has any reason to open
+  `PROJECT_DATA_LOCALITY.md`. Acceptance is a fact card answering the question in the words an agent would
+  actually use, no bound or gate changes, and no claim that this is mechanically enforced — it is not
+  **Observed live, which is why it is worth recording (`2026-08-31`).** The `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`
+  session was handed an off-volume scratchpad by its harness and wrote three partition-verification files there
+  before catching the conflict; they were moved to `.project-data/tmp/` and the off-volume copies deleted, with
+  an empty residue check. The failure mode is not carelessness — the harness instruction is explicit and
+  arrives before the repository's own policy is read, so ordinary compliance with one rule breaks the other.
+  Verification: `fact card project-scratch-location added, answering where a temporary file goes and naming
+  .project-data/tmp/ as the repository-volume root (gitignored except .gitkeep, per PROJECT_DATA_LOCALITY.md's
+  temporary-workspaces row); off-volume residue from the observing session removed and re-censused empty; no
+  surface bound, gate, or registry dimension changed`
+  Commit: `SCRATCH-RESIDUE-CONTAINMENT.5 — record the off-volume harness-scratchpad hazard where retrieval finds it`
 
 ## Open Questions
 

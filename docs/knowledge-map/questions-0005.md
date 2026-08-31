@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > how does an unknown-kind Continued from previous page table fragment get a kind
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does automatic task ranking keep hard failures ahead of breadth work
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -293,7 +297,3 @@
   > how is the precision of the broadened (non-gold) extraction measured / estimated
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how is the proof seal read from a large stage artifact
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how is the protocol initiator actor identified structurally without a name list

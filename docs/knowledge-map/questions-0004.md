@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how are byte location | size | register description tables extracted
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are caption-less page fragments of a split table stitched together
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
@@ -130,6 +132,8 @@
   > how do I check whether a named frontier has an owning task-tree leaf
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how do I check whether the persisted corpus seal is stale
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > how do I clean up scratch after a slice
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how do I count the records in the status ledger
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -294,7 +298,3 @@
   > how does a section-heading register avoid double-counting an existing register record
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > how does an unknown-kind Continued from previous page table fragment get a kind

@@ -1,3 +1,22 @@
+### SCRATCH-RESIDUE-CONTAINMENT.5 — record the off-volume harness-scratchpad hazard where retrieval finds it
+
+- THIS TREE HAS BEEN ABOUT SCRATCH THE REPOSITORY CREATES; the complementary hazard is scratch an agent is
+  INSTRUCTED to create somewhere else. An interactive harness can hand a session a scratchpad directory
+  outside the repository volume — commonly under /private/tmp — and tell it to use that for all temporary
+  files, which is exactly what PROJECT_DATA_LOCALITY.md forbids. The instruction is not adversarial, it is
+  the harness default, and it arrives before the agent has any reason to open the locality standard.
+- NO GATE CAN CATCH IT, and the leaf says so rather than implying coverage. The files never enter the
+  repository, so check_project_data_locality has nothing to walk and the .3 residue census cannot see them.
+  Retrieval is the only workable control, so the remedy is a fact card phrased in the words an agent actually
+  uses when deciding where to put a temporary file — not a checker that would be theatre.
+- OBSERVED LIVE, which is why it is recorded at all: the LIVE-DOCUMENT-PRESSURE-HEADROOM.4e session wrote
+  three partition-verification files to its harness scratchpad before catching the conflict; they were moved
+  to .project-data/tmp/ and the off-volume copies deleted, with an empty residue check.
+- Fact card project-scratch-location added (254 cards; Knowledge Map 277 facts / 2,220 keys over 16 shards).
+  The fact-card planned_outputs contract and the published card-count assertion moved in the same
+  transaction, the latter re-derived from its named producer rather than hand-set. No bound, gate, registry
+  dimension, or product behaviour changed.
+
 ### KG-ISF-COMPLETENESS.5.iv.a — give the lane's named next step an owning leaf
 
 - FOUND WHILE COUNTING A WRITER SET, NOT WHILE LOOKING FOR IT. LIVE-DOCUMENT-PRESSURE-HEADROOM.4e had to

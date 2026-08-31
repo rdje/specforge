@@ -68,6 +68,8 @@
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > can I re-stamp a published replay record
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > can I use /tmp or /private/tmp for scratch in SpecForge (NO — PROJECT_DATA_LOCALITY.md forbids defaulting to /private/tmp, /tmp, user-home caches, or any other off-volume location; all project-owned data must sit on the same filesystem volume as the repository)
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > can ISF model an explicit state machine / FSM (proven)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -295,5 +297,3 @@
   > does IntentIR preserve SWD protocol provenance and order
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > does PhaseRecord remain schema compatible
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > does SemanticIR keep copyright and license text
