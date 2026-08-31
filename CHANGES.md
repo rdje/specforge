@@ -1,3 +1,36 @@
+### WIRE-BASED-100.8a — give a proof-carrying artifact a supported way to move, and restore the scoring oracle
+
+- THE ORACLE WAS DOWN, AND IT WAS THE ARTIFACT'S ADDRESS, NOT ITS CONTENT. `eval-extraction` refused every
+  document in the corpus; on the rebuildable stratum the diagnostic was `registered derivation
+  'evidence.claim.schema_version.root' output or input topology is stale`. Isolated read-only: two copies of the
+  I2C EvidenceIR, one keeping the `<base>/<document_key>` convention and one flat, each with ONLY
+  `artifact_layout` rewritten and every other byte identical, are both refused by `specforge entity-type`, while
+  the artifact in place verifies and runs. So the flat layout was never the issue — relocation as such was.
+- MECHANISM. `proof_kernel` registers one `evidence.current-replay` derivation over
+  `serde_json::to_vec(public_field_values())` and makes it the sole input of every `evidence.claim.<surface>.<key>`
+  derivation; `public_field_values` inserts `artifact_layout`. Each claim premise's `inputs_sha256` therefore binds
+  the artifact's storage path, and `validate_premise`'s `RegisteredDerivation` arm raises that exact diagnostic when
+  the recomputed topology differs. `extract_on_copy` must relocate, precisely so the corpus is never mutated, so
+  every eval task failed before scoring.
+- THE FIX IS A SUPPORTED OPERATION, NOT A LOOSENED SEAL. `EvidenceIr::load_relocated_to_artifact_base_root`
+  verifies the artifact where it is, moves it to `<base>/<document_key>/evidence_ir.json`, and re-derives its proof
+  for the new location from the same verified SourceIR prefix and the same sealed proof context, mutation chain
+  intact. It cannot launder authority: the artifact must already verify, and `write_to_disk` re-verifies the result
+  against an independent rebuild. An unsealed `artifact_layout` rewrite stays refused, and a hermetic control pins
+  both halves. The deeper fix — taking the replay over everything except the location — was rejected here because
+  it changes the frozen 38-family/170-field producer graph and invalidates all 24 sealed chains at once.
+- MEASURED, `--provider skip`, first re-derivation since `2026-08-09`. I2C `declared_signal` source-tolerant
+  1.000 (tp=6 fp=0 fn=0) with complete-gold precision 6/6; SWD `signal_constraint` 1.000 (1/1) and
+  `actor_signal_relation` source-tolerant 1.000 (1/1); SWD derivation gold `protocol_operation` 1.000 (4/4) and
+  `interface_edge_timing` 1.000 (1/1). The corpus is provably unmutated (both exercised artifacts keep their
+  pre-change mtimes) and `check_chain_currency.sh --check` stays 24 replayed / 24 current / 0 stale.
+- AND THE FIRST THING THE WORKING ORACLE FOUND: the SWD derivation gold also scores `serial_frame_field` 0/11 and
+  `protocol_state` 0/13 — document-level 5/29, against a published `29/29 at 1.000`. That is not a regression and
+  not caused by this slice: it is the published effect of `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` (`89d8dee7`,
+  `2026-08-12`), whose own entry below records that exact comparison *"retires 22 fixed-phase frame and four
+  named-operation records"*. The trade was honest; leaving the retired score standing as current for 20 days was
+  not, and nothing caught it because the oracle that would have was itself down. Owned as `WIRE-BASED-100.8c`.
+
 ### KG-ISF-COMPLETENESS.5.iv.a — correction: the RESERVED split was 5/7 and is 6/6, and its worked example was backwards
 
 - THE DIRECTOR ASKED WHETHER THE FIVE PUBLISHED FINDINGS STILL HOLD. Three re-derive exactly and are

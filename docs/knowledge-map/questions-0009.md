@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > what does DOCLING_DEVICE do
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what does KG-ISF-TRANSACTIONS.2k add
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
@@ -294,7 +298,3 @@
   > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > what is a cardinality exemption
-- [contested-priors](../knowledge/contested-priors.md)
-  > what is a contested prior

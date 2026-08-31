@@ -49,10 +49,18 @@ actor→signal relations; the contract and diagram tasks are deferred):
   labeled *completely*).
 - **The runner** (`eval-extraction`). For each document in the dataset it runs the *real*
   extraction command with the chosen model **on a temp copy** of that document's
-  EvidenceIR — the IR's write target is redirected to a temp directory, so your corpus
-  artifacts are never mutated — then reads the produced records, matches them to the
-  labeled statements by provenance, and scores. `--provider skip` makes the commands
-  no-op, giving the deterministic pattern baseline for free.
+  EvidenceIR, so your corpus artifacts are never mutated — then reads the produced
+  records, matches them to the labeled statements by provenance, and scores.
+  `--provider skip` makes the commands no-op, giving the deterministic pattern baseline
+  for free.
+
+  That temp copy is not a plain file copy. An EvidenceIR carries an executable proof, and
+  the proof covers the artifact's own recorded storage location, so a byte-identical copy
+  at another path is refused rather than trusted. The runner therefore relocates through
+  the supported seam, which verifies the artifact where it lives and then re-derives its
+  proof for the temp root from the same verified SourceIR — see
+  [Relocating a proof-carrying artifact](../pipeline/evidenceir.md#relocating-a-proof-carrying-artifact).
+  The copy the extraction command sees is a fully proved artifact, not a downgraded one.
 
 ## Honesty notes
 
@@ -61,6 +69,13 @@ actor→signal relations; the contract and diagram tasks are deferred):
 - The score measures the **whole system's** output for a statement (pattern + LLM), which
   is what matters for "which model gives the best final extraction." Isolate the LLM's
   contribution by diffing against the `--provider skip` baseline.
+- **A published score is only worth what its last re-derivation is worth.** Between at
+  least `2026-08-28` and `2026-09-01` this runner refused every document in the corpus, so
+  no score on this page could be re-derived on demand; the cause was the relocation
+  described above, and it is fixed. Two strata still differ in what they can tell you: the
+  24 rebuildable documents can be re-scored now, while the 54 legacy schema-1 chains —
+  which include the APB, AHB and AXI golds — are refused as proofless and inspection-only
+  until they are re-ingested. Re-run a number before you rely on it.
 
 ## How it was verified
 

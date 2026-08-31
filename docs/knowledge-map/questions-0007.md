@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > how will SpecForge automatically detect convergence or divergence
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > how will the million-byte Knowledge Map be sharded without losing question retrieval
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -227,8 +231,6 @@
   > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > is the eval gold / answer key trustworthy or reliable
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > is the eval-extraction proof failure a regression from a recent slice (NO — it reproduces on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > is the eval-extraction temporal precision 0.6 a real defect
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -296,5 +298,3 @@
   > must a repair leaf rebuild every affected document or only the ones it measures
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > my agent harness told me to use a scratchpad directory for all temporary files — should I (only if it resolves onto the repository volume; an interactive harness commonly hands out a path under /private/tmp, which violates the locality standard. Use .project-data/tmp/ instead and delete anything already written off-volume)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)

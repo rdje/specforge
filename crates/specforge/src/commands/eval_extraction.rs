@@ -3,9 +3,10 @@
 //! `LLM-EXTRACTION-EVAL.4`: the provider-gated runner. For each `(doc_key, task)` in
 //! the dataset it runs the *real* extraction command (`nlp-enrich` / `signal-resolve`)
 //! with the chosen provider/model **on a temp copy** of the document's EvidenceIR
-//! (redirecting the IR's `artifact_layout` to a temp dir so the corpus artifact is never
-//! mutated), reads the produced typed records, indexes them by statement provenance, and
-//! scores them against the gold labels via [`crate::eval`].
+//! (relocated to a temp root through the proof-carrying seam, so the corpus artifact is
+//! never mutated and the copy still carries a valid proof), reads the produced typed
+//! records, indexes them by statement provenance, and scores them against the gold labels
+//! via [`crate::eval`].
 //!
 //! `--provider skip` makes the extraction commands no-op, so the temp copy keeps only the
 //! deterministic pattern records — i.e. the **baseline**. A model A/B is two runs
@@ -156,10 +157,12 @@ fn extract_on_copy(
 ) -> Result<(TaskRecords, Vec<FactProvenanceRecord>)> {
     let source = evidence_root.join(doc_key).join("evidence_ir.json");
     let temp = crate::project_data::tempdir()?;
-    let mut ir = EvidenceIr::load_from_path(&source)?;
-    // Redirect all writes to the temp dir; the command writes there, not over the corpus.
-    ir.artifact_layout.artifact_root = temp.path().to_path_buf();
-    ir.artifact_layout.evidence_ir_path = temp.path().join("evidence_ir.json");
+    // Relocate into the temp root so the command writes there, never over the corpus.
+    // `WIRE-BASED-100.8a` — this goes through the proof-carrying seam. Rewriting `artifact_layout`
+    // directly, as this did, voids the seal: an EvidenceIR's proof is taken over its public fields
+    // and those include the artifact's own storage location, so every later load of the copy was
+    // refused with a stale registered replay topology, and no eval task ever reached scoring.
+    let ir = EvidenceIr::load_relocated_to_artifact_base_root(&source, temp.path())?;
     ir.write_to_disk()?;
     let temp_path = ir.artifact_layout.evidence_ir_path.clone();
 

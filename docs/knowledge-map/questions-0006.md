@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWDIO sampling and drive-change edge scored
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how is the composition-frame grammar kept free of corpus false positives
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -294,7 +298,3 @@
   > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > how will SpecForge automatically detect convergence or divergence

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how does SpecForge serialize repository owned paths
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how does SpecForge stop a published count going stale under a green gate
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > how does SpecForge stop a published gap reproduction from silently running no test
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -293,7 +297,3 @@
   > how is the NLI gate tested without Ollama
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWDIO sampling and drive-change edge scored
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist

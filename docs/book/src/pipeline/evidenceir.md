@@ -93,6 +93,33 @@ EvidenceIR implementation identity uses the shared
 [production-semantic digest closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met),
 so test/comment churn is inert while a referenced production verifier dependency changes proof currency.
 
+### Relocating a proof-carrying artifact
+
+The registered replay is taken over the artifact's public fields, and one of those fields is the artifact's own
+`artifact_layout`. The proof therefore covers *where the artifact is stored*, not only what it says. Copy an
+`evidence_ir.json` to another directory, rewrite only its `artifact_layout`, leave every other byte identical,
+and canonical load refuses it:
+
+```text
+error: invalid stage artifact: EvidenceIR proof verification failed: registered derivation
+'evidence.claim.schema_version.root' output or input topology is stale
+```
+
+That is the seal working, not a bug — but read-only work still has to move artifacts. Scoring the extraction
+commands, above all, must run them against a copy so the corpus is never mutated. So relocation is a supported
+operation rather than a field rewrite: `EvidenceIr::load_relocated_to_artifact_base_root` verifies the artifact
+where it currently lives, moves it to `<new base>/<document_key>/evidence_ir.json`, and re-derives the proof for
+that location from the same verified SourceIR prefix and the same sealed proof context, mutation chain included.
+
+It cannot launder authority in either direction. The artifact must already verify before it may move, and
+writing the relocated artifact re-verifies it against an independent rebuild from its SourceIR, so content that
+no longer replays cannot be persisted at the new path. Only the storage location, and the proof that binds it,
+differ from the original.
+
+Note what this does *not* affect: moving the whole repository. Persisted paths are repository-root-relative and
+resolved against the current root at runtime, so a repository that moves — even to another filesystem — keeps
+every seal valid. It is relocation *within* a repository that needs the seam.
+
 ## Typical evidence-level wins
 
 - source/destination table recovery

@@ -1151,6 +1151,50 @@ impl EvidenceIr {
         evidence_ir.runtime_clone()
     }
 
+    /// `WIRE-BASED-100.8a` — load a canonical EvidenceIR and re-prove it for a different
+    /// repository-owned artifact base root.
+    ///
+    /// An EvidenceIR's proof is taken over its public field map, and that map includes the
+    /// artifact's own `artifact_layout`, so every claim premise binds where the artifact is stored:
+    /// a byte-identical copy at another path fails canonical verification with a stale registered
+    /// replay topology. Read-only work — scoring the extraction commands without mutating the
+    /// corpus, above all — has to relocate the artifact, so relocation needs a supported operation
+    /// rather than an unsealed field rewrite that quietly voids the seal.
+    ///
+    /// The artifact is verified where it currently is, because a relocation must not launder
+    /// authority onto something that never had it. It then moves to
+    /// `<artifact_base_root>/<document_key>/evidence_ir.json` — the same layout convention the
+    /// independent rebuild that verification performs replays, so the two still agree — and its
+    /// proof is re-derived for that location from the same verified SourceIR prefix and the same
+    /// sealed proof context, mutation chain included. Only the storage location changes;
+    /// [`Self::write_to_disk`] re-verifies the result against a fresh rebuild, so this seam cannot
+    /// persist content that no longer replays from its SourceIR.
+    pub fn load_relocated_to_artifact_base_root(
+        evidence_ir_path: &Path,
+        artifact_base_root: &Path,
+    ) -> Result<Self> {
+        let (mut evidence_ir, _) = Self::load_with_verified_proof(evidence_ir_path)?;
+        let context = evidence_ir
+            .proof_context
+            .clone()
+            .ok_or_else(|| evidence_derivation_error("proofless EvidenceIR cannot be relocated"))?;
+        let source_runtime_path = resolve_existing(
+            &evidence_ir.source_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        let (_, source_proof) = SourceIr::load_with_verified_proof(&source_runtime_path)?;
+        let prior_guidance = evidence_ir.prior_guidance_for_context(&context)?;
+        let artifact_root = artifact_base_root.join(&evidence_ir.document_identity.document_key);
+        let relocated_path = artifact_root.join("evidence_ir.json");
+        evidence_ir.artifact_layout = EvidenceArtifactLayout {
+            artifact_root,
+            evidence_ir_path: relocated_path,
+        }
+        .runtime_layout()?;
+        evidence_ir.refresh_proof_from_context(context, &source_proof, prior_guidance.as_ref())?;
+        Ok(evidence_ir)
+    }
+
     pub fn build(source_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
         Self::build_with_prior_memory(source_ir_path, artifact_base_root, None)
     }
@@ -1406,6 +1450,27 @@ impl EvidenceIr {
         Ok((builder.seal(), proof_premises))
     }
 
+    /// The validated-prior guidance every proof operation over this artifact must reconstruct,
+    /// from the artifact's own persisted prior path plus the prior payload captured in its sealed
+    /// proof context. The two are one fact recorded twice, so a disagreement is a corrupt artifact
+    /// rather than a defaultable state.
+    fn prior_guidance_for_context(
+        &self,
+        context: &EvidenceProofContext,
+    ) -> Result<Option<EvidencePriorGuidance>> {
+        match (&self.prior_memory_path, &context.prior_memory) {
+            (None, None) => Ok(None),
+            (Some(path), Some(corpus_memory)) => Ok(Some(EvidencePriorGuidance {
+                prior_memory_path: resolve_repository_output(path)?,
+                corpus_memory: corpus_memory.clone(),
+                prior_scope: PriorScope::Global,
+            })),
+            _ => Err(evidence_derivation_error(
+                "EvidenceIR prior path and captured validated-prior payload disagree",
+            )),
+        }
+    }
+
     fn refresh_canonical_proof(
         &mut self,
         source_ir: &SourceIr,
@@ -1498,19 +1563,7 @@ impl EvidenceIr {
         let source_runtime_path =
             resolve_existing(&self.source_ir_path, PersistedPathOrigin::RepositoryOwned)?;
         let (source_ir, source_proof) = SourceIr::load_with_verified_proof(&source_runtime_path)?;
-        let prior_guidance = match (&self.prior_memory_path, &context.prior_memory) {
-            (None, None) => None,
-            (Some(path), Some(corpus_memory)) => Some(EvidencePriorGuidance {
-                prior_memory_path: resolve_repository_output(path)?,
-                corpus_memory: corpus_memory.clone(),
-                prior_scope: PriorScope::Global,
-            }),
-            _ => {
-                return Err(evidence_derivation_error(
-                    "EvidenceIR prior path and captured validated-prior payload disagree",
-                ));
-            }
-        };
+        let prior_guidance = self.prior_guidance_for_context(&context)?;
         let runtime_layout = self.artifact_layout.runtime_layout()?;
         let artifact_base_root = runtime_layout.artifact_root.parent().ok_or_else(|| {
             AppError::InvalidStageArtifact(
@@ -1626,19 +1679,7 @@ impl EvidenceIr {
         let source_runtime_path =
             resolve_existing(&self.source_ir_path, PersistedPathOrigin::RepositoryOwned)?;
         let (source_ir, source_proof) = SourceIr::load_with_verified_proof(&source_runtime_path)?;
-        let prior_guidance = match (&self.prior_memory_path, &context.prior_memory) {
-            (None, None) => None,
-            (Some(path), Some(corpus_memory)) => Some(EvidencePriorGuidance {
-                prior_memory_path: resolve_repository_output(path)?,
-                corpus_memory: corpus_memory.clone(),
-                prior_scope: PriorScope::Global,
-            }),
-            _ => {
-                return Err(evidence_derivation_error(
-                    "EvidenceIR prior path and captured validated-prior payload disagree",
-                ));
-            }
-        };
+        let prior_guidance = self.prior_guidance_for_context(context)?;
         let runtime_layout = self.artifact_layout.runtime_layout()?;
         let artifact_base_root = runtime_layout.artifact_root.parent().ok_or_else(|| {
             AppError::InvalidStageArtifact(
@@ -31654,5 +31695,90 @@ mod swd_serial_extraction_4e {
         assert_eq!(surface.entries[0].name, "timing.interface_edge_prose");
         assert_eq!(surface.entries[0].produced, 1);
         assert_eq!(surface.entries[0].kept, 1);
+    }
+}
+
+#[cfg(test)]
+mod wire_based_100_8a {
+    //! WIRE-BASED-100.8a — proof-carrying relocation of a verified EvidenceIR.
+    use std::fs;
+    use std::path::PathBuf;
+
+    use tempfile::tempdir;
+
+    use super::{EvidenceArtifactLayout, EvidenceIr};
+    use crate::error::Result;
+    use crate::ir::source::SourceIr;
+
+    #[test]
+    fn relocation_through_the_seam_preserves_verification() -> Result<()> {
+        // An EvidenceIR's proof is taken over its public fields, and those include
+        // `artifact_layout`, so the proof binds where the artifact is stored. A consumer that must
+        // score the extraction commands without mutating the corpus therefore cannot simply rewrite
+        // the layout of a copy. Both halves of that contract are pinned here.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("relocatable.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            "# Protocol\nSignal XREQV is output width 1.\nXREQV must be HIGH when the transfer is accepted.\n",
+        )?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_test_fixture_to_disk()?;
+        let original_path = evidence_ir.artifact_layout.evidence_ir_path.clone();
+        let document_key = evidence_ir.document_identity.document_key.clone();
+
+        // Both artifacts below are persisted with a plain `fs::write` rather than `write_to_disk`,
+        // because `write_to_disk`'s test-fixture re-seal would repair precisely the failure under
+        // test and turn either assertion into a false green.
+        let persist = |artifact: &EvidenceIr| -> Result<PathBuf> {
+            let path = artifact.artifact_layout.evidence_ir_path.clone();
+            fs::create_dir_all(&artifact.artifact_layout.artifact_root)?;
+            fs::write(
+                &path,
+                serde_json::to_string_pretty(&artifact.persisted_clone()?)?,
+            )?;
+            Ok(path)
+        };
+
+        // Control — the unsupported move: rewrite `artifact_layout` and leave every other byte
+        // identical. The production read path must still refuse it.
+        let mut unsealed = EvidenceIr::load_from_path(&original_path)?;
+        let unsealed_root = tempdir.path().join("unsealed").join(&document_key);
+        unsealed.artifact_layout = EvidenceArtifactLayout {
+            artifact_root: unsealed_root.clone(),
+            evidence_ir_path: unsealed_root.join("evidence_ir.json"),
+        };
+        let refusal = EvidenceIr::load_from_path(&persist(&unsealed)?)
+            .expect_err("an unsealed artifact_layout rewrite must stay refused");
+        assert!(
+            refusal.to_string().contains("topology is stale"),
+            "unexpected refusal: {refusal}"
+        );
+
+        // The supported seam: relocate and re-prove, then read it back through that same path.
+        let relocated_base = tempdir.path().join("relocated");
+        let relocated =
+            EvidenceIr::load_relocated_to_artifact_base_root(&original_path, &relocated_base)?;
+        assert_eq!(
+            relocated.artifact_layout.evidence_ir_path,
+            relocated_base.join(&document_key).join("evidence_ir.json"),
+            "relocation must keep the <base>/<document_key> layout the rebuild replays"
+        );
+        let reloaded = EvidenceIr::load_from_path(&persist(&relocated)?)?;
+
+        // Only the storage location — and the proof that binds it — may differ.
+        let mut expected = EvidenceIr::load_from_path(&original_path)?;
+        assert_ne!(expected.proof_ledger, reloaded.proof_ledger);
+        expected.artifact_layout = reloaded.artifact_layout.clone();
+        expected.proof_ledger = reloaded.proof_ledger.clone();
+        assert_eq!(expected, reloaded);
+        Ok(())
     }
 }

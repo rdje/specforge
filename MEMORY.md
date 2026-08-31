@@ -6,40 +6,36 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `KG-ISF-COMPLETENESS` — `.5` is COMPLETE (`.5.i` name gate, `.5.ii` spine gate, `.5.iii`
-  `_WIDTH` gate, `.5.iv` measurement, `.5.iv.a` header source). Newly opened and now the lane's blocker:
-  `WIRE-BASED-100.8`. Also open: `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/
-  `.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
-  `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
-  `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`;
-  `CHANGES-LEDGER-ROLLOVER.4`.
-- Current state: **the corpus, not the code, is what limits extraction work now.** 54 of 78 persisted chains
-  are legacy schema 1 — the current binary refuses them for canonical use — including the APB/AHB/AXI wire
-  golds and NVMe/RISC-V register golds; only 24 are rebuildable, and only SWD/ADI + I2C among the scored
-  documents. So `.5.iv.a` ships a real capability that reaches 9 documents and changes nothing on disk
-  today: exactly 1 of its 285 accepted tables is in a rebuildable document, and that one mints nothing.
-  Worse, `WIRE-BASED-100.8`: `eval-extraction` refuses EVERY document (pre-change binary too), because an
-  EvidenceIR proof binds the artifact's own `artifact_layout` and `extract_on_copy` must relocate — so no
-  WIRE-BASED-100 number can be re-derived at all.
-- Next action: `WIRE-BASED-100.8` — restore the scoring oracle before any further extraction slice, since
-  every such slice's mandated before/after gate runs through it. Split it if the proof-kernel fix and the
-  `eval-extraction` fix are separately reviewable.
+- Active unit: `WIRE-BASED-100.8` — `.8a` is COMPLETE (the scoring oracle runs again). Open children:
+  `.8c` (the stale SWD score the restored oracle exposed) then `.8b` (legacy stratum → UNMEASURABLE
+  disposition). Also open: `KG-ISF-COMPLETENESS` beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM`
+  `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY`
+  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`;
+  `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`;
+  `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`.
+- Current state: **the oracle is back, and it immediately falsified a published number.** An EvidenceIR's proof
+  is taken over its public fields and `artifact_layout` is one of them, so the proof bound the artifact's storage
+  path and every relocated copy was refused — which is what `eval-extraction` must do to leave the corpus
+  untouched. Relocation is now a supported, re-proving operation. First re-derivation since `2026-08-09`
+  (`--provider skip`): I2C declared-signal 1.000 (6/6); SWD constraint 1.000, relation 1.000,
+  protocol_operation 4/4, interface_edge_timing 1/1 — **but serial_frame_field 0/11 and protocol_state 0/13,
+  i.e. 5/29 against a published 29/29.** Cause identified and NOT a regression: `89d8dee7` (`2026-08-12`)
+  retired the fixed-phase frame and named-operation carriers on ADR-0006 genericity grounds and said so in its
+  own ledger entry. Only the 24 rebuildable chains are scoreable; the 54 legacy schema-1 chains (APB/AHB/AXI
+  golds) are still refused.
+- Next action: `WIRE-BASED-100.8c` — correct every live surface that still presents SWD `29/29` as current
+  (`WIRE-BASED-100.5j`, `SWD-SERIAL-EXTRACTION`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, book
+  `quality/extraction-eval.md` §SWD protocol facts), keeping the retired number as dated history, and give the
+  residual recall frontier an owning leaf or an explicit deferral. Then `.8b`.
 - In-flight uncommitted: none after this commit.
-- Blockers: none that stop work, one that weakens evidence — **the gate a slice is told to run may itself be
-  down; prove the oracle runs BEFORE trusting a green result from it.** `.5.iv.a` also shows a measurement
-  can be right and its scope wrong: `.5.iv` censused `table_kind == encoding`, but the shipped scan visits
-  `unknown` too, so the population was 2x and its four "junk classes" missed the dominant one (positional
-  headers) and the whole glossary class. **Re-derive the population from the SHIPPED path, never from the
-  earlier census.** And a named exclusion may be unnecessary: half the `RESERVED`-only cases are eliminated
-  by `build_symbol_definitions`' conflicting-value rule, so it did not ship — measure downstream before
-  gating upstream. **A count read off a dump is not derived.** That elimination split shipped as `5/7`, is
-  `6/6`, and its worked example shipped backwards; both were caught only because the director audited, and
-  the fix was to make the reproducer model the merge (`--reserved-split`), not to reword. Two frames that
-  answer the same question are still two populations — label which one a number came from.
-  Prepending to `CHANGES.md` shifts the line-pinned `current_claim_census.jsonl` regions
-  (re-anchor by CONTENT, never offsets); editing `CHANGES.md`/`MEMORY.md` stales `durability.artifacts`
-  digests in `claims.jsonl`; a new fact card moves `fact_card_catalog.json` `planned_outputs` plus the
-  `fact-card-catalog-count` assertion — refresh those last. Never infer ownership from a mention: read the
-  owner's own `Status`. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/
-  `.9`/`.12`/`.13`; `CHANGES-LEDGER-ROLLOVER.4`; `SCRATCH-RESIDUE-CONTAINMENT.4` — never run the fixture
-  suite concurrently with the locality gate. `durability.stale_check` is never executed by any gate (`.18`).
+- Blockers: none that stop work. Standing hazards, unchanged: **prove the oracle runs BEFORE trusting a green
+  result from it** — and now also **re-derive a published score before citing it**, because a genericity trade
+  can retire a number that no live surface then corrects. Two frames answering the same question are still two
+  populations — label which one a number came from; a count read off a dump is not derived. Prepending to
+  `CHANGES.md` shifts the line-pinned `current_claim_census.jsonl` regions (re-anchor by CONTENT, never
+  offsets); editing `CHANGES.md`/`MEMORY.md` stales `durability.artifacts` digests in `claims.jsonl`; a new fact
+  card moves `fact_card_catalog.json` `planned_outputs` plus the `fact-card-catalog-count` assertion — refresh
+  those last. Never infer ownership from a mention: read the owner's own `Status`. Owned, not fixed:
+  `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`; `CHANGES-LEDGER-ROLLOVER.4`;
+  `SCRATCH-RESIDUE-CONTAINMENT.4` — never run the fixture suite concurrently with the locality gate.
+  `durability.stale_check` is never executed by any gate (`.18`).

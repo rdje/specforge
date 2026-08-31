@@ -307,12 +307,137 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   (`ihi0074_a` SWD/ADI, `um10204` I2C) with the relocation defect fixed at its cause rather than by
   mutating the corpus; the legacy-stratum refusal is stated as an explicit UNMEASURABLE disposition with its
   own re-ingest route rather than presented as a score; and a regression control pins that relocating a
-  verified artifact preserves verification. Split before implementing if the proof-kernel change and the
-  `eval-extraction` change are separately reviewable.
+  verified artifact preserves verification. **SPLIT (`2026-09-01`), because the two halves are separately
+  reviewable exactly as the leaf anticipated:** `.8a` is a kernel-seam change in `EvidenceIr` that has to be
+  judged against the proof doctrine, and `.8b` is a command-behaviour change in `eval-extraction` that has to
+  be judged against the scoring/honesty doctrine. `.8c` was then opened by what the restored oracle found.
+  Children: `WIRE-BASED-100.8a`, `WIRE-BASED-100.8b`, `WIRE-BASED-100.8c`.
   Non-goal: re-ingesting the 54 legacy chains (owned by the corpus refresh frontier); changing any gold.
   Prerequisite: none. KM `[[evidence-proof-binds-artifact-location]]`.
+  Verification: see `.8a`/`.8b`.
+  Commit: see `.8a`/`.8b`.
+
+- ID: `WIRE-BASED-100.8a` · Status: `done` (`2026-09-01`) · Goal: **a supported, proof-carrying way to relocate a
+  verified EvidenceIR** — the kernel half of `.8`. Today the only way to move an artifact is to rewrite
+  `artifact_layout` in place, which silently invalidates the seal: the proof's registered replay is taken
+  over `public_field_values()`, and that map *includes* `artifact_layout`, so every claim premise's
+  `inputs_sha256` binds the artifact's own storage path. Add `EvidenceIr::load_relocated_to_artifact_base_root`,
+  which verifies the artifact where it is (relocation may not launder authority), moves it to
+  `<new base>/<document_key>/evidence_ir.json` — the same `<base>/<document_key>` convention
+  `build_unproved_from_source_ir` replays, so the independent rebuild still agrees — and re-derives the proof
+  for the new location from the same verified SourceIR prefix and the same sealed proof context, mutation
+  chain intact.
+  Move `extract_on_copy` onto that seam in the same slice, so the seam ships with its only caller and
+  `eval-extraction` reaches a score again.
+  Acceptance: a hermetic control proves (a) an unsealed `artifact_layout` rewrite is still refused by the
+  production read path, and (b) an artifact relocated through the new seam reloads and verifies at its new
+  root with its content unchanged; `eval-extraction --provider skip` reaches a score on the rebuildable
+  golds; `kg-bench` and the CI suite stay green; the corpus is provably unmutated.
+  Non-goal: unbinding the artifact's location from the replay topology (that is the deeper fix; it changes
+  the frozen 38-family/170-field producer graph AND invalidates all 24 sealed chains at once — see Decisions).
+  Prerequisite: none.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
+
+- ID: `WIRE-BASED-100.8b` · Status: `pending` · Goal: **make the legacy stratum an explicit UNMEASURABLE
+  disposition** — the honesty half of `.8`. With `.8a` landed the oracle runs, but one refused document still
+  aborts the whole run: `build_predictions` propagates the load error, so a dataset naming any of the 54
+  legacy chains produces no output at all. A legacy/proofless EvidenceIR must instead be reported as
+  UNMEASURABLE with its re-ingest route and its gold items withheld from scoring, never folded into a score as
+  false negatives — a refusal presented as `R=0.000` is a fake number in the exact sense this tree forbids.
+  Any other failure must still abort: a real defect may not be absorbed into a disposition.
+  Acceptance: a legacy-stratum dataset (`seed_apb.json`, whose `ihi0024_e` chain is schema 1) prints the
+  UNMEASURABLE disposition, scores nothing for that document, and exits successfully; a rebuildable dataset is
+  unchanged byte-for-byte in its scored output; a hermetic control pins that a non-legacy failure still aborts.
+  Prerequisite: `WIRE-BASED-100.8a`.
   Verification: `pending`
   Commit: `pending`
+
+- ID: `WIRE-BASED-100.8c` · Status: `pending` · Goal: **the first thing the restored oracle found — the
+  published SWD `29/29 at 1.000` is stale, and the live docs still present it as current.** Re-derived
+  `2026-09-01` with `.8a`'s working oracle on the rebuildable `ihi0074_a` chain:
+  `seed_swd_derivation.json` scores `protocol_operation` 4/4 = 1.000 and `interface_edge_timing` 1/1 = 1.000,
+  but `serial_frame_field` **0/11** and `protocol_state` **0/13** — document-level recall 5/29, not 29/29.
+  **This is NOT an extraction regression, and it is not caused by `.8a`.** It is the published, deliberate
+  effect of `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` (`89d8dee7`, `2026-08-12`), which replaced the named protocol
+  carriers and protocol-gated extractors with schema-2 structural semantics on ADR-0006 genericity grounds and
+  said so in its own ledger entry: *"Exact comparison retires 22 fixed-phase frame and four named-operation
+  records."* The SWD frame fields were exactly those fixed-phase records; the surviving `protocol_states` also
+  lost their `machine_name` binding, so the gold's `machine|state` keys no longer resolve. `extract_serial_frame_fields`
+  now admits a field only from a statement carrying a document-stated phase name, and on this document that
+  gate is satisfied by 61 statements none of which carry the gold's bit-range fields.
+  **Why it stayed invisible for 20 days:** the trade was published in `CHANGES.md`, but the score it retired
+  lives in `WIRE-BASED-100.5j`, `SWD-SERIAL-EXTRACTION`, `ROADMAP.md`, and `LIVE_ACHIEVEMENT_STATUS.md`, and
+  nothing re-derived it — because the oracle was down from at least `2026-08-28` (`.8`). A genericity trade may
+  retire a score; it may not leave the retired score standing as current.
+  Acceptance: every live surface that presents SWD serial-frame/state recovery as current carries the
+  re-derived number and its cause, with the retired number kept as dated history rather than deleted;
+  `CLAIM_VERIFICATION.md` §6 is honoured — both competing explanations are named and separated by the
+  `89d8dee7` ledger entry rather than by assuming the newer instrument wins; the residual recall frontier gets
+  an owning leaf or an explicit deferral with its consequence.
+  Non-goal: restoring the retired records by reintroducing protocol-named extractors (ADR 0006/0035 forbid it);
+  changing `seed_swd_derivation.json`, which is a faithful gold whose facts are real.
+  Prerequisite: `WIRE-BASED-100.8a`.
+  Verification: `pending`
+  Commit: `pending`
+
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.8a` — DONE `2026-09-01`
+
+- [x] **REPRODUCE / MEASURE** — the oracle is down on every document, and it is not this session's binary:
+  `./target/release/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_i2c_signals.json --provider skip`
+  on the pre-change `2026-08-28` release binary prints the header, the dataset line, and then
+  `error: invalid stage artifact: EvidenceIR proof verification failed: registered derivation
+  'evidence.claim.schema_version.root' output or input topology is stale` — no score at all. Baseline for
+  every WIRE-BASED-100 number: **not re-derivable**, last re-derivation of record `2026-08-09`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — isolated read-only, and it is the artifact's own recorded location, not
+  its content. Two copies of `generated/evidence_ir/um10204_.../evidence_ir.json` were placed under
+  `.project-data/tmp/evprobe`: **(A)** convention-preserving (`<base>/<document_key>/evidence_ir.json`) and
+  **(B)** flat (what `extract_on_copy` did), each with ONLY `artifact_layout.artifact_root` and
+  `artifact_layout.evidence_ir_path` rewritten and every other byte identical. `specforge entity-type` fails on
+  **both** with the exact diagnostic above, while the same command on the artifact in place succeeds and prints
+  its `4 filtered (non-signal)` census. So the failure is not the flat layout — it is relocation as such.
+  Mechanism, at `file:line`: `EvidenceIr::proof_kernel` registers one `evidence.current-replay` derivation over
+  `replay_bytes` (`crates/specforge/src/ir/evidence.rs:1416`), and every `evidence.claim.<surface>.<key>`
+  derivation takes it as its sole input (`crates/specforge/src/ir/evidence.rs:1424`); `replay_bytes` is
+  `serde_json::to_vec(public_field_values())`, and `public_field_values` inserts `artifact_layout`
+  (`crates/specforge/src/ir/evidence.rs:1244`). So each claim premise's `inputs_sha256` binds the storage path,
+  and `validate_premise`'s `RegisteredDerivation` arm (`crates/specforge/src/ir/derivation.rs:2149`) raises
+  exactly `output or input topology is stale` when the recomputed topology differs.
+  `extract_on_copy` (`crates/specforge/src/commands/eval_extraction.rs:151`) must relocate, precisely so the
+  corpus is never mutated — so every `eval-extraction` task failed before scoring.
+- [x] **ADDRESSED (verified)** — added `EvidenceIr::load_relocated_to_artifact_base_root`: verify where the
+  artifact is, move it to `<base>/<document_key>/evidence_ir.json` (the convention the independent rebuild
+  replays), then re-derive the proof for that location from the same verified SourceIR prefix and the same
+  sealed proof context, mutation chain intact; `extract_on_copy` now uses it. **Before → after, per gold, on
+  the rebuildable stratum** (`--provider skip`, so this is the deterministic pattern baseline):
+  `seed_i2c_signals.json` refusal → `declared_signal` source-tolerant **P=R=F1=1.000 (tp=6 fp=0 fn=0)**,
+  complete-gold precision **6/6**; `seed_swd.json` refusal → `signal_constraint` **1.000 (tp=1 fp=0 fn=0)** and
+  `actor_signal_relation` source-tolerant **1.000 (tp=1 fp=0 fn=0)**; `seed_swd_derivation.json` refusal →
+  `protocol_operation` **1.000 (4/4)**, `interface_edge_timing` **1.000 (1/1)**, `serial_frame_field` **0.000
+  (0/11)**, `protocol_state` **0.000 (0/13)**. The last two are NOT caused by this slice and are not a
+  regression: they are the published effect of `89d8dee7` (`2026-08-12`) retiring the fixed-phase frame and
+  named-operation carriers on genericity grounds, which the down oracle had hidden — owned as `.8c`.
+- [x] **NO REGRESSION** — `kg-bench` **156/156** (`fixtures_passed: 156, fixtures_failed: 0`).
+  `cargo test --workspace` green: specforge lib **470**, specforge-core lib **1381** (+1, the new relocation
+  control), conformance **168**, production-graph **4**, isf round-trip **5**. `cargo fmt --all --check`,
+  `cargo clippy --workspace --all-targets -- -D warnings`, and `RUSTDOCFLAGS="-D warnings" cargo doc --workspace
+  --no-deps` all clean. **The corpus is provably unmutated**: after three eval runs the two exercised artifacts
+  keep their pre-change mtimes (`generated/evidence_ir/ihi0074_a_.../evidence_ir.json` `Aug 30 21:04`,
+  `um10204_.../evidence_ir.json` `Aug 30 21:05`), and `scripts/check_chain_currency.sh --check` replays
+  **24 replayed / 24 current / 0 stale** at `evidence`, `semantic`, `intent`, and `isf-adapter`. The pinned
+  production-genericity flow census moved exactly the three size counters the two new functions add —
+  `analyzed_functions` 2,376→2,378, `helper_edges` 14,737→14,758, `decision_sites` 12,696→12,700 — while
+  `boundary_rows`, `rule_roots`, `grammar_declassifiers`, `canonical_seams`, `proof_gates`, `trusted_regions`,
+  `non_authoritative_regions`, and every `protected_*` count are UNCHANGED: the seam adds no decision authority,
+  no trusted region, and no protected construction.
+- [x] **GENERICITY (ADR 0006)** — N/A to document identity: the seam is pure artifact-storage plumbing over the
+  proof kernel. It reads no document text and branches on no name; its only document-derived value is
+  `document_identity.document_key`, used as a path component exactly as `build_unproved_from_source_ir` already
+  does, so a renamed document relocates identically.
+- [x] **LOCKSTEP** — book `pipeline/evidenceir.md` (the relocation seam and why an unsealed move is refused);
+  KM fact card `evidence-proof-binds-artifact-location` updated from "defect, oracle down" to the resolved
+  mechanism plus the supported operation; `CHANGES.md`; `MEMORY.md`; `LIVE_ACHIEVEMENT_STATUS.md`.
 
 ## `.5d` — durable in-repo source PDFs (owner directive `2026-06-07`)
 

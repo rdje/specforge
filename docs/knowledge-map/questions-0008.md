@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > qwen2.5vl vs qwen3-vl which model
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
@@ -68,6 +70,8 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > was the .5.iv prediction that header naming is byte-changing on the AXI wire gold correct (NO, twice over: ihi0022_l already carries an AWATOP enum with 13 members so the lever could only add members, and ihi0022_l cannot be rebuilt at all — its persisted SourceIR is legacy schema 1, refused as inspection-only, and its normalized bundle is not retained. It is one of 54 legacy
   > chains against 24 current ones)
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -294,7 +298,3 @@
   > what does CORPUS-COVERAGE.1 add
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what does DEFER mean in the doctrine enforcement report
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > what does DOCLING_DEVICE do
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what does KG-ISF-TRANSACTIONS.2k add
