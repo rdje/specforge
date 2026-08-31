@@ -525,6 +525,22 @@ repeatable rollover/remedy paths and remain under their existing owners.
   only by the author's care is exactly the "trust me" `DOCTRINE_ENFORCEMENT.md` exists to remove, so the leaf
   registers it rather than recording a lesson
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`
+  **Honest correction to this leaf's own account of `.4e` (`2026-08-31`, on the director's re-verification
+  request).** The `CHANGES.md` record written with this leaf said `.4e` broke the invariant "while reporting
+  'no inbound route breaks'". **`.4e` never wrote that sentence.** It belongs to `.4c`, and `.4e`'s own
+  engineering note quotes it precisely in order to *reject* it — "`.4c` reported that no inbound route broke
+  because all 14 references cited the file as a whole. That was luck, not a property of partitions." So `.4e`
+  had already identified the hazard, repaired the eight deep-links it found, and disclosed that dated ledger
+  entries were left alone. Flattening that into a false quotation made the predecessor look less careful than
+  it was, and it is the same defect this leaf exists to correct — a characterization asserted from memory
+  instead of re-derived from the record.
+  **What `.4e` actually got wrong, stated exactly.** Its commit message asserted that dated ledger history was
+  "not rewritten and routed one hop by the new `Outcome` section". That assertion was **false when written**,
+  not merely unverified: the `Outcome` section pointed at the successor in prose, but the cited headings
+  themselves had no target in the retained record, so no `§` link resolved anywhere. And because `.4e` never
+  established the repository's baseline, it had no way to see that leaving fourteen links unresolved was a
+  regression from zero rather than an inherited condition. **Missing baseline is the root cause; the
+  unverified "one hop" is the symptom.**
   Verification: `docs/research/generic-enum-conflation-measurement.md gains a Moved sections block holding the
   six partitioned headings as redirects (176 -> 216 lines, 33.8% of 640); every one of the 14 broken links
   resolves again and the repository goes to 27 resolving / 0 unresolved, above its own pre-partition baseline

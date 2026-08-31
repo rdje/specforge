@@ -1,3 +1,40 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — correction: the .4f account of .4e contained a false quotation
+
+- THE DIRECTOR ASKED WHETHER .4f's OWN SELF-CRITIQUE HELD. Five of its seven assertions re-derive; two do not,
+  and one of those is a misquotation published in the entry directly below this one and in the af44ad45 commit
+  message. This entry is appended rather than rewriting that record, which is the same rule .4f applied to the
+  archives: a dated entry is corrected by an erratum above it, never by editing what it said.
+- THE MISQUOTE. The .4f entry says .4e broke the anchor invariant "while reporting 'no inbound route breaks'".
+  .4e never wrote that sentence. It is .4c's, and .4e's engineering note quotes it in order to REJECT it —
+  ".4c reported that no inbound route broke because all 14 references cited the file as a whole. That was
+  luck, not a property of partitions." .4e had already found the hazard, repaired the eight deep-links it
+  located, and disclosed that dated ledger entries were left. The flattening made the predecessor look less
+  careful than it was, by exactly the mechanism .4f was written to condemn: a characterization asserted from
+  memory instead of re-derived from the record. Verified by git show 7e1ad931.
+- WHAT .4e ACTUALLY GOT WRONG, WHICH IS SHARPER. Its commit message asserted dated ledger history was "not
+  rewritten and routed one hop by the new Outcome section". That was FALSE WHEN WRITTEN, not merely
+  unverified: the Outcome section named the successor in prose, but the cited headings had no target in the
+  retained record, so no section link resolved anywhere. And .4e never established the repository's baseline,
+  so it could not see that leaving fourteen unresolved was a regression from zero rather than an inherited
+  condition. Missing baseline is the root cause; the unverified "one hop" is the symptom.
+- THE SECOND FAILED ASSERTION IS RHETORICAL. .4f said losslessness was "proved to four decimal places". It was
+  proved BYTE-EXACT, by cmp and sha256. A numerical-precision metaphor is the wrong description of an exact
+  identity, and it is a poor one to use inside a paragraph about precision.
+- WHAT DID HOLD, MEASURED. The regression is real (20/0 at caf448fa, 13/14 at 7e1ad931). Route integrity was
+  argued rather than measured — .4e's own text asserts the hop without counting anything. CLAIM_VERIFICATION.md
+  section 1 does govern the route assertion: it is a current-facing pass/fail assertion "a reader can
+  reasonably act on", and sections 3.1/3.2 require re-derivation plus a competing hypothesis. The pre/post
+  count is cheap and was timed rather than estimated: 17.1s real for both revisions.
+- ONE CLAIM WAS OVERSTATED AND IS WITHDRAWN. .4f implied the byte count was held to the CLAIM_VERIFICATION
+  standard while the route claim was not. Neither was declared as a claim ID; the slice declared the three
+  ledger-durability claims only. The accurate statement is that rigor was applied unevenly, and that whether a
+  route assertion should mint its own claim record is exactly the coverage question CLAIM-VERIFICATION-ADOPTION
+  .8/.9/.12/.13 already own — not a settled violation this entry gets to assert.
+- NOT MECHANIZED, DELIBERATELY. Anchor resolution is checkable and is now gated by SECTION-ANCHORS. Whether a
+  paraphrase fairly represents the record it cites is not mechanically decidable, and inventing a gate that
+  appeared to check it would be worse than naming the limit. The control that works is the cheap one the
+  director applied here: ask whether the finding still holds, and re-read the source before answering.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — repair the anchor regression .4e shipped, and gate the invariant
 
 - THE DIRECTOR ASKED WHETHER THE .4e FINDINGS STILL HELD. Eight of nine re-derived. One did not, and the
