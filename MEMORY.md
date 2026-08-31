@@ -6,33 +6,34 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM` — `.14a`/`.4a`/`.4b`/`.4c`/`.4e` done; open here:
-  `.1`/`.3`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`. Also open: `SOURCE-IR-REPRODUCIBILITY`
+- Active unit: `LIVE-DOCUMENT-PRESSURE-HEADROOM` — `.14a`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.4d.i` done; open
+  here: `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`. Also open: `SOURCE-IR-REPRODUCIBILITY`
   `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`;
   `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`;
   `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`.
-- Current state: `.4e` partitioned `generic-enum-conflation-measurement.md` (559/640) at the same chronology
-  seam `.4c` used — it keeps lines 1-149 plus a new `Outcome` section (176); the four `.5.x` cycles move to
-  `generic-enum-conflation-results.md` (428). The partition is EXHAUSTIVE: prefix ++ moved reproduces HEAD
-  byte-for-byte under `cmp`. Research `lines_each` warning CLEARS; maximum falls back to 467/640 (73.0%).
-- Next action: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d` — validation snapshot 544/640 (85.0%) and `README.md`
-  line bytes 108/120 (90.0%, at rollover). Classify each by lifecycle; README stays inside `README_POLICY.md`.
-  Then `.15` (closed-owner gate) and `.1` (299/300 knowledge card).
+- Current state: `.4d` split on what each dimension MAXIMIZES — not maximum-versus-total: the producer
+  computes all three `_each` dimensions as maxima, but `line_bytes_each` ranges over a per-LINE width that
+  never accumulates, so it has no growth driver and no meaningful rollover. README had two lines over 96
+  bytes in one bullet; reflowed at the narrowest
+  line-count-preserving column (88; 87 spills to 6), so 118 lines / 4,637 bytes are UNCHANGED and the widest
+  line is 94 (78.3%). `.4d.ii` (validation snapshot) is a Rust producer slice, not a doc edit.
+- Next action: PRODUCT lane, on the director's `2026-08-31` steer off the containment plane —
+  `KG-ISF-COMPLETENESS` / `KG-ISF-TRANSACTIONS` / `WIRE-BASED-100`. `.4d.ii`/`.15`/`.1` stay owned, not dropped.
 - In-flight uncommitted: none after this commit.
-- Blockers: none. **A size stop is a symptom — classify the growth driver before choosing a remedy.** `.4a`
-  removed a count because the aggregates already bound the resource; `.4c` kept the line bound because the
-  population fits it (mean 172, p95 372); `.4e` chose partition over rollover because **the remaining WRITER
-  SET was countable at one leaf** (`.5.iv.a`) against a mean-68/max-105 append — liveness never decides, only
-  open-endedness does. Prove a partition against HEAD mechanically (best: exhaustive, via `cmp`) — **but
-  losslessness is not route-safety**: `.4e` was byte-exact, passed all 12 doctrines, and still took the repo
-  from 20/0 to 13/14 resolving section anchors. `.4f` repaired it and registered `SECTION-ANCHORS`. When you
-  partition, keep every moved heading in the retained record as a **redirect**; source-end repair is
-  impossible for links inside sealed archive segments. Prepending to `CHANGES.md` shifts 12 line-pinned
-  regions in `current_claim_census.jsonl` (re-anchor by
-  CONTENT, re-verify `sha256(line + "\n")`, never by offsets) and needs one NEW census row for the new ledger
-  head. Editing `CHANGES.md`/`DEVELOPMENT_NOTES.md`/`MEMORY.md` stales whole-file `durability.artifacts`
-  digests in three `claims.jsonl` claims; refresh them last. Never infer ownership from a mention — read the
-  owner's own `Status`. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/
-  `.9`/`.12`/`.13`; `CHANGES-LEDGER-ROLLOVER.4`; `SCRATCH-RESIDUE-CONTAINMENT.4` — the `generated/` fixture
-  producer is still signal-unsafe; never run the fixture suite concurrently with the locality gate.
-  `durability.stale_check` is never executed by any gate (`.18`), so no staleness marker is load-bearing.
+- Blockers: none. **A size stop is a symptom — classify the growth driver first**, and before that, whether
+  the dimension even HAS one. `.4a` removed a count because the aggregates already bound the resource; `.4c`
+  kept the line bound because the population fits it; `.4e` chose partition over rollover because the WRITER
+  SET was countable at one leaf. `.4d.i` adds: where a surface bounds both width and size, the width remedy
+  SPENDS the other two budgets (+1 line, +2 bytes per break) and README had 2 lines / 3 bytes of headroom, so
+  reflow must preserve the line count — the census pins README at L1, L30, L88-L104 by line number + sha256.
+  **Losslessness is not route-safety**: `.4e` was byte-exact, passed all 12 doctrines, and still broke 14
+  anchors; `.4f` repaired it and registered `SECTION-ANCHORS`, so keep moved headings as redirects. Prepending
+  to `CHANGES.md` shifts the line-pinned `current_claim_census.jsonl` regions (re-anchor by CONTENT, never by
+  offsets) plus one NEW row for the ledger head; editing `CHANGES.md`/`DEVELOPMENT_NOTES.md`/`MEMORY.md`
+  stales `durability.artifacts` digests in three `claims.jsonl` claims and `README.md` a fourth, and a new
+  fact card moves `fact_card_catalog.json` `planned_outputs` plus the `fact-card-catalog-count` assertion —
+  refresh all of those last. Never infer ownership from a mention: read the owner's own `Status`.
+  Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`;
+  `CHANGES-LEDGER-ROLLOVER.4` (its `lines_each` crossed 80% here); `SCRATCH-RESIDUE-CONTAINMENT.4` — the
+  `generated/` fixture producer is still signal-unsafe; never run the fixture suite concurrently with the
+  locality gate. `durability.stale_check` is never executed by any gate (`.18`).

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > how is the page-range batch size chosen / adapted
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > how is the precision of the broadened (non-gold) extraction measured / estimated
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how is the proof seal read from a large stage artifact
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -292,9 +298,3 @@
   > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > is 64 the status ledger record count
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > is AArch64 External Debug a methodology guide or under-extracted architecture
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is AXI/SWD per-signal phase membership recoverable from timing diagrams via a VLM
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > is CORPUS-PATTERN-REUSE.3b.3a a go or no-go

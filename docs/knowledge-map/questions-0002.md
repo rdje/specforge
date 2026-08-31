@@ -66,6 +66,8 @@
   > can FigureRegion raw_image_path store an absolute path
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > can I just rewrap a whole live document to a narrower column (only after checking the surface's other bounds — every line break you insert costs one line and, at a two-space continuation indent, two bytes, so a naive rewrap can trade one warning for two)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > can I re-stamp a published replay record
 - [project-scratch-location](../knowledge/project-scratch-location.md)
@@ -295,5 +297,3 @@
   > does I2C extraction remain invariant under opaque signal renaming
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does IntentIR preserve SWD protocol provenance and order
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > does PhaseRecord remain schema compatible

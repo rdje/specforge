@@ -368,7 +368,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   the condition `LIVE-DOC-STOP-RISK` exists to prevent: a bound a surface can reach with no remedy
   compliant work can take. Note the `.jsonl` rollover plans under the same directory do **not** count —
   the surface targets `*.md` only.
-  Children: `.4a`, `.4b`, `.4c`, `.4d`, `.4e`
+  Children: `.4a`, `.4b`, `.4c`, `.4d`, `.4e`, `.4f`
   Verification: `pending`
   Commit: `pending`
 
@@ -558,12 +558,125 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — repair the anchor regression .4e shipped and gate the invariant`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d`
-  Status: `pending`
+  Status: `active`
   Goal: classify and remedy the validation-snapshot and README member warnings
   Acceptance: `validation_snapshot` lines_each (544 of 640) and `readme_entrypoint` line_bytes_each (108 of
   120, already at its rollover milestone) each get a lifecycle-correct local remedy or a measured reason the
   surface is healthy; no generic warning is merely suppressed and README stays inside `README_POLICY.md`
+  **Split (`2026-08-31`) once both were measured.** The two members share a row in the gate's warning table
+  and nothing else. `check_live_document_size.pl` computes every `_each` dimension as a per-surface maximum,
+  so the split is not maximum-versus-total; it is what each maximum ranges over. `line_bytes_each` maximizes a
+  per-*line* width, which does not grow as the document does: no growth driver, and a remedy that finishes
+  inside the surface in one edit. `validation_snapshot` `lines_each` maximizes a per-*file* line count that
+  does accumulate — here as O(reviewed corpus) against a constant bound — and its only lifecycle-correct
+  remedy changes a Rust producer, a currency contract, and the registry. Holding both in one leaf would have
+  let the cheap half stand in for the expensive one
+  Children: `.4d.i`, `.4d.ii`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i`
+  Status: `done` (`2026-08-31`)
+  Goal: classify both member warnings by dimension kind, and clear the README one at zero cost to its other
+  two bounds
+  Acceptance: each warning is classified by what its dimension maximizes, with its measured driver, before any
+  remedy is chosen; the README remedy moves no bound, deletes no word, and leaves `lines_each` and
+  `bytes_each` numerically unchanged; the validation-snapshot finding is measured precisely enough that
+  `.4d.ii` inherits a decided remedy class rather than a re-derivation
   Prerequisite: none
+  **README is not growing; one bullet drifted.** `readme_entrypoint` declares `health_targets ==
+  enforcement_ceilings` on all three per-file dimensions (the same no-band shape `.5` found on
+  `active_resume`), so with `warning_pct: 80` the bands are: `lines_each` 150 warning at 120, `bytes_each`
+  5,800 warning at 4,640, `line_bytes_each` 120 warning at 96. Measured: **118 lines (78.7%), 4,637 bytes
+  (79.9%), widest line 108 (90.0%, at rollover)**. The width population is 86 non-blank lines, mean 52.5,
+  median 56, p90 92, p95 94 — and **exactly two lines exceed 96 bytes**, L72 (108) and L73 (107), both inside
+  a single five-line bullet. Every other line in the file is 95 bytes or less. The dimension did not drift
+  upward with the document; one block was written wide.
+  **The remedy is adversarial to the other two bounds, which is why it had to be line-neutral.** Reducing a
+  maximum line width means inserting line breaks, and at a two-space continuation indent each break converts
+  one `" "` into `"\n  "`: **+1 line and +2 bytes**. README had **2 lines** and **3 bytes** of headroom. A
+  whole-file rewrap to a narrower column would have cleared one warning and tripped two. The safe operation
+  is to reflow only the enclosing block, at the narrowest column that preserves its line count exactly — same
+  separator count, therefore the same byte count. Measured boundary: **width 88 wraps to 5 lines / 423 bytes;
+  width 87 spills to 6 lines / 424 bytes.**
+  **Line-neutrality is a correctness property here, not tidiness.**
+  `doctrine/claim_verification/current_claim_census.jsonl` pins README by **line number plus a SHA-256 of the
+  pinned lines**, not by content search: L1 (document identity anchor), L30 (`rust_prerequisite_copies`
+  derived value) and **L88-L104** (the entrypoint route block, whose verifier is
+  `scripts/check_readme_policy.sh`). Any edit that changes the line count above a pin moves that region and
+  stales its digest, dragging a claim-plane re-anchor into a slice that had no business touching it. All
+  three digests re-derive **unchanged** across this reflow.
+  **The validation snapshot is the opposite case, and it is not healthy.** Its per-document marginal cost,
+  measured from the file rather than estimated: **AXI 163, AHB 147, AXI-Stream 112, APB 110** lines
+  (its rescan-recommendation blocks, plus one `Projected Artifacts` block, plus one summary bullet), over
+  **12** fixed lines — and 12 + 532 = 544 reproduces the measured total exactly. Headroom to the ceiling is
+  **96 lines**, so **the cheapest fifth reviewed document is refused whichever document it is**. The band
+  fails the doctrine's own rule at the warning too: warning to refusal is 641 - 512 = **129 lines**, less
+  than the largest normal update (163) *before* any rollover transaction, where
+  `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` requires room for the largest normal update **plus** the rollover.
+  Even holding the reviewed set at four is bounded: at the measured **14.7 lines per rescan recommendation**
+  (427 lines / 29), the surface admits about **6** more recommendations before it refuses.
+  **And it is structural, not a near miss.** `generated/intent_ir/*/intent_ir.json` already holds **78** built
+  artifacts against the **4** reviewed here, and `CORPUS-COVERAGE` exists to grow that set. At the measured
+  133-line mean, 78 reviewed documents need roughly **10,400 lines** against a 640-line bound — 16x. The
+  surface's size is O(reviewed corpus) while its bound is a constant, so **no ceiling number fixes it**; the
+  remedy class is a bounded landing over per-document parts, the shape this repository already runs for
+  `docs/task-catalog/`, `docs/knowledge-catalog/`, and the knowledge-map shards.
+  **Why that remedy is not this slice.** The shape is emitted by `render_validation_snapshot_doc` in
+  `crates/specforge/src/commands/project_validation.rs`, and
+  `doctrine/live_document_size/validation_snapshot.json` pins four producer regions by digest alongside the
+  file's own sha256/lines/bytes/line_bytes, required H2 order, and required literals. The reviewed content
+  additionally may not be regenerated: `review_boundary.local_artifacts_authoritative` is `false` and
+  `CANONICAL-PROMOTION-SWEEP` deliberately did not refresh it. A hand-cut partition would leave the file
+  disagreeing with its producer, and the next legitimate refresh would silently un-partition it. That is a
+  Rust change carrying an acceptance checklist, not a documentation edit. `.4d.ii` owns it.
+  **Self-audit on the director's challenge (`2026-08-31`), before commit.** Four findings were published in
+  the session report; **three carried defects**, corrected here and in the ledger record rather than left to
+  stand. (1) The extremal/accumulating framing was WRONG AS STATED: `check_live_document_size.pl` computes
+  `bytes_each`, `lines_each` **and** `line_bytes_each` alike as per-surface maxima, so the distinction is not
+  maximum-versus-total but what each maximum ranges over — a per-file count that grows, versus a per-line
+  width that does not. The conclusion survives; the reason given for it did not. (2) "There is no rollover
+  transaction you can perform on a maximum" was TOO STRONG: a rollover *can* lower a maximum if the extreme
+  member falls in the sealed part. What holds is narrower, and had to be re-derived twice: the first
+  correction said `readme_entrypoint` "declares no `remedy` field", which is **true but vacuous** — no surface
+  in the registry declares one. The checkable statement is that the only rollover transaction is the
+  rolling-ledger protocol, whose registry names exactly four sources (`CHANGES.md`, `DEVELOPMENT_NOTES.md`,
+  `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md` — the four `rolling_ledger` surfaces); README is a
+  `bounded_snapshot` appearing there only as a reader, so it has no rollover, and where one does exist it acts
+  only incidentally (the last `CHANGES.md` rollover left `line_bytes` at 1629 either side). (3) "Fourth instance of the stale
+  hand-maintained-table class" was an OVERCOUNT: the tree records two priors and counts one commit's
+  correction as one instance, so this is the **third**; and the container-never-in-frontier rule cited as
+  "the file's own" belongs to `docs/TASK_TREE.md` line 201. One reply-only claim is also withdrawn: the
+  ledger record was said to have been kept "to 1,994 bytes against the 1,992-byte budget", which measured the
+  draft file rather than the record — the record is **2,337 bytes** and is the **63rd of 90** above that
+  budget (`oversized_records` 62 -> 63). Finding 2 (the hair-trigger band) re-derived intact.
+  Verification: `README.md 118 lines / 4,637 bytes UNCHANGED, widest line 108 -> 94 (90.0% -> 78.3%); words
+  and order identical; lines 1-71 and 77-118 byte-identical. Width 88 preserves the block at 5 lines / 423
+  bytes, width 87 spills to 6 / 424, so 88 is the exact line-count-preserving boundary. The three
+  current_claim_census.jsonl README regions (L1, L30, L88-L104) re-derive UNCHANGED. Wrap population at HEAD:
+  11 lines at 90-94, one at 95, then nothing until 107 and 108 - a clean gap, so ~95 is the document's own
+  column and the 96-byte warning threshold sits one byte above it. Validation snapshot re-derived from the
+  file: marginal 163/147/112/110 lines over 12 fixed, 12 + 532 = 544; headroom 96; cheapest fifth document
+  refused; warning-to-refusal 129 < largest update 163; 78 built intent_ir.json against 4 reviewed.
+  scripts/check_doctrines.sh: ALL 13 executed doctrines PASS (14 registered, tier=gate). Cost recorded
+  honestly: CHANGES.md lines_each crossed its 80% warning (1433 -> 1455 of 1800) and the new ledger record is
+  2,337 bytes against a 1,992-byte derived budget, the 63rd of 90 over it`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i — classify both member warnings; README's dimension does not accumulate`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii`
+  Status: `pending`
+  Goal: give the reviewed validation snapshot a bound that does not scale with the corpus
+  Acceptance: `VALIDATION_SNAPSHOT.md` becomes a bounded landing (summary plus a complete index of reviewed
+  documents) over per-document parts, **emitted by `render_validation_snapshot_doc` rather than hand-cut**, so
+  the file and its producer still agree after the next legitimate refresh; the reviewed content is preserved
+  byte-exactly across the partition and proved so mechanically, with no score, finding, or recommendation
+  regenerated from local artifacts (`review_boundary.local_artifacts_authoritative` stays `false`);
+  `doctrine/live_document_size/validation_snapshot.json` re-pins the landing, the parts, and the four
+  producer regions, and a `validation_snapshot_parts` surface is registered with per-part and aggregate
+  bounds; every moved `###` heading stays reachable from the landing as a redirect so `SECTION-ANCHORS` stays
+  at zero unresolved; and the resulting landing admits a fifth reviewed document at the largest observed
+  marginal cost (163 lines) while staying inside its warning band
+  Prerequisite: `.4d.i`
   Verification: `pending`
   Commit: `pending`
 
@@ -883,15 +996,17 @@ owner's `Status` line rather than from any mention of the surface.
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
-| 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `pending` | re-ranked `2026-08-28`: `docs/research/*.md` is 63 of a 64-file ceiling with no warning band and no rollover, and two active trees write research records |
-| 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
-| 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `done` | the gate warns 35 lines across four producers and no reviewed assignment exists; a grep screen cannot serve, since reporting a gap closes it |
-| 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
-| 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
-| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
-| 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `pending` | seven instances of the closed-owner class in one session is the evidence that review does not hold the invariant |
-| 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` | `done` | the largest research record is 639 of 640 lines, so a one-line correction to it is refused |
-| 14 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` | `pending` | `.4c` relocated the research maximum onto a record with a live writer: 559/640 and an active `KG-ISF-COMPLETENESS.5` still appending |
+| 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `done` | routed the 19-line constant preamble out; mutable budget 31 -> 42 with no bound moved, and the split is now gated |
+| 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `done` | the gate warns 35 lines across four producers and no reviewed assignment exists; a grep screen cannot serve, since reporting a gap closes it |
+| 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
+| 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
+| 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
+| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `pending` | seven instances of the closed-owner class in one session is the evidence that review does not hold the invariant |
+| 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` | `done` | the largest research record is 639 of 640 lines, so a one-line correction to it is refused |
+| 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` | `done` | `.4c` relocated the research maximum onto a record with a live writer: 559/640 and an active `KG-ISF-COMPLETENESS.5` still appending |
+| 14 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f` | `done` | `.4e` was byte-exact and still took the repository from 20/0 to 13/14 resolving section anchors |
+| 15 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i` | `done` | two member warnings share a table row and nothing else; one is a maximum with a free remedy, the other is a reachable stop |
+| 16 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` | `pending` | the reviewed validation snapshot refuses its fifth document at any marginal cost, and 78 built artifacts are waiting behind 4 reviewed |
 
 ## Decisions
 
@@ -978,6 +1093,9 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-31` | `.4d.i` self-audit | the four published findings re-derived on the director's challenge: dimension computation read from `check_live_document_size.pl`; `readme_entrypoint`'s surface record inspected for a declared remedy; the `changes` ledger `line_bytes` compared across its rollover; prior stale-table instances counted from this tree's own Changelog; `check_active_task_evidence.pl` contracts enumerated; the ledger record measured as the checker splits it | **three of four carried defects.** The extremal/accumulating contrast was wrong as stated (all three `_each` dimensions are maxima; only what they range over differs); "no rollover can act on a maximum" was too strong (it acts incidentally — measured 1629 -> 1629); "fourth instance" was an overcount (**third**, by the tree's own convention) and the frontier rule cited as this file's belongs to `docs/TASK_TREE.md`:201. A reply-only budget claim is withdrawn: the record is **2,337 bytes**, not the 1,994-byte draft, and `oversized_records` went **62 -> 63**. A **fourth** defect was then caught inside the first correction itself — "declares no `remedy` field" is true but vacuous, since no surface in the registry declares one; the checkable statement is that `rolling_ledgers.jsonl` names four sources and README appears there only as a reader. Finding 2 re-derived intact: 11 lines at 90-94 and one at 95, then a clean gap to 107/108, so the 96-byte warning sits one byte above the document's own column |
+| `2026-08-31` | `.4d.i` README | width population re-derived from `README.md`; block reflowed at successive columns; the three `current_claim_census.jsonl` README region digests recomputed before and after; `check_readme_policy.sh --check`; `check_derived_state_authorities.pl --contract rust_prerequisite_copies` | **108 -> 94 bytes (90.0% -> 78.3%) at 118 lines and 4,637 bytes unchanged.** Only two lines in the file exceeded 96 bytes and both sat in one five-line bullet; every other line was <= 95. Width 88 preserved the block's 5 lines / 423 bytes, width 87 spilled to 6 / 424, so 88 is the exact line-count-preserving boundary. Same words in the same order; lines 1-71 and 77-118 byte-identical. All three census region digests (L1, L30, L88-L104) re-derive **unchanged**, which a rewrap that moved lines would have broken |
+| `2026-08-31` | `.4d.i` snapshot | per-document line cost derived from `VALIDATION_SNAPSHOT.md` itself; contract read from `doctrine/live_document_size/validation_snapshot.json`; built-artifact population counted under `generated/intent_ir` | **the surface is not healthy and no ceiling fixes it.** Marginal cost per reviewed document is 163/147/112/110 lines over 12 fixed (12 + 532 = 544 exactly), so with 96 lines of headroom **the cheapest fifth document is refused**. Warning-to-refusal is 129 lines, below the largest normal update (163) alone, where the doctrine requires the largest update **plus** the rollover. Holding at four documents, ~6 further rescan recommendations fit at the measured 14.7 lines each. **78** built `intent_ir.json` artifacts stand against **4** reviewed: at the 133-line mean the surface is O(corpus) — roughly 10,400 lines against a 640 bound |
 | `2026-08-31` | `.15` population | every `docs/tasks/*.md` link in `ROADMAP.md` resolved to its own `Status` line, then split by whether the citing row describes finished or open work | **28 trees linked, 12 closed.** Most are correct historical attributions in the `Done` workstream rows. The defect is in the *active* program-group list: `LIVE-DOC-STOP-RISK` and `CORPUS-CHAIN-CURRENCY`, both `done`, were named as current owners, and `LIVE-DOCUMENT-PRESSURE-HEADROOM` was absent from the roadmap entirely. Two weaker cases (`R9` "Mostly done", `R15b` "In progress") name closed trees and are left for the gate to adjudicate |
 | `2026-08-31` | `.4b` | generic live-size checker before and after removing the record | RED observed first at `3cf7f6d0`: "unused or banked ceiling-increase authority", 1 violation. Green after: 901 files / 57 surfaces. The single-use protocol is therefore proven in both directions, not just claimed |
 | `2026-08-31` | `.4a` | `check_live_document_size.sh`; the generic size checker with the authority registry; census, book-claim and doctrine gates | research files **63/64 -> unbounded** behind the declared exemption; every resource dimension stays numeric; the single-use authority is added and consumed in the same commit; the composed gate reports **901 Markdown files / 57 governed surfaces** and exits 0 with no research warning. The stop relocates to `lines_total`/`bytes_total`, which at the measured record mean bind at ~238 records and still have a warning band |
@@ -992,6 +1110,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.4d.i` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i — classify both member warnings; README's dimension does not accumulate` | the width remedy is byte- and line-neutral by necessity, not by taste: README had 3 bytes and 2 lines of headroom, and its census pins are line-anchored. `.4d.ii` inherits a decided remedy class |
 | `.4c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled` | 639 -> 467 lines, zero bytes lost, proved against HEAD; the maximum relocates to a live-writer record `.4e` now owns, and the slice's own ledger record forced a paired rollover |
 | `.4b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority` | the banked-authority refusal observed RED at `3cf7f6d0` first |
 | `.4a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption` | ADR 0045 applied to a second surface; `.4b` must retire the consumed authority next |
@@ -1003,6 +1122,25 @@ owner's `Status` line rather than from any mention of the surface.
 | `.2` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2 — split the decided no-cap remedy into the three transactions it actually is` | container; found the second `$MAX_TASKS` enforcer and measured the relocation |
 
 ## Changelog
+
+- `2026-08-31`: `.4d` becomes a container over `.4d.i` (classify both; remedy README) and `.4d.ii` (partition
+  the reviewed validation snapshot). The split is the finding, not bookkeeping: the gate prints one sentence
+  for every dimension. **The distinction is not maximum-versus-total** — the producer computes `bytes_each`,
+  `lines_each` and `line_bytes_each` alike as per-surface maxima. It is what each one ranges over: the first
+  two maximize a per-*file* count that grows as content is added, while `line_bytes_each` maximizes a
+  per-*line* width that does not. So the second has no growth driver and is freely reducible, and "at or above
+  rollover" on it does not mean what it means elsewhere — on a `bounded_snapshot` no rollover exists at all,
+  and where one does it lowers a maximum only incidentally (the last `CHANGES.md` rollover left `line_bytes`
+  at 1629 either side). Read as capacity pressure it would argue for partitioning or raising a bound on a file
+  that needed one bullet rewrapped. Also corrected two stale rows in this tree's own Current Frontier — `.4`,
+  a container, was listed as a pending frontier entry against `docs/TASK_TREE.md`'s rule that a container
+  never appears there, and `.4e` still read `pending` after shipping — and restored `.4f` to `.4`'s
+  `Children` list, where the commit that created it never added it. **Third** instance of the stale
+  hand-maintained-table class in this tree, counting as the tree itself counts (the `2026-08-30`
+  `.2a`/`.2b`/`.2c` rows, then the `.14a` duplicate `.4` row); `.15` makes ownership citations mechanical but
+  does not compare a frontier row to its own node's `Status`, and no contract governs this tree's tables —
+  the `current_frontier` field in `check_active_task_evidence.pl` binds only `PDF-VARIANT-DIGESTION`,
+  `CORPUS-COVERAGE` and `SPEC-TO-INTENT-ALIGNMENT`.
 
 - `2026-08-31`: `.4c` closes the research per-record line stop by partition rather than by profile, and
   opens `.4e`. Two facts decided it. First, the ceiling fits the population — mean 172, median 130, p95 372,

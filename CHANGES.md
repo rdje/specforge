@@ -1,3 +1,29 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i — classify both member warnings; README's dimension does not accumulate
+
+- TWO WARNINGS, TWO KINDS OF DIMENSION — and NOT maximum-versus-total, which is how this entry first put
+  it. check_live_document_size.pl computes bytes_each, lines_each AND line_bytes_each alike as per-surface
+  maxima. What differs is what each ranges over: the first two maximize a per-FILE count that grows as
+  content is added; line_bytes_each maximizes a per-LINE width that does not. So it has no growth driver and
+  is freely reducible, and "at or above rollover" on it does not mean what it means elsewhere — the only
+  rollover transaction is the rolling-ledger protocol, whose registry names four sources, and README appears
+  there only as a reader; where a rollover does exist it lowers a maximum only incidentally, as the last
+  CHANGES.md rollover did not (line_bytes 1629 either side). .4d splits there.
+- README IS NOT GROWING; ONE BLOCK DRIFTED. 86 non-blank lines, mean 52.5, p95 94, and EXACTLY TWO above 96
+  bytes — L72 (108), L73 (107) — both in one five-line bullet; every other line is <= 95.
+- THE REMEDY IS ADVERSARIAL TO THE OTHER TWO BOUNDS. Each break costs +1 line and +2 bytes, and README
+  had 2 LINES and 3 BYTES of headroom, so a whole-file rewrap clears one warning and trips two.
+  Reflowed the one bullet at the narrowest line-count-preserving column: width 88 -> 5 lines/423 bytes,
+  width 87 -> 6/424. Result 118 lines / 4,637 bytes UNCHANGED, same words in order, 108 -> 94 (78.3%).
+- LINE-NEUTRALITY WAS CORRECTNESS. current_claim_census.jsonl pins README by LINE NUMBER plus sha256 at
+  L1, L30 and L88-L104; all three re-derive unchanged. A rewrap that moved lines would have staled the
+  route block and pulled a claim-plane re-anchor into this slice.
+- THE VALIDATION SNAPSHOT IS THE OPPOSITE AND IS NOT HEALTHY. Marginal cost per reviewed document, read
+  from the file: 163/147/112/110 lines over 12 fixed (12 + 532 = 544 exactly). With 96 lines of headroom THE
+  CHEAPEST FIFTH DOCUMENT IS REFUSED, and warning-to-refusal is 129 lines, under the largest normal update
+  alone where the doctrine requires it PLUS the rollover. generated/intent_ir holds 78 built
+  artifacts against 4 reviewed, so the surface is O(corpus) — ~10,400 lines against 640. No ceiling fixes
+  it; .4d.ii owns the bounded-landing partition. Fact card live-document-width-remedy-coupling added.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — correction: the .4f account of .4e contained a false quotation
 
 - THE DIRECTOR ASKED WHETHER .4f's OWN SELF-CRITIQUE HELD. Five of its seven assertions re-derive; two do not,

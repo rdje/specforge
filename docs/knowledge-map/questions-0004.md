@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > how are bit location | register description | attributes tables extracted
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are bits | name | function tables extracted
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are byte location | size | register description tables extracted
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
@@ -134,6 +138,8 @@
   > how do I check whether the persisted corpus seal is stale
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > how do I clean up scratch after a slice
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > how do I clear a live-document line_bytes_each warning (reflow the few widest lines; do not partition, roll over, or raise the ceiling — nothing is running out)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how do I count the records in the status ledger
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -292,9 +298,3 @@
   > how does a future SpecForge session retrieve and re-run a current claim
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > how does a heterogeneous collection declare its legal maximum
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > how does a repair prove its change is isolated if it also rebuilds drifted documents
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how does a section-heading register avoid double-counting an existing register record
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > how does a timing diagram become an ActorContract in SemanticIR and IntentIR

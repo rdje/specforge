@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > how does a repair prove its change is isolated if it also rebuilds drifted documents
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how does a section-heading register avoid double-counting an existing register record
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -291,9 +297,3 @@
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > how is the live-document containment checker tested
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how is the page-range batch size chosen / adapted
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > how is the precision of the broadened (non-gold) extraction measured / estimated
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how is the proof seal read from a large stage artifact
