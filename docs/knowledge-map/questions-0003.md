@@ -106,6 +106,8 @@
   > does current Docling lose captions
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > does docs/research have a file-count ceiling
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -295,5 +297,3 @@
   > how are caption-less page fragments of a split table stitched together
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how are cited falsification controls bound to known-bad RED evidence
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role

@@ -278,7 +278,9 @@ uncertainty—while deriving every document-owned symbol and relation from the c
 is not perfect recovery from corrupt, missing, contradictory, or ambiguous source material; it is one
 identity-independent engine that promotes only source-justified intent and emits explicit residuals for what
 it cannot decide. The complete audit is
-[`docs/research/production-genericity-pipeline-audit.md`](../../research/production-genericity-pipeline-audit.md).
+[`docs/research/production-genericity-pipeline-audit.md`](../../research/production-genericity-pipeline-audit.md),
+and its per-leaf qualification results are
+[`docs/research/production-genericity-qualification-results.md`](../../research/production-genericity-qualification-results.md).
 
 ### Autonomous-first clarification foundation
 

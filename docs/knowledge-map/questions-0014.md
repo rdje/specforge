@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > why does AMD IOMMU extract no register fields
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why does DTI (ihi0088) have zero message_field_records
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > why does Docling re-ingest fail on Apple Silicon
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > why does EvidenceIR schema 2 clear old protocol records
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why does GIC 400 emit fifteen registers with missing access
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -276,25 +298,3 @@
   > why is DTI DOWNSTREAM not preserved as a heuristic only wire
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why is Reset value not a semantic phase
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why is SWD per-signal phase membership degenerate / empty
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why is SWD/ADI hard / different from APB AHB AXI
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is SWIO not captured as a third SWP signal
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > why is SpecForge called forward specification mining
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > why is TEMPLATE excluded from the task catalog
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why is Vital Product Data (VPD) not a signal

@@ -23,6 +23,7 @@
 | [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md) | 2026-08-08 | `current` | Repository-local temp exposes a Docling test root-discovery and mutex-poison cascade |
 | [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |
 | [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md) | 2026-08-27 | `current` | Residual actionability counts required residuals, not declared residual queries |
+| [research-record-size-profile](../knowledge/research-record-size-profile.md) | 2026-08-31 | `current` | Research-record line ceiling fits the population; an oversized record is a composite |
 | [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md) | 2026-08-27 | `current` | A retained chain must be validated stage by stage as it is rebuilt, not at the end |
 | [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
 | [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md) | 2026-08-28 | `current` | Changing the reviewed fixture builder is a three-way lockstep, not a one-file edit |
@@ -60,4 +61,3 @@
 | [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md) | 2026-08-09 | `superseded` | The canonical SWD chain contains all 29 scored protocol facts through the adapter boundary |
 | [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md) | 2026-06-07 | `current` | SWD protocol derivation is scored 100% across frame, operation, state, and interface-edge timing tasks |
 | [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md) | 2026-06-07 | `current` | SWD's intent = its packet protocol + line state machine on SWDIO (read from spec Chapter B4) |
-| [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md) | 2026-08-09 | `superseded` | Convergence snapshots retain and count the exact four SWD protocol collections |

@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why is Reset value not a semantic phase
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why is SWD per-signal phase membership degenerate / empty
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why is SWD/ADI hard / different from APB AHB AXI
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is SWIO not captured as a third SWP signal
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > why is SpecForge called forward specification mining
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > why is TEMPLATE excluded from the task catalog
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Vital Product Data (VPD) not a signal
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -240,6 +262,8 @@
   > why was the ISF explicit-FSM feature request withdrawn
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > why was the at least timing paraphrase rejected
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > why was the production-genericity pipeline audit partitioned
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > why was the spike's 'manager Reads ARID' direction error not in production
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)

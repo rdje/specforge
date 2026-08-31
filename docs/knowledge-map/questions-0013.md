@@ -2,6 +2,27 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > why are message fields not part of the document_class decision
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > why are modal verbs must shall should may not flagged as ambiguous
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > why are prior candidate fixture names not joined into one long Markdown line
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why are reviewed fixture anchors fragile
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > why are rustup and cargo allowed on the boot volume
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest
+  > residuals)
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > why are some retained CCIX decibel timing records still canonical
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > why are some section-heading registers held as a residual instead of emitted
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
@@ -276,25 +297,3 @@
   > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > why does ACE table_0275 stay flagged after presence capture
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why does AMD IOMMU extract no register fields
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why does DTI (ihi0088) have zero message_field_records
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > why does Docling re-ingest fail on Apple Silicon
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > why does EvidenceIR schema 2 clear old protocol records
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate

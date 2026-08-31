@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.14a` done; `.1`/`.3`/`.4`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
+- Status: `active` (`.0`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.14a` done; `.1`/`.3`/`.4`/`.4d`/`.4e`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-31`
@@ -368,7 +368,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   the condition `LIVE-DOC-STOP-RISK` exists to prevent: a bound a surface can reach with no remedy
   compliant work can take. Note the `.jsonl` rollover plans under the same directory do **not** count —
   the surface targets `*.md` only.
-  Children: `.4a`, `.4b`, `.4c`, `.4d`
+  Children: `.4a`, `.4b`, `.4c`, `.4d`, `.4e`
   Verification: `pending`
   Commit: `pending`
 
@@ -413,7 +413,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`
-  Status: `pending`
+  Status: `done` (`2026-08-31`)
   Goal: release the per-record line stop the file-count exemption does not touch
   Acceptance: `docs/research/production-genericity-pipeline-audit.md` is **639 of a 640-line per-file
   ceiling**, again with `health_targets.lines_each == enforcement_ceilings.lines_each`, so a one-line
@@ -421,6 +421,46 @@ repeatable rollover/remedy paths and remain under their existing owners.
   section boundary (the partitioned-canonical remedy, which costs one catalog row and therefore needs `.4a`
   first) or a re-derived per-file profile, and preserve every byte either way
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a`
+  **Decided: split, not a re-derived profile.** The population supports the existing 640 and refuses the
+  re-derivation: across the 63 members the mean is 172 lines, the median 130, p95 372, and only **two** records
+  exceed 80% of the ceiling. A profile re-derived to fit one record would be a bound raised to quiet one
+  warning — this tree's Non-Goal — and would spend a single-use `ceiling_increase_authorities.jsonl` record
+  for no structural gain. The measured cause is not that the ceiling is wrong; it is that this record is
+  **two documents**: a genericity audit, plus a per-leaf qualification chronology that thirteen `.6d.ii` leaves
+  appended to it over three weeks. Splitting at that seam retires the growth driver instead of buying 120 lines.
+  **The cut preserves the reader's question in place** (`LIVE_DOCUMENT_SIZE_CONTAINMENT.md`): the audit keeps
+  its question, boundary, feasibility, denominator, method, confirmed violations, source disposition,
+  forbidden-vocabulary rebuttal, required signoff architecture, historical correction, and exit criteria, and a
+  new 20-line `Qualification outcome` section states the composed structural and behavioral verdict by
+  derivation. Only the per-leaf results move, verbatim and in their original appended order — which is not
+  strict leaf order, since `.e.iv.vii` was written after `.e.v.iii`, and reordering evidence is not lossless
+  Verification: `two contiguous section-boundary blocks moved: the .6d.ii.d.iv-.e.v.iii chronology (audit lines
+  44-165, 122 lines) and the .e.iv.vii/.f chronology (lines 550-619, 70 lines), into
+  docs/research/production-genericity-qualification-results.md (212 lines, 17,332 bytes, max line 231 bytes).
+  Losslessness proved mechanically against git HEAD, not by inspection: both moved blocks occur byte-identically
+  and in order inside the new record (at its lines 20 and 143); the retained prefix and the 20-line suffix are
+  byte-identical to the original; and zero of the 639 original lines are absent from both files. No inbound
+  route breaks - all 14 inbound references cite the file as a whole with no anchor deep-links, and the four
+  retained intra-document back-references ("the detailed findings above", "every P0/P1 item above") still
+  resolve to sections that stayed. research_records lines_each 639/640 (99.8%, 1 line below a stop) -> the audit
+  at 467/640 (73%), and the surface maximum relocates to a different record at 559/640 (87.3%) with an 81-line
+  band; the research bytes_each warning clears. One catalog row added by
+  perl scripts/check_canonical_collection_catalogs.pl --write (5 indexes, 265 members). Gate reports 902
+  Markdown files / 57 governed surfaces, exit 0; scripts/check_doctrines.sh green`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`
+  Status: `pending`
+  Goal: own the research-line frontier `.4c` relocated the maximum onto
+  Acceptance: `.4c` removed the stop but did not leave the axis quiet, and the successor is not a dormant
+  record. `docs/research/generic-enum-conflation-measurement.md` is **559 of 640 lines (87.3%)**, above the
+  80% warning and 19 points below rollover, and unlike the audit it has a **live writer**: it is owned by
+  `KG-ISF-COMPLETENESS.5`, an active lane whose `.5.iii` and `.5.iv` leaves appended to it as recently as
+  `5c2fe11f`. An active measurement record 81 lines below a no-warning-band ceiling is the `LIVE-DOC-STOP-RISK`
+  condition again, reached by ordinary compliant work. Decide the lifecycle-correct remedy before that lane's
+  next measurement lands: either the same chronology/result partition `.4c` applied, or a declared per-record
+  rollover the measurement lane can take. Do not raise the ceiling
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`
   Verification: `pending`
   Commit: `pending`
 
@@ -757,6 +797,8 @@ owner's `Status` line rather than from any mention of the surface.
 | 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `pending` | seven instances of the closed-owner class in one session is the evidence that review does not hold the invariant |
+| 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` | `done` | the largest research record is 639 of 640 lines, so a one-line correction to it is refused |
+| 14 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` | `pending` | `.4c` relocated the research maximum onto a record with a live writer: 559/640 and an active `KG-ISF-COMPLETENESS.5` still appending |
 
 ## Decisions
 
@@ -857,6 +899,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.4c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled` | 639 -> 467 lines, zero bytes lost, proved against HEAD; the maximum relocates to a live-writer record `.4e` now owns, and the slice's own ledger record forced a paired rollover |
 | `.4b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority` | the banked-authority refusal observed RED at `3cf7f6d0` first |
 | `.4a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption` | ADR 0045 applied to a second surface; `.4b` must retire the consumed authority next |
 | `.14a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a — shard the task-evidence index by lifecycle` | ADR 0046; the stop relocates to `max_leaf_routes` and `.17` says so |
@@ -867,6 +910,17 @@ owner's `Status` line rather than from any mention of the surface.
 | `.2` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2 — split the decided no-cap remedy into the three transactions it actually is` | container; found the second `$MAX_TASKS` enforcer and measured the relocation |
 
 ## Changelog
+
+- `2026-08-31`: `.4c` closes the research per-record line stop by partition rather than by profile, and
+  opens `.4e`. Two facts decided it. First, the ceiling fits the population — mean 172, median 130, p95 372,
+  and only two of 63 records above 80% — so re-deriving the profile would have been a bound raised for one
+  outlier. Second, the outlier is a composite: an audit plus a per-leaf qualification chronology thirteen
+  `.6d.ii` leaves appended to it, which is the actual growth driver. Losslessness was proved mechanically
+  against `git HEAD` rather than by reading the diff: both moved blocks occur byte-identically and in order
+  in the new record, the retained prefix and suffix are byte-identical, and zero of the 639 original lines
+  are absent from both files. The remedy is not silent, though — it relocated the surface maximum onto a
+  record that is still being written, so `.4e` owns that before `KG-ISF-COMPLETENESS.5`'s next measurement
+  lands rather than after the axis stops again.
 
 - `2026-08-31`: corrected `ROADMAP.md`'s repository-durability ownership, which named two closed trees as
   current owners while this tree — the one holding the work and the assignment table — was absent from the

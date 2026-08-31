@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > where is the exact historical SpecForge roadmap after containment
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > where is the exact pre-migration alignment task source
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the extraction architecture contract
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the first post-migration DEVELOPMENT_NOTES rollover segment
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > where is the mdBook current-truth verifier
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the normative IntentIR product contract
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > where is the per-author adopt-vs-defer provenance
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > where is the persisted source-to-IntentIR result snapshot
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > where is the register-field gold seed
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -182,6 +202,8 @@
   > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > which register-table family stays residual (byte location size tables)
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > which research record is closest to its line ceiling
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
@@ -276,24 +298,3 @@
   > why are extracted signal names truncated at the underscore
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why are held-out alpha failures not yet production name-coupling evidence
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why are message fields not part of the document_class decision
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > why are modal verbs must shall should may not flagged as ambiguous
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why are prior candidate fixture names not joined into one long Markdown line
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why are reviewed fixture anchors fragile
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > why are rustup and cargo allowed on the boot volume
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest
-  > residuals)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > why are some retained CCIX decibel timing records still canonical

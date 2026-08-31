@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how are different health and ceiling file counts declared
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -140,6 +142,8 @@
   > how do I populate the fsmgen gitlink in a detached measurement worktree
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > how do I prove a live-document partition is lossless
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I re-derive a published count per revision instead of at two endpoints
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -294,7 +298,3 @@
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does chain currency distinguish a checked blocked adapter from an emitted ISF file
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how does claim evidence become stale
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how does collapse_section_header_register_identity decide same-register vs different-register

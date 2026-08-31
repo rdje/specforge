@@ -1,4 +1,52 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-PRESSURE-HEADROOM.4c (`2026-08-31`) — a size stop is a symptom; classify the growth driver first
+
+The leaf offered two remedies for a record one line under its ceiling — split it, or re-derive the per-file
+profile — and the instinct is to pick by convenience. The measurement picks instead, and it picks by asking a
+different question than "is this record too long?"
+
+The population answers the first half. Across the 63 members of `research_records` the mean is 172 lines, the
+median 130, p95 372, and only **two** records exceed 80% of the 640-line ceiling. A bound that 61 of 63 members
+sit comfortably inside is not miscalibrated, so re-deriving the profile would have been a bound raised to
+accommodate one outlier — this tree's Non-Goal — and it would have spent a single-use ceiling authority to buy
+nothing structural. That is the same reasoning `.4a` used to *remove* the file count, and it lands the opposite
+way here, which is the point: ADR 0045's exemption is not a general licence to unbind an axis. `.4a` removed a
+count because the aggregates already bound the resource and the count had no rollover; `.4c` keeps a line bound
+because the population proves it fits.
+
+The second half is the one worth keeping. The outlier was not a long document — it was **two documents**: a
+genericity audit, and a per-leaf qualification chronology that thirteen `SPEC-TO-INTENT-ALIGNMENT.6d.ii` leaves
+had appended to it over three weeks as each closed. Every one of those appends was correct work by a compliant
+writer. The defect is that a record with an *unbounded writer set* was living under a *per-file* bound, so the
+stop was arithmetically certain and told us only when, not why. Splitting at the composition seam retires the
+growth driver; raising the ceiling would have re-run the same countdown with a larger constant. The general
+rule: before choosing a containment remedy, ask what writes this surface and how often — the answer decides
+between partition, rollover, and re-profile, and none of the three is interchangeable with the others.
+
+The containment doctrine's "preserve the reader's question in place" is what stops that split from becoming a
+loss. The naive partition moves every result out and leaves an audit that no longer states its own verdict. The
+audit therefore keeps its question, boundary, denominator, method, confirmed violations, source disposition,
+forbidden-vocabulary rebuttal, required signoff architecture, historical correction, and exit criteria, and
+gains a 20-line `Qualification outcome` section that states the composed structural and behavioral result *by
+derivation*. The moved sections keep their original appended order even though it is not strict leaf order —
+`.e.iv.vii` follows `.e.v.iii` because that is where it was written, and tidying evidence into chronological
+order would have been an unrequested rewrite of immutable material.
+
+**Prove losslessness against `HEAD`, not by reading the diff.** A 189-line move across two files is exactly the
+size where a careful read feels sufficient and is not. Three mechanical checks are: each moved block occurs
+byte-identically *and in order* in the destination; the retained prefix and suffix of the source are
+byte-identical to the original's; and the multiset difference of original lines minus (new source ∪
+destination) is empty. Routes need a separate pass, because a content-preserving move still breaks anchor
+deep-links and intra-document back-references — here all 14 inbound references cite the file as a whole, and
+the four retained "the findings above" style references still resolve to sections that stayed.
+
+Last, a split **relocates** a maximum rather than removing one, and the successor is the part worth reporting.
+The research maximum is now `generic-enum-conflation-measurement.md` at 559/640, and unlike the audit — whose
+`.6d.ii` writers are all closed — that record has a live writer in the active `KG-ISF-COMPLETENESS.5` lane,
+which appended to it as recently as `5c2fe11f`. Closing `.4c` while leaving that unowned would have reproduced
+the exact `LIVE-DOC-STOP-RISK` condition the tree exists to prevent, one record over, so `.4e` owns it now
+rather than after the axis stops a second time.
+
 ## CLAIM-VERIFICATION-ADOPTION.10 (`2026-08-30`) — a restatement cannot be diffed, so it must be re-read
 
 Directive 17 asks that the adopted standard be checked for updates. The obvious reading of that is a diff, and

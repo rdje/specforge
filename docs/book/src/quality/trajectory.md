@@ -345,6 +345,8 @@ keeps convergence honestly `unmeasurable`.
 
 The completed whole-pipeline audit is
 [`docs/research/production-genericity-pipeline-audit.md`](../../../research/production-genericity-pipeline-audit.md).
+Its per-leaf qualification results are
+[`docs/research/production-genericity-qualification-results.md`](../../../research/production-genericity-qualification-results.md).
 The frozen behavioral oracle is
 [`docs/research/behavioral-genericity-qualification-design.md`](../../../research/behavioral-genericity-qualification-design.md).
 The corrected held-out result is

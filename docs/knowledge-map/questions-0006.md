@@ -2,8 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is the terminal task source archive boundary verified
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > how is transaction membership kept boundary-precise across read vs write (bar #3)
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
   > how is workflow-standard file capacity derived
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > how large is the average docs/research record
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how many AArch64 External Debug page sidecars are repository relative
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -292,9 +298,3 @@
   > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > is SWD at 100% and on what metric
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > is SourceIR covered by the chain currency doctrine
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > is SpecForge PDF ingest deterministic

@@ -53,6 +53,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/live-document-derived-state-adoption-delta.md](../../docs/research/live-document-derived-state-adoption-delta.md) | Derived-state containment adoption delta — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a` |
 | [docs/research/miss-detectors-catalog.md](../../docs/research/miss-detectors-catalog.md) | Miss-Detector Catalog — completeness invariants & the miss taxonomy |
 | [docs/research/production-genericity-pipeline-audit.md](../../docs/research/production-genericity-pipeline-audit.md) | Production-genericity pipeline audit |
+| [docs/research/production-genericity-qualification-results.md](../../docs/research/production-genericity-qualification-results.md) | Production-genericity qualification results |
 | [docs/research/production-genericity-structural-qualification.md](../../docs/research/production-genericity-structural-qualification.md) | Production-genericity structural qualification |
 | [docs/research/recall-estimation-and-report.md](../../docs/research/recall-estimation-and-report.md) | Recall Estimation & the Typed CompletenessReport — design (research `.5`) |
 | [docs/research/region-accounting-design.md](../../docs/research/region-accounting-design.md) | Region Accounting & Backward Traceability — instrument design |

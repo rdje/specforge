@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how does claim evidence become stale
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how does collapse_section_header_register_identity decide same-register vs different-register
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > how does converge report integrated scheduled and omitted production capabilities
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -293,7 +297,3 @@
   > how is the required free disk for an ingest estimated
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is the terminal task source archive boundary verified
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > how is transaction membership kept boundary-precise across read vs write (bar #3)

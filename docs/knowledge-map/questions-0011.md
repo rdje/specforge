@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what owns containment of the live document adoption task history
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > what owns live-document size limits and transition debt
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what owns the SWD EvidenceIR to IntentIR projection gap
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what parts of the literature are deferred or flagged as future work
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what precision and recall floors must a supported document category meet
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what prevents one Knowledge Map question from pointing to multiple fact cards
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > what prevents root documentation from regrowing into a second manual
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
@@ -118,12 +132,16 @@
   > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > where are section-derived semantic phases built
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where are the .6d.ii per-leaf qualification results
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > where are the persisted trajectory controller input and report
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where did SpecForge suggest LTL/MTL support in ISF
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > where did my signal constraint go between EvidenceIR and SemanticIR
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where did the .6d.ii.e.v.iii information-flow result move to
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -248,6 +266,8 @@
   > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where is the .6d.ii.f behavioral signoff recorded
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > where is the 12 document current replay manifest
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -278,23 +298,3 @@
   > where is the declared-signal gate applied (pattern + dynamic constraint paths)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > where is the default-flip decision packet / should promote-constraints-llm become the default
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > where is the exact historical SpecForge roadmap after containment
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > where is the exact pre-migration alignment task source
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the extraction architecture contract
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the first post-migration DEVELOPMENT_NOTES rollover segment
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > where is the mdBook current-truth verifier
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the normative IntentIR product contract
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > where is the per-author adopt-vs-defer provenance
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > where is the persisted source-to-IntentIR result snapshot

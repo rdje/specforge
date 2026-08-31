@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > is SWD at 100% and on what metric
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > is SourceIR covered by the chain currency doctrine
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > is SpecForge PDF ingest deterministic
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > is SpecForge converging diverging stalled mixed or unmeasurable
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
@@ -81,6 +87,8 @@
   > is the .isf affected by transaction membership (no — emitter lowers steps, not ports/phase_membership)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > is the 46 percent figure the defect rate
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > is the 640-line research record ceiling correctly calibrated
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > is the AArch64 External Debug Guide current-binary refresh complete
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -268,6 +276,8 @@
   > should a corpus refresh clean the normalized bundle when it finishes
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > should an oversized research record be split or should its ceiling be raised
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > should corpus refresh progress be counted from normalized directories
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
@@ -288,13 +298,3 @@
   > temporal rule eval false positives root cause
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > temporal rule predicate atom vocabulary
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > torch MPS float64 error during ingest
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > was DL a signal declaration in the OpenCAPI Ready note
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > was OpenCAPI Discovery ingest deterministic and memory safe
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > was any USB4 pipeline artifact changed by the source locality probe
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > was the (contract ... eventually ...) ISF clause removed

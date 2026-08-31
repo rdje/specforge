@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CHANGES-LEDGER-ROLLOVER`
-- Status: `active` (`.0`/`.1`/`.2`/`.3`/`.5` done; `.4` owns the standing limit every rollover keeps hitting)
+- Status: `active` (`.0`/`.1`/`.2`/`.3`/`.5`/`.6` done; `.4` owns the standing limit every rollover keeps hitting)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-11`
 - Last updated: `2026-08-30`
@@ -52,7 +52,7 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   Status: `done`
   Goal: the change ledger is back inside its warning band through its declared transaction, with no record
   edited and no bound moved
-  Children: `CHANGES-LEDGER-ROLLOVER.0`, `.1`
+  Children: `CHANGES-LEDGER-ROLLOVER.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`
 
 - ID: `CHANGES-LEDGER-ROLLOVER.0`
   Status: `done`
@@ -170,6 +170,41 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   edited, reordered or reflowed and no limit, milestone or ceiling moved`
   Commit: `STATUS-LEDGER-ROLLOVER.5 / CHANGES-LEDGER-ROLLOVER.5 — roll both root ledgers in one transaction`
 
+- ID: `CHANGES-LEDGER-ROLLOVER.6`
+  Status: `done` (`2026-08-31`)
+  Goal: roll the change ledger, which `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`'s own record pushed past its line
+  signal
+  Acceptance: measured `2026-08-31`, `CHANGES.md` reached **1,636 lines = 90.9%** of its 1,800-line health
+  target — the mandatory 90% signal — and 225,378 bytes = 88.4%, already past the 80% byte warning as well.
+  Shortening the entry that crossed it is refused on two grounds: the committed root was 1,606 lines, so the
+  entry would have to fall to 13 lines to stay under 1,620, and trimming evidence to dodge a declared milestone
+  is precisely the Non-Goal `LIVE-DOCUMENT-PRESSURE-HEADROOM` exists to enforce. So the rollover is performed
+  **inside the same transaction** as `.4c`, which is this repository's established pattern for a blocking pair
+  (`2b9e8899` carries `CLAIM-VERIFICATION-ADOPTION.6b / CHANGES-LEDGER-ROLLOVER.3`; `.5` carries
+  `STATUS-LEDGER-ROLLOVER.5`). The pivot rule is respected in substance: no new work is started, and the tree is
+  brought to a clean committed state at the first point where that is possible
+  **Sizing, stated before the plan is written.** The pinned 75-record migration suffix is 1,053 lines and
+  170,695 bytes before any current record exists — the standing limit `.4` owns — so only the remaining third is
+  reachable. The cut is taken at a **semantic** boundary rather than at the minimum that clears the warning:
+  the committed root's newest seven records are exactly the current `LIVE-DOCUMENT-PRESSURE-HEADROOM` story
+  (`.15`, `.4b`, `.4a`, `.14a`, and three `.7` records), and the thirteen below them are the closed
+  `SPEC-TO-INTENT-ALIGNMENT.9` and `CLAIM-VERIFICATION-ADOPTION.7` block. Keeping seven opens the ledger on the
+  story this transaction continues — `.5`'s stated reason, applied to this tree. The minimum cut would have kept
+  eleven and landed at 78.9% of bytes, roughly one record below re-warning; keeping seven lands at 74.0% with
+  about six records before the warning and seventeen before the next stop, so the semantic cut is also the one
+  that does not re-enter this transaction two slices later
+  Prerequisite: none; it blocks `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`'s commit
+  Verification: `plan docs/research/changes-ledger-rollover-2026-08-31-plan.jsonl pins boundary commit d5b4016b
+  and committed opening SHA-256 19c6b9c7...3155 across 95 records with 1 future prepend; the dry run reported
+  exact and warning-safe before the applied run, and the applied run installed root-last. Root 95 -> 82 committed
+  records / 1,606 -> 1,216 lines / 219,676 -> 185,835 bytes, and with .4c's own 30-line record riding over the
+  cut the live root is 83 records / 1,246 lines (69.2% of the 1,800-line target) / 188,654 bytes (74.0% of the
+  255,000-byte target) — under the 80% warning on every dimension. Segment segment-0017-2026-08-31.md holds
+  13 records / 390 lines / 36,724 bytes at SHA-256 3b8783c1...87b2; git diff proves every older segment and the
+  source capsule byte-identical, with only the root, the new segment, the manifest and the index changed. No
+  record was edited, reordered or reflowed and no limit, milestone or ceiling moved`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -179,7 +214,8 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
 | 3 | `CHANGES-LEDGER-ROLLOVER.2` | `done` | sealed 18 records so `.6`'s append was legal |
 | 4 | `CHANGES-LEDGER-ROLLOVER.3` | `done` | sealed 12 records so `.6b`'s append was legal; root 61.9% / 69.1% |
 | 5 | `CHANGES-LEDGER-ROLLOVER.5` | `done` | sealed 13 records so `STATUS-LEDGER-ROLLOVER.5`'s own record was legal; kept the five this transaction and `.7`'s closure wrote |
-| 6 | `CHANGES-LEDGER-ROLLOVER.4` | `pending` | the frozen migration suffix occupies two thirds of the byte budget, so every rollover buys only a dozen slices |
+| 6 | `CHANGES-LEDGER-ROLLOVER.6` | `done` | sealed 13 records so `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`'s own record was legal; cut at the semantic boundary, root 69.2% / 74.0% |
+| 7 | `CHANGES-LEDGER-ROLLOVER.4` | `pending` | the frozen migration suffix occupies two thirds of the byte budget, so every rollover buys only a dozen slices |
 
 ## Decisions
 

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what is residual_gold_law
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what is route_catalog_state
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is scripts/check_doctrines.sh / the doctrine driver
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is select_initiator_actor / initiator_perspective_directions
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is signal_presence_records and what does a SignalPresenceRecord hold
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -175,6 +185,8 @@
   > what is the inter-annotator agreement of the eval gold
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what is the line-size profile of SpecForge research records
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is the live-document coverage authority
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
@@ -217,6 +229,8 @@
   > what is the register-field eval surface (EvalTask::RegisterField)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > what is the registers.section_header_field strategy
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what is the remedy when a research record reaches its per-file line ceiling
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > what is the rolling ledger archive protocol
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -284,17 +298,3 @@
   > what must change together with the population replay orchestrator
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > what must happen before the USB4 inter-domain corpus refresh can run
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what owns containment of the live document adoption task history
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > what owns live-document size limits and transition debt
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > what owns the SWD EvidenceIR to IntentIR projection gap
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what parts of the literature are deferred or flagged as future work
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what precision and recall floors must a supported document category meet
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what prevents one Knowledge Map question from pointing to multiple fact cards
