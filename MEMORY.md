@@ -30,9 +30,13 @@
   can be right and its scope wrong: `.5.iv` censused `table_kind == encoding`, but the shipped scan visits
   `unknown` too, so the population was 2x and its four "junk classes" missed the dominant one (positional
   headers) and the whole glossary class. **Re-derive the population from the SHIPPED path, never from the
-  earlier census.** And a named exclusion may be unnecessary: `RESERVED`-only self-eliminates in
-  `build_symbol_definitions`' conflicting-value rule, so it did not ship — measure downstream before gating
-  upstream. Prepending to `CHANGES.md` shifts the line-pinned `current_claim_census.jsonl` regions
+  earlier census.** And a named exclusion may be unnecessary: half the `RESERVED`-only cases are eliminated
+  by `build_symbol_definitions`' conflicting-value rule, so it did not ship — measure downstream before
+  gating upstream. **A count read off a dump is not derived.** That elimination split shipped as `5/7`, is
+  `6/6`, and its worked example shipped backwards; both were caught only because the director audited, and
+  the fix was to make the reproducer model the merge (`--reserved-split`), not to reword. Two frames that
+  answer the same question are still two populations — label which one a number came from.
+  Prepending to `CHANGES.md` shifts the line-pinned `current_claim_census.jsonl` regions
   (re-anchor by CONTENT, never offsets); editing `CHANGES.md`/`MEMORY.md` stales `durability.artifacts`
   digests in `claims.jsonl`; a new fact card moves `fact_card_catalog.json` `planned_outputs` plus the
   `fact-card-catalog-count` assertion — refresh those last. Never infer ownership from a mention: read the

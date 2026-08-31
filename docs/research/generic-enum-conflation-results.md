@@ -473,12 +473,12 @@ Measured against the whole population rather than the `encoding`-kind sample:
 - **`RESERVED`-only is NOT an exclusion, and the record is corrected.** `.5.iv` called the twelve
   `RESERVED`-only enums junk that "carry no intent". Two measurements overturn it. First,
   `build_symbol_definitions` keys members by NAME and drops any member whose value conflicts, so the five
-  multi-row cases self-eliminate downstream with no name-side gate. Second, the seven single-row cases are
-  structurally indistinguishable from 31 legitimate single-distinct-member tables in the same population
+  cases are eliminated downstream with no name-side gate. Second, the survivors are structurally
+  indistinguishable from 31 legitimate single-distinct-member tables in the same population
   (`TTL 0b00 = NO_LEVEL_HINT_INFORMATION`, `CD2L 0b1 = 2_LEVEL_CD_TABLE_SUPPORTED`, `S1P`, `PRI`, `GRAN4K`…)
   — the only discriminator is the word `RESERVED` itself, which is exactly the spec-assigned value
-  vocabulary ADR 0006 forbids. And in the merge they are not even vacuous: CHI `DataSource` fuses a
-  meaning row with a reserved row into the field's correct encoding. So no `RESERVED` clause shipped.
+  vocabulary ADR 0006 forbids. So no `RESERVED` clause shipped. **The split and the worked example were
+  first published wrong and are corrected below (`§.5.iv.a correction`).**
 
 ### The predicate that shipped
 
@@ -514,6 +514,54 @@ rebuildable documents against the patched binary and finds every persisted artif
 states its own limit in the same line: `0 emitted .isf file(s), 24 blocked/no-file state(s)`, so the FSMGen
 `--strict` leg has nothing to run on here and is vacuous by construction rather than passed. The capability
 is real and reaches those 8 documents the moment their chains are re-ingested.
+
+### `.5.iv.a` correction (`2026-08-31`) — the `RESERVED` split and its worked example were wrong
+
+The director audited the five findings this slice published. Three re-derived exactly; two did not, both
+inside the `RESERVED`-only argument, and both because they were read off a dump instead of computed. The
+decision they support is unchanged; the statements are withdrawn and replaced.
+
+**Withdrawn: "five of the twelve self-eliminate … the other seven are single-row."** Modelling what
+`build_symbol_definitions` actually does — accumulate members by NAME per document, then drop any member
+whose value disagrees with the one already accumulated — the split is **six and six**:
+
+| | `.5.iv`'s census (the corrected claim's frame) | the shipped predicate's population (the decision's frame) |
+| --- | ---: | ---: |
+| tables minting at least one member | 134 | 138 |
+| `RESERVED`-only among them | 12 | 10 |
+| …`RESERVED` ELIMINATED by the merge | **6** | **4** |
+| …`RESERVED` SURVIVING | **6** | **6** |
+| legitimate single-member comparators | 31 | 37 |
+
+The two frames are different populations and must not be conflated: `.5.iv` selected header-nameable
+`encoding`-kind tables with no positional class and no encoding-literal requirement, so it holds two NVMe
+`CODE` tables and a CoreSight `OFFSET` table the shipped predicate now declines — and all three were among
+the eliminated, which is the whole difference between 6 and 4. **Both frames leave the same six survivors:**
+SMMU `STALL_MODEL`, `TTENDIAN`, `HTTU`, `PGS` and CHI-C2C `CONTFORMAT`, `EVENTTYPE`.
+
+Four of the eliminated conflict inside their own table (`DATASOURCE` 0b10/0b11, `REASON` ×2, `CODE`
+05h–FFh); the other two are single-row tables that only conflict once merge-by-name pulls in a sibling table
+of the same name in the same document — which is exactly why counting rows per table, as the withdrawn
+figure did, gets it wrong. Re-derive both frames with
+`python3 scripts/measure_header_sourced_enum_naming.py --reserved-split`.
+
+**Withdrawn: "in the merge they are not even vacuous: CHI `DataSource` fuses a meaning row with a reserved
+row into the field's correct encoding."** It does the opposite. `DataSource` accumulates
+`DEFAULT_NO_USEFUL_INFORMATION = 0` from one table and `RESERVED` at values 2 **and** 3 from another; the two
+reserved rows disagree, so the conflicting-value rule drops `RESERVED` outright and the surviving enum is
+`(DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0))`. The merge preserves no reserved encoding at all.
+
+**What still holds, and why the decision does not move.** The NO-GO rested on two legs and only the third,
+decorative one is gone: half the population is eliminated downstream without any name-side gate, and the six
+survivors have no structural discriminator against 31 legitimate single-member tables — the only thing that
+separates `STALL_MODEL 0b11 = RESERVED` from `TTL 0b00 = NO_LEVEL_HINT_INFORMATION` is the word `RESERVED`,
+which is precisely the spec-assigned value vocabulary ADR 0006 forbids. Emitting `(STALL_MODEL (RESERVED 3))`
+is also a true statement about that document, not a fabrication, so there is nothing to gate away.
+
+**Method note, because this is the second time.** `CLAIM-VERIFICATION-ADOPTION.9`'s ninth instance says a
+derived figure needs its own derivation command rather than arithmetic over a correct table. Both withdrawn
+statements are that failure again: the underlying dump was right, the reading of it was not. The reproducer
+now models the merge, so the split is re-derivable rather than eyeballed.
 
 ### Found while gating this slice — the WIRE-BASED-100 scoring oracle cannot run
 

@@ -954,9 +954,11 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   field LAYOUT), which alone removes 448 candidates and subsumes the `OFFSET` and garbled-`AXADDR` classes;
   a second clause — at least one value cell must PARSE as an encoding literal — subsumes the `*_WIDTH` class
   *and* the glossary/notation/abbreviation class `.5.iv` never saw. **`RESERVED`-only did not ship as an
-  exclusion**: five of the twelve self-eliminate in `build_symbol_definitions`' conflicting-value rule, the
-  other seven are structurally indistinguishable from 31 legitimate single-member tables, and the only
-  discriminator is a spec-assigned value word ADR 0006 forbids. (3) **This node's gate prediction was false.**
+  exclusion**: SIX of the twelve have their `RESERVED` member eliminated by `build_symbol_definitions`'
+  conflicting-value rule, the other SIX survive, and those six are structurally indistinguishable from 31
+  legitimate single-distinct-member tables, so the only discriminator left is a spec-assigned value word
+  ADR 0006 forbids. (Corrected `2026-08-31` — this node first published `five`/`seven`, hand-counted from a
+  dump rather than derived; see the correction block below.) (3) **This node's gate prediction was false.**
   `ihi0022_l` already carries `AWATOP` with 13 members, and it cannot be rebuilt at all — its SourceIR is
   legacy schema 1, refused for canonical use, one of 54 legacy chains against 24 current ones. Exactly ONE
   accepted table sits in a rebuildable document (the SMMU guide's `Table 3-1`, the table that opened `.5.iv`)
@@ -1011,6 +1013,27 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Changelog
 
+- `2026-08-31`: **`.5.iv.a` CORRECTION — two of the statements the landing published are withdrawn.** The
+  director audited the five findings. Three re-derived exactly (the eval-extraction refusal and its
+  relocation cause on the pre-change binary; 54 legacy / 24 current chains with APB/AHB/AXI legacy and only
+  SWD+I2C rebuildable; 994 candidates / 285 accepted / 1 in a rebuildable document, `AWATOP` already 13
+  members, SMMU `Table 3-1` minting nothing). Two did not, both inside the `RESERVED` argument, and both
+  because they were read off a dump instead of computed. **(a) The split is SIX/SIX, not five/seven.**
+  Modelling `build_symbol_definitions`' merge-by-name and conflicting-value drop: in the `.5.iv` census
+  frame 6 of 12 `RESERVED` members are eliminated and 6 survive; in the shipped-predicate frame 4 of 10 are
+  eliminated and the SAME 6 survive (`STALL_MODEL`, `TTENDIAN`, `HTTU`, `PGS`, `CONTFORMAT`, `EVENTTYPE`).
+  Four conflict inside their own table; two only conflict once merge-by-name pulls in a sibling table, which
+  is exactly what counting rows per table misses. **(b) The `DataSource` worked example is backwards.** It
+  accumulates `DEFAULT_NO_USEFUL_INFORMATION = 0` plus `RESERVED` at 2 AND 3; the reserved rows disagree, so
+  the rule drops `RESERVED` and the surviving enum is `(DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0))` — the
+  merge preserves no reserved encoding, the opposite of what was published. **The NO-GO decision does not
+  move**: it rested on the elimination leg and the indistinguishability leg (6 survivors against 31
+  legitimate single-member comparators, discriminable only by a spec-assigned word ADR 0006 forbids), and
+  only the decorative third leg is gone. `scripts/measure_header_sourced_enum_naming.py --reserved-split`
+  now models the merge and prints both frames, so the split is re-derivable instead of eyeballed — the same
+  lesson `CLAIM-VERIFICATION-ADOPTION.9`'s ninth instance records. Report §`.5.iv.a correction`; KM
+  `[[generic-enum-conflation]]`.
+
 - `2026-08-31`: **`.5.iv.a` DONE — CODE: the encoding table's own column header may now SOURCE its enum
   name.** Added `derive_header_sourced_enum_name` (`ir/evidence.rs`) as a LAST resort after the signal-match
   loop and the `.5.i`-gated caption fallback, so the change is strictly additive. Its five clauses were
@@ -1021,9 +1044,10 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   the column holds a POSITION so the table is a field LAYOUT — remove 448 alone and subsume two of the four,
   and **"no value cell parses as an encoding literal"** subsumes the `*_WIDTH` class *and* the
   glossary/notation/abbreviation class `.5.iv` never saw); and **`RESERVED`-only did not ship as an
-  exclusion** — five of the twelve self-eliminate in `build_symbol_definitions`' conflicting-value rule, the
-  other seven are structurally identical to 31 legitimate single-member tables, and the only discriminator
-  left is a spec-assigned value word ADR 0006 forbids. **The node's own gate prediction was also false:**
+  exclusion** — SIX of the twelve have their `RESERVED` member eliminated by `build_symbol_definitions`'
+  conflicting-value rule and SIX survive, and those six are structurally identical to 31 legitimate
+  single-distinct-member tables, so the only discriminator left is a spec-assigned value word ADR 0006
+  forbids (corrected `2026-08-31`; first published as `five`/`seven`). **The node's own gate prediction was also false:**
   `ihi0022_l` already carries `AWATOP` (13 members) and cannot be rebuilt at all — legacy schema 1, one of 54
   legacy chains against 24 current — and exactly ONE accepted table sits in a rebuildable document (the SMMU
   guide `Table 3-1` that opened `.5.iv`), which mints nothing because `.5.ii` drops its sentence members.

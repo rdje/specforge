@@ -24,7 +24,13 @@ Reads only persisted `generated/source_ir/*/source_ir.json`. Writes nothing, run
 no stage, and is safe to run at any time. Paths resolve from the repository root so the reproducer
 moves with the repository.
 
-    python3 scripts/measure_header_sourced_enum_naming.py [--json]
+`--reserved-split` additionally models what `build_symbol_definitions` (ir/semantic.rs) does to the
+`RESERVED`-only tables: it accumulates members by NAME per document and drops any member whose value
+disagrees with the one already accumulated. That merge is why a table's own row count does not decide
+whether its `RESERVED` member survives, and why the `.5.iv.a` correction of `2026-08-31` exists — the split
+was first published from a per-table dump instead of from this model.
+
+    python3 scripts/measure_header_sourced_enum_naming.py [--json] [--reserved-split]
 """
 
 from __future__ import annotations
@@ -33,6 +39,7 @@ import argparse
 import collections
 import json
 import os
+import re
 import sys
 
 # The shipped scan visits every table except these three kinds.
@@ -183,6 +190,132 @@ def classify(table: dict) -> tuple[str, str | None]:
     return "accepted", field
 
 
+# `.5.ii`'s sentence-spine member gate, reproduced for measurement only. A member carrying an English
+# sentence-spine token is a captured sentence, and the shipped gate drops it, so a table whose members are
+# all fragments mints nothing however it is named.
+SENTENCE_SPINE = {
+    "IS", "ARE", "BE", "BEEN", "BEING", "WAS", "WERE", "HAS", "HAVE", "HAD",
+    "MUST", "SHALL", "SHOULD", "WILL", "WOULD",
+    "THE", "THIS", "THAT", "THESE", "THOSE",
+    "WHICH", "WHEN", "WHERE", "WHILE", "IF", "BECAUSE", "THAN", "THEN",
+    "OF", "TO", "AND", "OR", "FOR", "FROM", "WITH", "AS", "BY", "IN", "ON", "NOT",
+}
+
+# The unassigned-encoding marker whose exclusion `.5.iv` proposed and `.5.iv.a` declined to ship. It appears
+# here only as a MEASUREMENT subject: no production path may branch on a spec-assigned value word (ADR 0006).
+RESERVED_MARKER = "RESERVED"
+
+
+def synthesize_member_name(cell: str) -> str:
+    return re.sub(r"[^A-Z0-9]+", "_", cell.upper()).strip("_")
+
+
+def is_prose_fragment(member: str) -> bool:
+    return any(token in SENTENCE_SPINE for token in member.split("_") if token)
+
+
+def minted_members(table: dict, enum_name: str) -> list[tuple[str, int]]:
+    """(member, value) pairs the member seam would synthesize: value parses, else the row index."""
+    headers = [c.get("text", "") for c in (table.get("header_rows") or [[]])[0]]
+    value_column = infer_value_column(headers, enum_name)
+    name_column = 1 if value_column == 0 else 0
+    minted: list[tuple[str, int]] = []
+    for index, row in enumerate(table.get("body_rows", [])):
+        if max(value_column, name_column) >= len(row):
+            continue
+        member = synthesize_member_name(row[name_column].get("text", "").strip())
+        if not member or is_prose_fragment(member):
+            continue
+        parsed = parse_encoding_numeric_literal(row[value_column].get("text", "").strip())
+        minted.append((member, index if parsed is None else parsed))
+    return minted
+
+
+def legacy_census_module():
+    """The `.5.iv` census, imported rather than re-implemented so its predicate stays single-sourced.
+
+    The `.5.iv` frame is a DIFFERENT population from the shipped one: it selects header-nameable tables
+    with no positional-header class, no layout-range clause, and no encoding-literal requirement, and it
+    restricts to `table_kind == "encoding"`. Reproducing it by hand here would let the two drift, and the
+    numbers being corrected are that frame's.
+    """
+    import importlib.util
+
+    sibling = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           "measure_encoding_enum_header_naming.py")
+    spec = importlib.util.spec_from_file_location("measure_encoding_enum_header_naming", sibling)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def reserved_split(root: str, frame: str) -> dict:
+    """Model `build_symbol_definitions`' merge-by-name and report what happens to RESERVED-only tables.
+
+    `frame` is `"legacy_census"` — the population `.5.iv` censused, whose claim is the one corrected — or
+    `"shipped"`, the population the shipped predicate accepts, which is the frame the decision governs.
+    They are different sets and give different totals; the conclusion holds in both.
+    """
+    source_root = os.path.join(root, "generated", "source_ir")
+    legacy = legacy_census_module() if frame == "legacy_census" else None
+    accepted: list[tuple[str, str, str, list[tuple[str, int]]]] = []
+    for key in sorted(os.listdir(source_root)):
+        path = os.path.join(source_root, key, "source_ir.json")
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding="utf-8") as handle:
+            source_ir = json.load(handle)
+        if legacy is not None:
+            by_id = {t.get("table_id"): t for t in source_ir.get("structured_tables", [])}
+            for table_id, name, members in legacy.candidate_tables(source_ir):
+                if not members:
+                    continue
+                minted = minted_members(by_id[table_id], name)
+                if minted:
+                    accepted.append((key, table_id, name, minted))
+            continue
+        for table in source_ir.get("structured_tables", []):
+            if table.get("table_kind") in SKIPPED_TABLE_KINDS:
+                continue
+            verdict, name = classify(table)
+            if verdict != "accepted":
+                continue
+            members = minted_members(table, name)
+            if members:
+                accepted.append((key, table.get("table_id"), name, members))
+
+    per_group: dict[tuple[str, str], list[tuple[str, int]]] = collections.defaultdict(list)
+    for key, _table_id, name, members in accepted:
+        per_group[(key, name)].extend(members)
+
+    reserved_only = [t for t in accepted if {m for m, _ in t[3]} <= {RESERVED_MARKER}]
+    eliminated, survived = [], []
+    for key, table_id, name, _members in reserved_only:
+        accumulator: dict[str, int] = {}
+        conflicting: set[str] = set()
+        for member, value in per_group[(key, name)]:
+            if member in accumulator and accumulator[member] != value:
+                conflicting.add(member)
+            accumulator.setdefault(member, value)
+        (eliminated if RESERVED_MARKER in conflicting else survived).append(f"{key}:{table_id}:{name}")
+
+    single = [t for t in accepted if len({m for m, _ in t[3]}) == 1]
+    return {
+        "frame": "the .5.iv header-nameable census (the corrected claim's frame)"
+                 if frame == "legacy_census"
+                 else "the population the shipped predicate accepts (the decision's frame)",
+        "tables_minting_at_least_one_member": len(accepted),
+        "reserved_only_tables": len(reserved_only),
+        "reserved_member_eliminated_by_merge": len(eliminated),
+        "reserved_member_survives": len(survived),
+        "eliminated": sorted(eliminated),
+        "survived": sorted(survived),
+        "single_distinct_member_tables": len(single),
+        "legitimate_single_member_comparators":
+            len([t for t in single if {m for m, _ in t[3]} != {RESERVED_MARKER}]),
+    }
+
+
 def measure(root: str) -> dict:
     source_root = os.path.join(root, "generated", "source_ir")
     if not os.path.isdir(source_root):
@@ -248,9 +381,31 @@ def main() -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("--json", action="store_true", help="emit the census as JSON")
+    parser.add_argument(
+        "--reserved-split",
+        action="store_true",
+        help="model build_symbol_definitions' merge and report the RESERVED-only split in both frames",
+    )
     args = parser.parse_args()
 
-    result = measure(repository_root())
+    root = repository_root()
+    if args.reserved_split:
+        frames = [reserved_split(root, "legacy_census"), reserved_split(root, "shipped")]
+        if args.json:
+            print(json.dumps(frames, indent=2, sort_keys=True))
+            return 0
+        for frame in frames:
+            print(f"frame: {frame['frame']}")
+            print(f"  tables minting at least one member:        {frame['tables_minting_at_least_one_member']}")
+            print(f"  RESERVED-only tables:                      {frame['reserved_only_tables']}")
+            print(f"    RESERVED eliminated by the merge:        {frame['reserved_member_eliminated_by_merge']}")
+            print(f"    RESERVED surviving:                      {frame['reserved_member_survives']}")
+            print(f"  single-distinct-member tables:             {frame['single_distinct_member_tables']}")
+            print(f"    legitimate (non-RESERVED) comparators:   {frame['legitimate_single_member_comparators']}")
+            print()
+        return 0
+
+    result = measure(root)
 
     if args.json:
         print(json.dumps(result, indent=2, sort_keys=True))

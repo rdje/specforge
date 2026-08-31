@@ -1,3 +1,35 @@
+### KG-ISF-COMPLETENESS.5.iv.a — correction: the RESERVED split was 5/7 and is 6/6, and its worked example was backwards
+
+- THE DIRECTOR ASKED WHETHER THE FIVE PUBLISHED FINDINGS STILL HOLD. Three re-derive exactly and are
+  unchanged: eval-extraction refuses all 8 tracked seeds (5 legacy-schema-2, 3 proof-topology) on the
+  CURRENT binary and identically on the pre-change 2026-08-28 release binary, with the relocation probe
+  showing artifact_layout as the ONLY differing top-level key between the failing and passing copies;
+  54 legacy / 24 current chains with APB/AHB/AXI/ACE/NVMe/RISC-V legacy and only SWD+I2C rebuildable among
+  scored documents; 9,828 visited / 994 candidates / 285 accepted / 1 in a rebuildable document, with
+  ihi0022_l already carrying AWATOP at 13 members and refused as legacy schema 1, and the SMMU guide
+  Table 3-1 accepted but minting nothing because all three members are sentence fragments. The book-census
+  blind spot also re-derives: "285 tables" and "nine documents" both fail is_candidate, while "285 documents"
+  and "285 files" match — two independent misses, noun list and spelled numeral.
+- TWO STATEMENTS DO NOT HOLD, both inside the RESERVED argument, both read off a dump instead of computed.
+  (a) THE SPLIT IS SIX AND SIX, not five and seven. Modelling build_symbol_definitions' merge-by-name plus
+  its conflicting-value drop: 6 of 12 eliminated / 6 surviving in the .5.iv census frame, and 4 of 10
+  eliminated / the SAME 6 surviving in the shipped-predicate frame — the two frames are different
+  populations and were conflated. Four conflict inside their own table; two only conflict once merge-by-name
+  pulls in a sibling table of the same name, which is precisely what a per-table row count misses.
+  (b) THE DataSource EXAMPLE IS BACKWARDS. It accumulates DEFAULT_NO_USEFUL_INFORMATION = 0 plus RESERVED at
+  2 AND 3; the reserved rows disagree, so RESERVED is dropped and the surviving enum is
+  (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). The merge preserves no reserved encoding at all.
+- THE DECISION DOES NOT MOVE. The NO-GO on a RESERVED name-side exclusion rested on the elimination leg and
+  the indistinguishability leg — 6 survivors against 31 legitimate single-distinct-member comparators,
+  separable only by a spec-assigned value word ADR 0006 forbids — and only the decorative third leg is gone.
+  Emitting (STALL_MODEL (RESERVED 3)) remains a true statement about that document, not a fabrication.
+- THE FIX IS A DERIVATION, NOT A REWORD. scripts/measure_header_sourced_enum_naming.py --reserved-split now
+  models the merge and prints both frames, importing the .5.iv census rather than re-implementing it so the
+  two predicates cannot drift. Same lesson as CLAIM-VERIFICATION-ADOPTION.9's ninth instance: a derived
+  figure needs its own derivation command, and the underlying dump being right does not make the reading of
+  it right. Corrected in the task node, the acceptance checklist, the research record, the fact card and the
+  resume pointer; commit 06a609ef's message keeps the withdrawn numbers and is superseded by this entry.
+
 ### KG-ISF-COMPLETENESS.5.iv.a — let an encoding table's own header source its enum name
 
 - THE ASYMMETRY, CLOSED. derive_encoding_enum_name drew its candidate from caption_text or the section
