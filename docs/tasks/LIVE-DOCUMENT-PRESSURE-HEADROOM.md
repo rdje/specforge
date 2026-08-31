@@ -630,7 +630,17 @@ repeatable rollover/remedy paths and remain under their existing owners.
   `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`), `CLAIM-VERIFICATION-ADOPTION.11` produced a sixth by screening
   with `grep -rl`, and `.7` produced a seventh by closing itself while holding three of its own rows — the
   last under full attention, immediately after documenting the class. That is the evidence that review does
-  not hold this invariant and a gate must
+  not hold this invariant and a gate must.
+  **An eighth instance, on a surface `.7`'s assignment never screened (`2026-08-31`).** `.7` bound the
+  live-size gate's 39 warned rows; nobody screened `ROADMAP.md`, whose "five active program groups" list
+  named **two closed trees** as current owners of the repository-durability group — `LIVE-DOC-STOP-RISK`
+  (`done`) for live-document containment and `CORPUS-CHAIN-CURRENCY` (`done`) for artifact currency — while
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM`, the tree actually holding that work and every warned-surface
+  assignment, appeared **zero** times in the roadmap. The citation is corrected in this commit; the gate this
+  leaf builds must therefore cover `ROADMAP.md`'s ownership prose, not only the live-size assignment
+  surfaces, and must distinguish a *historical attribution* (a `Done` workstream row naming the tree that
+  finished it, which is correct) from a *current-owner* citation. Found by re-reading the roadmap to check a
+  claim, which is the point: the class is invisible to every screen that does not read the owner's `Status`
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
   Verification: `pending`
   Commit: `pending`
@@ -833,6 +843,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-31` | `.15` population | every `docs/tasks/*.md` link in `ROADMAP.md` resolved to its own `Status` line, then split by whether the citing row describes finished or open work | **28 trees linked, 12 closed.** Most are correct historical attributions in the `Done` workstream rows. The defect is in the *active* program-group list: `LIVE-DOC-STOP-RISK` and `CORPUS-CHAIN-CURRENCY`, both `done`, were named as current owners, and `LIVE-DOCUMENT-PRESSURE-HEADROOM` was absent from the roadmap entirely. Two weaker cases (`R9` "Mostly done", `R15b` "In progress") name closed trees and are left for the gate to adjudicate |
 | `2026-08-31` | `.4b` | generic live-size checker before and after removing the record | RED observed first at `3cf7f6d0`: "unused or banked ceiling-increase authority", 1 violation. Green after: 901 files / 57 surfaces. The single-use protocol is therefore proven in both directions, not just claimed |
 | `2026-08-31` | `.4a` | `check_live_document_size.sh`; the generic size checker with the authority registry; census, book-claim and doctrine gates | research files **63/64 -> unbounded** behind the declared exemption; every resource dimension stays numeric; the single-use authority is added and consumed in the same commit; the composed gate reports **901 Markdown files / 57 governed surfaces** and exits 0 with no research warning. The stop relocates to `lines_total`/`bytes_total`, which at the measured record mean bind at ~238 records and still have a warning band |
 | `2026-08-31` | `.14a` | `check_active_task_evidence.pl --self-test`; the three contracts `--check`; `--write` round-trip; `check_live_document_size.sh`; census, book-claim, knowledge-map and doctrine gates | index **115 -> 43 lines** (89.8% -> 33.6%), clear of the 90% milestone that refused the next leaf; 83 routes = 3 open / 80 closed in one 93-line catalog part; self-test **61/61** with eleven new RED cases and a writer round-trip plus preflight refusal; live-size **900 files / 57 surfaces**; census 41 surfaces / 73 evidence units; book claims 325/325; Knowledge Map 274 facts / 2,193 keys |
@@ -856,6 +867,11 @@ owner's `Status` line rather than from any mention of the surface.
 | `.2` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2 — split the decided no-cap remedy into the three transactions it actually is` | container; found the second `$MAX_TASKS` enforcer and measured the relocation |
 
 ## Changelog
+
+- `2026-08-31`: corrected `ROADMAP.md`'s repository-durability ownership, which named two closed trees as
+  current owners while this tree — the one holding the work and the assignment table — was absent from the
+  roadmap. Eighth instance of the class `.15` exists to catch, and the first on a surface `.7` never
+  screened, so `.15`'s scope now includes roadmap ownership prose.
 
 - `2026-08-31`: `.4` becomes a container over `.4a` (the membership stop, done), `.4b` (retire the consumed
   authority), `.4c` (the 639-of-640 per-record line stop) and `.4d` (validation snapshot and README). Also

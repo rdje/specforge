@@ -120,11 +120,11 @@ Five active program groups support that north star:
   [`CORPUS-PATTERN-REUSE`](docs/tasks/CORPUS-PATTERN-REUSE.md);
 - learning, arbitration, and corpus synthesis: the open R15c–R15g lanes remain owned by
   [`R15C-R15G-LEARNING-PLANE-BACKFILL`](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md);
-- repository durability and portability: measured artifact currency is owned by
-  [`CORPUS-CHAIN-CURRENCY`](docs/tasks/CORPUS-CHAIN-CURRENCY.md) with the ingest boundary it cannot reach owned
-  by [`SOURCE-IR-REPRODUCIBILITY`](docs/tasks/SOURCE-IR-REPRODUCIBILITY.md), and live-document containment by
-  [`LIVE-DOC-STOP-RISK`](docs/tasks/LIVE-DOC-STOP-RISK.md), under the rule that a bound a surface can
-  actually reach must have a remedy compliant work can take.
+- repository durability and portability: live-document containment is owned by
+  [`LIVE-DOCUMENT-PRESSURE-HEADROOM`](docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md) and the ingest boundary
+  by [`SOURCE-IR-REPRODUCIBILITY`](docs/tasks/SOURCE-IR-REPRODUCIBILITY.md), under the rule that a bound a
+  surface can actually reach must have a remedy compliant work can take — the rule the now-closed
+  [`LIVE-DOC-STOP-RISK`](docs/tasks/LIVE-DOC-STOP-RISK.md) and `CORPUS-CHAIN-CURRENCY` established.
 
 The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md). This roadmap owns only high-level direction and milestone status;
 it does not mirror leaf frontiers, delivery chronology, or per-leaf measurements. Direction retired by a rollover is sealed byte-exact in

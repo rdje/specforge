@@ -19,7 +19,9 @@
   split at a section boundary (now affordable, the file count is unbounded) and a re-derived per-file profile.
   Then `.4d` (validation snapshot 544/640, README 108/120) and `.15` (the closed-owner gate).
 - In-flight uncommitted: none after this commit.
-- Blockers: none. Never infer ownership from a mention: read the owner's own `Status`, and check
+- Blockers: none. **Ownership citations reach past the live-size gate:** `ROADMAP.md` named two `done`
+  trees as current owners of an active program group — the eighth instance, and the first outside
+  `.7`'s 39 assigned rows. Corrected; `.15` now covers roadmap prose. Never infer ownership from a mention: read the owner's own `Status`, and check
   that a leaf you close holds no assignment rows. Prepending to `CHANGES.md` or editing a book chapter moves
   pinned census regions: read the file BEFORE opening it for write, prove the prepend is pure, shift, then
   re-verify each `sha256(line bytes + "\n")` by CONTENT anchor, never by offset arithmetic. Owned, not fixed:

@@ -1,3 +1,22 @@
+### LIVE-DOCUMENT-PRESSURE-HEADROOM.15 — correct the roadmap's closed-owner citation (eighth instance)
+
+- FOUND BY RE-READING THE ROADMAP TO CHECK A CLAIM, WHICH IS THE POINT. ROADMAP.md's "five active program
+  groups" list named LIVE-DOC-STOP-RISK (done) as the current owner of live-document containment and
+  CORPUS-CHAIN-CURRENCY (done) for artifact currency, while LIVE-DOCUMENT-PRESSURE-HEADROOM — the tree
+  actually holding that work and every warned-surface assignment — appeared ZERO times in the roadmap.
+- THAT IS THE EIGHTH INSTANCE OF THE CLASS, AND THE FIRST ON A SURFACE .7 NEVER SCREENED. .7 bound the 39
+  rows the live-size gate warns about; nobody screened the roadmap's ownership prose. .15's scope now
+  includes it, and the gate must distinguish a historical attribution (a Done workstream row naming the tree
+  that finished it — correct, and 12 of the 28 linked trees are closed for exactly that reason) from a
+  current-owner citation. Two weaker cases, R9 "Mostly done" and R15b "In progress", are left for the gate.
+- THE CITATION IS CORRECTED LINE-NEUTRALLY, because Current strategic priorities is at 96.4% of its 56-line
+  bound (owned by .13) and a fix that spends that budget would trade one defect for another. Both closed
+  trees stay visible as the authors of the rule rather than as its current owners.
+- ALSO CORRECTED IN THE SESSION RECORD, not just here: the .9a finding was reported to the director as "no
+  node record anywhere". Re-derived, .9a HAS a bare owner-registry line in the bounded root; what it lacks is
+  a node record with a status in any semantic part, which is what the leaf and ADR 0046 already said. The
+  chat summary was looser than the durable artifacts.
+
 ### LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority
 
 - THE SINGLE-USE PROTOCOL IS PROVEN IN BOTH DIRECTIONS. .4a's authority was consumed by the commit that
