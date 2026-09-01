@@ -1,3 +1,40 @@
+### WIRE-BASED-100.8e — audit on challenge: every conclusion survives, three of `.8d`'s numbers do not
+
+- THE DIRECTOR ASKED WHETHER THE FINDINGS HOLD. Re-deriving them rather than restating them: every CONCLUSION
+  survives and three FIGURES do not, and the reason is the failure mode this lane spent four slices correcting
+  in other people's work — a number read off a probe instead of derived, from a probe that was not a faithful
+  port of the thing it measured.
+- SURVIVES, RE-DERIVED. The restored oracle reproduces its scorecard exactly at HEAD (`serial_frame_field`
+  0/11, `protocol_operation` 4/4, `protocol_state` 0/13, `interface_edge_timing` 1/1). `check_chain_currency.sh`
+  is 24/24. The corpus-wide surface-selective loss holds. `89d8dee7`'s identity gate
+  (`serial wire`/`packet request`/`shift-dr`/`swdio`/`swclk`) and the now-absent `SerialFramePhase` enum hold.
+  Its blast radius holds EXACTLY: four SWD cards superseded, four book chapters updated, and `ROADMAP.md`, the
+  extraction-eval chapter, both owning trees and `swd-derivation-scored-100` untouched. The schema census, the
+  corpus-frontier population, and `picture_0038`/`picture_0039` carrying a caption as their only observation all
+  hold.
+- A POPULATION TRAP THAT DID NOT BITE, CHECKED BECAUSE THE POINTER SAYS TO. `.8c` cited `89d8dee7`'s "five
+  operations and 40 structurally admitted states" as re-deriving today, measured over the 24 schema-3 documents,
+  while the ledger sentence spoke of all 78. Re-measuring both frames: the 54 legacy artifacts carry 0 frame
+  fields, 0 states and 0 operations, so the totals are identical and the citation is sound. Sound by luck of the
+  migration rather than by construction — worth the check.
+- THE THREE THAT FAILED. (a) "61 statements carry a stated phase name" is **56**: the probe dropped the gate's
+  own `parse_count_word` rejection, so "two or three phases" counted as the phase name `three`, and it stripped
+  non-alphabetic characters anywhere in a token instead of trimming only the ends as `trim_matches` does.
+  (b) "wrong for at least 7 of 11" was **never computed** — it is wrong on **11 of 11, correct on 0**. An
+  eyeballed floor published in the voice of a measurement; the evidence was always stronger than the claim.
+  (c) "at most 4 of 11" section titles is not a valid ceiling: 4 land literally, **5** once `ACK responses` is
+  counted.
+- THE FIX IS A DERIVATION, NOT A REWORD. `scripts/measure_swd_frame_phase_scope.py` ports `stated_phase_name`
+  and `parse_count_word` exactly, prints all three figures plus the per-field table, and CHECKS its ported
+  count-word list against the Rust source so the two cannot drift silently. Demonstrated RED: adding a
+  `"thirteen" => Some(13)` arm to a copy of `evidence.rs` makes it exit `parse_count_word drifted`.
+- AND THE RULE GENERALISES TO ITS AUTHOR. `.8c` published that retiring a producer stales the surfaces carrying
+  its NUMBER, not the ones describing its artifact. These three figures had spread to exactly six surfaces —
+  this ledger, `MEMORY.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the task tree, the fact card and the book — in under a
+  day. The `.8d` record below is kept as written; this record withdraws its figures in place.
+- `.8d`'s deferral is unchanged and better supported: scope binding does not work, the binding is in the figure,
+  and `serial_frame_field` stays 0/11 deliberately.
+
 ### WIRE-BASED-100.8d — the proposed fix is disproven by its own measurement, and `.8` closes
 
 - `.8d` proposed the obvious generic repair for SWD's retired frame fields: stop requiring the phase name and

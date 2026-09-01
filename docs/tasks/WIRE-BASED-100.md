@@ -312,7 +312,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   judged against the proof doctrine, and `.8b` is a command-behaviour change in `eval-extraction` that has to
   be judged against the scoring/honesty doctrine. `.8c` was then opened by what the restored oracle found,
   and `.8d` by what `.8c` localised. Children: `WIRE-BASED-100.8a`, `WIRE-BASED-100.8b`,
-  `WIRE-BASED-100.8c`, `WIRE-BASED-100.8d`.
+  `WIRE-BASED-100.8c`, `WIRE-BASED-100.8d`, `WIRE-BASED-100.8e`.
   **CLOSED `2026-09-01`.** `.8a`/`.8b`/`.8c` are `done` and `.8d` is `deferred` with its consequence recorded,
   so every child is resolved. The oracle runs, refuses nothing silently, and its first re-derivation since
   `2026-08-09` retired a published score rather than confirming it — which is the outcome this leaf existed to
@@ -381,7 +381,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   records."* The SWD frame fields were exactly those fixed-phase records; the surviving `protocol_states` also
   lost their `machine_name` binding, so the gold's `machine|state` keys no longer resolve. `extract_serial_frame_fields`
   now admits a field only from a statement carrying a document-stated phase name, and on this document that
-  gate is satisfied by 61 statements none of which carry the gold's bit-range fields.
+  gate is satisfied by 56 statements none of which carry the gold's bit-range fields (`.8e` corrected this
+  from 61: the probe that produced it had dropped the gate's own `parse_count_word` rejection).
   **Why it stayed invisible for 20 days:** the trade was published in `CHANGES.md`, but the score it retired
   lives in `WIRE-BASED-100.5j`, `SWD-SERIAL-EXTRACTION`, `ROADMAP.md`, and `LIVE_ACHIEVEMENT_STATUS.md`, and
   nothing re-derived it — because the oracle was down from at least `2026-08-28` (`.8`). A genericity trade may
@@ -416,7 +417,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   DISPROVEN**) · Goal: **recover the retired frame fields generically — bind a document-stated phase to the
   fields in its scope, not only within one sentence.** `.8c` localised the residual
   exactly: `extract_serial_frame_fields` admits a field only when ONE statement both passes `stated_phase_name`
-  and parses a bit range / named-bit list. SWD carries 61 statements with a stated phase name and writes
+  and parses a bit range / named-bit list. SWD carries 56 statements with a stated phase name and writes
   `A[3:2]`, `WDATA[31:0]`, `RDATA[31:0]` in different statements, so the conjunction never holds and the surface
   is empty. Corpus-wide the current grammar emits **0** serial frame fields across all 24 measurable documents,
   so this is not an SWD quirk; but the one document that would exercise the composition-list path
@@ -432,17 +433,19 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   **MEASURED `2026-09-01`, READ-ONLY — SCOPE BINDING DOES NOT WORK, AND THE MEASUREMENT IS THE DELIVERABLE.**
   The fix this leaf proposed was written from a plausible mechanism, not from evidence, and the evidence refutes
   it. Two candidate scopes were measured against the 11 gold frame facts on the current `ihi0074_a` EvidenceIR:
-  - **Nearest preceding phase-stating statement.** It resolves for every field, so it would *fire* — and it
-    would be WRONG for at least 7 of 11. `APnDP`/`RnW` (gold `request`) would inherit `transfer`;
-    `Start`/`Parity`/`Stop` (gold `request`) would inherit `transfer` from 28–44 statements back; `Park` (gold
-    `request`) would inherit `data`; `A`, `ACK` and `DATAIN` sit **278, 303 and 324** statements after the
-    nearest one, which names `response`. A rule that fires everywhere and is right a third of the time is
-    fabrication with a structural alibi.
+  - **Nearest preceding phase-stating statement.** It resolves for every field, so it would *fire* — and it is
+    wrong on **11 of 11** (`.8e`; the figure first published here said "at least 7", which was asserted rather
+    than computed). `APnDP`/`RnW` (gold `request`) inherit `transfer`; `Start`/`Parity`/`Stop` (gold `request`)
+    inherit `transfer` from 28–44 statements back; `Park` (gold `request`) inherits `data`; `A`, `ACK` and
+    `DATAIN` sit **278, 303 and 324** statements after the nearest one, which names `response`. A rule that
+    fires everywhere and is right **nowhere** is fabrication with a structural alibi.
   - **The owning section's title.** Resolving each gold statement's span to its section anchor: `Packet
     requests` → `request` ✓ (`APnDP`, `RnW`) and `Data transfers (WDATA and RDATA)` → `data` ✓ (`WDATA`,
     `RDATA`), but `Start`/`Parity`/`Stop` sit under `B4.2 SWD protocol operation`, `Park` under `B4.2.5 Protocol
     error response`, `A` under `Attributes`, `ACK` under a table caption and `DATAIN` under `OK or FAULT
-    response to a DPACC or APACC access`. At most 4 of 11 land, and no title even contains the word `phase`.
+    response to a DPACC or APACC access`. **4 of 11** land under a literal title-states-the-phase reading and
+    **5 of 11** even counting any appearance of the phase word or its stem (`ACK responses`), so the honest
+    ceiling is 5, not the 4 first published here. No title contains the word `phase` — 0 of 11.
   **WHERE THE BINDING ACTUALLY LIVES — and it explains the retired extractor.** For `Start`/`Parity`/`Stop`/
   `Park`/`A` the document never states the phase in text at all; the frame's field-to-phase membership is drawn
   in **`Figure B4-1 SWD successful write operation`** and `Figure B4-2`. Both are captured — `picture_0038` and
@@ -463,6 +466,46 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   `crates/specforge/test_data/llm_eval/seed_swd_derivation.json`; no code changed, no artifact written.
   Commit: see log.
 
+
+- ID: `WIRE-BASED-100.8e` · Status: `done` (`2026-09-01`) · Goal: **audit `.8`'s published findings on the
+  director's challenge, and repair the three figures that do not survive re-derivation.** Every finding's
+  CONCLUSION holds; three of `.8d`'s NUMBERS do not, and the reason is the same one this lane spent four slices
+  correcting in other people's work: a figure was read off a probe instead of derived, and the probe was not a
+  faithful port of the thing it claimed to measure.
+  **What survives, re-derived rather than restated.** `.8a`'s relocation seam and the restored oracle (the
+  `seed_swd_derivation` scorecard reproduces exactly at HEAD: 0/11, 4/4, 0/13, 1/1); `.8c`'s three legs — chain
+  currency 24/24, the corpus-wide surface-selective loss, and `89d8dee7`'s own published counts; the retired
+  extractor's identity gate and its now-absent `SerialFramePhase` enum; `.8`'s blast-radius rule (that commit
+  DID supersede exactly four SWD cards and update four book chapters, and DID NOT touch `ROADMAP.md`,
+  `docs/book/src/quality/extraction-eval.md`, either owning tree, or `swd-derivation-scored-100`); the schema
+  census; the corpus-frontier population; and the figure claim (`picture_0038`/`picture_0039`, role
+  `ambiguous`, a single `caption` observation each).
+  **A population trap that did NOT bite, checked because MEMORY says to.** `.8c` cited `89d8dee7`'s "five
+  operations and 40 structurally admitted states" as re-deriving today, measured over the 24 schema-3
+  documents, while the ledger sentence was about all 78. Re-measuring both frames: the 54 legacy artifacts
+  carry **0** frame fields, **0** states and **0** operations, so the two frames give identical totals and the
+  citation is sound. Sound by luck of the migration, not by construction — it was worth checking.
+  **The three figures that failed.** (a) "61 statements carry a stated phase name" is **56**: the probe dropped
+  the gate's own `parse_count_word` rejection, so "two or three phases" was counted as the phase name `three`,
+  and it stripped non-alphabetic characters anywhere in a token instead of trimming only the ends as Rust's
+  `trim_matches` does. (b) "wrong for at least 7 of 11" was never computed — the true figure is **wrong on 11
+  of 11, correct on 0**. It was an eyeballed floor published in the voice of a measurement; the evidence was
+  always stronger than the claim. (c) "at most 4 of 11" section titles is **not a valid ceiling**: 4 land under
+  a literal reading but **5** do once `ACK responses` is counted, so the bound is 5.
+  **The fix is a derivation, not a reword** (`KG-ISF-COMPLETENESS.5.iv.a`'s lesson, applied to my own numbers):
+  `scripts/measure_swd_frame_phase_scope.py` ports `stated_phase_name` and `parse_count_word` exactly, prints
+  all three figures plus the per-field table, and **checks its ported count-word list against the Rust source**
+  so the two cannot drift silently. Demonstrated RED: adding a `"thirteen" => Some(13)` arm to a copy of
+  `evidence.rs` makes the script exit with `parse_count_word drifted`.
+  **And the rule generalises to its author.** `.8c` published that a retired producer stales the surfaces
+  carrying its NUMBER. These three figures had spread to exactly six — `CHANGES.md`, `MEMORY.md`,
+  `LIVE_ACHIEVEMENT_STATUS.md`, this tree, the fact card and the book — in under a day.
+  **`.8`'s conclusion is unchanged and slightly strengthened:** scope binding does not work, the binding is in
+  the figure, and `serial_frame_field` stays 0/11 deliberately.
+  Non-goal: re-opening `.8d`, whose deferral the corrected figures support more strongly than the originals.
+  Prerequisite: `WIRE-BASED-100.8d`.
+  Verification: `python3 scripts/measure_swd_frame_phase_scope.py`
+  Commit: see log.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.8a` — DONE `2026-09-01`
 

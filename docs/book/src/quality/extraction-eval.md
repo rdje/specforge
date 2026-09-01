@@ -206,8 +206,8 @@ grammar admits a frame field only from a statement that itself states a phase na
 SWD states its phases in one set of sentences and writes `A[3:2]` and `WDATA[31:0]` in others, so the
 conjunction never holds. The obvious repair — let a phase named in a nearby sentence or in the section heading
 bind the fields in its scope — was measured against the gold before being built, and it does not work. Nearest
-preceding phase fires for all 11 fields and assigns the *wrong* one to at least 7 of them; section titles reach
-at most 4, and not one of them contains the word "phase".
+preceding phase fires for all 11 fields and assigns the *wrong* one to **every single one of them**; section
+titles reach 4, or 5 read as generously as the text allows, and not one of them contains the word "phase".
 
 The reason is that this specification **draws** the frame rather than describing it. For half these fields the
 phase membership appears only in `Figure B4-1 SWD successful write operation`, which SpecForge has captured as

@@ -32,10 +32,13 @@
 - In-flight uncommitted: none after this commit.
 - Blockers: none that stop work. Standing hazards: **prove the oracle runs BEFORE trusting a green result**;
   **re-derive a published score before citing it**; **measure a proposed fix before building it** (`.8d`'s
-  plausible scope rule fires on every SWD frame field and is wrong on 7 of 11); and **when a change retires a
+  plausible scope rule fires on every SWD frame field and is wrong on all 11); and **when a change retires a
   producer, the stale surfaces are the ones publishing its NUMBER, not the ones describing its ARTIFACT**.
   Never name a stratum by one schema number — the legacy version differs per stage. Never infer ownership from
-  a mention: read the owner's own `Status`. The full derived-state refresh chain an edit to `CHANGES.md`, the
+  a mention: read the owner's own `Status`. **A probe is not a port:** `.8e` had to correct three of `.8d`'s
+  figures because the probe dropped the production gate's own `parse_count_word` rejection — publish from a
+  committed derivation (`scripts/measure_swd_frame_phase_scope.py`), never an ad-hoc script.
+  The full derived-state refresh chain an edit to `CHANGES.md`, the
   book, a fact card or `surfaces.jsonl` sets off — including the ASCII-only rollover `reason` and this file's
   50-line cap — is `[[live-surface-edit-bookkeeping-chain]]`. Owned, not fixed:
   `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`;
