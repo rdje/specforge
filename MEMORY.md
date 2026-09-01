@@ -21,29 +21,23 @@
   are SourceIR 1 / EvidenceIR 2 / SemanticIR 1 / IntentIR 1 against 3/3/2/2 current, so ZERO schema-1
   EvidenceIRs exist and the shorthand was false of the artifact `eval-extraction` refuses. Only the 24
   rebuildable chains are scoreable; the APB/AHB/AXI `1.000`s are unverifiable until re-ingest.
-- Next action: pick a new lane. `WIRE-BASED-100`'s `.8` is closed and its remaining leaves (`.5d` in_progress)
-  are corpus-supply work; the live extraction frontier is `KG-ISF-COMPLETENESS` beyond `.5`, and the corpus
-  refresh frontier (re-ingesting the 54 legacy chains) is what would make the APB/AHB/AXI wire golds measurable
-  again — the single highest-leverage unblock for every wire claim.
+- Next action: pick a new lane; the live extraction frontier is `KG-ISF-COMPLETENESS` beyond `.5`.
+  `WIRE-BASED-100`'s `.8` is closed and its remaining leaves (`.5d` in_progress) are corpus-supply work.
+  **Unowned and worth owning:** re-ingesting the legacy stratum is what would make the APB/AHB/AXI wire golds
+  measurable again — the highest-leverage unblock for every wire claim. Do NOT assume the tracked corpus-refresh
+  frontier covers it: `scripts/check_corpus_frontier.sh` reports a 57-document cohort at 52 refreshed / 5
+  remaining (`den0034_a`, `lpc_memory_agent…`, `nvme_base_specification_2_0a`, and the two
+  `opencapi_3_x_transaction_layer`), and none of the three wire golds is among them — so that frontier is a
+  different population from the 54 legacy chains, and the wire re-ingest has no owning leaf yet.
 - In-flight uncommitted: none after this commit.
 - Blockers: none that stop work. Standing hazards: **prove the oracle runs BEFORE trusting a green result**;
-  **re-derive a published score before citing it**; **when a change retires a producer, the stale surfaces are
-  the ones publishing its NUMBER, not the ones describing its ARTIFACT** (`89d8dee7` superseded four fact cards
-  and four book chapters and still left the score in the roadmap, the book's eval chapter, two trees and three
-  cards). New: **never name a stratum by one schema number** — the legacy version differs per stage, and that
-  shorthand propagated through six surfaces including one I wrote hours earlier. A count read off a dump is not
-  derived; two frames answering one question are two populations. Prepending to `CHANGES.md` shifts the
-  line-pinned `current_claim_census.jsonl` regions and editing the book shifts `book_quantitative_claims.jsonl`
-  ones (re-anchor by CONTENT, never offsets; register the new `CHANGES.md` line 1 as excluded evidence; a new
-  book candidate line needs its own region record and `expected_candidate_lines`); a book line-count change
-  stales `surfaces.jsonl` `shipped_behavior` aggregate authority, whose `rationale` is capped at 512 bytes;
-  changing `surfaces.jsonl` stales three `surface_registry` source pins AND `claims.jsonl` digests; a new fact
-  card moves `fact_card_catalog.json` `planned_outputs` AND the `fact-card-catalog-count` published assertion —
-  refresh those last, then re-run the gate. A ledger rollover additionally RETIRES the census evidence records
-  whose regions were sealed (the bytes live on in the segment) and needs one new record for the new line 1 —
-  and **a rollover plan's `reason` must be pure ASCII**: the manifest writer emits without a UTF-8 layer, so one
-  em dash fails the staged identity check and the whole transaction rolls back (`CHANGES-LEDGER-ROLLOVER.7`).
-  Never infer ownership from a mention: read the owner's own `Status`.
-  Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`;
-  `CHANGES-LEDGER-ROLLOVER.4`; `SCRATCH-RESIDUE-CONTAINMENT.4` — never run the fixture suite concurrently with
-  the locality gate. `durability.stale_check` is never executed by any gate (`.18`).
+  **re-derive a published score before citing it**; **measure a proposed fix before building it** (`.8d`'s
+  plausible scope rule fires on every SWD frame field and is wrong on 7 of 11); and **when a change retires a
+  producer, the stale surfaces are the ones publishing its NUMBER, not the ones describing its ARTIFACT**.
+  Never name a stratum by one schema number — the legacy version differs per stage. Never infer ownership from
+  a mention: read the owner's own `Status`. The full derived-state refresh chain an edit to `CHANGES.md`, the
+  book, a fact card or `surfaces.jsonl` sets off — including the ASCII-only rollover `reason` and this file's
+  50-line cap — is `[[live-surface-edit-bookkeeping-chain]]`. Owned, not fixed:
+  `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`;
+  `SCRATCH-RESIDUE-CONTAINMENT.4` — never run the fixture suite concurrently with the locality gate.
+  `durability.stale_check` is never executed by any gate (`.18`).
