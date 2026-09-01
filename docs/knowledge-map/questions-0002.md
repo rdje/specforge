@@ -148,8 +148,14 @@
   > can the active-task evidence checker support the alignment task through data
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > can the downstream corpus chain be rebuilt without re-ingesting documents
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > can the owning section title supply the SWD frame phase (NO — at most 4 of 11. Packet requests gives request for APnDP/RnW and Data transfers (WDATA and RDATA) gives data for WDATA/RDATA, but Start/Parity/Stop sit under B4.2 SWD protocol operation, Park under B4.2.5 Protocol error response, A under Attributes, ACK under a table caption, DATAIN under OK or FAULT response to a
+  > DPACC or APACC access. No title contains the word phase)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > can the retired SWD serial frame fields be recovered by binding a document-stated phase to nearby statements (NO — measured 2026-09-01 read-only: the nearest preceding phase-stating statement resolves for all 11 gold fields and is WRONG for at least 7. APnDP/RnW/Start/Parity/Stop would inherit transfer and Park would inherit data, all against a gold phase of request; A, ACK
+  > and DATAIN sit 278, 303 and 324 statements after the nearest one, which says response)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > can the reviewed dataset source_region predicates be edited
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -292,9 +298,3 @@
   > does FSMGen strict success prove that a SpecForge adapter is semantically faithful
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > does FSMGen support a register reset value in storage (yes — (storage (var NAME (width N) [(reset V)])) is shipped per 13k:42 + 13m:48-68; optional, in-width non-negative int, omission = all-0s byte-identical, over-width/non-integer fails closed)
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > does FigureRegion have a production producer or only synthetic tests
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > does GateRecord remain schema compatible

@@ -281,7 +281,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   normative ones ("must/shall…"). Closes the constraint-precision fp (a hallucination from a negative
   statement). Reuse the NLI gate as the grounding check.
 
-- ID: `WIRE-BASED-100.8` · Status: `active` · Goal: **restore the scoring oracle — `eval-extraction` refuses
+- ID: `WIRE-BASED-100.8` · Status: `done` (`2026-09-01`) · Goal: **restore the scoring oracle — `eval-extraction` refuses
   every document in the corpus, so no WIRE-BASED-100 number can currently be re-derived.** Found
   `2026-08-31` while gating `KG-ISF-COMPLETENESS.5.iv.a`, whose inherited gate is "before/after
   WIRE-BASED-100 on rebuilt gold evidence"; that protocol could not be executed at all. **Not caused by that
@@ -313,6 +313,12 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   be judged against the scoring/honesty doctrine. `.8c` was then opened by what the restored oracle found,
   and `.8d` by what `.8c` localised. Children: `WIRE-BASED-100.8a`, `WIRE-BASED-100.8b`,
   `WIRE-BASED-100.8c`, `WIRE-BASED-100.8d`.
+  **CLOSED `2026-09-01`.** `.8a`/`.8b`/`.8c` are `done` and `.8d` is `deferred` with its consequence recorded,
+  so every child is resolved. The oracle runs, refuses nothing silently, and its first re-derivation since
+  `2026-08-09` retired a published score rather than confirming it — which is the outcome this leaf existed to
+  make possible. What `.8` does NOT deliver, stated plainly: the wire golds it was meant to protect (APB, AHB,
+  AXI) remain unmeasurable because their EvidenceIR is legacy, so "the oracle is restored" means restored over
+  the 24 rebuildable chains only. Re-ingesting the legacy stratum stays with the corpus refresh frontier.
   Non-goal: re-ingesting the 54 legacy chains (owned by the corpus refresh frontier); changing any gold.
   Prerequisite: none. KM `[[evidence-proof-binds-artifact-location]]`.
   Verification: see `.8a`/`.8b`.
@@ -406,8 +412,9 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: see log.
 
-- ID: `WIRE-BASED-100.8d` · Status: `pending` · Goal: **recover the retired frame fields generically — bind a
-  document-stated phase to the fields in its scope, not only within one sentence.** `.8c` localised the residual
+- ID: `WIRE-BASED-100.8d` · Status: `deferred` (`2026-09-01`, measured read-only; **its own proposed fix is
+  DISPROVEN**) · Goal: **recover the retired frame fields generically — bind a document-stated phase to the
+  fields in its scope, not only within one sentence.** `.8c` localised the residual
   exactly: `extract_serial_frame_fields` admits a field only when ONE statement both passes `stated_phase_name`
   and parses a bit range / named-bit list. SWD carries 61 statements with a stated phase name and writes
   `A[3:2]`, `WDATA[31:0]`, `RDATA[31:0]` in different statements, so the conjunction never holds and the surface
@@ -421,8 +428,40 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   identity-renamed control; no protocol, vendor or signal name enters production; APB/AHB/AXI/I2C scores and
   `kg-bench` are unchanged; whatever residual remains is measured and published rather than rounded away.
   Prerequisite: `WIRE-BASED-100.8c`.
-  Verification: `pending`
-  Commit: `pending`
+
+  **MEASURED `2026-09-01`, READ-ONLY — SCOPE BINDING DOES NOT WORK, AND THE MEASUREMENT IS THE DELIVERABLE.**
+  The fix this leaf proposed was written from a plausible mechanism, not from evidence, and the evidence refutes
+  it. Two candidate scopes were measured against the 11 gold frame facts on the current `ihi0074_a` EvidenceIR:
+  - **Nearest preceding phase-stating statement.** It resolves for every field, so it would *fire* — and it
+    would be WRONG for at least 7 of 11. `APnDP`/`RnW` (gold `request`) would inherit `transfer`;
+    `Start`/`Parity`/`Stop` (gold `request`) would inherit `transfer` from 28–44 statements back; `Park` (gold
+    `request`) would inherit `data`; `A`, `ACK` and `DATAIN` sit **278, 303 and 324** statements after the
+    nearest one, which names `response`. A rule that fires everywhere and is right a third of the time is
+    fabrication with a structural alibi.
+  - **The owning section's title.** Resolving each gold statement's span to its section anchor: `Packet
+    requests` → `request` ✓ (`APnDP`, `RnW`) and `Data transfers (WDATA and RDATA)` → `data` ✓ (`WDATA`,
+    `RDATA`), but `Start`/`Parity`/`Stop` sit under `B4.2 SWD protocol operation`, `Park` under `B4.2.5 Protocol
+    error response`, `A` under `Attributes`, `ACK` under a table caption and `DATAIN` under `OK or FAULT
+    response to a DPACC or APACC access`. At most 4 of 11 land, and no title even contains the word `phase`.
+  **WHERE THE BINDING ACTUALLY LIVES — and it explains the retired extractor.** For `Start`/`Parity`/`Stop`/
+  `Park`/`A` the document never states the phase in text at all; the frame's field-to-phase membership is drawn
+  in **`Figure B4-1 SWD successful write operation`** and `Figure B4-2`. Both are captured — `picture_0038` and
+  `picture_0039` carry the caption — but their role is `ambiguous` and their only observation is that caption,
+  so the diagram's content was never read. That is why the retired `extract_serial_frame_fields` scored 11/11:
+  it did not read the frame, it keyed the phase off the FIELD NAME (`wdata`/`rdata`/`datain`/`ack[`), i.e. it
+  carried SWD's field→phase table in the code. No prose-level rule can replace a lookup that was never a
+  reading.
+  **DEFERRED with its consequence stated:** SWD frame recall stays **0/11** and the gold's 11 frame facts stay
+  honestly unreachable. Nothing is minted, because minting a wrong phase is worse than a measured zero. The
+  score is published as-is by `.8c`.
+  **Re-open trigger:** figure-content extraction reaching this class of diagram — the pipeline already has the
+  typed carrier (`VisualObservationKind::TimingDiagramExtraction`) and the assets are already captured, so the
+  gap is the extraction pass, not the schema. A slice that reads `picture_0038` into typed per-signal frame
+  structure makes this leaf buildable and measurable in one step.
+  Non-goal (restated, now with evidence): any rule keyed on field NAMES, which is what the retired code was.
+  Verification: read-only measurement over `generated/evidence_ir/ihi0074_a_.../evidence_ir.json` and
+  `crates/specforge/test_data/llm_eval/seed_swd_derivation.json`; no code changed, no artifact written.
+  Commit: see log.
 
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.8a` — DONE `2026-09-01`

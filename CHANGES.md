@@ -1,3 +1,33 @@
+### WIRE-BASED-100.8d — the proposed fix is disproven by its own measurement, and `.8` closes
+
+- `.8d` proposed the obvious generic repair for SWD's retired frame fields: stop requiring the phase name and
+  the bit range in the SAME statement, and bind a document-stated phase to the fields in its scope. Measured
+  read-only against the 11 gold facts before writing any code, **that repair is wrong**, and the measurement is
+  the deliverable.
+- STATEMENT SCOPE FIRES EVERYWHERE AND IS RIGHT A THIRD OF THE TIME. The nearest preceding phase-stating
+  statement resolves for all 11 fields, so the rule would always produce something — and for at least 7 it
+  produces the WRONG phase. `APnDP`/`RnW` would inherit `transfer` against a gold of `request`;
+  `Start`/`Parity`/`Stop` would inherit `transfer` from 28-44 statements back; `Park` would inherit `data`. `A`,
+  `ACK` and `DATAIN` sit **278, 303 and 324** statements past the nearest one, which says `response`.
+- SECTION SCOPE IS HONEST BUT THIN: at most 4 of 11. `Packet requests` gives `request` for `APnDP`/`RnW` and
+  `Data transfers (WDATA and RDATA)` gives `data` for `WDATA`/`RDATA`, but `Start`/`Parity`/`Stop` sit under
+  `B4.2 SWD protocol operation`, `Park` under `B4.2.5 Protocol error response`, `A` under `Attributes`, and
+  `DATAIN` under `OK or FAULT response to a DPACC or APACC access`. No section title contains the word `phase`.
+- BECAUSE THE DOCUMENT DRAWS IT RATHER THAN WRITING IT. For `Start`/`Parity`/`Stop`/`Park`/`A` the phase is
+  never stated in text: the field-to-phase membership is in `Figure B4-1 SWD successful write operation` and
+  `Figure B4-2`. Both are captured (`picture_0038`, `picture_0039`) with role `ambiguous` and a caption as their
+  only observation, so the diagram content was never read. **That also explains the retired extractor's 11/11:
+  it never read the frame either — it assigned the phase from the FIELD NAME (`wdata`/`rdata`/`datain`/`ack[`),
+  which is SWD's field-to-phase table transcribed into production code.** A prose rule cannot replace a lookup
+  that was never a reading.
+- DEFERRED WITH ITS CONSEQUENCE STATED: SWD `serial_frame_field` stays 0/11 and nothing is minted, because a
+  wrong phase is worse than a measured zero. Re-open trigger is figure-content extraction — the typed carrier
+  (`VisualObservationKind::TimingDiagramExtraction`) and the assets already exist, so the gap is the pass, not
+  the schema. Fact card `swd-frame-phase-binding-lives-in-the-figure`.
+- `WIRE-BASED-100.8` CLOSES with every child resolved. Stated plainly, what it does not deliver: the APB, AHB
+  and AXI wire golds it existed to protect are still unmeasurable because their EvidenceIR is legacy, so "the
+  oracle is restored" means restored over the 24 rebuildable chains only.
+
 ### CHANGES-LEDGER-ROLLOVER.7 — roll the change ledger in the same transaction that filled it
 
 - `WIRE-BASED-100.8b`'s own record took `CHANGES.md` to 1,633 lines = **90.7%** of its 1,800-line health target,

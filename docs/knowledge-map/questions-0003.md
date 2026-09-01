@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > does FigureRegion have a production producer or only synthetic tests
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > does GateRecord remain schema compatible
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > does I2C extraction remain invariant under opaque signal renaming
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -292,9 +298,3 @@
   > how are Docling-fragmented register field tables de-fragmented without fabricating a field set
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how are NAME[hi:lo] bit-ranges parsed into frame fields
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how are SWCLK and SWDIO captured if they are not in a signal table

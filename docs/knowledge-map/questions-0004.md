@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > how are NAME[hi:lo] bit-ranges parsed into frame fields
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how are SWCLK and SWDIO captured if they are not in a signal table
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > how are SpecForge live documents kept bounded
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
@@ -292,9 +298,3 @@
   > how does SpecForge prove a reviewed paraphrase is parser equivalent
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > how does SpecForge recover a subject the model misspelled
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > how does SpecForge recover a timing unit from a table caption
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > how does SpecForge relate to GoldMine Texada Pnueli Ammons

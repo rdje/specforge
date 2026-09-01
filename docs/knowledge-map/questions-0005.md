@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > how does SpecForge recover a subject the model misspelled
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > how does SpecForge recover a timing unit from a table caption
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > how does SpecForge relate to GoldMine Texada Pnueli Ammons
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge resolve a persisted path after the repository moves
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -291,9 +297,3 @@
   > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
   > how is the CorpusMemory feedback loop made reproducible
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > how is the EvidenceIR extractor path / extraction layer structured and wired
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > how is the FSMGen feedback channel kept bounded without losing old requests and responses
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how is the NLI gate tested without Ollama

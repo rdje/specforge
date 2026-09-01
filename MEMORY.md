@@ -8,8 +8,8 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: `WIRE-BASED-100.8` — `.8a` (oracle restored), `.8b` (legacy stratum is a disposition, not an
   abort) and `.8c` (the retired SWD score, corrected everywhere) are COMPLETE, and `CHANGES-LEDGER-ROLLOVER.7`
-  rolled the change ledger in `.8b`'s transaction. One child open: `.8d` (recover frame fields generically by
-  phase-scope binding). Also open: `KG-ISF-COMPLETENESS` beyond `.5`;
+  rolled the change ledger in `.8b`'s transaction. `.8d` is `deferred` with its consequence recorded, so
+  **`WIRE-BASED-100.8` is CLOSED**. Also open: `KG-ISF-COMPLETENESS` beyond `.5`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`;
   `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION`
   `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
@@ -21,10 +21,10 @@
   are SourceIR 1 / EvidenceIR 2 / SemanticIR 1 / IntentIR 1 against 3/3/2/2 current, so ZERO schema-1
   EvidenceIRs exist and the shorthand was false of the artifact `eval-extraction` refuses. Only the 24
   rebuildable chains are scoreable; the APB/AHB/AXI `1.000`s are unverifiable until re-ingest.
-- Next action: `WIRE-BASED-100.8d` — bind a document-stated phase to the fields in its SCOPE (section or
-  paragraph), not only within one sentence, so `extract_serial_frame_fields` stops requiring the phase name and
-  the bit range in the same statement. SWD has 61 phase-name statements and writes `A[3:2]`/`WDATA[31:0]` in
-  others, so it currently yields 0/11. Document grammar only — a phase VOCABULARY is forbidden.
+- Next action: pick a new lane. `WIRE-BASED-100`'s `.8` is closed and its remaining leaves (`.5d` in_progress)
+  are corpus-supply work; the live extraction frontier is `KG-ISF-COMPLETENESS` beyond `.5`, and the corpus
+  refresh frontier (re-ingesting the 54 legacy chains) is what would make the APB/AHB/AXI wire golds measurable
+  again — the single highest-leverage unblock for every wire claim.
 - In-flight uncommitted: none after this commit.
 - Blockers: none that stop work. Standing hazards: **prove the oracle runs BEFORE trusting a green result**;
   **re-derive a published score before citing it**; **when a change retires a producer, the stale surfaces are

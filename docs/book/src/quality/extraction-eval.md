@@ -201,11 +201,23 @@ retirement boundary and does so corpus-wide: across all 24 measurable documents 
 serial frame fields and binds a machine name on none of its 40 protocol states, while protocol operations still
 produce five. And the retirement's own published accounting predicted that shape in advance, down to the counts.
 
-What the current generic grammar needs is narrow and nameable. It admits a frame field only from a statement
-that itself states a phase name *and* carries the bit range. SWD states its phases in one set of sentences and
-writes `A[3:2]` and `WDATA[31:0]` in others, so the conjunction never holds. Binding a phase named in a section
-or paragraph to the fields inside its scope is document grammar, not protocol identity, so it is admissible —
-and it is the open work, not a closed capability.
+What the current generic grammar needs looked narrow and nameable, and measuring it changed the answer. The
+grammar admits a frame field only from a statement that itself states a phase name *and* carries the bit range;
+SWD states its phases in one set of sentences and writes `A[3:2]` and `WDATA[31:0]` in others, so the
+conjunction never holds. The obvious repair — let a phase named in a nearby sentence or in the section heading
+bind the fields in its scope — was measured against the gold before being built, and it does not work. Nearest
+preceding phase fires for all 11 fields and assigns the *wrong* one to at least 7 of them; section titles reach
+at most 4, and not one of them contains the word "phase".
+
+The reason is that this specification **draws** the frame rather than describing it. For half these fields the
+phase membership appears only in `Figure B4-1 SWD successful write operation`, which SpecForge has captured as
+an asset but has never read beyond its caption. That also explains the retired extractor's perfect score: it
+never read the frame either — it assigned each field's phase from the field's own name, which is the
+protocol's field table written into the code. A prose rule cannot replace a lookup that was never a reading.
+
+So the frame surface stays at 0/11 on this document, deliberately. Minting a wrong phase would be worse than a
+measured zero, and the honest number is the one on this page. The work that would move it is figure-content
+extraction, for which the typed record and the captured images already exist.
 
 *Read every number on this page with its date.* A score is a measurement of a producer at a revision; when the
 producer changes for good reasons, the score can retire with it.

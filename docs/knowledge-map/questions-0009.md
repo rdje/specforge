@@ -2,6 +2,13 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what do leading_section_number and is_descendant_section_number do
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what document class is a chip-spec PDF (protocol / register / interface / guide)
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what does 'at or above rollover' mean for a line_bytes_each dimension (only that the widest single line is at 90% of the width bound; the milestone vocabulary is written for a quantity that accumulates. Most surfaces have no rollover to perform anyway — rolling_ledgers.jsonl declares just four sources, and README is a bounded_snapshot that appears there only as a reader —
+  > and where one does exist it lowers a maximum only incidentally, as the CHANGES.md rollover did not: line_bytes 1629 either side)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -290,11 +297,3 @@
   > what is PDF-VARIANT-DIGESTION.12a
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is PDF-VARIANT-DIGESTION.12b
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what is PDF-VARIANT-DIGESTION.3 prose entity capture
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > what is ProtocolStateRecord / protocol_states / DBGTAPSM
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what is README.md's effective wrap column in SpecForge (about 94 bytes — that is the measured maximum of the population once the two drifted lines were reflowed; the enforced bound is 120 and the warning fires at 96)
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > what is REPLAY_PROJECTION_SHA256

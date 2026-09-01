@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > is upstream extraction or ISF expressiveness the next measured blocker
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > may a value be published because a trajectory shows it has not moved
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > may fact cards be deleted or merged to free catalog capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > must a corpus refresh update the frontier declaration
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -291,10 +297,3 @@
   > what distinguishes converging stalled divergent mixed and unmeasurable
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > what do I do with a published count no claim outcome fits
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what do leading_section_number and is_descendant_section_number do
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what document class is a chip-spec PDF (protocol / register / interface / guide)
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what does 'at or above rollover' mean for a line_bytes_each dimension (only that the widest single line is at 90% of the width bound; the milestone vocabulary is written for a quantity that accumulates. Most surfaces have no rollover to perform anyway — rolling_ledgers.jsonl declares just four sources, and README is a bounded_snapshot that appears there only as a reader —
-  > and where one does exist it lowers a maximum only incidentally, as the CHANGES.md rollover did not: line_bytes 1629 either side)

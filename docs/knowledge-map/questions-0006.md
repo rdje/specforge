@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > how is the EvidenceIR extractor path / extraction layer structured and wired
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > how is the FSMGen feedback channel kept bounded without losing old requests and responses
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how is the NLI gate tested without Ollama
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal) — four deterministic eval-extraction tasks read the EvidenceIR surfaces directly: serial_frame_field, protocol_operation (once named swd_operation), protocol_state, interface_edge_timing
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -292,9 +298,3 @@
   > how was the 400 page Docling SIGKILL reproduced
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > how was the CHI field-constraint routing measured without re-ingesting the PDF
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > how was the eval gold checked for idiosyncrasy
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > how was the migrated alignment task evidence independently audited
