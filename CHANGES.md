@@ -1,3 +1,51 @@
+### CHANGES-LEDGER-ROLLOVER.7 — roll the change ledger in the same transaction that filled it
+
+- `WIRE-BASED-100.8b`'s own record took `CHANGES.md` to 1,633 lines = **90.7%** of its 1,800-line health target,
+  the mandatory rollover signal, with bytes at 88.4%. Shortening the entry that crossed it would mean cutting a
+  27-line record to under 14 — trimming evidence to dodge a declared milestone, which is exactly the Non-Goal
+  the containment doctrine exists to enforce. So the rollover rides inside the same transaction, the established
+  pattern for a blocking pair.
+- SEAM-CLEAN, NOT MINIMAL. The committed root at `4926fa84` held 19 post-migration records; the plan keeps
+  **two** — the `WIRE-BASED-100.8` pair this transaction continues — and seals 17. That is the deepest cut at
+  which every multi-record story below the boundary seals whole: both `KG-ISF-COMPLETENESS.5.iv.a` records, both
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f` records, and the older `.4`/`.7` block. Root 94 → 77 committed records /
+  1,606 → 1,123 lines / 223,007 → 177,679 bytes; with `.8b`'s record riding over the cut the live window is
+  78 records / 1,150 lines (63.9%) / 180,186 bytes (70.7%), about nine records of headroom.
+- AND A CONSTRAINT NOBODY HAD WRITTEN DOWN. The applied run failed once and rolled back cleanly to exact
+  preflight bytes: `staged output identity drift for … manifest.jsonl`, preceded by `Wide character in print at
+  scripts/check_rolling_ledger_protocol.pl line 942`. The manifest writer emits without a UTF-8 layer, so a
+  **non-ASCII byte in a plan `reason`** — an em dash here — makes the staged manifest fail its own identity
+  check. Every earlier plan's reason happens to be ASCII, so the constraint had never been observed. The
+  fail-closed restore behaved exactly as designed; the undocumented constraint is the defect, now recorded in
+  `CHANGES-LEDGER-ROLLOVER.7` and in the plan file. A plan `reason` must be ASCII.
+
+### WIRE-BASED-100.8b — a document the oracle cannot read gets a disposition, not a zero (and the legacy stratum is not schema 1)
+
+- BEFORE: `eval-extraction` on any dataset naming a legacy document printed its header and died —
+  `build_predictions` propagated the load error through `?`, so the whole run produced no output even for its
+  measurable documents. There was exactly one way to represent a refusal: abort.
+- AFTER: the extractor returns `TaskOutcome::{Records, Unmeasurable}`. `unmeasurable_disposition` probes the
+  artifact's OWN `schema_version` through the new `EvidenceIr::persisted_schema_version`; a below-current
+  artifact becomes an UNMEASURABLE disposition carrying that version and its re-ingest route, its remaining
+  tasks are not retried, and its gold items are withheld from every scorer. `seed_apb.json` now reports
+  `persisted EvidenceIR is schema 2, below the current canonical schema 3 … 16 gold item(s) withheld from
+  scoring` and exits 0. **Any other failure still aborts** — a hermetic control pins that, because a disposition
+  must never become a place to absorb real defects.
+- WHY WITHHOLDING MATTERS, PINNED AS A CONTROL: the same test asserts that WITHOUT the filter those labels score
+  as false negatives. Rendering "cannot be measured" as `R=0.000` is the fabricated number this tree forbids.
+- AND A CORRECTION THIS SLICE FOUND IN ITS OWN INHERITED WORDING. `.8` called the 54 legacy documents "schema
+  1". Censusing every persisted artifact instead of assuming: they are SourceIR schema 1 / EvidenceIR schema 2 /
+  SemanticIR schema 1 / IntentIR schema 1, against 3/3/2/2 for the 24 current ones — ZERO schema-1 EvidenceIRs
+  exist. "Legacy schema 1" is true of their SourceIR and false of the EvidenceIR `eval-extraction` refuses. The
+  shorthand had spread into MEMORY.md, LIVE_ACHIEVEMENT_STATUS.md, the book, the `.8a` fact card, two SWD cards,
+  and a `.5j` correction written hours earlier in this same session; all corrected. A stratum whose legacy
+  version differs per stage cannot be named by one number — which is why the disposition prints the artifact's
+  own version rather than a constant.
+- Rebuildable golds unchanged value for value (I2C 1.000 6/6; SWD constraint 1.000, relation 1.000; SWD
+  derivation 4/4 and 1/1 with the retired 0/11 and 0/13). `kg-bench` 156/156; workspace tests green (specforge
+  lib 472, +2 controls). Flow census moved only its three size counters, every authority and protection count
+  unchanged.
+
 ### WIRE-BASED-100.8c — the SWD 29/29 is retired, and the miss was a PARTIAL retirement, not an unpropagated one
 
 - RE-DERIVED, `--provider skip`, on the oracle `.8a` restored: `seed_swd_derivation.json` scores
@@ -67,489 +115,6 @@
   `2026-08-12`), whose own entry below records that exact comparison *"retires 22 fixed-phase frame and four
   named-operation records"*. The trade was honest; leaving the retired score standing as current for 20 days was
   not, and nothing caught it because the oracle that would have was itself down. Owned as `WIRE-BASED-100.8c`.
-
-### KG-ISF-COMPLETENESS.5.iv.a — correction: the RESERVED split was 5/7 and is 6/6, and its worked example was backwards
-
-- THE DIRECTOR ASKED WHETHER THE FIVE PUBLISHED FINDINGS STILL HOLD. Three re-derive exactly and are
-  unchanged: eval-extraction refuses all 8 tracked seeds (5 legacy-schema-2, 3 proof-topology) on the
-  CURRENT binary and identically on the pre-change 2026-08-28 release binary, with the relocation probe
-  showing artifact_layout as the ONLY differing top-level key between the failing and passing copies;
-  54 legacy / 24 current chains with APB/AHB/AXI/ACE/NVMe/RISC-V legacy and only SWD+I2C rebuildable among
-  scored documents; 9,828 visited / 994 candidates / 285 accepted / 1 in a rebuildable document, with
-  ihi0022_l already carrying AWATOP at 13 members and refused as legacy schema 1, and the SMMU guide
-  Table 3-1 accepted but minting nothing because all three members are sentence fragments. The book-census
-  blind spot also re-derives: "285 tables" and "nine documents" both fail is_candidate, while "285 documents"
-  and "285 files" match — two independent misses, noun list and spelled numeral.
-- TWO STATEMENTS DO NOT HOLD, both inside the RESERVED argument, both read off a dump instead of computed.
-  (a) THE SPLIT IS SIX AND SIX, not five and seven. Modelling build_symbol_definitions' merge-by-name plus
-  its conflicting-value drop: 6 of 12 eliminated / 6 surviving in the .5.iv census frame, and 4 of 10
-  eliminated / the SAME 6 surviving in the shipped-predicate frame — the two frames are different
-  populations and were conflated. Four conflict inside their own table; two only conflict once merge-by-name
-  pulls in a sibling table of the same name, which is precisely what a per-table row count misses.
-  (b) THE DataSource EXAMPLE IS BACKWARDS. It accumulates DEFAULT_NO_USEFUL_INFORMATION = 0 plus RESERVED at
-  2 AND 3; the reserved rows disagree, so RESERVED is dropped and the surviving enum is
-  (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). The merge preserves no reserved encoding at all.
-- THE DECISION DOES NOT MOVE. The NO-GO on a RESERVED name-side exclusion rested on the elimination leg and
-  the indistinguishability leg — 6 survivors against 31 legitimate single-distinct-member comparators,
-  separable only by a spec-assigned value word ADR 0006 forbids — and only the decorative third leg is gone.
-  Emitting (STALL_MODEL (RESERVED 3)) remains a true statement about that document, not a fabrication.
-- THE FIX IS A DERIVATION, NOT A REWORD. scripts/measure_header_sourced_enum_naming.py --reserved-split now
-  models the merge and prints both frames, importing the .5.iv census rather than re-implementing it so the
-  two predicates cannot drift. Same lesson as CLAIM-VERIFICATION-ADOPTION.9's ninth instance: a derived
-  figure needs its own derivation command, and the underlying dump being right does not make the reading of
-  it right. Corrected in the task node, the acceptance checklist, the research record, the fact card and the
-  resume pointer; commit 06a609ef's message keeps the withdrawn numbers and is superseded by this entry.
-
-### KG-ISF-COMPLETENESS.5.iv.a — let an encoding table's own header source its enum name
-
-- THE ASYMMETRY, CLOSED. derive_encoding_enum_name drew its candidate from caption_text or the section
-  title and only then validated it against known_signals and the header, so the header was a VETO and never
-  a SOURCE: `SEC_SID value | Description` minted nothing because its caption carried no field token. Added
-  derive_header_sourced_enum_name (ir/evidence.rs), called LAST after both existing paths decline — strictly
-  additive, so no enum minted today changes name or disappears.
-- RE-MEASURING THE SHIPPED PATH CORRECTED .5.iv THREE TIMES, and that is the substance of this slice.
-  (1) THE POPULATION IS TWICE WHAT .5.iv COUNTED. It censused table_kind == encoding only, but
-  scan_encoding_tables_by_signal_anchor skips just signal-description/register-map/timing-parameter and
-  table_looks_like_encoding then admits any name+value header — so unknown-kind tables are in scope. 9,828
-  tables visited, 994 reach the header shape, 285 accepted in 9 documents; not 134 in 10.
-  (2) THE FOUR EXCLUSION CLASSES .5.iv NAMED ARE THE WRONG LIST. The dominant junk is POSITIONAL headers —
-  Bytes/Offset/Index/bits, where the column holds a POSITION so the table is a field LAYOUT — which removes
-  448 candidates alone and subsumes the OFFSET and garbled-AXADDR classes. A second clause, at least one
-  value cell must PARSE as an encoding literal, subsumes the *_WIDTH class AND the glossary / notation /
-  abbreviation class .5.iv never saw at all (Term|Meaning, Acronym|Description, Notation|Meaning).
-  (3) RESERVED-ONLY DID NOT SHIP AS AN EXCLUSION. Five of the twelve self-eliminate in
-  build_symbol_definitions' conflicting-value rule; the other seven are structurally indistinguishable from
-  31 legitimate single-distinct-member tables (TTL, CD2L, S1P, PRI, GRAN4K...), leaving only the word
-  RESERVED as a discriminator — the spec-assigned value vocabulary ADR 0006 forbids. In the merge they are
-  not even vacuous: CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding.
-- THE NODE'S OWN GATE PREDICTION WAS FALSE, and the corpus is why. ihi0022_l already carries AWATOP with 13
-  members, and it CANNOT BE REBUILT: its SourceIR is legacy schema 1, refused as inspection-only, one of 54
-  legacy chains against 24 current. Exactly ONE accepted table sits in a rebuildable document — the SMMU
-  guide Table 3-1 that opened .5.iv — and it mints nothing because .5.ii drops its sentence members, the
-  mechanical confirmation of the honest correction .5.iv wrote in prose.
-- INERTNESS PROVEN, NOT ASSUMED. check_chain_currency.sh replays all 24 rebuildable documents against the
-  patched binary: 24 replayed / 24 current / 0 stale at evidence, semantic, intent AND isf-adapter — every
-  persisted artifact byte-identical. kg-bench 156/156; cargo test green (+8 tests); check_doctrines.sh GREEN.
-  The production-genericity flow census moved only analyzed_functions 2,373->2,376, helper_edges
-  14,684->14,737 and decision_sites 12,669->12,696; rule_roots, grammar_declassifiers, canonical_seams,
-  proof_gates, trusted_regions and every protected_* count are UNCHANGED — no new decision authority.
-- FOUND WHILE GATING THIS SLICE, NOT CAUSED BY IT: THE SCORING ORACLE IS DOWN. eval-extraction refuses every
-  document in the corpus, on the PRE-change 2026-08-28 binary too — the 54 legacy chains as proofless
-  inspection-only, the 24 current ones as `registered derivation 'evidence.claim.schema_version.root' output
-  or input topology is stale`. Isolated read-only: rewriting ONLY an EvidenceIR's artifact_layout, every
-  other byte identical, fails canonical verification, while the byte-identical copy that keeps its layout
-  verifies and runs — and extract_on_copy must relocate so the corpus is never mutated. So no WIRE-BASED-100
-  number can be re-derived today. Opened as WIRE-BASED-100.8 with fact card
-  evidence-proof-binds-artifact-location, rather than absorbed here.
-- .5 IS COMPLETE: .5.i name gate, .5.ii spine member gate, .5.iii _WIDTH member gate, .5.iv header-naming
-  measurement, .5.iv.a header source. Reproducer scripts/measure_header_sourced_enum_naming.py; report
-  docs/research/generic-enum-conflation-results.md §.5.iv.a; book pipeline/isf-adapter.md.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i — classify both member warnings; README's dimension does not accumulate
-
-- TWO WARNINGS, TWO KINDS OF DIMENSION — and NOT maximum-versus-total, which is how this entry first put
-  it. check_live_document_size.pl computes bytes_each, lines_each AND line_bytes_each alike as per-surface
-  maxima. What differs is what each ranges over: the first two maximize a per-FILE count that grows as
-  content is added; line_bytes_each maximizes a per-LINE width that does not. So it has no growth driver and
-  is freely reducible, and "at or above rollover" on it does not mean what it means elsewhere — the only
-  rollover transaction is the rolling-ledger protocol, whose registry names four sources, and README appears
-  there only as a reader; where a rollover does exist it lowers a maximum only incidentally, as the last
-  CHANGES.md rollover did not (line_bytes 1629 either side). .4d splits there.
-- README IS NOT GROWING; ONE BLOCK DRIFTED. 86 non-blank lines, mean 52.5, p95 94, and EXACTLY TWO above 96
-  bytes — L72 (108), L73 (107) — both in one five-line bullet; every other line is <= 95.
-- THE REMEDY IS ADVERSARIAL TO THE OTHER TWO BOUNDS. Each break costs +1 line and +2 bytes, and README
-  had 2 LINES and 3 BYTES of headroom, so a whole-file rewrap clears one warning and trips two.
-  Reflowed the one bullet at the narrowest line-count-preserving column: width 88 -> 5 lines/423 bytes,
-  width 87 -> 6/424. Result 118 lines / 4,637 bytes UNCHANGED, same words in order, 108 -> 94 (78.3%).
-- LINE-NEUTRALITY WAS CORRECTNESS. current_claim_census.jsonl pins README by LINE NUMBER plus sha256 at
-  L1, L30 and L88-L104; all three re-derive unchanged. A rewrap that moved lines would have staled the
-  route block and pulled a claim-plane re-anchor into this slice.
-- THE VALIDATION SNAPSHOT IS THE OPPOSITE AND IS NOT HEALTHY. Marginal cost per reviewed document, read
-  from the file: 163/147/112/110 lines over 12 fixed (12 + 532 = 544 exactly). With 96 lines of headroom THE
-  CHEAPEST FIFTH DOCUMENT IS REFUSED, and warning-to-refusal is 129 lines, under the largest normal update
-  alone where the doctrine requires it PLUS the rollover. generated/intent_ir holds 78 built
-  artifacts against 4 reviewed, so the surface is O(corpus) — ~10,400 lines against 640. No ceiling fixes
-  it; .4d.ii owns the bounded-landing partition. Fact card live-document-width-remedy-coupling added.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — correction: the .4f account of .4e contained a false quotation
-
-- THE DIRECTOR ASKED WHETHER .4f's OWN SELF-CRITIQUE HELD. Five of its seven assertions re-derive; two do not,
-  and one of those is a misquotation published in the entry directly below this one and in the af44ad45 commit
-  message. This entry is appended rather than rewriting that record, which is the same rule .4f applied to the
-  archives: a dated entry is corrected by an erratum above it, never by editing what it said.
-- THE MISQUOTE. The .4f entry says .4e broke the anchor invariant "while reporting 'no inbound route breaks'".
-  .4e never wrote that sentence. It is .4c's, and .4e's engineering note quotes it in order to REJECT it —
-  ".4c reported that no inbound route broke because all 14 references cited the file as a whole. That was
-  luck, not a property of partitions." .4e had already found the hazard, repaired the eight deep-links it
-  located, and disclosed that dated ledger entries were left. The flattening made the predecessor look less
-  careful than it was, by exactly the mechanism .4f was written to condemn: a characterization asserted from
-  memory instead of re-derived from the record. Verified by git show 7e1ad931.
-- WHAT .4e ACTUALLY GOT WRONG, WHICH IS SHARPER. Its commit message asserted dated ledger history was "not
-  rewritten and routed one hop by the new Outcome section". That was FALSE WHEN WRITTEN, not merely
-  unverified: the Outcome section named the successor in prose, but the cited headings had no target in the
-  retained record, so no section link resolved anywhere. And .4e never established the repository's baseline,
-  so it could not see that leaving fourteen unresolved was a regression from zero rather than an inherited
-  condition. Missing baseline is the root cause; the unverified "one hop" is the symptom.
-- THE SECOND FAILED ASSERTION IS RHETORICAL. .4f said losslessness was "proved to four decimal places". It was
-  proved BYTE-EXACT, by cmp and sha256. A numerical-precision metaphor is the wrong description of an exact
-  identity, and it is a poor one to use inside a paragraph about precision.
-- WHAT DID HOLD, MEASURED. The regression is real (20/0 at caf448fa, 13/14 at 7e1ad931). Route integrity was
-  argued rather than measured — .4e's own text asserts the hop without counting anything. CLAIM_VERIFICATION.md
-  section 1 does govern the route assertion: it is a current-facing pass/fail assertion "a reader can
-  reasonably act on", and sections 3.1/3.2 require re-derivation plus a competing hypothesis. The pre/post
-  count is cheap and was timed rather than estimated: 17.1s real for both revisions.
-- ONE CLAIM WAS OVERSTATED AND IS WITHDRAWN. .4f implied the byte count was held to the CLAIM_VERIFICATION
-  standard while the route claim was not. Neither was declared as a claim ID; the slice declared the three
-  ledger-durability claims only. The accurate statement is that rigor was applied unevenly, and that whether a
-  route assertion should mint its own claim record is exactly the coverage question CLAIM-VERIFICATION-ADOPTION
-  .8/.9/.12/.13 already own — not a settled violation this entry gets to assert.
-- NOT MECHANIZED, DELIBERATELY. Anchor resolution is checkable and is now gated by SECTION-ANCHORS. Whether a
-  paraphrase fairly represents the record it cites is not mechanically decidable, and inventing a gate that
-  appeared to check it would be worse than naming the limit. The control that works is the cheap one the
-  director applied here: ask whether the finding still holds, and re-read the source before answering.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — repair the anchor regression .4e shipped, and gate the invariant
-
-- THE DIRECTOR ASKED WHETHER THE .4e FINDINGS STILL HELD. Eight of nine re-derived. One did not, and the
-  control is unambiguous: counting qualified `<path>.md` §`<section>` references across every tracked
-  Markdown file, caf448fa (pre-partition) had 20 resolving / 0 unresolved; 07eba8d8 (after .4e) had 13 / 14.
-  Zero unresolved was the repository's actual standing invariant. .4e broke it fourteen times and reported
-  "no inbound route breaks".
-- THE REASONING WAS THE DEFECT, NOT JUST THE OUTPUT. .4e's "repoint current-facing authorities, leave dated
-  ledger history to be routed one hop by the Outcome section" was not the repository's practice; it was a
-  rule invented to justify not finishing the work, and it read as principled because it cited a real
-  distinction. The pre/post count is what exposed it — the same discipline CLAIM_VERIFICATION.md requires of
-  any published assertion, applied to a claim about routes.
-- REPAIR IS FORCED TO THE TARGET END. Seven of the fourteen links sit inside sealed
-  docs/archive/rolling-ledgers/* segments whose lifecycle is archive_terminal and whose source COMMIT.md
-  forbids editing. A remedy that rewrites only live roots leaves seven permanently broken. So the retained
-  measurement record keeps the six partitioned headings as redirects (176 -> 216 lines, 33.8% of 640): all
-  fourteen resolve again, the repository reaches 27 / 0 — above its own pre-partition baseline, because the
-  seven new routes into the results record resolve too — and not one dated entry or sealed segment was edited.
-- NO GATE COULD SEE IT, SO ONE NOW EXISTS. .4e ran the full driver and got ALL 12 doctrines PASS while
-  shipping the regression; builtin:markdown_links proves catalog MEMBERSHIP, never that a cited SECTION
-  exists. scripts/check_section_anchors.pl is registered as the gate-tier SECTION-ANCHORS doctrine and
-  mirrored in DOCTRINE_ENFORCEMENT.md section 10. Controls run in detached worktrees: RED at 07eba8d8 fails
-  with exactly 14 and exit 1 — it would have blocked the commit that shipped the defect; the GREEN control at
-  caf448fa passes with 20, so it is not a checker that always fails; --self-test proves the normalized
-  containment accepts a cited heading and refuses an absent one. Honest limit declared in the script and the
-  section 10 row: 42 bare section references carry no path and are counted, not checked.
-- Fact card research-record-size-profile corrected — it previously said only "inspect inbound routes
-  separately", which is what .4e did and got wrong. It now states that a partitioned record must keep every
-  cited heading as a redirect, and that source-end repair is impossible for sealed history. The resume
-  pointer's route rule is corrected in the same transaction so a fresh session cannot inherit the bad one.
-
-### SCRATCH-RESIDUE-CONTAINMENT.5 — record the off-volume harness-scratchpad hazard where retrieval finds it
-
-- THIS TREE HAS BEEN ABOUT SCRATCH THE REPOSITORY CREATES; the complementary hazard is scratch an agent is
-  INSTRUCTED to create somewhere else. An interactive harness can hand a session a scratchpad directory
-  outside the repository volume — commonly under /private/tmp — and tell it to use that for all temporary
-  files, which is exactly what PROJECT_DATA_LOCALITY.md forbids. The instruction is not adversarial, it is
-  the harness default, and it arrives before the agent has any reason to open the locality standard.
-- NO GATE CAN CATCH IT, and the leaf says so rather than implying coverage. The files never enter the
-  repository, so check_project_data_locality has nothing to walk and the .3 residue census cannot see them.
-  Retrieval is the only workable control, so the remedy is a fact card phrased in the words an agent actually
-  uses when deciding where to put a temporary file — not a checker that would be theatre.
-- OBSERVED LIVE, which is why it is recorded at all: the LIVE-DOCUMENT-PRESSURE-HEADROOM.4e session wrote
-  three partition-verification files to its harness scratchpad before catching the conflict; they were moved
-  to .project-data/tmp/ and the off-volume copies deleted, with an empty residue check.
-- Fact card project-scratch-location added (254 cards; Knowledge Map 277 facts / 2,220 keys over 16 shards).
-  The fact-card planned_outputs contract and the published card-count assertion moved in the same
-  transaction, the latter re-derived from its named producer rather than hand-set. No bound, gate, registry
-  dimension, or product behaviour changed.
-
-### KG-ISF-COMPLETENESS.5.iv.a — give the lane's named next step an owning leaf
-
-- FOUND WHILE COUNTING A WRITER SET, NOT WHILE LOOKING FOR IT. LIVE-DOCUMENT-PRESSURE-HEADROOM.4e had to
-  measure how much writing was left in KG-ISF-COMPLETENESS.5 to choose between partition and rollover. That
-  count turned up an ownership gap: .5.iv closed on 2026-08-11 with "Frontier -> .5.iv.a (CODE)" and .5.iv.a
-  was never given a node. Under docs/decisions/0003 the lane's named next step therefore could not legally be
-  started, and nothing detected it.
-- OWNED, NOT JUST REPORTED. .5.iv.a now has a pending leaf carrying what .5.iv already decided: widen
-  derive_encoding_enum_name so a single-header-row <FIELD> value|Description table may take its name from the
-  header; exclude the four measured junk classes first (OFFSET-headed register-offset tables, *_WIDTH
-  self-named pseudo-enums, garbled members, RESERVED-only enums) with the exclusion predicate itself measured
-  FP-free; and run the full before/after WIRE-BASED-100 protocol because it mints a new AWATOP enum on the AXI
-  wire gold ihi0022_l. Merge-by-name is safe here by measurement, not assumption: 0 of 28 same-name collision
-  groups conflict on any shared value.
-- THE FIRST AUDIT WAS WRONG AND THE CORRECTION IS THE REUSABLE PART. A detector matching only the absolute
-  "- ID: `TREE.x`" node form reported THREE trees with an unowned frontier. Two were false positives:
-  DOC-INTENT-TAXONOMY .3b/.3c and BOOK-USER-FRIENDLY-BACKFILL .2.b-.2.f are written in a second, equally
-  legitimate nested relative form ("  - `.3b` · Status: ..."), and they own their leaves. Corrected, exactly
-  ONE tree had a real gap. Fact card task-tree-node-forms records both forms and carries the corrected
-  detector, so the next audit does not repeat the false positive.
-- Fact-card projection regenerated (253 cards, bounded landing plus 5 title parts) and its planned_outputs
-  contract updated in the same transaction, since adding a card changes the pinned title-part metrics;
-  Knowledge Map 276 facts / 2,214 keys over 16 shards; canonical catalogs verified at 266 members.
-- THE PUBLISHED-ASSERTIONS GATE CAUGHT THE REST, AND THAT IS THE POINT. The first commit attempt was REFUSED:
-  adding one card moves docs/knowledge/INDEX.md's published card count, and published_assertions.jsonl still
-  pinned 252 with the old region digest — "value '252' does not appear in its own governed region" and
-  "'card_count' re-derives to '253', published '252'". The value was corrected by re-running the named
-  producer (check_fact_card_catalog.pl --report, field card_count) rather than by hand, which is the whole
-  contract: a published number is only allowed to move when its producer says so.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.4e — partition the composite enum-conflation record at its chronology seam
-
-- .4c RELOCATED THE RESEARCH MAXIMUM ONTO A RECORD WITH A LIVE WRITER, and .4e owns that successor:
-  docs/research/generic-enum-conflation-measurement.md at 559 of 640 lines (87.3%), on a surface whose
-  health_targets.lines_each equals its enforcement_ceilings.lines_each, so there is no band above the
-  warning — and unlike the audit, KG-ISF-COMPLETENESS.5 was still appending to it.
-- THE DECIDING MEASUREMENT IS THE SIZE OF THE REMAINING WRITER SET, NOT THE FACT THAT A WRITER IS LIVE.
-  The .4e acceptance offered a declared per-record rollover as the alternative remedy, and a live writer is
-  what makes that look necessary. It is not here, and the reason is countable: .5 has exactly ONE unwritten
-  leaf left — .5.iv.a, the CODE slice .5.iv deferred; .5 and .5.i–.5.iv are all done — and the record's own
-  history bounds what that leaf costs. Seven commits took it 149 -> 559 lines in six appends of
-  +72/+105/+38/+96/+33/+66 (mean 68, max 105). A rollover lifecycle, with new surfaces, checker logic and an
-  ADR spent against decision_records axes already at 82.8% files / 92.6% lines / 97.1% bytes, would have been
-  built to serve one append.
-- SO PARTITION, THE SURFACE'S OWN partitioned_canonical REMEDY, ON THE SAME SEAM .4c FOUND: a 2026-06-24
-  measurement (defect, extraction-side origin, corpus census, member-quality finding, decomposed decision,
-  reproducer, conclusion) followed by a chronology of four .5.x measurement/LANDED cycles appended over seven
-  weeks. Original lines 150-559 move verbatim and in order into
-  docs/research/generic-enum-conflation-results.md; the measurement keeps lines 1-149 and gains an Outcome
-  section stating the composed result by derivation.
-- THE PARTITION IS EXHAUSTIVE, which is a stronger proof than .4c's: concatenating the retained prefix with
-  the moved block reproduces the committed HEAD file byte-for-byte under cmp, so no line is dropped,
-  duplicated or reordered. Independently, sha256 of the base record's first 149 lines equals sha256 of HEAD
-  lines 1-149; sha256 of the results record's lines 19-428 equals sha256 of HEAD lines 150-559; and the
-  multiset difference original-minus-(base union results) is zero lines.
-- CONTENT-PRESERVING IS NOT ROUTE-PRESERVING, and this record had the deep-links the audit did not. Eight
-  inbound citations named a section that moved and were repointed at the results record — the .5.ii/.5.iii/
-  .5.iv task-tree nodes and the .5.ii, .5.iii-MEASUREMENT, .5.iii-CODE and .5.iv enforced acceptance
-  checklists — while the three whole-record citations (.5 node, .5.i checklist measure step, Changelog
-  entry) correctly still name the measurement, whose cited content stayed. The dated Changelog's bare-section
-  references are not rewritten; the measurement's Outcome section routes them one hop.
-- RESULT: lines_each 559/640 (87.3%) -> measurement 176/640 (27.5%) and results 428/640 (66.9%). The surface
-  maximum falls back to the already-partitioned audit at 467/640 (73.0%), below the 80% warning, so the
-  research line warning clears and the axis has 173 lines of band. One catalog row added by
-  check_canonical_collection_catalogs.pl --write (5 indexes, 266 members).
-- TWO CENSUS OBLIGATIONS, NOT ONE. Prepending this record shifted all 12 line-pinned CHANGES.md regions in
-  current_claim_census.jsonl, re-anchored by CONTENT and re-verified against sha256(line bytes + newline);
-  it also required ONE NEW row for the new ledger head, which the 4c rollover had to add too — so it is the
-  rule, not an exception. Staging then showed the resume pointer had itself crossed into warning at 41/50
-  lines, so MEMORY.md was tightened to 36 rather than leaving a warning on a surface this slice does not own.
-  Gate: 905 Markdown files / 57 governed surfaces with no research_records and no active_resume warning;
-  check_doctrines.sh ALL 12 executed doctrines PASS.
-
-### CHANGES-LEDGER-ROLLOVER.6 — roll the change ledger in the same transaction that filled it
-
-- LIVE-DOCUMENT-PRESSURE-HEADROOM.4c's own record took CHANGES.md to 1,636 lines = 90.9% of its 1,800-line
-  health target, the mandatory rollover signal, with bytes already at 88.4%. It cannot be dodged by
-  shortening that entry — the committed root was 1,606 lines, so the entry would have to fall to 13 — and
-  trimming evidence to clear a declared milestone is the exact Non-Goal the owning tree exists to enforce.
-- SO THE ROLLOVER RUNS INSIDE .4c's TRANSACTION, this repository's established pattern for a blocking pair
-  (4529d535 carries STATUS-LEDGER-ROLLOVER.5 / CHANGES-LEDGER-ROLLOVER.5; 2b9e8899 carries
-  CLAIM-VERIFICATION-ADOPTION.6b / .3). The pivot rule holds in substance: no new work is started and the
-  tree reaches a clean committed state at the first point where that is possible.
-- THE CUT IS SEMANTIC, NOT MINIMAL. The committed root's newest seven records are the current
-  LIVE-DOCUMENT-PRESSURE-HEADROOM story; the thirteen below are the closed SPEC-TO-INTENT-ALIGNMENT.9 and
-  CLAIM-VERIFICATION-ADOPTION.7 block. Keeping seven opens the ledger on the story this transaction
-  continues. The minimum cut would have kept eleven and re-warned within about one record.
-- Plan changes-ledger-rollover-2026-08-31-plan.jsonl pins committed boundary d5b4016b and 95 records with
-  1 future prepend; dry run exact and warning-safe before the applied run. Root 1,606 -> 1,216 lines /
-  219,676 -> 185,835 bytes, and with .4c's record riding over the cut the live root is 83 records / 1,246
-  lines (69.2%) / 188,654 bytes (74.0%) — under the 80% warning on every dimension.
-  segment-0017-2026-08-31.md holds 13 records / 389 lines / 36,723 bytes. git diff proves every older
-  segment and the source capsule byte-identical; no record was edited, reordered or reflowed and no limit,
-  milestone or ceiling moved.
-- THE ROLLOVER MOVES THE CLAIM CENSUS TOO, which is the part a plan does not do for you: twelve
-  current_claim_census rows pinned records that left the live window and were removed, three were
-  re-anchored by content, and one was added for the new ledger head. The standing limit is unchanged and
-  still owned by .4 — a pinned 75-record migration suffix holding 1,053 lines and 170,695 bytes before a
-  single current record exists.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.4c — partition the composite genericity audit at its chronology seam
-
-- THE CEILING WAS RIGHT; THE RECORD WAS TWO DOCUMENTS. docs/research/production-genericity-pipeline-audit.md
-  was 639 of a 640-line per-file ceiling with health_targets.lines_each == enforcement_ceilings.lines_each,
-  so a ONE-LINE correction to it was already refused. The population says the bound fits: across 63 records
-  the mean is 172 lines, the median 130, p95 372, and only two exceed 80% of the ceiling. Re-deriving the
-  per-file profile would have been a bound raised for a single outlier — this tree's Non-Goal — and would
-  have spent a single-use ceiling authority for no structural gain.
-- THE OUTLIER'S REAL DEFECT IS COMPOSITION, NOT LENGTH. It is a genericity audit plus a per-leaf
-  qualification chronology that thirteen .6d.ii leaves appended to it over three weeks. Splitting at that
-  seam retires the growth driver; raising the ceiling would only have postponed it. Two contiguous
-  section-boundary blocks moved verbatim into docs/research/production-genericity-qualification-results.md
-  (212 lines): the .d.iv–.e.v.iii chronology and the .e.iv.vii/.f chronology.
-- THE READER'S QUESTION STAYS IN PLACE, which is what the containment doctrine requires of a partition. The
-  audit keeps its question, boundary, denominator, method, confirmed violations, source disposition,
-  forbidden-vocabulary rebuttal, required signoff architecture, historical correction, and exit criteria, and
-  a new 20-line Qualification outcome section states the composed structural and behavioral verdict by
-  derivation. The moved sections keep their original appended order, which is NOT strict leaf order —
-  .e.iv.vii was written after .e.v.iii — because reordering evidence is not lossless.
-- LOSSLESSNESS WAS PROVED AGAINST HEAD, NOT BY READING THE DIFF. Both moved blocks occur byte-identically
-  and in order inside the new record; the retained prefix and the 20-line suffix are byte-identical to the
-  original; and zero of the 639 original lines are absent from both files. All 14 inbound references cite the
-  file as a whole with no anchor deep-links, and the four retained intra-document back-references still
-  resolve to sections that stayed. 639/640 (99.8%) -> 467/640 (73%); the research bytes_each warning clears.
-- THE REMEDY IS NOT SILENT, AND .4e NOW OWNS WHAT IT EXPOSED. The surface maximum relocated onto
-  generic-enum-conflation-measurement.md at 559/640 (87.3%) — and unlike the audit, that record has a LIVE
-  writer: KG-ISF-COMPLETENESS.5 appended to it as recently as 5c2fe11f. An active measurement record 81 lines
-  below a no-warning-band ceiling is the LIVE-DOC-STOP-RISK condition again, so it is owned now rather than
-  after the axis stops a second time.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.15 — correct the roadmap's closed-owner citation (eighth instance)
-
-- FOUND BY RE-READING THE ROADMAP TO CHECK A CLAIM, WHICH IS THE POINT. ROADMAP.md's "five active program
-  groups" list named LIVE-DOC-STOP-RISK (done) as the current owner of live-document containment and
-  CORPUS-CHAIN-CURRENCY (done) for artifact currency, while LIVE-DOCUMENT-PRESSURE-HEADROOM — the tree
-  actually holding that work and every warned-surface assignment — appeared ZERO times in the roadmap.
-- THAT IS THE EIGHTH INSTANCE OF THE CLASS, AND THE FIRST ON A SURFACE .7 NEVER SCREENED. .7 bound the 39
-  rows the live-size gate warns about; nobody screened the roadmap's ownership prose. .15's scope now
-  includes it, and the gate must distinguish a historical attribution (a Done workstream row naming the tree
-  that finished it — correct, and 12 of the 28 linked trees are closed for exactly that reason) from a
-  current-owner citation. Two weaker cases, R9 "Mostly done" and R15b "In progress", are left for the gate.
-- THE CITATION IS CORRECTED LINE-NEUTRALLY, because Current strategic priorities is at 96.4% of its 56-line
-  bound (owned by .13) and a fix that spends that budget would trade one defect for another. Both closed
-  trees stay visible as the authors of the rule rather than as its current owners.
-- ALSO CORRECTED IN THE SESSION RECORD, not just here: the .9a finding was reported to the director as "no
-  node record anywhere". Re-derived, .9a HAS a bare owner-registry line in the bounded root; what it lacks is
-  a node record with a status in any semantic part, which is what the leaf and ADR 0046 already said. The
-  chat summary was looser than the durable artifacts.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority
-
-- THE SINGLE-USE PROTOCOL IS PROVEN IN BOTH DIRECTIONS. .4a's authority was consumed by the commit that
-  nulled research_records.files; once HEAD carried the new bands the generic gate refused it as banked —
-  observed RED at 3cf7f6d0 with "surface 'research_records' has unused or banked ceiling-increase
-  authority", 1 violation. Removing the record returns the gate to green at 901 Markdown files / 57
-  governed surfaces. The surface bands, the exemption object, and every other authority are untouched.
-- This is the mandatory second transaction .2b performed for .2a, and it is why a cardinality exemption
-  costs two commits rather than one: the authority must exist for exactly the commit that spends it.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.4a — remove the research-plane cap through a declared exemption
-
-- THE NEXT RESEARCH RECORD WAS THE LAST ONE. docs/research/*.md was 63 of a 64-file ceiling with
-  health_targets.files == enforcement_ceilings.files, so no warning band, and the surface declares NO
-  rollover transaction at all: a bound compliant work can reach with a remedy compliant work cannot take.
-  Two active trees write research records as their normal output.
-- ONLY THE COUNT WAS LOADED. lines_total 10,840/40,960 = 26.5% and bytes_total 740,829/4,194,304 = 17.7%.
-  At the measured 172-line / 11.8 KB record mean those aggregates admit about 238 records, which is fewer
-  than the catalog's own row capacity — so the resource bound binds first and still has a warning band. That
-  is the ADR 0045 shape exactly, and it is why the cap is removed rather than raised: raising 64 to a larger
-  number moves the countdown and leaves the no-rollover defect in place, which this tree's Non-Goal forbids.
-- APPLIED THROUGH THE GATED EXEMPTION, NOT A BARE NULL. research_records nulls files in both bands behind a
-  cardinality_exemption naming ADR 0045, this leaf, and canonical_collection_indexes as the route that
-  covers docs/catalogs/research-records.md and is itself bounded in every dimension. Every resource
-  dimension stays numeric. Nulling a ceiling is an increase, so the transaction adds and consumes one exact
-  single-use ceiling_increase_authorities.jsonl record whose old/new match the registry byte-for-byte.
-- .4b MUST FOLLOW IMMEDIATELY. Once HEAD carries the new bands the consumed authority reads as banked and
-  the generic gate refuses it, exactly as .2b had to follow .2a.
-- NO SECOND DECISION RECORD. ADR 0045's Decision is written as the general mechanism, so applying it is not
-  a new decision; the per-surface measurement lives in the registry's own gated rationale field and in the
-  leaf. A near-duplicate ADR would also spend decision_records.files, already at 82.8%.
-- .4 is now a container over .4a (this), .4b, .4c (one research record is 639 of a 640-line per-file ceiling,
-  so a one-line correction to it is still refused) and .4d (validation snapshot and README).
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.14a — shard the task-evidence index by lifecycle
-
-- THE ALIGNMENT INDEX WAS ONE LEAF FROM A HARD REFUSAL. It routed every leaf the tree had ever declared, one
-  row each, so its length was a pure function of project age: 115 of a 128-line health target = 89.8%, against
-  a 90% milestone that is an error, not a warning. destinations gives the root a rollover route and the parts a
-  rollover route and gives the index none. Of its 83 rows, 78 were done or superseded and 54 belonged to one
-  finished lane. It also gated the product frontier SPEC-TO-INTENT-ALIGNMENT.9c, which needs child leaves.
-- THE CUT IS BY LIFECYCLE, NOT BY ALPHABET, following .2c. The landing carries the OPEN leaves and links a
-  derived route catalog carrying complete membership with each leaf's lifecycle. Index 115 -> 43 lines
-  (33.6%); 83 routes = 3 open / 80 closed in one 93-line catalog part. Both files are derive-and-diff
-  generated, --write is the only writer, and an unplanned routes-*.md is refused by name. Part bounds come from
-  the generator's own shape: a structurally full part sits BELOW its own 80% warning, never a bound with no
-  remedy. ADR 0046 records the rule so corpus-coverage and pdf-variant-digestion inherit it.
-- THE LANDING'S LIFECYCLE CLAIM IS RE-DERIVED, NOT ASSERTED. Where a leaf's primary part declares it as a node,
-  the contract's open/closed must agree with that part's own State:/Status: line. THE CROSS-CHECK FOUND TWO
-  THINGS ON ITS FIRST RUN: .8 was active in residual-actionability while all four children were done and the
-  root records .0-.8 complete — the new landing would have published as open a leaf the root publishes as
-  closed; and .9a is routed and registered as an owner but has NO node record in any part. .9a is the single
-  uncorroborated route, pinned by max_unverified_routes: 1 so the population can only shrink, owned by .16.
-- ADOPTION IS STAGED FOR AN EVIDENTIAL REASON, NOT A SCHEDULING ONE. pdf-variant-digestion and corpus-coverage
-  stay inline: their parts record leaves as prose with no node blocks, so the cross-check has no authority
-  there, and declaring 52 and 56 lifecycles by hand would put an unverifiable claim on their landings.
-  route_catalog_state declares the shape the way migration_state already stages this doctrine.
-- THE STOP RELOCATES AND THE RECORD SAYS SO. The nearest structural bound is now limits.manifest.max_leaf_routes,
-  fixed at 128 by the portable cap against 83 declared routes, with no declared rollover. Calling this "the
-  index bound is removed" would repeat the error .2 caught in .2a; .17 owns the residual.
-- FOUND WHILE REFRESHING THE CLAIM PINS: check_claim_verification.pl executes rederive.commands and
-  falsification.controls but NEVER durability.stale_check, so every claim's staleness gate is decorative. The
-  proof is that current-claim-census-frozen pinned "39 current surfaces" while the producer printed 40 before
-  this slice. That one pin is repaired to the stable phrase the claim's own assertion requires; .18 owns the
-  general gap. A third instance surfaced in the same pass and failed loudly, which is the system working:
-  mdbook-quantitative-census-frozen's EXECUTED rederive marker pinned "regions":322 while its own assertion
-  says those totals are per-commit counters read from --report. It is withdrawn to a marker carrying no count.
-- .14 is now a container over .14a (this), .14b (the semantic-part collection) and .14c (the Rust analysis
-  ledger), because those are three lifecycles and this tree's Non-Goal forbids combining them.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — repair the self-orphan the assignment created
-
-- THE ASSIGNMENT BOUND THREE ROWS TO .7 AND THE SAME COMMIT CLOSED .7. alignment_task_evidence_index,
-  alignment_task_evidence_parts and rust_analysis were left owned by a done leaf — the exact defect .7 exists
-  to eliminate, committed inside the commit that eliminated it, and including the row that gates .9c.
-- THAT IS THE SEVENTH INSTANCE OF THE CLASS IN ONE SESSION. Five historical citations name closed trees;
-  CLAIM-VERIFICATION-ADOPTION.11 produced a sixth by screening with grep -rl; .7 produced the seventh at full
-  attention, immediately after writing the warning about it. A class that survives being reviewed, documented,
-  and guarded against by its own author is not a discipline problem. It is a missing mechanical check.
-- .14 CARRIES THE THREE ROWS and does the alignment index shard by .2c's proven form — lifecycle, not alphabet,
-  so the bound measures concurrent work in flight rather than project age. Measured: 77 of 83 route rows are
-  closed lanes, 54 in lane .6 alone.
-- .14 ALSO RECORDS THE GENERAL RULE as a decision record in the same commit, because all three task-evidence
-  contracts share a destinations shape with a rollover route for the root and the parts and NONE for the index,
-  whose size is a pure function of leaf count. corpus-coverage is at 68% of the same un-routed bound and
-  pdf-variant-digestion at 49.4%, so the third tree inherits the answer instead of rediscovering it. The
-  generalisation follows the instance rather than preceding it, which is this repository's own idiom.
-- .15 MAKES "A CITED OWNER IS STILL OPEN" MECHANICAL, with the owner's own Status line as authority, a known-bad
-  case observed RED before green is claimed, and an explicit statement of what it still permits: it can prove an
-  owner is open, never that the open owner is the right one.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — assign every gate-level warning by review
-
-- THE LEAF FOUND ITS OWN DOCUMENTED TRAP INSIDE ITSELF. .7 exists because .11 screened ownership with
-  grep -rl, which "scores a done tree as an owner ... so a real gap was hidden". Reviewing the 39 rows by
-  reading each candidate owner's own Status line, FIVE named owners are done trees:
-  DECISION-RECORD-CAPACITY-HEADROOM, FACT-CARD-CAPACITY-HEADROOM, FACT-CARD-CATALOG-CONTAINMENT,
-  CORPUS-TASK-EVIDENCE-CONTAINMENT and LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION. The first of those is the one
-  .7's OWN ACCEPTANCE cites as the model form of a clean exclusion — "excluded because
-  DECISION-RECORD-CAPACITY-HEADROOM owns its axes". That tree is closed, so the row held up as correctly-owned
-  was unowned, and it is the most pressured item in the whole population at 97.1% of bytes and 92.6% of lines.
-- OWNERSHIP IS NOW READ FROM THE OWNER, NOT FROM A MENTION. Every assignment reads the candidate tree's own
-  Status line; every per-file warning was resolved to the file actually driving it rather than to its surface,
-  which is what makes the row actionable — knowledge_cards is production-genericity-boundary.md at 296 lines,
-  shipped_behavior is the EvidenceIR chapter, task_evidence is docs/tasks/CLAIM-VERIFICATION-ADOPTION.md at
-  254,031 bytes, decision_records is 0038-proof-carrying-genericity-kernel.md.
-- THE ARITHMETIC IS CLOSED: 23 rows bind to eight open owners, 15 to .8-.13 opened here, one is exempt.
-  23 + 15 + 1 = 39.
-- EXACTLY ONE EXEMPTION, AND IT IS EARNED. active_resume is the one surface whose pressure is by design: .5
-  gave the resume pointer a band, and ordinary compliant work moves it back down — demonstrated this session
-  when rewriting the pointer took it from 94.0% to 80.0% of lines_each with no authority edit. A surface that
-  ordinary work already regulates needs the band it has, not a remedy leaf.
-- SIX LEAVES OPENED, COSTING NO INDEX LINE. LIVE-DOCUMENT-PRESSURE-HEADROOM is a plain single-file tree at
-  17.6% of its target with no collection index, so declaring owners here is free — unlike the alignment tree,
-  whose index is the stop that started this.
-- research_records remains the closest thing to a hard stop: its health targets ARE its enforcement ceilings
-  (64 files, 640 lines_each, no absorb band), and it sits at 63 files with a 639-line widest file. Owned by .4.
-
-### LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen
-
-- SELECTED BECAUSE .9c CANNOT PROCEED WITHOUT IT, which was measured rather than assumed. ExtractedStatement
-  carries no SourceIR element identity; adding it touches 11 production and 93 test construction sites, changes
-  a serialized schema, and reconciles 24 proof-carrying chains — so .9c needs child leaves, every child costs
-  exactly one line of docs/tasks/spec-to-intent-alignment/INDEX.md, and that index sits at 115 lines against a
-  115.2 mandatory-rollover threshold. The index is on .9c's critical path, not beside it.
-- AND THE PROJECT HAD ALREADY SOLVED IT. Before declaring new work under .9, the prior-adjudication check found
-  LIVE-DOCUMENT-PRESSURE-HEADROOM.2c (done) shipped the remedy for "a derived index whose cardinality is a
-  stop" — shard by lifecycle, not by alphabet — and .7 (pending) already names alignment_task_evidence_index as
-  one of the three surfaces it owns. Declaring a leaf under .9 would have duplicated a shipped design and
-  stepped on an existing owner. The measurement says the remedy fits: 77 of 83 route rows belong to CLOSED
-  lanes, 54 to lane .6 alone.
-- THE POPULATION CORRECTS THIS LEAF'S OWN PREMISE A THIRD TIME. .11 got it wrong, .11a corrected it, and now
-  the recorded "four producers" is wrong too. Derived at 057710cd: the driver composes 22 producers that emit a
-  line and FIVE that emit a warning. The missing one is roadmap-projection, and the reason matters more than
-  the count — it emits "WARNING section ..." in UPPERCASE WITH NO COLON, so a census keyed on the lowercase
-  "warning:" token reads 38 of 42 lines and is blind to every one of its rows. .11 was blind by the
-  surface '...' token; the identical failure reappears on the warning token itself.
-- THE DRIVER ALSO DOUBLE-EMITS. fact-card-catalog and roadmap-projection each run twice — once inside the block
-  guarded by [ "$ROOT" = "$ADAPTER_ROOT" ] and once in the gate path — so three rows appear twice. A naive
-  count reports 42 warned items; deduplicated it is 39: live-document-size 22, active-task-evidence 7,
-  rolling-ledger 7, roadmap-projection 2, fact-card-catalog 1.
-- NO TOTALS ARE CARRIED. They are per-commit counters, as this leaf already records; the derivation command is
-  the authority. The reviewed per-row assignment against the open trees is the leaf's remaining half.
 
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
 

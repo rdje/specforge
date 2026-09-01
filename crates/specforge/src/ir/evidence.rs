@@ -1151,6 +1151,31 @@ impl EvidenceIr {
         evidence_ir.runtime_clone()
     }
 
+    /// The current canonical EvidenceIR schema version. A persisted artifact below it is legacy:
+    /// readable for inspection, never for canonical authority.
+    pub const CURRENT_SCHEMA_VERSION: u32 = EVIDENCE_IR_SCHEMA_VERSION;
+
+    /// `WIRE-BASED-100.8b` — the `schema_version` a persisted artifact records, read without
+    /// granting it any authority.
+    ///
+    /// This exists so a caller can tell *why* a load was refused. A legacy artifact is a known,
+    /// nameable disposition with a re-ingest route; any other refusal is a defect and must stay one.
+    /// Reading the whole file is deliberate: the probe runs only on the failure path, and guessing
+    /// the version from a prefix would be a second, weaker parser of the same bytes.
+    pub fn persisted_schema_version(path: &Path) -> Result<u32> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let artifact = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        artifact
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .and_then(|version| u32::try_from(version).ok())
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "EvidenceIR is missing an integer schema_version".to_string(),
+                )
+            })
+    }
+
     /// `WIRE-BASED-100.8a` — load a canonical EvidenceIR and re-prove it for a different
     /// repository-owned artifact base root.
     ///

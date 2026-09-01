@@ -340,19 +340,28 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: see log.
 
-- ID: `WIRE-BASED-100.8b` · Status: `pending` · Goal: **make the legacy stratum an explicit UNMEASURABLE
+- ID: `WIRE-BASED-100.8b` · Status: `done` (`2026-09-01`) · Goal: **make the legacy stratum an explicit UNMEASURABLE
   disposition** — the honesty half of `.8`. With `.8a` landed the oracle runs, but one refused document still
   aborts the whole run: `build_predictions` propagates the load error, so a dataset naming any of the 54
   legacy chains produces no output at all. A legacy/proofless EvidenceIR must instead be reported as
   UNMEASURABLE with its re-ingest route and its gold items withheld from scoring, never folded into a score as
   false negatives — a refusal presented as `R=0.000` is a fake number in the exact sense this tree forbids.
   Any other failure must still abort: a real defect may not be absorbed into a disposition.
-  Acceptance: a legacy-stratum dataset (`seed_apb.json`, whose `ihi0024_e` chain is schema 1) prints the
-  UNMEASURABLE disposition, scores nothing for that document, and exits successfully; a rebuildable dataset is
-  unchanged byte-for-byte in its scored output; a hermetic control pins that a non-legacy failure still aborts.
+  Acceptance: a legacy-stratum dataset (`seed_apb.json`) prints the UNMEASURABLE disposition, scores nothing for
+  that document, and exits successfully; a rebuildable dataset is unchanged in its scored output; a hermetic
+  control pins that a non-legacy failure still aborts.
+  **CORRECTION while implementing, and it is bigger than this leaf.** The leaf said `ihi0024_e` is "schema 1".
+  It is **schema 2**. Censusing every persisted artifact rather than assuming: the 54 legacy documents are
+  **SourceIR schema 1 / EvidenceIR schema 2 / SemanticIR schema 1 / IntentIR schema 1**, against 3 / 3 / 2 / 2
+  for the 24 current ones — **zero schema-1 EvidenceIRs exist in the corpus**. So "the 54 legacy schema-1
+  chains" is true of their SourceIR and false of the EvidenceIR that `eval-extraction` actually refuses. The
+  shorthand came from `.8`'s own text and had spread into `MEMORY.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the book's
+  extraction-eval chapter, the `.8a` fact card, two SWD cards, and `.5j`'s own correction written hours earlier
+  in this same session — all corrected here. The legacy version is per STAGE; naming a stratum by one schema
+  number is what made it wrong, which is exactly why the disposition prints the artifact's OWN version.
   Prerequisite: `WIRE-BASED-100.8a`.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: see the acceptance checklist below.
+  Commit: see log.
 
 - ID: `WIRE-BASED-100.8c` · Status: `done` (`2026-09-01`) · Goal: **the first thing the restored oracle found — the
   published SWD `29/29 at 1.000` is stale, and the live docs still present it as current.** Re-derived
@@ -404,7 +413,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   `A[3:2]`, `WDATA[31:0]`, `RDATA[31:0]` in different statements, so the conjunction never holds and the surface
   is empty. Corpus-wide the current grammar emits **0** serial frame fields across all 24 measurable documents,
   so this is not an SWD quirk; but the one document that would exercise the composition-list path
-  (`PDF-VARIANT-DIGESTION.9.3b`, the CAN specification) is a legacy schema-1 chain and unmeasurable, so "0
+  (`PDF-VARIANT-DIGESTION.9.3b`, the CAN specification) is a legacy chain and unmeasurable, so "0
   everywhere" must NOT be read as "the grammar is dead" — it is untested on its designed input.
   The admissible fix is scope binding: a phase named in a section or paragraph binds the fields inside that
   scope. That is document grammar, so ADR 0006 admits it; a phase VOCABULARY would not be.
@@ -517,6 +526,46 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   phase-scope binding — is stated in `.8d` as document grammar with a phase *vocabulary* explicitly excluded.
 - [x] **LOCKSTEP** — book, roadmap, both task trees, five fact cards (one new, one superseded, three corrected),
   `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `MEMORY.md`.
+
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.8b` — DONE `2026-09-01`
+
+- [x] **REPRODUCE / MEASURE** — with `.8a`'s oracle working,
+  `./target/release/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json --provider skip`
+  printed the header and then died on the first document, producing **no output at all** for the whole run:
+  `build_predictions` propagated the load error through `?`. Any dataset naming any of the 54 legacy chains was
+  therefore unscoreable end to end, even for its measurable documents.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `build_predictions`
+  (`crates/specforge/src/commands/eval_extraction.rs`) accepted `F: FnMut(&str, EvalTask) -> Result<TaskRecords>`,
+  so an extraction failure had exactly one representation: abort. There was no way to say "this document has no
+  score" without either aborting or — worse — letting its gold items fall through to the scorers, where a
+  withheld measurement renders as `R=0.000`.
+- [x] **ADDRESSED (verified)** — the extractor now returns `TaskOutcome::{Records, Unmeasurable}`;
+  `unmeasurable_disposition` probes the artifact's own `schema_version` through the new
+  `EvidenceIr::persisted_schema_version` and classifies a below-current artifact as UNMEASURABLE with its
+  re-ingest route; `build_predictions` returns the unmeasurable set and stops retrying that document's remaining
+  tasks; `run` prints the disposition, reports how many gold items are withheld, and filters them out before
+  every scorer. **Before → after on `seed_apb.json`:** a bare abort → `ihi0024_e_2023_02_amba_5_apb_protocol_specification:
+  persisted EvidenceIR is schema 2, below the current canonical schema 3; it is legacy/proofless and
+  inspection-only. Re-ingest the document … / 16 gold item(s) withheld from scoring` then
+  `=== Extraction eval: no measurable document in this dataset ===`, exit 0.
+- [x] **NO REGRESSION** — the three rebuildable golds are **unchanged, value for value**, against the `.8a` run:
+  I2C `declared_signal` source-tolerant 1.000 (tp=6 fp=0 fn=0) and complete-gold precision 6/6; SWD
+  `signal_constraint` 1.000 (1/1) and `actor_signal_relation` source-tolerant 1.000 (1/1); SWD derivation
+  `protocol_operation` 1.000 (4/4), `interface_edge_timing` 1.000 (1/1), `serial_frame_field` 0.000 (0/11),
+  `protocol_state` 0.000 (0/13). `kg-bench` **156/156**. `cargo test --workspace` green: specforge lib **472**
+  (+2, the two new controls), core **1381**, conformance **168**, production-graph **4**, isf round-trip **5**.
+  `cargo fmt --all --check`, warning-deny clippy, and warning-deny rustdoc clean. The pinned flow census moved
+  only its three size counters — `analyzed_functions` 2,378→2,380, `helper_edges` 14,758→14,763,
+  `decision_sites` 12,700→12,705 — with `boundary_rows`, `rule_roots`, `grammar_declassifiers`,
+  `canonical_seams`, `proof_gates`, `trusted_regions`, `non_authoritative_regions` and every `protected_*` count
+  UNCHANGED, re-derived directly from `cargo run --release -p specforge-production-graph -- --flow --json`.
+- [x] **GENERICITY (ADR 0006)** — the disposition is keyed on the artifact's own recorded `schema_version`
+  against the binary's current constant; no document, vendor, protocol or document-key list exists anywhere in
+  the path, and the message quotes the artifact's own number rather than a hardcoded one.
+- [x] **LOCKSTEP** — book `quality/extraction-eval.md` (what the runner does with a document it cannot read);
+  `CHANGES.md`; `LIVE_ACHIEVEMENT_STATUS.md`; `MEMORY.md`. No KM card: the mechanism is the existing
+  `evidence-proof-binds-artifact-location` fact plus a command-behaviour change the book now documents.
 
 ## `.5d` — durable in-repo source PDFs (owner directive `2026-06-07`)
 
@@ -637,7 +686,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   **CORRECTION `2026-09-01` (`.8c`): that closing sentence is no longer true and must not be cited as current.**
   SWD's serial metric is **5/29** — operations 4/4 and edge timing 1/1 survive, frame fields 0/11 and states 0/13
   do not — because `89d8dee7` (`2026-08-12`) retired the protocol-name-bound frame extractor on ADR 0006 grounds.
-  The APB/AHB/AXI `1.000` is also unverifiable today: those three chains are legacy schema 1 and `eval-extraction`
+  The APB/AHB/AXI `1.000` is also unverifiable today: those three chains are legacy and `eval-extraction`
   refuses them. `[[swd-serial-frame-score-retired-by-genericity]]`.
 
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")

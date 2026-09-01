@@ -39,6 +39,6 @@ same gold scores **5/29** — operations 4/4 and edge timing 1/1 still hold, fra
 not (`[[swd-serial-frame-score-retired-by-genericity]]`). The conclusion above survives intact and is in fact
 sharpened: the serial path still needs its own extraction, and it now needs one that reads document grammar
 rather than protocol names. APB/AHB/AXI remain 100% on constraints/relations/temporal *as last measured*, though
-their chains are legacy schema 1 and unmeasurable today
+their EvidenceIR is legacy and unmeasurable today
 (`[[evidence-proof-binds-artifact-location]]`). See `[[swd-canonical-protocol-artifact-is-current]]` and
 `[[axi-channel-structure]]`.

@@ -52,7 +52,7 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   Status: `done`
   Goal: the change ledger is back inside its warning band through its declared transaction, with no record
   edited and no bound moved
-  Children: `CHANGES-LEDGER-ROLLOVER.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`
+  Children: `CHANGES-LEDGER-ROLLOVER.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`
 
 - ID: `CHANGES-LEDGER-ROLLOVER.0`
   Status: `done`
@@ -204,6 +204,45 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   source capsule byte-identical, with only the root, the new segment, the manifest and the index changed. No
   record was edited, reordered or reflowed and no limit, milestone or ceiling moved`
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled`
+
+- ID: `CHANGES-LEDGER-ROLLOVER.7`
+  Status: `done` (`2026-09-01`)
+  Goal: roll the change ledger, which `WIRE-BASED-100.8b`'s own record pushed past its line signal
+  Acceptance: measured `2026-09-01`, `CHANGES.md` reached **1,633 lines = 90.7%** of its 1,800-line health
+  target — the mandatory 90% signal — with bytes at 225,514 = 88.4%, already past the 80% byte warning. The
+  committed root at `4926fa84` was 1,606 lines, so shortening the entry that crossed it would mean cutting a
+  27-line record to under 14; trimming evidence to dodge a declared milestone is the Non-Goal
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM` exists to enforce. The rollover therefore rides **inside the same
+  transaction** as `.8b`, this repository's established pattern for a blocking pair (`.6` with
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`; `.5` with `STATUS-LEDGER-ROLLOVER.5`; `2b9e8899` with
+  `CLAIM-VERIFICATION-ADOPTION.6b`). No new work is started
+  **Sizing, stated before the plan was written.** The pinned 75-record suffix floors the ledger at 1,053 lines
+  and 170,695 bytes — 58.5% and 66.9% before a single current record exists, the standing limit `.4` owns — so
+  only the remaining third is reachable. The committed root held 19 post-migration records: the
+  `WIRE-BASED-100.8` pair on top, then two `KG-ISF-COMPLETENESS.5.iv.a` records, a `LIVE-DOCUMENT-PRESSURE-HEADROOM`
+  block containing both `.4f` records, `.6`'s own rollover record, and the older `.4`/`.7` block. Keeping **two**
+  opens the ledger on the `WIRE-BASED-100.8` story this transaction continues, and it is the deepest
+  **seam-clean** cut available: every multi-record story below it seals whole, so no story is split across the
+  boundary. `.6` recorded that its minimum cut would have re-warned within one record; this one lands at 63.9%
+  of lines and 70.7% of bytes with `.8b`'s record riding over the cut, about nine records of headroom
+  Prerequisite: none; it blocks `WIRE-BASED-100.8b`'s commit
+  **Finding for `.4`, and it is new evidence rather than a restatement.** The applied run failed once and rolled
+  back cleanly, restoring exact preflight bytes: `rollover transaction failed: staged output identity drift for
+  'docs/archive/rolling-ledgers/changes/manifest.jsonl'`, preceded by `Wide character in print at
+  scripts/check_rolling_ledger_protocol.pl line 942`. The cause is that the manifest writer emits without a UTF-8
+  layer, so a **non-ASCII byte in a plan `reason`** — here an em dash — makes the staged manifest fail its own
+  identity check. Every prior plan's reason happens to be ASCII, so the constraint was never observed. The
+  transaction's fail-closed restore behaved exactly as designed; the undocumented constraint is the defect, and
+  it is now stated here and in the plan file. A plan `reason` must be ASCII
+  Verification: `plan docs/research/changes-ledger-rollover-2026-09-01-plan.jsonl pins boundary commit
+  4926fa844ad016324c5e4b02c676b575f5f3debc and committed opening SHA-256 bdcfbb34...e16b across 94 records with
+  1 future prepend; the dry run reported exact and warning-safe before the applied run, and the applied run
+  installed root-last. Root 94 -> 77 committed records / 1,606 -> 1,123 lines / 223,007 -> 177,679 bytes, and
+  with .8b's own 27-line record riding over the cut the live root is 78 records / 1,150 lines (63.9% of the
+  1,800-line target) / 180,186 bytes (70.7% of the 255,000-byte target) - under the 80% warning on every
+  dimension. Segment segment-0018-2026-09-01.md holds 17 records / 482 lines / 45,327 bytes at SHA-256
+  fb96fb88...cb08. No record was edited, reordered or reflowed and no limit, milestone or ceiling moved`
+  Commit: `WIRE-BASED-100.8b / CHANGES-LEDGER-ROLLOVER.7 — a document the oracle cannot read gets a disposition, not a zero`
 
 ## Current Frontier
 

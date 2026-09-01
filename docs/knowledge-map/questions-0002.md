@@ -83,7 +83,8 @@
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses (no — and the serial path that once scored 29/29 is retired too; it is 5/29 today, see swd-serial-frame-score-retired-by-genericity)
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > can WIRE-BASED-100 scores be re-derived right now (YES for the rebuildable stratum since 2026-09-01 / WIRE-BASED-100.8a. Before that eval-extraction refused every document. The 54 legacy schema-1 chains — including the APB, AHB, AXI, NVMe and RISC-V golds — are still refused as proofless and inspection-only and need re-ingest)
+  > can WIRE-BASED-100 scores be re-derived right now (YES for the rebuildable stratum since 2026-09-01 / WIRE-BASED-100.8a. Before that eval-extraction refused every document. The 54 legacy chains — including the APB, AHB, AXI, NVMe and RISC-V golds — are still refused as proofless and inspection-only and need re-ingest. Their EvidenceIR is schema 2, NOT schema 1: measured
+  > 2026-09-01, the legacy stratum is SourceIR schema 1 / EvidenceIR schema 2 / SemanticIR schema 1 / IntentIR schema 1, so the legacy version is per stage and 'legacy schema 1' is only correct for SourceIR)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > can a SourceIR element contain text from two places
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)

@@ -50,5 +50,5 @@ because some statements support multiple doc-level facts (e.g. `1679`→A/APnDP/
 100% (frame/operations/FSM/edge timing). The fresh canonical chain projected those exact records through
 SemanticIR and IntentIR and gave every record an honest adapter disposition
 (`[[swd-protocol-surfaces-reach-intentir]]`). Of that sentence only the APB/AHB/AXI half is still a current
-claim, and even it is unmeasurable today because those three chains are legacy schema 1
+claim, and even it is unmeasurable today because those three chains are legacy
 (`[[evidence-proof-binds-artifact-location]]`).

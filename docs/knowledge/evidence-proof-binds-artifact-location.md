@@ -4,7 +4,7 @@ title: An EvidenceIR's proof binds the artifact's own storage location, so a byt
 answers:
   - "why does moving an evidence_ir.json make it fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because the proof's registered replay is taken over public_field_values, that map includes the artifact's own artifact_layout, and every evidence.claim.<surface>.<key> derivation takes the replay as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)"
   - "how do I relocate a verified EvidenceIR without breaking its proof (EvidenceIr::load_relocated_to_artifact_base_root — it verifies the artifact where it is, moves it to <base>/<document_key>/evidence_ir.json, and re-derives the proof for the new location from the same verified SourceIR prefix and the same sealed proof context; an unsealed artifact_layout rewrite is still refused)"
-  - "can WIRE-BASED-100 scores be re-derived right now (YES for the rebuildable stratum since 2026-09-01 / WIRE-BASED-100.8a. Before that eval-extraction refused every document. The 54 legacy schema-1 chains — including the APB, AHB, AXI, NVMe and RISC-V golds — are still refused as proofless and inspection-only and need re-ingest)"
+  - "can WIRE-BASED-100 scores be re-derived right now (YES for the rebuildable stratum since 2026-09-01 / WIRE-BASED-100.8a. Before that eval-extraction refused every document. The 54 legacy chains — including the APB, AHB, AXI, NVMe and RISC-V golds — are still refused as proofless and inspection-only and need re-ingest. Their EvidenceIR is schema 2, NOT schema 1: measured 2026-09-01, the legacy stratum is SourceIR schema 1 / EvidenceIR schema 2 / SemanticIR schema 1 / IntentIR schema 1, so the legacy version is per stage and 'legacy schema 1' is only correct for SourceIR)"
   - "was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)"
   - "how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different location than the one recorded in its artifact_layout)"
   - "how do I reproduce the artifact-relocation proof failure read-only (copy an evidence_ir.json, rewrite only its artifact_layout artifact_root and evidence_ir_path to the new directory, and run specforge entity-type on it: it fails. Run the same command on a byte-identical copy that keeps the original layout: it succeeds. Keeping the <base>/<document_key> convention does not help — relocation as such is what fails)"
@@ -67,8 +67,14 @@ rebuildable documents to current at every stage, and `specforge semantic --dry-r
 before/after eval on any extraction change touching a scored document. While the oracle was down neither the
 published wire scores nor any new measurement could be re-derived on demand — exactly the claim
 `CLAIM_VERIFICATION.md` refuses. The legacy stratum still bounds what a working oracle can reach: 54 of 78
-persisted chains are schema-1 proofless artifacts the current binary refuses outright, including the APB, AHB
-and AXI wire golds, so only the SWD/ADI and I2C golds are scoreable until those chains are re-ingested.
+persisted chains are proofless artifacts the current binary refuses outright, including the APB, AHB and AXI
+wire golds, so only the SWD/ADI and I2C golds are scoreable until those chains are re-ingested.
+
+Name that stratum by stage, not by one number. Censused `2026-09-01` over `generated/`, the 54 legacy documents
+are **SourceIR schema 1, EvidenceIR schema 2, SemanticIR schema 1, IntentIR schema 1**, against 3 / 3 / 2 / 2
+for the 24 current ones. "The 54 legacy schema-1 chains" is therefore true of their SourceIR and false of the
+EvidenceIR that `eval-extraction` actually refuses — a shorthand that had spread through the live documents
+until `WIRE-BASED-100.8b` measured it.
 
 Found `2026-08-31` while gating `KG-ISF-COMPLETENESS.5.iv.a` and reproduced on the pre-change binary, so it was
 never a regression from that slice. Fixed by `WIRE-BASED-100.8a` on `2026-09-01`. The first thing the restored

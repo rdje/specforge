@@ -69,13 +69,20 @@ actor→signal relations; the contract and diagram tasks are deferred):
 - The score measures the **whole system's** output for a statement (pattern + LLM), which
   is what matters for "which model gives the best final extraction." Isolate the LLM's
   contribution by diffing against the `--provider skip` baseline.
+- **A document the runner cannot read gets a disposition, not a zero.** The current binary refuses a
+  persisted EvidenceIR below its canonical schema, and a refusal is not a measurement. Such a
+  document is listed as UNMEASURABLE with its own recorded schema version and its re-ingest route,
+  its gold labels are withheld from every scorer, and the rest of the dataset still scores
+  normally — because folding withheld labels into a score would render "cannot be measured" as
+  `R=0.000`. Any *other* failure still aborts the run: a disposition must never become a place to
+  absorb real defects.
 - **A published score is only worth what its last re-derivation is worth.** Between at
   least `2026-08-28` and `2026-09-01` this runner refused every document in the corpus, so
   no score on this page could be re-derived on demand; the cause was the relocation
   described above, and it is fixed. Two strata still differ in what they can tell you: the
-  24 rebuildable documents can be re-scored now, while the 54 legacy schema-1 chains —
-  which include the APB, AHB and AXI golds — are refused as proofless and inspection-only
-  until they are re-ingested. Re-run a number before you rely on it.
+  24 rebuildable documents can be re-scored now, while the 54 legacy chains — which include
+  the APB, AHB and AXI golds — are refused as proofless and inspection-only until they are
+  re-ingested. Re-run a number before you rely on it.
 
 ## How it was verified
 

@@ -29,7 +29,7 @@ use crate::ir::extraction_filters::{
 use crate::ir::nli_verify::{constraint_claim_text, verify_entailment};
 use crate::ir::semantic::{InterfaceSignalRecord, SemanticIr, TemporalRuleRecord};
 use crate::ir::source::{ActorSignalRelation, RegisterRecord, SignalConstraintRecord};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 /// The typed records produced for one `(doc, task)`. The two LLM tasks run the real
@@ -102,20 +102,47 @@ fn filter_overgenerated(
     }
 }
 
+/// What one `(doc, task)` extraction produced: typed records, or a named reason the whole
+/// document cannot be measured. `WIRE-BASED-100.8b` — a document the current binary refuses
+/// outright has no score, and reporting one would be a fabricated number. Only a *recognised*
+/// disposition may take this branch; every other failure stays an error and aborts the run.
+enum TaskOutcome {
+    Records(TaskRecords),
+    Unmeasurable(String),
+}
+
 /// Build predictions by invoking `extractor` once per unique `(doc_key, task)` in `items`
 /// and indexing the produced records by statement provenance. The extractor is injected so
 /// the orchestration is testable without running a real command.
-fn build_predictions<F>(items: &[EvalItem], mut extractor: F) -> Result<PredictedKeys>
+///
+/// Returns the predictions plus the unmeasurable documents by key. A document that reports a
+/// disposition on its first task is not retried for its remaining tasks: the refusal is a property
+/// of the artifact, not of the task.
+fn build_predictions<F>(
+    items: &[EvalItem],
+    mut extractor: F,
+) -> Result<(PredictedKeys, BTreeMap<String, String>)>
 where
-    F: FnMut(&str, EvalTask) -> Result<TaskRecords>,
+    F: FnMut(&str, EvalTask) -> Result<TaskOutcome>,
 {
     let mut predicted = PredictedKeys::new();
     let mut seen: BTreeSet<(String, EvalTask)> = BTreeSet::new();
+    let mut unmeasurable: BTreeMap<String, String> = BTreeMap::new();
     for item in items {
+        if unmeasurable.contains_key(&item.doc_key) {
+            continue;
+        }
         if !seen.insert((item.doc_key.clone(), item.task)) {
             continue;
         }
-        match extractor(&item.doc_key, item.task)? {
+        let records = match extractor(&item.doc_key, item.task)? {
+            TaskOutcome::Records(records) => records,
+            TaskOutcome::Unmeasurable(reason) => {
+                unmeasurable.insert(item.doc_key.clone(), reason);
+                continue;
+            }
+        };
+        match records {
             TaskRecords::Constraints(records) => {
                 index_constraint_predictions(&records, &mut predicted)
             }
@@ -143,7 +170,24 @@ where
             }
         }
     }
-    Ok(predicted)
+    Ok((predicted, unmeasurable))
+}
+
+/// Classify a refused document. `WIRE-BASED-100.8b` — a persisted EvidenceIR below the current
+/// canonical schema is legacy: the binary refuses it by design, it has a known re-ingest route, and
+/// it must be reported as UNMEASURABLE rather than folded into a score as false negatives. Any
+/// other refusal returns `None` so the caller aborts: a real defect may not become a disposition.
+fn unmeasurable_disposition(evidence_root: &Path, doc_key: &str) -> Option<String> {
+    let path = evidence_root.join(doc_key).join("evidence_ir.json");
+    let version = EvidenceIr::persisted_schema_version(&path).ok()?;
+    (version < EvidenceIr::CURRENT_SCHEMA_VERSION).then(|| {
+        format!(
+            "persisted EvidenceIR is schema {version}, below the current canonical schema {}; \
+             it is legacy/proofless and inspection-only. Re-ingest the document \
+             (`specforge ingest <pdf>` then `evidence`/`semantic`) to make it measurable.",
+            EvidenceIr::CURRENT_SCHEMA_VERSION
+        )
+    })
 }
 
 /// Run the real extraction command for `(doc_key, task)` on a TEMP COPY of the document's
@@ -394,15 +438,43 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
     // Stash each (doc, task)'s records + fact_provenance during the scoring pass, so conformal
     // calibration reuses the same extraction (no second LLM run).
     let mut conformal_input: Vec<(TaskRecords, Vec<FactProvenanceRecord>)> = Vec::new();
-    let predicted = build_predictions(&items, |doc_key, task| {
+    let (predicted, unmeasurable) = build_predictions(&items, |doc_key, task| {
         let (records, provenance) =
-            extract_on_copy(&evidence_root, doc_key, task, provider, args.model.clone())?;
+            match extract_on_copy(&evidence_root, doc_key, task, provider, args.model.clone()) {
+                Ok(produced) => produced,
+                // WIRE-BASED-100.8b — a refusal this runner recognises becomes an explicit
+                // disposition; anything else is a defect and still aborts the run.
+                Err(error) => match unmeasurable_disposition(&evidence_root, doc_key) {
+                    Some(reason) => return Ok(TaskOutcome::Unmeasurable(reason)),
+                    None => return Err(error),
+                },
+            };
         // WIRE-BASED-100.6/.7(c) — drop over-generated facts (garbage actors, descriptive
         // hallucinations); automatic via the LLM when a provider is available, else heuristic.
         let records = filter_overgenerated(records, provider, &model);
         conformal_input.push((records.clone(), provenance));
-        Ok(records)
+        Ok(TaskOutcome::Records(records))
     })?;
+
+    // WIRE-BASED-100.8b — withhold an unmeasurable document's labels from every scorer below.
+    // Leaving them in would silently convert "cannot be measured" into "recall 0.000", which is
+    // exactly the kind of number this tree forbids.
+    if !unmeasurable.is_empty() {
+        println!("  -- UNMEASURABLE documents (no score is reported for these) --");
+        for (doc_key, reason) in &unmeasurable {
+            let withheld = items.iter().filter(|item| &item.doc_key == doc_key).count();
+            println!("    {doc_key}: {reason}");
+            println!("      {withheld} gold item(s) withheld from scoring");
+        }
+    }
+    let items: Vec<EvalItem> = items
+        .into_iter()
+        .filter(|item| !unmeasurable.contains_key(&item.doc_key))
+        .collect();
+    if items.is_empty() {
+        println!("=== Extraction eval: no measurable document in this dataset ===");
+        return Ok(());
+    }
 
     let scores = eval::score_dataset(&items, &predicted);
     print!("{}", format_report(&scores, provider, &model));
@@ -701,22 +773,20 @@ mod tests {
 
         let mut relation_calls = 0;
         let mut constraint_calls = 0;
-        let predicted = build_predictions(&items, |_doc, task| match task {
+        let (predicted, unmeasurable) = build_predictions(&items, |_doc, task| match task {
             EvalTask::ActorSignalRelation => {
                 relation_calls += 1;
                 // model "found" s1's edge (TP) but missed s2's; also a spurious one on s1 (FP)
-                Ok(TaskRecords::Relations(vec![
+                Ok(TaskOutcome::Records(TaskRecords::Relations(vec![
                     relation_record("Manager", RelationKind::Drives, "HTRANS", "s1"),
                     relation_record("Manager", RelationKind::Drives, "HWDATA", "s1"),
-                ]))
+                ])))
             }
             EvalTask::SignalConstraint => {
                 constraint_calls += 1;
-                Ok(TaskRecords::Constraints(vec![constraint_record(
-                    "HADDR",
-                    SignalConstraintKind::MustBeStable,
-                    "s3",
-                )]))
+                Ok(TaskOutcome::Records(TaskRecords::Constraints(vec![
+                    constraint_record("HADDR", SignalConstraintKind::MustBeStable, "s3"),
+                ])))
             }
             EvalTask::TemporalRule
             | EvalTask::SerialFrameField
@@ -732,6 +802,7 @@ mod tests {
 
         assert_eq!(relation_calls, 1, "extractor invoked once per (doc, task)");
         assert_eq!(constraint_calls, 1);
+        assert!(unmeasurable.is_empty());
 
         let scores = eval::score_dataset(&items, &predicted);
         let rel = &scores[&EvalTask::ActorSignalRelation];
@@ -781,11 +852,14 @@ mod tests {
             automation_confidence: AutomationConfidence::Medium,
         };
         let items = [item];
-        let predicted = build_predictions(&items, |_doc, task| {
+        let (predicted, unmeasurable) = build_predictions(&items, |_doc, task| {
             assert_eq!(task, EvalTask::TemporalRule);
-            Ok(TaskRecords::TemporalRules(vec![record.clone()]))
+            Ok(TaskOutcome::Records(TaskRecords::TemporalRules(vec![
+                record.clone(),
+            ])))
         })
         .unwrap();
+        assert!(unmeasurable.is_empty());
         let scores = eval::score_dataset(&items, &predicted);
         let card = &scores[&EvalTask::TemporalRule];
         assert_eq!(
@@ -797,17 +871,73 @@ mod tests {
     }
 
     #[test]
-    fn format_report_renders_per_task_metrics() {
-        let items = vec![relation_item("s1", "Manager", "drives", "HTRANS")];
-        let predicted = build_predictions(&items, |_doc, _task| {
-            Ok(TaskRecords::Relations(vec![relation_record(
-                "Manager",
-                RelationKind::Drives,
-                "HTRANS",
-                "s1",
-            )]))
+    fn an_unmeasurable_document_is_reported_and_never_scored() {
+        // WIRE-BASED-100.8b — a document the binary refuses outright has no score. Its remaining
+        // tasks must not be retried, and its labels must not reach a scorer, because a withheld
+        // measurement rendered as `R=0.000` is a fabricated number.
+        let items = vec![
+            relation_item("s1", "Manager", "drives", "HTRANS"),
+            constraint_item("s2", "HADDR", "must_be_stable"),
+        ];
+        let mut calls = 0;
+        let (predicted, unmeasurable) = build_predictions(&items, |_doc, _task| {
+            calls += 1;
+            Ok(TaskOutcome::Unmeasurable("legacy schema 2".to_string()))
         })
         .unwrap();
+
+        assert_eq!(
+            calls, 1,
+            "the refusal is a property of the artifact, so the second task is not retried"
+        );
+        assert_eq!(unmeasurable.len(), 1);
+        assert_eq!(unmeasurable.values().next().unwrap(), "legacy schema 2");
+
+        // The scored population is what survives the filter `run` applies — here, nothing.
+        let measurable: Vec<EvalItem> = items
+            .iter()
+            .filter(|item| !unmeasurable.contains_key(&item.doc_key))
+            .cloned()
+            .collect();
+        assert!(measurable.is_empty(), "every label is withheld");
+        assert!(
+            eval::score_dataset(&measurable, &predicted).is_empty(),
+            "no scorecard is produced for an unmeasurable document"
+        );
+        assert_eq!(
+            eval::score_dataset(&items, &predicted)[&EvalTask::ActorSignalRelation].fn_count,
+            1,
+            "control: WITHOUT the filter the same labels would score as false negatives, \
+             which is the fabricated number this disposition exists to prevent"
+        );
+    }
+
+    #[test]
+    fn a_failure_that_is_not_a_recognised_disposition_still_aborts() {
+        // The disposition must never become a place to absorb real defects.
+        let items = vec![relation_item("s1", "Manager", "drives", "HTRANS")];
+        let error = build_predictions(&items, |_doc, _task| {
+            Err(crate::error::AppError::InvalidStageArtifact(
+                "proof verification failed".to_string(),
+            ))
+        })
+        .expect_err("an unclassified failure must propagate");
+        assert!(
+            error.to_string().contains("proof verification failed"),
+            "the original diagnostic survives: {error}"
+        );
+    }
+
+    #[test]
+    fn format_report_renders_per_task_metrics() {
+        let items = vec![relation_item("s1", "Manager", "drives", "HTRANS")];
+        let (predicted, unmeasurable) = build_predictions(&items, |_doc, _task| {
+            Ok(TaskOutcome::Records(TaskRecords::Relations(vec![
+                relation_record("Manager", RelationKind::Drives, "HTRANS", "s1"),
+            ])))
+        })
+        .unwrap();
+        assert!(unmeasurable.is_empty());
         let scores = eval::score_dataset(&items, &predicted);
         let report = format_report(&scores, VlmProviderArg::Skip, "qwen2.5vl:7b");
         assert!(report.contains("actor_signal_relation"));
