@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > is there a PSL or SVA export of temporal rules
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > is there a buildable transaction ordered multi-phase body lever beyond .2b
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > is there a limit on the number of task trees
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > is there a lowering-completeness check for temporal rules
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > is tier-agreement a good confidence axis for conformal calibration
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
@@ -287,13 +297,3 @@
   > what did the corpus task evidence containment census find
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > what did the current claim census find
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > what did the mdBook quantitative claim census find
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > what did the owner decide about PDF-to-IR work versus FSMGen work on 2026-08-11
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did the register access carrier improve in the current replay
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > what did the retired SWD frame extractor key on (literal protocol identity: extract_serial_frame_fields at 89d8dee7^ gated the whole document on the strings serial wire / packet request / shift-dr / swdio / swclk, then assigned a fixed three-value SerialFramePhase enum from wdata / rdata / datain / ack[ — exactly what ADR 0006 forbids in production)
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor

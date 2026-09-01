@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > how does SpecForge prove a reviewed paraphrase is parser equivalent
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > how does SpecForge recover a subject the model misspelled
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -292,8 +298,3 @@
   > how is published claim provenance mechanically gated
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > how is register-field extraction quality measured / scored
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
-  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > how is the CorpusMemory feedback loop made reproducible

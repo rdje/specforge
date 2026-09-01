@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > how to read a chip-spec PDF when the Read tool refuses it
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > how to recover register field bit positions that live in the layout graphic, not the table
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how was AHB HREADY recovered for the temporal antecedent
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how was AXI constraint precision fixed
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > how was the 400 page Docling SIGKILL reproduced
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > how was the CHI field-constraint routing measured without re-ingesting the PDF
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -288,13 +298,3 @@
   > is the traverse_pictures mechanism measured or only read from source
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > is the whole renderable corpus FSMGen --strict clean now (yes — 70/70 current-emit .isf after .2a.vi; the ISF-emit strict-FAIL frontier is closed: Levers A/B/C/F + .2a.vi)
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > is there a PSL or SVA export of temporal rules
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > is there a buildable transaction ordered multi-phase body lever beyond .2b
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > is there a limit on the number of task trees
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > is there a lowering-completeness check for temporal rules

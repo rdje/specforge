@@ -57,7 +57,7 @@
 | [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md) | 2026-06-06 | `current` | Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate |
 | [contested-priors](../knowledge/contested-priors.md) | 2026-06-04 | `current` | SpecForge detects contested priors (same key, conflicting values across docs) — read-only |
 | [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md) | 2026-08-09 | `current` | CoreSight Base System refresh is portable, authority-empty, and honestly under-extracted |
+| [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md) | 2026-09-01 | `current` | Only 24 of 78 persisted documents (30.8%) pass the scorer's schema gate and just 2 carry a gold, and the two… |
 | [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md) | 2026-06-09 | `current` | Vendor/layout clustering via a derived structural+behavioral fingerprint (corpus_cluster) — emergent famili… |
 | [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md) | 2026-06-17 | `current` | The whole local corpus builds to IntentIR — semantic->intent needs only the persisted evidence_ir.json (not… |
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
-| [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |

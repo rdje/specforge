@@ -1,3 +1,72 @@
+### WIRE-BASED-100.9a — the corpus refresh frontier cannot own the wire re-ingest, and 5 of 7 gold documents cannot be scored
+
+- `.8` closed by handing its remainder away in one sentence — *"Re-ingesting the legacy stratum stays with the
+  corpus refresh frontier"* — and repeated the routing in its `Non-goal`. Re-derived rather than restated, that
+  hand-off names an owner whose own contract excludes the work: the frontier's cohort rule is
+  `excluded_source_prefixes: ["corpus/"]`, documented in `scripts/check_corpus_frontier_census.pl` as *"the
+  tracked in-repo gold/eval corpus — copied into the repository, never part of the host-library refresh
+  program"*. All 18 legacy `corpus/`-sourced documents, the three wire golds among them, sit outside its cohort
+  by construction; its `5 remaining` would still read `5` after every wire gold had rotted.
+- THE MEASURABLE SHARE IS 30.8%, AND NO GATE PUBLISHES IT. Censused read-only over the persisted corpus with
+  the tracked reproducer `scripts/measure_corpus_canonical_currency.py`: **78 documents = 24 measurable + 54
+  legacy**, stratified totally at every stage (SourceIR 54×1 / 24×3, EvidenceIR 54×2 / 24×3, SemanticIR
+  54×1 / 24×2, IntentIR 54×1 / 24×2). "Measurable" is not a convention chosen here — it is the exact predicate
+  `unmeasurable_disposition` (`commands/eval_extraction.rs`) applies before `eval-extraction` will score.
+- TWO GREEN GATES PUBLISH COVERAGE AND NEITHER ANSWERS THE QUESTION. `check_chain_currency.sh` reads
+  `24 replayed / 24 current / 0 stale` — true, and a statement about the REBUILDABLE stratum, which declares
+  the other 54 UNMEASURABLE and does not count them, so it reads 100% while describing 31% of the corpus.
+  `check_corpus_frontier.sh` reads `57 cohort = 52 refreshed + 5 remaining` — true, and a statement about the
+  host-library re-ingest PROGRAM, so it reads 91% done.
+- AND `refreshed` DOES NOT MEAN CURRENT: **31 of the 52 declared-refreshed documents are still legacy.** The
+  census contract is internally honest (it defines `refreshed` as declared completed keys and binds membership
+  to bundle retention, never to a schema), but the line printed on the terminal invites exactly the inference
+  `.8` made. The sweep finished under a SourceIR schema that no longer carries canonical authority (schema 3
+  landed `2026-08-12`, `bb5047c2`; a schema-3 SourceIR carries `proof_context`/`proof_ledger` keys a schema-1
+  artifact does not have at all). Legacy ownership partitions **18 unowned + 31 refreshed + 5 remaining = 54**.
+- THE CONSEQUENCE IS THE NUMBER THAT MATTERS. Deriving the scored set from the eval datasets' own `doc_key`
+  fields: **7 documents carry an eval gold and 2 are measurable** — SWD/ADI and I2C. APB, AHB, AXI and RISC-V
+  Debug have NO OPEN owning leaf; NVMe is owned only incidentally as a frontier `remaining` entry. Six of the
+  eleven tracked eval datasets belong to the three wire golds, so every APB/AHB/AXI number this tree has
+  published is currently un-re-derivable — the claim `CLAIM_VERIFICATION.md` refuses. Confirmed live: the
+  binary prints the UNMEASURABLE disposition, withholds all 16 `seed_apb` gold items, and scores nothing.
+  Stated as a bound rather than a demonstration: `24 measurable` is an ADMISSION count — only 2 of the 24
+  carry a gold at all, and a schema-3 document failing for any OTHER reason aborts the run rather than being
+  dispositioned, deliberately, so a real defect cannot hide inside a disposition.
+- THE CAUSE IS AN INVALIDATED REFRESH, NOT NEGLECT — and finding it required auditing CLOSED leaves, not just
+  the open frontier. `CORPUS-PATTERN-REUSE.3c` (`done`, `2026-06-09`) re-ingested APB/AHB/AXI/AXI-Stream with
+  `DOCLING_DEVICE=cpu`, rebuilt their evidence and re-verified the wire scores at `1.000`. The persisted wire
+  SourceIRs were last written `2026-08-09`; canonical schema 3 landed `2026-08-12` (`bb5047c2`) three days
+  later and silently made that completed refresh legacy. **No gate reported it** — the frontier excludes these
+  documents by cohort rule and chain-currency counts only the already-current stratum. The durable defect
+  underneath is therefore that NOTHING FAILS when a persisted chain falls below the canonical schema; a check
+  would have fired on `2026-08-12` rather than leaving this to a leaf that happened to need the scorer.
+- OWNED, NOT LOGGED. `WIRE-BASED-100.9` now owns the wire re-ingest as `.9b` APB / `.9c` AHB / `.9d` AXI,
+  smallest first, each with its own before/after evidence. The route is demonstrated rather than assumed: the
+  three PDFs are git-tracked under `corpus/` by `.5d`, `specforge doctor` reports the repo-local Docling
+  runtime ready, and the three `corpus/`-sourced documents that ARE measurable were produced through this same
+  route after the schema bump. The golds are content-anchored (`.1`) so they survive re-segmentation, and
+  scoring needs no model server (`--provider skip`).
+- ROUTED OUT, DELIBERATELY NOT ABSORBED: RISC-V Debug is a `PDF-VARIANT-DIGESTION` register-class gold, not a
+  wire spec; whether `refreshed` should keep meaning "sweep completed" is a corpus-program question about 31
+  documents; and the missing canonical-currency gate is a `DOCTRINE-ENFORCEMENT`-class decision. All three are
+  recorded in `.9`'s node so the next session finds them without this tree claiming them.
+- CHALLENGED ON REVIEW BEFORE COMMIT, AND TWO CLAIMS DID NOT SURVIVE. The director asked whether the findings
+  still held; re-derived rather than restated, (a) "no owning leaf at all" is FALSE as written — a closed leaf
+  owned and performed exactly this work — and (b) "24 of 78 can be scored" is an admission bound, not a
+  demonstration. Both corrected in place before publication. Every other conclusion re-derived unchanged: the
+  cohort-rule exclusion, 24/54, 18/31/5, 31-of-52, 7-golds-2-measurable, and the live `seed_apb` refusal.
+- TWO DOCTRINE LESSONS, both earned here. (1) **Read a gate's cohort rule before treating its ratio as coverage
+  of anything** — the denominator a gate publishes is the population it was built for, not the one you are
+  asking about; where a real population has no gate, derive it. (2) **The absence of an OPEN owner is not the
+  absence of an owner** — search closed leaves before publishing a "nobody owns X" claim, because the corrected
+  story (a completed refresh invalidated by a schema bump) points at a different and better fix than the wrong
+  one (neglect).
+- CAUTION RECORDED, NOT RESOLVED: a re-ingest destroys evidence the current binary cannot regenerate, and every
+  wire number published before `2026-08-12` was measured on that evidence. `.9b` carries a
+  preserve-before-rebuild acceptance item, and the publishing posture is `.8c`'s — a re-derived number replaces
+  the published one, and a number that cannot be re-derived is withdrawn rather than carried.
+- No Rust touched, so the wire/register golds and `kg-bench` are orthogonal by construction.
+
 ### WIRE-BASED-100.8f — re-challenge the audit: `.8d` survives an attempt to break it, and the trap is recorded
 
 - `.8e` verified `.8d`'s figures against the production gate. It did not ask the harder question: does `.8d`'s

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -285,15 +297,3 @@
   > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what is the line-size profile of SpecForge research records
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the live-document coverage authority
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > what is the measured peak day for workflow standards
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is the message_field_catalog_dump measurement harness
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > what is the message_fields.section_header_field strategy
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is the model-misspelled-subject / phantom-subject defect class
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the must_be_value + VALID typed convention

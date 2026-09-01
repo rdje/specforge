@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > how are Docling-fragmented register field tables de-fragmented without fabricating a field set
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
@@ -292,9 +298,3 @@
   > how does SpecForge prevent analog dB limits from becoming digital timing intent
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how does SpecForge prove a cited self-test contains a known-bad RED case
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > how does SpecForge prove a reviewed paraphrase is parser equivalent
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type

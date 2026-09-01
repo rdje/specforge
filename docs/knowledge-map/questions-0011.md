@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the live-document coverage authority
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > what is the measured peak day for workflow standards
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is the message_field_catalog_dump measurement harness
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > what is the message_fields.section_header_field strategy
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is the model-misspelled-subject / phantom-subject defect class
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the must_be_value + VALID typed convention
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > what is the next big PDF-variant digestion lever after the serial class
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -120,6 +132,8 @@
   > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what precision and recall floors must a supported document category meet
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > what predicate decides whether eval-extraction will score a document
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > what prevents one Knowledge Map question from pointing to multiple fact cards
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -283,17 +297,3 @@
   > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > where do the APB signal declarations come from (which table)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > where do zero-port actors come from in the IntentIR actor surface
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > where does .cache/local-references/chipdoc resolve
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > where does .isf record dropped temporal obligations

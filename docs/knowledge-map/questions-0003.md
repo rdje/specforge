@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > does FSMGen support a register reset value in storage (yes — (storage (var NAME (width N) [(reset V)])) is shipped per 13k:42 + 13m:48-68; optional, in-width non-negative int, omission = all-0s byte-identical, over-width/non-integer fails closed)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -86,6 +88,8 @@
   > does an explicit timing row unit override a caption unit
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > does any command report the live record count of a rolling ledger
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > does any gate fail when a persisted chain falls below the current canonical schema
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -161,6 +165,8 @@
   > does raising max_facts alone create fact-card headroom
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > does re-ingesting lose three paragraphs
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > does refreshed in the corpus frontier census mean the document is at the current schema
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -292,9 +298,3 @@
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how are ACK WDATA RDATA DATAIN bit-widths extracted
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > how are Docling-fragmented register field tables de-fragmented without fabricating a field set
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state

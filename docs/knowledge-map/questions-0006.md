@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
+  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > how is the CorpusMemory feedback loop made reproducible
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -124,6 +129,8 @@
   > how many corpus refreshes remain after the OpenCAPI Ready note
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > how many corpus/-sourced documents are there and how many are legacy
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current claim census candidates join exact evidence or registered annotations
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -262,6 +269,8 @@
   > how much of the corpus does the ingest drift affect
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > how much of the reviewed trajectory population has current binary replay evidence
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > how much of the specforge persisted corpus can actually be scored / is canonically current
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > how much page content escapes both the structured-element path and the region-crop path
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -288,13 +297,3 @@
   > how to re-measure the message-field corpus yield
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > how to re-score SWD derivation
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > how to read a chip-spec PDF when the Read tool refuses it
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how to recover register field bit positions that live in the layout graphic, not the table
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how was AHB HREADY recovered for the temporal antecedent
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how was AXI constraint precision fixed
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > how was the 400 page Docling SIGKILL reproduced

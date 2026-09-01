@@ -101,7 +101,10 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 
 ## Task Tree
 
-- ID: `WIRE-BASED-100` · Status: `active` · Children: `.1`–`.5`
+- ID: `WIRE-BASED-100` · Status: `active` · Children: `.1`–`.5`, `.6`/`.7` (automatic actor + normative
+  discrimination), `.8` (scoring-oracle restoration, closed `2026-09-01`), `.9` (re-ingest the legacy wire
+  golds so this tree's numbers can be re-derived at all — opened `2026-09-01` because `.8` closed with 5 of
+  7 gold documents unscoreable and the work owned by nobody)
 - ID: `WIRE-BASED-100.1` · Status: `done` · Goal: content-anchored evaluation (gold robust to
   `statement_id` drift). `eval::best_statement_for_text`/`realign_gold_statement_ids` (re-resolve a gold
   label to the current statement by `input_text` content-overlap ≥ 0.7; +2 tests incl. a **no-faking**
@@ -318,8 +321,13 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   `2026-08-09` retired a published score rather than confirming it — which is the outcome this leaf existed to
   make possible. What `.8` does NOT deliver, stated plainly: the wire golds it was meant to protect (APB, AHB,
   AXI) remain unmeasurable because their EvidenceIR is legacy, so "the oracle is restored" means restored over
-  the 24 rebuildable chains only. Re-ingesting the legacy stratum stays with the corpus refresh frontier.
-  Non-goal: re-ingesting the 54 legacy chains (owned by the corpus refresh frontier); changing any gold.
+  the 24 rebuildable chains only. ~~Re-ingesting the legacy stratum stays with the corpus refresh frontier.~~
+  **CORRECTED `2026-09-01` by `.9a`: that hand-off names an owner that excludes the work.** The frontier's
+  cohort rule is `excluded_source_prefixes: ["corpus/"]`, so all 18 legacy in-repo gold/eval documents — the
+  three wire golds among them — are outside its cohort by construction; it would never have reported them
+  outstanding. The wire re-ingest is now owned by `WIRE-BASED-100.9`.
+  Non-goal: re-ingesting the 54 legacy chains (**as written, "owned by the corpus refresh frontier" — false
+  for 18 of them; `.9` owns the three wire golds and `.9a` routes the rest**); changing any gold.
   Prerequisite: none. KM `[[evidence-proof-binds-artifact-location]]`.
   Verification: see `.8a`/`.8b`.
   Commit: see `.8a`/`.8b`.
@@ -542,6 +550,202 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Prerequisite: `WIRE-BASED-100.8e`.
   Verification: `python3 scripts/measure_swd_frame_phase_scope.py` (its `adversarial control` section)
   Commit: see log.
+
+- ID: `WIRE-BASED-100.9` · Status: `active` (umbrella; measurement `.9a` DONE `2026-09-01`) · Goal: **make the
+  APB/AHB/AXI wire golds measurable again by re-ingesting them, and own that work here.** `.8` restored the
+  oracle over the 24 rebuildable chains and closed by handing its remainder away in one sentence —
+  *"Re-ingesting the legacy stratum stays with the corpus refresh frontier"*, repeated in its `Non-goal` as
+  *"the 54 legacy chains (owned by the corpus refresh frontier)"*. **That routing is disproven by the
+  frontier's own contract** (`.9a`): its cohort rule is `excluded_source_prefixes: ["corpus/"]`, so every
+  in-repo gold/eval document — the three wire golds among them — is outside the cohort by construction. The
+  frontier could not have picked this up, would never report it outstanding, and its `5 remaining` would still
+  read `5` after every wire gold had rotted. The work has no OPEN owner; this node is the owner.
+  **The real cause is an invalidated refresh, not neglect — found by auditing CLOSED leaves.**
+  `CORPUS-PATTERN-REUSE.3c` (`done`, `2026-06-09`) re-ingested APB/AHB/AXI/AXI-Stream with
+  `DOCLING_DEVICE=cpu`, rebuilt their evidence, and re-verified the wire scores at `1.000`. The persisted wire
+  SourceIRs were last written `2026-08-09`; canonical schema 3 landed `2026-08-12` (`bb5047c2`) three days
+  later and made that completed refresh legacy, **and no gate reported it** — the frontier excludes these
+  documents by cohort rule, chain-currency counts only the already-current stratum. `.9a` first published this
+  as "no owning leaf at all"; that was corrected before commit, because searching only the open frontier missed
+  the leaf that owned the work and closed.
+  **Why it is the highest-leverage unblock in the tree.** `WIRE-BASED-100`'s governing principle is no fake
+  scoring, and `.9a` measured what the tree can currently score: **2 of 7 gold-carrying documents.** APB, AHB
+  and AXI hold six of the eleven tracked eval datasets and none of them can be scored at all, so every APB/AHB/
+  AXI number this tree has published is currently un-re-derivable — exactly the claim `CLAIM_VERIFICATION.md`
+  refuses. Re-ingesting three documents restores six datasets.
+  Children: `.9a` (measurement + ownership, done), `.9b` (APB), `.9c` (AHB), `.9d` (AXI) — smallest document
+  first, one per leaf, each carrying its own before/after evidence.
+  **Findings routed OUT, deliberately not absorbed** (`.9a` measured them; this tree does not own them):
+  (1) `1_0_risc_v_debug_specification` is the fourth unmeasurable gold document with no open owner and belongs
+  to the `PDF-VARIANT-DIGESTION` register class, not to a wire-protocol tree. (2) **31 of the refresh
+  frontier's 52 declared-`refreshed` documents are still legacy** — `refreshed` records completion of the
+  host-library re-ingest PROGRAM, not canonical currency, because the sweep finished under a SourceIR schema
+  that no longer carries authority. Whether `refreshed` should keep meaning that is a corpus-program question.
+  (3) **Nothing fails when a persisted chain falls below the canonical schema.** That missing gate is why a
+  completed refresh could go legacy unreported for three weeks; a check would have fired on `2026-08-12`
+  instead of leaving this to be found by a leaf that happened to need the scorer. It is a
+  `DOCTRINE-ENFORCEMENT`-class decision (this census is the derivation it would use), left explicitly unowned
+  rather than half-adopted inside a wire-protocol tree.
+  Non-goal: re-ingesting the other 51 legacy chains; changing any gold; re-opening `.8`.
+  Acceptance (closes `.9`): `eval-extraction --provider skip` runs to a real score on `seed_apb`,
+  `seed_apb_temporal`, `seed_ahb`, `seed_ahb_temporal`, `seed_axi`, and `seed_axi_temporal`; each leaf
+  publishes its re-derived per-fact numbers against the pre-re-ingest published ones, with any number that
+  moved stated as a correction rather than carried; and `scripts/measure_corpus_canonical_currency.py` reports
+  the three documents measurable with no gold document left unowned inside this tree's scope.
+  Prerequisite: `WIRE-BASED-100.8` (met — the oracle must work before a re-ingest can be judged by it).
+  KM `[[corpus-canonical-currency-and-ownership]]`.
+
+- ID: `WIRE-BASED-100.9a` · Status: `done` (`2026-09-01`; MEASUREMENT + ownership, read-only, docs-only —
+  no code change) · Goal: **derive how much of the persisted corpus can actually be scored, and who owns each
+  shortfall**, before spending a re-ingest on a guess. **Measured** with the tracked deterministic reproducer
+  `scripts/measure_corpus_canonical_currency.py` (reads persisted artifact headers, the four Rust schema
+  constants that define canonical currency, the frontier's own contract, and the tracked eval datasets; no
+  model, no rebuild, no write):
+
+  | population | count |
+  | --- | ---: |
+  | persisted documents | 78 |
+  | **measurable** (EvidenceIR at canonical schema 3) | **24 (30.8%)** |
+  | legacy (refused, inspection-only) | 54 |
+  | …with no OPEN owner (`corpus/`-sourced, outside the frontier cohort) | 18 |
+  | …frontier-declared `refreshed`, yet still legacy | 31 |
+  | …frontier-declared `remaining` | 5 |
+  | documents carrying an eval gold | 7 |
+  | **…measurable** | **2** (SWD/ADI, I2C) |
+
+  **Three results, each of which changes what a reader should believe.** (1) **The measurable share is 30.8%,
+  and no gate publishes it.** `check_chain_currency.sh` reads `24/24 current` — true, and a statement about the
+  *rebuildable* stratum, which declares the other 54 UNMEASURABLE and does not count them, so it reads 100%
+  while describing 31% of the corpus. `check_corpus_frontier.sh` reads `52 refreshed + 5 remaining` — true, and
+  a statement about the host-library re-ingest PROGRAM. (2) **`refreshed` does not mean current** — 31 of the
+  52 are still legacy. The census contract is internally honest: it defines `refreshed` as declared completed
+  keys, and its membership check constrains that declaration in one direction only (a RETAINED bundle forces a
+  key into `refreshed`; a declared-`remaining` key must have no retained bundle) — nothing ties it to a schema.
+  But the line printed on the terminal invites exactly the inference `.8` made. (3) **The frontier excludes
+  `corpus/` by contract**, so the 18 in-repo gold/eval legacy documents have no OPEN owner — including APB,
+  AHB, AXI and RISC-V Debug.
+  **The predicate is taken from the code, not invented:** measurable ⇔ persisted EvidenceIR at the current
+  canonical schema, exactly what `unmeasurable_disposition`
+  (`crates/specforge/src/commands/eval_extraction.rs`) applies before it will score. The reproducer reads each
+  stage constant rather than restating it, so a schema bump makes the census disagree loudly instead of
+  agreeing with itself. **Stated as a bound, not a demonstration:** 24 is an ADMISSION count. Only 2 of the 24
+  carry an eval gold, so only two are scoreable today; and a schema-3 document that fails canonical
+  verification for any OTHER reason is not dispositioned but propagates and aborts the run
+  (`build_predictions`) — deliberately, so a real defect cannot hide inside a disposition.
+  **Decision: GO on `.9b`/`.9c`/`.9d`, NO-GO on absorbing the three shortfalls** (routed out in `.9`).
+  The route is demonstrated, not assumed: the three PDFs are git-tracked under `corpus/` by `.5d`
+  (APB 516 KB, AHB 957 KB, AXI 2.0 MB, all in `corpus/SOURCE_PDF_REGISTRY.md`), `specforge doctor` reports the
+  repo-local Docling runtime ready (Python 3.11.15 / Docling 2.84.0), and the three `corpus/`-sourced documents
+  that ARE measurable — SWD/ADI, I2C, I2S — were produced through this same route after the `2026-08-12` schema
+  bump (`bb5047c2`); and `CORPUS-PATTERN-REUSE.3c` already ran this exact sequence on these exact documents
+  (`2026-06-09`), so `.9b`–`.9d` repeat a demonstrated procedure under a newer binary rather than attempting a
+  new one. The golds are content-anchored (`.1`), so they survive the re-segmentation a re-ingest
+  causes; scoring needs no model server (`--provider skip`).
+  Report `docs/research/corpus-canonical-currency-census.md`; KM `[[corpus-canonical-currency-and-ownership]]`.
+  Verification: see the acceptance checklist below.
+  Commit: `WIRE-BASED-100.9a — the corpus refresh frontier cannot own the wire re-ingest, and 5 of 7 gold documents cannot be scored`
+
+- ID: `WIRE-BASED-100.9b` · Status: `pending` · Goal: **re-ingest the APB gold `ihi0024_e` and re-derive its
+  score.** Smallest of the three (516 KB), so it proves the whole route end-to-end at the lowest cost and its
+  outcome decides whether `.9c`/`.9d` run unchanged.
+  Acceptance: the persisted APB chain is preserved on the repository volume BEFORE the rebuild (the current
+  binary cannot regenerate a legacy artifact, so the outgoing evidence is unrecoverable once replaced — see the
+  caution in `.9`); `ingest` → `evidence` → `semantic` produces SourceIR 3 / EvidenceIR 3 / SemanticIR 2;
+  `eval-extraction --provider skip` runs to a real score on `seed_apb` and `seed_apb_temporal` with the
+  per-fact table this tree's governing principle requires; the re-derived numbers are published **against**
+  the ones the tree currently carries (`constraint 6/6`, `relation 6/6`, `temporal 3/3`), and any number that
+  moved is stated as a correction rather than quietly replaced; `scripts/measure_corpus_canonical_currency.py`
+  shows 25 measurable; `check_chain_currency.sh` and `scripts/check_doctrines.sh` green.
+  Non-goal: touching the gold labels. A gold edit to make a score look better is the failure mode this tree's
+  governing principle exists to forbid; if a gold is genuinely stale the correction gets its own leaf.
+  Prerequisite: `WIRE-BASED-100.9a`.
+  Verification: pending
+  Commit: pending
+
+- ID: `WIRE-BASED-100.9c` · Status: `pending` · Goal: **re-ingest the AHB gold `ihi0033_c` and re-derive its
+  score** (957 KB). Same acceptance shape as `.9b`, against the currently carried `constraint 6/6`,
+  `relation 6/6`, `temporal 4/4`; `.5e` already demonstrated this exact document's re-ingest → eval route once,
+  which is why it follows APB rather than leading.
+  Prerequisite: `WIRE-BASED-100.9b` (its outcome decides whether the route runs unchanged).
+  Verification: pending
+  Commit: pending
+
+- ID: `WIRE-BASED-100.9d` · Status: `pending` · Goal: **re-ingest the AXI gold `ihi0022_l` and re-derive its
+  score** (2.0 MB — the largest, and the one whose persisted chain is 14.5 MB across four stages). Same
+  acceptance shape as `.9b`, against the currently carried `constraint 4/4`, `relation 6/6`, `temporal 3/3`.
+  Carries one extra check the smaller two do not: AXI is the document `KG-ISF-COMPLETENESS.5.iv.a` predicted
+  would mint a new `AWATOP` enum and could not verify, because `ihi0022_l` was unrebuildable — so this leaf
+  finally answers that open prediction, either way.
+  Prerequisite: `WIRE-BASED-100.9c`.
+  Verification: pending
+  Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.9a` (MEASUREMENT) — DONE `2026-09-01`
+
+- [x] **REPRODUCE / MEASURE** — read-only census with the tracked deterministic reproducer
+  `scripts/measure_corpus_canonical_currency.py` (no model, no rebuild, no write; repository-root-relative).
+  78 persisted documents → **24 measurable (30.8%) / 54 legacy**, stratified totally at every stage (SourceIR
+  54×1 / 24×3, EvidenceIR 54×2 / 24×3, SemanticIR 54×1 / 24×2, IntentIR 54×1 / 24×2). Legacy ownership
+  partitions **18 unowned + 31 declared-refreshed + 5 declared-remaining = 54**. Gold documents 7 → **2
+  measurable**. Cross-checked live against the binary: `eval-extraction crates/specforge/test_data/llm_eval/
+  seed_apb.json --provider skip` prints the UNMEASURABLE disposition, withholds all 16 gold items, and scores
+  nothing. Report `docs/research/corpus-canonical-currency-census.md`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the ownership gap is structural, not an oversight in wording.
+  `doctrine/corpus_frontier/census.json` declares `cohort_rule.excluded_source_prefixes: ["corpus/"]`, and
+  `scripts/check_corpus_frontier_census.pl` documents why: *"`corpus/` is the tracked in-repo gold/eval
+  corpus — copied into the repository, never part of the host-library refresh program."* So `.8`'s hand-off
+  named an owner whose contract excludes the documents handed to it. The second half of the gap is that
+  nothing ties `refreshed` to a schema, so 31 documents are simultaneously "refreshed" and refused by every
+  canonical gate. **And the deeper cause, found only by auditing CLOSED leaves:** the wire chains were
+  refreshed by `CORPUS-PATTERN-REUSE.3c` (`done`, `2026-06-09`, re-verified at `1.000`), last written
+  `2026-08-09`, and made legacy by the `2026-08-12` schema bump three days later — with **no gate reporting
+  it**, because no check fails when a persisted chain falls below the canonical schema.
+- [x] **CHALLENGED ON REVIEW, AND TWO PUBLISHED CLAIMS DID NOT SURVIVE** (director audit before commit;
+  `[[specforge-verify-before-publishing]]`). (a) *"APB/AHB/AXI had no owning leaf at all"* — **FALSE as
+  written.** `CORPUS-PATTERN-REUSE.3c` owned and performed exactly this re-ingest and closed; the true claim
+  is "no OPEN owner", and the corrected story points at a missing currency gate rather than at neglect.
+  Corrected everywhere before commit, and the search that would have caught it is now in the fact card's
+  `reverify`. (b) *"24 of 78 can be scored"* — **an admission bound, not a demonstration.** Only 2 of the 24
+  carry a gold; the other 22 pass the schema gate with nothing to score against, and a non-schema refusal
+  aborts rather than dispositions. Restated as a bound. Every other conclusion re-derived unchanged: the
+  cohort-rule exclusion, 24/54, 18/31/5, 31-of-52, 7-golds-2-measurable, and the live `seed_apb` refusal.
+- [x] **DECISION (per-item, `[[feedback_scoring_rigor]]`)** — **GO** on owning the wire re-ingest here as
+  `.9b`/`.9c`/`.9d`, smallest document first, each with its own before/after evidence. **NO-GO** on absorbing
+  the three shortfalls that are not wire-protocol work: RISC-V Debug (`PDF-VARIANT-DIGESTION` register class),
+  the 31 refreshed-but-legacy cohort documents (a corpus-program question about what `refreshed` should mean),
+  and the missing canonical-currency gate (a `DOCTRINE-ENFORCEMENT`-class decision). All three are recorded in
+  `.9`'s node as findings routed out, so the next session finds them without this tree claiming them.
+  **Feasibility is demonstrated rather than assumed** — the three PDFs are git-tracked by `.5d`, the
+  repo-local Docling runtime is ready, the three measurable `corpus/`-sourced documents were produced through
+  this route after the `2026-08-12` schema bump, and `CORPUS-PATTERN-REUSE.3c` ran this exact sequence on
+  these exact documents on `2026-06-09`.
+- [x] **HONEST CAUTION RECORDED, NOT RESOLVED** — a re-ingest destroys evidence the current binary cannot
+  regenerate, and every wire number published before `2026-08-12` was measured on that evidence. `.9b` carries
+  a preserve-before-rebuild acceptance item so the before/after comparison is exact rather than remembered, and
+  the publishing posture is `.8c`'s: a re-derived number replaces the published one, and a number that cannot
+  be re-derived is withdrawn rather than carried.
+- [x] **NO CODE → ORACLES ORTHOGONAL** — measurement/docs-only; no Rust touched, so WIRE-BASED-100, the
+  register/wire golds, and `kg-bench` are orthogonal by construction. `scripts/check_doctrines.sh` GREEN.
+- [x] **GENERICITY (ADR 0006)** — no document, vendor, or protocol name participates in the reproducer's
+  logic. The canonical schema of each stage is read from the Rust constant that defines it; frontier ownership
+  is read from the frontier's own contract including its cohort rule; the scored-document set is derived from
+  the tracked eval datasets' own `doc_key` fields. Reading the constants rather than restating them is what
+  makes the census stale-detecting under a schema bump instead of self-confirming.
+- [x] **LOCKSTEP** — report `docs/research/corpus-canonical-currency-census.md` + tracked reproducer
+  `scripts/measure_corpus_canonical_currency.py`; `.9`/`.9a`/`.9b`/`.9c`/`.9d` nodes; `.8`'s incorrect
+  hand-off corrected in place where it was published; KM card
+  `[[corpus-canonical-currency-and-ownership]]` + `KNOWLEDGE_MAP.md`/shard/fact-catalog regeneration;
+  `CHANGES.md` / `MEMORY.md`. **`LIVE_ACHIEVEMENT_STATUS.md` is deliberately unchanged**: its routing contract
+  moves it only when the current product-status snapshot moves, and a read-only measurement ships no
+  capability — the product does today exactly what it did before, and says so. **`ROADMAP.md` is deliberately
+  unchanged**: the near-term north star and the wire gate are unchanged; what moved is who owns a leaf inside
+  `WIRE-BASED-100`, which the task tree owns. **The mdBook is deliberately unchanged**: `quality/
+  extraction-eval.md` already tells the reader that the APB/AHB/AXI golds are refused as proofless until
+  re-ingested and that a published score is worth only its last re-derivation, so nothing it states is now
+  false; the chapter changes when `.9b` actually re-derives a score, which is a change in what the product can
+  demonstrate rather than a change of owner. Editing it here would also perturb the frozen book quantitative
+  census for no truth gain, which the routing contract forbids ("a path must never be edited merely to prove
+  that it was reviewed").
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.8a` — DONE `2026-09-01`
 
@@ -815,6 +1019,20 @@ recall, full-doc completeness) harden it; then roll the same set to AHB → AXI 
 
 ## Changelog
 
+- `2026-09-01` (`.9` opened, `.9a` done): **`.8` closed by handing the wire re-ingest to an owner that
+  excludes it, and 5 of 7 gold documents cannot be scored.** Censused read-only
+  (`scripts/measure_corpus_canonical_currency.py`): 78 persisted documents are **24 measurable (30.8%) / 54
+  legacy**, and the legacy set partitions **18 unowned + 31 frontier-declared-`refreshed`-but-still-legacy +
+  5 frontier-declared-`remaining`**. The refresh frontier `.8` handed off to declares
+  `excluded_source_prefixes: ["corpus/"]`, so every in-repo gold/eval document is outside its cohort by
+  construction — its `5 remaining` would still read `5` after every wire gold had rotted. Two green gates
+  publish coverage (`24/24 current`, `52 refreshed + 5 remaining`) and neither answers "how much can be
+  scored". **The cause, found by auditing closed leaves on review:** `CORPUS-PATTERN-REUSE.3c` refreshed these
+  documents on `2026-06-09` and re-verified `1.000`; they were last written `2026-08-09` and the `2026-08-12`
+  schema bump made that refresh legacy with no gate reporting it. `.9` now owns the re-ingest as `.9b` APB /
+  `.9c` AHB / `.9d` AXI, smallest first; RISC-V Debug, the 31 refreshed-but-legacy documents, and the missing
+  canonical-currency gate are routed out rather than absorbed. KM
+  `[[corpus-canonical-currency-and-ownership]]`.
 - `2026-08-31` (`.8` opened): **the scoring oracle itself is down.** `eval-extraction` refuses every document
   in the corpus — the 54 legacy chains as proofless/inspection-only, the 24 current ones as
   `registered derivation 'evidence.claim.schema_version.root' output or input topology is stale` — and it
