@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > how are SpecForge live documents kept bounded
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -296,5 +298,3 @@
   > how does SpecForge recover a timing unit from a table caption
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > how does SpecForge relate to GoldMine Texada Pnueli Ammons
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > how does SpecForge resolve a persisted path after the repository moves

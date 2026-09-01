@@ -5,7 +5,7 @@ answers:
   - "what is SWD's actual intent / protocol (from the spec)"
   - "what are the SWD packet phases and per-phase SWDIO direction"
   - "what is the SWD line state machine (reset/operating/protocol-error/lockout)"
-  - "what must SpecForge derive to fully capture SWD; what are the gaps"
+  - "what must SpecForge derive to fully capture SWD; what are the gaps (as of 2026-09-01 generic extraction reaches 5 of the 29 verified facts: the four packet operations and the one interface-edge record; the frame fields and machine-bound states need a generic phase-scope grammar)"
   - "is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)"
 date: 2026-06-07
 tags: [swd, adi, fsm, swdio, protocol, intent, completeness]
@@ -37,8 +37,12 @@ and multi-drop `deselected`.
 **What SpecForge derives today:** SWCLK/SWDIO signals; the complete request/ack/data frame fields with order,
 width, response values, and SWDIO direction; the four response-branched packet operations and turnaround
 placement; the JTAG TAP states plus the SWD line states; and one exact typed B4.3.1 interface-edge record —
-the target samples SWDIO and changes its drive state on SWCLK's rising edge. The verified derivation gold is
-29/29 (`[[swd-derivation-scored-100]]`).
+the target samples SWDIO and changes its drive state on SWCLK's rising edge. **Read that in the present tense
+with care:** the verified derivation gold still holds 29 real facts, but generic extraction reaches only **5**
+of them today — the frame fields and the machine-bound states were produced by a protocol-name-bound extractor
+that ADR 0006 enforcement retired on `2026-08-12`
+(`[[swd-serial-frame-score-retired-by-genericity]]`, superseding `[[swd-derivation-scored-100]]`). What SpecForge
+still derives generically is the four packet operations and the one interface-edge record.
 
 **Remaining product gap:** these protocol-specific records are still EvidenceIR facts. SemanticIR, IntentIR,
 and the `.isf` adapter do not consume them, so a perfect extraction score does not yet mean the canonical

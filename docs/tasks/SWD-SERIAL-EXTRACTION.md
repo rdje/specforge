@@ -3,12 +3,37 @@
 ## Metadata
 
 - Tree ID: `SWD-SERIAL-EXTRACTION`
-- Status: `done` (`2026-08-09`)
+- Status: `done` (`2026-08-09`) — **its headline score is RETIRED; see the correction below**
 - Roadmap lane: `R15e`/`R16` (extraction quality / signoff)
 - Created: `2026-06-07`
 - Parent: opened by owner decision (a) from `WIRE-BASED-100.5j` — SWD/ADI (IHI0074) is a serial/architecture
   spec the parallel-bus signal-table model does not fit (KM `swd-adi-not-signal-table-spec`). This tree is
   the genuine path to SWD 100% (not a faked cherry-picked gold).
+
+## CORRECTION `2026-09-01` — the 29/29 signoff recorded throughout this tree is retired
+
+Everything below is the accurate record of what was built and measured on `2026-08-09`. **The score it reached
+is no longer current, and this tree must not be cited as a live 29/29 signoff.**
+
+Re-derived `2026-09-01` by `WIRE-BASED-100.8c`, on the first run of the scoring oracle since (`.8a` restored it):
+`protocol_operation` **4/4** and `interface_edge_timing` **1/1** still hold; `serial_frame_field` is **0/11** and
+`protocol_state` is **0/13**. Document-level recall is **5/29**.
+
+The cause is not a regression and not a stale artifact — the currency gate replays all 24 rebuildable documents
+to current, and the loss partitions corpus-wide along a published boundary. `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`
+(`89d8dee7`, `2026-08-12`) retired the frame extractor this tree relied on, because it recognised the protocol by
+name: it switched on for any document containing `serial wire`/`packet request`/`shift-dr`/`swdio`/`swclk` and
+sorted fields with a fixed `SerialFramePhase {Request, Acknowledge, Data}` enum. ADR 0006 forbids that in
+production, so the retirement was mandatory — and it means this tree's frame and state numbers measured a
+protocol recogniser rather than generic capability.
+
+What survives unchanged: the gold (`seed_swd_derivation.json`'s 29 facts are real, independently verified
+statements of the ADI specification and remain the target), the ingest and promotion work, the operation and
+edge-timing extraction, and this tree's central finding that SWD needs its own serial-protocol path. What does
+not survive is the claim that the path is finished.
+
+Generic recovery of the frame fields is owned by `WIRE-BASED-100.8d`. Fact card:
+`swd-serial-frame-score-retired-by-genericity`.
 
 ## Goal
 

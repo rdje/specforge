@@ -1,3 +1,40 @@
+### WIRE-BASED-100.8c — the SWD 29/29 is retired, and the miss was a PARTIAL retirement, not an unpropagated one
+
+- RE-DERIVED, `--provider skip`, on the oracle `.8a` restored: `seed_swd_derivation.json` scores
+  `protocol_operation` 1.000 (4/4) and `interface_edge_timing` 1.000 (1/1), but `serial_frame_field` 0.000 (0/11)
+  and `protocol_state` 0.000 (0/13) — document-level **5/29** against a published `29/29 at 1.000`. Content
+  anchoring is not the explanation: 28 of 29 gold statement ids already resolve and the gold sentences match
+  current statements at ratio 1.00.
+- NOT A REGRESSION, ESTABLISHED THREE WAYS RATHER THAN BY READING A DIFF. (1) `check_chain_currency.sh --check`
+  reports 24 replayed / 24 current / 0 stale, so the zeros are the current producer's real output, not a stale
+  artifact. (2) The loss partitions along a published boundary CORPUS-WIDE: a read-only census of all 24 schema-3
+  EvidenceIRs finds 0 serial_frame_fields in every document and `machine_name` on 0 of 40 protocol_states, while
+  protocol_operations total 5 — and `89d8dee7`'s own entry below says the comparison *"retires 22 fixed-phase
+  frame and four named-operation records; the generic producer retains five operations and 40 structurally
+  admitted states."* Five and forty re-derive exactly. (3) Per-revision producer evidence: at `89d8dee7^`
+  `extract_serial_frame_fields` gated the whole document on `serial wire`/`packet request`/`shift-dr`/`swdio`/
+  `swclk` and sorted fields with a fixed `SerialFramePhase {Request, Acknowledge, Data}` enum keyed on
+  `wdata`/`rdata`/`datain`/`ack[`. That enum is gone from today's source.
+- SO THE CAUSE IS STRONGER THAN "A GENERICITY TRADE": ADR 0006 forbids that class of production decision
+  outright, so the 29/29 never measured generic capability — it measured a protocol recogniser. Retiring it was
+  mandatory. The gold is untouched and stays faithful; only the claim that the path is finished is withdrawn.
+- THE MISS WAS PARTIAL, AND ITS SHAPE IS THE REUSABLE LESSON. `89d8dee7` DID supersede four SWD fact cards and
+  update four book chapters. It missed `swd-derivation-scored-100` — the one card whose title asserts the score —
+  plus two more cards, `ROADMAP.md`, `docs/book/src/quality/extraction-eval.md` (the chapter that publishes the
+  number), and both owning task trees. **It retired the artifact-authority surfaces and missed the
+  score-assertion surfaces.** When a change retires a producer, hunt the surfaces publishing its NUMBER; they are
+  rarely the ones describing its ARTIFACT.
+- CORRECTED EVERYWHERE, WITH THE RETIRED NUMBER KEPT AS DATED HISTORY: roadmap, book (a new *"The 29/29 signoff
+  is retired"* section carrying the current scorecard, plus the stale `swd_operation` task name fixed to
+  `protocol_operation`), `WIRE-BASED-100.5j`, the `SWD-SERIAL-EXTRACTION` tree head, a new fact card
+  `swd-serial-frame-score-retired-by-genericity`, `swd-derivation-scored-100` superseded, and two cards corrected.
+- THE RESIDUAL IS LOCALISED AND OWNED (`.8d`): `extract_serial_frame_fields` admits a field only when ONE
+  statement both states a phase name and parses a bit range. SWD states phases in 61 statements and writes
+  `A[3:2]`/`WDATA[31:0]` in others, so the conjunction never holds. The admissible repair is scope binding — a
+  phase named in a section binds the fields in its scope — which is document grammar, not protocol identity.
+  Stated honestly: "0 frame fields corpus-wide" is NOT proof the grammar is dead, because the one document that
+  would exercise its composition-list path (the CAN specification) is a legacy chain and unmeasurable.
+
 ### WIRE-BASED-100.8a — give a proof-carrying artifact a supported way to move, and restore the scoring oracle
 
 - THE ORACLE WAS DOWN, AND IT WAS THE ARTIFACT'S ADDRESS, NOT ITS CONTENT. `eval-extraction` refused every

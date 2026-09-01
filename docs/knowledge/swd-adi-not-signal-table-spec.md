@@ -5,7 +5,7 @@ answers:
   - "why is SWD/ADI hard / different from APB AHB AXI"
   - "are SWCLK and SWDIO extracted / declared"
   - "why does the ADI spec produce so few signals and so much garbage"
-  - "can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses"
+  - "can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses (no — and the serial path that once scored 29/29 is retired too; it is 5/29 today, see swd-serial-frame-score-retired-by-genericity)"
   - "what extraction approach does SWD/ADI need"
 date: 2026-08-09
 status: current
@@ -29,8 +29,16 @@ those to 100%:
   via `is_signal_synthesis_non_signal`).
 
 **Conclusion (no-faking):** SWD/ADI cannot reach a real 100% via the parallel-bus playbook; it requires
-serial-protocol/architecture-specific extraction. The dedicated `SWD-SERIAL-EXTRACTION` tree has now completed
-that path: SWCLK/SWDIO, 11 frame fields, four response-branched operations, 13 protocol states, and the complete
-interface-edge timing tuple score 29/29 at 1.000 and reach canonical IntentIR exactly. APB/AHB/AXI remain 100%
-on constraints/relations/temporal, while SWD uses its faithful serial metric rather than a cherry-picked bus
-gold. See `[[swd-canonical-protocol-artifact-is-current]]` and `[[axi-channel-structure]]`.
+serial-protocol/architecture-specific extraction. The dedicated `SWD-SERIAL-EXTRACTION` tree built that path and
+scored it 29/29 at 1.000 on `2026-08-09` — SWCLK/SWDIO, 11 frame fields, four response-branched operations, 13
+protocol states, and the complete interface-edge timing tuple, reaching canonical IntentIR exactly.
+
+**That score is retired, and this is the honest current number.** The extractor that produced the frame fields
+recognised the protocol by name, so ADR 0006 enforcement removed it on `2026-08-12`; re-derived `2026-09-01` the
+same gold scores **5/29** — operations 4/4 and edge timing 1/1 still hold, frame fields 0/11 and states 0/13 do
+not (`[[swd-serial-frame-score-retired-by-genericity]]`). The conclusion above survives intact and is in fact
+sharpened: the serial path still needs its own extraction, and it now needs one that reads document grammar
+rather than protocol names. APB/AHB/AXI remain 100% on constraints/relations/temporal *as last measured*, though
+their chains are legacy schema 1 and unmeasurable today
+(`[[evidence-proof-binds-artifact-location]]`). See `[[swd-canonical-protocol-artifact-is-current]]` and
+`[[axi-channel-structure]]`.

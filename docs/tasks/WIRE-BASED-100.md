@@ -310,8 +310,9 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   verified artifact preserves verification. **SPLIT (`2026-09-01`), because the two halves are separately
   reviewable exactly as the leaf anticipated:** `.8a` is a kernel-seam change in `EvidenceIr` that has to be
   judged against the proof doctrine, and `.8b` is a command-behaviour change in `eval-extraction` that has to
-  be judged against the scoring/honesty doctrine. `.8c` was then opened by what the restored oracle found.
-  Children: `WIRE-BASED-100.8a`, `WIRE-BASED-100.8b`, `WIRE-BASED-100.8c`.
+  be judged against the scoring/honesty doctrine. `.8c` was then opened by what the restored oracle found,
+  and `.8d` by what `.8c` localised. Children: `WIRE-BASED-100.8a`, `WIRE-BASED-100.8b`,
+  `WIRE-BASED-100.8c`, `WIRE-BASED-100.8d`.
   Non-goal: re-ingesting the 54 legacy chains (owned by the corpus refresh frontier); changing any gold.
   Prerequisite: none. KM `[[evidence-proof-binds-artifact-location]]`.
   Verification: see `.8a`/`.8b`.
@@ -353,7 +354,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: `pending`
   Commit: `pending`
 
-- ID: `WIRE-BASED-100.8c` · Status: `pending` · Goal: **the first thing the restored oracle found — the
+- ID: `WIRE-BASED-100.8c` · Status: `done` (`2026-09-01`) · Goal: **the first thing the restored oracle found — the
   published SWD `29/29 at 1.000` is stale, and the live docs still present it as current.** Re-derived
   `2026-09-01` with `.8a`'s working oracle on the rebuildable `ihi0074_a` chain:
   `seed_swd_derivation.json` scores `protocol_operation` 4/4 = 1.000 and `interface_edge_timing` 1/1 = 1.000,
@@ -378,6 +379,39 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Non-goal: restoring the retired records by reintroducing protocol-named extractors (ADR 0006/0035 forbid it);
   changing `seed_swd_derivation.json`, which is a faithful gold whose facts are real.
   Prerequisite: `WIRE-BASED-100.8a`.
+  **OUTCOME — the account above was right about the cause and WRONG about the blast radius, in the project's
+  favour.** `89d8dee7` did NOT simply leave its retirement unpropagated: it superseded four SWD fact cards
+  (`swd-canonical-protocol-artifact-is-current`, `swd-protocol-surfaces-reach-intentir`,
+  `swd-protocol-convergence-snapshots-are-exact`, `swd-serial-frame-surface`) and updated four book chapters. The
+  defect is a **partial** retirement, and its shape is diagnostic: it missed `swd-derivation-scored-100` — the one
+  card whose title asserts the score — plus `swd-adi-not-signal-table-spec`, `swd-intent-is-the-fsm-driving-swdio`,
+  `ROADMAP.md`, `docs/book/src/quality/extraction-eval.md` (the chapter that publishes the number), and both owning
+  task trees. **It retired the artifact-authority surfaces and missed the score-assertion surfaces.** That is a
+  reusable rule, not an anecdote: when a change retires a producer, the surfaces to hunt are the ones publishing
+  its NUMBER, which are rarely the ones describing its ARTIFACT.
+  **And the cause is stronger than "a genericity trade":** the retired `extract_serial_frame_fields` switched
+  itself on for any document containing `serial wire`/`packet request`/`shift-dr`/`swdio`/`swclk` and sorted
+  fields with a fixed `SerialFramePhase {Request, Acknowledge, Data}` enum keyed on `wdata`/`rdata`/`datain`/
+  `ack[`. ADR 0006 forbids that outright, so the 29/29 was never evidence of generic capability — it measured a
+  protocol recogniser. Retiring it was mandatory, not a trade.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
+
+- ID: `WIRE-BASED-100.8d` · Status: `pending` · Goal: **recover the retired frame fields generically — bind a
+  document-stated phase to the fields in its scope, not only within one sentence.** `.8c` localised the residual
+  exactly: `extract_serial_frame_fields` admits a field only when ONE statement both passes `stated_phase_name`
+  and parses a bit range / named-bit list. SWD carries 61 statements with a stated phase name and writes
+  `A[3:2]`, `WDATA[31:0]`, `RDATA[31:0]` in different statements, so the conjunction never holds and the surface
+  is empty. Corpus-wide the current grammar emits **0** serial frame fields across all 24 measurable documents,
+  so this is not an SWD quirk; but the one document that would exercise the composition-list path
+  (`PDF-VARIANT-DIGESTION.9.3b`, the CAN specification) is a legacy schema-1 chain and unmeasurable, so "0
+  everywhere" must NOT be read as "the grammar is dead" — it is untested on its designed input.
+  The admissible fix is scope binding: a phase named in a section or paragraph binds the fields inside that
+  scope. That is document grammar, so ADR 0006 admits it; a phase VOCABULARY would not be.
+  Acceptance: SWD frame recall rises from 0/11 on a rule stated structurally and demonstrated on at least one
+  identity-renamed control; no protocol, vendor or signal name enters production; APB/AHB/AXI/I2C scores and
+  `kg-bench` are unchanged; whatever residual remains is measured and published rather than rounded away.
+  Prerequisite: `WIRE-BASED-100.8c`.
   Verification: `pending`
   Commit: `pending`
 
@@ -438,6 +472,51 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 - [x] **LOCKSTEP** — book `pipeline/evidenceir.md` (the relocation seam and why an unsealed move is refused);
   KM fact card `evidence-proof-binds-artifact-location` updated from "defect, oracle down" to the resolved
   mechanism plus the supported operation; `CHANGES.md`; `MEMORY.md`; `LIVE_ACHIEVEMENT_STATUS.md`.
+
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.8c` (MEASUREMENT + CORRECTION) — DONE `2026-09-01`
+
+- [x] **REPRODUCE / MEASURE** — `./target/release/specforge eval-extraction
+  crates/specforge/test_data/llm_eval/seed_swd_derivation.json --provider skip` on the `.8a` binary:
+  `protocol_operation` **1.000 (tp=4 fp=0 fn=0)**, `interface_edge_timing` **1.000 (tp=1 fp=0 fn=0)**,
+  `serial_frame_field` **0.000 (tp=0 fp=0 fn=11)**, `protocol_state` **0.000 (tp=0 fp=9 fn=13)** — document-level
+  **5/29** against a published `29/29 at 1.000`. Content anchoring is not the explanation: 28 of 29 gold
+  statement ids already resolve, and spot-checked gold sentences match current statements at ratio 1.00.
+- [x] **ROOT CAUSE (WHY + WHERE)** — three legs, each dimensionally different, separating "regression" from
+  "retirement" per `CLAIM_VERIFICATION.md` §6. **(1) The artifact is not stale:** `scripts/check_chain_currency.sh
+  --check` reports 24 replayed / 24 current / 0 stale at evidence, semantic, intent and isf-adapter, so the zeros
+  are the current producer's real output. **(2) The loss partitions along the retirement boundary, corpus-wide:**
+  a read-only census of all 24 schema-3 `generated/evidence_ir/*/evidence_ir.json` finds **0 serial_frame_fields
+  in every document** and `machine_name` set on **0 of 40** `protocol_states`, while `protocol_operations` total
+  **5** (4 SWD + 1 Wishbone) — and `89d8dee7`'s own `CHANGES.md` entry from `2026-08-12` states *"retires 22
+  fixed-phase frame and four named-operation records; the generic producer retains five operations and 40
+  structurally admitted states."* Five and forty re-derive exactly. **(3) Per-revision producer evidence, not a
+  diff reading:** `git show 89d8dee7^:crates/specforge/src/ir/evidence.rs` shows `extract_serial_frame_fields`
+  gating the whole document on `l.contains("serial wire") || l.contains("packet request") ||
+  l.contains("shift-dr") || l.contains("swdio") || l.contains("swclk")` and then assigning a fixed
+  `enum SerialFramePhase {Request, Acknowledge, Data}` from `wdata`/`rdata`/`datain`/`ack[`; that enum is absent
+  from today's source. ADR 0006 forbids exactly that class of production decision.
+- [x] **ADDRESSED (verified)** — every surface that published the retired number now carries the re-derived one
+  with its cause and its date, and the retired number is kept as dated history rather than deleted:
+  `ROADMAP.md` (the `SWD-SERIAL-EXTRACTION` bullet), `docs/book/src/quality/extraction-eval.md` (a new
+  *"The 29/29 signoff is retired"* section with the current scorecard, plus the stale `swd_operation` task name
+  corrected to `protocol_operation`), `docs/tasks/WIRE-BASED-100.md` `.5j`, `docs/tasks/SWD-SERIAL-EXTRACTION.md`,
+  the new fact card `swd-serial-frame-score-retired-by-genericity`, `swd-derivation-scored-100` (now
+  `status: superseded` with its answers carrying the correction), `swd-adi-not-signal-table-spec`, and
+  `swd-intent-is-the-fsm-driving-swdio`. Measured blast radius of the original miss: `89d8dee7` DID supersede four
+  SWD cards and update four book chapters, so the defect is a **partial** retirement that hit the
+  artifact-authority surfaces and missed the score-assertion surfaces.
+- [x] **NO REGRESSION** — docs/measurement only; no Rust behaviour changed and no gold changed
+  (`seed_swd_derivation.json` is byte-identical). `scripts/check_doctrines.sh` GREEN including KNOWLEDGE-MAP
+  derive-and-diff, LIVE-DOC-SIZE, CLAIM-VERIFICATION and PUBLISHED-ASSERTIONS; the roadmap projection contract
+  still passes with `Current strategic priorities` unchanged at 100.0% of its 56-line bound (the correction is
+  line-neutral). `kg-bench` 156/156 and the workspace suite were re-earned by `.8a` at this same tree state.
+- [x] **GENERICITY (ADR 0006)** — this leaf is the doctrine being enforced rather than applied: it publishes that
+  the retired extractor keyed on protocol identity, and it deliberately does NOT restore the records, because the
+  only way to restore them at the old score is to reinstate a protocol recogniser. The admissible replacement —
+  phase-scope binding — is stated in `.8d` as document grammar with a phase *vocabulary* explicitly excluded.
+- [x] **LOCKSTEP** — book, roadmap, both task trees, five fact cards (one new, one superseded, three corrected),
+  `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `MEMORY.md`.
 
 ## `.5d` — durable in-repo source PDFs (owner directive `2026-06-07`)
 
@@ -555,6 +634,11 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   and promoted a fresh portable tracked-PDF chain. KM `[[swd-adi-not-signal-table-spec]]` and
   `[[swd-canonical-protocol-artifact-is-current]]`. APB/AHB/AXI remain 1.000 on constraints, relations, and
   temporal; SWD is 1.000 on its faithful serial frame/operation/state/edge metric without a cherry-picked gold.
+  **CORRECTION `2026-09-01` (`.8c`): that closing sentence is no longer true and must not be cited as current.**
+  SWD's serial metric is **5/29** — operations 4/4 and edge timing 1/1 survive, frame fields 0/11 and states 0/13
+  do not — because `89d8dee7` (`2026-08-12`) retired the protocol-name-bound frame extractor on ADR 0006 grounds.
+  The APB/AHB/AXI `1.000` is also unverifiable today: those three chains are legacy schema 1 and `eval-extraction`
+  refuses them. `[[swd-serial-frame-score-retired-by-genericity]]`.
 
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 

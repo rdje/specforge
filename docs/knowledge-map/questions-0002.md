@@ -81,7 +81,7 @@
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
   > can SpecForge use FSMGen's (stable …) sampled-value predicate
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
+  > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses (no — and the serial path that once scored 29/29 is retired too; it is 5/29 today, see swd-serial-frame-score-retired-by-genericity)
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > can WIRE-BASED-100 scores be re-derived right now (YES for the rebuildable stratum since 2026-09-01 / WIRE-BASED-100.8a. Before that eval-extraction refused every document. The 54 legacy schema-1 chains — including the APB, AHB, AXI, NVMe and RISC-V golds — are still refused as proofless and inspection-only and need re-ingest)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -141,6 +141,8 @@
   > can strict-valid ISF prove that a PDF was understood (no)
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > can the Docling-flattened register diagram table be parsed into bits_high/bits_low (no — garbled: wrong explicit positions, dropped field bands, doubled cells, two stacked halves, or symbolic XLEN-relative positions)
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > can the SWD frame facts be recovered generically (not yet — it needs the phase stated in a section or paragraph to bind the fields in its scope rather than only within one sentence. That is document grammar, not protocol identity, so it is ADR-0006-admissible; owned by WIRE-BASED-100.8d)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > can the active-task evidence checker support the alignment task through data
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
@@ -295,5 +297,3 @@
   > does FigureRegion have a production producer or only synthetic tests
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > does GateRecord remain schema compatible
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > does I2C extraction remain invariant under opaque signal renaming

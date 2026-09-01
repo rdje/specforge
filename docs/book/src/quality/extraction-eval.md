@@ -155,7 +155,7 @@ the clock edge on which the target samples and changes its drive state. `eval-ex
 deterministic tasks that read the corresponding EvidenceIR records directly:
 
 - `serial_frame_field`: field name, width, phase, SWDIO direction, order, and response values;
-- `swd_operation`: response/access branch, phase count, data-phase presence, and turnaround placement;
+- `protocol_operation`: response/access branch, phase count, data-phase presence, and turnaround placement;
 - `protocol_state`: machine plus state identity;
 - `interface_edge_timing`: actor, data signal, clock signal, edge, sampling flag, and drive-change flag.
 
@@ -163,10 +163,45 @@ The last key is deliberately all-or-nothing. A record naming the right data sign
 falling rather than rising edge, or only sampling without the drive-state change does not match the gold.
 
 The real `seed_swd_derivation.json` contains 29 independently verified facts: 11 frame fields, four operations,
-13 states, and the B4.3.1 `target / SWDIO / SWCLK / rising / samples / drive-changes` fact. Against a fresh
-repository-local CPU re-ingest, the source-tolerant WIRE score is `P=R=F1=1.000` for all four tasks. The strict
-statement-local frame/state view is lower because one source statement can support several correct document
-facts; the source-tolerant view re-resolves source drift and filters predictions to the complete gold universe.
+13 states, and the B4.3.1 `target / SWDIO / SWCLK / rising / samples / drive-changes` fact. The strict
+statement-local frame/state view is lower than the document-level one because one source statement can support
+several correct document facts; the source-tolerant view re-resolves source drift and filters predictions to the
+complete gold universe.
+
+### The 29/29 signoff is retired — what the score is now, and why
+
+On `2026-08-09` all four tasks scored `P=R=F1=1.000` against a fresh repository-local CPU re-ingest. **That
+result no longer holds, and the honest current number is 5 of 29.** Re-derived on `2026-09-01`:
+
+```text
+protocol_operation     P=1.000 R=1.000 F1=1.000  (tp=4 fp=0 fn=0)
+interface_edge_timing  P=1.000 R=1.000 F1=1.000  (tp=1 fp=0 fn=0)
+serial_frame_field     P=0.000 R=0.000 F1=0.000  (tp=0 fp=0 fn=11)
+protocol_state         P=0.000 R=0.000 F1=0.000  (tp=0 fp=9 fn=13)
+```
+
+This is not an extraction regression, and the gold is not wrong. The frame extractor that earned the original
+score recognised the protocol **by name** — it switched itself on for any document containing `swdio`, `swclk`,
+`serial wire`, `shift-dr`, or `packet request`, then sorted fields into a fixed three-value phase enum using
+`wdata`, `rdata`, `datain`, and `ack[`. SpecForge's genericity rule forbids exactly that in production code: a
+production decision may use universal digital semantics and document grammar, never document, vendor, or
+protocol identity. So the extractor was retired, along with the score it produced.
+
+Three independent observations separate a retirement from a regression. The persisted artifacts are current —
+the currency gate replays all 24 rebuildable documents and finds them byte-identical to what today's binary
+builds, so these zeros are the real output of the current producer. The loss partitions exactly along the
+retirement boundary and does so corpus-wide: across all 24 measurable documents the current producer emits zero
+serial frame fields and binds a machine name on none of its 40 protocol states, while protocol operations still
+produce five. And the retirement's own published accounting predicted that shape in advance, down to the counts.
+
+What the current generic grammar needs is narrow and nameable. It admits a frame field only from a statement
+that itself states a phase name *and* carries the bit range. SWD states its phases in one set of sentences and
+writes `A[3:2]` and `WDATA[31:0]` in others, so the conjunction never holds. Binding a phase named in a section
+or paragraph to the fields inside its scope is document grammar, not protocol identity, so it is admissible —
+and it is the open work, not a closed capability.
+
+*Read every number on this page with its date.* A score is a measurement of a producer at a revision; when the
+producer changes for good reasons, the score can retire with it.
 
 One boundary matters: the score proves the EvidenceIR extractors, while separate parity/accounting checks prove
 downstream availability. The canonical builders carry the exact four ordered collections and provenance through
@@ -180,21 +215,26 @@ faithful extraction into fabricated intent. Until a record is complete enough fo
 adapter will preserve it as an explicit residual while continuing to render unrelated, independently licensed
 content.
 
-The current canonical chain comes from a fresh repository-local CPU ingest of the tracked ADI PDF. SourceIR is
-ready with 400 pages, 386 visual assets, 210 tables, and 6,784 content elements; convergence stabilizes after two
-passes. EvidenceIR, SemanticIR, and IntentIR each contain the exact 11 frame / 4 operation / 13 state / 1 edge
-vectors. The adapter records 29 stable protocol residual packets and remains renderable, and its generated ISF
-passes FSMGen strict with zero diagnostics. Repository-owned metadata paths are relative, so this promoted
-result is current, portable, and reproducible rather than a disposable scoring artifact.
+The canonical chain comes from a fresh repository-local CPU ingest of the tracked ADI PDF. SourceIR is ready
+with 400 pages, 386 visual assets, 210 tables, and 6,784 content elements; convergence stabilizes after two
+passes. As promoted on `2026-08-09`, EvidenceIR, SemanticIR, and IntentIR each contained the exact 11 frame /
+4 operation / 13 state / 1 edge vectors, the adapter recorded 29 stable protocol residual packets and remained
+renderable, and its generated ISF passed FSMGen strict with zero diagnostics. After the genericity retirement
+the frame and machine-bound state vectors are empty; the operation and edge vectors survive. Repository-owned
+metadata paths are relative, so the chain itself remains current, portable, and reproducible.
 
 A later deterministic cascade applied the current generic dense-prose authority gates to that same canonical
 source. It removed one synthetic `LEVEL` interface signal and four phrase-fragment relations, reducing the actor
 graph from 22 actors / 25 relations to 19 / 21 and the emitted interface from 12 signals to 11. The four protocol
-vectors remained byte-for-fact exact at 29/29, two complete replays reproduced every downstream artifact, and
-FSMGen strict remained clean. This distinction is intentional: graph cleanup may change an unrelated heuristic
-interface surface without weakening the independently typed and scored serial-protocol surface.
+vectors remained byte-for-fact exact at 29/29 through that cascade, two complete replays reproduced every
+downstream artifact, and FSMGen strict remained clean. That distinction was intentional: graph cleanup may change
+an unrelated heuristic interface surface without weakening the independently typed serial-protocol surface. The
+later genericity retirement is a different kind of change entirely — it removed the producer, so the surface went
+with it.
 
-*Authoritative tracking:* `docs/tasks/SWD-SERIAL-EXTRACTION.md` (`.4e` and `.7a`–`.7e`) and ADR 0016.
+*Authoritative tracking:* `docs/tasks/SWD-SERIAL-EXTRACTION.md` (`.4e` and `.7a`–`.7e`),
+`docs/tasks/WIRE-BASED-100.md` (`.8c` for the retirement, `.8d` for the generic frame-scope work), ADR 0016, and
+ADR 0035.
 
 ## Register fields — measuring the breadth, and surfacing the gaps honestly
 

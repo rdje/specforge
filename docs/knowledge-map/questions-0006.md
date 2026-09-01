@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal) — four deterministic eval-extraction tasks read the EvidenceIR surfaces directly: serial_frame_field, protocol_operation (once named swd_operation), protocol_state, interface_edge_timing
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > how is the SWDIO sampling and drive-change edge scored
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
@@ -194,6 +196,8 @@
   > how many reviewed source regions and modalities were found
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > how many serial frame fields does the current producer emit across the corpus (ZERO, across all 24 rebuildable schema-3 documents; protocol_states carry a machine_name on 0 of 40. protocol_operations still produce 5 corpus-wide — 4 SWD plus 1 Wishbone — which is exactly the five the 2026-08-12 ledger said the generic producer retains)
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -294,7 +298,3 @@
   > how was the eval gold checked for idiosyncrasy
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how was the migrated alignment task evidence independently audited
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
