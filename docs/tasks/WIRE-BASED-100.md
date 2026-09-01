@@ -312,7 +312,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   judged against the proof doctrine, and `.8b` is a command-behaviour change in `eval-extraction` that has to
   be judged against the scoring/honesty doctrine. `.8c` was then opened by what the restored oracle found,
   and `.8d` by what `.8c` localised. Children: `WIRE-BASED-100.8a`, `WIRE-BASED-100.8b`,
-  `WIRE-BASED-100.8c`, `WIRE-BASED-100.8d`, `WIRE-BASED-100.8e`.
+  `WIRE-BASED-100.8c`, `WIRE-BASED-100.8d`, `WIRE-BASED-100.8e`, `WIRE-BASED-100.8f`.
   **CLOSED `2026-09-01`.** `.8a`/`.8b`/`.8c` are `done` and `.8d` is `deferred` with its consequence recorded,
   so every child is resolved. The oracle runs, refuses nothing silently, and its first re-derivation since
   `2026-08-09` retired a published score rather than confirming it — which is the outcome this leaf existed to
@@ -447,7 +447,9 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
     **5 of 11** even counting any appearance of the phase word or its stem (`ACK responses`), so the honest
     ceiling is 5, not the 4 first published here. No title contains the word `phase` — 0 of 11.
   **WHERE THE BINDING ACTUALLY LIVES — and it explains the retired extractor.** For `Start`/`Parity`/`Stop`/
-  `Park`/`A` the document never states the phase in text at all; the frame's field-to-phase membership is drawn
+  `Park`/`A` no statement ever ASSIGNS the field to a phase (`.8f` sharpened this from "never states the phase
+  in text at all", which was imprecise: the phase WORDS do occur nearby — `statement_1678` names both phases in
+  one sentence — but never as an assignment); the frame's field-to-phase membership is drawn
   in **`Figure B4-1 SWD successful write operation`** and `Figure B4-2`. Both are captured — `picture_0038` and
   `picture_0039` carry the caption — but their role is `ambiguous` and their only observation is that caption,
   so the diagram's content was never read. That is why the retired `extract_serial_frame_fields` scored 11/11:
@@ -505,6 +507,40 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Non-goal: re-opening `.8d`, whose deferral the corrected figures support more strongly than the originals.
   Prerequisite: `WIRE-BASED-100.8d`.
   Verification: `python3 scripts/measure_swd_frame_phase_scope.py`
+  Commit: see log.
+
+- ID: `WIRE-BASED-100.8f` · Status: `done` (`2026-09-01`) · Goal: **re-challenge `.8e`'s own audit, and record
+  the trap the next attempt at `.8d` will fall into.** `.8e` verified `.8d`'s figures against the production
+  gate; it did not test whether `.8d`'s CONCLUSION survives a *better* detector. It does, and the test that
+  proves it is worth keeping because its raw number is a lie.
+  **The adversarial test.** Replace the production phase detector with a deliberately permissive proximity rule
+  — a statement "states phase P" if `P` occurs within four tokens of `phase`/`phases` — and ask how many gold
+  fields a nearest-preceding rule would then get right. The answer looks like **5 of 11**, which would read as
+  "the detector was the problem, `.8d` gave up too early". **Every one of those five is a false positive.** The
+  matched statements are `statement_1678` (*"A simple parity check is applied to all packet request and data
+  transfer phases"* — claimed for seven fields; it names both phases and assigns neither), `statement_1798`
+  (*"A FAULT response to a read or write packet request consists of two phases"* — claimed for `Park`, and it
+  is about a FAULT response), and `statement_0813` 702 statements away (*"a parity or framing error on the data
+  phase of a write"* — claimed for `DATAIN`). Not one assigns a field to a phase.
+  **So `.8d` is confirmed by an attempt to break it**, which is a stronger result than `.8e`'s: the conclusion
+  no longer rests on the production detector being right, because a strictly more permissive detector recovers
+  nothing real either.
+  **And a precision defect in `.8d`'s own wording, corrected.** It said the document "never states the phase in
+  text at all" for `Start`/`Parity`/`Stop`/`Park`/`A`. The phase WORDS do occur near them; what never occurs is
+  an ASSIGNMENT of a field to a phase. The distinction is the whole point — a proximity rule sees the words and
+  mints the wrong phase — so the loose wording would have taught the next reader the wrong lesson.
+  **Also checked and sound, so the audit's other legs stand:** every gold statement falls strictly inside the
+  section anchor attributed to it (11/11, `line_start <= line <= line_end`); every frame gold item carries
+  exactly one fact, and the two statements carrying two items each (`statement_1679`, `statement_1682`) are
+  handled per item rather than per statement.
+  **Residual honestly stated:** `56` remains a PORT-derived figure — `.8e`'s script ports `stated_phase_name`
+  rather than calling it, and only the count-word list is machine-checked against the source. It is not
+  load-bearing: the production-derived fact is the extraction manifest's `serial_frame.bit_range` and
+  `serial_frame.composition` both at `produced: 0`, which owes nothing to the port. `11 of 11` is robust to the
+  port's accuracy — the loose probe and the faithful port give the same answer.
+  Non-goal: re-opening `.8d`. This slice strengthens its deferral.
+  Prerequisite: `WIRE-BASED-100.8e`.
+  Verification: `python3 scripts/measure_swd_frame_phase_scope.py` (its `adversarial control` section)
   Commit: see log.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.8a` — DONE `2026-09-01`

@@ -1,3 +1,33 @@
+### WIRE-BASED-100.8f — re-challenge the audit: `.8d` survives an attempt to break it, and the trap is recorded
+
+- `.8e` verified `.8d`'s figures against the production gate. It did not ask the harder question: does `.8d`'s
+  CONCLUSION survive a BETTER detector? Tested adversarially, it does — and the test is worth keeping precisely
+  because its raw number is a lie.
+- THE ATTEMPT. Replace the production phase detector with a deliberately permissive proximity rule — a
+  statement "states phase P" if `P` occurs within four tokens of `phase`/`phases` — and a nearest-preceding rule
+  appears to get **5 of 11** right. Read as a rescue, that would say the detector was the problem and `.8d` gave
+  up early.
+- EVERY ONE OF THE FIVE IS A FALSE POSITIVE. `statement_1678` — *"A simple parity check is applied to all packet
+  request and data transfer phases"* — is claimed for SEVEN fields; it names both phases and assigns neither.
+  `statement_1798` is claimed for `Park` and is about a FAULT response. `statement_0813` is claimed for `DATAIN`
+  from 702 statements away. Not one assigns a field to a phase.
+- SO `.8d` IS CONFIRMED BY AN ATTEMPT TO BREAK IT, which is stronger than `.8e`'s confirmation: the conclusion
+  no longer depends on the production detector being right, because a strictly more permissive detector recovers
+  nothing real either. The control now ships in `scripts/measure_swd_frame_phase_scope.py` so the next attempt
+  meets the false positives instead of the number.
+- AND A PRECISION DEFECT IN `.8d`'s OWN WORDING, CORRECTED. It said the document "never states the phase in text
+  at all" for `Start`/`Parity`/`Stop`/`Park`/`A`. The phase WORDS do occur near them; what never occurs is an
+  ASSIGNMENT. That distinction is the entire point — a proximity rule sees the words and mints the wrong phase —
+  so the loose wording would have taught the next reader exactly the wrong lesson. Corrected in the task node,
+  the fact card and the book.
+- OTHER AUDIT LEGS RE-CHECKED AND SOUND: all 11 gold statements fall strictly inside the section anchor
+  attributed to them (`line_start <= line <= line_end`); every frame gold item carries exactly one fact, and the
+  two statements carrying two items each are handled per item.
+- RESIDUAL STATED HONESTLY: `56` remains a PORT-derived figure — the script ports `stated_phase_name` rather
+  than calling it, and only the count-word list is machine-checked. It is not load-bearing: the
+  production-derived fact is the manifest's `serial_frame.bit_range` and `serial_frame.composition` both at
+  `produced: 0`. `11 of 11` is robust to the port — the loose probe and the faithful port agree.
+
 ### WIRE-BASED-100.8e — audit on challenge: every conclusion survives, three of `.8d`'s numbers do not
 
 - THE DIRECTOR ASKED WHETHER THE FINDINGS HOLD. Re-deriving them rather than restating them: every CONCLUSION

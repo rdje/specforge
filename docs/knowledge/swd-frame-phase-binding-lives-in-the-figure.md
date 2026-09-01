@@ -7,6 +7,7 @@ answers:
   - "where is the SWD frame's field-to-phase membership actually stated (in Figure B4-1 SWD successful write operation and Figure B4-2 SWD successful read operation. Both are captured as visual assets picture_0038 and picture_0039, but their role is ambiguous and their only observation is the caption, so the diagram content was never read)"
   - "why did the retired SWD frame extractor score 11 of 11 if the document does not state the phases (because it did not read the frame: it keyed the phase off the FIELD NAME — wdata/rdata/datain/ack[ — so it carried SWD's field-to-phase table in the code. That is what ADR 0006 forbids, and it is why removing it lost the facts entirely)"
   - "what would make SWD frame recall buildable again (figure-content extraction reaching this class of diagram. The typed carrier already exists as VisualObservationKind::TimingDiagramExtraction and the assets are already captured, so the gap is the extraction pass rather than the schema)"
+  - "would a MORE PERMISSIVE phase detector rescue the SWD frame fields (NO, and the attempt is a documented trap: a proximity rule that accepts the phase word within four tokens of phase/phases appears to rescue 5 of 11, but every hit is a false positive - statement_1678 names both phases and assigns neither yet is claimed for seven fields, statement_1798 is about a FAULT response, and statement_0813 is 702 statements away. Run the adversarial control in scripts/measure_swd_frame_phase_scope.py)"
   - "why is SWD serial_frame_field left at 0/11 instead of being partially recovered (because every candidate rule that fires often enough to help also mis-assigns the phase on most fields, and a wrong phase is fabrication. A measured zero is the honest result; WIRE-BASED-100.8d is deferred with that consequence stated)"
 date: 2026-09-01
 status: current
@@ -36,8 +37,10 @@ DPACC or APACC access`. Not one section title contains the word `phase`.
 
 ## Because the document draws it rather than writing it
 
-For `Start`, `Parity`, `Stop`, `Park` and `A` the specification never states the phase in text. The frame's
-field-to-phase membership is in **`Figure B4-1 SWD successful write operation`** and `Figure B4-2 SWD
+For `Start`, `Parity`, `Stop`, `Park` and `A` no statement ever *assigns* the field to a phase. Be precise
+about that: the phase **words** do occur nearby — `statement_1678` reads *"A simple parity check is applied to
+all packet request and data transfer phases"* — but naming two phases in one sentence assigns neither. The
+frame's field-to-phase membership is in **`Figure B4-1 SWD successful write operation`** and `Figure B4-2 SWD
 successful read operation`. Both figures are captured — `picture_0038` and `picture_0039` — but each carries
 role `ambiguous` and a single `caption` observation, so nothing has read what the diagram shows.
 
@@ -52,6 +55,14 @@ SWD `serial_frame_field` stays at **0/11**. Nothing is minted, because a wrong p
 zero. `WIRE-BASED-100.8d` is deferred on that basis, and its re-open trigger is figure-content extraction: the
 typed carrier (`VisualObservationKind::TimingDiagramExtraction`) and the captured assets already exist, so what
 is missing is the pass that reads them — not the schema.
+
+## The trap, so the next attempt does not fall into it
+
+The obvious follow-up is "the production detector was too strict — use a permissive proximity rule". Doing so
+appears to rescue **5 of 11**, and every one of those is a false positive: `statement_1678` is claimed for
+seven fields while assigning none, `statement_1798` is about a FAULT response, and `statement_0813` sits 702
+statements away. The `adversarial control` section of `scripts/measure_swd_frame_phase_scope.py` prints them.
+Treat a rescue number from any proximity rule as unproven until each hit is read.
 
 Links: [[swd-serial-frame-score-retired-by-genericity]], [[swd-adi-not-signal-table-spec]],
 [[swd-intent-is-the-fsm-driving-swdio]], [[production-genericity-boundary]].

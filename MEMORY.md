@@ -38,6 +38,8 @@
   a mention: read the owner's own `Status`. **A probe is not a port:** `.8e` had to correct three of `.8d`'s
   figures because the probe dropped the production gate's own `parse_count_word` rejection — publish from a
   committed derivation (`scripts/measure_swd_frame_phase_scope.py`), never an ad-hoc script.
+  **A rescue number is not a rescue:** `.8f`'s permissive detector appears to recover 5 of 11 SWD
+  frame fields and every hit is a false positive — read each hit before believing any.
   The full derived-state refresh chain an edit to `CHANGES.md`, the
   book, a fact card or `surfaces.jsonl` sets off — including the ASCII-only rollover `reason` and this file's
   50-line cap — is `[[live-surface-edit-bookkeeping-chain]]`. Owned, not fixed:

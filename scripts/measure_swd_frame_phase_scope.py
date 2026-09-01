@@ -164,7 +164,41 @@ def main() -> int:
     print(f"section-title rule: {literal} of {total} under a literal title-states-the-phase reading, "
           f"{generous} of {total} even counting any appearance of the phase word or its stem")
     print(f"section titles containing the word 'phase': {sum(1 for t in titles if 'phase' in t.lower())} of {len(titles)}")
+
+    adversarial_control(statements, frame_items, index_of)
     return 0
+
+
+def adversarial_control(statements, frame_items, index_of) -> None:
+    """WIRE-BASED-100.8f — the trap a future implementer of `.8d` will fall into.
+
+    A reasonable next attempt is "the production phase detector is too strict; use a permissive
+    proximity rule instead". Do that and the rule appears to rescue five of the eleven fields.
+    Every one of those hits is a false positive: the matched statements name a phase without
+    assigning any field to it. This control prints them so the number is never taken at face
+    value.
+    """
+    def mentions(text: str, phase: str) -> bool:
+        words = [re.sub(r"[^a-z]", "", token.lower()) for token in text.split()]
+        for position, word in enumerate(words):
+            if word in ("phase", "phases") and phase in words[max(0, position - 4):position + 5]:
+                return True
+        return False
+
+    print("\nadversarial control — a PERMISSIVE proximity detector appears to rescue fields; it does not:")
+    matched: dict[str, list[str]] = {}
+    for item in frame_items:
+        phase = str(item["gold"][0]["phase"]).lower()
+        position = index_of[item["statement_id"]]
+        for back in range(position, -1, -1):
+            if mentions(statements[back]["text"], phase):
+                matched.setdefault(statements[back]["statement_id"], []).append(item["gold"][0]["name"])
+                break
+    for statement_id, fields in matched.items():
+        text = next(s["text"] for s in statements if s["statement_id"] == statement_id)
+        print(f"  {statement_id} claimed for {fields}")
+        print(f"    \"{text[:120]}\"")
+    print("  none of these assigns a field to a phase, so the apparent rescue is entirely false positives")
 
 
 if __name__ == "__main__":

@@ -209,9 +209,12 @@ bind the fields in its scope — was measured against the gold before being buil
 preceding phase fires for all 11 fields and assigns the *wrong* one to **every single one of them**; section
 titles reach 4, or 5 read as generously as the text allows, and not one of them contains the word "phase".
 
-The reason is that this specification **draws** the frame rather than describing it. For half these fields the
-phase membership appears only in `Figure B4-1 SWD successful write operation`, which SpecForge has captured as
-an asset but has never read beyond its caption. That also explains the retired extractor's perfect score: it
+The reason is that this specification **draws** the frame rather than describing it. For half these fields no
+sentence ever assigns the field to a phase — the phase words do appear nearby, but naming two phases in one
+sentence assigns neither — and the membership appears only in `Figure B4-1 SWD successful write operation`,
+which SpecForge has captured as an asset but has never read beyond its caption. Loosening the detector does not
+help: a permissive proximity rule appears to rescue five of the eleven fields and every one of those is a false
+positive, which the reproducer prints so nobody has to rediscover it. That also explains the retired extractor's perfect score: it
 never read the frame either — it assigned each field's phase from the field's own name, which is the
 protocol's field table written into the code. A prose rule cannot replace a lookup that was never a reading.
 
