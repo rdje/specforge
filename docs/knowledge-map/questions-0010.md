@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what is AppError::IngestTerminatedBySignal
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is CapturedRegionResidualRecord
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > what is DOC-INTENT-TAXONOMY.4c.ii
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -285,15 +297,3 @@
   > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > what is the first reviewed source-to-IntentIR evaluation result
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > what is the first task in canonical recovery
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what is the ingest disk pre-flight check
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding

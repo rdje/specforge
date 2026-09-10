@@ -17,6 +17,7 @@
 | [prose-signal-capture](../knowledge/prose-signal-capture.md) | 2026-06-08 | `current` | Signals introduced in PROSE (not tables) are captured — pin appositive + parenthetical abbreviation, as a s… |
 | [published-assertion-gate](../knowledge/published-assertion-gate.md) | 2026-08-30 | `current` | A published value re-derives against its producer field, or names the control, decision, or revision that fix… |
 | [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md) | 2026-08-16 | `current` | The a4a0 canonical-recovery replay is the current 40/0/0 reviewed population |
+| [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md) | 2026-09-11 | `current` | A column header that qualifies a closed role proved no role, which is why one classifier change silently empt… |
 | [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md) | 2026-06-22 | `current` | Register bit-field ISF lowering (DOC-INTENT-TAXONOMY.4a Gap A) — bit-field intent is fully captured + carri… |
 | [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md) | 2026-06-08 | `current` | Register bit positions from a diagram image — reconstruct from VLM-read order+widths via tiling, not the VL… |
 | [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md) | 2026-06-08 | `current` | Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debu… |
@@ -60,4 +61,3 @@
 | [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md) | 2026-08-15 | `current` | SpecForge is autonomous first and asks typed questions at the evidence boundary |
 | [spec-mining-framing](../knowledge/spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
 | [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md) | 2026-08-11 | `current` | The source-to-IntentIR completeness contract is category-aware, per-cell exact, and independent of ISF emission |
-| [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md) | 2026-06-04 | `current` | SpecForge stability obligations stay .isf residuals — phase-scoped, not FSMGen's unconditional (stable s) |

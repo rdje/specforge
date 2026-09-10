@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > how does SpecForge handle one transaction and one rule writing the same named-drive target
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how does SpecForge measure source-to-IntentIR stage loss
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > how does SpecForge prevent analog dB limits from becoming digital timing intent
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how does SpecForge prove a cited self-test contains a known-bad RED case
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -290,11 +298,3 @@
   > how is docs knowledge INDEX kept complete
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how is fact-plane capacity derived
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > how is max_cards derived from the knowledge_cards surface
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is prose signal over-capture prevented (no garbage)
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how is published claim provenance mechanically gated
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > how is register-field extraction quality measured / scored

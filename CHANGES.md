@@ -1,3 +1,70 @@
+### WIRE-BASED-100.10 — the loss was in the SourceIR classifier, .9d's two attributions are corrected, and 123 declarations come back without moving a score
+
+- ATTRIBUTED TO A REVISION AND A PRODUCER FUNCTION, by re-deriving each revision's own classifier on the
+  exact header row (`git show <rev>:crates/specforge/src/ir/source/docling_backend.rs`), never by reading a
+  diff: `46af2eca` and `f9434368` classify `Name | Signals covered | Width | Check enable` as
+  `signal_description`; **`dee0740f` (`2026-08-12`, `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`, "make SourceIR
+  classification neutral") classifies it `unknown`**, and every later revision agrees. `bb5047c2` the same
+  day re-encoded the narrowed rule in the Rust authority `classified_table_kind`. Independent oracle that no
+  EvidenceIR-side account can produce: classifying all 11,033 tables in the 77 persisted SourceIRs, **47
+  documents match the pre-seam classifier and 30 match HEAD's** — and `table_kind` is a SourceIR field.
+- BOTH OF `.9d`'s ATTRIBUTIONS ARE CORRECTED WHERE THEY WERE PUBLISHED. (1) *"The SourceIR is structurally
+  identical, so the ingest is exonerated."* The counts it quoted do hold and every table cell is
+  byte-identical, but **`table_kind` differs on 67 of 286 tables** (`encoding → unknown` 40,
+  `signal_description → unknown` 17, `feature_matrix → unknown` 9, `timing_parameter → unknown` 1),
+  **`section_kind` on 56 of 527 sections** and **`diagram_kind` on 20 of 333 assets**. Equal counts are not
+  an identical artifact. (2) *"The `_ => continue` width/direction arm in `evidence.rs`."* Those tables never
+  reach it: `should_treat_table_as_top_level_signal_description` (`evidence.rs:4041`) refuses any kind but
+  `SignalDescription`. `.9d` was right to leave attribution to a bisect; the located seam was the guess.
+- VERDICT: REGRESSION INSIDE A DELIBERATE HARDENING, NOT A RETIREMENT — and the identical repair was already
+  adjudicated here. The narrowing's own rule is name role + explicit signal/port/pin column + width, which
+  this table satisfies; whole-label equality simply could not see a role carrying a qualifier. Three days
+  later `e125aac7` (`.6d.ii.f.iv.a`, "restore structural register carriers") hit the same wall for the
+  register role and admitted **one balanced parenthesized qualifier**. `.10` is that ruling applied to the
+  signal role in the un-parenthesized form.
+- THE FIX IS ONE RULE IN BOTH CLASSIFIERS: `header_names_signals` (`crates/specforge/src/ir/source.rs`, the
+  persisted authority) and `classifier_header_names_signals` (the embedded Docling mirror) — a header proves
+  the explicit-signal role when a generic interface noun (`signal`/`signals`/`port`/`ports`/`pin`/`pins`)
+  stands as a **whole word** in its normalized label, the same authority the caption rule already used. A
+  name role and a width are still both required. Guarded by an alpha-renamed positive, four negatives
+  (including the `Name | Width | Description` layout the narrowing deliberately retired, and the non-noun
+  qualifier `Values covered`), and two new cases in the Rust↔Python parity probe.
+- BLAST RADIUS MEASURED BEFORE SHIPPING, over all 77 persisted SourceIRs (11,033 tables): **exactly 7 tables
+  change, all `unknown → signal_description`** — the 5 AXI `*CHK` tables and 2 of the same shape in AMBA LTI
+  — and **zero** `register_map`/`encoding`/`timing_parameter`/`feature_matrix` changes. Each of the 7 was
+  read by hand. Two looser variants were measured and rejected: role-as-prefix minted **+425** register maps,
+  and whole-word matching for every role minted **+1,277** encodings.
+- ADDRESSED, RE-INGESTED AND RE-DERIVED (`2026-09-11`, route unchanged, no model server). SourceIR reproduces
+  `.9d` with **zero cell-text differences** and exactly the 5 intended kind changes.
+  `table_signal_declaration_provenance` **265 → 388** records and **170 → 293** distinct with **0 → 115**
+  `*CHK`; SemanticIR declared inventory **159 → 277** (110 `*CHK` back); ISF interface ports **159 → 277**.
+  Legacy reference: 411 / 304 / 115 / 289 / 287.
+- THE SIX SCORED NUMBERS ARE UNCHANGED — which is the whole point. `seed_axi` `signal_constraint` and
+  `actor_signal_relation` `P=R=F1=1.000`, document-level 4/4 and 6/6, `seed_axi_temporal` `1.000`; APB
+  `1.000`/`1.000`/`0.333` and AHB `1.000`/`1.000`/`1.000` re-derived after their own re-ingests, and both
+  documents are byte-stable in every measured dimension. 118 declarations came back and no score moved,
+  exactly as no score moved when 115 left.
+- PUBLISHED RATHER THAN LEFT IMPLIED: **30 distinct table declarations are still missing** against the legacy
+  chain, split by mechanism → `.10a`. `table_0255` (15) and `table_0251` (7) are `Name | Width | Source |
+  Description` continuation pages that lost a different authority (`Source` stopped being direction, and a
+  "Continued from previous page" caption names no signal); `table_0059` (4), `table_0187` (3) and
+  `table_0259` (1) are already `signal_description` and lose rows inside the synthesis — the only place
+  `.9d`'s `_ => continue` hypothesis can still be true.
+- AND `.9d`'s BUNDLING PREMISE IS DISPROVEN BY MEASUREMENT → `.10b`. It routed the junk interface members here
+  "because they share the table/actor synthesis boundary". Restoring 118 declarations moved the actor count
+  **134 → 134** and removed none of `The`, `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`, `RP`, `CRDT`,
+  `CRDTSH`, `SHAREDCRD`, `AxLEN`. APB (8 actors) and AHB (25) did not inflate under the same binary.
+- THE COST THIS SLICE PAID, IN FULL, INSIDE THE SLICE. A SourceIR production change regenerates the build-time
+  `SOURCE_PRODUCTION_SEMANTIC_SHA256`, so **every persisted SourceIR proof went stale — 26 documents** — which
+  would have emptied the measurable census silently, the same shape of blind spot that cost `.9b` a published
+  `1.000`. Repaired here, not deferred: 24 documents rebuilt from their retained normalized bundles with
+  `source_proof_migrate --retained-manifest doctrine/chain_currency/retained_bundles.json --write`
+  (**zero** `table_kind`/`section_kind`/`diagram_kind`/count changes across all 24 — proof refreshed, content
+  untouched) and their `evidence → semantic → intent → adapt` chains re-run; APB and AHB re-ingested because
+  their bundles are held out. **The census stays 27 measurable (34.6%) / 51 legacy, 5 of 7 gold documents.**
+  The AXI, APB and AHB bundles the re-ingests recreated are held out under
+  `generated/preserved/WIRE-BASED-100.10/`, keeping the retained set at exactly the declared 24.
+
 ### WIRE-BASED-100.9d — every AXI number holds, both predictions were wrong, and a 115-declaration loss no score could see
 
 - THE ROUTE RAN UNCHANGED on the largest wire spec: `DOCLING_DEVICE=cpu ingest` → `evidence` → `semantic` →

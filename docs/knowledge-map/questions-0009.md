@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > what did the OpenCAPI AFU address note prove about legal boilerplate
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the active PDF task containment census find
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > what did the corpus promotion sweep measure (gauge deltas per doc)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what did the corpus task evidence containment census find
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > what did the current claim census find
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
@@ -219,6 +229,8 @@
   > what happens to a register-worded caption that grounds no identifier
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > what happens to census evidence records when a rolling ledger rolls over (the records whose regions were sealed into the segment are RETIRED from the census - the bytes live on byte-exact in the segment - and one new record is registered for the new live line 1)
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > what happens to every persisted SourceIR proof when I change SourceIR production semantics
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -285,15 +297,3 @@
   > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what is AppError::IngestAbortedForMemory
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what is AppError::IngestTerminatedBySignal
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is CapturedRegionResidualRecord
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > what is DOC-INTENT-TAXONOMY.4c.ii
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is EvidenceIr.extraction_quality_gauge and who writes it

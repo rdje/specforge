@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what is the first task in canonical recovery
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is the ingest disk pre-flight check
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > what is the inter-annotator agreement of the eval gold
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -285,15 +297,3 @@
   > where do DBID / TxnID / ReturnNID style names come from in CHI
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > where do DTI message field obligations leak (signal_constraints) and how is it fixed
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where do I log feedback or a suggestion to FSMGen
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > where do TimingConstraintRecord table provenance ids live
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > where do interface_edge_timings stop in the pipeline
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > where do live-document checker test fixtures create temporary files

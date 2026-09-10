@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > is the reviewed residual expected_keys redundant with its predicates
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > is the reviewed source-to-intent dataset historically unseen
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > is the traverse_pictures mechanism measured or only read from source
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > is the whole renderable corpus FSMGen --strict clean now (yes — 70/70 current-emit .isf after .2a.vi; the ISF-emit strict-FAIL frontier is closed: Levers A/B/C/F + .2a.vi)
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -18,6 +26,8 @@
   > is tier-agreement a good confidence axis for conformal calibration
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > is upstream extraction or ISF expressiveness the next measured blocker
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > may a closed classifier role carry a qualifier (yes — e125aac7 admitted one balanced parenthesized qualifier for register carriers; WIRE-BASED-100.10 admits a generic interface noun as a whole word for the signal role)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > may a value be published because a trajectory shows it has not moved
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -287,13 +297,3 @@
   > what did statement 0114 say in the stale OpenCAPI Ready evidence
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > what did the OpenCAPI AFU address note prove about legal boilerplate
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the active PDF task containment census find
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what did the corpus promotion sweep measure (gauge deltas per doc)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what did the corpus task evidence containment census find

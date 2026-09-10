@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > how are ACK WDATA RDATA DATAIN bit-widths extracted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -175,6 +177,8 @@
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how do I make the NLI verifier actively change extraction / demote claims
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > how do I measure a classifier change's blast radius before shipping it
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I measure a doctrine checker across many revisions
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -191,6 +195,8 @@
   > how do I read the labels inside a diagram
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > how do I rebuild every retained chain after a production change
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > how do I refresh a stale SourceIR proof without a Docling re-ingest (source_proof_migrate --retained-manifest doctrine/chain_currency/retained_bundles.json --write, then re-run evidence/semantic/intent/adapt)
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > how do I regenerate a task-evidence index
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -220,6 +226,8 @@
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different
   > location than the one recorded in its artifact_layout)
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > how do I tell whether a persisted SourceIR was produced before or after the classification narrowing
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -290,11 +298,3 @@
   > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > how does SpecForge handle one transaction and one rule writing the same named-drive target
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how does SpecForge measure source-to-IntentIR stage loss
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > how does SpecForge prevent analog dB limits from becoming digital timing intent
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how does SpecForge prove a cited self-test contains a known-bad RED case

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > how to express the JTAG TAP / SWD FSM in .isf
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > how to get a fresh eval-extraction baseline for a spec
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how to re-measure the message-field corpus yield
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how to re-score SWD derivation
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > how to read a chip-spec PDF when the Read tool refuses it
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -290,11 +298,3 @@
   > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > is the reviewed residual expected_keys redundant with its predicates
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > is the reviewed source-to-intent dataset historically unseen
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > is the traverse_pictures mechanism measured or only read from source

@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why did TL disappear from the OpenCAPI Ready Definition
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why did USB 3.2 produce 918 interfaces and 556 adapter signals
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a Name | Signals covered | Width | Check enable table classify as unknown
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why did a current claim census count change without the producer changing
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > why did a figure caption become null after re-ingest
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > why did a fresh ingest expose normalized staging in persisted metadata
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why did a paragraph gain words after re-ingest
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > why did an OpenCAPI functional test become an IntentIR behavior
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -278,23 +298,3 @@
   > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > why does caption_text disappear on re-ingest
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > why does cargo test -p specforge not run the trajectory snapshot tests
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why does check_chain_currency report 24/24 current when 54 documents are legacy
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why does check_live_document_size not report records
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > why does condition_text matter for the NLI claim
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why does constraint promotion run outside the convergence loop
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > why does decision-record capacity become 58
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why does declaring a newly re-ingested normalized bundle fail the doctrine gate

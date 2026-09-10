@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where do I log feedback or a suggestion to FSMGen
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > where do TimingConstraintRecord table provenance ids live
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > where do interface_edge_timings stop in the pipeline
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > where do live-document checker test fixtures create temporary files
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -152,6 +164,8 @@
   > where is the first post-migration DEVELOPMENT_NOTES rollover segment
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > where is the gate that stops an unknown-kind table from producing signal declarations (should_treat_table_as_top_level_signal_description, crates/specforge/src/ir/evidence.rs — the _ => continue width/direction arm is never reached for such a table)
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > where is the mdBook current-truth verifier
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -284,17 +298,3 @@
   > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > which doctrine checks the persisted proof seal on every commit
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered in the SpecForge doctrine driver
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which documents are in the first source-to-IntentIR vertical evaluation population
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > which documents no longer reproduce their persisted SourceIR
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > which exact current state copies are not yet independently verified in SpecForge

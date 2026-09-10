@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why is my rebuilt chain stale even though the content matches
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why is page_image_path null / None for a large document
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is plural-rejection unsafe for phase names (access ends in ss)
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > why is repeating the same check not independent verification
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why is residual actionability 8 of 16 in the current reviewed result
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > why is section-title boilerplate filtering insufficient
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why is signal direction hard to lower faithfully to a single .isf module
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why is source_ref ambiguous
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why is statement_0223 still a normative statement
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > why is subs/fsmgen empty in a git worktree
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does FSMGen strict success prove that a SpecForge adapter is semantically faithful
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > does FSMGen support a register reset value in storage (yes — (storage (var NAME (width N) [(reset V)])) is shipped per 13k:42 + 13m:48-68; optional, in-width non-negative int, omission = all-0s byte-identical, over-width/non-integer fails closed)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -296,5 +298,3 @@
   > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how are ACK WDATA RDATA DATAIN bit-widths extracted

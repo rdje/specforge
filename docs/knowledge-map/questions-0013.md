@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > which doctrine checks the persisted proof seal on every commit
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered in the SpecForge doctrine driver
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which documents are in the first source-to-IntentIR vertical evaluation population
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > which documents no longer reproduce their persisted SourceIR
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > which exact current state copies are not yet independently verified in SpecForge
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > which extraction commands does converge run directly
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -62,6 +76,8 @@
   > which reviewed cells are region-scoped and which are fact-scoped
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which reviewed cells still need a typed actionable residual
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > which root rolling ledger is currently above its rollover signal
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -215,6 +231,8 @@
   > why can eval-extraction score only SWD/ADI and I2C
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > why can the 80-record status window never be reached
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > why can the fact-card maximum not simply be raised from 198
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -279,21 +297,3 @@
   > why did RESERVED-only NOT ship as a header-naming exclusion (build_symbol_definitions keys members by NAME per document and drops any member whose value conflicts, so HALF the RESERVED-only cases are eliminated downstream with no name-side gate — 6 of 12 in the .5.iv census frame, 4 of 10 in the shipped-predicate frame, the SAME six survivors either way: SMMU
   > STALL_MODEL/TTENDIAN/HTTU/PGS and CHI-C2C CONTFORMAT/EVENTTYPE. Those survivors are structurally indistinguishable from 31 legitimate single-distinct-member tables (TTL 0b00=NO_LEVEL_HINT_INFORMATION, CD2L, S1P, PRI, GRAN4K...), leaving only the word RESERVED itself as a discriminator — exactly the spec-assigned value vocabulary ADR 0006 forbids. Re-derive:
   > scripts/measure_header_sourced_enum_naming.py --reserved-split)
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why did TL disappear from the OpenCAPI Ready Definition
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why did USB 3.2 produce 918 interfaces and 556 adapter signals
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > why did a current claim census count change without the producer changing
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > why did a figure caption become null after re-ingest
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > why did a fresh ingest expose normalized staging in persisted metadata
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why did a paragraph gain words after re-ingest
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit

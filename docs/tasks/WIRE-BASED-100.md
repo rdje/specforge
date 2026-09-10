@@ -888,20 +888,29 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   **THE FINDING THIS LEAF DID NOT EXPECT: AXI's typed signal-declaration capture lost 115 declarations.**
   The declared inventory moves **289 → 159 distinct signals** and **every one of the 110 `*CHK` parity
   signals disappears** from SemanticIR; `table_signal_declaration_provenance` drops `411 → 265` records and
-  `304 → 170` distinct signals (`115 → 0` ending in `CHK`). **It is not a re-ingest artifact and the SourceIR
+  `304 → 170` distinct signals (`115 → 0` ending in `CHK`). ~~**It is not a re-ingest artifact and the SourceIR
   proves it:** old and new SourceIR are structurally identical — 320 pages / 333 visual / **286 tables** /
   3,652 content elements / 527 sections — so the ingest is stable and the change is entirely in the EvidenceIR
-  producer between the binary that wrote the legacy chain (`2026-08-12`) and today's. **Nothing is
+  producer between the binary that wrote the legacy chain (`2026-08-12`) and today's.~~ **CORRECTED by `.10`
+  (`2026-09-11`): those counts hold and every cell is byte-identical, but equal counts are not an identical
+  artifact — `table_kind` differs on 67 of the 286 tables, `section_kind` on 56 of 527 sections and
+  `diagram_kind` on 20 of 333 assets. The change is in the SourceIR classifier, not the EvidenceIR
+  producer.** **Nothing is
   unrecoverable:** the raw table row survives in both (`statement_4788` = `| AWVALIDCHK | AWVALID | 1 |
   ARESETn |`); what stopped is the SYNTHESIS of the typed declaration the old chain also carried
-  (`statement_6025` = `Signal AWVALIDCHK is width 1.`). The source tables are shaped
+  (`statement_6025` = `Signal AWVALIDCHK is width 1.`). ~~The source tables are shaped
   `Name | Signals covered | Width | Check enable` with a usable width, which is exactly what
   `_ => continue` in the width/direction synthesis (`crates/specforge/src/ir/evidence.rs`) is supposed to
-  admit — so the cause is a real bisect, not a guess, and this leaf does not guess it. Owned by
+  admit~~ — **CORRECTED by `.10`: those tables never reach that arm.
+  `should_treat_table_as_top_level_signal_description` (`evidence.rs:4041`) rejects any table whose kind is
+  not `SignalDescription`, and `dee0740f` had made these `unknown`.** The leaf was right to leave the
+  attribution to a bisect rather than guess it; the located seam was the guess. Owned by
   `WIRE-BASED-100.10`, NOT fixed here; the six scored numbers are unaffected, which is precisely why a score
   alone would never have shown it. The AXI adapter also gained junk interface members minted from prose
-  (`The`, `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`, …) and its actor count moved `21 → 134`; both
-  are routed to `.10` with the declaration loss because they share the table/actor synthesis boundary.
+  (`The`, `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`, …) and its actor count moved `21 → 134`; ~~both
+  are routed to `.10` with the declaration loss because they share the table/actor synthesis boundary.~~
+  **CORRECTED by `.10`: they share nothing measurable — restoring 118 declarations left the actor count at
+  134 and removed no prose member. Re-routed to `.10b` as an independent regression.**
   **Same two dispositions as `.9b`/`.9c`:** the ISF adapter moved `renderable` → `blocked`
   (`ACLK` demoted out of `(clock ACLK)`), and the normalized bundle is HELD OUT at
   `generated/preserved/WIRE-BASED-100.9d/axi-normalized-bundle-held-out/` per
@@ -913,34 +922,201 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: see log.
 
-- ID: `WIRE-BASED-100.10` · Status: `pending` · Goal: **recover AXI's 115 lost typed signal declarations, and
-  the junk interface members that arrived with them.** Measured by `.9d` from artifacts, not inferred: the
-  declared inventory is `289 → 159` distinct signals with all `110` `*CHK` parity signals gone,
-  `table_signal_declaration_provenance` is `411 → 265` records / `304 → 170` distinct / `115 → 0` `*CHK`, and
-  the actor count is `21 → 134` with prose words (`The`, `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`,
-  `RP`, `CRDT`, `CRDTSH`, `SHAREDCRD`, `AxLEN`) reaching the ISF interface.
-  **The attribution is already narrowed to one seam and must be finished by bisect, not by reading code.**
-  The SourceIR is byte-stable across the re-ingest (320 pages / 333 visual / 286 tables / 3,652 content / 527
-  sections, identical), so the ingest is exonerated; the raw table row survives as a statement in both chains
-  (`statement_4788`), so nothing is lost upstream of synthesis; only the synthesized typed declaration
-  (`Signal AWVALIDCHK is width 1.`, `statement_6025` in the legacy chain) stopped. The tables are
-  `Name | Signals covered | Width | Check enable` and carry a width, so the `_ => continue` arm that drops a
-  row with neither direction nor width should NOT be reached — meaning either the width column or the name
-  column stopped being recognised for this shape. Attribute by re-deriving from each revision's own producer
-  (`git show <rev>:crates/specforge/src/ir/evidence.rs`) across `2026-08-12..HEAD`, never by reading a diff.
-  **Decide, do not assume, whether the loss is a regression or a retirement.** APB and AHB still carry their
-  `*CHK` signals today (`PADDRCHK`, `HSELxCHK` are in their current `.isf` interfaces), so this is not a
-  blanket ADR 0006 retirement of parity-check capture; if it turns out to be a deliberate narrowing, the
-  retirement must be published where the number is, exactly as `.8c` had to.
-  Acceptance: the cause is named with a revision and a producer function; AXI's typed declarations are
-  restored or their retirement is published with the count; the junk actors/interface members are gone or
-  explained; `kg-bench` green; the six WIRE-BASED-100 scored numbers unchanged; `scripts/check_doctrines.sh`
-  green.
-  Non-goal: re-scoring AXI (all six numbers already hold — this loss is invisible to them, which is the
-  point); widening any gold.
+- ID: `WIRE-BASED-100.10` · Status: `done` (`2026-09-11`; cause attributed to a revision and a producer
+  function, 123 declarations restored, and two of `.9d`'s own attributions corrected) · Goal: **recover
+  AXI's 115 lost typed signal declarations, and the junk interface members that arrived with them.**
+  Measured by `.9d` from artifacts, not inferred: the declared inventory was `289 → 159` distinct signals
+  with all `110` `*CHK` parity signals gone, `table_signal_declaration_provenance` was `411 → 265` records /
+  `304 → 170` distinct / `115 → 0` `*CHK`, and the actor count was `21 → 134` with prose words reaching the
+  ISF interface.
   Prerequisite: `WIRE-BASED-100.9d`.
+
+  **THE SEAM IS THE SourceIR CLASSIFIER, AND `.9d`'s TWO ATTRIBUTIONS ARE BOTH CORRECTED.** `.9d` placed
+  the loss at the `_ => continue` width/direction arm in `crates/specforge/src/ir/evidence.rs` and
+  exonerated the ingest because "the SourceIR is structurally identical". Neither holds:
+
+  1. **The tables never reach that arm.** `should_treat_table_as_top_level_signal_description`
+     (`crates/specforge/src/ir/evidence.rs:4041`) returns `false` unless
+     `effective_table_kind(..) == TableKind::SignalDescription`, so a table classified `unknown` is never
+     offered to `synthesize_signal_declarations` at all. The width arm was never reached and never guilty.
+  2. **The SourceIR is not identical — `.9d` compared counts, and the classification fields moved.** The
+     counts it quoted do hold (320 pages / 333 visual / 286 tables / 3,652 content / 527 sections) and every
+     table's cell text is byte-identical across the re-ingest, but three *classification* fields differ
+     between the `2026-08-12` chain and `.9d`'s: **`table_kind` on 67 of 286 tables** (`encoding → unknown`
+     40, `signal_description → unknown` 17, `feature_matrix → unknown` 9, `timing_parameter → unknown` 1),
+     **`section_kind` on 56 of 527 sections**, and **`diagram_kind` on 20 of 333 assets**. Equal counts are
+     not an identical artifact; the ingest was never exonerated.
+
+  **ATTRIBUTION — by re-deriving each revision's own producer, never a diff.** The five AXI tables are
+  shaped `Name | Signals covered | Width | Check enable`. Running `classify_table_kind` extracted from
+  `git show <rev>:crates/specforge/src/ir/source/docling_backend.rs` against that exact header row:
+
+  | revision | date | leaf | verdict on the header row |
+  | --- | --- | --- | --- |
+  | `46af2eca` | `2026-08-10` | `CORPUS-COVERAGE.2.47a` | `signal_description` |
+  | `f9434368` | `2026-08-12` | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `signal_description` |
+  | **`dee0740f`** | **`2026-08-12`** | **`SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`** | **`unknown`** ← the seam |
+  | `e125aac7` · `2172ad9e` · `5f568381` · `HEAD` | `2026-08-15`…`2026-09-10` | — | `unknown` |
+
+  `dee0740f` ("make SourceIR classification neutral") replaced substring role matching with **whole-label**
+  role equality, so a header proves a role only when its entire normalized label *is* that role.
+  `bb5047c2` (`2026-08-12`, `.6d.ii.e.iv.ii`) then made the Rust `classified_table_kind` the persisted
+  authority and re-encoded the same narrowed rule — its `header_has_role` was whole-label equality with no
+  qualifier admission at all.
+
+  **INDEPENDENT CONFIRMATION FROM THE CORPUS ITSELF.** Classifying every table in all 77 persisted
+  SourceIRs with both producers: **30 documents match HEAD's classifier exactly** (the re-ingested cohort)
+  and **47 match the pre-seam classifier at 99–100%** and HEAD at far less. `table_kind` is a SourceIR
+  field that no EvidenceIR producer can write, so the competing account `.9d` proposed — "the change is
+  entirely in the EvidenceIR producer" — cannot produce this observation.
+
+  **VERDICT: REGRESSION, NOT RETIREMENT — and the same repair was already adjudicated here once.** The
+  narrowing's own rule is that a signal table needs a name role plus an *explicit* signal/port/pin column;
+  `Name | Signals covered | Width | Check enable` satisfies it. Whole-label equality simply could not see a
+  role carrying a qualifier. Three days after the narrowing, `e125aac7` (`.6d.ii.f.iv.a`, "restore
+  structural register carriers") hit the identical wall for the register role and repaired it by admitting
+  **one balanced parenthesized qualifier** — so "a closed role may carry a qualifier" is already this
+  repository's ruling; only the un-parenthesized form was left unhandled. APB and AHB keeping their `*CHK`
+  signals is the corroborating evidence that no blanket ADR 0006 retirement of parity capture was intended.
+
+  **THE FIX.** `header_names_signals` (`crates/specforge/src/ir/source.rs`) and its embedded-Python mirror
+  `classifier_header_names_signals`: a header proves the explicit-signal role when a **generic interface
+  noun** (`signal`/`signals`/`port`/`ports`/`pin`/`pins`) appears as a **whole word** in its normalized
+  label. That is the same authority form the caption rule already used (`Table … signals`), and the noun
+  set is universal digital-interface vocabulary, never document identity (ADR 0006). It only ever *adds*
+  the explicit-signal leg; a name role and a width are still both required.
+
+  **BLAST RADIUS, MEASURED BEFORE SHIPPING — over all 77 persisted SourceIRs (11,033 tables).** Exactly
+  **7 tables change, all `unknown → signal_description`**: the 5 AXI `*CHK` tables and 2 in
+  `ihi0089_d` (AMBA LTI) of the same shape. Zero `register_map` / `encoding` / `timing_parameter` /
+  `feature_matrix` changes. Two looser variants were measured and **rejected**: admitting a role as a
+  label *prefix* minted **+425** register maps, and whole-word matching for *every* role minted **+1,277**
+  encodings and **+35** feature matrices. Each of the 7 was read by hand and is a real declaration table.
+
+  **ADDRESSED — re-ingested and re-derived (`2026-09-11`, route unchanged, no model server).** SourceIR
+  reproduces `.9d` exactly except the 5 intended tables: 320 pages / 333 visual / 286 tables / 3,652
+  content / 527 sections, **zero cell-text differences**, and **5 kind changes, all `unknown →
+  signal_description`** on `table_0245`–`table_0249`.
+
+  | measure | legacy `2026-08-12` | `.9d` `2026-09-10` | `.10` `2026-09-11` |
+  | --- | --- | --- | --- |
+  | `table_signal_declaration_provenance` records | 411 | 265 | **388** |
+  | … distinct signals | 304 | 170 | **293** |
+  | … distinct `*CHK` | 115 | 0 | **115** |
+  | SemanticIR declared inventory | 289 | 159 | **277** (110 `*CHK`) |
+  | SemanticIR interfaces | 263 | 298 | 321 |
+  | ISF interface ports | 287 | 159 | **277** (110 `*CHK`) |
+
+  **THE SIX SCORED NUMBERS ARE UNCHANGED** (`--provider skip`, the `-- source-tolerant + filtered
+  (WIRE-BASED-100) --` blocks): `seed_axi` `signal_constraint` `P=R=F1=1.000` (tp=4 fp=0 fn=0),
+  `actor_signal_relation` `1.000` (tp=6 fp=0 fn=0), document-level 4/4 and 6/6; `seed_axi_temporal`
+  `1.000` (tp=3 fp=0 fn=0). That is the point of the leaf: 118 declarations came back and no score moved,
+  exactly as no score moved when they left.
+
+  **WHAT IS NOT FIXED, PUBLISHED WITH ITS COUNT RATHER THAN LEFT IMPLIED.** **30** distinct table-declared
+  signals are still missing against the legacy chain, in two disjoint groups → `.10a`:
+  `table_0255` (15) and `table_0251` (7) are `Name | Width | Source | Description` continuation pages that
+  lost a *different* authority (`Source` stopped counting as direction, and a "Continued from previous
+  page" caption does not name signals); `table_0059` (4), `table_0187` (3) and `table_0259` (1) are
+  **still classified `signal_description`** and lost rows inside the synthesis — that residual is where
+  `.9d`'s `_ => continue` hypothesis may genuinely apply, and `.10a` owns testing it.
+
+  **THE JUNK ACTORS ARE NOT PART OF THIS DEFECT — `.9d`'s bundling premise is disproven by measurement.**
+  `.9d` routed them here "because they share the table/actor synthesis boundary". Restoring 118
+  declarations moved the actor count **134 → 134**, and all 11 prose members (`The`, `Asserted`, `Secure`,
+  `Stream`, `VALID`, `PENDING`, `RP`, `CRDT`, `CRDTSH`, `SHAREDCRD`, `AxLEN`) are still in the ISF
+  interface. They are an independent regression → `.10b`. (`ACLK`/`ARESETn` also appear as ports; that is
+  the already-recorded `renderable → blocked` clock/reset disposition, not junk.)
+
+  **THE COST THIS SLICE PAID, STATED PLAINLY.** This is a production-semantics change, so
+  `SOURCE_PRODUCTION_SEMANTIC_SHA256` (build-generated from the reachable producer graph) moved and **every
+  persisted SourceIR proof went stale — 26 documents**, which would have silently emptied the measurable
+  census exactly the way a retired fix silently cost a published `1.000` in `.9b`. It was repaired inside
+  this slice, not deferred: 24 documents were rebuilt from their retained normalized bundles with
+  `source_proof_migrate --retained-manifest doctrine/chain_currency/retained_bundles.json --write`
+  (**zero** `table_kind` / `section_kind` / `diagram_kind` / count changes across all 24 — the proof
+  refreshed, the content did not), their `evidence → semantic → intent → adapt` chains were re-run, and
+  APB and AHB were re-ingested because their bundles are held out under
+  `RETAINED-BUNDLE-POPULATION-FROZEN`. The AXI bundle the re-ingest recreated is held out the same way at
+  `generated/preserved/WIRE-BASED-100.10/axi-normalized-bundle-held-out/`, keeping the retained set at
+  exactly the declared 24.
+  Preservation (repo-volume, `2026-09-11`, 185 MB, before the rebuild): `generated/preserved/
+  WIRE-BASED-100.10/pre-reingest/` — `source_ir.json` `40a17cb5fd86d8f9…`, `evidence_ir.json`
+  `1395c5cfc37eedae…`, `semantic_ir.json` `4dc43aea1a1f3004…`, `intent_ir.json` `e04f22dda5bf605a…`,
+  `adapters_isf/adapter.json` `0b84a318cab939ad…`; full manifest in that directory's `SHA256SUMS.txt`.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
+
+- ID: `WIRE-BASED-100.10a` · Status: `pending` · Goal: **the 30 AXI table declarations `.10` did not
+  recover**, measured per table and split by mechanism rather than reported as one number.
+  Group A (22): `table_0251` (7) and `table_0255` (15) are `Name | Width | Source | Description`
+  continuation pages of `Table B1.1`/`B1.4`. Their first pages still classify (their captions name
+  signals); the continuations do not, because `dee0740f` also removed `source`/`destination` from the
+  direction roles and a "Continued from previous page" caption carries no signal noun. Decide the general
+  question — **does a continuation caption inherit its parent table's kind, or is a `Source` column
+  direction authority?** — and do not answer it by adding a caption phrase to a list.
+  Group B (8): `table_0059` (4), `table_0187` (3), `table_0259` (1) are **already** `signal_description`
+  and lose rows *inside* `synthesize_signal_declarations`. This is the only place `.9d`'s `_ => continue`
+  hypothesis can still be true; test it against the 56 AXI sections whose `section_kind` moved
+  `signal_description → normative` at the same seam, since that field feeds
+  `infer_signal_direction_from_section` and therefore the `default_dir` a row falls back to.
+  Acceptance: each group's mechanism named at `file:line`; recovered or its retirement published with the
+  count; the six scored numbers unchanged; corpus blast radius measured over all persisted SourceIRs
+  before shipping, as `.10` did.
+  Prerequisite: `WIRE-BASED-100.10`.
   Verification: pending
   Commit: pending
+
+- ID: `WIRE-BASED-100.10b` · Status: `pending` · Goal: **the 11 prose words in AXI's ISF interface and the
+  `21 → 134` actor inflation**, now known to be independent of the declaration loss.
+  `.10` measured the coupling `.9d` assumed: restoring 118 typed declarations moved the actor count
+  `134 → 134` and removed none of `The`, `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`, `RP`, `CRDT`,
+  `CRDTSH`, `SHAREDCRD`, `AxLEN`. APB (8 actors) and AHB (25) were re-ingested by the same binary and did
+  not inflate, so this is AXI-shaped, not a blanket actor-synthesis change. Attribute it the way `.10`
+  attributed the classifier — re-derive from each revision's own producer across `2026-08-12..HEAD` — and
+  note that `AxLEN` reaching the interface *while the declared `AXLEN` disappeared* is one observation, not
+  two. `.6c`'s `ir/entity_typing` bounded-LLM actor discrimination already exists and is the candidate
+  general fallback.
+  Acceptance: cause named with a revision and a producer function; the prose members gone or their
+  presence explained; APB/AHB actor counts unmoved; the six scored numbers unchanged.
+  Prerequisite: `WIRE-BASED-100.10`.
+  Verification: pending
+  Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.10` (RUST CODE CHANGE) — DONE `2026-09-11`
+
+- [x] **REPRODUCE / MEASURE** — baseline from the persisted artifacts before any edit: AXI
+  `table_signal_declaration_provenance` 265 records / 170 distinct / **0** `*CHK`, against the preserved
+  legacy chain's 411 / 304 / **115**; SemanticIR declared inventory 159 vs 289; ISF ports 159 vs 287. The
+  `.9d` chain (185 MB) was preserved with a SHA-256 manifest before the rebuild.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `dee0740f` (`2026-08-12`, `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`)
+  narrowed `classify_table_kind`'s role matching to whole-label equality, so
+  `Name | Signals covered | Width | Check enable` stopped being `signal_description`; `bb5047c2` re-encoded
+  the narrowed rule in the Rust authority `classified_table_kind` (`crates/specforge/src/ir/source.rs`).
+  Attributed by running each revision's own extracted producer on that header row, never by reading a
+  diff. `.9d`'s located seam (`_ => continue` in `evidence.rs`) is corrected: an `unknown` table is
+  rejected by `should_treat_table_as_top_level_signal_description` (`evidence.rs:4041`) and never reaches
+  the synthesis. Independent oracle: 47 of 77 persisted SourceIRs match the pre-seam classifier and 30
+  match HEAD's, which no EvidenceIR-side account can produce.
+- [x] **ADDRESSED (verified)** — per-artifact, before → after: provenance records `265 → 388`, distinct
+  `170 → 293`, `*CHK` `0 → 115`; SemanticIR declared inventory `159 → 277`; ISF interface ports
+  `159 → 277`. SourceIR reproduces `.9d` with **zero** cell-text differences and exactly the 5 intended
+  `unknown → signal_description` kind changes. The residual 30 is published per table and owned by `.10a`.
+- [x] **NO REGRESSION** — named, re-runnable oracles, all green: `cargo test -p specforge-core --lib`
+  (1,383 + the 3 new cases), `-p specforge --lib` (472), `-p specforge-conformance --lib` (168);
+  `cargo fmt --all`; the six WIRE-BASED-100 numbers re-derived unchanged via
+  `specforge eval-extraction … --provider skip`; `bash scripts/check_chain_currency.sh`;
+  `bash scripts/check_doctrines.sh`. **Stated rather than implied:** the production-semantics digest moved
+  and staled 26 SourceIR proofs; that was repaired inside this slice (24 migrated from retained bundles
+  with zero content change, APB and AHB re-ingested), not deferred to a gate nobody runs.
+- [x] **GENERICITY (ADR 0006)** — the rule reads a closed set of universal interface nouns as whole words
+  in a column label. No chip, vendor, protocol, or document name; no corpus phrase (`signals covered` is
+  never mentioned). Guarded by an alpha-renamed positive and four negatives, including the ambiguous
+  `Name | Width | Description` layout the narrowing deliberately retired and a non-noun qualifier
+  (`Values covered`), plus the Rust↔Python parity probe.
+- [x] **LOCKSTEP** — mdBook, `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `ROADMAP.md`, the resume pointer
+  and a Knowledge Map fact card updated; `.9d`'s two corrected attributions rewritten where they were
+  published; `.10a`/`.10b` opened.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.9d` (RE-INGEST + RE-DERIVATION, closes `.9`) — DONE `2026-09-10`
 
@@ -951,12 +1127,15 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 - [x] **ROOT CAUSE (WHY + WHERE)** — three, each named with a location. (1) The predicted `ARESETN`/`ARESETn`
   mismatch does not exist: `eval::temporal_predicate_key` (`crates/specforge/src/eval.rs:458`) uppercases every
   name, so case cannot move a score — which withdraws `.9b`'s second "route". (2) `AWATOP` is not newly
-  minted: `(type AWATOP (bits 4))` is identical in the preserved legacy adapter and the new one. (3) The 115
+  minted: `(type AWATOP (bits 4))` is identical in the preserved legacy adapter and the new one. (3) ~~The 115
   lost typed declarations are located at the synthesis seam, not the ingest: the SourceIR is structurally
-  identical across the re-ingest (320/333/286/3,652/527) and the raw row survives in both chains
-  (`statement_4788`), while the synthesized `Signal AWVALIDCHK is width 1.` (`statement_6025`) is gone —
-  the `_ => continue` width/direction arm in `crates/specforge/src/ir/evidence.rs`. Attribution to a revision
-  is deliberately left to `.10`'s bisect rather than guessed here.
+  identical across the re-ingest (320/333/286/3,652/527) … the `_ => continue` width/direction arm in
+  `crates/specforge/src/ir/evidence.rs`.~~ **WITHDRAWN by `.10` (`2026-09-11`): the seam is the SourceIR
+  table classifier (`dee0740f`), the SourceIR is not identical in its classification fields, and an
+  `unknown` table never reaches that arm.** What survives is the observation this leg was built on — the
+  raw row lives in both chains (`statement_4788`) and only the synthesized declaration
+  (`statement_6025`) stopped — and the decision to leave attribution to `.10`'s bisect rather than guess
+  it; the located seam was the part that was guessed.
 - [x] **ADDRESSED (verified)** — the chain is canonical and scoreable: `ingest` → 320 page artifacts / 333
   visual / 0 residuals / `high`; `evidence` → 527 anchors / 5,909 spans / 220 links / 6,283 statements;
   `semantic` → 134 actors / 298 interfaces / 923 invariants; `intent` → 129 actors / 604 behaviors / 939

@@ -228,6 +228,23 @@ def classifier_has_phrase(value, phrases):
     return any(f" {classifier_label(phrase)} " in normalized for phrase in phrases)
 
 
+SIGNAL_NOUNS = ("signal", "signals", "port", "ports", "pin", "pins")
+
+
+def classifier_header_names_signals(headers):
+    """Return whether any column header names signals explicitly.
+
+    A closed role must match a header's whole normalized label, so a *qualified* header such as
+    ``Signals covered`` proves no role even though it names signals as plainly as ``Signal`` does.
+    Reading a generic interface noun as a whole word inside the label is the same authority the
+    caption rule already applies to ``Table A16.4 ... signals``, and it stays identity-independent
+    because only the closed noun set is admitted.
+    """
+    return any(
+        set(classifier_label(header).split()) & set(SIGNAL_NOUNS) for header in headers
+    )
+
+
 def classifier_header_has_role(headers, roles):
     """Return whether a header has one of the closed structural roles.
 
@@ -371,7 +388,7 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
     # ── 1. Caption-based positive: explicit generic table kind ───────────────
     cap_words = set(classifier_label(cap_lower).split())
     caption_names_signals = classifier_has_phrase(cap_lower, ["table"]) and bool(
-        cap_words & {"signal", "signals", "port", "ports", "pin", "pins"}
+        cap_words & set(SIGNAL_NOUNS)
     )
     if caption_names_signals:
         return "signal_description"
@@ -384,9 +401,7 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
         "width", "bit width", "bits", "size",
     ])
     has_dir_col = classifier_header_has_role(all_headers, ["direction", "dir"])
-    has_explicit_signal_col = classifier_header_has_role(all_headers, [
-        "signal", "signal name", "port", "port name", "pin", "pin name",
-    ])
+    has_explicit_signal_col = classifier_header_names_signals(all_headers)
     if has_signal_name_col and (has_dir_col or (has_explicit_signal_col and has_width_col)):
         return "signal_description"
 
@@ -3117,6 +3132,17 @@ payload = {
     "caption_declared_signal": classify_table_kind(
         _headers("Name", "Width", "Description"), [], "Table 4 Signal descriptions"
     ),
+    "qualified_signal_column": classify_table_kind(
+        _headers("Name", "Signals covered", "Width", "Check enable"),
+        [[_cell("ITEM_ALPHACHK", False), _cell("ITEM_ALPHA", False),
+          _cell("1", False), _cell("ITEM_RESETN", False)]],
+        "Table 5 Continued from previous page",
+    ),
+    "unrelated_qualifier_is_not_a_signal_column": classify_table_kind(
+        _headers("Name", "Values covered", "Width"),
+        [[_cell("ITEM_ALPHA", False), _cell("ITEM_BETA", False), _cell("1", False)]],
+        "Table 6",
+    ),
     "structural_register_a": classify_table_kind(
         register_headers, register_body, "Vendor A table"
     ),
@@ -3183,6 +3209,11 @@ print(json.dumps(payload, sort_keys=True))
         assert_eq!(observed["opcode_is_not_encoding"], "unknown");
         assert_eq!(observed["hex_addresses_are_not_encoding"], "unknown");
         assert_eq!(observed["caption_declared_signal"], "signal_description");
+        assert_eq!(observed["qualified_signal_column"], "signal_description");
+        assert_eq!(
+            observed["unrelated_qualifier_is_not_a_signal_column"],
+            "unknown"
+        );
         assert_eq!(observed["structural_register_a"], "register_map");
         assert_eq!(
             observed["structural_register_a"],

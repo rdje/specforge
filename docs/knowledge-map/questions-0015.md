@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > why does cargo test -p specforge not run the trajectory snapshot tests
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why does check_chain_currency report 24/24 current when 54 documents are legacy
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why does check_live_document_size not report records
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > why does condition_text matter for the NLI claim
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why does constraint promotion run outside the convergence loop
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why does decision-record capacity become 58
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does declaring a newly re-ingested normalized bundle fail the doctrine gate
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > why does decoder go from 0/0 to connected (decoder also consolidated)
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -229,6 +249,8 @@
   > why is a gerund after while/when not a condition (action coordination)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why is a glob list not enough to scope a claim gate
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why is a green wire-protocol score not evidence that extraction is intact
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
@@ -275,25 +297,3 @@
   > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > why is exact source region capture 13 of 14
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why is my rebuilt chain stale even though the content matches
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why is page_image_path null / None for a large document
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is plural-rejection unsafe for phase names (access ends in ss)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > why is repeating the same check not independent verification
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why is residual actionability 8 of 16 in the current reviewed result
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why is section-title boilerplate filtering insufficient
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why is signal direction hard to lower faithfully to a single .isf module
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why is source_ref ambiguous
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why is statement_0223 still a normative statement

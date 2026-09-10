@@ -35,7 +35,9 @@ The current deterministic authority is deliberately narrow:
 - a diagram kind is assigned only when its caption explicitly names a generic visual form such as a
   timing waveform, state diagram, block diagram, register bit-field layout, truth table, or flow chart;
 - a signal table needs a signal identity role plus direction, or an explicit signal/port/pin role plus
-  width;
+  width — and a column names signals explicitly when a generic interface noun (`signal`, `signals`,
+  `port`, `ports`, `pin`, `pins`) appears as a whole word in its label, so `Signals covered` carries the
+  role that `Signal` does;
 - an encoding table needs both a value role and a meaning role, or an explicit encoding caption;
 - a register map needs a name role, access semantics, and address or bit-range structure;
 - scalar timing and feature tables need their complete generic role conjunctions;
@@ -50,6 +52,17 @@ A closed table-header role may carry one parenthesized qualifier. For example,
 `Address (A[3:2], BANK)` still has the closed `Address` role, while `Address qualifier`, an empty pair,
 an unclosed pair, or trailing text stays unmatched. The Rust verifier and embedded Docling classifier use the
 same grammar. This accommodates source notation without returning to substring classification.
+
+The **explicit signal role** is read one step more permissively, and only that role: a header proves it when
+one of the six generic interface nouns above stands as a whole word anywhere in the label. That is the same
+authority the caption rule already applies to `Table A2.1 … signal descriptions`, and it is still closed
+vocabulary, so `Values covered` proves nothing and `Name | Width | Description` remains `unknown`. The
+permission is narrow because it was earned narrowly: a real parity-check table headed
+`Name | Signals covered | Width | Check enable` was classified `unknown` for a month, which cost one corpus
+document 115 typed signal declarations without moving any published score. Every candidate rule was measured
+over all 77 persisted SourceIR documents (11,033 tables) before this one was chosen — it moves exactly 7
+tables, all from `unknown` to `signal_description`, and no table of any other kind
+(`WIRE-BASED-100.10`).
 
 Schema 1 and 2 SourceIR files remain readable only through the explicit inspection API. Their source
 text, grids, assets, geometry, and provenance can still be examined, but their old diagram/table/
@@ -66,8 +79,12 @@ retained chains measurable and makes their extracted fields byte-identical under
 The remaining SourceIR and EvidenceIR documents stay legacy proofless, inspection-only inputs until their
 reclaimed bundles return through owned re-ingest — which is how the frontier grows: it was 24 current / 54
 legacy at the migration and is **27 / 51** today, after `WIRE-BASED-100.9b`/`.9c`/`.9d` re-ingested the APB,
-AHB and AXI golds on `2026-09-10`. SemanticIR replay from a quarantined EvidenceIR input is
-unmeasurable rather than current. SemanticIR and IntentIR preserve that closed frontier: only the verified
+AHB and AXI golds on `2026-09-10`. Those three carry a second re-ingest on `2026-09-11`: changing a SourceIR
+production rule regenerates the build-time production-semantics digest and stales every persisted SourceIR
+proof at once, so `WIRE-BASED-100.10` rebuilt the 24 bundle-holding documents from their retained captures
+(content unchanged, proof refreshed) and re-ingested the three wire golds, whose bundles are held out. The
+frontier did not move, because that refresh shipped with the rule change rather than after it.
+SemanticIR replay from a quarantined EvidenceIR input is unmeasurable rather than current. SemanticIR and IntentIR preserve that closed frontier: only the verified
 chains can reach a fresh adapter, while persisted later-stage files for the legacy ones remain historical rather
 than acquiring authority from stage-local reproducibility.
 

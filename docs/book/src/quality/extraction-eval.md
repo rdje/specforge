@@ -89,8 +89,11 @@ actor→signal relations; the contract and diagram tasks are deferred):
   scored — while the AHB and AXI golds re-ingested the same day (`.9c`/`.9d`) kept all of
   theirs. Twelve carried wire numbers were re-derived, eleven held and one was withdrawn.
   **And note what a score cannot tell you:** the same AXI re-ingest that kept all six of its
-  numbers also revealed that 115 typed signal declarations had stopped being synthesized
-  (`WIRE-BASED-100.10`) — a defect no gold in this harness touches. A green score is evidence
+  numbers also revealed that 115 typed signal declarations had stopped being synthesized — a
+  defect no gold in this harness touches. `WIRE-BASED-100.10` traced it to a table-classification
+  rule narrowed a month earlier, restored 123 declarations, and re-derived all six AXI numbers
+  **unchanged** on `2026-09-11` — which is the same lesson read from the other end: the score was
+  blind to the defect arriving and equally blind to it being repaired. A green score is evidence
   about the facts the gold names, and about nothing else.
 
 ## How it was verified

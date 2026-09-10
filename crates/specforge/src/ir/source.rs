@@ -1443,6 +1443,27 @@ fn header_has_role(headers: &[&str], roles: &[&str]) -> bool {
     })
 }
 
+/// Generic interface nouns that name signals in any digital specification. They are universal
+/// domain vocabulary rather than document, vendor, or protocol identity, so reading them is
+/// ADR-0006 compliant.
+const SIGNAL_NOUNS: [&str; 6] = ["signal", "signals", "port", "ports", "pin", "pins"];
+
+/// Whether any column header names signals explicitly.
+///
+/// A closed role must match a header's whole normalized label, so a *qualified* header such as
+/// `Signals covered` proves no role even though it names signals as plainly as `Signal` does.
+/// Reading a generic interface noun as a whole word inside the label is the same authority the
+/// caption rule already applies to `Table A16.4 … signals`, and it stays identity-independent
+/// because only the closed noun set above is admitted — an arbitrary qualifier never becomes a
+/// role, and a document symbol can never name one.
+fn header_names_signals(headers: &[&str]) -> bool {
+    headers.iter().any(|header| {
+        classifier_label(header)
+            .split_whitespace()
+            .any(|word| SIGNAL_NOUNS.contains(&word))
+    })
+}
+
 fn table_cell_is_bit_range(value: &str) -> bool {
     let trimmed = value.trim().trim_start_matches('[').trim_end_matches(']');
     trimmed.split_once(':').is_some_and(|(high, low)| {
@@ -1469,7 +1490,7 @@ fn classified_table_kind(table: &StructuredTableRecord) -> TableKind {
         .map(str::to_string)
         .collect::<BTreeSet<_>>();
     if classifier_has_phrase(caption, &["table"])
-        && ["signal", "signals", "port", "ports", "pin", "pins"]
+        && SIGNAL_NOUNS
             .iter()
             .any(|word| caption_words.contains(*word))
     {
@@ -1489,17 +1510,7 @@ fn classified_table_kind(table: &StructuredTableRecord) -> TableKind {
     );
     let has_width = header_has_role(&headers, &["width", "bit width", "bits", "size"]);
     let has_direction = header_has_role(&headers, &["direction", "dir"]);
-    let has_explicit_signal = header_has_role(
-        &headers,
-        &[
-            "signal",
-            "signal name",
-            "port",
-            "port name",
-            "pin",
-            "pin name",
-        ],
-    );
+    let has_explicit_signal = header_names_signals(&headers);
     if has_signal_name && (has_direction || (has_explicit_signal && has_width)) {
         return TableKind::SignalDescription;
     }
@@ -4053,6 +4064,73 @@ mod tests {
             &[&["NX", "Address slice", "Reserved", "P"]],
         );
         assert_eq!(classified_table_kind(&packed_layout), TableKind::Unknown);
+    }
+
+    #[test]
+    fn qualified_signal_header_still_names_signals() {
+        // `Name | Signals covered | Width | ...` is a signal-declaration table: it carries a name
+        // role, an explicit signal role, and a usable width. Whole-label role equality could not
+        // see the role through the trailing qualifier, so the table read as `unknown` and its
+        // declarations were never synthesized.
+        let qualified = classification_test_table(
+            &["Name", "Signals covered", "Width", "Check enable"],
+            &[&["ITEM_ALPHACHK", "ITEM_ALPHA", "1", "ITEM_RESETN"]],
+        );
+        assert_eq!(
+            classified_table_kind(&qualified),
+            TableKind::SignalDescription
+        );
+
+        // The same table under alpha-renaming and a plural/singular swap: the rule reads structure
+        // and generic interface vocabulary, never a symbol (ADR 0006).
+        let renamed = classification_test_table(
+            &["Name", "Signal group", "Width", "Enable"],
+            &[&["ZETA_OMEGA", "ZETA", "4", "ZETA_RESETN"]],
+        );
+        assert_eq!(
+            classified_table_kind(&renamed),
+            TableKind::SignalDescription
+        );
+    }
+
+    #[test]
+    fn signal_noun_alone_does_not_fabricate_a_signal_table() {
+        // No-faking guards: naming signals is necessary, never sufficient. The ambiguous
+        // `Name | Width | Description` layout the closed-role hardening deliberately retired must
+        // stay `unknown`, and a signal noun without a name role or without a width must not
+        // promote a table on its own.
+        let ambiguous = classification_test_table(
+            &["Name", "Width", "Description"],
+            &[&["ITEM_ALPHA", "1", "An item."]],
+        );
+        assert_eq!(classified_table_kind(&ambiguous), TableKind::Unknown);
+
+        let signals_without_width = classification_test_table(
+            &["Name", "Signals covered", "Check enable"],
+            &[&["ITEM_ALPHACHK", "ITEM_ALPHA", "ITEM_RESETN"]],
+        );
+        assert_eq!(
+            classified_table_kind(&signals_without_width),
+            TableKind::Unknown
+        );
+
+        let signals_without_name_role =
+            classification_test_table(&["Signals covered", "Width"], &[&["ITEM_ALPHA", "1"]]);
+        assert_eq!(
+            classified_table_kind(&signals_without_name_role),
+            TableKind::Unknown
+        );
+
+        // A qualifier that is not a generic interface noun proves nothing, so the closed-role
+        // narrowing this fix sits inside is preserved everywhere else.
+        let unrelated_qualifier = classification_test_table(
+            &["Name", "Values covered", "Width"],
+            &[&["ITEM_ALPHA", "ITEM_BETA", "1"]],
+        );
+        assert_eq!(
+            classified_table_kind(&unrelated_qualifier),
+            TableKind::Unknown
+        );
     }
 
     #[test]
