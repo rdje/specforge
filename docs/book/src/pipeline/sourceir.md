@@ -65,8 +65,8 @@ SemanticIR, IntentIR, and the ISF adapter. EvidenceIR's subsequent proof migrati
 retained chains measurable and makes their extracted fields byte-identical under the new schema-3 authority.
 The remaining SourceIR and EvidenceIR documents stay legacy proofless, inspection-only inputs until their
 reclaimed bundles return through owned re-ingest — which is how the frontier grows: it was 24 current / 54
-legacy at the migration and is **26 / 52** today, after `WIRE-BASED-100.9b`/`.9c` re-ingested the APB and AHB
-golds on `2026-09-10`. SemanticIR replay from a quarantined EvidenceIR input is
+legacy at the migration and is **27 / 51** today, after `WIRE-BASED-100.9b`/`.9c`/`.9d` re-ingested the APB,
+AHB and AXI golds on `2026-09-10`. SemanticIR replay from a quarantined EvidenceIR input is
 unmeasurable rather than current. SemanticIR and IntentIR preserve that closed frontier: only the verified
 chains can reach a fresh adapter, while persisted later-stage files for the legacy ones remain historical rather
 than acquiring authority from stage-local reproducibility.

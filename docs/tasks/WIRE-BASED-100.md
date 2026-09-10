@@ -243,8 +243,14 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   corrected the gold's antecedent to that identity; `f88d463d` deleted the resolver and installed the opposite
   behaviour as a tested invariant
   (`temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling`: with `PSELX` declared,
-  `"PSEL is asserted"` must yield NO predicate), and made the declared spelling the document's own `PSELx`.
-  So the gold's `PSELX` is unreachable by two independent routes, and `PNSE`/`PBUSER` each lose an antecedent.
+  `"PSEL is asserted"` must yield NO predicate). `PNSE`/`PBUSER` each lose an antecedent as a result.
+  **CORRECTED `2026-09-10` by `.9d`:** `.9b` also blamed the same commit's identifier-opacity change, which
+  moved the declared select from `PSELX` to `PSELx`, and called the gold unreachable "by two independent
+  routes". That second route does not exist. `eval::temporal_predicate_key`
+  (`crates/specforge/src/eval.rs:458`) uppercases every name before comparison, so a spelling change of case
+  alone cannot move a score — demonstrated independently by `.9d`, where the produced antecedent `ARESETn`
+  matched the gold's `ARESETN` and AXI temporal scored `3/3`. There is exactly ONE cause: the deleted
+  resolver.
   **The two candidate resolutions are genuinely different, and the leaf must choose on evidence, not
   convenience.** (a) Reinstate the binding on a SOURCE-GROUNDED footing — the document itself declares the
   select and its per-completer index, so the link would be read from the declaration rather than inferred from
@@ -592,7 +598,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: `python3 scripts/measure_swd_frame_phase_scope.py` (its `adversarial control` section)
   Commit: see log.
 
-- ID: `WIRE-BASED-100.9` · Status: `active` (umbrella; `.9a` `2026-09-01`, `.9b`/`.9c` `2026-09-10`) · Goal: **make the
+- ID: `WIRE-BASED-100.9` · Status: `done` (`2026-09-10`; `.9a` `2026-09-01`, `.9b`/`.9c`/`.9d` `2026-09-10`) · Goal: **make the
   APB/AHB/AXI wire golds measurable again by re-ingesting them, and own that work here.** `.8` restored the
   oracle over the 24 rebuildable chains and closed by handing its remainder away in one sentence —
   *"Re-ingesting the legacy stratum stays with the corpus refresh frontier"*, repeated in its `Non-goal` as
@@ -614,8 +620,19 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   and AXI hold six of the eleven tracked eval datasets and none of them can be scored at all, so every APB/AHB/
   AXI number this tree has published is currently un-re-derivable — exactly the claim `CLAIM_VERIFICATION.md`
   refuses. Re-ingesting three documents restores six datasets.
-  Children: `.9a` (measurement + ownership, done), `.9b` (APB, done), `.9c` (AHB, done), `.9d` (AXI) —
-  smallest document first, one per leaf, each carrying its own before/after evidence. **`.9b`'s outcome changes what
+  Children: `.9a` (measurement + ownership), `.9b` (APB), `.9c` (AHB), `.9d` (AXI) — all done `2026-09-10`
+  except `.9a` (`2026-09-01`); smallest document first, one per leaf, each carrying its own before/after
+  evidence.
+  **CLOSED `2026-09-10`. Acceptance met in full:** all six datasets — `seed_apb`, `seed_apb_temporal`,
+  `seed_ahb`, `seed_ahb_temporal`, `seed_axi`, `seed_axi_temporal` — run to a real score under
+  `--provider skip`; each leaf published its per-fact re-derivation against the carried numbers; the census
+  reports **27 measurable (34.6%) / 51 legacy** with **5 of 7** gold documents measurable and the two that
+  are not (RISC-V Debug, NVMe) are exactly the ones `.9a` routed OUT by name. **Twelve carried numbers were
+  re-derived: eleven held and one was withdrawn** (APB temporal `1.000 → 0.333`). Three findings were opened
+  rather than absorbed: `.4a` (the deleted antecedent resolver), `RETAINED-BUNDLE-POPULATION-FROZEN` (the
+  retained set can neither grow nor shrink) and `.10` (AXI's 115 lost typed declarations). **The durable
+  lesson: a legacy chain cannot be scored, so for four weeks nothing could tell a held number from a rotted
+  one — and re-derivation moved a number in one document out of three, in the direction nobody predicted.** **`.9b`'s outcome changes what
   `.9c`/`.9d` must expect:** the route itself needs no change, but a re-ingested wire gold can return a
   DIFFERENT number from the one the tree carries, and `.9b` found one — so each remaining leaf publishes its
   re-derivation as a verdict per aspect, and any temporal antecedent that names an indexed select
@@ -734,8 +751,12 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   `PBUSER`'s antecedent set loses its `PSELX` member (`PENABLE`+`PREADY` survive, both declared verbatim).
   The same commit also removed identifier-spelling authority upstream, so the declared identity is now the
   document's own `PSELx` — visible as `sigcon_0011`'s antecedent moving `PSELX → PSELx` across the re-ingest.
-  The gold asks for `PSELX`, which no longer names anything the pipeline can produce, by **two** independent
-  routes.
+  **CORRECTION (`2026-09-10`, `.9d`): that spelling move is real but SCORING-NEUTRAL, and this leaf was wrong
+  to call it a second independent route.** `eval::temporal_predicate_key` (`crates/specforge/src/eval.rs:458`)
+  uppercases every name before comparison, so case alone cannot move a score; `.9d` demonstrated it from the
+  other side, where the produced `ARESETn` matched the gold's `ARESETN` and AXI temporal scored `3/3`. The
+  single cause of APB's loss is the deleted resolver, and the fix `.4a` owes is the antecedent, not the
+  spelling.
   **The re-ingest did not cause this, and the preserved bytes prove it.** In the PRESERVED legacy SemanticIR
   (`generated/preserved/WIRE-BASED-100.9b/pre-reingest/`, digests below) `temporal_signal_constraint_sigcon_0009`
   (`PNSE`) already carries `antecedents: []` and `…_sigcon_0014` (`PBUSER`) already carries only
@@ -823,7 +844,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: see log.
 
-- ID: `WIRE-BASED-100.9d` · Status: `pending` · Goal: **re-ingest the AXI gold `ihi0022_l` and re-derive its
+- ID: `WIRE-BASED-100.9d` · Status: `done` (`2026-09-10`; AXI re-ingested, **all six numbers hold**, and two
+  disproven predictions corrected) · Goal: **re-ingest the AXI gold `ihi0022_l` and re-derive its
   score** (2.0 MB — the largest, and the one whose persisted chain is 14.5 MB across four stages). Same
   acceptance shape as `.9b`, against the currently carried `constraint 4/4`, `relation 6/6`, `temporal 3/3`.
   Carries one extra check the smaller two do not: AXI is the document `KG-ISF-COMPLETENESS.5.iv.a` predicted
@@ -838,8 +860,123 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   the declared catalog BEFORE predicting. AXI is also the largest (2.0 MB, a 14.5 MB persisted chain), so
   preserve first and watch RAM.
   Prerequisite: `WIRE-BASED-100.9c`.
+  **RESULT — every carried AXI number re-derives, and BOTH of this leaf's stated predictions were wrong.**
+  Route unchanged (`DOCLING_DEVICE=cpu ingest` → `evidence` → `semantic` → `intent` → `adapt --target isf`):
+  320 page artifacts / 333 visual / 0 residuals / `high`, chain canonical **3 / 3 / 2 / 2**. Census moves
+  `26 → 27` measurable (33.3% → 34.6%), legacy `52 → 51`, gold documents measurable `4 → 5` of 7 — the
+  remaining two (RISC-V Debug, NVMe) are the ones `.9a` routed OUT of this tree by name.
+
+  | dataset · aspect | carried | re-derived `2026-09-10` | verdict |
+  | --- | --- | --- | --- |
+  | `seed_axi` signal_constraint | `4/4` | `P=R=F1=1.000` (tp=4 fp=0 fn=0) | **holds** |
+  | `seed_axi` actor_signal_relation (source-tolerant + filtered) | `6/6` | `P=R=F1=1.000` (tp=6 fp=0 fn=0) | **holds** |
+  | `seed_axi` document-level recall | constraints 4/4, relations 6/6 | constraints 4/4, relations 6/6 | **holds** |
+  | `seed_axi_temporal` temporal_rule | `3/3` | `P=R=F1=1.000` (tp=3 fp=0 fn=0) | **holds** |
+
+  **PREDICTION 1, DISPROVEN — and it corrects a `.9b` claim rather than only this leaf's.** Before the
+  re-ingest this leaf predicted AXI temporal would score `1/2`, because the gold's antecedent is spelled
+  `ARESETN` while identifier opacity makes the declared identity `ARESETn`. It scored `3/3`: the produced
+  antecedent IS `ARESETn` (`temporal_signal_constraint_sigcon_0046`/`0047`) and it MATCHED, because
+  `eval::temporal_predicate_key` (`crates/specforge/src/eval.rs:458`) uppercases every name before comparing.
+  **Case can never move a score**, so `.9b`'s "unreachable by two independent routes" is withdrawn: the sole
+  cause of APB's temporal loss is `.4`'s deleted resolver, and `.4a` owes the antecedent, not the spelling.
+  **PREDICTION 2, DISPROVEN.** `KG-ISF-COMPLETENESS.5.iv.a` predicted this document "would mint a NEW `AWATOP`
+  enum" and could not verify it because `ihi0022_l` was unrebuildable. It mints nothing new: `(type AWATOP
+  (bits 4))` is present in the PRESERVED legacy adapter and in the new one, byte-for-byte the same
+  declaration. The open prediction is answered NO. The adapter's enum count did move `14 → 15`, so which enum
+  is new is a separate, smaller question and belongs to that tree, not this one.
+  **THE FINDING THIS LEAF DID NOT EXPECT: AXI's typed signal-declaration capture lost 115 declarations.**
+  The declared inventory moves **289 → 159 distinct signals** and **every one of the 110 `*CHK` parity
+  signals disappears** from SemanticIR; `table_signal_declaration_provenance` drops `411 → 265` records and
+  `304 → 170` distinct signals (`115 → 0` ending in `CHK`). **It is not a re-ingest artifact and the SourceIR
+  proves it:** old and new SourceIR are structurally identical — 320 pages / 333 visual / **286 tables** /
+  3,652 content elements / 527 sections — so the ingest is stable and the change is entirely in the EvidenceIR
+  producer between the binary that wrote the legacy chain (`2026-08-12`) and today's. **Nothing is
+  unrecoverable:** the raw table row survives in both (`statement_4788` = `| AWVALIDCHK | AWVALID | 1 |
+  ARESETn |`); what stopped is the SYNTHESIS of the typed declaration the old chain also carried
+  (`statement_6025` = `Signal AWVALIDCHK is width 1.`). The source tables are shaped
+  `Name | Signals covered | Width | Check enable` with a usable width, which is exactly what
+  `_ => continue` in the width/direction synthesis (`crates/specforge/src/ir/evidence.rs`) is supposed to
+  admit — so the cause is a real bisect, not a guess, and this leaf does not guess it. Owned by
+  `WIRE-BASED-100.10`, NOT fixed here; the six scored numbers are unaffected, which is precisely why a score
+  alone would never have shown it. The AXI adapter also gained junk interface members minted from prose
+  (`The`, `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`, …) and its actor count moved `21 → 134`; both
+  are routed to `.10` with the declaration loss because they share the table/actor synthesis boundary.
+  **Same two dispositions as `.9b`/`.9c`:** the ISF adapter moved `renderable` → `blocked`
+  (`ACLK` demoted out of `(clock ACLK)`), and the normalized bundle is HELD OUT at
+  `generated/preserved/WIRE-BASED-100.9d/axi-normalized-bundle-held-out/` per
+  `RETAINED-BUNDLE-POPULATION-FROZEN`.
+  Preservation (repo-volume, `2026-09-10`, before the rebuild; 15 MB): `generated/preserved/
+  WIRE-BASED-100.9d/pre-reingest/` — `source_ir.json` `e010c13c9007b7f7…`, `evidence_ir.json`
+  `ea500fc02ed380c4…`, `semantic_ir.json` `80ba2ac6e61ae363…`, `intent_ir.json` `d20578e3d796f292…`,
+  `adapters_isf/adapter.json` `d2dca5ad2c904ba2…`; full manifest in that directory's `SHA256SUMS.txt`.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
+
+- ID: `WIRE-BASED-100.10` · Status: `pending` · Goal: **recover AXI's 115 lost typed signal declarations, and
+  the junk interface members that arrived with them.** Measured by `.9d` from artifacts, not inferred: the
+  declared inventory is `289 → 159` distinct signals with all `110` `*CHK` parity signals gone,
+  `table_signal_declaration_provenance` is `411 → 265` records / `304 → 170` distinct / `115 → 0` `*CHK`, and
+  the actor count is `21 → 134` with prose words (`The`, `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`,
+  `RP`, `CRDT`, `CRDTSH`, `SHAREDCRD`, `AxLEN`) reaching the ISF interface.
+  **The attribution is already narrowed to one seam and must be finished by bisect, not by reading code.**
+  The SourceIR is byte-stable across the re-ingest (320 pages / 333 visual / 286 tables / 3,652 content / 527
+  sections, identical), so the ingest is exonerated; the raw table row survives as a statement in both chains
+  (`statement_4788`), so nothing is lost upstream of synthesis; only the synthesized typed declaration
+  (`Signal AWVALIDCHK is width 1.`, `statement_6025` in the legacy chain) stopped. The tables are
+  `Name | Signals covered | Width | Check enable` and carry a width, so the `_ => continue` arm that drops a
+  row with neither direction nor width should NOT be reached — meaning either the width column or the name
+  column stopped being recognised for this shape. Attribute by re-deriving from each revision's own producer
+  (`git show <rev>:crates/specforge/src/ir/evidence.rs`) across `2026-08-12..HEAD`, never by reading a diff.
+  **Decide, do not assume, whether the loss is a regression or a retirement.** APB and AHB still carry their
+  `*CHK` signals today (`PADDRCHK`, `HSELxCHK` are in their current `.isf` interfaces), so this is not a
+  blanket ADR 0006 retirement of parity-check capture; if it turns out to be a deliberate narrowing, the
+  retirement must be published where the number is, exactly as `.8c` had to.
+  Acceptance: the cause is named with a revision and a producer function; AXI's typed declarations are
+  restored or their retirement is published with the count; the junk actors/interface members are gone or
+  explained; `kg-bench` green; the six WIRE-BASED-100 scored numbers unchanged; `scripts/check_doctrines.sh`
+  green.
+  Non-goal: re-scoring AXI (all six numbers already hold — this loss is invisible to them, which is the
+  point); widening any gold.
+  Prerequisite: `WIRE-BASED-100.9d`.
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.9d` (RE-INGEST + RE-DERIVATION, closes `.9`) — DONE `2026-09-10`
+
+- [x] **REPRODUCE / MEASURE** — baseline from the binary before the rebuild: `eval-extraction … seed_axi.json`
+  and `… seed_axi_temporal.json --provider skip` both printed the UNMEASURABLE disposition, withholding 11 and
+  2 gold items; the census read **26 measurable / 52 legacy**, gold documents 4 of 7. The outgoing chain
+  (SourceIR 1 / EvidenceIR 2 / SemanticIR 1 / IntentIR 1, 15 MB) was preserved with a SHA-256 manifest first.
+- [x] **ROOT CAUSE (WHY + WHERE)** — three, each named with a location. (1) The predicted `ARESETN`/`ARESETn`
+  mismatch does not exist: `eval::temporal_predicate_key` (`crates/specforge/src/eval.rs:458`) uppercases every
+  name, so case cannot move a score — which withdraws `.9b`'s second "route". (2) `AWATOP` is not newly
+  minted: `(type AWATOP (bits 4))` is identical in the preserved legacy adapter and the new one. (3) The 115
+  lost typed declarations are located at the synthesis seam, not the ingest: the SourceIR is structurally
+  identical across the re-ingest (320/333/286/3,652/527) and the raw row survives in both chains
+  (`statement_4788`), while the synthesized `Signal AWVALIDCHK is width 1.` (`statement_6025`) is gone —
+  the `_ => continue` width/direction arm in `crates/specforge/src/ir/evidence.rs`. Attribution to a revision
+  is deliberately left to `.10`'s bisect rather than guessed here.
+- [x] **ADDRESSED (verified)** — the chain is canonical and scoreable: `ingest` → 320 page artifacts / 333
+  visual / 0 residuals / `high`; `evidence` → 527 anchors / 5,909 spans / 220 links / 6,283 statements;
+  `semantic` → 134 actors / 298 interfaces / 923 invariants; `intent` → 129 actors / 604 behaviors / 939
+  constraints; schema **3 / 3 / 2 / 2**. Scores: `seed_axi` constraints `1.000` (tp=4 fp=0 fn=0) and relations
+  `1.000` (tp=6 fp=0 fn=0, source-tolerant + filtered), document-level 4/4 and 6/6; `seed_axi_temporal`
+  `1.000` (tp=3 fp=0 fn=0). Census **27 measurable (34.6%) / 51 legacy**, gold documents **5 of 7** — closing
+  `.9`.
+- [x] **NO REGRESSION** — in the scored sense: no Rust source touched, the AXI gold files are byte-identical,
+  and all six numbers hold. **Stated plainly rather than implied: a real un-scored regression WAS found** (115
+  typed declarations, 130 declared signals, 113 spurious actors) and is owned by `.10` rather than reported
+  and dropped. Named re-runnable oracles: `bash scripts/check_chain_currency.sh`, `bash
+  scripts/check_doctrines.sh`.
+- [x] **GENERICITY (ADR 0006)** — N/A for the rebuild. `.10` must decide whether the declaration loss is a
+  genericity retirement or a defect, and APB/AHB keeping their `*CHK` signals is the evidence that says it is
+  not a blanket retirement.
+- [x] **LOCKSTEP** — `.9` is closed with its acceptance quoted against the measured result; `.9b`'s
+  two-routes claim is withdrawn where it was published (tree, `CHANGES.md`); `KG-ISF-COMPLETENESS.5.iv.a`'s
+  `AWATOP` prediction is answered; `.10` is opened; the corpus counts that moved (26 → 27 measurable, 52 → 51
+  legacy, 26 → 27 adapter manifests) are corrected in the book, `LIVE_ACHIEVEMENT_STATUS.md`, `CHANGES.md`,
+  `ROADMAP.md` and the resume pointer.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.9c` (RE-INGEST + RE-DERIVATION) — DONE `2026-09-10`
 
@@ -1254,6 +1391,25 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 recall, full-doc completeness) harden it; then roll the same set to AHB → AXI → SWD (`.5`).
 
 ## Changelog
+
+- `2026-09-10` (`.9d` done, `.9` CLOSED, `.10` opened): **every AXI number holds, both of the leaf's
+  predictions were wrong, and the re-ingest exposed a 115-declaration loss no score could see.** All six AXI
+  numbers re-derive — constraints `1.000` (tp=4 fp=0 fn=0), relations `1.000` (tp=6 fp=0 fn=0), document-level
+  4/4 and 6/6, temporal `1.000` (tp=3 fp=0 fn=0) — taking the corpus to **27 measurable (34.6%) / 51 legacy**
+  and gold documents to **5 of 7**, which closes `.9`: all six datasets score, and the two documents that
+  still cannot are exactly the ones `.9a` routed out. **Prediction 1 disproven, and it withdraws a `.9b`
+  claim:** AXI temporal was predicted to lose the `ARESETN`/`ARESETn` item; it scored `3/3` because
+  `eval::temporal_predicate_key` (`eval.rs:458`) uppercases every name, so case can never move a score — the
+  sole cause of APB's loss is the deleted resolver, and `.9b`'s "two independent routes" is withdrawn.
+  **Prediction 2 disproven:** `KG-ISF-COMPLETENESS.5.iv.a`'s open `AWATOP` prediction is answered NO —
+  `(type AWATOP (bits 4))` is identical in the preserved legacy adapter and the new one. **And the finding
+  nobody was looking for:** AXI's declared inventory fell `289 → 159` signals with all `110` `*CHK` parity
+  signals gone (`table_signal_declaration_provenance` `411 → 265` records, `115 → 0` `*CHK`) while the actor
+  count rose `21 → 134` with prose words reaching the ISF interface. The SourceIR is structurally identical
+  across the re-ingest and the raw table row survives in both chains, so the loss sits in typed-declaration
+  synthesis, not ingest — owned by `.10`, attributed by bisect there rather than guessed here. **Twelve
+  carried numbers re-derived across `.9`: eleven held, one was withdrawn, and the largest defect found was
+  invisible to all twelve.**
 
 - `2026-09-10` (`.9c` done): **AHB survives its re-ingest intact, and `.9b`'s prediction that it would not is
   corrected.** All four carried numbers re-derive exactly — constraints `1.000` (tp=6 fp=0 fn=0), relations

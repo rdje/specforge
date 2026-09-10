@@ -55,10 +55,10 @@ returns the original in-memory IntentIR unchanged.
 Schemas older than 2 are inspection-only and cannot feed an adapter. A current proofless artifact, a stale
 ruleset, a field edit with a recomputed digest, an unauthorized mutation, or a future schema fails closed.
 Repository-owned paths are resolved and normalized before verification, so moving the repository does not alter
-otherwise identical authority. The retained population has 26 proof-current IntentIR chains — 24 whose
-migration changed no pre-existing public field, plus the APB and AHB golds returned by owned re-ingest
-(`WIRE-BASED-100.9b`/`.9c`, `2026-09-10`); 52 historical chains remain explicitly unmeasurable behind legacy
-SemanticIR. No synthetic proof is assigned to them.
+otherwise identical authority. The retained population has 27 proof-current IntentIR chains — 24 whose
+migration changed no pre-existing public field, plus the APB, AHB and AXI golds returned by owned re-ingest
+(`WIRE-BASED-100.9b`/`.9c`/`.9d`, `2026-09-10`); 51 historical chains remain explicitly unmeasurable behind
+legacy SemanticIR. No synthetic proof is assigned to them.
 IntentIR implementation identity is the shared
 [production-semantic registry/verifier closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met),
 not its test-and-comment-bearing source file.

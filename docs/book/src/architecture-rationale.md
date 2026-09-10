@@ -158,12 +158,13 @@ and proofless seams. The structural doctrine and its adversarial qualification a
 population behavioral qualification remains release-blocking work, not an accepted shortcut.
 
 The bounded identity-remediation parent remains jointly qualified over the exact three-commit range
-`89d8dee7..9c38b569`. The later proof migration exposes a stricter current frontier: exactly 26 documents retain
-verifiable source capture and current SourceIR/EvidenceIR proof, while 52 historical chains are inspection-only.
-SemanticIR, IntentIR, and adapter replay are consequently 26 current / 52 unmeasurable; all 26 current adapters
-are honestly blocked and reconcile to zero emitted files. Existing later-stage files for the other 52 documents
+`89d8dee7..9c38b569`. The later proof migration exposes a stricter current frontier: exactly 27 documents retain
+verifiable source capture and current SourceIR/EvidenceIR proof, while 51 historical chains are inspection-only.
+SemanticIR, IntentIR, and adapter replay are consequently 27 current / 51 unmeasurable; all 27 current adapters
+are honestly blocked and reconcile to zero emitted files. Existing later-stage files for the other 51 documents
 are historical, not a substitute for the missing upstream proof chain. The frontier was 24 / 54 at the migration
-and moves only by owned re-ingest, one document at a time (`WIRE-BASED-100.9b` APB and `.9c` AHB, `2026-09-10`). Focused alpha-renaming, identity, prompt, spelling, fixture-name, and fail-closed proposal
+and moves only by owned re-ingest, one document at a time (`WIRE-BASED-100.9b`/`.9c`/`.9d` returned the APB, AHB
+and AXI wire golds on `2026-09-10`). Focused alpha-renaming, identity, prompt, spelling, fixture-name, and fail-closed proposal
 controls cover the repaired paths. Structural enforcement is complete; population-level metamorphic
 qualification remains mandatory before the implementation can claim this invariant as a whole.
 
@@ -218,7 +219,7 @@ inventoried structural alpha contract. Final structural qualification covered 15
 proof-bearing artifacts, and its exact comparison found zero non-proof/non-validation or residual delta. Those
 same 24 chain ledgers contained all 170 rule ids and 150,942 cumulative claims when that qualification was
 measured; claim totals are re-measured per slice rather than carried as an invariant, and the retained
-population has since grown to 26. The other 52 chains remain explicitly proof-unmeasurable.
+population has since grown to 27. The other 51 chains remain explicitly proof-unmeasurable.
 
 Population behavioral qualification is active under `.6d.ii.f` and is deliberately relational rather than one
 byte-equality gate. `.f.i` has frozen 24 current rows: three repository-owned and 21 portable external PDF
@@ -260,8 +261,8 @@ first occurrence, and removes complete declared aliases before interpreting titl
 projection and narrow set/declaration canonicalization close the representation-only comparison surfaces while
 non-bijective ids and ordered transaction steps remain exact. The clean-revision aggregate is 35 pass / zero fail /
 16 unmeasurable / zero invalid: all 34 PDF relations and I2C alpha execute fresh under revision `2cdcd131`, while
-retained evidence supplies only alpha eligibility. The shared-extractor movement is reconciled exactly: all 26 measurable persisted chains are current and zero stale
-through EvidenceIR, SemanticIR, IntentIR, and adapter; all 26 adapters remain blocked with no emitted ISF.
+retained evidence supplies only alpha eligibility. The shared-extractor movement is reconciled exactly: all 27 measurable persisted chains are current and zero stale
+through EvidenceIR, SemanticIR, IntentIR, and adapter; all 27 adapters remain blocked with no emitted ISF.
 Transformation recipes, expected
 relations, held-out labels, and comparison evidence remain in conformance; core receives each variant only as
 current input. The [behavioral design report](../../research/behavioral-genericity-qualification-design.md)
