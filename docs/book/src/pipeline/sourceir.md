@@ -63,10 +63,12 @@ recorded source and retained page/visual manifests, then reconstructed classific
 generic rules and created schema-3 proofs. Every one of those 24 chains was rebuilt through EvidenceIR,
 SemanticIR, IntentIR, and the ISF adapter. EvidenceIR's subsequent proof migration keeps exactly those 24
 retained chains measurable and makes their extracted fields byte-identical under the new schema-3 authority.
-The other 54 SourceIR and EvidenceIR documents remain legacy proofless, inspection-only inputs until their
-reclaimed bundles return through owned re-ingest. SemanticIR replay from those quarantined EvidenceIR inputs is
-unmeasurable rather than current. SemanticIR and IntentIR now preserve that closed frontier: only the 24 verified
-chains can reach a fresh adapter, while persisted later-stage files for the other 54 remain historical rather
+The remaining SourceIR and EvidenceIR documents stay legacy proofless, inspection-only inputs until their
+reclaimed bundles return through owned re-ingest — which is how the frontier grows: it was 24 current / 54
+legacy at the migration and is **25 / 53** today, after `WIRE-BASED-100.9b` re-ingested the APB gold on
+`2026-09-10`. SemanticIR replay from a quarantined EvidenceIR input is
+unmeasurable rather than current. SemanticIR and IntentIR preserve that closed frontier: only the verified
+chains can reach a fresh adapter, while persisted later-stage files for the legacy ones remain historical rather
 than acquiring authority from stage-local reproducibility.
 
 ## Executable source authority
@@ -138,9 +140,14 @@ not undo that work. Report normalized retention separately: it is the *measurabi
 can be rebuilt again without another Docling ingest — and a refresh now keeps its bundle so that census grows by
 one each time (see [Generated Artifacts](../reference/generated-artifacts.md#normalized-bundles-are-retained)).
 
-The current measured example (`2026-08-12`) is 52 completed current-binary refreshes with five real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 78 SourceIR files, 24 retained
-normalized bundles, 78 EvidenceIR files, and 78 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
+The current measured example (`2026-09-10`) is 52 completed current-binary refreshes with five real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 78 SourceIR files, 24 declared
+retained normalized bundles, 78 EvidenceIR files, and 78 SemanticIR→IntentIR→adapter chains. Three counts move
+independently here, which is why they are reported separately: the refresh queue governs the host-library
+program and excludes in-repo `corpus/` documents by contract, so the `2026-09-10` APB re-ingest left `52 + 5`
+unchanged; the canonical proof frontier grew to 25; and the retention declaration deliberately stayed at 24,
+because that declaration is currently frozen (`RETAINED-BUNDLE-POPULATION-FROZEN`) and APB's bundle is held on
+the repository volume rather than declared. The newest bundle belongs to
 the latest completed refresh: all project-owned path values are final, present, and repository-relative. An
 explicitly authorized external source PDF remains absolute and labeled `external_input`; source and repository
 are on the same SSD. Bundle presence is measurability status, not what makes a refresh complete; complete,
@@ -717,8 +724,8 @@ a diagram puts its items two levels down. An interior item that resolves to no f
 ingest rather than being dropped.
 
 Empty text is the one exclusion, and it is the same rule `content_elements` already applies: an item
-whose text normalizes away carries no information. Across all 24 retained converter bundles that is
-**one** item, against 13,506 carried.
+whose text normalizes away carries no information. Across the retained converter bundles (24 when this was
+measured) that is **one** item, against 13,506 carried.
 
 The example above is real. Re-ingesting the 14-page I2S bus specification closes its
 figure-interior bucket completely — 464 converter text items, 115 reaching a record before and

@@ -83,11 +83,15 @@ ledger before persistence. Rebuilding EvidenceIR no longer imports hidden NLP st
 without an explicit replay event cannot silently regain authority.
 
 Schemas 1 and 2 remain available through the inspection API only. They cannot feed SemanticIR. In the local
-corpus, the 24 documents with retained, verified SourceIR captures now have schema-3 EvidenceIR and no extracted
-field changed during migration. The other 54 EvidenceIR files remain historical, proofless, inspection-only
-artifacts until their SourceIR inputs can be recaptured under an owned refresh. The currency gate reports their
+corpus, the 25 documents with a verified current SourceIR capture have schema-3 EvidenceIR, and no extracted
+field changed during the migration that established 24 of them; owned re-ingest returns the rest one document
+at a time. The other 53 EvidenceIR files remain historical, proofless, inspection-only
+artifacts until their SourceIR inputs can be recaptured under an owned refresh. Proof currency and bundle
+RETENTION are separate properties: 24 of the 25 also have a declared retained normalized bundle, so the 25th
+(APB) is canonical and scoreable while its EvidenceIR replay reads unmeasurable
+(`RETAINED-BUNDLE-POPULATION-FROZEN`). The currency gate reports their
 EvidenceIR-to-SemanticIR replay as unmeasurable rather than pretending it is current. SemanticIR and IntentIR now
-enforce the same proof frontier: the 24 reachable chains are current through the product boundary, while the 54
+enforce the same proof frontier: the 25 reachable chains are current through the product boundary, while the 53
 historical later-stage files cannot regain authority from their storage location or old stage-local bytes.
 EvidenceIR implementation identity uses the shared
 [production-semantic digest closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met),

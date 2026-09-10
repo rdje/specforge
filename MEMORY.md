@@ -7,44 +7,43 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: `WIRE-BASED-100.9` — re-ingest the legacy wire golds so this tree's numbers can be re-derived.
-  `.9a` (measurement + ownership) COMPLETE; `.9b` APB / `.9c` AHB / `.9d` AXI `pending`. `.8` CLOSED. Also
-  open: `KG-ISF-COMPLETENESS` beyond `.5` (all `.5` children done);
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`;
-  `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION`
-  `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
-  `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`.
-- Current state: **only 24 of 78 persisted documents (30.8%) pass the scorer's schema gate, and just 2 carry
-  a gold**, and no gate published that until `.9a` derived it
-  (`scripts/measure_corpus_canonical_currency.py`). `check_chain_currency.sh` reads `24/24 current` over the
-  rebuildable stratum alone; `check_corpus_frontier.sh` reads `52 refreshed + 5 remaining` over a
-  host-library sweep — and **31 of those 52 are still legacy**, because nothing ties `refreshed` to a schema.
-  **`.8`'s hand-off of the re-ingest to that frontier is disproven**: its cohort rule is
-  `excluded_source_prefixes: ["corpus/"]`, so all 18 legacy in-repo gold/eval documents are outside it by
-  construction. **7 gold documents, 2 measurable** (SWD/ADI, I2C). **Cause: `CORPUS-PATTERN-REUSE.3c`
-  refreshed APB/AHB/AXI on `2026-06-09` at 1.000; the `2026-08-12` schema bump made it legacy, unreported.**
-  SWD is 5/29, not 29/29 (`.8c`).
-- Next action: `WIRE-BASED-100.9b` — preserve the persisted APB chain on the repo volume FIRST (a legacy
-  artifact cannot be regenerated), then `ingest`/`evidence`/`semantic` on tracked
-  `corpus/arm/amba/core/apb/current/IHI0024_E_*.pdf`, then `eval-extraction --provider skip` on `seed_apb`
-  + `seed_apb_temporal`, publishing the re-derived per-fact table against the carried 6/6 · 6/6 · 3/3.
-  Routed OUT, still unowned: RISC-V Debug (`PDF-VARIANT-DIGESTION` register class); the 31
-  refreshed-but-legacy cohort documents (what `refreshed` should mean); and **no gate fails when a chain
-  falls below the canonical schema** — the defect that let a completed refresh rot unreported.
+  `.9a` and `.9b` (APB) COMPLETE; `.9c` AHB / `.9d` AXI `pending`. `.8` CLOSED. Opened by `.9b`:
+  `WIRE-BASED-100.4a` (temporal antecedent identity) and the new tree
+  `RETAINED-BUNDLE-POPULATION-FROZEN` (`.1`/`.2`/`.3` all pending). Also open:
+  `KG-ISF-COMPLETENESS` beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM`
+  `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY`
+  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`;
+  `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`;
+  `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`.
+- Current state: **APB is scoreable again and one published `1.000` is withdrawn.** The re-ingest
+  restored `ihi0024_e` to canonical 3/3/2/2, so the corpus is **25 measurable (32.1%) / 53 legacy** and
+  **3 of 7** gold documents can be scored. `seed_apb` re-derives EXACTLY — constraints `1.000`
+  (tp=6 fp=0 fn=0), relations `1.000` (tp=5 fp=0 fn=0), doc-level recall 6/6 and 6/6.
+  `seed_apb_temporal` does NOT: **`0.333` (tp=1 fp=2 fn=2)** against the carried `1.000`, so the tree's
+  "APB 100% on ALL three aspects" headline is withdrawn. Cause: `.4`'s `resolve_indexed_signal_family`
+  was deleted by `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` (`f88d463d`) when identifiers became opaque, so
+  the gold's `PSELX` antecedent is unproducible. **The preserved pre-rebuild SemanticIR already carries
+  both defects** — the loss was persisted and unscoreable, invisible for four weeks.
+- Next action: `WIRE-BASED-100.9c` — same route on AHB `ihi0033_c` (preserve the chain first), and
+  expect `seed_ahb_temporal` to fail the same way (`.5` reuses the resolver for `HSELx`); record it,
+  do not absorb the fix. Alternatively take `RETAINED-BUNDLE-POPULATION-FROZEN.1` first — it unblocks
+  the same wall `.9c`/`.9d` will hit.
 - In-flight uncommitted: none after this commit.
-- Blockers: none that stop work. Standing hazards: **read a gate's cohort rule before treating its ratio as
-  coverage of anything** — the denominator a gate publishes is the population it was built for, not the one
-  you are asking about (`[[corpus-canonical-currency-and-ownership]]`). **Never infer ownership from a
-  mention or a hand-off sentence: read the named owner's own contract.** **The absence of an OPEN owner is
-  not the absence of an owner — search CLOSED leaves before publishing "nobody owns X"** (`.9a` published
-  that and withdrew it; a closed leaf held the causal story). Prove the oracle runs BEFORE trusting a green
-  result; re-derive a published score before citing it; measure a proposed fix before building it (`.8d`'s
-  scope rule is wrong on all 11 SWD frame fields). When a change retires a producer, the stale surfaces
-  publish its NUMBER, not its ARTIFACT. Never name a stratum by one schema number — the legacy version
-  differs per stage (1/2/1/1 against 3/3/2/2 current). **A probe is not a port** — publish from a committed
-  derivation, never an ad-hoc script (`.8e`). **A rescue number is not a rescue** — `.8f`'s permissive
-  detector "recovers" 5 of 11 SWD fields and all five are false positives. A re-ingest destroys evidence no
-  rebuild can restore. The full derived-state refresh chain an edit to `CHANGES.md`, the book, a
-  fact card or `surfaces.jsonl` sets off — including the ASCII-only rollover `reason` and this file's
-  50-line cap — is `[[live-surface-edit-bookkeeping-chain]]`. Owned, not fixed:
-  `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`; and
-  `SCRATCH-RESIDUE-CONTAINMENT.4` — never run the fixture suite with the locality gate. `durability.stale_check` is never executed by any gate (`.18`).
+- Blockers: none that stop work. Standing hazards: **the retained normalized-bundle set can neither
+  grow nor shrink** — a size literal in two contract validators, a `reclamations != []` freeze, and a
+  set-equality join to a frozen behavioral qualification; APB's bundle is HELD at
+  `generated/preserved/WIRE-BASED-100.9b/apb-normalized-bundle-held-out/`, so its EvidenceIR replay
+  reads UNMEASURABLE by design until that tree's `.3`. **A re-ingest can return a DIFFERENT number
+  from the one a tree carries** — publish the re-derivation as a verdict per aspect and withdraw, never
+  carry. **A legacy chain cannot be scored, so a retired fix costs a published number silently**; that
+  missing canonical-currency gate is still unowned. Read a gate's cohort rule before treating its ratio
+  as coverage (`[[corpus-canonical-currency-and-ownership]]`). Never infer ownership from a mention;
+  read the named owner's contract, and search CLOSED leaves before publishing "nobody owns X".
+  Attribute a regression from producer history (`git log -S`), never by reading a diff. A probe is not
+  a port; a rescue number is not a rescue. A re-ingest destroys evidence no rebuild can restore —
+  preserve first. The derived-state refresh chain an edit to `CHANGES.md`, the book, a fact card or
+  `surfaces.jsonl` sets off is `[[live-surface-edit-bookkeeping-chain]]`; this file's cap is 50 lines.
+  Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`;
+  `SCRATCH-RESIDUE-CONTAINMENT.4` — never run the fixture suite with the locality gate.
+  `durability.stale_check` is never executed by any gate (`.18`), and no gate runs
+  `scripts/validate_canonical_recovery_contract.py` — which currently reports four unrelated failures.

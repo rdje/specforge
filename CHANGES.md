@@ -1,3 +1,69 @@
+### WIRE-BASED-100.9b — the APB gold is scoreable again, and scoring it withdraws a published 1.000
+
+- THE RE-INGEST RAN THE DEMONSTRATED ROUTE UNCHANGED and restored the APB chain to canonical authority:
+  `DOCLING_DEVICE=cpu ingest` → `evidence` → `semantic` → `intent` → `adapt --target isf` on the current
+  release binary, no model server, ~4 minutes — 48 page artifacts / 35 visual / 0 residuals /
+  `automation_confidence high`, and schema now **SourceIR 3 / EvidenceIR 3 /
+  SemanticIR 2 / IntentIR 2**. `scripts/measure_corpus_canonical_currency.py` moves from **24 measurable
+  (30.8%) / 54 legacy** to **25 (32.1%) / 53**, and gold-carrying documents from **2 of 7** to **3 of 7**.
+  The persisted chain was preserved with a SHA-256 manifest under
+  `generated/preserved/WIRE-BASED-100.9b/pre-reingest/` BEFORE any command wrote over it, because the current
+  binary refuses legacy input and cannot regenerate those bytes.
+- TWO OF THE THREE APB SCORES RE-DERIVE EXACTLY. `seed_apb`: `signal_constraint P=R=F1=1.000` (tp=6 fp=0 fn=0)
+  and `actor_signal_relation P=R=F1=1.000` (tp=5 fp=0 fn=0, source-tolerant + filtered), document-level recall
+  6/6 constraints and 6/6 relations — identical, per fact, to what the tree carried. Content anchoring did its
+  job across the re-segmentation the rebuild caused (extracted statements 597 → 598).
+- THE THIRD DOES NOT, AND IS WITHDRAWN RATHER THAN CARRIED. `seed_apb_temporal` scores
+  **`P=R=F1=0.333` (tp=1 fp=2 fn=2)** against the published `1.000`, so the `2026-06-06` "APB is 100% on ALL
+  three extraction aspects" headline is retired. Only the `PSTRB` rule still matches; `PNSE` and `PBUSER` are
+  each missed on their ANTECEDENT, and the scorer prints both missed keys.
+- CAUSE, ATTRIBUTED FROM PRODUCER HISTORY RATHER THAN A DIFF. `git log -S resolve_indexed_signal_family --
+  crates/specforge/src/ir/semantic.rs` returns exactly two commits: `WIRE-BASED-100.4` (`1c28516b`,
+  `2026-06-06`) added it so an un-indexed prose reference (`PSEL`) resolved to the declared indexed family
+  member (`PSELX`), and corrected the gold's antecedent to that canonical identity; then
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` (`f88d463d`, `2026-08-12`, *make document identifiers opaque*) DELETED
+  it and installed the opposite behaviour as a tested invariant —
+  `temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling` asserts that with `PSELX`
+  declared, `"PSEL is asserted"` must yield NO predicate. The same commit removed identifier-spelling authority
+  upstream, so the declared identity is now the document's own `PSELx` (visible as `sigcon_0011`'s antecedent
+  moving `PSELX → PSELx` across the re-ingest). The gold's `PSELX` is therefore unreachable by two independent
+  routes.
+- THE RE-INGEST DID NOT CAUSE IT, AND THE PRESERVED BYTES PROVE IT. In the preserved pre-rebuild SemanticIR,
+  `temporal_signal_constraint_sigcon_0009` (`PNSE`) already carries `antecedents: []` and `…_0014` (`PBUSER`)
+  already carries only `PENABLE`+`PREADY`. Both defects were already persisted in the artifact the `1.000` was
+  last associated with; the schema bump three days later made that artifact unscoreable, so the loss was
+  INVISIBLE FOR FOUR WEEKS and the re-ingest is what made it visible. This is exactly the unowned defect `.9a`
+  routed out — nothing fails when a persisted chain falls below the canonical schema — now demonstrated
+  costing a real published number.
+- OWNED, NOT LOGGED, AND THE GOLD WAS NOT TOUCHED. `WIRE-BASED-100.4a` now owns the choice between reinstating
+  a SOURCE-GROUNDED (not spelling-inferred) binding of an un-indexed prose reference to its declared indexed
+  identity, and ruling the two identities distinct and re-anchoring the gold. Editing the gold to recover the
+  headline is the failure mode this tree's governing principle exists to forbid. `.5` reuses the same resolver
+  for AHB `HSELx`, so `.9c` is expected to meet this again and will record it rather than absorb the fix.
+- ONE MORE MOVEMENT, AND IT IS NOT A REGRESSION: the APB ISF adapter went `renderable` → `blocked`
+  (`no source-grounded system clock/reset contract`; the emitted diagnostic reads
+  `(clock __specforge_unresolved_clock)`), because `PCLK`/`PRESETn` were previously recognised as clock and
+  reset from their spellings. That is the documented policy for the whole measurable stratum — every retained
+  adapter manifest is honestly blocked with zero emitted `.isf` — so APB joins that set as the 25th.
+- AND A SECOND FINDING, OWNED AS ITS OWN TREE: **the retained normalized-bundle population can neither grow
+  nor shrink.** The rebuild restored APB's bundle, and `check_chain_currency.sh` fails closed on an undeclared
+  bundle on disk — but declaring it turns `PRODUCTION-GENERICITY` and `RESIDUAL-ACTIONABILITY` red, because
+  `scripts/validate_residual_actionability_contract.py` and `scripts/validate_canonical_recovery_contract.py`
+  pin `len(retained_ids) != 24` as a literal and `scripts/check_behavioral_genericity_contract.py` joins the
+  retained set by SET EQUALITY to a release-blocking behavioral qualification frozen at 24 rows, a 7/17
+  calibration/holdout split and 51 declared held-out attempts. Recording a deliberate reclamation instead is
+  refused by the same two validators (`reclamations != []`). ADR 0025 mandates BOTH operations — a refresh
+  keeps its bundle, and reclamation stays deliberate and task-owned — so the first refresh to exercise it had
+  no compliant move. `.9b` HELD the bundle at
+  `generated/preserved/WIRE-BASED-100.9b/apb-normalized-bundle-held-out/` (repository volume, 25 MB,
+  byte-identical, nothing deleted) and left the declaration at 24, so APB's EvidenceIR replay reads
+  UNMEASURABLE while its SemanticIR/IntentIR/adapter replays stay measurable and current.
+  `RETAINED-BUNDLE-POPULATION-FROZEN` owns the repair and restores the bundle in its `.3`.
+- LOCKSTEP: the book's current 24/54 frontier statements move to 25/53 across the SourceIR, EvidenceIR,
+  SemanticIR, IntentIR, ISF-adapter, architecture-rationale, extraction-architecture and extraction-eval
+  chapters, with dated measurements left as dated rather than rewritten, and proof currency separated from
+  bundle retention wherever the two were stated as one number.
+
 ### WIRE-BASED-100.9a — the corpus refresh frontier cannot own the wire re-ingest, and 5 of 7 gold documents cannot be scored
 
 - `.8` closed by handing its remainder away in one sentence — *"Re-ingesting the legacy stratum stays with the

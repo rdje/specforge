@@ -220,7 +220,7 @@ benchmarks measure progress; they do not redefine the architecture.
 ### Structural qualification snapshot
 
 The complete structural program spans 15 committed slices. Its persisted boundary, re-measured on the current
-binary, is exact:
+binary at the close of that program, is exact:
 
 | Stage | Current / legacy | Registered families / fields | Stage-local claims in the 24 final ledgers | Public migration delta |
 | --- | ---: | ---: | ---: | ---: |
@@ -237,7 +237,10 @@ delta. The current residual surfaces contain 0 SourceIR, 3 SemanticIR, 8 IntentI
 adapters are honestly blocked with zero current emitted files. Claim totals are re-measured, not fixed: every
 production slice that adds or removes a canonical record moves them, so the
 [structural qualification report](../../../research/production-genericity-structural-qualification.md) pins its
-own dated boundary rather than a standing invariant. The 54 legacy chains remain inspectable but
+own dated boundary rather than a standing invariant. The population is not frozen either: owned re-ingest
+returns legacy chains one at a time, so the frontier is **25 current / 53 legacy** today
+(`WIRE-BASED-100.9b`, APB, `2026-09-10`) while the per-stage claim totals above stay attached to the 24 chains
+that qualification measured. The legacy chains remain inspectable but
 cannot feed canonical authority. The [structural qualification report](../../../research/production-genericity-structural-qualification.md)
 publishes the per-chain ledger and residual counts.
 

@@ -67,23 +67,30 @@ Demonstrated per-fact (content-anchored, existing facts):
 No low score is left unaddressed — each maps to a concrete, principled fix that raises the number
 *because the underlying facts become right*, never by relaxing the bar.
 
-## APB — 100% ACHIEVED (`2026-06-06`), demonstrated + provable
+## APB — where the three scores actually stand (re-derived `2026-09-10` by `.9b`)
 
 ```
-signal_constraint      P=1.000 R=1.000 F1=1.000  (tp=6 fp=0 fn=0)   # seed_apb.json
-actor_signal_relation  P=1.000 R=1.000 F1=1.000  (tp=5 fp=0 fn=0)   # seed_apb.json
-temporal_rule          P=1.000 R=1.000 F1=1.000  (tp=3 fp=0 fn=0)   # seed_apb_temporal.json (.4)
+signal_constraint      P=1.000 R=1.000 F1=1.000  (tp=6 fp=0 fn=0)   # seed_apb.json          HOLDS
+actor_signal_relation  P=1.000 R=1.000 F1=1.000  (tp=5 fp=0 fn=0)   # seed_apb.json          HOLDS
+temporal_rule          P=0.333 R=0.333 F1=0.333  (tp=1 fp=2 fn=2)   # seed_apb_temporal.json WITHDRAWN
 ```
 
-**APB is now 100% on ALL three extraction aspects** (constraints + relations + temporal), plus
-catalog-100% (35/35 signals, `.3a`) and an accurate completeness gauge (`.3a`+`.3b`: only genuine
-candidates remain). Reproducible: `specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json
---provider skip` and `… seed_apb_temporal.json --provider skip` (the `-- source-tolerant + filtered
-(WIRE-BASED-100) --` blocks). Every point earned by making facts correct — `.1` fixed id-drift, `.1b`
-credits valid sources, `.6` dropped garbage actors (`FOR`, `APB protocol`), `.7` dropped the
-descriptive-clause hallucination (`PRDATA must_be_stable`), `.4` resolved the `PSEL`↔`PSELx` antecedent
-identity. No faking — derived universal-language checks + index-suffix grammar (ADR 0006) with tested
-guards. Next: roll the same bar to AHB → AXI → SWD (`.5`).
+**Two of the three aspects re-derive at 1.000 on the current binary; the third does not, and the
+`2026-06-06` "100% on ALL three aspects" headline is withdrawn** rather than carried. Constraints and
+relations re-derive exactly, per fact, together with catalog-100% (35/35 signals, `.3a`) and the
+completeness gauge (`.3a`+`.3b`). Temporal returned to its own pre-`.4` baseline because
+`SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` (`f88d463d`, `2026-08-12`) deleted `.4`'s
+`resolve_indexed_signal_family` when it made document identifiers opaque — so the gold's canonical `PSELX`
+antecedent is no longer producible and `PNSE`/`PBUSER` each lose one. Recovery is owned by `.4a`; the gold
+is untouched. Reproducible:
+`specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json --provider skip` and
+`… seed_apb_temporal.json --provider skip` (the `-- source-tolerant + filtered (WIRE-BASED-100) --`
+blocks). What still stands was earned by making facts correct — `.1` fixed id-drift, `.1b` credits valid
+sources, `.6` dropped garbage actors (`FOR`, `APB protocol`), `.7` dropped the descriptive-clause
+hallucination (`PRDATA must_be_stable`) — with derived universal-language checks (ADR 0006) and tested
+guards. **The durable lesson is the four-week blind spot, not the number:** a legacy chain cannot be
+scored, so a retired fix cost a published `1.000` and no gate said so until `.9b` re-ingested the document.
+Next: `.4a` (temporal identity), then roll the bar to AHB → AXI → SWD (`.5`).
 
 ## Automatic detection — the heuristics are only a fast-path (owner requirement)
 
@@ -225,6 +232,35 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   now takes `known_signals` — the bare list member `PSEL` stays value-less so the shared `ASSERTED`
   distributes, instead of leaking `sv|PSELX|PSEL` and dropping PENABLE). +2 unit tests (canonicalization
   gold + a no-fabrication negative). Verification: see log. Commit: see log.
+  **RETIRED `2026-08-12`, discovered `2026-09-10` by `.9b`:** `resolve_indexed_signal_family` was DELETED by
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` (`f88d463d`), which removed identifier-spelling authority from the
+  pipeline; the temporal score returned to exactly the `0.333` (tp=1 fp=2 fn=2) baseline diagnosed above. The
+  fix and its demonstration stand as history; the current number does not. Recovery is `.4a`.
+- ID: `WIRE-BASED-100.4a` · Status: `pending` · Goal: **decide how an un-indexed prose signal reference binds to
+  its declared indexed identity under the identifier-opacity doctrine, and restore APB temporal to a number the
+  binary can produce.** Opened by `.9b`, which re-derived `seed_apb_temporal` at `P=R=F1=0.333` (tp=1 fp=2 fn=2)
+  against the carried `1.000` and root-caused it: `.4` canonicalized prose `PSEL` to the declared `PSELX` and
+  corrected the gold's antecedent to that identity; `f88d463d` deleted the resolver and installed the opposite
+  behaviour as a tested invariant
+  (`temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling`: with `PSELX` declared,
+  `"PSEL is asserted"` must yield NO predicate), and made the declared spelling the document's own `PSELx`.
+  So the gold's `PSELX` is unreachable by two independent routes, and `PNSE`/`PBUSER` each lose an antecedent.
+  **The two candidate resolutions are genuinely different, and the leaf must choose on evidence, not
+  convenience.** (a) Reinstate the binding on a SOURCE-GROUNDED footing — the document itself declares the
+  select and its per-completer index, so the link would be read from the declaration rather than inferred from
+  spelling, which is what the opacity doctrine actually forbids. (b) Rule that an un-indexed prose reference is
+  a genuinely distinct identity and re-anchor the gold to what the document declares — a gold correction, which
+  this tree permits ONLY as its own leaf with the fact left unchanged, never to recover a headline.
+  Whichever wins must state why the other is wrong, and (a) must not resurrect the suffix-spelling inference
+  the alignment tree deliberately removed.
+  **Scope beyond APB:** `.5` reuses this resolver for AHB `HSELx`, and the same test names `HSELX`/`HSEL`, so
+  `.9c` will meet this on `seed_ahb_temporal` before `.4a` closes; `.9c` records what it observes and does not
+  absorb the fix.
+  Non-goal: reverting `f88d463d`, or weakening
+  `temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling` to make a score move.
+  Prerequisite: `WIRE-BASED-100.9b` (the re-derivation that exposed it).
+  Verification: pending
+  Commit: pending
 - ID: `WIRE-BASED-100.5` · Status: `active` · Goal: cross-spec generalization (AHB → AXI → SWD).
   Children: `.5a` (AHB constraint baseline) → more AHB facts → AXI → SWD. Reuses `.4` index-family
   resolver (AHB `HSELx`), `.3a`/`.3b` gauge fixes, `.1`/`.6`/`.7` eval.
@@ -551,7 +587,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: `python3 scripts/measure_swd_frame_phase_scope.py` (its `adversarial control` section)
   Commit: see log.
 
-- ID: `WIRE-BASED-100.9` · Status: `active` (umbrella; measurement `.9a` DONE `2026-09-01`) · Goal: **make the
+- ID: `WIRE-BASED-100.9` · Status: `active` (umbrella; `.9a` DONE `2026-09-01`, `.9b` DONE `2026-09-10`) · Goal: **make the
   APB/AHB/AXI wire golds measurable again by re-ingesting them, and own that work here.** `.8` restored the
   oracle over the 24 rebuildable chains and closed by handing its remainder away in one sentence —
   *"Re-ingesting the legacy stratum stays with the corpus refresh frontier"*, repeated in its `Non-goal` as
@@ -573,8 +609,12 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   and AXI hold six of the eleven tracked eval datasets and none of them can be scored at all, so every APB/AHB/
   AXI number this tree has published is currently un-re-derivable — exactly the claim `CLAIM_VERIFICATION.md`
   refuses. Re-ingesting three documents restores six datasets.
-  Children: `.9a` (measurement + ownership, done), `.9b` (APB), `.9c` (AHB), `.9d` (AXI) — smallest document
-  first, one per leaf, each carrying its own before/after evidence.
+  Children: `.9a` (measurement + ownership, done), `.9b` (APB, done), `.9c` (AHB), `.9d` (AXI) — smallest
+  document first, one per leaf, each carrying its own before/after evidence. **`.9b`'s outcome changes what
+  `.9c`/`.9d` must expect:** the route itself needs no change, but a re-ingested wire gold can return a
+  DIFFERENT number from the one the tree carries, and `.9b` found one — so each remaining leaf publishes its
+  re-derivation as a verdict per aspect, and any temporal antecedent that names an indexed select
+  (AHB `HSELx`, AXI) is expected to fail the same way until `.4a` closes.
   **Findings routed OUT, deliberately not absorbed** (`.9a` measured them; this tree does not own them):
   (1) `1_0_risc_v_debug_specification` is the fourth unmeasurable gold document with no open owner and belongs
   to the `PDF-VARIANT-DIGESTION` register class, not to a wire-protocol tree. (2) **31 of the refresh
@@ -645,9 +685,10 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: `WIRE-BASED-100.9a — the corpus refresh frontier cannot own the wire re-ingest, and 5 of 7 gold documents cannot be scored`
 
-- ID: `WIRE-BASED-100.9b` · Status: `pending` · Goal: **re-ingest the APB gold `ihi0024_e` and re-derive its
-  score.** Smallest of the three (516 KB), so it proves the whole route end-to-end at the lowest cost and its
-  outcome decides whether `.9c`/`.9d` run unchanged.
+- ID: `WIRE-BASED-100.9b` · Status: `done` (`2026-09-10`; APB re-ingested, six datasets re-derived, **one carried
+  number withdrawn**) · Goal: **re-ingest the APB gold `ihi0024_e` and re-derive its score.** Smallest of the
+  three (516 KB), so it proves the whole route end-to-end at the lowest cost and its outcome decides whether
+  `.9c`/`.9d` run unchanged.
   Acceptance: the persisted APB chain is preserved on the repository volume BEFORE the rebuild (the current
   binary cannot regenerate a legacy artifact, so the outgoing evidence is unrecoverable once replaced — see the
   caution in `.9`); `ingest` → `evidence` → `semantic` produces SourceIR 3 / EvidenceIR 3 / SemanticIR 2;
@@ -659,8 +700,75 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Non-goal: touching the gold labels. A gold edit to make a score look better is the failure mode this tree's
   governing principle exists to forbid; if a gold is genuinely stale the correction gets its own leaf.
   Prerequisite: `WIRE-BASED-100.9a`.
-  Verification: pending
-  Commit: pending
+  **RESULT — two of the three aspects re-derive exactly; the third does not, and is withdrawn.** The route ran
+  unchanged (`DOCLING_DEVICE=cpu ingest` → `evidence` → `semantic` → `intent` → `adapt --target isf`, no model
+  server, ~4 min): 48 page artifacts / 35 visual / 0 residuals / `automation_confidence high`, and the chain is
+  canonical **SourceIR 3 / EvidenceIR 3 / SemanticIR 2 / IntentIR 2**. The census
+  moves `24 → 25` measurable (30.8% → 32.1%), legacy `54 → 53`, gold-carrying documents measurable `2 → 3`.
+
+  | dataset · aspect | carried | re-derived `2026-09-10` | verdict |
+  | --- | --- | --- | --- |
+  | `seed_apb` signal_constraint | `P=R=F1=1.000` (tp=6 fp=0 fn=0) | `P=R=F1=1.000` (tp=6 fp=0 fn=0) | **holds** |
+  | `seed_apb` actor_signal_relation (source-tolerant + filtered) | `P=R=F1=1.000` (tp=5 fp=0 fn=0) | `P=R=F1=1.000` (tp=5 fp=0 fn=0) | **holds** |
+  | `seed_apb` document-level recall | constraints 6/6, relations 6/6 | constraints 6/6, relations 6/6 | **holds** |
+  | `seed_apb_temporal` temporal_rule | `P=R=F1=1.000` (tp=3 fp=0 fn=0) | **`P=R=F1=0.333` (tp=1 fp=2 fn=2)** | **WITHDRAWN** |
+
+  Per-fact, the twelve `seed_apb` gold facts are all true positives — constraints `PADDR`/`PWDATA`
+  `must_be_stable`, `PSTRB` `must_be_low`, `PWAKEUP` `must_be_asserted`, `PBUSER`/`PNSE` `must_be_value VALID`;
+  relations Completer→`PREADY` (×2 gold statements), Requester→`PSTRB`, Completer→`PRDATA`,
+  Requester→`PWDATA`, Completer→`PSLVERR`. Of the three temporal gold facts only `PSTRB`
+  (`Requester drives PSTRB` + `PSTRB LOW`, no antecedent) still matches; `PNSE` and `PBUSER` are both missed
+  **on their antecedent**, and the scorer prints both missed keys.
+  **ROOT CAUSE — `.4`'s canonicalization was retired by the identity-opacity doctrine, and no gate connected
+  the two.** `.4` (`1c28516b`, `2026-06-06`) added `resolve_indexed_signal_family` so an un-indexed prose
+  reference (`PSEL`) resolved to the declared indexed family member (`PSELX`), and corrected the temporal gold's
+  antecedent to that canonical identity. `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` (`f88d463d`, `2026-08-12`,
+  *"make document identifiers opaque"*) **deleted that function** and installed the opposite behaviour as a
+  test: `temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling` asserts that with `PSELX`
+  declared, `"PSEL is asserted"` yields **no** predicate. So `PNSE`'s antecedent is dropped entirely and
+  `PBUSER`'s antecedent set loses its `PSELX` member (`PENABLE`+`PREADY` survive, both declared verbatim).
+  The same commit also removed identifier-spelling authority upstream, so the declared identity is now the
+  document's own `PSELx` — visible as `sigcon_0011`'s antecedent moving `PSELX → PSELx` across the re-ingest.
+  The gold asks for `PSELX`, which no longer names anything the pipeline can produce, by **two** independent
+  routes.
+  **The re-ingest did not cause this, and the preserved bytes prove it.** In the PRESERVED legacy SemanticIR
+  (`generated/preserved/WIRE-BASED-100.9b/pre-reingest/`, digests below) `temporal_signal_constraint_sigcon_0009`
+  (`PNSE`) already carries `antecedents: []` and `…_sigcon_0014` (`PBUSER`) already carries only
+  `PENABLE`+`PREADY`. Both defects were already persisted in the artifact the `1.000` was last associated with;
+  the schema bump three days earlier had made that artifact unscoreable, so **the regression was invisible for
+  four weeks and the re-ingest is what made it visible**. This is the same blindness `.9a` routed out as an
+  unowned defect — nothing fails when a persisted chain falls below the canonical schema — now demonstrated
+  costing a real published number.
+  **Not fixed here, and the gold was not touched.** Restoring the number needs a decision between reinstating a
+  source-grounded (not spelling-inferred) binding of `PSEL` to declared `PSELx` and re-anchoring the gold to the
+  opaque identity; that is `WIRE-BASED-100.4a`, opened by this leaf. Editing the gold to recover the headline is
+  exactly what this tree's governing principle forbids.
+  **Second observed movement, and it is NOT a regression:** the ISF adapter went `renderable` → `blocked`
+  (`no source-grounded system clock/reset contract`; `(clock __specforge_unresolved_clock)`), because `PCLK` /
+  `PRESETn` were recognised as clock/reset by spelling and that authority is gone. This is the documented
+  current policy for the whole measurable stratum — the book already states every retained adapter manifest is
+  honestly blocked with zero emitted `.isf` — so APB joins that set as the 25th rather than breaking a rule.
+  **The re-ingest's normalized bundle is HELD OUT of the retained declaration, and that is a finding, not
+  bookkeeping.** The rebuild restored the bundle, and `check_chain_currency.sh` fails closed on an undeclared
+  bundle on disk — but declaring it turns `PRODUCTION-GENERICITY` and `RESIDUAL-ACTIONABILITY` red, because the
+  retained set is frozen at 24 by a size literal in two contract validators and joined by SET EQUALITY to a
+  release-blocking behavioral qualification whose 24-row population, 7/17 split and 51 held-out attempts are
+  frozen at a declared selection boundary. Recording a deliberate reclamation instead is refused by the same
+  two validators (`reclamations != []`). ADR 0025 mandates BOTH operations, so the first refresh to exercise it
+  had no compliant move. `.9b` therefore MOVED the bundle to
+  `generated/preserved/WIRE-BASED-100.9b/apb-normalized-bundle-held-out/` (repository volume, 25 MB,
+  byte-identical, nothing deleted) and left the declaration at 24. Stated rather than hidden: APB's
+  SourceIR→EvidenceIR replay reads UNMEASURABLE until the bundle returns, while its SemanticIR, IntentIR and
+  adapter replays are measurable and current and its EvidenceIR is canonical and scoreable — which is what this
+  leaf existed to restore. The whole finding is owned by `RETAINED-BUNDLE-POPULATION-FROZEN`, whose `.3`
+  restores the bundle once both gates can accept a 25th key.
+  Preservation (repo-volume, `2026-09-10`, before the rebuild; the current binary cannot regenerate legacy
+  bytes): `generated/preserved/WIRE-BASED-100.9b/pre-reingest/` — `source_ir.json`
+  `0eb30dfe48d44f3c…`, `evidence_ir.json` `0fd404bbace952b5…`, `semantic_ir.json` `217b261236bde70a…`,
+  `intent_ir.json` `c1fbd376fa46faba…`, `adapters_isf/adapter.json` `83b0083095e6b42b…`; full manifest in that
+  directory's `SHA256SUMS.txt`.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
 
 - ID: `WIRE-BASED-100.9c` · Status: `pending` · Goal: **re-ingest the AHB gold `ihi0033_c` and re-derive its
   score** (957 KB). Same acceptance shape as `.9b`, against the currently carried `constraint 6/6`,
@@ -679,6 +787,49 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Prerequisite: `WIRE-BASED-100.9c`.
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.9b` (RE-INGEST + RE-DERIVATION) — DONE `2026-09-10`
+
+- [x] **REPRODUCE / MEASURE** — baseline captured before the rebuild, from the binary itself:
+  `eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json --provider skip` printed the UNMEASURABLE
+  disposition (`persisted EvidenceIR is schema 2, below the current canonical schema 3`), withheld all 16 gold
+  items and scored nothing; `scripts/measure_corpus_canonical_currency.py` read **24 measurable (30.8%) / 54
+  legacy**, gold documents **2 of 7** measurable. The outgoing chain was SourceIR 1 / EvidenceIR 2 /
+  SemanticIR 1 / IntentIR 1 and was preserved with a SHA-256 manifest **before** any command wrote over it.
+- [x] **ROOT CAUSE (WHY + WHERE)** — for the one number that moved. `.4`'s `resolve_indexed_signal_family`
+  (`crates/specforge/src/ir/semantic.rs`, added `1c28516b`) is **gone**, deleted by `f88d463d`
+  (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii`, *make document identifiers opaque*), which also installed the
+  opposite behaviour as a tested invariant — `temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling`
+  asserts that with `PSELX` declared, `"PSEL is asserted"` yields no predicate. Attribution is by
+  producer-history, not by reading a diff: `git log -S resolve_indexed_signal_family -- crates/specforge/src/ir/semantic.rs`
+  returns exactly two commits, the leaf that added it and the leaf that removed it. Consequence in the
+  artifacts: `temporal_signal_constraint_sigcon_0009` (`PNSE`) has `antecedents: []` and `…_0014` (`PBUSER`)
+  has `PENABLE`+`PREADY` only, against a gold that requires `PSELX`.
+- [x] **ADDRESSED (verified)** — the chain is canonical and scoreable again, per stage and per fact.
+  `DOCLING_DEVICE=cpu ingest` → 48 page artifacts / 35 visual / 0 residuals / `high`, normalized bundle
+  RESTORED; `evidence` → 99 anchors / 517 spans / 150 links / **598** statements (was 597 — the
+  re-segmentation `.1`'s content anchoring exists to absorb); `semantic` → 8 actors / 35 interfaces / 65
+  invariants; `intent` → 6 actors / 16 behaviors / 66 constraints; schema now **3 / 3 / 2 / 2**. Scores:
+  `seed_apb` signal_constraint `1.000` (tp=6 fp=0 fn=0) and actor_signal_relation `1.000` (tp=5 fp=0 fn=0,
+  source-tolerant + filtered), document-level recall 6/6 and 6/6 — all identical to the carried numbers;
+  `seed_apb_temporal` `0.333` (tp=1 fp=2 fn=2) — **withdrawn, not carried**, with both missed keys printed by
+  the scorer. `scripts/measure_corpus_canonical_currency.py` now reads **25 measurable (32.1%) / 53 legacy**
+  and **3 of 7** gold documents measurable.
+- [x] **NO REGRESSION** — no Rust source touched, so the extractor's behaviour on every other document is
+  unchanged by construction; the movement observed here is a re-measurement of behaviour that shipped on
+  `2026-08-12`. Named re-runnable oracles: `bash scripts/check_chain_currency.sh` (replays every persisted
+  stage against the current binary, including the newly current APB chain, and compares the retained-bundle
+  declaration with what is on disk) and `bash scripts/check_doctrines.sh`. The APB gold files are byte-identical
+  — `git status` shows no change under `crates/specforge/test_data/llm_eval/`.
+- [x] **GENERICITY (ADR 0006)** — N/A for the rebuild (no rule changed). It is, however, the substance of the
+  finding: `f88d463d` removed a spelling-derived inference precisely because ADR 0006 forbids identifier
+  authority, and `.4a` must recover the fact without resurrecting it.
+- [x] **LOCKSTEP** — the tree's `2026-06-06` "100% on ALL three aspects" headline is withdrawn where it was
+  published, `.4` records that its fix was retired, `.4a` owns the recovery, and the corpus counts that moved
+  (24 → 25 measurable, 54 → 53 legacy, 24 → 25 adapter manifests; retained bundles deliberately unchanged at
+  24) are corrected in the book, `LIVE_ACHIEVEMENT_STATUS.md`, `CHANGES.md` and the resume pointer, and the
+  frozen-population finding is opened as `RETAINED-BUNDLE-POPULATION-FROZEN`.
+  KM `[[corpus-canonical-currency-and-ownership]]`, `[[chain-currency-doctrine]]`.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.9a` (MEASUREMENT) — DONE `2026-09-01`
 
@@ -1018,6 +1169,22 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 recall, full-doc completeness) harden it; then roll the same set to AHB → AXI → SWD (`.5`).
 
 ## Changelog
+
+- `2026-09-10` (`.9b` done, `.4a` opened): **APB is scoreable again, and the price of finding out is one
+  withdrawn number.** The re-ingest ran the demonstrated route unchanged and restored the chain to canonical
+  3/3/2/2, moving the corpus to **25 measurable (32.1%) / 53 legacy** and gold documents to **3 of 7**.
+  `seed_apb` re-derives EXACTLY — constraints `1.000` (tp=6 fp=0 fn=0), relations `1.000` (tp=5 fp=0 fn=0),
+  document-level recall 6/6 and 6/6. `seed_apb_temporal` does not: `0.333` (tp=1 fp=2 fn=2) against the carried
+  `1.000`, so the `2026-06-06` "100% on ALL three aspects" headline is **withdrawn**. Cause, attributed from
+  producer history rather than a diff: `.4`'s `resolve_indexed_signal_family` was deleted by
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` (`f88d463d`, `2026-08-12`) when identifiers became opaque, and the
+  opposite behaviour now ships as a test — so the gold's canonical `PSELX` antecedent is unproducible and
+  `PNSE`/`PBUSER` each lose one. **The re-ingest did not cause it:** the preserved pre-rebuild SemanticIR
+  already carries both defects, so the loss had been persisted and unscoreable — invisible — for four weeks.
+  That is the unowned no-canonical-currency-gate defect `.9a` routed out, now measured in a real published
+  number. Recovery is `.4a`; the gold was not touched. The ISF adapter also moved `renderable` → `blocked`
+  (`no source-grounded system clock/reset contract`), which is the documented policy for the whole measurable
+  stratum, not a new defect.
 
 - `2026-09-01` (`.9` opened, `.9a` done): **`.8` closed by handing the wire re-ingest to an owner that
   excludes it, and 5 of 7 gold documents cannot be scored.** Censused read-only

@@ -771,10 +771,12 @@ inventory metadata, and explicit residual decisions, including one per canonical
 lacks complete executable bindings. It is tagged with the `isf_adapter` `IrStage`, which stage-keyed tooling
 (e.g. `specforge validate`, `project-validation`) dispatches on.
 
-The current retained proof frontier has 24 adapter manifests derived from verified IntentIR. All 24 are honestly
+The current retained proof frontier has 25 adapter manifests derived from verified IntentIR. All 25 are honestly
 blocked by their present source-grounded content and therefore reconcile to zero emitted `.isf` files. The other
-54 historical chains remain inspection-only behind legacy upstream proof; their old later-stage files do not
-restore authority. Renderable proof behavior is independently locked by synthetic typed controls and the real
+53 historical chains remain inspection-only behind legacy upstream proof; their old later-stage files do not
+restore authority. The 25th is the APB gold returned by owned re-ingest (`WIRE-BASED-100.9b`, `2026-09-10`); it
+blocks on `no source-grounded system clock/reset contract`, because its clock and reset were previously
+recognised from the identifier spellings `PCLK`/`PRESETn` and that authority was deliberately removed. Renderable proof behavior is independently locked by synthetic typed controls and the real
 FSMGen strict canaries.
 
 ### Portable artifact paths

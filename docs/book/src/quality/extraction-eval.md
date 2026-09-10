@@ -80,9 +80,13 @@ actor→signal relations; the contract and diagram tasks are deferred):
   least `2026-08-28` and `2026-09-01` this runner refused every document in the corpus, so
   no score on this page could be re-derived on demand; the cause was the relocation
   described above, and it is fixed. Two strata still differ in what they can tell you: the
-  24 rebuildable documents can be re-scored now, while the 54 legacy chains — which include
-  the APB, AHB and AXI golds — are refused as proofless and inspection-only until they are
-  re-ingested. Re-run a number before you rely on it.
+  25 rebuildable documents can be re-scored now, while the 53 legacy chains — which still
+  include the AHB and AXI golds — are refused as proofless and inspection-only until they
+  are re-ingested. Re-run a number before you rely on it, and note what re-running one cost:
+  re-ingesting the APB gold (`WIRE-BASED-100.9b`, `2026-09-10`) re-derived its constraint and
+  relation scores at `1.000` exactly, and withdrew its temporal `1.000` to `0.333` — a fix
+  retired four weeks earlier by an unrelated doctrine change, invisible for as long as the
+  document could not be scored.
 
 ## How it was verified
 
@@ -195,11 +199,11 @@ production decision may use universal digital semantics and document grammar, ne
 protocol identity. So the extractor was retired, along with the score it produced.
 
 Three independent observations separate a retirement from a regression. The persisted artifacts are current —
-the currency gate replays all 24 rebuildable documents and finds them byte-identical to what today's binary
+the currency gate replays every rebuildable document and finds them byte-identical to what today's binary
 builds, so these zeros are the real output of the current producer. The loss partitions exactly along the
-retirement boundary and does so corpus-wide: across all 24 measurable documents the current producer emits zero
-serial frame fields and binds a machine name on none of its 40 protocol states, while protocol operations still
-produce five. And the retirement's own published accounting predicted that shape in advance, down to the counts.
+retirement boundary and does so corpus-wide: across all measurable documents (24 when this was measured) the
+current producer emits zero serial frame fields and binds a machine name on none of its 40 protocol states,
+while protocol operations still produce five. And the retirement's own published accounting predicted that shape in advance, down to the counts.
 
 What the current generic grammar needs looked narrow and nameable, and measuring it changed the answer. The
 grammar admits a frame field only from a statement that itself states a phase name *and* carries the bit range;
