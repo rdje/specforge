@@ -253,9 +253,14 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   this tree permits ONLY as its own leaf with the fact left unchanged, never to recover a headline.
   Whichever wins must state why the other is wrong, and (a) must not resurrect the suffix-spelling inference
   the alignment tree deliberately removed.
-  **Scope beyond APB:** `.5` reuses this resolver for AHB `HSELx`, and the same test names `HSELX`/`HSEL`, so
-  `.9c` will meet this on `seed_ahb_temporal` before `.4a` closes; `.9c` records what it observes and does not
-  absorb the fix.
+  **Scope beyond APB — MEASURED `2026-09-10` by `.9c`, and narrower than this leaf first stated.** `.5` does
+  reuse this resolver for AHB `HSELx` and the same test names `HSELX`/`HSEL`, so `.9c` was expected to fail the
+  same way. It scored `4/4 = 1.000`. The reason is exact: the AHB temporal gold's only antecedent is `HREADY`,
+  which the document declares with the spelling the prose uses, and no AHB gold item references the un-indexed
+  `HSEL`. So the defect is confined to a gold whose antecedent names an INDEXED-FAMILY signal by its
+  un-indexed prose spelling. That does not make it APB-only — every un-indexed select reference in any spec
+  still loses its antecedent silently, and only a gold that scores one makes the loss visible — so `.4a` must
+  fix the mechanism, not the one gold.
   Non-goal: reverting `f88d463d`, or weakening
   `temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling` to make a score move.
   Prerequisite: `WIRE-BASED-100.9b` (the re-derivation that exposed it).
@@ -587,7 +592,7 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: `python3 scripts/measure_swd_frame_phase_scope.py` (its `adversarial control` section)
   Commit: see log.
 
-- ID: `WIRE-BASED-100.9` · Status: `active` (umbrella; `.9a` DONE `2026-09-01`, `.9b` DONE `2026-09-10`) · Goal: **make the
+- ID: `WIRE-BASED-100.9` · Status: `active` (umbrella; `.9a` `2026-09-01`, `.9b`/`.9c` `2026-09-10`) · Goal: **make the
   APB/AHB/AXI wire golds measurable again by re-ingesting them, and own that work here.** `.8` restored the
   oracle over the 24 rebuildable chains and closed by handing its remainder away in one sentence —
   *"Re-ingesting the legacy stratum stays with the corpus refresh frontier"*, repeated in its `Non-goal` as
@@ -609,8 +614,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   and AXI hold six of the eleven tracked eval datasets and none of them can be scored at all, so every APB/AHB/
   AXI number this tree has published is currently un-re-derivable — exactly the claim `CLAIM_VERIFICATION.md`
   refuses. Re-ingesting three documents restores six datasets.
-  Children: `.9a` (measurement + ownership, done), `.9b` (APB, done), `.9c` (AHB), `.9d` (AXI) — smallest
-  document first, one per leaf, each carrying its own before/after evidence. **`.9b`'s outcome changes what
+  Children: `.9a` (measurement + ownership, done), `.9b` (APB, done), `.9c` (AHB, done), `.9d` (AXI) —
+  smallest document first, one per leaf, each carrying its own before/after evidence. **`.9b`'s outcome changes what
   `.9c`/`.9d` must expect:** the route itself needs no change, but a re-ingested wire gold can return a
   DIFFERENT number from the one the tree carries, and `.9b` found one — so each remaining leaf publishes its
   re-derivation as a verdict per aspect, and any temporal antecedent that names an indexed select
@@ -770,13 +775,53 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: see log.
 
-- ID: `WIRE-BASED-100.9c` · Status: `pending` · Goal: **re-ingest the AHB gold `ihi0033_c` and re-derive its
-  score** (957 KB). Same acceptance shape as `.9b`, against the currently carried `constraint 6/6`,
-  `relation 6/6`, `temporal 4/4`; `.5e` already demonstrated this exact document's re-ingest → eval route once,
-  which is why it follows APB rather than leading.
+- ID: `WIRE-BASED-100.9c` · Status: `done` (`2026-09-10`; AHB re-ingested, **all three aspects re-derive at
+  1.000**) · Goal: **re-ingest the AHB gold `ihi0033_c` and re-derive its score** (957 KB). Same acceptance
+  shape as `.9b`, against the currently carried `constraint 6/6`, `relation 6/6`, `temporal 4/4`; `.5e` already
+  demonstrated this exact document's re-ingest → eval route once, which is why it follows APB rather than
+  leading.
   Prerequisite: `WIRE-BASED-100.9b` (its outcome decides whether the route runs unchanged).
-  Verification: pending
-  Commit: pending
+  **RESULT — every carried AHB number survives, and `.9b`'s prediction that it would not is CORRECTED.** The
+  route ran unchanged (`DOCLING_DEVICE=cpu ingest` → `evidence` → `semantic` → `intent` →
+  `adapt --target isf`, no model server): 104 page artifacts / 70 visual / 0 residuals /
+  `automation_confidence high`, chain canonical **3 / 3 / 2 / 2**. The census moves `25 → 26` measurable
+  (32.1% → 33.3%), legacy `53 → 52`, gold documents measurable `3 → 4` of 7.
+
+  | dataset · aspect | carried | re-derived `2026-09-10` | verdict |
+  | --- | --- | --- | --- |
+  | `seed_ahb` signal_constraint | `6/6` | `P=R=F1=1.000` (tp=6 fp=0 fn=0) | **holds** |
+  | `seed_ahb` actor_signal_relation (source-tolerant + filtered) | `6/6` | `P=R=F1=1.000` (tp=6 fp=0 fn=0) | **holds** |
+  | `seed_ahb` document-level recall | constraints 6/6, relations 6/6 | constraints 6/6, relations 6/6 | **holds** |
+  | `seed_ahb_temporal` temporal_rule | `4/4` | `P=R=F1=1.000` (tp=4 fp=0 fn=0) | **holds** |
+
+  Per fact: constraints `HAUSER`/`HWUSER`/`HRUSER`/`HBUSER` `must_be_value VALID` and `HAUSER`/`HWUSER`
+  `must_not_change`; relations Subordinate→`HRESP`/`HREADYOUT`/`HRUSER`/`HBUSER` and
+  Manager→`HAUSER`/`HWUSER`; temporal `HAUSER`, `HWUSER` (no antecedent) and `HRUSER`, `HBUSER`
+  (antecedent `HREADY HIGH`).
+  **CORRECTION to `.9b` and to `.9`'s expectation.** `.9b` predicted `.9c` would fail the same way because
+  `.5` reuses `.4`'s index-family resolver for AHB `HSELx`. It does not, and the reason is exact rather than
+  lucky: **the AHB temporal gold's only antecedent is `HREADY`, a signal the document declares with the same
+  spelling the prose uses.** No gold item references the un-indexed `HSEL`. So `.4a`'s defect is not
+  "wire-wide" — it is confined to a gold whose antecedent names an indexed-family signal by its un-indexed
+  prose spelling, which the APB gold does and the AHB gold does not. `.4a`'s scope note is corrected
+  accordingly; the resolver is still gone for AHB, it simply has nothing scored to lose there.
+  **The re-ingest was structurally inert for AHB**, which is why the golds needed no re-anchoring at all
+  (`content-anchored: re-resolved 0/17` and `0/4` — the ids were already current): the rebuilt EvidenceIR has
+  the SAME 1,322 statements / 172 anchors / 1,199 spans / 481 links / 70 visual records as the preserved
+  legacy artifact. Only proof authority and identifier spelling moved.
+  **Same two movements as `.9b`, same dispositions.** The ISF adapter went `renderable` → `blocked`
+  (`no source-grounded system clock/reset contract`; `HCLK` demoted from `(clock HCLK)` into the interface),
+  the documented policy for the whole measurable stratum; and the declared select identity moved
+  `HSELX`/`HSELXCHK` → `HSELx`/`HSELxCHK` under identifier opacity, with no signal lost. The normalized bundle
+  is HELD OUT at `generated/preserved/WIRE-BASED-100.9c/ahb-normalized-bundle-held-out/` for the reason `.9b`
+  established and `RETAINED-BUNDLE-POPULATION-FROZEN` owns, so AHB's EvidenceIR replay reads UNMEASURABLE
+  while its SemanticIR/IntentIR/adapter replays are current.
+  Preservation (repo-volume, `2026-09-10`, before the rebuild): `generated/preserved/WIRE-BASED-100.9c/
+  pre-reingest/` — `source_ir.json` `97444457673da6fd…`, `evidence_ir.json` `3bae4b77e7b5afe6…`,
+  `semantic_ir.json` `8b77ad97561ea6cc…`, `intent_ir.json` `c17e46464fed8656…`,
+  `adapters_isf/adapter.json` `073ec73d3e486f97…`; full manifest in that directory's `SHA256SUMS.txt`.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
 
 - ID: `WIRE-BASED-100.9d` · Status: `pending` · Goal: **re-ingest the AXI gold `ihi0022_l` and re-derive its
   score** (2.0 MB — the largest, and the one whose persisted chain is 14.5 MB across four stages). Same
@@ -784,9 +829,49 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Carries one extra check the smaller two do not: AXI is the document `KG-ISF-COMPLETENESS.5.iv.a` predicted
   would mint a new `AWATOP` enum and could not verify, because `ihi0022_l` was unrebuildable — so this leaf
   finally answers that open prediction, either way.
+  **What `.9b`/`.9c` say to expect, and what they say NOT to assume.** Expect: the chain to reach canonical
+  3/3/2/2; the ISF adapter to move `renderable` → `blocked` on `no source-grounded system clock/reset
+  contract`; declared identifiers to lose their uppercasing; and the normalized bundle to be HELD OUT
+  (`RETAINED-BUNDLE-POPULATION-FROZEN`). Do NOT assume a verdict either way on the scores: `.9b` withdrew a
+  `1.000` and `.9c` kept three, and the difference was decided by whether a gold antecedent names an
+  indexed-family signal by its un-indexed prose spelling — check the AXI temporal gold's antecedents against
+  the declared catalog BEFORE predicting. AXI is also the largest (2.0 MB, a 14.5 MB persisted chain), so
+  preserve first and watch RAM.
   Prerequisite: `WIRE-BASED-100.9c`.
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.9c` (RE-INGEST + RE-DERIVATION) — DONE `2026-09-10`
+
+- [x] **REPRODUCE / MEASURE** — baseline from the binary before the rebuild:
+  `eval-extraction … seed_ahb.json --provider skip` and `… seed_ahb_temporal.json --provider skip` both printed
+  the UNMEASURABLE disposition (`persisted EvidenceIR is schema 2`), withholding 17 and 4 gold items and
+  scoring nothing; the census read **25 measurable / 53 legacy**, gold documents 3 of 7. The outgoing chain
+  (SourceIR 1 / EvidenceIR 2 / SemanticIR 1 / IntentIR 1) was preserved with a SHA-256 manifest first.
+- [x] **ROOT CAUSE (WHY + WHERE)** — N/A as a defect: every carried number re-derived. The leaf's real
+  question was whether `.9b`'s regression generalises, and the answer is derived rather than assumed —
+  the AHB temporal gold's only antecedent is `HREADY` (declared with the prose spelling), and no AHB gold
+  references the un-indexed `HSEL`, so `.4a`'s deleted resolver has nothing scored to lose here. Recorded as a
+  correction to `.9b`'s prediction and to `.4a`'s scope note.
+- [x] **ADDRESSED (verified)** — the chain is canonical and scoreable. `ingest` → 104 page artifacts / 70
+  visual / 0 residuals / `high`; `evidence` → 172 anchors / 1,199 spans / 481 links / **1,322** statements —
+  identical to the preserved legacy artifact, which is why `content-anchored` re-resolved `0/17` and `0/4`
+  (ids already current); `semantic` → 25 actors / 41 interfaces / 223 invariants; `intent` → 23 actors / 64
+  behaviors / 225 constraints; schema **3 / 3 / 2 / 2**. Scores: `seed_ahb` constraints `1.000`
+  (tp=6 fp=0 fn=0) and relations `1.000` (tp=6 fp=0 fn=0, source-tolerant + filtered), document-level 6/6 and
+  6/6; `seed_ahb_temporal` `1.000` (tp=4 fp=0 fn=0). Census now **26 measurable (33.3%) / 52 legacy**, gold
+  documents **4 of 7**.
+- [x] **NO REGRESSION** — no Rust source touched; the AHB gold files are byte-identical (`git status` shows no
+  change under `crates/specforge/test_data/llm_eval/`). Named re-runnable oracles: `bash
+  scripts/check_chain_currency.sh` and `bash scripts/check_doctrines.sh`. The ISF adapter's
+  `renderable` → `blocked` move and the `HSELX` → `HSELx` identity move are the same two dispositions `.9b`
+  established, and no ISF signal is lost (`HCLK` enters the interface, `HSELX`/`HSELXCHK` become
+  `HSELx`/`HSELxCHK`).
+- [x] **GENERICITY (ADR 0006)** — N/A for the rebuild (no rule changed); the observed identity move is
+  identifier opacity doing what ADR 0006 requires.
+- [x] **LOCKSTEP** — the tree's `.9d` expectations, `.4a`'s scope note and `.9b`'s prediction are corrected
+  where they were published; the corpus counts that moved (25 → 26 measurable, 53 → 52 legacy, 25 → 26 adapter
+  manifests) are corrected in the book, `LIVE_ACHIEVEMENT_STATUS.md`, `CHANGES.md` and the resume pointer.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.9b` (RE-INGEST + RE-DERIVATION) — DONE `2026-09-10`
 
@@ -1169,6 +1254,20 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 recall, full-doc completeness) harden it; then roll the same set to AHB → AXI → SWD (`.5`).
 
 ## Changelog
+
+- `2026-09-10` (`.9c` done): **AHB survives its re-ingest intact, and `.9b`'s prediction that it would not is
+  corrected.** All four carried numbers re-derive exactly — constraints `1.000` (tp=6 fp=0 fn=0), relations
+  `1.000` (tp=6 fp=0 fn=0), document-level 6/6 and 6/6, temporal `1.000` (tp=4 fp=0 fn=0) — moving the corpus
+  to **26 measurable (33.3%) / 52 legacy** and gold documents to **4 of 7**. The reason AHB is not APB is
+  exact: its temporal gold's only antecedent is `HREADY`, declared with the spelling the prose uses, and no
+  AHB gold names the un-indexed `HSEL`. `.4a`'s scope is narrowed to a gold whose antecedent names an
+  indexed-family signal by its un-indexed prose spelling — while noting the mechanism still loses every such
+  antecedent silently wherever no gold scores it. The rebuild was structurally inert (same 1,322 statements /
+  172 anchors / 1,199 spans / 481 links / 70 visual as the preserved legacy artifact), so the golds needed no
+  re-anchoring. Same two dispositions as `.9b`: the ISF adapter moved `renderable` → `blocked`
+  (`HCLK` demoted out of `(clock …)`) and the declared select became `HSELx`/`HSELxCHK` under identifier
+  opacity, with no signal lost; the normalized bundle is HELD OUT per
+  `RETAINED-BUNDLE-POPULATION-FROZEN`.
 
 - `2026-09-10` (`.9b` done, `.4a` opened): **APB is scoreable again, and the price of finding out is one
   withdrawn number.** The re-ingest ran the demonstrated route unchanged and restored the chain to canonical

@@ -54,10 +54,10 @@ Schemas older than 2 are available only through the inspection API. They cannot 
 wrapped in synthetic proof. A current-schema artifact missing proof, carrying a stale ruleset, or differing from
 the registered replay fails closed. Repository-owned lineage paths are resolved and normalized before proof
 comparison, so moving the repository does not invalidate otherwise identical authority; ambiguous or external
-rebasing still rejects. In the retained population, 25 chains currently have verifiable EvidenceIR
-and SemanticIR; 53 historical chains remain explicitly unmeasurable until their upstream capture can be
+rebasing still rejects. In the retained population, 26 chains currently have verifiable EvidenceIR
+and SemanticIR; 52 historical chains remain explicitly unmeasurable until their upstream capture can be
 re-ingested. The count moves by owned re-ingest, one document at a time: it was 24/54 until
-`WIRE-BASED-100.9b` returned the APB gold on `2026-09-10`.
+`WIRE-BASED-100.9b`/`.9c` returned the APB and AHB golds on `2026-09-10`.
 SemanticIR ruleset identity uses the shared
 [production-semantic digest closure](../architecture-rationale.md#current-implementation-status-the-invariant-is-not-yet-met)
 rather than a hash of its complete Rust module.

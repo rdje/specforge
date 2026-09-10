@@ -1,3 +1,42 @@
+### WIRE-BASED-100.9c — AHB survives its re-ingest intact, and .9b's prediction that it would not is corrected
+
+- THE ROUTE RAN UNCHANGED and restored the AHB chain to canonical authority: `DOCLING_DEVICE=cpu ingest` →
+  `evidence` → `semantic` → `intent` → `adapt --target isf` on the current release binary, no model server —
+  104 page artifacts / 70 visual / 0 residuals / `automation_confidence high`, schema now **SourceIR 3 /
+  EvidenceIR 3 / SemanticIR 2 / IntentIR 2**. `scripts/measure_corpus_canonical_currency.py` moves from
+  **25 measurable (32.1%) / 53 legacy** to **26 (33.3%) / 52**, and gold-carrying documents from **3 of 7** to
+  **4 of 7**. The persisted chain was preserved with a SHA-256 manifest under
+  `generated/preserved/WIRE-BASED-100.9c/pre-reingest/` BEFORE any command wrote over it.
+- ALL FOUR CARRIED NUMBERS RE-DERIVE EXACTLY. `seed_ahb`: `signal_constraint P=R=F1=1.000` (tp=6 fp=0 fn=0)
+  and `actor_signal_relation P=R=F1=1.000` (tp=6 fp=0 fn=0, source-tolerant + filtered), document-level recall
+  6/6 constraints and 6/6 relations. `seed_ahb_temporal`: `temporal_rule P=R=F1=1.000` (tp=4 fp=0 fn=0).
+  Per fact: constraints `HAUSER`/`HWUSER`/`HRUSER`/`HBUSER` `must_be_value VALID` plus `HAUSER`/`HWUSER`
+  `must_not_change`; relations Subordinate→`HRESP`/`HREADYOUT`/`HRUSER`/`HBUSER` and
+  Manager→`HAUSER`/`HWUSER`; temporal `HAUSER` and `HWUSER` unconditioned, `HRUSER` and `HBUSER` under
+  `HREADY HIGH`.
+- THE CORRECTION MATTERS MORE THAN THE PASS. `.9b` predicted `.9c` would lose its temporal score the same way
+  APB did, because `.5` reuses `.4`'s index-family resolver for AHB `HSELx`. It did not, and the reason is
+  exact rather than lucky: **the AHB temporal gold's only antecedent is `HREADY`, which the document declares
+  with the spelling the prose uses, and no AHB gold item references the un-indexed `HSEL`.** So the defect
+  `WIRE-BASED-100.4a` owns is confined to a gold whose antecedent names an INDEXED-FAMILY signal by its
+  un-indexed prose spelling — which is narrower than "wire-wide" and wider than "APB-only": the mechanism
+  still drops every such antecedent silently wherever no gold scores it, so `.4a` must fix the mechanism.
+- THE REBUILD WAS STRUCTURALLY INERT for AHB, which is why the golds needed no re-anchoring
+  (`content-anchored: re-resolved 0/17` and `0/4` — the ids were already current): the rebuilt EvidenceIR
+  carries the SAME 1,322 statements / 172 anchors / 1,199 spans / 481 links / 70 visual records as the
+  preserved legacy artifact. Only proof authority and identifier spelling moved. APB, by contrast, re-segmented
+  by one statement (597 → 598).
+- SAME TWO DISPOSITIONS AS .9b, BOTH ALREADY OWNED. The ISF adapter moved `renderable` → `blocked` on
+  `no source-grounded system clock/reset contract` (`HCLK` demoted out of `(clock HCLK)` and into the
+  interface), which is the documented policy for the whole measurable stratum; and the declared select moved
+  `HSELX`/`HSELXCHK` → `HSELx`/`HSELxCHK` under identifier opacity, with no ISF signal lost. The normalized
+  bundle is HELD OUT at `generated/preserved/WIRE-BASED-100.9c/ahb-normalized-bundle-held-out/` for the reason
+  `RETAINED-BUNDLE-POPULATION-FROZEN` owns, so AHB's EvidenceIR replay reads UNMEASURABLE while its
+  SemanticIR/IntentIR/adapter replays stay measurable and current.
+- LOCKSTEP: the book's frontier statements move 25/53 → 26/52 across the SourceIR, EvidenceIR, SemanticIR,
+  IntentIR, ISF-adapter, architecture-rationale, extraction-architecture and extraction-eval chapters;
+  `.4a`'s scope note, `.9b`'s prediction and `.9d`'s expectations are corrected where they were published.
+
 ### WIRE-BASED-100.9b — the APB gold is scoreable again, and scoring it withdraws a published 1.000
 
 - THE RE-INGEST RAN THE DEMONSTRATED ROUTE UNCHANGED and restored the APB chain to canonical authority:

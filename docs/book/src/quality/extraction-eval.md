@@ -80,13 +80,14 @@ actor→signal relations; the contract and diagram tasks are deferred):
   least `2026-08-28` and `2026-09-01` this runner refused every document in the corpus, so
   no score on this page could be re-derived on demand; the cause was the relocation
   described above, and it is fixed. Two strata still differ in what they can tell you: the
-  25 rebuildable documents can be re-scored now, while the 53 legacy chains — which still
-  include the AHB and AXI golds — are refused as proofless and inspection-only until they
-  are re-ingested. Re-run a number before you rely on it, and note what re-running one cost:
+  26 rebuildable documents can be re-scored now, while the 52 legacy chains — which still
+  include the AXI gold — are refused as proofless and inspection-only until they are
+  re-ingested. Re-run a number before you rely on it, and note what re-running one can cost:
   re-ingesting the APB gold (`WIRE-BASED-100.9b`, `2026-09-10`) re-derived its constraint and
-  relation scores at `1.000` exactly, and withdrew its temporal `1.000` to `0.333` — a fix
+  relation scores at `1.000` exactly and withdrew its temporal `1.000` to `0.333` — a fix
   retired four weeks earlier by an unrelated doctrine change, invisible for as long as the
-  document could not be scored.
+  document could not be scored — while the AHB gold re-ingested the same day (`.9c`) kept all
+  four of its numbers. Re-derivation is not a formality in either direction.
 
 ## How it was verified
 
