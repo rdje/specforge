@@ -66,6 +66,8 @@
   > does SpecForge reject a page metadata staging traversal or symlink escape
 - [contested-priors](../knowledge/contested-priors.md)
   > does SpecForge revise or decay priors
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > does SpecForge uppercase declared signal names
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge use LTL CTL or TLA+
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
@@ -173,6 +175,8 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > does header-sourced enum naming re-create the merge-by-name conflation (NO — 28 of 28 collision groups agree on every shared value, 0 conflicts. Structural, not lucky: a caption keyword like Table is shared by unrelated tables, but a header names the actual field and a field encodes the same way throughout a document. Worked example SMMU SH: 11 tables in ihi0070_e_a, every
   > shared value identical 0b00=NON_SHAREABLE/0b10=OUTER_SHAREABLE/0b11=INNER_SHAREABLE/0b01=RESERVED — the merge IS the correct encoding)
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > does known_signals fold a signal name's case
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -294,7 +298,3 @@
   > does the placeholder rule use a list of placeholder words
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > does the reviewed I2S fixture claim a live VLM run
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > does the reviewed population publish product support results
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > does the rolling ledger verifier validate predecessor successor chronology

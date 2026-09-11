@@ -30194,6 +30194,91 @@ mod wire_based_100_5h {
     /// keeps the reason it already had. Without that ordering, every bracketed non-identifier in
     /// the corpus — a bit range under a `Bits` header, a bracketed width suffix — would silently
     /// change reason in the accounting without any row changing fate.
+    /// SIGNAL-DECLARATION-ROW-DROP.3 — the declared spelling is the document's spelling, exactly.
+    ///
+    /// This is not cosmetic. A lower-case position inside an otherwise upper-case identifier is how
+    /// these documents write two different things: polarity (`ARESETn`, `nRESET`) and an index
+    /// metavariable (`AMEVCNTRn_EL0`). Folding the case emits an identifier the document never
+    /// wrote, which ADR 0037 forbids — case carries no alias authority, so `ARESETN` is a minted
+    /// name and not a grounded one.
+    ///
+    /// It also interacts with a control elsewhere, precisely: `is_alpha_variant_placeholder` refuses
+    /// a relation-derived name by finding an **interior** lower-case position in it
+    /// (`[[alpha-variant-placeholder-is-not-a-wire]]`). Case-folding applied to that candidate would
+    /// remove the position the rule looks for. This control covers the table path, where the
+    /// declared set those candidates are matched against is built — a folded declaration set is the
+    /// other half of the same hazard. (`PSELx` is safe from that rule either way: its `x` is final,
+    /// not interior, which is why the rule requires `index + 1 < len`.)
+    ///
+    /// The legacy corpus shows what that looked like: 716 of 2,085 declarations in legacy artifacts
+    /// carry a spelling their document never writes (`ARESETN` for `ARESETn`, `PSELX` for `PSELx`,
+    /// `QACTIVE_CG` for `qactive_cg`). No current artifact does, and this control is what keeps it so.
+    #[test]
+    fn a_declared_name_keeps_the_cell_s_own_spelling() {
+        let table = StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "asset_0001".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal", "Width", "Direction", "Description"])],
+            body_rows: vec![
+                // Trailing lower-case letter: an active-low polarity convention.
+                row(&["ARESETn", "1", "input", "A described signal."]),
+                // Trailing lower-case letter: an index metavariable, not a polarity.
+                row(&["PSELx", "1", "input", "A described signal."]),
+                // Interior lower-case letter inside a suffixed name.
+                row(&["AMEVCNTRn_EL0", "64", "input", "A described signal."]),
+                // A document that writes its signals in lower case entirely.
+                row(&["qactive_cg", "1", "output", "A described signal."]),
+                // Mixed case that is neither convention.
+                row(&["StreamID", "8", "input", "A described signal."]),
+            ],
+            row_count: 5,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let mut accounting = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+
+        let declared: Vec<&str> = prov.iter().map(|p| p.signal_name.as_str()).collect();
+        assert_eq!(
+            declared,
+            vec![
+                "ARESETn",
+                "PSELx",
+                "AMEVCNTRn_EL0",
+                "qactive_cg",
+                "StreamID"
+            ],
+            "every declared name is the cell's own spelling: {declared:?}"
+        );
+        // ...and the sentence the next stage reads carries that spelling too, not a folded one.
+        let texts: Vec<&str> = stmts.iter().map(|s| s.text.as_str()).collect();
+        assert_eq!(
+            texts,
+            vec![
+                "Signal ARESETn is input width 1.",
+                "Signal PSELx is input width 1.",
+                "Signal AMEVCNTRn_EL0 is input width 64.",
+                "Signal qactive_cg is output width 1.",
+                "Signal StreamID is input width 8.",
+            ],
+            "{texts:?}"
+        );
+    }
+
     #[test]
     fn a_bracketed_non_identifier_keeps_its_original_drop_reason() {
         let table = StructuredTableRecord {

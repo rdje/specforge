@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b` closed; `.2c` deferred; `.2d`/`.3` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.3` closed; `.2c` deferred; `.2d` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -576,17 +576,37 @@ a long tail.
   Verification: pending
   Commit: pending
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.3` · Status: `pending` · Goal: **the declared spelling must be the
-  document's spelling.** `known_signals` carries `READDATA`; Avalon writes `readdata` 75 times and
-  `READDATA` zero times. Under ADR 0037 case carries no alias authority, so emitting a case-variant the
-  source never wrote is minting an identifier rather than grounding one. Find where the uppercase
-  spelling enters, and ground it. Census first: how many declared names corpus-wide are spelled in a
-  case the source document never uses.
-  Non-goal: normalising case for comparison — matching case-insensitively is correct and stays; this is
-  about the spelling that gets *emitted*.
+- ID: `SIGNAL-DECLARATION-ROW-DROP.3` · Status: `done` (`2026-09-11`) · Goal: **the declared spelling
+  must be the document's spelling.** Under ADR 0037 case carries no alias authority, so emitting a
+  case-variant the source never wrote mints an identifier rather than grounding one.
+
+  **The census was run first, and it corrected this leaf's own premise.** Over all 78 persisted
+  artifact pairs, joining each `table_signal_declaration_provenance` entry to every token its source
+  document actually writes: **716 of 2,085 declarations in the LEGACY stratum** carry a spelling their
+  document never uses — `ARESETN` for `ARESETn`, `PSELX` for `PSELx`, `NRESET` for `nRESET`,
+  `AMEVCNTRN_EL0` for `AMEVCNTRn_EL0`, `STREAMID` for `StreamID`, and MMU-700 alone accounting for 488
+  where the document writes `qactive_cg` and the artifact says `QACTIVE_CG`. In the **current
+  proof-carrying stratum the count is 0 of 604**. The defect is historic: the legacy artifacts predate
+  its removal, and `known_signals` — this leaf's named suspect — turns out to resolve a proposed
+  spelling *back to* the declared one (`parse_nlp_relations`, `resolve_declared_signal_identifier`),
+  which is the correct behaviour, not the source of the uppercase.
+  **The current-artifact evidence is weak on its own and this leaf says so:** only 4 of the 27
+  proof-carrying documents produce table declarations at all, and AXI is 462 of the 604 while writing
+  its signals upper-case natively, so a case-folding emitter would be nearly invisible there. The
+  authority is therefore the reader, not the artifacts — see the checklist.
+
+  **What this leaf ships is a guard, not a fix**, and the distinction is stated rather than blurred:
+  `a_declared_name_keeps_the_cell_s_own_spelling` passes on the unmodified tree. It is worth its place
+  because the property is load-bearing twice over — the folded name is one ADR 0037 forbids, and
+  `is_alpha_variant_placeholder` refuses a relation-derived placeholder by finding an **interior**
+  lower-case position, so folding is how that control gets disarmed. It was observed RED against a
+  reintroduced fold, returning exactly the legacy spellings.
+  Non-goal: normalising case for comparison — matching case-insensitively is correct and stays.
+  Non-goal: repairing the legacy artifacts. They are inspection-only and cannot be rebuilt; the 716 is
+  a fact about stored files, not about the product.
   Prerequisite: none (independent of `.1`/`.2`).
-  Verification: pending
-  Commit: pending
+  Verification: see the `.3` checklist below.
+  Commit: see log.
 
 ## Acceptance Checklist — `.2b` (enforced)
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_row_notations.py` over 78 persisted
@@ -639,11 +659,43 @@ a long tail.
   production rule was deleted or replaced** — the chain step is additive and every prior reading keeps
   priority over it.
 
+## Acceptance Checklist — `.3` (enforced)
+- [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted `source_ir.json` +
+  `evidence_ir.json` pairs: every `table_signal_declaration_provenance` name is looked up against the
+  complete token set its own document writes (content elements plus every table header and body cell).
+  **Legacy stratum: 716 of 2,085** declarations carry a spelling the document never writes, across 17
+  documents. **Current proof-carrying stratum: 0 of 604**, across the 4 documents that declare.
+- [x] **ROOT CAUSE (WHY + WHERE)** — none in the current producer, which is the finding. Every
+  `to_ascii_uppercase` reachable from the declaration path is comparison-normalisation, not emission:
+  `strip_signal_mentions_from_semantic_hint_text` (`evidence.rs:8967`), the column-scoring closure
+  inside `synthesize_signal_declarations` (`evidence.rs:10451`), `extract_condition_clause`
+  (`evidence.rs:9974`, condition text), `extract_enum_member_name` and
+  `synthesize_encoding_declarations_for_enum` (enum members, a different surface). `known_signals`
+  resolves a proposed spelling to the canonical declared one rather than folding it
+  (`ir/nlp_relation_extract.rs:74`). The uppercase in the legacy artifacts entered through a producer
+  that no longer exists.
+- [x] **ADDRESSED (verified)** — control `a_declared_name_keeps_the_cell_s_own_spelling` asserts both
+  the provenance names and the emitted sentences for five spellings the corpus actually uses:
+  `ARESETn` (polarity), `PSELx` (final index marker), `AMEVCNTRn_EL0` (interior index marker),
+  `qactive_cg` (an all-lower-case document), `StreamID` (neither convention). **Observed RED:**
+  reintroducing a fold in `signal_names_in_name_cell`'s result makes it fail with exactly
+  `["ARESETN", "PSELX", "AMEVCNTRN_EL0", "QACTIVE_CG", "STREAMID"]` — the legacy spellings, reproduced
+  character for character, which is what makes this a guard against the real defect rather than a
+  tautology.
+- [x] **NO REGRESSION** — `cargo test --offline -p specforge-core --lib` **1415 passed, 0 failed**
+  (1414 + this control); `-p specforge --lib` 472 passed; `cargo fmt --all --check` clean;
+  `cargo clippy --offline --all-targets -- -D warnings` exit 0; `bash scripts/check_doctrines.sh` all
+  gate-tier PASS. Test-only change — no production line moves, so no artifact, score, or gold can.
+- [x] **GENERICITY (ADR 0006)** — the control is a fixture; the five spellings are document text in a
+  test, which is where protocol-specific text is allowed. No production rule learns a name.
+- [x] **LOCKSTEP** — no user-visible behaviour changed, so the book is unchanged by the producer
+  sub-clause; the durable finding is the fact card `[[declared-spelling-is-the-document-spelling]]`,
+  which records the 716/0 split so the legacy artifacts are not mistaken for current evidence.
+
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `SIGNAL-DECLARATION-ROW-DROP.3` — the emitted spelling must be the document's spelling. Independent
-   of `.2`; census first.
-2. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+1. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.

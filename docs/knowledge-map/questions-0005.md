@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > how do you audit registers/signals against the table image with the VLM
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how does .10g differ from .10f (register vs message routing)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does / will SpecForge reuse extraction patterns across different PDFs
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -294,7 +298,3 @@
   > how is a captured table region proven covered or uncovered
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how is a captured visual region proven covered or uncovered
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how is a claim's grounding checked beyond a string match
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is a completed oversized task tree contained without losing evidence
