@@ -1898,11 +1898,13 @@ impl EvidenceIr {
 
         // EXTRACTOR-ARCHITECTURE.8 — collect each framework surface's run manifest into a per-document
         // extraction fingerprint (which extractors fired / produced / kept), surfaced on `EvidenceIr`.
-        let mut extraction_manifest = ExtractionManifest::default();
-        // SIGNAL-DECLARATION-ROW-DROP.1 — publish the reader's own denominator on the extraction
-        // manifest, so the 18.3% row loss it used to discard silently becomes a number a check can
-        // bound without replaying the build.
-        extraction_manifest.declaration_row_accounting = table_declaration_row_accounting;
+        let mut extraction_manifest = ExtractionManifest {
+            // SIGNAL-DECLARATION-ROW-DROP.1 — publish the reader's own denominator on the
+            // extraction manifest, so the 18.3% row loss it used to discard silently becomes a
+            // number a check can bound without replaying the build.
+            declaration_row_accounting: table_declaration_row_accounting,
+            ..ExtractionManifest::default()
+        };
 
         // EXTRACTOR-ARCHITECTURE.6 — the register-record surface (register-map + `unknown` field-table
         // strategies, concatenated via `run_surface_concat`, then the width / bit-layout-grid / fragment

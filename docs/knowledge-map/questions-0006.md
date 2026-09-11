@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how is a roadmap rollover capsule verified
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
@@ -291,9 +297,3 @@
   > how much fact-card catalog index headroom remains
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how much fixed overhead does the status ledger live view carry
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how much headroom remains in the corpus coverage task file
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > how much intent does SpecForge extract across the whole corpus
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > how much memory did the guarded AArch64 External Debug ingest use

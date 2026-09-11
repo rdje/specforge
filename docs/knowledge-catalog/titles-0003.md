@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md) | 2026-08-09 | `superseded` | Historical blocker: the corpus host-library route still named the boot-volume checkout |
 | [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md) | 2026-06-06 | `superseded` | Indexed-family spelling canonicalization was historical and is no longer production authority |
 | [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md) | 2026-08-16 | `current` | The recovered APB antecedent reaches EvidenceIR and then stops at SemanticIR record grounding |
 | [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md) | 2026-08-16 | `current` | The current APB canonical miss is an independently explicit inference-antecedent state loss |
@@ -60,4 +61,3 @@
 | [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md) | 2026-08-10 | `current` | The OpenCAPI Data Link Layer v2.0 refresh declares no interface signals, so ISF lowering blocks honestly |
 | [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md) | 2026-08-10 | `current` | OpenCAPI Discovery Configuration refresh removes false topology but remains under-extracted |
 | [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md) | 2026-08-10 | `current` | OpenCAPI Ready Definition refresh removes diagram labels and legacy semantic scaffolds |
-| [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md) | 2026-08-09 | `current` | OpenCAPI Ready and Certified note refreshes reject acronym-derived DL signals |

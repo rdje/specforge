@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0` census + `.1` instrument closed, `.2`/`.3` open)
+- Status: `active` (`2026-09-11`; `.0` census + `.1` instrument closed, `.1a` correction closed, `.2`/`.3` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.2`, `.3`
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.2`, `.3`
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.0` · Status: `done` (`2026-09-11`) · Goal: **measure the drop before
   proposing a fix.** Establish whether the Avalon case is a document quirk or a corpus-wide loss.
@@ -171,6 +171,28 @@ a long tail.
   Verification: see the Acceptance Checklist below.
   Commit: see log.
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1a` · Status: `done` (`2026-09-11`) · Goal: **repair the toolchain
+  gate `.1` left red, and withdraw the claim that said otherwise.** `.1` ticked NO REGRESSION citing
+  `cargo clippy --offline --all-targets -- -D warnings` clean. It is not: at `48def695` clippy fails
+  with `field_reassign_with_default` on `crates/specforge/src/ir/evidence.rs:1905`, the line `.1`
+  itself added (`extraction_manifest.declaration_row_accounting = …` after
+  `ExtractionManifest::default()`), and `scripts/run_ci.sh:30` runs that exact command with
+  `-D warnings`, so the branch could not have passed CI.
+
+  **Why nothing caught it, which is the part worth keeping.** `scripts/check_doctrines.sh` runs no
+  cargo gate at all — its registry is fourteen repository doctrines, and the Rust toolchain oracles
+  (`fmt`, `clippy`, `test`) are named in its header as DETERMINISTIC-ORACLE doctrines that live in
+  `scripts/run_ci.sh`, not in the driver. So the full doctrine report reads all-PASS over a tree whose
+  build does not lint, and the pre-commit hook cannot see it either. The only thing standing between a
+  red clippy and a merge is that someone actually runs it — which is exactly the class of check
+  `CLAIM_VERIFICATION.md` §2 calls "a ticked acceptance box: catches a forgotten step, still permits
+  the step being done wrong." Fact card `[[doctrine-driver-runs-no-cargo-gate]]`.
+  Non-goal: adding a cargo gate to the doctrine driver — the tiering is deliberate (a pre-commit hook
+  must stay fast) and changing it is `DOCTRINE_ENFORCEMENT.md`'s decision, not this tree's.
+  Prerequisite: `.1`.
+  Verification: see the `.1a` checklist below.
+  Commit: see log.
+
 ## Acceptance Checklist (enforced)
 - [x] **REPRODUCE / MEASURE** — `.0`'s corpus census: **482 of 2,637 signal-description rows (18.3%)**
   discarded with no declaration, no residual, no counter and no validation-report entry, over all 78
@@ -198,7 +220,10 @@ a long tail.
   87.5% loss in a single document was previously invisible in every artifact, score and gate.
 - [x] **NO REGRESSION** — `cargo test --offline -p specforge-core --lib` **1406 passed, 0 failed**
   (1405 pre-existing + the new control); `cargo test --offline -p specforge --lib` 472 passed;
-  `cargo fmt --all --check` clean; `cargo clippy --offline --all-targets -- -D warnings` clean. The
+  `cargo fmt --all --check` clean. **Correction (`2026-09-11`, `.1a`): the clippy leg of this line did
+  not re-derive.** `cargo clippy --offline --all-targets -- -D warnings` fails at `48def695` on the
+  very line this leaf added, and CI runs exactly that command (`scripts/run_ci.sh:30`). The rest of
+  the line stands; the clippy leg is withdrawn and repaired by `.1a`. The
   change is purely additive — no declaration is emitted or withheld that was not before, so no score
   can move. **No registration count moves**: `EVIDENCE_RULE_FIELDS` stays 39 and the genericity rule
   inventory stays 170, because the accounting is manifest telemetry rather than a new evidence rule —
@@ -212,6 +237,32 @@ a long tail.
   `[[declaration-reader-drops-uninterpretable-rows]]`. **Producer sub-clause: no production rule was
   deleted or replaced** — the `_ => continue` arm still drops the same rows, it now records them — so
   no book text described behaviour that has gone away.
+
+## Acceptance Checklist — `.1a` (enforced)
+- [x] **REPRODUCE / MEASURE** — `git stash push --include-untracked` to reach `48def695` exactly, then
+  `cargo clippy --offline --all-targets -- -D warnings`: `error: could not compile specforge-core (lib)`
+  / `error: could not compile specforge-core (lib test)`, one violation. The same command is
+  `scripts/run_ci.sh:30`. `bash scripts/check_doctrines.sh` over the same tree reports every doctrine
+  PASS, so the red build is invisible to the enforcer.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs:1905` (at `48def695`):
+  `let mut extraction_manifest = ExtractionManifest::default();` immediately followed by
+  `extraction_manifest.declaration_row_accounting = table_declaration_row_accounting;` is
+  `clippy::field_reassign_with_default`, denied by `-D warnings`. Introduced by `.1` —
+  `git show 48def695 -- crates/specforge/src/ir/evidence.rs` shows the assignment as an added line
+  under an unchanged `::default()`. The gap that let it land: `scripts/check_doctrines.sh` registers
+  fourteen doctrines and no cargo invocation, so the clippy leg of a NO-REGRESSION box is attested by
+  the author and by nothing else until `run_ci.sh` runs.
+- [x] **ADDRESSED (verified)** — the manifest is built in one initializer
+  (`declaration_row_accounting: …, ..ExtractionManifest::default()`), preserving the comment that says
+  why the field is there. `cargo clippy --offline --all-targets -- -D warnings` now exits `0`.
+- [x] **NO REGRESSION** — `cargo test --offline -p specforge-core --lib` **1406 passed, 0 failed** and
+  `cargo test --offline -p specforge --lib` **472 passed** — identical to `.1`'s counts, as a
+  construction-syntax change must be; `cargo fmt --all --check` clean; `bash scripts/check_doctrines.sh`
+  all gate-tier PASS. No behaviour, no field, no registration count moves, so no gold can move.
+- [x] **GENERICITY (ADR 0006)** — syntax only; no rule, vocabulary, or document text is touched.
+- [x] **LOCKSTEP** — no user-visible behaviour changed, so the book is unchanged by the producer
+  sub-clause; the durable finding is the fact card `[[doctrine-driver-runs-no-cargo-gate]]`, and `.1`'s
+  withdrawn clippy leg is corrected in place above rather than quietly replaced.
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `pending` · Goal: **read the two notations the census
   names**, as grammars and not as vendor forms — directional arrow (`A → B`, and its ASCII spellings)

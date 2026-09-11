@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > does validate detect a stale downstream artifact that silently dropped relations
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does validate follow the embedded artifact layout
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does validate materialize SourceIR normalized manifests
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > does validate report message_field_records
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -292,9 +298,3 @@
   > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how does SpecForge combine confidence across modalities or sources
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how does SpecForge decide signal direction (input/output) in the emitted .isf

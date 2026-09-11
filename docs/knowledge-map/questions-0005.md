@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > how does SpecForge combine confidence across modalities or sources
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > how does SpecForge decide signal direction (input/output) in the emitted .isf
 - [contested-priors](../knowledge/contested-priors.md)
   > how does SpecForge detect contradicting or conflicting priors
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -292,9 +298,3 @@
   > how is a promoted constraint surface visible in the extraction manifest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > how is a published mechanism or causal account verified in SpecForge
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
