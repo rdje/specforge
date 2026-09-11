@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.2a` closed; `.2` split into `.2a`-`.2d`; `.2b`-`.2d`/`.3` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.2a` closed; `.2` split into `.2a`-`.2d`; `.1c`/`.2b`-`.2d`/`.3` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.2`, `.3`
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2`, `.3`
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -173,6 +173,11 @@ a long tail.
   appears on the extraction manifest, nothing else moves — which is exactly the attribution ADR 0025
   decision 1 requires before the cascade may be re-run. Gate-tier is green; the rebuild is owned by
   this leaf and must run before the next push.
+  **Correction (`2026-09-11`, `.1b`): "gate-tier is green" understated this residual badly.** Until the
+  rebuild ran, 4 of the 27 proof-carrying documents — AXI, APB, AHB and ADIv6, i.e. every wire-bearing
+  one — could not be loaded by the current binary at all, so `eval-extraction` refused every gold and
+  the WIRE-BASED-100 hard gate was unmeasurable. The deferral was not "a stale seal to tidy up before
+  pushing"; it was the project's primary oracle off the air. Executed and re-derived in `.1b`.
   Non-goal: reading any new notation; that is `.2`. Non-goal: failing a build on the ratio — `.1`
   publishes the denominator, and what bound to enforce is a decision that needs `.2`'s recovery first.
   Prerequisite: `.0`.
@@ -200,6 +205,58 @@ a long tail.
   Prerequisite: `.1`.
   Verification: see the `.1a` checklist below.
   Commit: see log.
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1b` · Status: `done` (`2026-09-11`) · Goal: **execute the cascade `.1`
+  deferred, and correct what its "gate-tier is green" meant.** `.1` named the residual honestly — *"the
+  persisted corpus still carries pre-slice content … the rebuild is owned by this leaf and must run
+  before the next push"* — and then reported the tree as green. It was not green in the sense a reader
+  would take: at `f2966d42` the product's own read-only canonical probe
+  (`specforge semantic <persisted evidence_ir.json> --dry-run`) was **refused for 4 of the 27**
+  proof-carrying documents, and the four were exactly the wire-bearing ones — AXI `ihi0022_l`, APB
+  `ihi0024_e`, AHB `ihi0033_c`, ADIv6 `ihi0074_a`. `eval-extraction`, the WIRE-BASED-100 scoring
+  oracle, therefore refused **every gold**, and had been doing so since `48def695`.
+
+  **Root cause — a second staling mechanism, not the one `.1` guarded against.** `extraction_manifest`
+  is one of the 39 `EVIDENCE_RULE_FIELDS`, so it is a proof-bearing claim field. `.1` put the
+  accounting *inside* it precisely to avoid adding a 40th field and restamping the stage ruleset
+  digest, and at that it succeeded: the seal is unchanged and the count is still 39. But the proof
+  binds more than the ruleset. `public_field_values()` feeds `replay_bytes`; `replay_bytes` is the
+  output of the registered derivation `evidence.current-replay`; and that derivation is the sole input
+  of every per-claim derivation `evidence.claim.<field>.root`. **Changing the content of an existing
+  rule field moves `inputs_sha256` for every claim in the artifact**, so every persisted proof goes
+  stale — a different route to the same place, invisible to a seal comparison. It bit only four
+  documents because the accounting is empty for a document whose tables never reach the body-row
+  reader, and an absent field deserializes to that same empty value.
+
+  **The repair.** The three wire golds' normalized bundles were restored from
+  `generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out/`, the four chains
+  rebuilt stage-major with one `validate` per artifact strictly upstream-to-downstream, and the
+  bundles returned — `diff -r` clean against the preserved copies before removal, declared population
+  still exactly 24 (`[[retained-bundle-population-is-frozen]]`). The cascade **remedy** script could
+  not be used: it refuses any content delta by design (ADR 0025 decision 1) and this delta is real and
+  deliberate, so the stages were run directly with the delta attributed here.
+  Non-goal: teaching `rebuild_stage_cascade.sh` to absorb an attributed delta — that weakens the one
+  control that makes a remedy safe, and it needs a decision record, not a leaf.
+  Prerequisite: `.1`.
+  Verification: see the `.1b` checklist below.
+  Commit: see log.
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1c` · Status: `pending` · Goal: **make the canonical probe
+  per-document, because "one probe per distinct seal" is a sample of the property that actually
+  broke.** `scripts/check_proof_seal_currency.sh` states its own argument in its header: the probe is
+  *"REPRESENTATIVE, one per distinct seal per stage. That is not a sample: the census is what
+  establishes representativeness."* `.1b` falsifies that argument by measurement. All 27 evidence
+  artifacts carried **one** distinct seal, so exactly one probe ran — and 23 of the 27 accepted while
+  4 refused. The seal is homogeneous *because it does not depend on artifact content*; the loader also
+  verifies a per-document replay topology, which does. One probe per seal can therefore never see a
+  content-driven divergence, and it is `CLAIM_VERIFICATION.md` §2's fourth row exactly: a per-item
+  assertion checked against per-container data, which reproduces perfectly while getting it wrong.
+  Decide the tier honestly: measure a full per-document sweep first, and if it costs more than the
+  gate tier can carry, move the total probe to CI and leave a cheap prefilter at the gate — but never
+  leave a sampled probe *describing itself* as total.
+  Prerequisite: `.1b`.
+  Verification: pending
+  Commit: pending
 
 ## Acceptance Checklist (enforced)
 - [x] **REPRODUCE / MEASURE** — `.0`'s corpus census: **482 of 2,637 signal-description rows (18.3%)**
@@ -294,6 +351,65 @@ a long tail.
   Prerequisite: `.1`.
   Verification: see the `.2a` checklist below.
   Commit: see log.
+
+## Acceptance Checklist — `.1b` (enforced)
+- [x] **REPRODUCE / MEASURE** — over the 27 proof-carrying documents at the pre-repair corpus,
+  `specforge semantic generated/evidence_ir/<doc>/evidence_ir.json --dry-run` (the read-only canonical
+  probe, chosen because `validate` mutates): **23 accepted, 4 refused** with
+  `EvidenceIR proof verification failed: registered derivation 'evidence.claim.schema_version.root'
+  output or input topology is stale`. The four: `ihi0022_l` (AXI), `ihi0024_e` (APB), `ihi0033_c`
+  (AHB), `ihi0074_a` (ADIv6). `specforge eval-extraction … --provider skip` consequently refused all
+  eight gold datasets. Bisected across three commits by rebuilding each and re-running the oracle:
+  `4697fdf0` scores, `71a2b3a0` (`.0`) scores, `48def695` (`.1`) refuses. (The probe ran on a binary
+  carrying the unlanded `.2b`; that is sound here because `.2b`'s EvidenceIR output is byte-identical
+  to `f2966d42`'s for all 27 documents — measured — and the probe compares the persisted artifact
+  against exactly that replay.)
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `extraction_manifest` is
+  one of the 39 `EVIDENCE_RULE_FIELDS`, so `public_field_values()` (`evidence.rs:1249`) puts it in
+  `replay_bytes`; `replay_bytes` is the output of the registered derivation `evidence.current-replay`
+  (`evidence.rs:1441`), which is the sole input of every `evidence.claim.<field>.root`
+  (`evidence.rs:1454`); and `verify_premise` (`crates/specforge/src/ir/derivation.rs:2149`) rejects a
+  premise whose recorded `output_sha256`/`inputs_sha256` no longer match the current replay. So adding
+  a sub-field to an existing rule field stales every claim in the artifact **without touching the
+  ruleset seal** — a second staling mechanism beside the one `.1` guarded against. Empty for a
+  document whose tables never reach the body-row reader, which is why 23 of 27 were unaffected.
+- [x] **ADDRESSED (verified)** — three held-out bundles restored from
+  `generated/preserved/WIRE-BASED-100.10/`, four chains rebuilt stage-major
+  (`evidence`→`validate`→`semantic`→`validate`→`intent`→`validate`→`adapt --target isf`→`validate`,
+  one validate per artifact, strictly upstream-to-downstream), bundles returned with `diff -r` clean
+  and the declared population still 24. Measured against a pre-rebuild snapshot held at
+  `generated/preserved/SIGNAL-DECLARATION-ROW-DROP.1b/pre-rebuild/`: across all four documents the
+  **only** differing top-level section is `extraction_manifest` at the EvidenceIR stage, and within it
+  only `declaration_row_accounting`; `semantic_ir`, `intent_ir` and the `.isf` adapter are
+  content-identical, and the emitted `.isf` is unchanged under `compare_emitted_isf` — the cascade's
+  own predicate, borrowed so the repair cannot certify itself with a weaker comparison than the gate
+  would make. Exactly the attribution ADR 0025 decision 1 requires. After the rebuild the probe
+  accepts **27 of 27**. The recovered denominators: APB 9 tables / 61 rows / 60 emitted / 1 dropped;
+  AHB 12 / 95 / 79 / 16; AXI 76 / 464 / 468 / 33; ADIv6 4 / 24 / 3 / 21.
+- [x] **NO REGRESSION** — the wire golds are **re-scored, not assumed**, and every published value
+  re-derives. `eval-extraction --provider skip`, WIRE-BASED-100 block: APB `signal_constraint` 1.000
+  (tp=6 fp=0 fn=0) / `actor_signal_relation` 1.000 (tp=5 fp=0 fn=0) / `temporal_rule` 1.000 (tp=3);
+  AHB 1.000 (tp=6) / 1.000 (tp=6) / 1.000 (tp=4); AXI 1.000 (tp=3) / 1.000 (tp=6) / 1.000 (tp=3); SWD
+  `signal_constraint` 1.000 (tp=1) / `actor_signal_relation` 1.000 (tp=1), and its derivation gold
+  `protocol_operation` 1.000 (tp=4), `protocol_state` tp=8 fn=5, `interface_edge_timing` 1.000 (tp=1),
+  `serial_frame_field` 0 of 11 — which is the published **SWD 13/29** exactly (0+4+8+1 of 11+4+13+1).
+  `kg-bench` **156/156**. `bash scripts/check_chain_currency.sh` over the rebuilt corpus: *"every
+  measurable persisted artifact is exactly what the current binary produces"* — evidence 24 replayed /
+  24 current / 0 stale, semantic 27/27/0, intent 27/27/0, isf-adapter 27/27/0, retention **24 bundles
+  on disk, exactly the declared retained set**. The three wire golds stay `UNMEASURABLE` at the
+  evidence stage by construction, because their bundles were returned.
+  `cargo test --offline -p specforge-core --lib` 1410 passed / `-p specforge --lib` 472 passed;
+  `cargo fmt --all --check` clean; `cargo clippy --offline --all-targets -- -D warnings` exit 0;
+  `bash scripts/check_doctrines.sh` all gate-tier PASS.
+- [x] **GENERICITY (ADR 0006)** — no rule, vocabulary, or production decision changed; this leaf runs
+  the product's own stages over its own corpus. The four rebuilt documents are named as corpus
+  members, not as inputs to any rule.
+- [x] **LOCKSTEP** — no user-visible behaviour changed, so the book is unchanged by the producer
+  sub-clause; the durable findings are the fact card
+  `[[evidence-rule-field-content-stales-every-proof]]` and `.1`'s residual note,
+  corrected in place above rather than quietly replaced. The blind spot that hid it is opened as
+  `.1c` rather than left as a remark.
+
 
 ## Acceptance Checklist — `.2a` (enforced)
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_row_notations.py` over all 78

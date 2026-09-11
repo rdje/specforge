@@ -73,13 +73,13 @@
   "planned_outputs": [
     {
       "metrics": {
-        "bytes": 1088,
+        "bytes": 1103,
         "line_bytes": 190,
         "lines": 11
       },
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "41eb183377dddbaf259d1f86462df7c047f30be73a7ddc0c369e8e4cf1ec8bac"
+      "sha256": "e8499a056c12abf259f1287c6fe194279e1d5857519c658a554d0e45e3ce8be2"
     },
     {
       "metrics": {
@@ -93,43 +93,43 @@
     },
     {
       "metrics": {
-        "bytes": 12541,
+        "bytes": 12565,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0002.md",
       "role": "title_part",
-      "sha256": "f28c297e7a7422eafc6c6c406367cf67e8b26a0e5959ce2b61e7ce42a59650ed"
+      "sha256": "6bb3b97c7db148a5bce6569a52d4fb2884d060b55e0e63e638ad920a6b47a7a5"
     },
     {
       "metrics": {
-        "bytes": 12291,
+        "bytes": 12300,
         "line_bytes": 269,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-      "sha256": "10bb7b4830f39fd60f639492fea95459422d2ccd686eb1cf3308e8540dc776cb"
+      "sha256": "5f08143a91f8ea4d6466e8e08a8ad6b3b792287569993707ed40e4075d057b22"
     },
     {
       "metrics": {
-        "bytes": 12506,
+        "bytes": 12534,
         "line_bytes": 260,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-      "sha256": "40f12abec55e3f8e3efb702b260edc26ca989c8c9d3229be599b916522ffda19"
+      "sha256": "6f43d8b8a6e8f71e2b9d70e4c5cf0e3bc8f7e16b59788facda4a6f26c222fe82"
     },
     {
       "metrics": {
-        "bytes": 10797,
+        "bytes": 10993,
         "line_bytes": 256,
-        "lines": 55
+        "lines": 56
       },
       "path": "docs/knowledge-catalog/titles-0005.md",
       "role": "title_part",
-      "sha256": "d5caac05b3760ae667ee0e30ae68b1bc30842e0e630eea3fdb94a7a5dfdcb449"
+      "sha256": "ee348b23b5ce1342575789cf516589743820977d00126a29b987fa422c5deb18"
     }
   ],
   "schema_version": 1,

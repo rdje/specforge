@@ -66,6 +66,17 @@ un-seals every persisted artifact, and the re-seal cannot complete because AXI, 
 gate refuses evidence, semantic and intent; manifest: the corpus stays sealed. **Adding an EvidenceIR
 rule field is currently structurally unlandable**, which is worth knowing well beyond this tree.
 
+**Correction (`2026-09-11`, `.1b`): "manifest: the corpus stays sealed" was measured with an
+instrument that cannot see the defect.** The seal did stay put, and the corpus still stopped loading:
+changing the *content* of an already-registered rule field moves `inputs_sha256` for every claim in
+the artifact and stales every persisted proof without touching the ruleset digest. Four of the 27
+proof-carrying documents — AXI, APB, AHB and ADIv6, every wire-bearing one — refused to load for three
+commits, so `eval-extraction` refused all eight golds. The proof-seal gate reported green because it
+probes one document per distinct seal, and the seal is homogeneous precisely because it ignores
+content. Repaired by rebuilding those four chains with the delta attributed; the mechanism and the
+repair procedure are `[[evidence-rule-field-content-stales-every-proof]]`, and the sampling blind spot
+is `SIGNAL-DECLARATION-ROW-DROP.1c`.
+
 **The two unread notations have since been censused, and the arrow form is much smaller than it
 looked.** `python3 scripts/measure_declaration_row_notations.py` reads every persisted SourceIR and
 finds **83** flow-arrow cells in direction-bearing columns of `signal_description` tables — in exactly
