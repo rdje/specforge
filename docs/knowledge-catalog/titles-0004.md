@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md) | 2026-08-10 | `current` | The OpenCAPI Data Link Layer v2.0 refresh declares no interface signals, so ISF lowering blocks honestly |
 | [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md) | 2026-08-10 | `current` | OpenCAPI Discovery Configuration refresh removes false topology but remains under-extracted |
 | [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md) | 2026-08-10 | `current` | OpenCAPI Ready Definition refresh removes diagram labels and legacy semantic scaffolds |
 | [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md) | 2026-08-09 | `current` | OpenCAPI Ready and Certified note refreshes reject acronym-derived DL signals |
@@ -60,4 +61,3 @@
 | [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
 | [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md) | 2026-08-27 | `current` | SourceIR ingest is not reproducible across time, and no gate can see it |
-| [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md) | 2026-08-28 | `current` | Re-ingesting the corpus is a trade, not a refresh — it loses caption bindings to gain figure-interior text |

@@ -8,10 +8,11 @@ answers:
   - "what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost"
   - "why does AXI score 1.000 while losing 103 declaration rows"
   - "does SpecForge read the Slave -> Master arrow direction form"
+  - "which notations of the 482 dropped rows have been recovered"
   - "does SpecForge read an enumerated width set like 8, 16, 32, 64"
   - "why are 15 of Avalon's 26 declarations width-only"
   - "can synthesize_directions_from_relations be deleted without losing real signals"
-  - "how many arrow-form direction cells exist corpus-wide"
+  - "which of the 482 dropped rows does the arrow form actually recover"
   - "how many enumerated width cells exist corpus-wide"
   - "does reading the arrow form fix the four documents that lose every row"
   - "which of Avalon's eight signals does the arrow form actually recover"
@@ -95,4 +96,6 @@ above — the admitted rows carry `address`, `byteenable`, `readdata`, `writedat
 **5 of the 8** signals, not 8; `CHANNEL`, `DATA` and `ERROR` reach EvidenceIR some other way and that
 path must be re-measured before the deletion. Adjudicating that same 18-row selection is what exposed
 `[[bracketed-metavariable-name-cell]]`: 2 of the 7 rows the arrow form would newly admit are template
-metavariables, which had to be refused first.
+metavariables, which had to be refused first. The arrow grammar itself shipped in `.2b` with the
+mirror test that keeps it from over-firing — `[[flow-arrow-direction-grammar]]` — so `readdata` and
+`writedata` now declare with directions, and only their enumerated width remains unread.

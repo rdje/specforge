@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.2a` closed; `.2` split into `.2a`-`.2d`; `.1c`/`.2b`-`.2d`/`.3` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.2a`/`.2b` closed; `.2` split into `.2a`-`.2d`; `.1c`/`.2c`/`.2d`/`.3` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -457,7 +457,7 @@ a long tail.
   drop reason still means what the book says it means.
 
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2b` · Status: `pending` · Goal: **read the flow-arrow direction
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2b` · Status: `done` (`2026-09-11`) · Goal: **read the flow-arrow direction
   grammar** — a direction-bearing cell that states the signal's flow (`<driver> → <receiver>`) rather
   than its port sense. Both sides must resolve through the existing actor-role taxonomy and must
   **agree** (left read as a source, right read as a destination, same port sense), and exactly one
@@ -479,9 +479,13 @@ a long tail.
   are not among them, so `WIRE-BASED-100.10f` must re-measure rather than assume its unblock. The
   surviving half of the prediction holds and then some: 18 of 482 is **3.7%**, nowhere near a majority.
   Non-goal: extending the actor taxonomy (that is `.2d`); entity typing; anything an LLM decides.
+  Non-goal: reading a LEFTWARD arrow as a flow. It is the same relation with its operands swapped, but
+  no corpus direction cell uses one and the single family that writes `←` writes it as *assignment*
+  (`ATVALID ← 0`), so reading it as flow would ship a rule with no population behind it. Disqualified
+  explicitly rather than left to fall through.
   Prerequisite: `.2a`.
-  Verification: pending
-  Commit: pending
+  Verification: see the `.2b` checklist below.
+  Commit: see log.
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2c` · Status: `pending` · Goal: **read an enumerated legal-width
   cell** (`8, 16, 32, 64, 128, 256, 512, 1024`) as a width *set* rather than a parse failure.
@@ -522,15 +526,65 @@ a long tail.
   Verification: pending
   Commit: pending
 
+## Acceptance Checklist — `.2b` (enforced)
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_row_notations.py` over 78 persisted
+  SourceIR: **83** arrow cells in direction-bearing columns of `signal_description` tables, 2 documents,
+  13 distinct forms. Through the reader, on Avalon `table_0012` carried verbatim as a fixture, the
+  before state is **1 declaration and 2 dropped rows**: `Signal debugaccess is width 1.` plus
+  `readdata` and `writedata` recorded `no_direction_and_no_width` — measured by running the control
+  with the new chain step removed, not predicted.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `synthesize_signal_declarations`: the direction chain read an explicit column only for the literal
+  substrings `output`/`input`, then a source/destination column through
+  `infer_signal_direction_from_actor_text`, whose `builtin_actor_taxonomy_role_in_text` returns `None`
+  for `Master → Slave` because `normalize_actor_term` turns the arrow into whitespace and the cell then
+  contains a requester term **and** a completer term. So a cell that states the flow perfectly clearly
+  resolved to no direction, and with the width also unreadable the row hit `_ => continue`.
+- [x] **ADDRESSED (verified)** — after: the same fixture emits **3 declarations and drops nothing** —
+  `Signal readdata is input.`, `Signal writedata is output.`, `Signal debugaccess is output width 1.`
+  The 18-cell admitted set is adjudicated in full and is **100% genuine direction statements**; the 65
+  closed cells are adjudicated too (16 genuinely bidirectional, 49 a taxonomy gap owned by `.2d`).
+  Controls: `the_corpus_flow_arrow_forms_admit_only_the_mirrored_ones` enumerates **all 13 corpus cell
+  forms**, so the control population is the corpus population;
+  `a_flow_arrow_needs_both_sides_to_resolve_and_agree` pins the mirror (one side unknown, and two sides
+  of the same role, both fail closed); `a_flow_arrow_must_be_single_forward_and_unambiguous` pins every
+  accepted spelling, every disqualifier, and the splitter's one-arrow rule.
+- [x] **NO REGRESSION** — **the wire golds are re-scored, not assumed**, against the corpus `.1b`
+  repaired: APB `signal_constraint` 1.000 (tp=6 fp=0 fn=0) / `actor_signal_relation` 1.000 (tp=5) /
+  `temporal_rule` 1.000 (tp=3); AHB 1.000 (tp=6) / 1.000 (tp=6) / 1.000 (tp=4); AXI 1.000 (tp=3) /
+  1.000 (tp=6) / 1.000 (tp=3); SWD 1.000 / 1.000 and its derivation gold unchanged at **13/29**.
+  `kg-bench` **156/156**. **Byte-identical EvidenceIR for every proof-carrying document**: the 24
+  rebuildable ones compared before/after through `evidence --dry-run` (`cmp`: 0 of 24 changed) and the
+  four wire-bearing ones compared with their bundles temporarily restored (4 of 4 identical), so the
+  change provably cannot move a score or a stored chain — the two documents it does affect are legacy
+  proofless. All 27 artifacts still load. `cargo test --offline -p specforge-core --lib` **1414
+  passed, 0 failed** (1410 + 4 new controls); `-p specforge --lib` 472 passed; `cargo fmt --all
+  --check` clean; `cargo clippy --offline --all-targets -- -D warnings` exit 0;
+  `bash scripts/check_doctrines.sh` all gate-tier PASS. CHAIN-CURRENCY is CI-tier: `.1b` ran it green
+  over this exact corpus (*"every measurable persisted artifact is exactly what the current binary
+  produces"*), and this leaf's producer output is byte-identical for all 27 proof-carrying documents,
+  so the corpus cannot have moved; it is re-running as a confirmatory check and must be green before
+  the next push.
+- [x] **GENERICITY (ADR 0006)** — the rule is seven arrow spellings, seven disqualifying markers, and
+  the role taxonomy that already existed; no document, vendor, or protocol name enters it. The 13
+  corpus cell forms appear only in a test fixture. Registered under the existing `evidence.declaration`
+  claim family; `EVIDENCE_RULE_FIELDS` stays 39 and the genericity rule inventory stays 170.
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/evidenceir.md` gains *"Direction written as a flow, not as
+  a port sense"*; its one dated ratio is registered in `book_quantitative_claims.jsonl` as
+  `excluded / dated_boundary_evidence` and the frozen candidate expectation moves 337 → 338 rather than
+  leaving it ungoverned. Fact card `[[flow-arrow-direction-grammar]]`. **Producer sub-clause: no
+  production rule was deleted or replaced** — the chain step is additive and every prior reading keeps
+  priority over it.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `SIGNAL-DECLARATION-ROW-DROP.2b` — the flow-arrow direction grammar. Population measured, sample
-   adjudicated, prediction half-falsified in advance; ready to implement.
-2. `SIGNAL-DECLARATION-ROW-DROP.3` — the emitted spelling must be the document's spelling. Independent
+1. `SIGNAL-DECLARATION-ROW-DROP.1c` — make the canonical proof probe per-document. First, because a
+   sampled probe that calls itself total is how the corpus stayed broken for three commits.
+2. `SIGNAL-DECLARATION-ROW-DROP.2c` — the enumerated width set. Decide the representation of a legal
+   width set in the leaf before writing code; 7 cells in 2 documents.
+3. `SIGNAL-DECLARATION-ROW-DROP.3` — the emitted spelling must be the document's spelling. Independent
    of `.2`; census first.
-3. `SIGNAL-DECLARATION-ROW-DROP.2c` — the enumerated width set. Blocked behind `.2b` only because its
-   representation choice is cleaner to make once the rows carry a direction.
 4. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.

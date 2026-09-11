@@ -73,13 +73,13 @@
   "planned_outputs": [
     {
       "metrics": {
-        "bytes": 1103,
+        "bytes": 1087,
         "line_bytes": 190,
         "lines": 11
       },
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "e8499a056c12abf259f1287c6fe194279e1d5857519c658a554d0e45e3ce8be2"
+      "sha256": "9bb267b3832b18b8ddaf29605c5949a8331c5cf5f7217e25a1a0549ee5f19006"
     },
     {
       "metrics": {
@@ -93,43 +93,43 @@
     },
     {
       "metrics": {
-        "bytes": 12565,
+        "bytes": 12574,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0002.md",
       "role": "title_part",
-      "sha256": "6bb3b97c7db148a5bce6569a52d4fb2884d060b55e0e63e638ad920a6b47a7a5"
+      "sha256": "f2b6a0ae70fabd8cf83ad975f2866a2d9b5ff8138b337b56a0199f9cbe239b73"
     },
     {
       "metrics": {
-        "bytes": 12300,
+        "bytes": 12258,
         "line_bytes": 269,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-      "sha256": "5f08143a91f8ea4d6466e8e08a8ad6b3b792287569993707ed40e4075d057b22"
+      "sha256": "55d24b78c9f160b66246cb1f4c7e88ec7922c3eeaa4c9c65a8279a946638c740"
     },
     {
       "metrics": {
-        "bytes": 12534,
-        "line_bytes": 260,
+        "bytes": 12526,
+        "line_bytes": 252,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-      "sha256": "6f43d8b8a6e8f71e2b9d70e4c5cf0e3bc8f7e16b59788facda4a6f26c222fe82"
+      "sha256": "3b724be8d3341dc8db6791d3301e9352a55f08bf3f32f45f371da105fcaf8986"
     },
     {
       "metrics": {
-        "bytes": 10993,
-        "line_bytes": 256,
-        "lines": 56
+        "bytes": 11254,
+        "line_bytes": 260,
+        "lines": 57
       },
       "path": "docs/knowledge-catalog/titles-0005.md",
       "role": "title_part",
-      "sha256": "ee348b23b5ce1342575789cf516589743820977d00126a29b987fa422c5deb18"
+      "sha256": "a45dd4873b78035008f0e7e88ca0abae0069e6fd17829beb17b558536630982e"
     }
   ],
   "schema_version": 1,

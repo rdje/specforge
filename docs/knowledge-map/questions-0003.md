@@ -56,6 +56,8 @@
   > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > does SpecForge preserve certification workflow source evidence
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > does SpecForge read `Master -> Slave` as a direction
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > does SpecForge read an enumerated width set like 8, 16, 32, 64
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -189,6 +191,8 @@
   > does re-ingesting lose three paragraphs
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > does reading the arrow form fix the four documents that lose every row
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > does reading the arrow form recover Avalon's eight signals
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does refreshed in the corpus frontier census mean the document is at the current schema
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -294,7 +298,3 @@
   > does the reviewed population publish product support results
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > does the rolling ledger verifier validate predecessor successor chronology
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > does the trapped-row gap-fill mint duplicate signal declarations

@@ -9125,6 +9125,85 @@ fn infer_signal_direction_from_actor_text(
         .map(|role| direction_for_actor_taxonomy_role(role, column_kind))
 }
 
+/// Right-flowing arrow spellings, longest first so `-->` is one arrow rather than `->` preceded by
+/// a stray `-`, and `==>` is one arrow rather than `=>` preceded by `=`.
+const FLOW_ARROW_FORMS: [&str; 7] = ["⟶", "⇒", "→", "==>", "-->", "=>", "->"];
+
+/// A reverse or bidirectional marker anywhere in the cell disqualifies it. A leftward arrow states
+/// the same relation with its operands swapped, but no corpus direction cell uses one — the one
+/// family that writes `←` writes it as *assignment* (`ATVALID ← 0`), not as flow — so reading it as
+/// flow would be a rule shipped without a population. A bidirectional cell states two senses and has
+/// no single answer. Both fail closed rather than guess.
+const FLOW_ARROW_DISQUALIFIERS: [&str; 7] = ["⟵", "⇐", "←", "↔", "⇔", "<-", "<="];
+
+/// Split a cell on its single right-flowing arrow, returning `(driving side, receiving side)`.
+///
+/// `None` when the cell carries no arrow, more than one, or any reverse/bidirectional marker. The
+/// "more than one" case is not pedantry: a cell that states two opposite flows at once describes a
+/// bidirectional signal group, which has no single port sense.
+fn split_on_single_flow_arrow(cell_text: &str) -> Option<(&str, &str)> {
+    if FLOW_ARROW_DISQUALIFIERS
+        .iter()
+        .any(|marker| cell_text.contains(marker))
+    {
+        return None;
+    }
+    let mut split = None;
+    let mut index = 0usize;
+    while index < cell_text.len() {
+        if !cell_text.is_char_boundary(index) {
+            index += 1;
+            continue;
+        }
+        let rest = &cell_text[index..];
+        match FLOW_ARROW_FORMS
+            .iter()
+            .find(|form| rest.starts_with(**form))
+        {
+            Some(form) => {
+                if split.is_some() {
+                    // A second flow in one cell: bidirectional, not a direction.
+                    return None;
+                }
+                split = Some((&cell_text[..index], &rest[form.len()..]));
+                index += form.len();
+            }
+            None => index += 1,
+        }
+    }
+    split
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.2b — read a direction-bearing cell that states the signal's **flow**
+/// (`<driving actor> → <receiving actor>`) rather than its port sense.
+///
+/// The arrow is the grammar; the two actors are read with the same role taxonomy every other
+/// direction path uses, so this adds a notation rather than a vocabulary (ADR 0006).
+///
+/// **Both sides must resolve, and they must agree.** Reading the left side as a source and the right
+/// side as a destination must produce the same port sense; anything else fails closed. The mirror is
+/// the second condition, and this reader has needed one every time: a cell naming one recognised
+/// role beside one unrecognised name states a flow relative to an actor whose role is unknown, and a
+/// cell whose two sides disagree (two requesters, say) contradicts itself. Measured corpus-wide, the
+/// test admits 18 of 83 arrow cells and every one of the 18 is a genuine direction statement.
+fn infer_signal_direction_from_flow_arrow(
+    cell_text: &str,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Option<&'static str> {
+    let (driving, receiving) = split_on_single_flow_arrow(cell_text)?;
+    let from_driver = infer_signal_direction_from_actor_text(
+        driving,
+        RelationTableColumnKind::SourceLike,
+        prior_guidance,
+    )?;
+    let from_receiver = infer_signal_direction_from_actor_text(
+        receiving,
+        RelationTableColumnKind::DestinationLike,
+        prior_guidance,
+    )?;
+    (from_driver == from_receiver).then_some(from_driver)
+}
+
 /// Infer interface direction from a signal-description cell's prose, for tables that
 /// carry NO direction / source / width column (for example, two-column
 /// `Signal | Description` channel tables).
@@ -10475,6 +10554,20 @@ fn synthesize_signal_declarations(
                         prior_guidance,
                     )
                 })
+            })
+            .or_else(|| {
+                // SIGNAL-DECLARATION-ROW-DROP.2b — a direction-bearing column may state the
+                // signal's FLOW rather than its port sense (`Master → Slave`). Tried after the
+                // three literal readings and before the prose fallback: a column the table
+                // designates for direction outranks a sentence, whichever notation it uses.
+                [explicit_dir_col, source_col, dest_col]
+                    .into_iter()
+                    .flatten()
+                    .find_map(|col| {
+                        row.get(col).and_then(|cell| {
+                            infer_signal_direction_from_flow_arrow(&cell.text, prior_guidance)
+                        })
+                    })
             })
             .or_else(|| {
                 // No direction/source/dest column (e.g. CHI's two-column
@@ -30282,6 +30375,210 @@ mod wire_based_100_5h {
                 .collect::<Vec<_>>(),
             vec![DeclarationRowDropReason::NameIsPlaceholder],
         );
+    }
+
+    /// SIGNAL-DECLARATION-ROW-DROP.2b — the flow-arrow grammar against **every distinct cell form
+    /// the corpus contains**. `python3 scripts/measure_declaration_row_notations.py` finds 83 arrow
+    /// cells in direction-bearing columns of signal-description tables across all 78 persisted
+    /// SourceIR artifacts, in 13 distinct forms — so this table is the population, not a sample.
+    #[test]
+    fn the_corpus_flow_arrow_forms_admit_only_the_mirrored_ones() {
+        // The 18 admitted cells, both forms, from one interface specification's Direction column.
+        for (cell, expected) in [("Master → Slave", "output"), ("Slave → Master", "input")] {
+            assert_eq!(
+                infer_signal_direction_from_flow_arrow(cell, None),
+                Some(expected),
+                "{cell} states a flow between two roles the taxonomy knows"
+            );
+        }
+        // The 65 that fail closed, every distinct form. Two flows in one cell (16 rows) describe a
+        // bidirectional group; the rest name an actor the builtin taxonomy does not know, which is
+        // a taxonomy question (`.2d`), not an arrow question.
+        for cell in [
+            "Redistributor→ Distributor Distributor→ Redistributor",
+            "ITS →Distributor Distributor →ITS",
+            "Distributor→ Remote chip",
+            "Source → Sink",
+            "Distributor →SPI Collator",
+            "ITS →Distributor",
+            "Redistributor→ Distributor",
+            "SPI Collator→ Distributor",
+            "Remote chip→ Distributor",
+            "Distributor →Wake Request",
+            "Wake Request→ Distributor",
+            "Interconnect → Slave",
+            "Sink → Source",
+        ] {
+            assert_eq!(
+                infer_signal_direction_from_flow_arrow(cell, None),
+                None,
+                "{cell} must fail closed"
+            );
+        }
+    }
+
+    /// The mirror is the rule's second condition, so it gets its own controls: one side alone is
+    /// never enough, and two sides that disagree contradict each other.
+    #[test]
+    fn a_flow_arrow_needs_both_sides_to_resolve_and_agree() {
+        // Both sides resolve and agree — the only shape that admits.
+        assert_eq!(
+            infer_signal_direction_from_flow_arrow("Manager -> Subordinate", None),
+            Some("output")
+        );
+        assert_eq!(
+            infer_signal_direction_from_flow_arrow("Completer --> Requester", None),
+            Some("input")
+        );
+        // One side unknown: the flow is stated relative to an actor whose role is not.
+        assert_eq!(
+            infer_signal_direction_from_flow_arrow("Manager → Zetaalpha", None),
+            None
+        );
+        assert_eq!(
+            infer_signal_direction_from_flow_arrow("Zetaalpha → Subordinate", None),
+            None
+        );
+        // Two sides of the same role: source-like and destination-like disagree, so it is refused.
+        assert_eq!(
+            infer_signal_direction_from_flow_arrow("Manager → Requester", None),
+            None
+        );
+        assert_eq!(
+            infer_signal_direction_from_flow_arrow("Slave → Subordinate", None),
+            None
+        );
+    }
+
+    #[test]
+    fn a_flow_arrow_must_be_single_forward_and_unambiguous() {
+        // Every accepted spelling, longest-first so a longer form is one arrow and not two.
+        for cell in [
+            "Master ⟶ Slave",
+            "Master ⇒ Slave",
+            "Master → Slave",
+            "Master ==> Slave",
+            "Master --> Slave",
+            "Master => Slave",
+            "Master -> Slave",
+        ] {
+            assert_eq!(
+                infer_signal_direction_from_flow_arrow(cell, None),
+                Some("output"),
+                "{cell}"
+            );
+        }
+        // No arrow at all, and a cell that merely names both roles, stay with the existing paths.
+        assert_eq!(
+            infer_signal_direction_from_flow_arrow("Master Slave", None),
+            None
+        );
+        assert_eq!(infer_signal_direction_from_flow_arrow("", None), None);
+        // Reverse and bidirectional markers fail closed rather than being read as a forward flow.
+        for cell in [
+            "Slave ← Master",
+            "Slave <- Master",
+            "Master ↔ Slave",
+            "Master <-> Slave",
+            "Master ⇔ Slave",
+            "Master <= Slave",
+        ] {
+            assert_eq!(
+                infer_signal_direction_from_flow_arrow(cell, None),
+                None,
+                "{cell} must fail closed"
+            );
+        }
+        // The splitter itself: exactly one arrow, or nothing.
+        assert_eq!(
+            split_on_single_flow_arrow("Master → Slave"),
+            Some(("Master ", " Slave"))
+        );
+        assert_eq!(split_on_single_flow_arrow("A → B → C"), None);
+        assert_eq!(split_on_single_flow_arrow("A -> B --> C"), None);
+    }
+
+    /// The rows the notation was opened for, carried verbatim from the persisted corpus
+    /// (`683091…avalon…/source_ir.json`, `table_0012`) — a conformance fixture (ADR 0006).
+    ///
+    /// `readdata` and `writedata` are plainly listed in a table SpecForge itself typed
+    /// `signal_description`, and produced nothing at all: the document writes direction as a flow
+    /// and `readdata`'s width as the set of legal widths, and the reader read neither.
+    #[test]
+    fn the_corpus_arrow_direction_rows_declare_their_signals() {
+        let table = StructuredTableRecord {
+            table_id: "table_0012".to_string(),
+            asset_id: "asset_0012".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&[
+                "Signal Role",
+                "Width",
+                "Direction",
+                "Required",
+                "Description",
+            ])],
+            body_rows: vec![
+                row(&[
+                    "readdata",
+                    "8, 16, 32, 64, 128, 256, 512, 1024",
+                    "Slave → Master",
+                    "No",
+                    "The readdata driven from the slave to the master in response to a read transfer.",
+                ]),
+                row(&[
+                    "writedata",
+                    "8, 16, 32, 64, 128, 256, 512, 1024",
+                    "Master → Slave",
+                    "No",
+                    "Data for write transfers.",
+                ]),
+                row(&[
+                    "debugaccess",
+                    "1",
+                    "Master → Slave",
+                    "No",
+                    "When asserted, allows the processor to write on-chip memories configured as ROMs.",
+                ]),
+            ],
+            row_count: 3,
+            col_count: 5,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let mut accounting = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+
+        let texts: Vec<&str> = stmts.iter().map(|s| s.text.as_str()).collect();
+        assert_eq!(
+            texts,
+            vec![
+                // Direction recovered; the width is still the enumerated set `.2c` owns.
+                "Signal readdata is input.",
+                "Signal writedata is output.",
+                // Already declared before this leaf, but width-only: it gains its direction.
+                "Signal debugaccess is output width 1.",
+            ],
+            "the arrow column now decides direction: {texts:?}"
+        );
+        assert!(
+            accounting[0].dropped_rows.is_empty(),
+            "no row is dropped any more: {:?}",
+            accounting[0]
+        );
+        assert_eq!(accounting[0].rows_considered, 3);
+        assert_eq!(accounting[0].declarations_emitted, 3);
     }
 
     #[test]

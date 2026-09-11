@@ -378,6 +378,48 @@ produces a byte-identical `EvidenceIR` before and after, so no score and no stor
 Tracked as `SIGNAL-DECLARATION-ROW-DROP.2a`; the population is re-derivable with
 `python3 scripts/measure_declaration_row_notations.py`.
 
+### Direction written as a flow, not as a port sense
+
+With template rows refused, the notation that started this can be read. A signal table's direction
+column does not always say `input` or `output`. Some documents state the **flow** instead:
+
+```text
+Signal Role   Width                              Direction        Description
+readdata      8, 16, 32, 64, 128, 256, 512, 1024 Slave → Master   The readdata driven from the slave …
+writedata     8, 16, 32, 64, 128, 256, 512, 1024 Master → Slave   Data for write transfers.
+```
+
+Both rows produced nothing at all before: no direction was readable, the width was a list of legal
+widths rather than one width, and a row with neither is the drop the section above measures.
+
+The arrow is the grammar. The two actors either side of it are read with the same role taxonomy every
+other direction path already uses, so this adds a notation rather than a vocabulary. What makes it
+safe is that **both sides must resolve, and they must agree**: reading the left side as a source and
+the right side as a destination has to yield the same port sense. A cell naming one recognised role
+beside one unrecognised name states a flow relative to an actor whose role is unknown; a cell whose
+two sides disagree contradicts itself; a cell containing two flows describes a bidirectional group,
+which has no single answer. All three fail closed, as does any reverse or bidirectional marker.
+
+That mirror is not caution for its own sake — it is this reader's recurring lesson, that a cheap
+structural rule over-fires until a second condition is added. The numbers say how much it costs and
+what it buys. Across all 78 stored artifacts there are 83 arrow-bearing direction cells, in just two
+documents and 13 distinct wordings — few enough that the sample *is* the population. 18 are admitted,
+and every one of them is a genuine direction statement. The other 65 fail closed: 16 state two
+opposite flows in one cell, and 49 name actors the built-in role taxonomy does not know
+(`Distributor`, `ITS`, `Source → Sink`). Those 49 are a taxonomy question, deliberately left open
+rather than answered by widening a list that also decides how headings and prose are read.
+
+Of the 18, seven are rows that produced nothing before — five real wires recovered, and two that the
+template rule above now refuses. The rest already declared a width and simply gain their direction.
+
+Two honest limits. First, this recovers about 3.7 % of the measured row loss, not a majority: the
+four specifications that lose *every* row contain no arrow cell at all, so their loss has another
+cause that is still unidentified. Second, `readdata` and `writedata` come back as
+`Signal readdata is input.` — with a direction but no width, because the enumerated width set is a
+separate notation and a separate decision about how to represent a set of legal widths without
+inventing one of them. Tracked as `SIGNAL-DECLARATION-ROW-DROP.2b`; the population is re-derivable
+with `python3 scripts/measure_declaration_row_notations.py`.
+
 ## Why provenance is critical here
 
 `EvidenceIR` is where the project first needs to defend itself against "plausible but wrong" extraction.

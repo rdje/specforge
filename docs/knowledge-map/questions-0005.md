@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does / will SpecForge reuse extraction patterns across different PDFs
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > how does FSMGen decide a value literal's width (by notation digit count — 0x7D=8 bits, 0b00=2 bits — NOT by value; it requires an exact width-cast W'… match, no implicit truncation/extension; a bare decimal is unsized and fits any width)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -294,7 +298,3 @@
   > how is a claim's grounding checked beyond a string match
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is a completed oversized task tree contained without losing evidence
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics

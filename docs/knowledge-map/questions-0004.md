@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > does the trapped-row gap-fill mint duplicate signal declarations
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > does the upstream-first decision weaken the executable-intent objective
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
@@ -294,7 +298,3 @@
   > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does .10g differ from .10f (register vs message routing)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does / will SpecForge reuse extraction patterns across different PDFs
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations

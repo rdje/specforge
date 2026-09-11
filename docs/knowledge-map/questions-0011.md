@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the I2C declared-signal recall / precision
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
@@ -120,6 +124,8 @@
   > what is the first reviewed source-to-IntentIR evaluation result
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > what is the first task in canonical recovery
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > what is the flow-arrow direction grammar
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -292,9 +298,3 @@
   > what remains before the repaired reviewed population can be published
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what remains under-extracted in OpenCAPI Discovery Configuration
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what replaced ProtocolFamily in CorpusMemory schema 7
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > what replaced the SWD-specific EvidenceIR carrier
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > what reports that the persisted corpus is out of seal

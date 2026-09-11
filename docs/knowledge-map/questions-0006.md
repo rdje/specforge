@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -149,7 +153,7 @@
   > how many administrative workflow statements were measured
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how many alignment task owners and routes survive migration
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > how many arrow-form direction cells exist corpus-wide
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how many book claims describe behaviour the code no longer has
@@ -293,7 +297,3 @@
   > how many signal_description rows are dropped corpus-wide
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > how many synthetic behaviors came from generic gates
