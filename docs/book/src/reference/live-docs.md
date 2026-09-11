@@ -620,8 +620,13 @@ moves in the planning slice; each migration has its own source/retrieval proof.
 
 #### Task catalog migration landed
 
-`docs/TASK_TREE.md` now derives one concise row for all 121 real task trees, with `TEMPLATE.md` linked
-separately for authors. The workflow contract remains outside the generated section. The index moved
+`docs/TASK_TREE.md` derives one concise row per real task tree, with `TEMPLATE.md` linked
+separately for authors. The live count is derived on read, not stored here — `perl
+scripts/check_task_tree_catalog.pl --check` prints it, the same way
+`STATUS-LEDGER-ROLLOVER.1` replaced this chapter's stored ledger sizes: a copy of a value that every
+new tree invalidates is the derived-state anti-pattern the containment doctrine names.
+
+The workflow contract remains outside the generated section. At the migration boundary the index moved
 from 167,583 bytes and an 18,932-byte widest row to 27,228 bytes and a 207-byte widest row while adding
 the four missing real routes.
 

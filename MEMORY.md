@@ -14,7 +14,7 @@
   `.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
   `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
   `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`;
-  `CHANGES-LEDGER-ROLLOVER.4`; `BOOK-BEHAVIOUR-CURRENCY` `.0`/`.1` (new).
+  `CHANGES-LEDGER-ROLLOVER.4`; `BOOK-BEHAVIOUR-CURRENCY.1` (`.0` censused: one stale book claim, now fixed).
 - Current state: **Two slices, each decided by measuring a candidate rule before shipping it.** `.10b` took
   7 names out of AXI's ISF interface (ports `295 → 288`, actors `25 → 21`, constraints `53 → 44`, rules
   `133 → 110`) after the obvious suffix-shape detector was **falsified** — 10 tables / 42 declarations
