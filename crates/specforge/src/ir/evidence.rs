@@ -2618,6 +2618,9 @@ pub enum DeclarationRowDropReason {
     NoNameCell,
     /// The name cell's leading token is not an identifier, so the row names no signal.
     NameNotAnIdentifier,
+    /// The name cell's leading token is a metavariable — an identifier-shaped word wrapped in a
+    /// matched bracket pair — so the row is a template the document expands, not a declaration.
+    NameIsPlaceholder,
     /// A named signal whose row yielded neither a direction nor a width. This is the arm that
     /// cost Avalon its `readdata`/`writedata` declarations and the corpus 482 rows.
     NoDirectionAndNoWidth,
@@ -10198,6 +10201,42 @@ fn is_signal_value_constraint(text: &str) -> bool {
 /// affix is what separates a signal family from a sentence — `Chip enable, active LOW.` splits into
 /// well-formed-looking words that share nothing, and is refused. No vocabulary and no document
 /// identity: the rule reads shape alone (ADR 0006).
+/// Bracket pairs a document uses to mark a metavariable in a template row.
+const NAME_PLACEHOLDER_DELIMITERS: [(char, char); 4] =
+    [('<', '>'), ('(', ')'), ('[', ']'), ('{', '}')];
+
+/// SIGNAL-DECLARATION-ROW-DROP.2a — true when a name cell's leading token is a **metavariable**
+/// rather than an identifier: an identifier-shaped word wrapped in a matched bracket pair.
+///
+/// A row like `<name> _in` — *"the input signal of a logical tristate signal"* — is a template the
+/// integrator expands, not a wire the document declares. The reader nevertheless used to accept it,
+/// because the token is only trimmed of its non-identifier characters before being judged, and
+/// stripping `<` and `>` is exactly what turns `<name>` into the perfectly ordinary identifier
+/// `name`. Judging the token **as written** is the whole rule: a wrapper that must be removed
+/// before a token looks like a name is evidence that it is not one.
+///
+/// Shape only — a matched pair around the whole leading token, with at least one character between
+/// them. No document, vendor, or protocol vocabulary (ADR 0006), and no list of placeholder words:
+/// `<name>`, `<any>` and `(varies)` are recognised by their delimiters, never by what they spell.
+/// See `[[alpha-variant-placeholder-is-not-a-wire]]` for the same error in the relation path.
+fn leading_name_token_is_placeholder(raw_name: &str) -> bool {
+    let Some(token) = raw_name.split_whitespace().next() else {
+        return false;
+    };
+    let mut characters = token.chars();
+    let (Some(open), Some(close)) = (characters.next(), characters.next_back()) else {
+        return false;
+    };
+    // `next_back` already consumed the closing character, so a non-empty remainder is the body
+    // between the delimiters — `<>` has none and is not a metavariable.
+    characters.next().is_some()
+        && NAME_PLACEHOLDER_DELIMITERS
+            .iter()
+            .any(|&(expected_open, expected_close)| {
+                open == expected_open && close == expected_close
+            })
+}
+
 fn signal_names_in_name_cell(raw_name: &str) -> Vec<String> {
     let first_token = |text: &str| -> String {
         text.split_whitespace()
@@ -10391,6 +10430,17 @@ fn synthesize_signal_declarations(
             dropped_rows.push(DroppedDeclarationRow {
                 name_cell: raw_name.to_string(),
                 reason: DeclarationRowDropReason::NameNotAnIdentifier,
+            });
+            continue;
+        }
+        // A token that only becomes an identifier once its wrapper is stripped is a metavariable.
+        // Tested AFTER the identifier test on purpose: a cell that was already refused keeps the
+        // reason it already had, so this reclassifies only rows the reader would otherwise have
+        // declared (SIGNAL-DECLARATION-ROW-DROP.2a).
+        if leading_name_token_is_placeholder(raw_name) {
+            dropped_rows.push(DroppedDeclarationRow {
+                name_cell: raw_name.to_string(),
+                reason: DeclarationRowDropReason::NameIsPlaceholder,
             });
             continue;
         }
@@ -29965,6 +30015,304 @@ mod wire_based_100_5h {
                 .any(|r| r.name_cell == "OMEGAALPHA"),
             "the dropped row must carry its own name cell: {account:?}"
         );
+    }
+
+    /// SIGNAL-DECLARATION-ROW-DROP.2a — a template row is not a declaration.
+    ///
+    /// The name cell's leading token is only trimmed of its non-identifier characters before being
+    /// judged, so a metavariable arrives at the identifier test already disguised: `<basename>`
+    /// becomes the ordinary-looking `basename`. The reader then declares a wire the document never
+    /// names, and — once a direction is readable — declares it twice with opposite senses, because
+    /// a tristate template states one row per sense. Judging the token as written closes that.
+    #[test]
+    fn a_bracketed_metavariable_name_cell_declares_no_signal() {
+        let table = StructuredTableRecord {
+            table_id: "table_0031".to_string(),
+            asset_id: "asset_0031".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal Role", "Width", "Direction", "Description"])],
+            body_rows: vec![
+                // An ordinary declaration: the rule must not touch it.
+                row(&["ZETAALPHA", "1", "input", "A described signal."]),
+                // Trailing punctuation is not a wrapper — the token is an identifier as written.
+                row(&["OMEGAALPHA,", "1", "input", "A described signal."]),
+                // One template row per bracket pair the grammar recognises. Each would otherwise
+                // declare the same phantom wire, twice with opposite senses.
+                row(&["<basename> _in", "1", "input", "The input signal."]),
+                row(&["<basename> _out", "1", "output", "The output signal."]),
+                row(&["(basename)", "1", "input", "A described signal."]),
+                row(&["[basename]", "1", "input", "A described signal."]),
+                row(&["{basename}", "1", "input", "A described signal."]),
+            ],
+            row_count: 7,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let mut accounting = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+
+        let declared: Vec<&str> = prov.iter().map(|p| p.signal_name.as_str()).collect();
+        assert_eq!(
+            declared,
+            vec!["ZETAALPHA", "OMEGAALPHA"],
+            "only the two real identifiers may declare: {declared:?}"
+        );
+        assert_eq!(stmts.len(), 2, "one statement per declared name");
+
+        let account = &accounting[0];
+        assert_eq!(account.rows_considered, 7);
+        assert_eq!(
+            account.rows_considered,
+            account.declarations_emitted + account.dropped_rows.len(),
+            "the denominator must still close: {account:?}"
+        );
+        assert!(
+            account
+                .dropped_rows
+                .iter()
+                .all(|r| r.reason == DeclarationRowDropReason::NameIsPlaceholder),
+            "every dropped row here is a metavariable: {:?}",
+            account.dropped_rows
+        );
+        // The cell is retained verbatim, so the template can be recognised from the artifact alone.
+        assert!(
+            account
+                .dropped_rows
+                .iter()
+                .any(|r| r.name_cell == "<basename> _in"),
+            "the dropped row carries its own name cell: {account:?}"
+        );
+    }
+
+    /// The metavariable test runs AFTER the identifier test, so a cell that was already refused
+    /// keeps the reason it already had. Without that ordering, every bracketed non-identifier in
+    /// the corpus — a bit range under a `Bits` header, a bracketed width suffix — would silently
+    /// change reason in the accounting without any row changing fate.
+    #[test]
+    fn a_bracketed_non_identifier_keeps_its_original_drop_reason() {
+        let table = StructuredTableRecord {
+            table_id: "table_0145".to_string(),
+            asset_id: "asset_0145".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Bits", "Width", "Direction", "Description"])],
+            body_rows: vec![row(&["[15:8]", "1", "input", "A described field."])],
+            row_count: 1,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let mut accounting = Vec::new();
+        synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+
+        let reasons: Vec<DeclarationRowDropReason> = accounting[0]
+            .dropped_rows
+            .iter()
+            .map(|r| r.reason)
+            .collect();
+        assert_eq!(
+            reasons,
+            vec![DeclarationRowDropReason::NameNotAnIdentifier],
+            "a bracketed non-identifier was never a declaration candidate: {reasons:?}"
+        );
+    }
+
+    /// The same rule against the rows that produced it, carried verbatim from the persisted
+    /// corpus (`683091…avalon…/source_ir.json`, `table_0031`) — a conformance fixture, which is
+    /// where document-specific text is allowed to live (ADR 0006).
+    ///
+    /// The document states the template in its own description column: *"The input signal of a
+    /// logical tristate signal"*. Two of these three rows are dropped today for an unrelated
+    /// reason — the width `1 - 1024` parses as neither a number nor an expression — so the
+    /// phantom only became visible once the width was readable. The third already declares it.
+    #[test]
+    fn the_corpus_template_rows_declare_no_signal() {
+        // Before this leaf, the row reached the declaration path with an ordinary-looking name:
+        // the leading token is trimmed of its non-identifier characters before being judged, and
+        // that trim is what turns the metavariable into an identifier. Both halves still hold —
+        // the defect was never in the trim, it was in judging the trimmed token.
+        let trimmed = signal_names_in_name_cell("<name> _outen")
+            .first()
+            .cloned()
+            .unwrap_or_default();
+        assert_eq!(
+            trimmed, "name",
+            "the wrapper is trimmed away before judgement"
+        );
+        assert!(
+            is_hardware_signal_token(&trimmed),
+            "which is why the identifier test used to admit it"
+        );
+
+        let table = StructuredTableRecord {
+            table_id: "table_0031".to_string(),
+            asset_id: "asset_0031".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&[
+                "Signal Role",
+                "Width",
+                "Direction",
+                "Required",
+                "Description",
+            ])],
+            body_rows: vec![
+                row(&[
+                    "<name> _in",
+                    "1 - 1024",
+                    "Slave → Master",
+                    "No",
+                    "The input signal of a logical tristate signal.",
+                ]),
+                row(&[
+                    "<name> _out",
+                    "1 - 1024",
+                    "Master → Slave",
+                    "No",
+                    "The output signal of a logical tristate signal.",
+                ]),
+                row(&[
+                    "<name> _outen",
+                    "1",
+                    "Master → Slave",
+                    "No",
+                    "The output enable for a logical tristate signal.",
+                ]),
+            ],
+            row_count: 3,
+            col_count: 5,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let mut accounting = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+
+        assert!(
+            stmts.is_empty() && prov.is_empty(),
+            "a template table declares nothing: {prov:?}"
+        );
+        let reasons: Vec<DeclarationRowDropReason> = accounting[0]
+            .dropped_rows
+            .iter()
+            .map(|r| r.reason)
+            .collect();
+        assert_eq!(
+            reasons,
+            vec![DeclarationRowDropReason::NameIsPlaceholder; 3],
+            "all three template rows are recorded as metavariables: {reasons:?}"
+        );
+
+        // The same document's conduit table (`table_0030`) writes the whole row as a template:
+        // the name is a metavariable and so is the width. The width being parametric is what
+        // used to carry it past the `(direction, width)` match.
+        let conduit = StructuredTableRecord {
+            table_id: "table_0030".to_string(),
+            asset_id: "asset_0030".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal Role", "Width", "Direction", "Description"])],
+            body_rows: vec![row(&[
+                "<any>",
+                "<n>",
+                "In, out, or bidirectional",
+                "A conduit interface consists of one or more input, output, or bidirectional signals.",
+            ])],
+            row_count: 1,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let mut accounting = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &conduit,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+        assert!(
+            stmts.is_empty() && prov.is_empty(),
+            "a conduit template declares nothing: {prov:?}"
+        );
+        assert_eq!(
+            accounting[0]
+                .dropped_rows
+                .iter()
+                .map(|r| r.reason)
+                .collect::<Vec<_>>(),
+            vec![DeclarationRowDropReason::NameIsPlaceholder],
+        );
+    }
+
+    #[test]
+    fn a_metavariable_needs_a_matched_pair_around_a_non_empty_body() {
+        for placeholder in ["<n>", "<basename>", "(varies)", "[index]", "{width}"] {
+            assert!(
+                leading_name_token_is_placeholder(placeholder),
+                "{placeholder} wraps a body in a matched pair"
+            );
+        }
+        for plain in [
+            "",
+            " ",
+            "<",
+            "<>",
+            "()",
+            "ZETAALPHA",
+            "ZETAALPHA,",
+            "ZETA[3:0]",
+            "<ZETAALPHA",
+            "ZETAALPHA>",
+            "(ZETAALPHA]",
+        ] {
+            assert!(
+                !leading_name_token_is_placeholder(plain),
+                "{plain:?} is not a metavariable"
+            );
+        }
+        // Only the LEADING token decides: the rest of the cell is the row's own description.
+        assert!(leading_name_token_is_placeholder("<basename> _outen"));
+        assert!(!leading_name_token_is_placeholder("ZETAALPHA <wrapped>"));
     }
 
     #[test]

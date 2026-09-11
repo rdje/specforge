@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > how is a leaf route lifecycle verified
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how is a message field's width kept honest (per-variant widths stay None)
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > how is a promoted constraint surface visible in the extraction manifest
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > how is a published mechanism or causal account verified in SpecForge
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -133,8 +141,12 @@
   > how many administrative workflow statements were measured
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how many alignment task owners and routes survive migration
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > how many arrow-form direction cells exist corpus-wide
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how many book claims describe behaviour the code no longer has
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > how many bracketed placeholder name cells exist corpus-wide
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > how many caption bindings does the corpus lose on re-ingest
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -201,6 +213,8 @@
   > how many documents lost promoted records when the empty-catalog special case was deleted
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > how many enumerated width cells exist corpus-wide
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > how many evidence artifacts have no validation report
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -283,17 +297,3 @@
   > how many task trees have an unowned named frontier
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > how many unknown-kind tables does the corpus carry
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > how much RAM did the qwen2.5vl:7b VLM use on a timing-diagram crop (13 GB; host hit 87% used, across the 85% kill threshold)
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > how much disk do normalized bundles cost across the corpus
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how much disk do the retained normalized bundles cost
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how much fact-card catalog index headroom remains
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > how much fixed overhead does the status ledger live view carry

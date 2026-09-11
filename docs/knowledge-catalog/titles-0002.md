@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md) | 2026-09-01 | `current` | Only 24 of 78 persisted documents (30.8%) pass the scorer's schema gate and just 2 carry a gold, and the two… |
 | [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md) | 2026-06-09 | `current` | Vendor/layout clustering via a derived structural+behavioral fingerprint (corpus_cluster) — emergent famili… |
 | [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md) | 2026-06-17 | `current` | The whole local corpus builds to IntentIR — semantic->intent needs only the persisted evidence_ir.json (not… |
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
@@ -60,4 +61,3 @@
 | [full-page-capture-gap](../knowledge/full-page-capture-gap.md) | 2026-06-14 | `current` | SpecForge captures a page's intent-bearing content; the residual outside Docling regions is decoration/furnit… |
 | [generic-enum-conflation](../knowledge/generic-enum-conflation.md) | 2026-08-31 | `current` | The `.isf` generic-`TABLE` (and `FIGURE`/`DATA`/…) mega-enum is an EXTRACTION-born conflation — `derive_e… |
 | [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The GIC Overview Guide carries interrupt constraints, not an 83-interface hardware surface |
-| [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md) | 2026-06-11 | `current` | Header-trapped SIGNAL tables — shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-… |

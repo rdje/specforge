@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0` census + `.1` instrument closed, `.1a` correction closed, `.2`/`.3` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.2a` closed; `.2` split into `.2a`-`.2d`; `.2b`-`.2d`/`.3` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -101,6 +101,14 @@ a long tail.
 ## Task Tree
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.2`, `.3`
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`
+  · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
+  after the corpus population was measured: the two notations are independent changes with different
+  payoffs (the arrow recovers rows; the enumerated width only sharpens rows the arrow already
+  recovered), adjudicating the arrow's own selection turned up a precondition that had to land first,
+  and the 49 rows that fail closed name a taxonomy question with a much wider blast radius than either
+  notation. Each child ships its own corpus count and adjudicated sample.
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.0` · Status: `done` (`2026-09-11`) · Goal: **measure the drop before
   proposing a fix.** Establish whether the Avalon case is a document quirk or a corpus-wide loss.
@@ -264,16 +272,125 @@ a long tail.
   sub-clause; the durable finding is the fact card `[[doctrine-driver-runs-no-cargo-gate]]`, and `.1`'s
   withdrawn clippy leg is corrected in place above rather than quietly replaced.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `pending` · Goal: **read the two notations the census
-  names**, as grammars and not as vendor forms — directional arrow (`A → B`, and its ASCII spellings)
-  and enumerated legal widths (`8, 16, 32, …` → a width set, not a parse failure). Each ships with the
-  corpus-wide count of rows it newly admits and an adjudicated sample, per the Acceptance Criteria.
-  **Prediction, stated before implementation:** the arrow form recovers Avalon's eight signals *with
-  directions* and moves the four all-zero documents off zero; it does **not** account for the majority
-  of the 482, because Cortex-A76's 107 and AXI's 103 are unlikely to share Avalon's notation. If the
-  arrow form alone closes more than half the 482, this prediction is wrong and the reason gets recorded.
-  Non-goal: entity typing; anything an LLM decides.
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2a` · Status: `done` (`2026-09-11`) · Goal: **a template row is not
+  a declaration.** Adjudicating `.2b`'s selection before implementing it — the discipline this tree
+  exists to enforce — turned up a precondition. Of the 7 currently-dropped rows the flow-arrow grammar
+  would newly admit, **2 are template metavariables**: Avalon `table_0031` documents a tristate conduit
+  as `<name> _in` / `<name> _out` / `<name> _outen`, *"the input signal of a logical tristate signal"*.
+  The reader declares them, because `signal_names_in_name_cell` trims the leading token of its
+  non-identifier characters *before* judging it, and that trim is exactly what turns `<name>` into the
+  ordinary identifier `name`. Shipping `.2b` first would have minted that phantom **twice with opposite
+  senses**, one per template row — a 28.6% false-positive rate in its own newly-admitted set.
+  **The rule:** a leading name token wrapped in a matched bracket pair (`<>`, `()`, `[]`, `{}`) around a
+  non-empty body is a metavariable; the row declares nothing and is recorded with its own reason
+  `name_is_a_placeholder`, name cell verbatim. Shape only — the delimiters decide, never the word
+  between them, so there is no placeholder vocabulary to maintain (ADR 0006).
+  **Ordering is load-bearing and deliberate:** the metavariable test runs AFTER the identifier test, so
+  a bracketed token that was never an identifier (`[15:8]` under a `Bits` header, GIC-600's
+  `[<domain>_]mbistaddr[variable:0]`) keeps the reason it already had. Without that ordering the change
+  would relabel 7 rows corpus-wide whose fate does not move, churning the accounting for nothing.
+  Non-goal: changing `is_hardware_signal_token` or `signal_names_in_name_cell` — both are used well
+  outside this reader and the trim itself is not the defect; judging the trimmed token was.
   Prerequisite: `.1`.
+  Verification: see the `.2a` checklist below.
+  Commit: see log.
+
+## Acceptance Checklist — `.2a` (enforced)
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_row_notations.py` over all 78
+  persisted `source_ir.json`: **12** name cells in `signal_description` tables whose leading token is
+  wrapped in a matched bracket pair, of which **5 currently survive the identifier test** and can
+  therefore reach a declaration — `<name> _in`, `<name> _out`, `<name> _outen` (Avalon `table_0031`),
+  `<any>` (`table_0030`), `(varies)` (AMD IOMMU `table_0314`). The other 7 (GIC-600's
+  `[<domain>_]mbistaddr[variable:0]…`, CHI's `[15:8]`/`[7:2]`/`[1:0]`) already fail the identifier test.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `synthesize_signal_declarations`: `signal_names_in_name_cell` takes the first whitespace token and
+  `trim_matches`-es every non-identifier character off both ends, so `<name>` reaches
+  `is_hardware_signal_token` as `name` and passes. The defect is not the trim — it is judging the
+  trimmed token. Confirmed by asserting both halves in the control:
+  `signal_names_in_name_cell("<name> _outen")[0] == "name"` and `is_hardware_signal_token("name")`.
+- [x] **ADDRESSED (verified)** — measured before→after through the product's own reader, by running
+  the corpus fixtures with the new guard removed and then restored, rather than predicting the verdict.
+  **Before:** Avalon `table_0031` emits `statement_0001` declaring signal **`name`** (2 further rows
+  dropped `no_direction_and_no_width`); `table_0030` emits `statement_0001` declaring signal **`any`**,
+  0 drops. **After:** both tables emit nothing; 3 and 1 rows respectively recorded
+  `name_is_a_placeholder`, with `rows_considered == declarations_emitted + dropped_rows.len()` still
+  closing. **Two phantom declarations removed.** The guard is observed RED: with it removed, both
+  `the_corpus_template_rows_declare_no_signal` and
+  `a_bracketed_metavariable_name_cell_declares_no_signal` fail, the latter listing `basename` five
+  times — one per bracket pair the grammar recognises.
+- [x] **NO REGRESSION** — **byte-identical `EvidenceIR` for every rebuildable document**: all 24
+  proof-carrying specifications re-run through `specforge evidence --dry-run` before and after, and
+  `cmp` reports **0 of 24 changed**. No gold can move because no artifact moves. (The 3 remaining
+  proof-carrying documents — AXI, APB, AHB — cannot be re-run at all: their `normalized/` bundles do
+  not exist and the population is frozen, `[[retained-bundle-population-is-frozen]]`.) The two
+  documents this leaf does change are legacy proofless, so no persisted chain and no seal is touched.
+  `cargo test --offline -p specforge-core --lib` **1410 passed, 0 failed** (1406 + 4 new controls);
+  `cargo test --offline -p specforge --lib` 472 passed; `cargo fmt --all --check` clean;
+  `cargo clippy --offline --all-targets -- -D warnings` exit 0 (run in this session, per `.1a`);
+  `bash scripts/check_doctrines.sh` all gate-tier PASS.
+- [x] **GENERICITY (ADR 0006)** — the rule is four bracket pairs and a non-empty body; no word, vendor,
+  protocol, or document name enters it, and there is no placeholder vocabulary to maintain. The
+  corpus-verbatim rows live only in a test fixture, which is where document-specific text is allowed.
+  The census script replicates the taxonomy for classification only and says so in its own header —
+  it is not, and may not be cited as, a check on the Rust rule (`CLAIM_VERIFICATION.md` §2).
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/evidenceir.md` gains *"A template row is not a
+  declaration"*, continuing `.0`'s failure-mode section; its two dated counts are registered in
+  `book_quantitative_claims.jsonl` as `excluded / dated_boundary_evidence`, and the frozen candidate
+  expectation moves 335 → 337 to cover them rather than leaving them ungoverned. **Producer
+  sub-clause: no production rule was deleted or replaced** — the rule is additive and every existing
+  drop reason still means what the book says it means.
+
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2b` · Status: `pending` · Goal: **read the flow-arrow direction
+  grammar** — a direction-bearing cell that states the signal's flow (`<driver> → <receiver>`) rather
+  than its port sense. Both sides must resolve through the existing actor-role taxonomy and must
+  **agree** (left read as a source, right read as a destination, same port sense), and exactly one
+  right-flow arrow must be present; a reverse or bidirectional marker, two flows in one cell, or one
+  unresolved side fails closed.
+  **Population already measured** (`python3 scripts/measure_declaration_row_notations.py`, 78 persisted
+  SourceIR): **83** arrow cells in direction-bearing columns of `signal_description` tables, in exactly
+  2 documents and 13 distinct cell forms — every one enumerable, so the sample is the population.
+  **18 admit** (11 `Master → Slave` → `output`, 7 `Slave → Master` → `input`), **65 fail closed** — 16
+  two-flow cells (`ITS →Distributor Distributor →ITS`, genuinely bidirectional groups) and 49 whose
+  actor names are outside the builtin taxonomy. Of the 18, **7 are rows that produce nothing today**
+  and 11 currently emit a width-only declaration that would gain a direction. After `.2a`, 5 of those 7
+  are real wires (`address`, `byteenable`, `readdata`, `writedata`, `burstcount`) and 2 are the
+  metavariable rows `.2a` now refuses.
+  **The `.2` prediction, graded before implementation — half of it is already falsified.** It predicted
+  the arrow form "moves the four all-zero documents off zero". It does not: AMD IOMMU, HBM2, ATP and
+  CHI C2C contain **no arrow cell at all** in any signal-description table. It also predicted recovery
+  of "Avalon's eight signals"; the admitted set covers **5 of the 8** — `CHANNEL`, `DATA` and `ERROR`
+  are not among them, so `WIRE-BASED-100.10f` must re-measure rather than assume its unblock. The
+  surviving half of the prediction holds and then some: 18 of 482 is **3.7%**, nowhere near a majority.
+  Non-goal: extending the actor taxonomy (that is `.2d`); entity typing; anything an LLM decides.
+  Prerequisite: `.2a`.
+  Verification: pending
+  Commit: pending
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2c` · Status: `pending` · Goal: **read an enumerated legal-width
+  cell** (`8, 16, 32, 64, 128, 256, 512, 1024`) as a width *set* rather than a parse failure.
+  Population: **7** cells in 2 documents (`8, 16, 32, 64, 128, 256, 512, 1024` ×2, `2, 4, 8, 16, 32,
+  64, 128`, `4, 8` ×2, `1, 4, 8`, `1,4, 8`). This leaf carries an unresolved policy choice and that is
+  why it is separate: `WidthHint` has `Numeric(u32)` and `Parametric(String)`, and a set is neither.
+  Picking a member fabricates; carrying the verbatim text puts commas into a declaration sentence that
+  SemanticIR parses. Decide the representation first, in the leaf, before writing code.
+  Note the payoff is narrow: after `.2b` every one of these rows already has a direction, so `.2c` adds
+  width fidelity, not recall. Non-goal: recovering rows — that is `.2b`'s.
+  Prerequisite: `.2b`.
+  Verification: pending
+  Commit: pending
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2d` · Status: `pending` · Goal: **decide what to do about the 49
+  arrow rows whose actors the taxonomy does not know.** `builtin_actor_taxonomy_role_in_text` knows
+  four requester-like and six completer-like terms. Every GIC-600 arrow row names an actor outside that
+  set (`Distributor`, `Redistributor`, `ITS`, `SPI Collator`, `Wake Request`, `Remote chip`), as do 9
+  Avalon rows (`Source → Sink`, `Interconnect → Slave`). These are real flows the reader can see and
+  cannot close. Extending the taxonomy is NOT a local change: that function also decides section-heading
+  direction and prose relation direction, so any new term moves populations this tree has not measured.
+  Census the blast radius of each candidate term corpus-wide before adding any, or decide that a flow
+  between two document-named actors can be read relative to the table's own subject without a taxonomy
+  at all. Non-goal: adding terms because they look obvious.
+  Prerequisite: `.2b`.
   Verification: pending
   Commit: pending
 
@@ -288,3 +405,16 @@ a long tail.
   Prerequisite: none (independent of `.1`/`.2`).
   Verification: pending
   Commit: pending
+
+## Current Frontier
+
+Ordered; PNT selects the first eligible leaf.
+
+1. `SIGNAL-DECLARATION-ROW-DROP.2b` — the flow-arrow direction grammar. Population measured, sample
+   adjudicated, prediction half-falsified in advance; ready to implement.
+2. `SIGNAL-DECLARATION-ROW-DROP.3` — the emitted spelling must be the document's spelling. Independent
+   of `.2`; census first.
+3. `SIGNAL-DECLARATION-ROW-DROP.2c` — the enumerated width set. Blocked behind `.2b` only because its
+   representation choice is cleaner to make once the rows carry a direction.
+4. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+   the blast radius before touching `builtin_actor_taxonomy_role_in_text`.

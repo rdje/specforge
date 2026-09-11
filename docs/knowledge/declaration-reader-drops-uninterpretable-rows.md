@@ -11,10 +11,14 @@ answers:
   - "does SpecForge read an enumerated width set like 8, 16, 32, 64"
   - "why are 15 of Avalon's 26 declarations width-only"
   - "can synthesize_directions_from_relations be deleted without losing real signals"
+  - "how many arrow-form direction cells exist corpus-wide"
+  - "how many enumerated width cells exist corpus-wide"
+  - "does reading the arrow form fix the four documents that lose every row"
+  - "which of Avalon's eight signals does the arrow form actually recover"
 date: 2026-09-11
 status: current
 tags: [evidence-ir, signal-tables, wire-based-100, signal-declaration-row-drop, recall, adr-0037]
-evidence: crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations_from_table, the `_ => continue` arm; infer_signal_direction_from_actor_text; infer_signal_table_row_width_hint); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.0); docs/tasks/WIRE-BASED-100.md (.10f); generated/source_ir/683091_18_1_2021_12_25_avalon_interface_specifications/source_ir.json (table_0012)
+evidence: scripts/measure_declaration_row_notations.py; crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations_from_table, the `_ => continue` arm; infer_signal_direction_from_actor_text; infer_signal_table_row_width_hint); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.0); docs/tasks/WIRE-BASED-100.md (.10f); generated/source_ir/683091_18_1_2021_12_25_avalon_interface_specifications/source_ir.json (table_0012)
 reverify: "re-run the .0 census over generated/source_ir + generated/evidence_ir: count signal_description body rows whose first cell is a single identifier, minus table_signal_declaration_provenance entries for that table; expect 482 of 2637"
 ---
 
@@ -61,3 +65,23 @@ un-seals every persisted artifact, and the re-seal cannot complete because AXI, 
 (`[[retained-bundle-population-is-frozen]]`). Measured both ways — registered field: the proof-seal
 gate refuses evidence, semantic and intent; manifest: the corpus stays sealed. **Adding an EvidenceIR
 rule field is currently structurally unlandable**, which is worth knowing well beyond this tree.
+
+**The two unread notations have since been censused, and the arrow form is much smaller than it
+looked.** `python3 scripts/measure_declaration_row_notations.py` reads every persisted SourceIR and
+finds **83** flow-arrow cells in direction-bearing columns of `signal_description` tables — in exactly
+**two documents**, over 13 distinct cell forms, so the adjudicable sample is the whole population.
+**18 admit** under a mirror test that requires both sides to resolve through the actor taxonomy and to
+agree (`Master → Slave` → `output` ×11, `Slave → Master` → `input` ×7); **65 fail closed** — 16 cells
+stating two opposite flows at once (a bidirectional group, correctly refused) and 49 whose actor names
+(`Distributor`, `ITS`, `Source → Sink`, `Interconnect`) are outside the builtin taxonomy. Enumerated
+width cells number **7**, in two documents.
+
+Two consequences correct this card's own framing. **The four documents that lose every row contain no
+arrow cell at all**, so the notation work cannot move them off zero — their loss has some other cause,
+still unidentified. And 18 of 482 is **3.7%**: reading both notations is a fidelity repair for two
+documents, not a recovery of the 18.3%. `WIRE-BASED-100.10f`'s unblock is also narrower than stated
+above — the admitted rows carry `address`, `byteenable`, `readdata`, `writedata` and `burstcount`, so
+**5 of the 8** signals, not 8; `CHANNEL`, `DATA` and `ERROR` reach EvidenceIR some other way and that
+path must be re-measured before the deletion. Adjudicating that same 18-row selection is what exposed
+`[[bracketed-metavariable-name-cell]]`: 2 of the 7 rows the arrow form would newly admit are template
+metavariables, which had to be refused first.

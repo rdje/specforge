@@ -341,6 +341,43 @@ drops their rows. Repairing the reader removes the reason the exception existed 
 model tier is needed to tell the junk names it also mints from the real ones. Tracked as
 `SIGNAL-DECLARATION-ROW-DROP`, which makes the drop visible before making it smaller.
 
+### A template row is not a declaration
+
+Repairing that drop started somewhere unexpected. Before teaching the reader a notation it cannot
+read, the rows it *already* reads had to be worth reading — and one class of them is not.
+
+Specifications routinely describe a family of signals by writing one row about a stand-in name. A
+tristate conduit is documented as three rows — `<name> _in`, `<name> _out`, `<name> _outen`, with
+descriptions like *"the input signal of a logical tristate signal"* — where `<name>` is whatever the
+integrator calls the signal. That is a template the reader of the document expands, not a wire the
+document declares.
+
+SpecForge declared it anyway. The name cell's leading token is trimmed of its non-identifier
+characters before being judged, and that trim is exactly what turns `<name>` into the perfectly
+ordinary identifier `name`. The identifier test then sees nothing unusual and the row becomes a
+signal called `name`. With a direction also readable — which is what the arrow notation above would
+have supplied — the same table would have declared that phantom **twice, with opposite senses**,
+because a tristate template states one row per sense.
+
+The rule is to judge the leading token *as written*: a token wrapped in a matched bracket pair
+(`<…>`, `(…)`, `[…]`, `{…}`) is a metavariable, and the row declares nothing. This is shape only —
+the delimiters decide, never the word inside them, so it carries no vendor or protocol vocabulary and
+no list of placeholder spellings. The row is recorded rather than discarded, with its own reason
+(`name_is_a_placeholder`) and its cell text kept verbatim, so a reader of the artifact can see the
+template that was refused.
+
+The test runs *after* the identifier test, deliberately. A bracketed token that was never an
+identifier in the first place — a bit range such as `[15:8]` under a `Bits` header — keeps the reason
+it already had, so the new rule changes the fate of a row rather than the label on a row whose fate
+was already settled.
+
+Measured on `2026-09-11` across 78 artifacts, exactly **five** rows in two documents reach the new
+rule, and **two phantom declarations** disappear: `name` and `any`, both from one interface
+specification's template tables. Nothing else moves: each of 24 documents that can be rebuilt
+produces a byte-identical `EvidenceIR` before and after, so no score and no stored chain is touched.
+Tracked as `SIGNAL-DECLARATION-ROW-DROP.2a`; the population is re-derivable with
+`python3 scripts/measure_declaration_row_notations.py`.
+
 ## Why provenance is critical here
 
 `EvidenceIR` is where the project first needs to defend itself against "plausible but wrong" extraction.

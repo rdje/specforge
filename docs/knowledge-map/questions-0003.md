@@ -36,6 +36,8 @@
   > does SpecForge classify Markdown inside the FSMGen submodule
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > does SpecForge cycle-schedule the FSM (no — FSMGen does)
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > does SpecForge declare a signal for a `<name> _in` template row
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > does SpecForge delete non-applicable physical timing records
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -181,6 +183,8 @@
   > does raising max_facts alone create fact-card headroom
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > does re-ingesting lose three paragraphs
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > does reading the arrow form fix the four documents that lose every row
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does refreshed in the corpus frontier census mean the document is at the current schema
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -278,6 +282,8 @@
   > does the path portability contract cover FigureRegion raw images
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does the persisted path gate cover dormant schemas
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > does the placeholder rule use a list of placeholder words
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > does the reviewed I2S fixture claim a live VLM run
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -292,9 +298,3 @@
   > does the upstream-first decision weaken the executable-intent objective
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > does the vertical evaluator make a category support claim yet
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > does the workflow catalog fit the full 21-file profile
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > does this break repository portability (not for a repository move — artifact_layout stores repository-root-relative paths and tools derive absolute paths at runtime. It breaks relocation WITHIN the repository, which is what a read-only evaluation on a temp copy needs, which is why the relocation seam exists)
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > does transaction phase precision change phase membership or ISF output

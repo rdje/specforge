@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > what are the first ranked trajectory gaps
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what are the isf_protocol residual packet prefixes
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what are the migrated alignment root index part and capsule metrics
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what blocks a Rust code change from committing in specforge
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what bounds the number of leaves a migrated task tree may declare
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -221,6 +235,8 @@
   > what does the corpus refresh frontier's 52 refreshed / 5 remaining actually mean
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > what does the declared_signal_names.is_empty() branch in semantic.rs do
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > what does the drop reason name_is_a_placeholder mean
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what does the ingest traversal oracle check
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
@@ -281,19 +297,3 @@
   > what happened to the four signal two enum Introducing CoreSight adapter
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what happened to the original Introducing CoreSight rollback
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what happened to the stale 83 interfaces in the GIC Overview Guide
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > what happens if someone runs clean --scope source-normalized on a declared document
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > what happens to a constraint whose subject is a withheld template base name
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what happens to a figure that reaches no canonical carrier
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > what happens to a page sidecar path when page images are not persisted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > what happens to a register-worded caption that grounds no identifier

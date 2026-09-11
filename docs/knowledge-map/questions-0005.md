@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how does SpecForge bind a protocol state to its state machine
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -290,11 +298,3 @@
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > how is a leaf route lifecycle verified
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how is a message field's width kept honest (per-variant widths stay None)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > how is a promoted constraint surface visible in the extraction manifest
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > how is a published mechanism or causal account verified in SpecForge

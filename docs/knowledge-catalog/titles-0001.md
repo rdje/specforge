@@ -40,6 +40,7 @@
 | [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md) | 2026-06-10 | `current` | Two-column bits\|description tables are STRUCTURE layouts, not registers — they extract into message_field_… |
 | [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md) | 2026-09-11 | `current` | The book's stale behavioural claims are found by the present-tense assertion population, and a symbol scanner… |
 | [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md) | 2026-08-12 | `current` | Bounded-ingest activation is sized from fixed host capacity and capped below the reproduced 400-page risk |
+| [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md) | 2026-09-11 | `current` | Trimming a name cell's leading token before judging it is what lets a bracketed metavariable become a declare… |
 | [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md) | 2026-06-11 | `current` | Byte-location placement tables are in-memory STRUCTURE layouts, not register maps — read them into message_… |
 | [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md) | 2026-06-09 | `current` | A protocol's frame STRUCTURE is recovered from a prose composition list ("composed of N bit fields: A, B, C")… |
 | [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md) | 2026-08-08 | `current` | Query-only canonical collections have complete bounded membership catalogs |
@@ -60,4 +61,3 @@
 | [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md) | 2026-06-06 | `current` | Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate |
 | [contested-priors](../knowledge/contested-priors.md) | 2026-06-04 | `current` | SpecForge detects contested priors (same key, conflicting values across docs) — read-only |
 | [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md) | 2026-08-09 | `current` | CoreSight Base System refresh is portable, authority-empty, and honestly under-extracted |
-| [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md) | 2026-09-01 | `current` | Only 24 of 78 persisted documents (30.8%) pass the scorer's schema gate and just 2 carry a gold, and the two… |

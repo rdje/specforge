@@ -7,26 +7,29 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.1a` CLOSED `2026-09-11`** — `.1` shipped with
-  `cargo clippy --all-targets -- -D warnings` RED on the line it added, having ticked a NO-REGRESSION
-  box that cited clippy clean. Repaired; the clippy leg of `.1`'s box is withdrawn in place.
-  Open in this tree: `.2`/`.3`. Also open: `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS`
-  beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`;
+- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.2a` CLOSED `2026-09-11`** — a bracketed metavariable
+  (`<name> _in`) is no longer a declaration; two phantom signals (`name`, `any`) stop being minted.
+  `.1a` before it repaired the clippy gate `.1` left red. Open in this tree: `.2b`/`.2c`/`.2d`/`.3`.
+  Also open: `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`;
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`;
   `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION`
   `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `WIRE-BASED-100` `.10d`/`.10f`/`.2`/`.3`/`.5` (SWD `13/29`).
-- Current state: **the doctrine enforcer runs no cargo gate at all.** `scripts/check_doctrines.sh`
-  registers fourteen repository doctrines and invokes cargo nowhere; `fmt`/`clippy`/`test` live in
-  `scripts/run_ci.sh` (`:30` runs clippy with `-D warnings`). Over `48def695` the full doctrine report
-  reads all-PASS while two targets fail to compile under clippy — and unlike CI-tier `CHAIN-CURRENCY`,
-  clippy does not even print `DEFER`, so nothing says it was skipped — a leaf citing a toolchain oracle must
-  run it in-session (`[[doctrine-driver-runs-no-cargo-gate]]`). Census 27 measurable / 51 legacy.
-- Next action: `[[SIGNAL-DECLARATION-ROW-DROP]]`.2, measured and ready to split — `.2a` metavariable name
-  cells / `.2b` flow-arrow direction / `.2c` enumerated width set / `.2d` the actor-taxonomy gap. Over 78
-  persisted SourceIR: **83** flow-arrow cells in direction-bearing `signal_description` columns (18 admit
-  under a mirror test; 65 closed — 16 two-flow, 49 actors outside the taxonomy); **5** live metavariable
-  name cells; **7** enumerated widths. Both affected documents are legacy, so no persisted chain moves.
+- Current state: **two slices, both from adjudicating a rule's selection before shipping it.** Grading
+  `.2b`'s 18 admitted rows by hand found that 2 of the 7 it newly recovers are template metavariables —
+  `.2a` landed first so `.2b` cannot mint `name` twice with opposite senses. Separately, the doctrine
+  enforcer **runs no cargo gate at all**: `check_doctrines.sh` registers fourteen doctrines and invokes
+  cargo nowhere, so `48def695` read all-PASS while clippy failed to compile two targets, and unlike
+  CI-tier `CHAIN-CURRENCY` clippy does not even print `DEFER` (`[[doctrine-driver-runs-no-cargo-gate]]`).
+  Census 27 measurable / 51 legacy.
+- Next action: `.2b`, the flow-arrow direction grammar — population already measured and adjudicated by
+  `python3 scripts/measure_declaration_row_notations.py`: **83** arrow cells in direction-bearing
+  `signal_description` columns of 78 persisted SourceIR, 2 documents, 13 distinct forms; **18 admit**
+  under the mirror test (both sides resolve AND agree), **65 fail closed** (16 two-flow, 49 actors
+  outside the taxonomy → `.2d`). `.2`'s prediction is **half falsified before implementation**: the four
+  all-zero documents contain no arrow cell at all, and the admitted set covers **5 of the 8** Avalon
+  signals `WIRE-BASED-100.10f` waits on — `CHANNEL`/`DATA`/`ERROR` are not among them.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **a green score is evidence only about the facts its gold names** — AXI's six held while it lost 115 declarations,
   regained them, moved 134 → 25 → 21 actors, gained its whole AR side and lost 7 phantom ports. **Measure a candidate rule corpus-wide before shipping,

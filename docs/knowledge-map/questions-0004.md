@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > does the workflow catalog fit the full 21-file profile
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > does this break repository portability (not for a repository move — artifact_layout stores repository-root-relative paths and tools derive absolute paths at runtime. It breaks relocation WITHIN the repository, which is what a read-only evaluation on a temp copy needs, which is why the relocation seam exists)
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > does transaction phase precision change phase membership or ISF output
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does validate detect a stale downstream artifact that silently dropped relations
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -217,6 +223,8 @@
   > how do I prove a live-document partition is lossless
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I re-derive a published count per revision instead of at two endpoints
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > how do I re-derive the declaration-row notation populations
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I read the labels inside a diagram
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
@@ -290,11 +298,3 @@
   > how does SemanticIR preserve VALID READY without formal signal declarations
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
   > how does SourceIR proof migration handle a classifier implementation change
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > how does SpecForge bind a protocol state to its state machine
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
