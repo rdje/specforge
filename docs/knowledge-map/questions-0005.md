@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > how do canonical register records retain source table provenance
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how do continuation tables (Table B2.2 Continued) merge into one container
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > how do decision slots change Knowledge Map capacity
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how do dword-relative page fragments chain
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > how do packet/flit protocols (CHI-class) declare message fields vs signals
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -286,15 +298,3 @@
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how is IngestTerminatedBySignal different from IngestAbortedForMemory
-- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
-  > how is SourceIR validation updated during classifier migration
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > how is SourceIr loaded from disk by downstream commands
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how is a CI-tier doctrine registered without slowing down the pre-commit hook
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how is a Reg.Field cross-reference distinguished from a real constraint subject
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how is a captured table region proven covered or uncovered
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how is a captured visual region proven covered or uncovered

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > does 24 measurable mean 24 documents produce a score
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > does AXI mint a signal from a prose name cell
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > does CPU-ISA (category 4) intent need a new ISF construct or does it map onto the existing register/storage abstraction (CSRs map onto storage/register — no new construct; non-register ISA semantics are honest non-targets)
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -199,6 +203,8 @@
   > does reading the arrow form recover Avalon's eight signals
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does refreshed in the corpus frontier census mean the document is at the current schema
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > does refusing a phrase name cell recover the wire the row was hiding
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -292,9 +298,3 @@
   > does the move portability repair change PathBuf JSON fields
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the path portability contract cover FigureRegion raw images
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > does the persisted path gate cover dormant schemas
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > does the placeholder rule use a list of placeholder words
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > does the reviewed I2S fixture claim a live VLM run

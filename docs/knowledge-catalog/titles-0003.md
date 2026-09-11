@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md) | 2026-06-04 | `current` | SpecForge emits bounded-eventually as (assert (monitor (within s N))) into .isf (fsmgen pin 43b29f5c) |
 | [full-page-capture-gap](../knowledge/full-page-capture-gap.md) | 2026-06-14 | `current` | SpecForge captures a page's intent-bearing content; the residual outside Docling regions is decoration/furnit… |
 | [generic-enum-conflation](../knowledge/generic-enum-conflation.md) | 2026-08-31 | `current` | The `.isf` generic-`TABLE` (and `FIGURE`/`DATA`/…) mega-enum is an EXTRACTION-born conflation — `derive_e… |
 | [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The GIC Overview Guide carries interrupt constraints, not an 83-interface hardware surface |
@@ -60,4 +61,3 @@
 | [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md) | 2026-08-10 | `current` | Normalized bundles are retained by declaration, and the declaration is gated |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
 | [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md) | 2026-08-10 | `current` | OpenCAPI 32G PHY Signaling is timing-rich but has no grounded digital interface topology |
-| [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md) | 2026-08-09 | `current` | OpenCAPI AFU Address Space Usage refresh rejects prose acronyms and legal behavior |

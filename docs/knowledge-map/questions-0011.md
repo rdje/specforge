@@ -2,6 +2,23 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > what is table_states_a_property_rather_than_a_signal_inventory
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the .2m candidate (deterministic AXI-family channel-membership lever)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is the .5.ii sentence-spine member-fragment predicate (a synthesized enum member_name is a prose fragment if any _-token is an English sentence-spine word — copula/aux/modal IS/ARE/BE/HAS/MUST/SHALL, article/demonstrative THE/THIS/THAT, relativizer/subordinator WHICH/WHEN/IF/BECAUSE — EXCLUDING the .1a collisions A/I/ITS/CAN/MAY/AM. Precision 1.000 (0/115 clean-anchor
+  > flagged), recall 1.000 (269/269 junk-anchor caught), 30.2% of members drop; universal grammar ADR-0006, no name list)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is the .5.iii _WIDTH parameter-leak gate / is it landed / is it ADR-0006 safe (LANDED 2026-06-24: is_width_parameter_leak_member + a continue-skip in synthesize_encoding_declarations_for_enum after the .5.ii spine gate, known_signals threaded from the signal-match caller. Drops a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name
+  > — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. AXI manager.isf now (BRESP (OKAY 0)(EXOKAY 1)...) + (AWCMO (CLEAN_AND_INVALIDATE
+  > 0)(CLEAN_ONLY 1)); false RRESP/AXSNOOP/RCHUNK* _WIDTH enums gone; FSMGen --strict success/0; WIRE-BASED-100 1.000 before==after; kg-bench 156/156; run_ci GREEN lib 1718 +2)
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is the 4th portable architecture (doctrine enforcement)
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what is the AXI signal naming convention (channel prefix)
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what is the DOC-INTENT-TAXONOMY.1 corpus census
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -280,21 +297,3 @@
   > what owns containment of the live document adoption task history
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > what owns live-document size limits and transition debt
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > what owns the SWD EvidenceIR to IntentIR projection gap
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what parts of the literature are deferred or flagged as future work
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what precision and recall floors must a supported document category meet
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > what predicate decides whether eval-extraction will score a document
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what prevents one Knowledge Map question from pointing to multiple fact cards
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > what prevents root documentation from regrowing into a second manual
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > what prevents the actor direction and extract-contracts book claims from drifting
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > what prevents the word while in a license notice from becoming a gate

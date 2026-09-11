@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > which three legs must an actionable current claim name
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > which to_ascii_uppercase calls in the evidence stage emit a name
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > which topology contains the active corpus coverage task
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > which tree owns the empty-catalog grounding filter defect
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > which units mark a timing record as decibel domain
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification material is deliberately not adopted
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > which validate metrics/finding surface channel membership
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > who owns re-ingesting the legacy wire golds APB AHB AXI
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > who reads and writes docs tasks CORPUS-COVERAGE md
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads or writes the active PDF task tree
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > why a parallel field-constraint surface instead of a subject-kind discriminator
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -251,6 +275,8 @@
   > why did six Introducing CoreSight interfaces disappear
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why did the 345-row phrase approximation not re-derive
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
@@ -271,29 +297,3 @@
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why did the OpenCAPI Certified DL signal disappear
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why did the OpenCAPI Ready DL signal disappear
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > why did the SWD serial_frame_field score go from 11/11 to 0/11 (because SPEC-TO-INTENT-ALIGNMENT.6d.ii.c at 89d8dee7 on 2026-08-12 retired the protocol-name-bound frame extractor and its fixed phase enum on ADR 0006 genericity grounds; its own ledger entry says the exact comparison retires 22 fixed-phase frame and four named-operation records)
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > why did the book quantitative checker separate record and array bounds
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > why did the canonical SWD relation count change from 25 to 21
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why did the corpus KB size warning appear and how was it removed
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why did the corpus task-evidence index verify the PDF contract
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > why did the emitted AXI isf carry a type named False
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why did the emitted ISF count drop from 57 to 44
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did the host actor disappear from AArch64 External Debug
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why did the initial prospective behavioral held-out run fail
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > why did the moved Python virtual environments still access the old repository

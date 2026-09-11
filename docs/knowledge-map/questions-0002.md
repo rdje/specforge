@@ -97,6 +97,8 @@
   > can a dense-prose phantom actor reach emitted ISF
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > can a reviewed gold key name the reason a region is not a contract
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > can a row-level rule refuse the eMMC bus-mode matrix
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > can a section-title shape alone license a signal declaration
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -296,5 +298,3 @@
   > does .2m change the emitted .isf or the WIRE-BASED-100 surfaces (no — provably orthogonal)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > does 24 measurable mean 24 documents produce a score

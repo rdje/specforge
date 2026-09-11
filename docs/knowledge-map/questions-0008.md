@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > is the Introducing CoreSight Debug and Trace refresh complete
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > is the LLM-primary promotion a recall improvement
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > is the LLM/VLM provider missing or not wired up
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is the NLP-SHALLOW-PARSE build frontier exhausted
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > is the OpenCAPI 3.0 Certified Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > is the OpenCAPI 3.0 Ready Definition refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
@@ -279,21 +297,3 @@
   > what are the canonical SWD protocol surface counts
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what are the corrected 17-document behavioral held-out outcomes
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > what are the current AArch64 External Debug artifact hashes
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what are the current CoreSight Base System artifact hashes
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what are the current Introducing CoreSight artifact hashes
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > what are the current OpenCAPI AFU address note artifact hashes
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > what are the current OpenCAPI Certified Definition artifact hashes
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what are the current OpenCAPI Certified artifact hashes
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > what are the current OpenCAPI Ready Definition artifact hashes
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what are the current OpenCAPI Ready artifact hashes
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > what are the current USB4 Connection Manager artifact hashes

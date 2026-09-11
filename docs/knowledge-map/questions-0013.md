@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > where is the SpecForge trajectory controller engine
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > where is the U+F0B7 signal integrity panic in evidence extraction
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > where is the acceptance checklist a code change must satisfy
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where is the authoritative chipdoc source library now
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > where is the behavioral alpha renaming harness implemented
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > where is the biggest register extraction gap across the corpus
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the canonical SpecForge user guide
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > where is the complete live document containment adoption task history
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > where is the declared-signal gate applied (pattern + dynamic constraint paths)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > where is the default-flip decision packet / should promote-constraints-llm become the default
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -166,6 +186,8 @@
   > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > which documents are in the first source-to-IntentIR vertical evaluation population
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > which documents declare signals from tables in the current stratum
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > which documents no longer reproduce their persisted SourceIR
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -258,6 +280,8 @@
   > which strategy is message_fields.byte_location_table
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > which surface bounds the number of task trees now
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > which table mints Clock and Reset as AHB signals
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > which task does the trajectory controller recommend first
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
@@ -274,27 +298,3 @@
   > which task owns the re-ingest decision
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which task tree crossed its live-document byte warning
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > which three legs must an actionable current claim name
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > which to_ascii_uppercase calls in the evidence stage emit a name
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > which topology contains the active corpus coverage task
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > which tree owns the empty-catalog grounding filter defect
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > which units mark a timing record as decibel domain
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification material is deliberately not adopted
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > which validate metrics/finding surface channel membership
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > who owns re-ingesting the legacy wire golds APB AHB AXI
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > who reads and writes docs tasks CORPUS-COVERAGE md
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads or writes the active PDF task tree

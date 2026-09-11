@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what owns the SWD EvidenceIR to IntentIR projection gap
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what parts of the literature are deferred or flagged as future work
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what precision and recall floors must a supported document category meet
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > what predicate decides whether eval-extraction will score a document
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what prevents one Knowledge Map question from pointing to multiple fact cards
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > what prevents root documentation from regrowing into a second manual
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > what prevents the actor direction and extract-contracts book claims from drifting
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > what prevents the word while in a license notice from becoming a gate
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > what produces the backslash in an EvidenceIR statement text
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -28,6 +46,8 @@
   > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > what reviewed paraphrase and layout calibrations currently pass
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what shapes does a declaring name cell take
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > what should an auditor do when re-derivation disagrees with a published value
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -277,23 +297,3 @@
   > where is the SWD frame's field-to-phase membership actually stated (in Figure B4-1 SWD successful write operation and Figure B4-2 SWD successful read operation. Both are captured as visual assets picture_0038 and picture_0039, but their role is ambiguous and their only observation is the caption, so the diagram content was never read)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where is the SpecForge FSMGen feedback or handoff channel
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > where is the SpecForge trajectory controller engine
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > where is the U+F0B7 signal integrity panic in evidence extraction
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > where is the acceptance checklist a code change must satisfy
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > where is the authoritative chipdoc source library now
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > where is the behavioral alpha renaming harness implemented
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > where is the biggest register extraction gap across the corpus
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the canonical SpecForge user guide
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > where is the complete live document containment adoption task history
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > where is the declared-signal gate applied (pattern + dynamic constraint paths)

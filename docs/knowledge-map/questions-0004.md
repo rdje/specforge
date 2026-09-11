@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > does the persisted path gate cover dormant schemas
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > does the placeholder rule use a list of placeholder words
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > does the reviewed I2S fixture claim a live VLM run
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > does the reviewed population publish product support results
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -223,6 +229,8 @@
   > how do I make the NLI verifier actively change extraction / demote claims
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I measure a classifier change's blast radius before shipping it
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how do I measure a declaration population through the reader rather than through a filter
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I measure a doctrine checker across many revisions
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -245,6 +253,8 @@
   > how do I rebuild every retained chain after a production change
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how do I recover the source row behind a table_signal_declaration_provenance entry
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I refresh a stale SourceIR proof without a Docling re-ingest (source_proof_migrate --retained-manifest doctrine/chain_currency/retained_bundles.json --write, then re-run evidence/semantic/intent/adapt)
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -273,6 +283,8 @@
   > how do I run a Docling ingest or re-ingest on this machine
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how do I see which ingested PDFs form structural families (the corpus-cluster command)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how do I tell a comma family from a footnote marker from a phrase without a word list
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different
   > location than the one recorded in its artifact_layout)
@@ -286,15 +298,3 @@
   > how do Published-claims ids resolve
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how do byte-granular page fragments chain (offset plus size adjacency)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > how do canonical register records retain source table provenance
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how do continuation tables (Table B2.2 Continued) merge into one container
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > how do decision slots change Knowledge Map capacity
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how do dword-relative page fragments chain
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > how do packet/flit protocols (CHI-class) declare message fields vs signals
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together

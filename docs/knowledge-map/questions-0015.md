@@ -2,6 +2,32 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why did the OpenCAPI Certified DL signal disappear
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why did the OpenCAPI Ready DL signal disappear
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > why did the SWD serial_frame_field score go from 11/11 to 0/11 (because SPEC-TO-INTENT-ALIGNMENT.6d.ii.c at 89d8dee7 on 2026-08-12 retired the protocol-name-bound frame extractor and its fixed phase enum on ADR 0006 genericity grounds; its own ledger entry says the exact comparison retires 22 fixed-phase frame and four named-operation records)
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > why did the book quantitative checker separate record and array bounds
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > why did the canonical SWD relation count change from 25 to 21
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > why did the corpus KB size warning appear and how was it removed
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why did the corpus task-evidence index verify the PDF contract
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why did the emitted AXI isf carry a type named False
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > why did the emitted ISF count drop from 57 to 44
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did the host actor disappear from AArch64 External Debug
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why did the initial prospective behavioral held-out run fail
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > why did the moved Python virtual environments still access the old repository
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -172,6 +198,8 @@
   > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > why does a register doc captioned 'message fields' yield zero message fields
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why does a row that looks like it would declare a signal not declare one
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > why does a sentence-period caption label yield nothing
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -269,31 +297,3 @@
   > why does recovered APB PSEL disappear between EvidenceIR and SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does setportfeature port over current become the USB 3.2 adapter actor
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does slicing idx minus 2 before signal panic
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why does source_batch not appear on my artifact
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why does the AArch64 External Debug Guide emit no ISF
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why does the ADI spec produce so few signals and so much garbage
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does the AMBA DTI specification declare no signals
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why does the APB missing fact remain must_be_asserted instead of HIGH
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why does the APB recovery keep PSEL separate from PSELX
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does the Bosch CAN specification declare no signals
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > why does the Claude Read tool refuse some PDFs / report password-protected
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why does the CoreSight Base System Architecture emit no ISF

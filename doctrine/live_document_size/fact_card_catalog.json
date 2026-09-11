@@ -73,13 +73,13 @@
   "planned_outputs": [
     {
       "metrics": {
-        "bytes": 1053,
+        "bytes": 1092,
         "line_bytes": 190,
         "lines": 11
       },
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "eeb3ea3589b48ddad976106c66157c447b5c456bfc29e5b45c30e686b6aaf090"
+      "sha256": "ca3bfd10bd2f440880b5cb828048f343419d34fc05d93c7a0fa64b7a6a99e036"
     },
     {
       "metrics": {
@@ -93,43 +93,43 @@
     },
     {
       "metrics": {
-        "bytes": 12616,
+        "bytes": 12688,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0002.md",
       "role": "title_part",
-      "sha256": "7d22326b3ef6f81e28d828fa9da9dff003a626043362f3fcdb0c166098b75980"
+      "sha256": "d5581b308d0250e9b939e1271fdf6bfaeacdf7a246913f50e2a65f039f5cf559"
     },
     {
       "metrics": {
-        "bytes": 12252,
+        "bytes": 12253,
         "line_bytes": 269,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-      "sha256": "4258de2d9a2d1337fc389707055db500e0ea396de1d221af26827f3149224223"
+      "sha256": "6890415445e90a7132a946147cf3c5a85d499b2561b78ebb4632fb6f7ad3082e"
     },
     {
       "metrics": {
-        "bytes": 12549,
+        "bytes": 12557,
         "line_bytes": 252,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-      "sha256": "ba793c0133baff14f3e9ccf6ce638cf648891593c8566e8e63412af7aa8c8f82"
+      "sha256": "a268a63d959f76a47e5a34f843ea21a51e2531df1e206d2070dee98fcb98985d"
     },
     {
       "metrics": {
-        "bytes": 11444,
+        "bytes": 11637,
         "line_bytes": 260,
-        "lines": 58
+        "lines": 59
       },
       "path": "docs/knowledge-catalog/titles-0005.md",
       "role": "title_part",
-      "sha256": "bfc0c403158fe7e8e8db31e3f0fe09414e5ea58122d7e3d48016584ef8c5d33f"
+      "sha256": "a91b67eaca7b3b04b8cea99316bdfa590c22bd94113188cd38105599becbefbf"
     }
   ],
   "schema_version": 1,

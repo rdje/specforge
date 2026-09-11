@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > how is SourceIR validation updated during classifier migration
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > how is SourceIr loaded from disk by downstream commands
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how is a CI-tier doctrine registered without slowing down the pre-commit hook
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > how is a Reg.Field cross-reference distinguished from a real constraint subject
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how is a captured table region proven covered or uncovered
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how is a captured visual region proven covered or uncovered
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how is a claim's grounding checked beyond a string match
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -263,6 +275,8 @@
   > how many persisted SourceIR artifacts are stale
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many persisted artifacts have an ambiguous source_ref
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how many phrase name cells does the current reader accept
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > how many placeholder tokens exist corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -283,17 +297,3 @@
   > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how many retained documents depended entirely on heuristic SemanticIR interfaces
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > how many retained legal semantic gates were measured
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > how many retained phases depended only on sequencing words
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > how many retained typed transaction phases were false positives
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many reviewed documents are locked per source category
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > how many reviewed documents have current binary replay evidence
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > how many reviewed source regions and modalities were found
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > how many sentence-start signal descriptor phrases pollute the retained corpus

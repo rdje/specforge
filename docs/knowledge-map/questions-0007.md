@@ -2,8 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > how many retained legal semantic gates were measured
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > how many retained phases depended only on sequencing words
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > how many retained typed transaction phases were false positives
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > how many reviewed documents are locked per source category
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > how many reviewed documents have current binary replay evidence
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > how many reviewed source regions and modalities were found
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > how many serial frame fields does the current producer emit across the corpus (ZERO, across all 24 rebuildable schema-3 documents; protocol_states carry a machine_name on 0 of 40. protocol_operations still produce 5 corpus-wide — 4 SWD plus 1 Wishbone — which is exactly the five the 2026-08-12 ledger said the generic producer retains)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how many signal declarations come from a name cell that is a phrase
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many signal_description rows are dropped corpus-wide
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -178,6 +194,8 @@
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > is a better VLM needed to read register bit-layout diagrams
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > is a candidate-row count the same as a declaration count
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > is a fresh ingest better than the persisted SourceIR
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
@@ -279,21 +297,3 @@
   > is the DTI ATST 0B01 constraint a real obligation (no — mis-attribution: the source text 'ATTR_OVR.SHCFG must be 0b01' binds SHCFG's value to ATST, which is a value of the FLOW field; an upstream extraction bug spun out of ISF-VALUE-WIDTH-EMIT)
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > is the EvidenceIR build reproducible / deterministic
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > is the Introducing CoreSight Debug and Trace refresh complete
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > is the LLM-primary promotion a recall improvement
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > is the LLM/VLM provider missing or not wired up
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is the NLP-SHALLOW-PARSE build frontier exhausted
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > is the OpenCAPI 3.0 Certified Definition refresh complete
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > is the OpenCAPI 3.0 Ready Definition refresh complete

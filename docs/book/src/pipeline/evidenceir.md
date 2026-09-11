@@ -420,6 +420,57 @@ separate notation and a separate decision about how to represent a set of legal 
 inventing one of them. Tracked as `SIGNAL-DECLARATION-ROW-DROP.2b`; the population is re-derivable
 with `python3 scripts/measure_declaration_row_notations.py`.
 
+
+### A name cell that is a phrase — and how large that population really is
+
+Both rules above *recover* rows. The opposite question — which rows this reader accepts that it
+should not — opened as its own tree, and its first leaf was a census rather than a rule, because the
+number the tree opened on turned out to be measuring something else.
+
+A row's name is its name cell's first whitespace token, trimmed and tested as an identifier. When the
+cell is a phrase, that mints its first word: `Backwards Compatibility with legacy MMCcard` would
+declare a signal called `Backwards`. Counting the rows *shaped* like that — a signal-description row
+whose name cell holds two or more tokens starting with an identifier, excluding the comma families —
+finds 318 rows across 27 documents. Counting the declarations the reader actually produced from such
+a cell finds seventeen.
+
+The gap is the `(direction, width)` drop measured above: a candidate row that offers neither is
+discarded long before the shape of its name matters. The population therefore has to be read back
+from what the reader emitted, never from what the source offers it. Joining every entry of the
+persisted `table_signal_declaration_provenance` to the source row carrying its name, and classifying
+that cell by shape, measured on `2026-09-12`:
+
+| stratum | declarations | joined to a name cell | minted from a phrase |
+| --- | ---: | ---: | ---: |
+| current (proof-carrying) | 604 | 604 (100.0%) | 2 |
+| legacy (inspection-only) | 2,085 | 1,251 (60.0%) | 15 |
+
+The two strata are never added, because a persisted artifact is evidence about the producer that
+wrote it. The legacy join rate is itself that principle showing through: an older emitter folded
+names to upper case, and a folded name is no longer the cell's own spelling, so it cannot be matched
+back to the row it came from.
+
+Five shapes separate the population with no vocabulary at all — a comma-separated family
+(`AWSIZE, ARSIZE`), a footnote marker (`HSELx a`), a bit-range suffix (`ARMPAM [10:0]`), a text-layer
+split of one identifier (`waitrequest waitrequest _ n`), and a phrase. Every legitimate form lands in
+its own class, which is why the corpus's largest wire specification contributes nothing to the
+phrase count: all 72 of its multi-word name cells are comma families this reader already reads
+correctly.
+
+Both current phantoms come from one AHB table, and the name reader is not their cause. That table is
+rotated — its header reads `Name | Source | Width | Description` while its body carries the signal in
+the last column — and the content-based correction that fixes the other rotated tables declines to
+fire, because the table has two body rows: too few to clear the margin that protects an explicit
+`Name` header from being overruled by noise. Refusing the phrase would silence those rows; correcting
+the column would read them. Neither loses a wire — both signals are declared correctly from a second
+table — but only one of the two is a repair.
+
+What no shape can decide is the remaining case. A bus-mode matrix that SourceIR typed as a signal
+table has rows named `HS200` and `HS400`, single tokens indistinguishable from a wire. A row-level
+rule refuses the phrases in that table and stops there, which is the measured reason the question
+moves up to the table or to the classifier rather than being answered here. Tracked as
+`PROSE-NAME-CELL-DECLARATION.0`; the population is re-derivable with
+`python3 scripts/measure_declaration_name_cell_shapes.py`.
 ## Why provenance is critical here
 
 `EvidenceIR` is where the project first needs to defend itself against "plausible but wrong" extraction.

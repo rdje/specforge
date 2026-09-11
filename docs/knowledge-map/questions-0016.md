@@ -2,6 +2,34 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does setportfeature port over current become the USB 3.2 adapter actor
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does slicing idx minus 2 before signal panic
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why does source_batch not appear on my artifact
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why does the AArch64 External Debug Guide emit no ISF
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why does the ADI spec produce so few signals and so much garbage
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the AMBA DTI specification declare no signals
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why does the APB missing fact remain must_be_asserted instead of HIGH
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why does the APB recovery keep PSEL separate from PSELX
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the Bosch CAN specification declare no signals
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > why does the Claude Read tool refuse some PDFs / report password-protected
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why does the CoreSight Base System Architecture emit no ISF
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -270,30 +298,3 @@
   > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why is the AHB eval baseline wrong or stale
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why is the Docling table capture of a register diagram unreliable
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > why is the FSM important for SWD/JTAG
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > why is the NLI framing better than free-form labeling
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why is the PSEL antecedent dropped in a temporal rule
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why is the SpecForge fact-card catalog almost out of capacity
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is the X interface strip gated on X being a connected agent in this doc
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as
-  > an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > why is the absolute bit position never derived from offset*8+bit
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > why is the block name not used to qualify the duplicate registers (heading levels flattened)
