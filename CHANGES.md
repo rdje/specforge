@@ -1,3 +1,42 @@
+### WIRE-BASED-100.10e — a configurable-property table is not a signal inventory, and the junk was bigger than the record that exposed it
+
+- AXI WRITES ONE TABLE PER CONFIGURABLE OPTION AND NAMES THE OPTION AFTER WHAT IT CONTROLS, so
+  "Table A12.16: Trace_Signals property" satisfied the signal-inventory caption test through the
+  PROPERTY'S OWN NAME. True and False therefore became known signal names for the whole document. They
+  mint no declaration (a value row states no width or direction), which is exactly why it stayed
+  invisible: no count moved.
+- IT SURFACED SIDEWAYS AND THE VISIBLE SYMPTOM WAS THE SMALLER HALF. .10b withheld a base-name template,
+  the prose polarity pass re-read the same row and attributed active_high to True — one junk record.
+  Measuring the real delta against a from-scratch rebuild of the pre-change chain found THREE MORE: an
+  enum literally named False (Enum False PARTITION_IDENTIFIER = 1, ... PERFORMANCE_MONITOR_GROUP = 2,
+  ... SECURITY_INDICATOR = 0), which had been reaching the emitted .isf as (type False (bits 2)) plus its
+  enum block.
+- THE OBVIOUS SHAPE TEST IS WRONG AND THE CENSUS PROVES IT, for the third time in this lane. "The first
+  header occurs verbatim in its own caption" — a property table heads itself with its subject, a signal
+  table with a column role — selects 17 of the 602 admitted signal_description tables AND MOST ARE REAL:
+  APB's "Table 5-1 Check signal descriptions" is headed "Check signal" and declares PADDRCHK/PCTRLCHK/
+  PSELxCHK, and CoreSight's SPIDEN/HIDEN and CHI's BTI tables are encodings headed by the signal they
+  encode. A role phrase that repeats in its own caption is still a role phrase.
+- WHAT SETTLES IT IS THE DOCUMENT'S OWN WORD FOR WHAT THE TABLE IS: the caption's LAST word must be
+  "property" — universal document grammar in the same class as the signal/port/pin/name words this gate
+  already reads, and neither a document, vendor, protocol nor symbol identity. Both conditions together
+  select EXACTLY 4 tables corpus-wide, and all four satisfy the shape test as well.
+- BECAUSE THE TEST IS A PURE FUNCTION OF ONE TABLE AND ITS CAPTION it needs no document-wide inventory,
+  so unlike .10b's template rule it sits directly in should_treat_table_as_top_level_signal_description —
+  the gate every concrete-signal consumer already shares — with no threading.
+- ADDRESSED (AXI), per fact: signal_polarities 45 -> 44; statements 6,454 -> 6,451, exactly the three
+  Enum False facts and nothing else; the emitted .isf drops (type False (bits 2)) and its enum block,
+  12 -> 11 types. Provenance (462/297), relations (257), signal constraints (44), conditional rules (151),
+  presence (306), channel memberships (154), semantic hints (61), ports (288) and rule count (110) are all
+  byte-stable.
+- THE SIX WIRE NUMBERS ARE UNCHANGED (AXI 1.000 x3, APB 1.000 x3, AHB 1.000 x3) and SWD holds at 13/29.
+  CORPUS BLAST RADIUS over the 27 proof-carrying chains: zero movement in ports, actors, declared
+  inventory, provenance, constraints or emitted ISF signal/rule counts. The three wire golds' held-out
+  bundles were restored for the chain and returned byte-identical.
+- VERIFIED: scripts/check_doctrines.sh green; cargo test -p specforge-core --lib 1,405 pass (3 new
+  cases), -p specforge --lib 472, -p specforge-conformance --lib 168; cargo fmt --all;
+  cargo clippy --all-targets clean; scripts/check_chain_currency.sh over the 27 rebuilt chains.
+
 ### WIRE-BASED-100.8g — the state machine a document names beside its own states, and SWD 5/29 -> 13/29
 
 - SWD'S TWO ZEROS HAD DIFFERENT CAUSES AND .8d ONLY DISPROVED ONE OF THEM. serial_frame_field 0/11 is

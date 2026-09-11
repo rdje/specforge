@@ -7,8 +7,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`WIRE-BASED-100.8g` CLOSED `2026-09-11`** — SWD `5/29 → 13/29`; with `.4a`'s APB
-  temporal `1.000`, every parallel-bus number is `1.000`. Open in this tree: `.10d`/`.10e`/`.10f`,
+- Active unit: **`WIRE-BASED-100.10e` CLOSED `2026-09-11`** — a property table is no longer a signal
+  inventory; `(type False (bits 2))` leaves AXI's `.isf`. Open in this tree: `.10d`/`.10f`,
   `.2`/`.3`/`.5` (SWD `13/29`: `serial_frame_field` 0/11 stays deferred). Also open: `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`;
   `KG-ISF-COMPLETENESS` beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/
   `.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
@@ -20,13 +20,13 @@
   tables / 42 declarations, 9 of those tables real; the **mirror test** cut it to 1 table / 6). `.4a`
   restored APB's dropped select antecedent from the identity the document states about itself — one
   appositive role phrase before `PSELx` and `PSEL`, not the `x`. `.8g` used the same shape for states: a
-  machine binds only when one statement names both (`0/13 → 8/13`), two machines fail closed, 12 of 45
-  bound corpus-wide. `BOOK-BEHAVIOUR-CURRENCY` censused the book: a symbol scanner finds **0 true
-  positives** over 167 removed functions. Census 27 measurable / 51 legacy.
-- Next action: `.10d` (expand a template's obligations over its instantiations — 9 AXI constraints),
-  `.10e`, or `.10f`. SWD's remaining `16/29` needs figure-content extraction (`.8d`'s re-open trigger:
-  5 of 11 frame fields are never assigned a phase in prose) plus the 5 unextracted SWD-line states —
-  both builds, not tuning.
+  machine binds only when one statement names both (`0/13 → 8/13`), two machines fail closed. `.10e` then
+  refused AXI's property tables — the shape test alone selects 17 of 602 and most are real. Every cheap
+  rule this session over-fired until a second condition was added. Census 27 measurable / 51 legacy.
+- Next action: `.10d` (expand a template's obligations over its instantiations — 9 AXI constraints) or
+  `.10f` (a relation becoming a declaration; censused over 25 documents, and the obvious threshold gate
+  costs 8 real Avalon signals). SWD's remaining `16/29` needs figure-content extraction plus the 5
+  unextracted SWD-line states — both builds, not tuning.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **a green score is evidence only about the facts its gold names** — AXI's
   six held while it lost 115 declarations, regained them, moved 134 → 25 → 21 actors, gained its whole AR

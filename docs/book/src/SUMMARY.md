@@ -13,6 +13,7 @@
   - [Clarification and Assisted Completion](pipeline/clarification-loop.md)
   - [SourceIR](pipeline/sourceir.md)
   - [EvidenceIR](pipeline/evidenceir.md)
+  - [Register And Bit-Layout Table Shapes](pipeline/register-tables.md)
   - [Multimodal Evidence And Visual Grounding](pipeline/multimodal-evidence.md)
   - [SemanticIR](pipeline/semanticir.md)
   - [IntentIR](pipeline/intentir.md)

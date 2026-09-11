@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how is a valid post-migration active task continuation verified
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is an active task evidence migration written atomically
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is an active task source locked before migration
@@ -221,6 +223,8 @@
   > how many placeholder tokens exist corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many production rules does the registry declare
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > how many property tables are admitted as signal tables corpus-wide
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how many protocol states carry a machine name corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -293,7 +297,3 @@
   > how much memory did the guarded OpenCAPI AFU address note ingest use
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how much memory did the guarded OpenCAPI Certified Definition ingest use
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Ready Definition ingest use
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how much memory did the guarded OpenCAPI Ready ingest use

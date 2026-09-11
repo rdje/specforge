@@ -4040,6 +4040,89 @@ fn is_headerless_connector_pin_diagram(
             || contains_ascii_word(caption_text, "pinout"))
 }
 
+/// WIRE-BASED-100.10e — a table that states a configurable PROPERTY, not a signal inventory.
+///
+/// A specification with configurable options writes one small table per option: AXI's
+/// `Table A12.16: Trace_Signals property` has the header `Trace_Signals`, a `Default` column, and
+/// `True`/`False` in the name column. Because the property's own name contains `Signals`, the caption
+/// satisfies the ordinary signal-inventory gate, so `True` and `False` entered the document's known
+/// signal names. They mint no declaration (a value row states no width or direction), which is why
+/// this stayed invisible — until `.10b` withheld a template and the prose polarity pass, re-reading the
+/// same row, attributed `active_high` to `True`.
+///
+/// Two independent conditions must agree, and the shape test alone is NOT sufficient:
+///
+/// 1. the caption's LAST word is the document's own word for what the table is (`property`);
+/// 2. the first header names the table's own SUBJECT — it occurs verbatim in the caption and is not a
+///    column-role word — rather than a column role like `Name` or `Signal`.
+///
+/// Measured over all 602 admitted `signal_description` tables in the persisted corpus: condition 2
+/// alone selects **17 tables and most are real** — APB's `Table 5-1 Check signal descriptions` carries
+/// the header `Check signal` and declares `PADDRCHK`/`PCTRLCHK`/`PSELxCHK`, and CoreSight's `SPIDEN`
+/// and CHI's `BTI` encoding tables head themselves with the signal they encode. Adding condition 1
+/// selects **exactly 4, and all four satisfy condition 2 as well**. `property` is universal document
+/// grammar in the same class as the `signal`/`port`/`pin`/`name` words this gate already reads — not a
+/// document, vendor, protocol or symbol identity (ADR 0006).
+fn table_states_a_property_rather_than_a_signal_inventory(
+    table: &crate::ir::source::StructuredTableRecord,
+) -> bool {
+    const ROLE_WORDS: [&str; 7] = ["name", "signal", "signals", "port", "ports", "pin", "pins"];
+    let Some(caption) = table.caption_text.as_deref() else {
+        return false;
+    };
+    let caption_words: Vec<&str> = caption
+        .split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+        .filter(|word| !word.is_empty())
+        .collect();
+    if !caption_words
+        .last()
+        .is_some_and(|word| word.eq_ignore_ascii_case("property"))
+    {
+        return false;
+    }
+
+    let Some(first_header) = table
+        .header_rows
+        .first()
+        .and_then(|row| row.first())
+        .map(|cell| cell.text.trim())
+        .filter(|text| !text.is_empty())
+    else {
+        return false;
+    };
+    let header_words: Vec<&str> = first_header
+        .split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+        .filter(|word| !word.is_empty())
+        .collect();
+    if header_words.is_empty()
+        || header_words.iter().all(|word| {
+            ROLE_WORDS
+                .iter()
+                .any(|role| word.eq_ignore_ascii_case(role))
+        })
+    {
+        // A column role is a column role even when the caption repeats it.
+        return false;
+    }
+    caption_contains_phrase(caption, first_header)
+}
+
+/// Whole-phrase containment, so `AxLEN` does not match inside `AxLENGTH`.
+fn caption_contains_phrase(caption: &str, phrase: &str) -> bool {
+    caption.match_indices(phrase).any(|(start, _)| {
+        let before_ok = !caption[..start]
+            .chars()
+            .next_back()
+            .is_some_and(is_ascii_identifier_char);
+        let after = start + phrase.len();
+        let after_ok = !caption[after..]
+            .chars()
+            .next()
+            .is_some_and(is_ascii_identifier_char);
+        before_ok && after_ok
+    })
+}
+
 fn should_treat_table_as_top_level_signal_description(
     source_ir: &SourceIr,
     table: &crate::ir::source::StructuredTableRecord,
@@ -4049,6 +4132,10 @@ fn should_treat_table_as_top_level_signal_description(
         effective_table_kind(table, prior_guidance),
         TableKind::SignalDescription
     ) {
+        return false;
+    }
+
+    if table_states_a_property_rather_than_a_signal_inventory(table) {
         return false;
     }
 
@@ -29832,6 +29919,75 @@ mod wire_based_100_5h {
             action: None,
             supporting_statement_ids: support.iter().map(|s| (*s).to_string()).collect(),
         }
+    }
+
+    fn captioned_table(caption: &str, header: &[&str], rows: &[&[&str]]) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: Some(caption.to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(header)],
+            body_rows: rows.iter().map(|r| row(r)).collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: header.len() as u32,
+        }
+    }
+
+    #[test]
+    fn a_property_table_is_not_a_signal_inventory() {
+        // WIRE-BASED-100.10e — the caption's last word is the document's own word for what the table
+        // is, and the first header names the table's SUBJECT rather than a column role.
+        let table = captioned_table(
+            "Table A1.1: Zeta_Alpha_Signals property",
+            &["Zeta_Alpha_Signals", "Default", "Description"],
+            &[
+                &["True", "", "Zeta alpha signals are included."],
+                &["False", "Y", "Zeta alpha signals are not present."],
+            ],
+        );
+        assert!(table_states_a_property_rather_than_a_signal_inventory(
+            &table
+        ));
+    }
+
+    #[test]
+    fn a_role_phrase_that_repeats_in_its_caption_is_still_a_role_phrase() {
+        // The shape test alone refuses real tables: APB heads its check-signal table `Check signal`
+        // under the caption `Check signal descriptions`, and it declares real wires.
+        let table = captioned_table(
+            "Table 5-1 Check signal descriptions",
+            &["Check signal", "Description"],
+            &[&["ZETA_ALPHACHK", "Parity over the zeta alpha bus."]],
+        );
+        assert!(!table_states_a_property_rather_than_a_signal_inventory(
+            &table
+        ));
+    }
+
+    #[test]
+    fn a_property_caption_alone_does_not_refuse_a_column_role_header() {
+        // Condition 1 without condition 2: the header is a column role, so the table still counts.
+        let table = captioned_table(
+            "Table A1.2: Zeta_Alpha_Signals property",
+            &["Name", "Width", "Description"],
+            &[&["ZETA_ALPHA", "1", "A real wire."]],
+        );
+        assert!(!table_states_a_property_rather_than_a_signal_inventory(
+            &table
+        ));
+        // And condition 2 without condition 1: an encoding table headed by its own signal stays.
+        let encoding = captioned_table(
+            "Table C5-5 Authentication signal restrictions for ZETA_ALPHA",
+            &["ZETA_ALPHA", "Meaning"],
+            &[&["0", "Disabled."]],
+        );
+        assert!(!table_states_a_property_rather_than_a_signal_inventory(
+            &encoding
+        ));
     }
 
     #[test]

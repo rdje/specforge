@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.3`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-08-31`
@@ -345,12 +345,34 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7 — derive the warned population from the driver, not from a screen`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.3`
-  Status: `pending`
+  Status: `done` (`2026-09-11`)
   Goal: keep the maintained EvidenceIR book chapter current below actionable pressure
   Acceptance: content is reorganized by reader concern without losing examples, links, or public behavior; the
   book aggregate and current-truth authorities remain exact and no size bound moves
-  Verification: `pending`
-  Commit: `pending`
+  **It stopped being a warning and became a breach, which is what forced the transaction.**
+  `WIRE-BASED-100.10e` added a section to `pipeline/evidenceir.md` and the chapter went to **131,583 bytes
+  against its 131,072 ceiling** — `shipped_behavior` failed closed and blocked the commit. The chapter had
+  been at 99% before that slice, so trimming the new section would have left it at ~99.6% and broken the
+  next book edit: the reprieve this doctrine exists to refuse, and the same trap
+  `STATUS-LEDGER-ROLLOVER.3` names for ledgers.
+  **The split is by reader concern, not by size.** Nine consecutive sections —
+  `PDF-VARIANT-DIGESTION.10a`…`10i` — are one subject: the table *shapes* a register map arrives in
+  (four-column bit tables, two-column layout grids, three-column caption-decides cases, dword-relative
+  cells, byte-location tables, fields as headings, reused mnemonics). They moved whole to
+  `docs/book/src/pipeline/register-tables.md` under their own title, with a pointer left in place and a
+  new `SUMMARY.md` route.
+  **Moved byte-identically, deliberately.** Every relocated line keeps its exact bytes — no heading was
+  promoted, no sentence rewritten — so all 14 pinned quantitative regions inside the block survived the
+  move as a pure path+line re-point rather than a re-adjudication. Three further regions in the remaining
+  chapter re-anchored by content; **zero regions were lost or invented**, and the frozen 332-candidate
+  population is unchanged.
+  Verification: `pipeline/evidenceir.md` **131,583 → 100,739 bytes = 76.9% of its 131,072 ceiling**, real
+  headroom rather than one slice's worth; `pipeline/register-tables.md` 32,038 bytes. Registry denominators
+  moved `39 → 40` book files and `21 → 22` candidate files with the `book_summary` source pin refreshed;
+  `perl scripts/check_book_quantitative_claims.pl --check` reports 40 files / 332 candidates / 332
+  adjudicated regions; `bash scripts/check_live_document_size.sh` and `scripts/check_doctrines.sh` green.
+  No ceiling, milestone or bound moved.
+  Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`
   Status: `pending`

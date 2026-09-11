@@ -1309,7 +1309,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: pending
   Commit: pending
 
-- ID: `WIRE-BASED-100.10e` · Status: `open` (`2026-09-11`, surfaced by `.10b`) · Goal: **a property table
+- ID: `WIRE-BASED-100.10e` · Status: `done` (`2026-09-11`; the junk was larger than the polarity record
+  that exposed it) · Goal: **a property table
   whose caption happens to say `signals` is admitted as a signal-description table, so `True` and `False`
   become known signal names.** AXI writes one two-column table per configurable property
   (`Table A3.3: SIZE_Present property`) whose Name column holds the property VALUE — 60 such tables, four
@@ -1324,8 +1325,26 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   rule named at `file:line`; a corpus census of every table it admits whose Name column is a property
   value; the junk record gone; APB/AHB/AXI declared inventories unmoved. Non-goal: `.6c`'s actor typing.
   Prerequisite: none.
-  Verification: pending
-  Commit: pending
+
+  **MEASURED `2026-09-11`, and the cheap rule over-fires exactly the way `.10b`'s did.** The four AXI
+  tables share an unmistakable shape: the caption is `Table A12.16: Trace_Signals property`, the **first
+  header is the table's own subject** (`Trace_Signals`) rather than a column role, and the Name column
+  holds `True`/`False` beside a `Default` column. The tempting structural test — *the first header text
+  occurs verbatim in the caption* — selects **17 tables across the 602 admitted `signal_description`
+  tables, and most of them are real**: APB's `Table 5-1 Check signal descriptions` has the header
+  `Check signal` and declares `PADDRCHK`/`PCTRLCHK`/`PSELxCHK`, so refusing it would break a wire gold;
+  CoreSight's `SPIDEN`/`HIDEN` and CHI's `BTI` tables are encodings whose header is the signal itself.
+  A role phrase that happens to appear in its own caption is still a role phrase.
+  **Adding the document's own word for what these tables are takes it to exactly the four.** Requiring the
+  caption's LAST word to be `property` — the same class of universal document-grammar word the gate
+  already keys on for `signal`/`port`/`pin`/`name`, and neither a document, vendor, protocol nor symbol
+  identity — selects **4 of 602 corpus-wide, and all four also satisfy the subject-named condition**. Two
+  independent conditions agreeing, zero false positives to measure.
+  Because the test is a pure function of one table and its caption, it needs no document-wide universe
+  and belongs directly in `should_treat_table_as_top_level_signal_description`, the gate every
+  concrete-signal consumer already shares — unlike `.10b`'s template rule, which had to be threaded.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
 
 - ID: `WIRE-BASED-100.10f` · Status: `open` (`2026-09-11`, censused by `.10b`) · Goal: **a relation becomes a
   declaration, and in a table-rich document that is almost always junk.**
@@ -1353,6 +1372,50 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Prerequisite: none (`.10b` supplies the census).
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.10e` (RUST CODE CHANGE) — DONE `2026-09-11`
+
+- [x] **REPRODUCE / MEASURE** — from the persisted artifacts before any edit: AXI's four property tables
+  (`table_0179`/`0181`/`0203`/`0237`) were admitted as signal-description tables, putting `True` and
+  `False` into `collect_signal_names_from_tables`. Directly observable consequences: one junk polarity
+  record `signal_polarities[True] = active_high` (the record `.10b` exposed) and **three junk enum facts
+  whose enum is literally named `False`** — `Enum False PARTITION_IDENTIFIER = 1`,
+  `… PERFORMANCE_MONITOR_GROUP = 2`, `… SECURITY_INDICATOR = 0` — which reached the emitted `.isf` as
+  `(type False (bits 2))` plus its enum block.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `should_treat_table_as_top_level_signal_description`
+  (`crates/specforge/src/ir/evidence.rs`) admits a table whose caption contains the word `signal`. AXI
+  writes one table per configurable option and names the option `Trace_Signals`, `Loopback_Signals`,
+  `Wakeup_Signals`, `Coherency_Connection_Signals` — so the **property's own name** satisfies the
+  signal-caption test, and the Name column's `True`/`False` values became known signal names. They mint no
+  declaration (a value row states no width or direction), which is why it stayed invisible until `.10b`
+  withheld a template and the prose polarity pass re-read the same row.
+- [x] **ADDRESSED (verified)** — `table_states_a_property_rather_than_a_signal_inventory` refuses the table
+  at the shared gate. AXI, per fact, against a from-scratch rebuild of the pre-change chain:
+  `signal_polarities` **45 → 44** (the `True` record gone), statements **6,454 → 6,451** — **exactly the
+  three `Enum False …` facts and nothing else** — and the emitted `.isf` loses `(type False (bits 2))` and
+  its enum block, **12 → 11 types**. Provenance (462/297), relations (257), signal constraints (44),
+  conditional rules (151), presence (306), channel memberships (154), semantic hints (61), ports (288) and
+  rule count (110) are all **byte-stable**.
+- [x] **NO REGRESSION** — named, re-runnable oracles, all green: `cargo test -p specforge-core --lib` 1,405
+  pass including 3 new cases; `-p specforge --lib` 472; `-p specforge-conformance --lib` 168;
+  `cargo fmt --all`; `cargo clippy --all-targets` clean. The six wire numbers re-derive unchanged (AXI
+  `1.000`×3, APB `1.000`×3, AHB `1.000`×3) and SWD holds at `13/29`. Corpus blast radius over the 27
+  proof-carrying chains: **zero movement** in ports, actors, declared inventory, provenance, constraints or
+  emitted ISF signal/rule counts. `bash scripts/check_doctrines.sh` and
+  `bash scripts/check_chain_currency.sh` green; the three wire golds' held-out bundles were restored for
+  the chain and returned byte-identical.
+- [x] **GENERICITY (ADR 0006)** — **the shape test alone is not sufficient, and the census proves it.**
+  Over all 602 admitted `signal_description` tables, *first header occurs verbatim in its own caption*
+  selects **17 tables and most are real**: APB's `Table 5-1 Check signal descriptions` is headed
+  `Check signal` and declares `PADDRCHK`/`PCTRLCHK`/`PSELxCHK`, and CoreSight's `SPIDEN`/`HIDEN` and CHI's
+  `BTI` encoding tables head themselves with the signal they encode. Requiring the caption's LAST word to
+  be `property` — universal document grammar in the same class as the `signal`/`port`/`pin`/`name` words
+  this gate already reads, and neither a document, vendor, protocol nor symbol identity — takes it to
+  **exactly 4, all four also satisfying the shape test**. Three new tests use alpha-renamed symbols and
+  assert both halves of that conjunction independently.
+- [x] **LOCKSTEP** — mdBook, `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the resume pointer and a
+  Knowledge Map card updated. Per `TOOLBOX.md`'s LOCKSTEP sub-clause: this slice deletes no production
+  rule, and the `now|currently` behavioural population re-adjudicates clean.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.8g` (RUST CODE CHANGE) — DONE `2026-09-11`
 
