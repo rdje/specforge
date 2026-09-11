@@ -504,6 +504,50 @@ Together the two readers restored the whole read-address side of the AMBA AXI in
 declared inventory past what the pre-regression chain had, with every wire-protocol gold score unchanged.
 *Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10c`).
 
+#### Names the document writes but never declares (`WIRE-BASED-100.10b`)
+
+The three corrections above all recovered content. This one removes content, and for the same reason: a
+specification writes identifiers that stand for wires without *being* wires, and reading them literally
+puts ports into the emitted interface that no design has.
+
+**A base-name template is not a catalogue.** When a protocol defines a repeated per-channel signal pattern,
+it writes the pattern once with its members spelled as base names. AMBA AXI's *"Credited channel signals"*
+table lists `VALID`, `PENDING`, `RP`, `CRDT`, `CRDTSH`, `SHAREDCRD`; the wires are `AWVALID`, `ARVALID`,
+`WCRDT` and so on, declared elsewhere in the per-channel inventories. Read as a catalogue, the template
+table put all six base names into the manager's interface *beside* their own instantiations.
+
+The obvious detector — *a declared name that is a proper suffix of other declared names is a base name* —
+was measured against the whole persisted corpus before anything shipped, **and it is wrong**. It selects
+10 tables, and 9 of them are real: a CoreSight debug component declares `TX_VALID`/`TX_READY`/
+`TX_LINKEST`/`TX_LINKUP` as its own ports, and the two wrappers that contain it declare `EXT_TX_VALID` and
+`INT_TX_VALID` as theirs. Both levels are wires. Shipping the shape rule alone would have deleted 36 real
+declarations to remove 6 false ones.
+
+What separates the two cases is structural, and it is the **mirror test**. Hierarchical qualification
+*re-declares the same port list one level up*, so the document contains a table whose entire declared set is
+the prefixed copy of the base table. A naming pattern has no mirror — its members are scattered through
+larger, heterogeneous channel inventories. So a table is a template only when it declares at least 3
+distinct names, every one of them is instantiated by at least 2 prefixes drawn from *other* tables, at
+least 2 prefixes reach *every* member, and **no** table in the document mirrors one of those
+instantiations. Across the corpus that selects exactly one table, worth 6 declarations.
+
+**A placeholder is not a wire either.** AXI states in its own text that *"`AxLEN` indicates AWLEN and
+ARLEN"*, then uses the placeholder in ordinary normative prose (*"a Manager … can omit the AxLEN outputs
+from its interface"*). The relation extractor reads that sentence correctly — and a Drives relation is then
+promoted into a formal declaration, which is what authorizes an interface signal. SpecForge now refuses to
+promote a token whose **interior** lower-case position, wildcarded, matches two or more declared names of
+the same length. Interior is deliberate: a *leading* lower-case letter is the active-LOW convention
+(`nRESET`) and a *trailing* one is the indexed-family convention (`PSELx`), and neither is a stand-in for a
+varying character. Across the corpus this selects exactly one token.
+
+Withholding is honest about what it costs. The template's own normative prose goes with it — *"VALID signals
+must be LOW during reset"* is a real obligation on every channel's VALID, and with the base name withheld it
+is dropped rather than expanded across the prefixes that instantiate it. On AXI that is 9 signal
+constraints and 23 emitted rules, every one of them addressed to a name the design does not carry.
+Expanding them onto the wires the document *does* declare is a capability the detection now makes possible
+and nothing yet implements; it is tracked rather than assumed.
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10b`, with `.10d` for the expansion).
+
 #### Captured requirements don't count as residuals (`WIRE-BASED-100.3b`)
 
 The same honesty applies to the **prose** side of the count. A sentence like "the

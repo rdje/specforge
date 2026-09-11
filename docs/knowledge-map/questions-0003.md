@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > does FSMGen accept a symbolic (width PARAM) or only a concrete integer width
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does FSMGen strict success prove that a SpecForge adapter is semantically faithful
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -296,5 +298,3 @@
   > has the corpus task evidence migration landed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > have the PDF task migration destinations been created
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed

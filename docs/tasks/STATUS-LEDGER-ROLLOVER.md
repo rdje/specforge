@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `STATUS-LEDGER-ROLLOVER`
-- Status: `active` (`.0`/`.1`/`.3`/`.4`/`.4a`/`.5` done; `.2` tracking-only)
+- Status: `active` (`.0`/`.1`/`.3`/`.4`/`.4a`/`.5`/`.6` done; `.2` tracking-only)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-11`
-- Last updated: `2026-08-30`
+- Last updated: `2026-09-11`
 - Owner: repo-local workflow
 
 ## Goal
@@ -63,7 +63,7 @@ pressure axis here, because one status record is one line.
   Status: `active`
   Goal: the status ledger is back inside its warning band through its declared transaction, with no record
   edited and no bound moved, and the structural reason it keeps returning is measured
-  Children: `STATUS-LEDGER-ROLLOVER.0`, `.1`, `.2`, `.3`, `.4`, `.4a`, `.5`
+  Children: `STATUS-LEDGER-ROLLOVER.0`, `.1`, `.2`, `.3`, `.4`, `.4a`, `.5`, `.6`
 
 - ID: `STATUS-LEDGER-ROLLOVER.0`
   Status: `done`
@@ -179,6 +179,57 @@ pressure axis here, because one status record is one line.
   chapter is deliberately unchanged — .1 removed its stored root sizes and .3 already recorded the harvest
   procedure, so there is no truth on that surface for this transaction to move`
   Commit: `STATUS-LEDGER-ROLLOVER.5 / CHANGES-LEDGER-ROLLOVER.5 — roll both root ledgers in one transaction`
+
+- ID: `STATUS-LEDGER-ROLLOVER.6`
+  Status: `done` (`2026-09-11`)
+  Goal: roll the status ledger again — it is full, and this time the measurement says so before an append
+  rather than after one.
+  Acceptance: measured `2026-09-11` at `ab339652`, `LIVE_ACHIEVEMENT_STATUS.md` is **102,608 bytes = 89.22%**
+  of its 115,000-byte health target across **60 records**. Only a record of **892 bytes or less** keeps the
+  root under the 103,500-byte mandatory signal, which is below `.4`'s own 1,351.6-byte per-record budget, so
+  **no compliant record fits** — the reprieve `.5` took by tightening a slice's entry is not available here.
+  `WIRE-BASED-100.10b`'s first draft (2,961 bytes) took the root to 91.8% and the `rolling-ledger` checker
+  refused it, which is the protocol working as designed.
+  **A census correction this leaf makes rather than inherits:** a first pass counted 55 records because it
+  scanned only the `✅`/`⚠`/`❌` markers, and this ledger also carries `🧭` and `🚧` records (five of them,
+  all inside the pinned suffix). The checker's own count is 60 — its warning line states it — and a plan
+  whose `opening_records` is short by five is not merely mis-sized: `validate_rollover_plan` treats the
+  difference as records *prepended after the boundary*, excludes them from the reconstructed opening, and
+  fails with `opening source identity drift`. Read the record count from the checker, never from a
+  hand-written marker list.
+  **Sizing, stated before the plan is written.** The pinned 40-record migration suffix is live forever under
+  `validate_retained_suffix` and alone spends 66,720 of the 92,000-byte warning budget, so the reachable
+  headroom is about 25,000 bytes whatever the cut. Of the 20 post-migration records, three are `2026-09-11`,
+  three are `2026-09-10`, six are `2026-09-01`, and eight are `2026-08-28`…`2026-08-31`. Measured from the
+  committed root: keeping **three** — exactly the `2026-09-11` day, `.10c`/`.10a`/`.10` — leaves 73,121 bytes
+  = 63.58% and about **fourteen** budget-sized records, more headroom than `.3` or `.5` achieved (eleven
+  each) while keeping a live story whole: `.10b`, the record appended next, belongs to that same family and
+  would otherwise open beside a sealed predecessor. The cut is a seam rather than a count — it seals the
+  whole `.8` scoring-oracle block, the `.9` re-ingest program and the `SPEC-TO-INTENT-ALIGNMENT.9x` block
+  together, and nothing it seals is still being continued. Keeping zero would leave 66,720 bytes and a
+  snapshot whose newest entry is `2026-08-08`, the reader cost `.3` and `.5` both declined to pay.
+  **Build the plan by harvesting, not by computing** (`.3`'s recorded lesson, re-confirmed by `.5`): write
+  placeholder metrics, read each `actual X, expected Y` from the dry run, rewrite, and re-run until exact.
+  Cross-check one figure predicted independently beforehand so the harvest is not self-fulfilling — here the
+  resulting root is predicted at **73,121 bytes** from the per-record table.
+  Prerequisite: none; it blocks the next status-bearing commit, which is `WIRE-BASED-100.10b`'s
+  Verification: plan `docs/research/status-ledger-rollover-2026-09-11-plan.jsonl` pins boundary commit
+  `ab339652` and opening SHA-256 `e745097d…684e`; the dry run reported **exact and warning-safe** before the
+  applied run, and the applied run installed root-last on the first attempt with no rollback. Root
+  **60 → 43 records / 103 → 85 lines / 102,608 → 73,121 bytes** = 63.58% of the byte target, 53.75% of the
+  80-record window, 15.18% of lines, and an unchanged 4,824-byte widest line (that line is record 51, inside
+  the pinned suffix, so no cut can reach it). Segment `segment-0013-2026-09-11.md` holds 17 records / 17
+  lines / 29,487 bytes at SHA-256 `7904d012…e39a`. `git status` proves every older segment and the source
+  capsule byte-identical, with only the root, the new segment, the manifest and the index changed. No limit,
+  milestone, or ceiling moved and no record was edited, reordered, or reflowed. **The independent
+  cross-check holds**: the resulting root was predicted at 73,121 bytes from the per-record table before the
+  first dry run and reported as 73,121 by the checker, so the harvest is not self-fulfilling. Two figures
+  the harvest could not supply were corrected by reading the checker rather than the file — the record count
+  (60, not the 55 a marker scan found) and the plan's `reason` byte cap, which the archive manifest enforces
+  below the plan's own 1,024-byte `max_scalar_bytes`. The mdBook rolling-ledger chapter is deliberately
+  unchanged: `.1` removed its stored root sizes and `.3` already records the harvest procedure, so this
+  transaction moves no truth on that surface.
+  Commit: `STATUS-LEDGER-ROLLOVER.6 — roll the status ledger before a compliant record no longer fits`
 
 - ID: `STATUS-LEDGER-ROLLOVER.4`
   Status: `done` (`2026-08-28`)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
@@ -32,6 +34,8 @@
   > how does SpecForge stop a published count going stale under a green gate
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > how does SpecForge stop a published gap reproduction from silently running no test
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > how does SpecForge tell a generic channel-signal template from a signal catalogue
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -294,7 +298,3 @@
   > how is corpus SOURCE_PDF_REGISTRY currentness checked
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how is corpus_kb currentness checked
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how is docs TASK_TREE kept complete without mirroring task history
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how is docs knowledge INDEX kept complete

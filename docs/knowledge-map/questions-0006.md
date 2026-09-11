@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > how is docs TASK_TREE kept complete without mirroring task history
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how is docs knowledge INDEX kept complete
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how is fact-plane capacity derived
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -193,6 +197,8 @@
   > how many persisted SourceIR artifacts are stale
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many persisted artifacts have an ambiguous source_ref
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > how many placeholder tokens exist corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many production rules does the registry declare
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -231,6 +237,8 @@
   > how many synthetic behaviors came from generic gates
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > how many synthetic behaviors came from generic section phases
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > how many tables corpus-wide are base-name templates
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how many task trees have an unowned named frontier
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
@@ -289,11 +297,3 @@
   > how should a behavior-preserving evidence refactor be verified given the non-determinism
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > how should a red check be attributed to a change
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how should an AXI gold or extraction be structured (per channel)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > how should the agent-identity / actor noise gate stay agnostic (no name list, ADR 0006)
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > how should the current FSMGen gitlink in documentation be verified
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)

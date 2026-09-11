@@ -107,6 +107,8 @@
   > can ambient validation reports define the tracked corpus KB validation page
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > can an active task tree use the terminal task archive topology
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > can an actor-signal relation declare a signal name no table declares
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > can an encoding table's column header SOURCE an enum name rather than only veto one / what did .5.iv measure (measured 2026-08-11 read-only, reproducer scripts/measure_encoding_enum_header_naming.py: derive_encoding_enum_name sources candidates ONLY from caption_text or the section title (evidence.rs:4698-4703) and then validates them against known_signals + the header
   > (:4715-4733), so the header is a veto and never a source. Corpus: 2,540 encoding tables -> 281 header-nameable <FIELD> value|Description -> 134 minting a non-empty enum after the .5.ii spine gate, in 10 docs. GO on the lever, NO-GO on the naive predicate; CODE deferred to .5.iv.a)
@@ -296,5 +298,3 @@
   > does FSMGen --strict --check use or validate signal direction (input vs output)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > does FSMGen 030f8c273 accept a value-free (sample S as s) transaction body
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > does FSMGen accept a symbolic (width PARAM) or only a concrete integer width

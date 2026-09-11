@@ -1,3 +1,60 @@
+### WIRE-BASED-100.10b — the names a specification writes but never declares, and the cheap rule that was wrong
+
+- TWO PRODUCERS WERE PUTTING NAMES INTO THE AXI INTERFACE THAT NAME NO WIRE, each at its own seam in
+  `crates/specforge/src/ir/evidence.rs`. (a) `synthesize_declarations_from_tables` read a BASE-NAME TEMPLATE
+  as a catalogue: `Table A2.3: Credited channel signals` spells a per-channel pattern — `VALID`, `PENDING`,
+  `RP`, `CRDT`, `CRDTSH`, `SHAREDCRD` — whose wires are `AWVALID`, `ARVALID`, `WCRDT`, declared elsewhere.
+  (b) `synthesize_directions_from_relations` promotes a Drives triple into a formal `Signal X is output.`
+  declaration, which is the one EvidenceIR path that can mint a name no table declared; the document's own
+  placeholder `AxLEN` ("In this specification, AxLEN indicates AWLEN and ARLEN") therefore became a port.
+- THE OBVIOUS RULE WAS MEASURED CORPUS-WIDE AND FALSIFIED BEFORE ANYTHING SHIPPED, and that is the part
+  worth keeping. "A declared name that is a proper suffix of at least two other declared names is a base
+  name" selects, over all 1,669 table declarations in the 26 persisted documents that have any, 10 tables
+  worth 42 declarations — and NINE of those tables are real. CoreSight SDC-600 declares
+  `TX_VALID`/`TX_READY`/`TX_LINKEST`/`TX_LINKUP` as one component's ports and `EXT_TX_VALID`/`INT_TX_VALID`
+  as the two wrappers'. Shipping the shape rule alone would have deleted 36 real declarations to remove 6
+  false ones.
+- WHAT SEPARATES THEM IS THE MIRROR TEST. Hierarchical qualification RE-DECLARES the same port list one
+  level up, so the document contains a table whose entire declared set IS the prefixed copy of the base
+  table. A naming pattern has no mirror — its members sit inside larger, heterogeneous channel inventories.
+  A table is a template only when it declares >= 3 distinct names, every one instantiated by >= 2 prefixes
+  from OTHER tables, with >= 2 prefixes reaching EVERY member, and no table mirroring any instantiation.
+  Corpus-wide that is exactly one table and six declarations.
+- AND `AxLEN` IS AN ALPHA-VARIANT PLACEHOLDER: an INTERIOR lower-case position that, wildcarded, matches two
+  declared names of the same length (`AWLEN`, `ARLEN`). Interior is load-bearing — a LEADING lower-case
+  letter is the active-LOW convention (`nRESET`) and a TRAILING one is the indexed-family convention
+  (`PSELx`, owned by `.4a`), and neither is a stand-in for a varying character. One token corpus-wide.
+  There is no `AXLEN` in the document at all, so `.10b`'s earlier "the declared AXLEN does not reach the
+  interface" is withdrawn rather than carried.
+- ADDRESSED (AXI), every delta attributed per fact: ISF ports and declared inventory **295 -> 288**,
+  removing exactly the seven names and nothing else; `table_signal_declaration_provenance` **468 -> 462**
+  records / **303 -> 297** distinct; actors **25 -> 21** (`Tx`/`Rx` existed only through `table_0011`,
+  `case` and `read response` only through prose relations to `VALID`); relations **266 -> 257**; signal
+  constraints **53 -> 44** and emitted rules **133 -> 110**, where ALL 9 lost constraints and ALL 23 lost
+  rules carry a withheld base name as their subject — verified by an id-independent body diff against a
+  from-scratch rebuild of the pre-change chain, not by counting.
+- WITHHOLDING COSTS SOMETHING REAL AND THE COST IS TRACKED, NOT HIDDEN. "VALID signals must be LOW during
+  reset" is a true obligation on every channel's VALID; with the base name withheld it is dropped rather
+  than expanded over the prefixes that instantiate it. `.10d` is opened to expand them onto the wires the
+  document does declare. `.10e` is opened for a second thing this slice made visible: AXI's per-property
+  tables (`Table A3.3: SIZE_Present property`) whose captions mention signals are admitted as
+  signal-description tables, so `True`/`False` are known signal names — inert until now, and now the
+  subject of one junk polarity record. `.10f` is opened with the third:
+  `synthesize_directions_from_relations` contradicts the SemanticIR authority doctrine one stage earlier,
+  and a census of every persisted EvidenceIR shows 25 documents minting names this way — almost all junk
+  where the table catalogue is rich (AHB mints `Manager`; the older AXI `h_c` mints 15 including AR, AW,
+  MEMORY, BARRIER, DVM) and almost all real where it is sparse (I2C's SCL/SDA, LPI's QREQN, ADIv6's SWDIO).
+  The obvious threshold gate is NOT clean — it would also lose 8 real Avalon signals and TMC's SYNCREQS —
+  so this slice blocked only the leak it could prove and left the general case measured, not guessed.
+- THE SIX SCORED NUMBERS ARE UNCHANGED: AXI `1.000` x3, APB `1.000`/`1.000`/`0.333`, AHB `1.000` x3.
+  CORPUS BLAST RADIUS: **1 of the 27 proof-carrying chains changed**; the other 26, APB (32 declarations,
+  8 actors) and AHB (40, 25) included, are identical in every measured dimension. EvidenceIR-only, so no
+  SourceIR proof was staled and no re-ingest was needed; the three wire golds had their held-out bundles
+  restored for the chain and returned byte-identical (658 / 136 / 283 files).
+- VERIFIED: `cargo test -p specforge-core --lib` 1,393 pass (5 new cases), `-p specforge --lib` 472,
+  `-p specforge-conformance --lib` 168; `cargo fmt --all`; `cargo clippy --all-targets` clean;
+  `scripts/check_chain_currency.sh` and `scripts/check_doctrines.sh` green.
+
 ### WIRE-BASED-100.10c — two readers, zero real AXI signals left behind, and a proof kernel that corrected the design
 
 - TWO INDEPENDENT READERS WERE DROPPING THE SAME SIDE OF THE BUS, each named at its seam.

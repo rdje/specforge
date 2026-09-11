@@ -1865,12 +1865,13 @@ impl EvidenceIr {
         // the table-declaration provenance side-output. This is the statement-ASSEMBLY phase, not the typed
         // surface-extraction phase, so it keeps its own orchestrator rather than the `run_surface` merge
         // driver (see the two-phase / two-category note in `ir/extractor.rs`).
-        let (synthesized, table_signal_declaration_provenance) = synthesize_signal_declaration_seed(
-            source_ir,
-            &extracted_statements,
-            &mut statement_counter,
-            prior_guidance.as_ref(),
-        );
+        let (synthesized, table_signal_declaration_provenance, table_declaration_catalog) =
+            synthesize_signal_declaration_seed(
+                source_ir,
+                &extracted_statements,
+                &mut statement_counter,
+                prior_guidance.as_ref(),
+            );
 
         // KG-ISF-TRANSACTIONS.2m: recover each declared signal's document-grounded CHANNEL
         // from the `<role> channel signals` table captions (joined with the provenance just
@@ -1931,6 +1932,7 @@ impl EvidenceIr {
             contract_stmts,
             &mut statement_counter,
             prior_guidance.as_ref(),
+            &table_declaration_catalog,
             &mut extraction_manifest,
         );
 
@@ -4913,6 +4915,62 @@ fn is_signal_name_char(ch: char) -> bool {
     ch.is_ascii_alphanumeric() || ch == '_'
 }
 
+/// WIRE-BASED-100.10b — an ALPHA-VARIANT PLACEHOLDER: the document's own spelling for a family of
+/// declared signals, not a signal.
+///
+/// A specification that discusses several signals at once writes one of them with the varying
+/// position in lower case inside an otherwise upper-case identifier — AXI's `AxLEN` for `AWLEN` and
+/// `ARLEN` — and then uses it in ordinary normative prose (`a Manager … can omit the AxLEN outputs
+/// from its interface`). The relation extractor reads that sentence correctly and
+/// `synthesize_directions_from_relations` promotes the triple into a declaration, putting a token
+/// that names no wire into the emitted interface.
+///
+/// The token is a placeholder when the document itself supplies the family: an INTERIOR position
+/// holds a lower-case letter, at least two upper-case letters sit elsewhere in the token, and
+/// wildcarding exactly that position matches at least two DECLARED names of the same length.
+/// Typographic document grammar plus the document's own declaration catalog — no vocabulary, no
+/// identity (ADR 0006). A name the tables already declare is never a placeholder, whatever its
+/// spelling.
+///
+/// INTERIOR is load-bearing, because the two edge positions already mean something else in
+/// hardware naming and neither is a metavariable: a leading lower-case letter is the active-LOW
+/// convention (`nRESET` beside a declared `NRESET`/`PRESET` pair would otherwise qualify), and a
+/// trailing one is the indexed-family convention (`PSELx`), whose recovery `WIRE-BASED-100.4a`
+/// owns. Only a substitution INSIDE the identifier is a stand-in for a varying character.
+///
+/// Measured over every persisted document before shipping: one token corpus-wide (`AxLEN`).
+fn is_alpha_variant_placeholder(
+    token: &str,
+    declared_from_tables: &std::collections::HashSet<String>,
+) -> bool {
+    if declared_from_tables.contains(token) {
+        return false;
+    }
+    let bytes = token.as_bytes();
+    bytes.iter().enumerate().any(|(index, byte)| {
+        index > 0
+            && index + 1 < bytes.len()
+            && byte.is_ascii_lowercase()
+            && bytes
+                .iter()
+                .enumerate()
+                .filter(|(other, candidate)| *other != index && candidate.is_ascii_uppercase())
+                .count()
+                >= 2
+            && declared_from_tables
+                .iter()
+                .filter(|declared| {
+                    let declared = declared.as_bytes();
+                    declared.len() == bytes.len()
+                        && declared[index] != bytes[index]
+                        && declared[..index] == bytes[..index]
+                        && declared[index + 1..] == bytes[index + 1..]
+                })
+                .count()
+                >= 2
+    })
+}
+
 /// Synthesize `Signal X is output.` declarations from the Drives triples in the
 /// knowledge graph.  These are added to `extracted_statements` so they flow into
 /// `SemanticIr::build_interfaces()` exactly like table-synthesized declarations.
@@ -4922,6 +4980,7 @@ fn is_signal_name_char(ch: char) -> bool {
 fn synthesize_directions_from_relations(
     relations: &[ActorSignalRelation],
     already_declared: &std::collections::HashSet<String>,
+    declared_from_tables: &std::collections::HashSet<String>,
     width_map: &std::collections::HashMap<String, WidthHint>,
     counter: &mut usize,
 ) -> Vec<ExtractedStatement> {
@@ -4936,6 +4995,12 @@ fn synthesize_directions_from_relations(
         // Table declarations are authoritative and must not be overwritten by
         // KG-derived declarations.
         if already_declared.contains(&rel.signal_name) {
+            continue;
+        }
+        // WIRE-BASED-100.10b — this is the one path that turns a relation into a formal
+        // declaration, so it is the one path that can mint a name the document never declared.
+        // A placeholder standing for a family of declared signals is not a wire.
+        if is_alpha_variant_placeholder(&rel.signal_name, declared_from_tables) {
             continue;
         }
         // One declaration per unique signal name — direction = output (from the driving actor).
@@ -7297,6 +7362,7 @@ fn synthesize_signal_declaration_seed(
 ) -> (
     Vec<ExtractedStatement>,
     Vec<TableSignalDeclarationProvenanceRecord>,
+    TableDeclarationCatalog,
 ) {
     let mut table_signal_declaration_provenance = Vec::new();
     // SWD-SERIAL-EXTRACTION.2: the table strategy seeds direct signal declarations + enum facts from
@@ -7331,7 +7397,177 @@ fn synthesize_signal_declaration_seed(
         prior_guidance,
         &mut table_signal_declaration_provenance,
     ));
-    (synthesized, table_signal_declaration_provenance)
+    // WIRE-BASED-100.10b — LAST, on the complete table-declaration provenance: a base-name TEMPLATE
+    // table declares a naming pattern, not wires. Withholding it here (rather than inside the table
+    // reader) is what makes the rule decidable at all: it needs the document's whole declared
+    // inventory, which only exists once every table producer has run.
+    let catalog = withhold_base_name_template_declarations(
+        &mut synthesized,
+        &mut table_signal_declaration_provenance,
+    );
+    (synthesized, table_signal_declaration_provenance, catalog)
+}
+
+/// WIRE-BASED-100.10b — the document's TABLE DECLARATION CATALOG: what the signal tables declared
+/// after the base-name templates among them were withheld, handed to the convergence loop so the
+/// withheld rows cannot re-enter through the relation path and so the relation path can tell a
+/// placeholder from a wire.
+#[derive(Debug, Default, Clone)]
+struct TableDeclarationCatalog {
+    /// Every name a signal table actually declared — the document's own declaration catalog, which
+    /// is narrower than the set of identifiers that merely appear in a name column.
+    declared_names: HashSet<String>,
+    /// The base-name template tables — a relation sourced from one of these declares nothing.
+    template_table_ids: BTreeSet<String>,
+    /// The names those tables were the ONLY declarer of. A name a concrete table also declares is
+    /// not withheld: the template is silenced, never the wire.
+    withheld_names: BTreeSet<String>,
+}
+
+/// A pattern needs more members than an affix coincidence does.
+const MIN_TEMPLATE_MEMBERS: usize = 3;
+/// One instantiation is an accident; the pattern must be instantiated at least twice per member.
+const MIN_INSTANTIATIONS_PER_MEMBER: usize = 2;
+/// The instantiating prefixes must form ONE family that reaches every member.
+const MIN_SHARED_INSTANTIATION_PREFIXES: usize = 2;
+
+/// WIRE-BASED-100.10b — the document's BASE-NAME TEMPLATE tables.
+///
+/// A specification that defines a repeated per-channel signal pattern writes the pattern once, with
+/// its members spelled as BASE names, and instantiates each member with the channel's prefix
+/// (`VALID` → `AWVALID`, `ARVALID`, `WVALID`). Read as a catalogue, such a table declares wires the
+/// design does not have — AXI's `Table A2.3: Credited channel signals` put `VALID`, `PENDING`, `RP`,
+/// `CRDT`, `CRDTSH` and `SHAREDCRD` into the manager's ISF interface beside their own instantiations.
+///
+/// A table is a template when the document instantiates all of it and never re-declares one
+/// instantiation as a port list of its own:
+///
+/// 1. it declares at least [`MIN_TEMPLATE_MEMBERS`] distinct names;
+/// 2. every one of those names is a proper SUFFIX of at least [`MIN_INSTANTIATIONS_PER_MEMBER`]
+///    names declared by OTHER tables;
+/// 3. at least [`MIN_SHARED_INSTANTIATION_PREFIXES`] prefixes instantiate EVERY member — one shared
+///    family, which is what separates a template from unrelated names that happen to share affixes;
+/// 4. the MIRROR test: no other table's whole declared set is contained in one prefix's
+///    instantiation of this table. Hierarchical qualification re-declares the same port list one
+///    level up (a component's `TX_VALID`/`TX_READY`/… beside a wrapper's `EXT_TX_VALID`/…), and
+///    that mirror table is the evidence that BOTH levels are real ports. A pattern has no mirror:
+///    its members are scattered through the larger, heterogeneous per-channel inventories.
+///
+/// Structural only — affix relations among the document's own declared names (ADR 0006). Measured
+/// over every persisted table declaration before shipping: conditions 1–3 alone select 10 tables
+/// worth 42 declarations, of which 9 tables are real per-component port lists; adding condition 4
+/// leaves exactly one table and six declarations corpus-wide.
+fn base_name_template_tables(
+    provenance: &[TableSignalDeclarationProvenanceRecord],
+) -> BTreeSet<String> {
+    let mut names_by_table: BTreeMap<&str, BTreeSet<&str>> = BTreeMap::new();
+    for record in provenance {
+        names_by_table
+            .entry(record.table_id.as_str())
+            .or_default()
+            .insert(record.signal_name.as_str());
+    }
+
+    let mut templates = BTreeSet::new();
+    for (table_id, members) in &names_by_table {
+        if members.len() < MIN_TEMPLATE_MEMBERS {
+            continue;
+        }
+        let elsewhere: BTreeSet<&str> = names_by_table
+            .iter()
+            .filter(|(other_id, _)| *other_id != table_id)
+            .flat_map(|(_, names)| names.iter().copied())
+            .collect();
+
+        let Some(shared_prefixes) = shared_instantiation_prefixes(members, &elsewhere) else {
+            continue;
+        };
+        if shared_prefixes.len() < MIN_SHARED_INSTANTIATION_PREFIXES {
+            continue;
+        }
+
+        let mirrored = shared_prefixes.iter().any(|prefix| {
+            let instantiation: BTreeSet<String> = members
+                .iter()
+                .map(|member| format!("{prefix}{member}"))
+                .collect();
+            names_by_table
+                .iter()
+                .filter(|(other_id, _)| *other_id != table_id)
+                .any(|(_, names)| {
+                    !names.is_empty() && names.iter().all(|name| instantiation.contains(*name))
+                })
+        });
+        if mirrored {
+            continue;
+        }
+        templates.insert((*table_id).to_string());
+    }
+    templates
+}
+
+/// The prefixes that instantiate EVERY member (condition 2 + 3 above). `None` as soon as one member
+/// is not instantiated often enough, so an ordinary table leaves the scan immediately.
+fn shared_instantiation_prefixes(
+    members: &BTreeSet<&str>,
+    elsewhere: &BTreeSet<&str>,
+) -> Option<BTreeSet<String>> {
+    let mut shared: Option<BTreeSet<String>> = None;
+    for member in members {
+        let prefixes: BTreeSet<String> = elsewhere
+            .iter()
+            .filter(|other| other.len() > member.len() && other.ends_with(*member))
+            .map(|other| other[..other.len() - member.len()].to_string())
+            .collect();
+        if prefixes.len() < MIN_INSTANTIATIONS_PER_MEMBER {
+            return None;
+        }
+        shared = Some(match shared {
+            None => prefixes,
+            Some(previous) => previous.intersection(&prefixes).cloned().collect(),
+        });
+        if shared.as_ref().is_some_and(BTreeSet::is_empty) {
+            return None;
+        }
+    }
+    shared
+}
+
+/// Remove every declaration a base-name template table produced, and report what was removed so the
+/// convergence loop can keep the same rows out of the relation-derived declaration path.
+fn withhold_base_name_template_declarations(
+    synthesized: &mut Vec<ExtractedStatement>,
+    provenance: &mut Vec<TableSignalDeclarationProvenanceRecord>,
+) -> TableDeclarationCatalog {
+    let template_table_ids = base_name_template_tables(provenance);
+    if !template_table_ids.is_empty() {
+        let withheld_statement_ids: HashSet<&str> = provenance
+            .iter()
+            .filter(|record| template_table_ids.contains(&record.table_id))
+            .map(|record| record.statement_id.as_str())
+            .collect();
+        synthesized
+            .retain(|statement| !withheld_statement_ids.contains(statement.statement_id.as_str()));
+    }
+    // A name a concrete table also declares keeps its declaration; only a name the template tables
+    // alone introduced disappears.
+    let survivors: HashSet<String> = provenance
+        .iter()
+        .filter(|record| !template_table_ids.contains(&record.table_id))
+        .map(|record| record.signal_name.clone())
+        .collect();
+    let withheld_names: BTreeSet<String> = provenance
+        .iter()
+        .filter(|record| template_table_ids.contains(&record.table_id))
+        .map(|record| record.signal_name.clone())
+        .filter(|name| !survivors.contains(name))
+        .collect();
+    provenance.retain(|record| !template_table_ids.contains(&record.table_id));
+    TableDeclarationCatalog {
+        declared_names: survivors,
+        template_table_ids,
+        withheld_names,
+    }
 }
 
 /// Currently handles two table kinds:
@@ -16975,6 +17211,10 @@ fn actor_signal_relation_surface(
     clippy::type_complexity,
     reason = "evidence convergence returns the synchronized extraction families that must remain aligned"
 )]
+#[expect(
+    clippy::too_many_arguments,
+    reason = "the convergence loop's inputs are the assembled seed surfaces themselves; bundling them into a struct would only rename the same fan-in"
+)]
 fn converge_evidence_extractions(
     source_ir: &SourceIr,
     base_extracted_statements: Vec<ExtractedStatement>,
@@ -16982,6 +17222,7 @@ fn converge_evidence_extractions(
     contract_statements: Vec<ExtractedStatement>,
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    table_declaration_catalog: &TableDeclarationCatalog,
     extraction_manifest: &mut ExtractionManifest,
 ) -> (
     Vec<ExtractedStatement>,
@@ -16992,10 +17233,26 @@ fn converge_evidence_extractions(
     Vec<ActorSignalRelation>,
     EvidenceConvergenceReport,
 ) {
-    let signal_names_from_tables = collect_signal_names_from_tables(source_ir, prior_guidance);
-    let signal_widths_from_tables = collect_signal_widths_from_tables(source_ir, prior_guidance);
-    let table_relations =
+    let mut signal_names_from_tables = collect_signal_names_from_tables(source_ir, prior_guidance);
+    let mut signal_widths_from_tables =
+        collect_signal_widths_from_tables(source_ir, prior_guidance);
+    let mut table_relations =
         extract_relations_from_signal_tables_with_prior_guidance(source_ir, prior_guidance);
+    // WIRE-BASED-100.10b — a base-name template table declares a naming pattern, so it contributes
+    // no known signal, no width, and no actor relation either. Without the relation arm the rows
+    // would simply come back: `synthesize_directions_from_relations` promotes a Drives triple into a
+    // formal declaration, which is exactly how the withheld names reached the ISF interface.
+    signal_names_from_tables
+        .retain(|name| !table_declaration_catalog.withheld_names.contains(name));
+    signal_widths_from_tables
+        .retain(|name, _| !table_declaration_catalog.withheld_names.contains(name));
+    table_relations.retain(|relation| {
+        !relation.source_statement_ids.iter().any(|source| {
+            table_declaration_catalog
+                .template_table_ids
+                .contains(source)
+        })
+    });
     let mut dynamic_synthesized_statements = Vec::new();
     let mut final_extracted_statements = Vec::new();
     let mut final_signal_constraints = Vec::new();
@@ -17060,6 +17317,7 @@ fn converge_evidence_extractions(
         candidate_statements.extend(synthesize_directions_from_relations(
             &actor_signal_relations,
             &already_declared,
+            &table_declaration_catalog.declared_names,
             &signal_widths_from_tables,
             statement_counter,
         ));
@@ -25003,9 +25261,12 @@ mod tests {
         let already_declared: std::collections::HashSet<String> = std::collections::HashSet::new();
         let width_map: std::collections::HashMap<String, WidthHint> =
             std::collections::HashMap::new();
+        let declared_from_tables: std::collections::HashSet<String> =
+            std::collections::HashSet::new();
         let stmts = synthesize_directions_from_relations(
             &relations,
             &already_declared,
+            &declared_from_tables,
             &width_map,
             &mut counter,
         );
@@ -29455,6 +29716,175 @@ mod wire_based_100_5h {
         );
         // The cells still declare their first token, exactly as before.
         assert!(names.contains(&"Channel") && names.contains(&"ZETA_ALPHA"));
+    }
+
+    fn prov(entries: &[(&str, &str)]) -> Vec<TableSignalDeclarationProvenanceRecord> {
+        entries
+            .iter()
+            .enumerate()
+            .map(
+                |(index, (table_id, signal_name))| TableSignalDeclarationProvenanceRecord {
+                    statement_id: format!("statement_{index:04}"),
+                    signal_name: (*signal_name).to_string(),
+                    table_id: (*table_id).to_string(),
+                },
+            )
+            .collect()
+    }
+
+    #[test]
+    fn a_base_name_table_the_document_instantiates_is_a_template() {
+        // `t_pattern` names three base members; two prefixes instantiate every one of them, and
+        // the instantiations live inside larger heterogeneous inventories. That is a naming
+        // pattern, not three wires.
+        let provenance = prov(&[
+            ("t_pattern", "ZETA"),
+            ("t_pattern", "OMEGA"),
+            ("t_pattern", "KAPPA"),
+            ("t_first", "AAZETA"),
+            ("t_first", "AAOMEGA"),
+            ("t_first", "AAKAPPA"),
+            ("t_first", "AAIOTA"),
+            ("t_second", "ABZETA"),
+            ("t_second", "ABOMEGA"),
+            ("t_second", "ABKAPPA"),
+            ("t_second", "ABIOTA"),
+        ]);
+        let templates = base_name_template_tables(&provenance);
+        assert_eq!(
+            templates.iter().map(String::as_str).collect::<Vec<_>>(),
+            vec!["t_pattern"],
+            "only the base-name table is a template, got {templates:?}"
+        );
+    }
+
+    #[test]
+    fn a_mirrored_port_list_is_two_real_levels_not_a_template() {
+        // The same shape as above EXCEPT that `t_first` declares exactly the prefixed copy of
+        // `t_base`. That mirror is hierarchical qualification — a component's own ports beside the
+        // wrapper's — and both levels are real, so nothing may be withheld.
+        let provenance = prov(&[
+            ("t_base", "ZETA"),
+            ("t_base", "OMEGA"),
+            ("t_base", "KAPPA"),
+            ("t_first", "AAZETA"),
+            ("t_first", "AAOMEGA"),
+            ("t_first", "AAKAPPA"),
+            ("t_second", "ABZETA"),
+            ("t_second", "ABOMEGA"),
+            ("t_second", "ABKAPPA"),
+        ]);
+        assert!(
+            base_name_template_tables(&provenance).is_empty(),
+            "a mirrored port list must keep its declarations"
+        );
+    }
+
+    #[test]
+    fn one_instantiation_or_no_shared_family_is_not_a_template() {
+        // A single instantiating prefix is an accident, not a pattern.
+        let single = prov(&[
+            ("t_base", "ZETA"),
+            ("t_base", "OMEGA"),
+            ("t_base", "KAPPA"),
+            ("t_first", "AAZETA"),
+            ("t_first", "AAOMEGA"),
+            ("t_first", "AAKAPPA"),
+            ("t_first", "AAIOTA"),
+        ]);
+        assert!(base_name_template_tables(&single).is_empty());
+        // Two prefixes, but no ONE prefix reaches every member — unrelated affix overlap.
+        let unshared = prov(&[
+            ("t_base", "ZETA"),
+            ("t_base", "OMEGA"),
+            ("t_base", "KAPPA"),
+            ("t_first", "AAZETA"),
+            ("t_first", "ABZETA"),
+            ("t_first", "AAIOTA"),
+            ("t_second", "BAOMEGA"),
+            ("t_second", "BBOMEGA"),
+            ("t_second", "BAKAPPA"),
+            ("t_second", "BBKAPPA"),
+            ("t_second", "BAIOTA"),
+        ]);
+        assert!(base_name_template_tables(&unshared).is_empty());
+    }
+
+    #[test]
+    fn withholding_a_template_keeps_a_name_a_concrete_table_also_declares() {
+        let mut provenance = prov(&[
+            ("t_pattern", "ZETA"),
+            ("t_pattern", "OMEGA"),
+            ("t_pattern", "KAPPA"),
+            ("t_first", "AAZETA"),
+            ("t_first", "AAOMEGA"),
+            ("t_first", "AAKAPPA"),
+            ("t_first", "AAIOTA"),
+            ("t_second", "ABZETA"),
+            ("t_second", "ABOMEGA"),
+            ("t_second", "ABKAPPA"),
+            ("t_second", "ABIOTA"),
+            // A concrete table declares ZETA in its own right.
+            ("t_second", "ZETA"),
+        ]);
+        let mut synthesized: Vec<ExtractedStatement> = provenance
+            .iter()
+            .map(|record| ExtractedStatement {
+                statement_id: record.statement_id.clone(),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {} is width 1.", record.signal_name),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        let catalog = withhold_base_name_template_declarations(&mut synthesized, &mut provenance);
+        assert_eq!(
+            catalog
+                .withheld_names
+                .iter()
+                .map(String::as_str)
+                .collect::<Vec<_>>(),
+            vec!["KAPPA", "OMEGA"],
+            "ZETA is declared by a concrete table and must survive"
+        );
+        assert!(catalog.declared_names.contains("ZETA"));
+        assert!(
+            provenance
+                .iter()
+                .all(|record| record.table_id != "t_pattern"),
+            "the template table contributes no provenance"
+        );
+        assert_eq!(synthesized.len(), provenance.len());
+    }
+
+    #[test]
+    fn an_alpha_variant_placeholder_is_not_a_wire() {
+        let declared: std::collections::HashSet<String> = ["ZAOMEGA", "ZBOMEGA", "ZETA"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        // One lower-case position, and wildcarding it matches two declared names.
+        assert!(is_alpha_variant_placeholder("ZxOMEGA", &declared));
+        // An all-upper-case identifier is never a placeholder, however unfamiliar.
+        assert!(!is_alpha_variant_placeholder("ZCOMEGA", &declared));
+        // A name the tables declare is a wire whatever its spelling.
+        assert!(!is_alpha_variant_placeholder("ZETA", &declared));
+        // One sibling is not a family.
+        let one: std::collections::HashSet<String> =
+            ["ZAOMEGA"].into_iter().map(str::to_string).collect();
+        assert!(!is_alpha_variant_placeholder("ZxOMEGA", &one));
+        // A LEADING lower-case letter is the active-LOW convention, never a metavariable, even
+        // when the document happens to declare two same-length siblings.
+        let polarity: std::collections::HashSet<String> = ["NRESET", "PRESET"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        assert!(!is_alpha_variant_placeholder("nRESET", &polarity));
+        // A TRAILING one is the indexed-family convention, whose recovery another leaf owns.
+        let indexed: std::collections::HashSet<String> =
+            ["ZETAA", "ZETAB"].into_iter().map(str::to_string).collect();
+        assert!(!is_alpha_variant_placeholder("ZETAx", &indexed));
     }
 
     #[test]

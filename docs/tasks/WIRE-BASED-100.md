@@ -111,7 +111,9 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 - ID: `WIRE-BASED-100` · Status: `active` · Children: `.1`–`.5`, `.6`/`.7` (automatic actor + normative
   discrimination), `.8` (scoring-oracle restoration, closed `2026-09-01`), `.9` (re-ingest the legacy wire
   golds so this tree's numbers can be re-derived at all — opened `2026-09-01` because `.8` closed with 5 of
-  7 gold documents unscoreable and the work owned by nobody)
+  7 gold documents unscoreable and the work owned by nobody), `.10` (the AXI declaration regression and the
+  four independent readers it exposed: `.10a` column parity, `.10b` names the document never declared,
+  `.10c` continuation pages + family cells, with `.10d`/`.10e`/`.10f` opened by `.10b`'s measurements)
 - ID: `WIRE-BASED-100.1` · Status: `done` · Goal: content-anchored evaluation (gold robust to
   `statement_id` drift). `eval::best_statement_for_text`/`realign_gold_statement_ids` (re-resolve a gold
   label to the current statement by `input_text` content-overlap ≥ 0.7; +2 tests incl. a **no-faking**
@@ -1152,8 +1154,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: see log.
 
-- ID: `WIRE-BASED-100.10b` · Status: `active` (`2026-09-11`: `.10a` removed most of it; what is left is one
-  table and one prose token) · Goal: **the prose words in AXI's ISF interface and the actor inflation.**
+- ID: `WIRE-BASED-100.10b` · Status: `done` (`2026-09-11`; both names removed, the cheap rule falsified
+  first, exactly one of 27 chains moved) · Goal: **the prose words in AXI's ISF interface and the actor inflation.**
   **Most of this leaf was the same defect as `.10a`, which is why it did not respond to `.10`.** `.9d`
   bundled the junk with the declaration loss; `.10` disproved that bundling (restoring 118 declarations
   moved the actor count `134 → 134`); `.10a` then found the real cause — a name-column scorer that handed
@@ -1169,12 +1171,137 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   declared `AXLEN` does not — one observation, not two.
   `.6c`'s `ir/entity_typing` bounded-LLM actor discrimination already exists and is the candidate general
   fallback for the template case.
-  Acceptance: the template reader named at `file:line` and its output either withheld or typed as a
-  pattern rather than a declaration; `AxLEN`/`AXLEN` resolved; APB/AHB actor counts unmoved; the six scored
-  numbers unchanged.
+
+  **Both questions turned out to be decidable by document grammar alone — but only after the obvious
+  rule was measured and falsified.** The cheap shape rule (a declared name that is a proper suffix of
+  other declared names is a base name) selects, corpus-wide over all 1,669 table declarations in 26
+  documents, **10 tables worth 42 declarations — and 9 of them are real.** CoreSight SDC-600 declares
+  `TX_VALID`/`TX_READY`/`TX_LINKEST`/`TX_LINKUP` as a component's own ports and `EXT_TX_VALID`/
+  `INT_TX_VALID` as the two wrappers' ports; both levels are wires. What separates them is the
+  **MIRROR test**: SDC-600 has a table (`table_0063`) whose entire declared set *is* the prefixed copy
+  of the base table, because hierarchical qualification re-declares the same port list one level up.
+  AXI's `table_0011` has no such mirror for any of `AR`/`AW`/`W` — its members are scattered through
+  large heterogeneous channel inventories, which is what instantiating a *pattern* looks like. Adding
+  the mirror test takes the corpus-wide selection to **exactly one table and six declarations**.
+  `AxLEN` is the same story in miniature: it is an **alpha-variant placeholder** — one lower-case
+  position inside an otherwise upper-case identifier, where wildcarding that position matches ≥2
+  declared names (`AWLEN`, `ARLEN`). Corpus-wide that rule selects **exactly one token**. There is no
+  `AXLEN`: the leaf's earlier "the declared `AXLEN` does not [reach the interface]" is **withdrawn** —
+  the document contains no `AXLEN` at all, in any table or any prose element.
+
+  Acceptance: see the checklist below. Non-goal: the junk actors AXI still carries (`Note`, `case`,
+  `Shareable`, …) — that is `.6c`'s entity typing, not this leaf; re-scoring AXI; widening any gold.
   Prerequisite: `WIRE-BASED-100.10a`.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
+
+- ID: `WIRE-BASED-100.10d` · Status: `open` (`2026-09-11`, opened by `.10b` measurement) · Goal: **expand a
+  recognised template's normative prose over the prefixes that instantiate it.** Withholding `table_0011`
+  correctly stopped six wires that do not exist, and it took nine AXI signal constraints and 23 ISF rules
+  with it — every one of them addressed to a base name (`VALID must be LOW during reset`,
+  `CRDTSH must be LOW`, …). Those obligations are **real**; they are simply stated once for a pattern the
+  document instantiates seven ways. `.10b` established the instantiating prefix set as a by-product of
+  detection (`shared_instantiation_prefixes`), so the missing capability is the expansion itself: one
+  base-name obligation becomes one obligation per instantiated wire that the document actually declares.
+  This is a recall gain of ~9 constraints on AXI alone, and it is the only honest way to recover what the
+  withholding costs. Open questions the leaf must answer before it writes anything: whether expansion is
+  sound for **every** predicate kind or only for the reset/stability class; whether a prefix that
+  instantiates only part of the template may expand at all; and whether the expanded facts carry the
+  template row's provenance or a derived one. Acceptance: per-fact table of every expanded obligation with
+  the declared wire it lands on and the row it came from; zero expansion onto a wire the document does not
+  declare; the six scored numbers unchanged. Non-goal: re-scoring; widening any gold.
+  Prerequisite: `WIRE-BASED-100.10b`.
   Verification: pending
   Commit: pending
+
+- ID: `WIRE-BASED-100.10e` · Status: `open` (`2026-09-11`, surfaced by `.10b`) · Goal: **a property table
+  whose caption happens to say `signals` is admitted as a signal-description table, so `True` and `False`
+  become known signal names.** AXI writes one two-column table per configurable property
+  (`Table A3.3: SIZE_Present property`) whose Name column holds the property VALUE — 60 such tables, four
+  of which (`table_0179`, `table_0181`, `table_0203`, `table_0237`) carry `signal`/`signals` in the caption
+  and therefore clear `should_treat_table_as_top_level_signal_description`. They mint no declaration (a
+  value row states no width or direction), which is why this has been invisible; but `True`/`False` enter
+  `collect_signal_names_from_tables`, and every consumer that takes a name from that looser universe can
+  attribute a fact to them. `.10b` made one such attribution visible: with `SHAREDCRD`/`CRDTSH` withheld,
+  the prose polarity pass re-read the same table row and produced `signal_polarities[True] = active_high`
+  — inert (no declaration, no port), but junk, and the same universe feeds the polarity, presence and
+  semantic-hint surfaces. The defect is the ADMISSION, not the polarity pass. Acceptance: the admission
+  rule named at `file:line`; a corpus census of every table it admits whose Name column is a property
+  value; the junk record gone; APB/AHB/AXI declared inventories unmoved. Non-goal: `.6c`'s actor typing.
+  Prerequisite: none.
+  Verification: pending
+  Commit: pending
+
+- ID: `WIRE-BASED-100.10f` · Status: `open` (`2026-09-11`, censused by `.10b`) · Goal: **a relation becomes a
+  declaration, and in a table-rich document that is almost always junk.**
+  `synthesize_directions_from_relations` promotes a `Drives` triple into a formal `Signal X is output.`
+  statement, which is declaration authority. That **contradicts the doctrine already recorded for
+  SemanticIR** — `[[semantic-interface-authority-empty-fallback]]` established that "a relation can ground
+  actor-relative use of an already authorized signal, but it does not independently declare the signal" —
+  and `evidence.rs` bypasses it one stage earlier. `.10b` blocked the one leak it measured (placeholders)
+  and deliberately did not touch the general case, because the census says a blanket rule would trade one
+  defect for another.
+  **Censused over every persisted EvidenceIR** (prose-sourced relation mints, i.e. the name is in no table
+  declaration): 25 documents mint 1–15 names each. In **rich-catalogue** documents it is essentially all
+  junk — AHB (42 table declarations) mints `Manager`; CHI mints `NOT`, `REQ`, `RUN`; MMU-700 (380) mints
+  `TCU`, `GROUP`, `COMPONENT`; CoreSight SoC-600 mints `APB`, `AHB`, `ATB`, `WRITING`; eMMC (61) mints
+  `OUTPUT`, `INPUT`; the older AXI `ihi0022_h_c` (236) mints **15** including `AR`, `AW`, `MEMORY`,
+  `INTERCONNECT`, `CACHE`, `BARRIER`, `ACE`, `DVM`. In **sparse-catalogue** documents the same path is the
+  real source of the wires — I2C's `SCL`/`SDA`, LPI's `QREQN`/`QACCEPTN`/`QDENY`, ADIv6's `SWDIO`/`SWCLK`/
+  `nSRST`, HBM2's `CKE`/`PAR`/`DBI`. **The obvious gate is the existing `table_signal_count < 8` threshold
+  the prose-declaration fallback already uses — and it is not clean:** it would remove ~29 junk names but
+  also lose 8 real Avalon signals (`READDATA`, `ADDRESS`, `BURSTCOUNT`, `BYTEENABLE`, …, from a 22-declaration
+  catalogue) and TMC's `SYNCREQS`. Acceptance: a rule that separates a relation naming a real undeclared wire
+  from one naming a concept, with the per-document census above as its measurement and the Avalon/TMC cases
+  as named negatives; the six scored numbers unchanged. Candidate: `.6c`'s `ir/entity_typing` as the bounded
+  fallback, which is what the tree already names for exactly this discrimination problem.
+  Prerequisite: none (`.10b` supplies the census).
+  Verification: pending
+  Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.10b` (RUST CODE CHANGE) — DONE `2026-09-11`
+
+- [x] **REPRODUCE / MEASURE** — from the persisted artifacts before any edit: the AXI ISF interface carried
+  `VALID`, `PENDING`, `RP`, `CRDT`, `CRDTSH`, `SHAREDCRD` and `AxLEN` among its 295 ports; declared
+  inventory 295; `table_signal_declaration_provenance` 468 records / 303 distinct; 25 actors; 53 signal
+  constraints; 266 relations; 133 emitted rules. `table_0011` was the sole declarer of the six; `AxLEN`
+  came from `statement_6472`, a relation-derived declaration with no table behind it, and **`AXLEN` does
+  not occur anywhere in the document** — the leaf's earlier wording is withdrawn.
+- [x] **ROOT CAUSE (WHY + WHERE)** — two producers, each named at its seam, in
+  `crates/specforge/src/ir/evidence.rs`. (a) `synthesize_declarations_from_tables` reads a **base-name
+  template** as a catalogue: `Table A2.3: Credited channel signals` spells the per-channel pattern, and the
+  wires are `AWVALID`/`ARVALID`/`WCRDT`. (b) `synthesize_directions_from_relations` promotes a Drives triple
+  into a formal `Signal X is output.` declaration — the one EvidenceIR path that can mint a name no table
+  declared — so the document's own placeholder `AxLEN` became a port.
+- [x] **ADDRESSED (verified)** — AXI, before → after, every delta attributed per fact: ISF ports and declared
+  inventory `295 → 288`, removing **exactly the seven names and nothing else**; provenance `468 → 462`
+  records / `303 → 297` distinct; actors `25 → 21` (`Tx`/`Rx` existed only through `table_0011`; `case` and
+  `read response` only through prose relations to `VALID`); relations `266 → 257`; signal constraints
+  `53 → 44` and emitted rules `133 → 110` — **all 9 lost constraints and all 23 lost rules have a withheld
+  base name as their subject**, verified by an id-independent body diff against a from-scratch rebuild of
+  the pre-change chain. 115 `*CHK` unchanged.
+- [x] **NO REGRESSION** — named, re-runnable oracles, all green: `cargo test -p specforge-core --lib` 1,393
+  pass including 5 new cases; `-p specforge --lib` 472; `-p specforge-conformance --lib` 168;
+  `cargo fmt --all`; `cargo clippy --all-targets` clean. The six WIRE-BASED-100 numbers re-derive unchanged
+  (AXI `1.000`×3, APB `1.000`/`1.000`/`0.333`, AHB `1.000`×3). **Corpus blast radius: 1 of the 27
+  proof-carrying chains changed.** The other 26 — APB (32 declarations, 8 actors) and AHB (40, 25) included
+  — are identical in every measured dimension. `bash scripts/check_chain_currency.sh` and
+  `bash scripts/check_doctrines.sh` green. EvidenceIR-only change: no SourceIR proof staled, no re-ingest.
+- [x] **GENERICITY (ADR 0006)** — both rules read the document's own structure. The template rule uses affix
+  relations among the document's declared names plus the mirror test; the placeholder rule uses interior
+  letter case plus the document's declaration catalog. No vocabulary, no vendor/protocol/document identity.
+  **The cheap version was measured and falsified before shipping**: the suffix-shape rule alone selects 10
+  tables / 42 declarations corpus-wide and 9 of those tables are real per-component port lists in CoreSight
+  SDC-600; the mirror test takes it to 1 table / 6 declarations. The placeholder rule selects 1 token. Five
+  new tests use alpha-renamed symbols and assert the negatives — a mirrored port list, a single
+  instantiation, an unshared prefix family, a leading lower-case (`nRESET`) and a trailing one (`ZETAx`).
+- [x] **LOCKSTEP** — mdBook, `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md` (whose 90% byte signal this slice
+  tripped, so `STATUS-LEDGER-ROLLOVER.6` performs the declared rollover in the same commit and the record is
+  written to `.4`'s 1,351.6-byte budget), the resume pointer, the roadmap and
+  two Knowledge Map cards updated; `.10d` (expand a template's obligations over its instantiations),
+  `.10e` (property tables admitted as signal tables) and `.10f` (a relation becomes a declaration —
+  censused over all 25 documents that do it) opened from this leaf's own measurements.
+
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.10c` (RUST CODE CHANGE) — DONE `2026-09-11`
 
