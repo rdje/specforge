@@ -48,6 +48,7 @@ Complete membership for this range. The bounded landing is
 | `PDF-VARIANT-DIGESTION` | `active` | make SpecForge digest as many chip-spec PDF variants as possible | [open](../tasks/PDF-VARIANT-DIGESTION.md) |
 | `PER-EXTRACTOR-FACT-TAGGING` | `done` | record which extractor found each fact (recall-gauge precondition) | [open](../tasks/PER-EXTRACTOR-FACT-TAGGING.md) |
 | `PRIOR-DECAY` | `done` | detect & flag contested priors (revision-on-contradiction for CorpusMemory) | [open](../tasks/PRIOR-DECAY.md) |
+| `PROSE-NAME-CELL-DECLARATION` | `active` | a row whose name cell is a phrase declares its first word as a signal | [open](../tasks/PROSE-NAME-CELL-DECLARATION.md) |
 | `PROVENANCE-HARDENING` | `done` | Test Assertion Coverage For Provenance-Like IR Fields | [open](../tasks/PROVENANCE-HARDENING.md) |
 | `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](../tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](../tasks/PURE-NLP-INTENT-EXTRACTION.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `R16-KG-PROTOCOL-ONTOLOGY` | `done` | protocol-structured knowledge graph (point #2) | [open](../tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
 | `R16-MODULE-HARDENING` | `done` | unit-test signoff hardening for the R16 IR modules | [open](../tasks/R16-MODULE-HARDENING.md) |
 | `R16-MULTIMODAL-CONTRACT-FUSION` | `done` | cross-modal evidence → one contract (point #3) | [open](../tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
-| `R16-WAVEFORM-CONTRACT-MINING` | `done` | timing diagram → contract (point #4 — the crux) | [open](../tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
 

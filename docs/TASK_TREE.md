@@ -49,6 +49,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `MEMORY-BOUNDED-INGEST` | `active` | bounded-memory ingestion of very large PDFs | [open](tasks/MEMORY-BOUNDED-INGEST.md) |
 | `NLP-SHALLOW-PARSE` | `active` | a deterministic in-Rust shallow-parse tier (subject–verb–object understanding) | [open](tasks/NLP-SHALLOW-PARSE.md) |
 | `PDF-VARIANT-DIGESTION` | `active` | make SpecForge digest as many chip-spec PDF variants as possible | [open](tasks/PDF-VARIANT-DIGESTION.md) |
+| `PROSE-NAME-CELL-DECLARATION` | `active` | a row whose name cell is a phrase declares its first word as a signal | [open](tasks/PROSE-NAME-CELL-DECLARATION.md) |
 | `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](tasks/PURE-NLP-INTENT-EXTRACTION.md) |
 | `R15C-R15G-LEARNING-PLANE-BACKFILL` | `active` | own + audit the learning / eval / corpus lanes (in-progress) | [open](tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
@@ -65,13 +66,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 153 trees route through 3 derived part(s); open a range to find an id.
+All 154 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-SUBMODULE-BUMP` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FULL-PAGE-INTENT-CAPTURE` | `R16-WAVEFORM-CONTRACT-MINING` |
-| [0003](task-catalog/catalog-0003.md) | 41 | `R6-CONVERGE-HARDENING` | `WIRE-BASED-100` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FULL-PAGE-INTENT-CAPTURE` | `R16-MULTIMODAL-CONTRACT-FUSION` |
+| [0003](task-catalog/catalog-0003.md) | 42 | `R16-WAVEFORM-CONTRACT-MINING` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b` closed; `.2` split into `.2a`-`.2d`; `.2c`/`.2d`/`.3` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b` closed; `.2c` deferred; `.2d`/`.3` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -530,18 +530,37 @@ a long tail.
   Verification: see the `.2b` checklist below.
   Commit: see log.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2c` · Status: `pending` · Goal: **read an enumerated legal-width
-  cell** (`8, 16, 32, 64, 128, 256, 512, 1024`) as a width *set* rather than a parse failure.
-  Population: **7** cells in 2 documents (`8, 16, 32, 64, 128, 256, 512, 1024` ×2, `2, 4, 8, 16, 32,
-  64, 128`, `4, 8` ×2, `1, 4, 8`, `1,4, 8`). This leaf carries an unresolved policy choice and that is
-  why it is separate: `WidthHint` has `Numeric(u32)` and `Parametric(String)`, and a set is neither.
-  Picking a member fabricates; carrying the verbatim text puts commas into a declaration sentence that
-  SemanticIR parses. Decide the representation first, in the leaf, before writing code.
-  Note the payoff is narrow: after `.2b` every one of these rows already has a direction, so `.2c` adds
-  width fidelity, not recall. Non-goal: recovering rows — that is `.2b`'s.
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2c` · Status: `deferred` (`2026-09-11`) · Goal: **read an enumerated
+  legal-width cell** (`8, 16, 32, 64, 128, 256, 512, 1024`) as a width *set* rather than a parse failure.
+  **Deferred before implementation, on its own adjudication, and the reason is worth more than the
+  leaf.** The census found 7 such cells. Looking at them:
+
+  - **4 of the 7 are not signal widths.** They are the `Bus Width` column of eMMC `table_0020`, a
+    bus-mode matrix (`Mode Name | Data Rate | IO Voltage | Bus Width | Frequency | Max Data Transfer`)
+    that SourceIR typed `signal_description`; its name column holds mode names. Teaching the reader
+    this notation would have declared `Backwards`, `High`, `High` and `HS200` as signals. That table
+    already mints `HS400` — its one row whose width cell is a single value and therefore parses — so
+    the change would have taken it from one phantom to five. Opened as
+    `[[PROSE-NAME-CELL-DECLARATION]]`, which is the real defect here.
+  - **The remaining 3 are real** (Avalon `readdata`, `writedata`, `byteenable`) and, after `.2b`, all
+    three already declare with a direction. What is missing is width fidelity for three rows in one
+    legacy document.
+  - **The representation question is not cheap.** `WidthHint` lives in `ir/source.rs` with exactly
+    `Numeric(u32)` and `Parametric(String)`; a set is neither, and a new variant crosses SourceIR →
+    SemanticIR → IntentIR → `.isf`. Worse, `parse_width_token` (`ir/semantic.rs`) strips a trailing
+    comma from a width token, so a sentence reading `width 8, 16, 32` **parses as `Numeric(8)`** — the
+    obvious spelling silently fabricates a width. A pipe-joined token (`8|16|32`) parses as nothing,
+    which is safe but carries no information.
+
+  **Consequence of deferring, stated:** three Avalon rows keep a direction and no width; the document
+  is legacy proofless, so no persisted chain, gold, or score is affected. Reopen once
+  `PROSE-NAME-CELL-DECLARATION` has decided the row question, or if a document appears whose
+  enumerated widths belong to real signals in a measurable chain — at which point the representation
+  decision is a decision record, not a leaf.
   Prerequisite: `.2b`.
-  Verification: pending
-  Commit: pending
+  Verification: read-only adjudication of all 7 cells; `jesd84_b50…/evidence_ir.json`
+  `table_signal_declaration_provenance` confirms `HS400` is declared from `table_0020`.
+  Commit: see log.
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2d` · Status: `pending` · Goal: **decide what to do about the 49
   arrow rows whose actors the taxonomy does not know.** `builtin_actor_taxonomy_role_in_text` knows
@@ -624,9 +643,7 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `SIGNAL-DECLARATION-ROW-DROP.2c` — the enumerated width set. Decide the representation of a legal
-   width set in the leaf before writing code; 7 cells in 2 documents.
-2. `SIGNAL-DECLARATION-ROW-DROP.3` — the emitted spelling must be the document's spelling. Independent
+1. `SIGNAL-DECLARATION-ROW-DROP.3` — the emitted spelling must be the document's spelling. Independent
    of `.2`; census first.
-3. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+2. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.
