@@ -205,6 +205,36 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   record was edited, reordered or reflowed and no limit, milestone or ceiling moved`
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled`
 
+- ID: `CHANGES-LEDGER-ROLLOVER.8`
+  Status: `done` (`2026-09-11`)
+  Goal: roll the change ledger, which `WIRE-BASED-100.10a`'s own record pushed past its line signal
+  Acceptance: measured `2026-09-11`, the committed root at `ddd775d5` reached **1,614 lines = 89.7%** of its
+  1,800-line health target and tripped the mandatory 90% line signal once measured against the live window,
+  with bytes at 224,957 = 88.2%, already past the 80% byte warning. The rollover rides **inside the same
+  transaction** as `WIRE-BASED-100.10c`, this repository's established pattern for a blocking pair (`.7` with
+  `WIRE-BASED-100.8b`; `.6` with `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c`; `.5` with `STATUS-LEDGER-ROLLOVER.5`).
+  No new work is started
+  **Sizing, stated before the plan was written.** The pinned 75-record suffix floors the ledger at 58.5% of
+  lines and 66.9% of bytes before a single current record exists — the standing limit `.4` owns — so only the
+  remaining third is reachable. The committed root held **13** post-migration records: the `WIRE-BASED-100.10`
+  and `.10a` pair on top, then the whole `WIRE-BASED-100.9` re-ingest program (`.9a` through `.9d`) and the
+  `.8` scoring-oracle block. Keeping **two** opens the ledger on the classifier-regression story `.10c`
+  continues, and it is the deepest **seam-clean** cut available: every multi-record story below it seals
+  whole, so no story is split across the boundary. It lands at **65.4% of lines and 71.7% of bytes**, and with
+  `.10c`'s own 48-line record riding over the cut the live window opens at 1,225 lines = 68.1%
+  Prerequisite: none; it blocks `WIRE-BASED-100.10c`'s commit
+  **Confirmation for `.7`'s finding rather than a new one:** this plan's `reason` was authored ASCII-only from
+  the start, per `.7`'s discovery that the manifest writer emits without a UTF-8 layer, and the applied run
+  installed root-last on the first attempt with no rollback. The undocumented constraint `.7` surfaced is now
+  load-bearing procedure
+  Verification: `plan docs/research/changes-ledger-rollover-2026-09-11-plan.jsonl pins boundary commit
+  ddd775d59df99acfa53ee9e7ee76cc51231cc11b and committed opening SHA-256 00a4d661...a598 across 88 records;
+  the dry run reported exact and warning-safe before the applied run. Root 88 -> 77 committed records /
+  1,614 -> 1,177 lines / 224,957 -> 182,783 bytes; segment changes-0019 sealed 11 records / 436 lines /
+  42,173 bytes with successor segment-0018-2026-09-01.md; the post-apply protocol check reports 4 ledgers
+  satisfying the lossless live-window/archive protocol`
+  Commit: see log
+
 - ID: `CHANGES-LEDGER-ROLLOVER.7`
   Status: `done` (`2026-09-01`)
   Goal: roll the change ledger, which `WIRE-BASED-100.8b`'s own record pushed past its line signal

@@ -1,3 +1,51 @@
+### WIRE-BASED-100.10c — two readers, zero real AXI signals left behind, and a proof kernel that corrected the design
+
+- TWO INDEPENDENT READERS WERE DROPPING THE SAME SIDE OF THE BUS, each named at its seam.
+  (a) `synthesize_declarations_from_tables` judged every table on its own `effective_table_kind`, so a
+  `Table B1.1 Continued from previous page` fragment that Docling dropped to `unknown` was skipped even
+  though its chain head classified — a signal table that simply ran over a page break contributed nothing.
+  (b) the row loop took one whitespace token from the name cell, so a family cell (`AWPROT, ARPROT`)
+  declared only its first member and every AR-side twin was silently absent.
+- THE PROOF KERNEL CORRECTED THE FIRST DESIGN, AND THAT IS THE DURABLE PART. (a) was first implemented in
+  the **SourceIR** classifier, with label-matched parents and a measured blast radius (34 tables
+  corpus-wide, every one with a same-label parent). ADR 0038 verifies a SourceIR field record by replaying
+  its own producer against its own premises, **one record at a time**, so a rule that reads neighbours is
+  not reproducible there; the migration failed with `SourceIR structured_tables:record-00000102
+  classification is not the registered capture/proposal replay`. `classified_table_kind` is obliged to be
+  a pure function of one table. The rule was not wrong, it was early — EvidenceIR is the first stage that
+  legitimately holds the whole document, and it already had the mechanism:
+  `continuation_inherited_table_heads`, built by `PDF-VARIANT-DIGESTION.12a` for the trapped-row pass,
+  which grounds the join twice (the fragment's caption states its parent's table reference AND the nearest
+  preceding non-continuation table with that reference must carry the exact same first-header-row
+  signature). `.10c` wires the ordinary body-row pass to the same resolver. Recorded as a fact card so the
+  next producer change does not rediscover it.
+- THE FAMILY RULE READS SHAPE, NOT VOCABULARY. `signal_names_in_name_cell` splits a name cell only when it
+  is unambiguously a list: every comma-separated element is exactly one identifier, AND all of them share
+  a prefix or suffix of at least two characters. The shared affix is what separates a signal family from a
+  sentence — `Chip enable, active LOW.` splits into well-formed-looking words that share nothing and is
+  refused, as is `Channel, bidirectional`, the single corpus-wide false positive that a shape test alone
+  admitted. Measured before shipping across all 3,940 name cells in every persisted `signal_description`
+  table: 36 cells are families, worth 38 additional declarations.
+- ADDRESSED (AXI): `table_signal_declaration_provenance` **388 -> 468** records and **288 -> 303** distinct;
+  declared inventory **280 -> 295**; ISF interface ports **280 -> 295**; 115 `*CHK` and 25 actors unchanged.
+  `ARMMUSECSID`, `ARMMUVALID`, `ARMMUSID`, `ARIDUNQ` and the rest of the AR side are declared for the first
+  time.
+- AND THE RESIDUAL IS NOW EXHAUSTED IN THE ONLY SENSE THAT MATTERS: against the legacy chain **23 -> 8**
+  names remain undeclared, and **all 8 are legacy junk rather than signals** — `table_0059`'s 4
+  Presence-column parameters, `table_0187`'s 3 Width-column parameters (both minted by the legacy chain's
+  own wrong-column selection, which `.10a` stopped) and `ARESETN` against today's opaque `ARESETn`. AXI's
+  declared inventory (295) now exceeds the legacy chain's (289) with nothing real left behind.
+- THE SIX SCORED NUMBERS ARE UNCHANGED: AXI `1.000` x4, APB `1.000`/`1.000`/`0.333`, AHB `1.000` x3. APB
+  (32 declarations, 8 actors) and AHB (40, 25) are byte-stable.
+- THE REFRESH COST NOTHING EXTRA, WHICH IS THE POINT OF WHERE THE RULE LANDED. The final design touches
+  EvidenceIR only, so no SourceIR proof was staled: all 27 chains re-ran `evidence -> semantic -> intent ->
+  adapt` with no re-ingest and no re-migration. The three wire golds had their held-out normalized bundles
+  restored for the duration of their chain and returned byte-identical; the retained set is unchanged at
+  the declared 24 and the census stays 27 measurable (34.6%) / 51 legacy.
+- VERIFIED: `scripts/check_doctrines.sh` green; `cargo test -p specforge-core --lib` 1,388 pass (3 new
+  cases), `-p specforge --lib` 472, `-p specforge-conformance --lib` 168; `cargo fmt --all`;
+  `cargo clippy --all-targets` clean; `scripts/check_chain_currency.sh` green.
+
 ### WIRE-BASED-100.10a — the scorer and the row loop disagreed, and that disagreement was minting prose as signals
 
 - THIS LEAF'S OWN HYPOTHESIS WAS WRONG AND THE MEASUREMENT SAYS SO. `.10a` predicted that `table_0059`,
@@ -121,443 +169,6 @@
   their bundles are held out. **The census stays 27 measurable (34.6%) / 51 legacy, 5 of 7 gold documents.**
   The AXI, APB and AHB bundles the re-ingests recreated are held out under
   `generated/preserved/WIRE-BASED-100.10/`, keeping the retained set at exactly the declared 24.
-
-### WIRE-BASED-100.9d — every AXI number holds, both predictions were wrong, and a 115-declaration loss no score could see
-
-- THE ROUTE RAN UNCHANGED on the largest wire spec: `DOCLING_DEVICE=cpu ingest` → `evidence` → `semantic` →
-  `intent` → `adapt --target isf`, no model server — 320 page artifacts / 333 visual / 0 residuals /
-  `automation_confidence high`, schema now **SourceIR 3 / EvidenceIR 3 / SemanticIR 2 / IntentIR 2**. The
-  census moves **26 measurable (33.3%) / 52 legacy** → **27 (34.6%) / 51**, gold documents **4 of 7** →
-  **5 of 7**. The 15 MB persisted chain was preserved with a SHA-256 manifest BEFORE the rebuild.
-- ALL SIX AXI NUMBERS RE-DERIVE. `seed_axi`: `signal_constraint P=R=F1=1.000` (tp=4 fp=0 fn=0),
-  `actor_signal_relation P=R=F1=1.000` (tp=6 fp=0 fn=0, source-tolerant + filtered), document-level recall
-  4/4 and 6/6. `seed_axi_temporal`: `temporal_rule P=R=F1=1.000` (tp=3 fp=0 fn=0).
-- PREDICTION 1 DISPROVEN, AND IT WITHDRAWS A `.9b` CLAIM. This leaf predicted AXI temporal would score `1/2`,
-  because the gold's antecedent is spelled `ARESETN` while identifier opacity makes the declared identity
-  `ARESETn`. It scored `3/3`: the produced antecedent IS `ARESETn` and it MATCHED, because
-  `eval::temporal_predicate_key` (`crates/specforge/src/eval.rs:458`) uppercases every name before comparing.
-  **Case can never move a score.** `.9b`'s "the gold's `PSELX` is unreachable by two independent routes" is
-  therefore withdrawn: the identifier-spelling move is real but scoring-neutral, the sole cause of APB's
-  temporal loss is `.4`'s deleted resolver, and `WIRE-BASED-100.4a` owes the antecedent, not the spelling.
-- PREDICTION 2 DISPROVEN. `KG-ISF-COMPLETENESS.5.iv.a` predicted this document would mint a NEW `AWATOP` enum
-  and could not verify it because `ihi0022_l` was unrebuildable. Answered NO: `(type AWATOP (bits 4))` is
-  present and identical in the preserved legacy adapter and the new one. (The adapter's enum count did move
-  14 → 15, so WHICH enum is new is a separate, smaller question owned by that tree.)
-- AND THE FINDING NOBODY WAS LOOKING FOR: **AXI'S TYPED SIGNAL-DECLARATION CAPTURE LOST 115 DECLARATIONS.**
-  The declared inventory falls **289 → 159** distinct signals and **all 110 `*CHK` parity signals disappear**
-  from SemanticIR; `table_signal_declaration_provenance` falls **411 → 265** records and **304 → 170**
-  distinct signals (**115 → 0** ending in `CHK`); the actor count rises **21 → 134** and prose words (`The`,
-  `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`, …) reach the ISF interface. **It is not a re-ingest
-  artifact and the SourceIR proves it:** old and new SourceIR are structurally identical — 320 pages / 333
-  visual / **286 tables** / 3,652 content elements / 527 sections — so the ingest is stable and the change is
-  entirely in the EvidenceIR producer between the binary that wrote the legacy chain (`2026-08-12`) and
-  today's. **Nothing is unrecoverable:** the raw table row survives in both chains (`statement_4788` =
-  `| AWVALIDCHK | AWVALID | 1 | ARESETn |`); what stopped is the SYNTHESIS of the typed declaration the old
-  chain also carried (`statement_6025` = `Signal AWVALIDCHK is width 1.`). The tables are shaped
-  `Name | Signals covered | Width | Check enable` and carry a usable width, so the `_ => continue` arm that
-  drops a row with neither direction nor width should not be reached. `WIRE-BASED-100.10` owns it and must
-  attribute it by re-deriving from each revision's own producer, not by reading a diff; APB and AHB still
-  carry their `*CHK` signals today, so this is not a blanket ADR 0006 retirement.
-- WIRE-BASED-100.9 IS CLOSED, with its acceptance quoted against the measured result: all six datasets score,
-  each leaf published its per-fact re-derivation, and the census reports 27 measurable with the only two
-  unscoreable gold documents being exactly the ones `.9a` routed out by name. **Twelve carried numbers were
-  re-derived: eleven held and one was withdrawn — and the largest defect the program found was invisible to
-  all twelve.** Three findings were opened rather than absorbed: `.4a`, `RETAINED-BUNDLE-POPULATION-FROZEN`
-  and `.10`.
-- SAME TWO DISPOSITIONS AS `.9b`/`.9c`: the ISF adapter moved `renderable` → `blocked` (`ACLK` demoted out of
-  `(clock ACLK)`), and the normalized bundle is HELD OUT at
-  `generated/preserved/WIRE-BASED-100.9d/axi-normalized-bundle-held-out/`.
-
-### WIRE-BASED-100.9c — AHB survives its re-ingest intact, and .9b's prediction that it would not is corrected
-
-- THE ROUTE RAN UNCHANGED and restored the AHB chain to canonical authority: `DOCLING_DEVICE=cpu ingest` →
-  `evidence` → `semantic` → `intent` → `adapt --target isf` on the current release binary, no model server —
-  104 page artifacts / 70 visual / 0 residuals / `automation_confidence high`, schema now **SourceIR 3 /
-  EvidenceIR 3 / SemanticIR 2 / IntentIR 2**. `scripts/measure_corpus_canonical_currency.py` moves from
-  **25 measurable (32.1%) / 53 legacy** to **26 (33.3%) / 52**, and gold-carrying documents from **3 of 7** to
-  **4 of 7**. The persisted chain was preserved with a SHA-256 manifest under
-  `generated/preserved/WIRE-BASED-100.9c/pre-reingest/` BEFORE any command wrote over it.
-- ALL FOUR CARRIED NUMBERS RE-DERIVE EXACTLY. `seed_ahb`: `signal_constraint P=R=F1=1.000` (tp=6 fp=0 fn=0)
-  and `actor_signal_relation P=R=F1=1.000` (tp=6 fp=0 fn=0, source-tolerant + filtered), document-level recall
-  6/6 constraints and 6/6 relations. `seed_ahb_temporal`: `temporal_rule P=R=F1=1.000` (tp=4 fp=0 fn=0).
-  Per fact: constraints `HAUSER`/`HWUSER`/`HRUSER`/`HBUSER` `must_be_value VALID` plus `HAUSER`/`HWUSER`
-  `must_not_change`; relations Subordinate→`HRESP`/`HREADYOUT`/`HRUSER`/`HBUSER` and
-  Manager→`HAUSER`/`HWUSER`; temporal `HAUSER` and `HWUSER` unconditioned, `HRUSER` and `HBUSER` under
-  `HREADY HIGH`.
-- THE CORRECTION MATTERS MORE THAN THE PASS. `.9b` predicted `.9c` would lose its temporal score the same way
-  APB did, because `.5` reuses `.4`'s index-family resolver for AHB `HSELx`. It did not, and the reason is
-  exact rather than lucky: **the AHB temporal gold's only antecedent is `HREADY`, which the document declares
-  with the spelling the prose uses, and no AHB gold item references the un-indexed `HSEL`.** So the defect
-  `WIRE-BASED-100.4a` owns is confined to a gold whose antecedent names an INDEXED-FAMILY signal by its
-  un-indexed prose spelling — which is narrower than "wire-wide" and wider than "APB-only": the mechanism
-  still drops every such antecedent silently wherever no gold scores it, so `.4a` must fix the mechanism.
-- THE REBUILD WAS STRUCTURALLY INERT for AHB, which is why the golds needed no re-anchoring
-  (`content-anchored: re-resolved 0/17` and `0/4` — the ids were already current): the rebuilt EvidenceIR
-  carries the SAME 1,322 statements / 172 anchors / 1,199 spans / 481 links / 70 visual records as the
-  preserved legacy artifact. Only proof authority and identifier spelling moved. APB, by contrast, re-segmented
-  by one statement (597 → 598).
-- SAME TWO DISPOSITIONS AS .9b, BOTH ALREADY OWNED. The ISF adapter moved `renderable` → `blocked` on
-  `no source-grounded system clock/reset contract` (`HCLK` demoted out of `(clock HCLK)` and into the
-  interface), which is the documented policy for the whole measurable stratum; and the declared select moved
-  `HSELX`/`HSELXCHK` → `HSELx`/`HSELxCHK` under identifier opacity, with no ISF signal lost. The normalized
-  bundle is HELD OUT at `generated/preserved/WIRE-BASED-100.9c/ahb-normalized-bundle-held-out/` for the reason
-  `RETAINED-BUNDLE-POPULATION-FROZEN` owns, so AHB's EvidenceIR replay reads UNMEASURABLE while its
-  SemanticIR/IntentIR/adapter replays stay measurable and current.
-- LOCKSTEP: the book's frontier statements move 25/53 → 26/52 across the SourceIR, EvidenceIR, SemanticIR,
-  IntentIR, ISF-adapter, architecture-rationale, extraction-architecture and extraction-eval chapters;
-  `.4a`'s scope note, `.9b`'s prediction and `.9d`'s expectations are corrected where they were published.
-
-### WIRE-BASED-100.9b — the APB gold is scoreable again, and scoring it withdraws a published 1.000
-
-- THE RE-INGEST RAN THE DEMONSTRATED ROUTE UNCHANGED and restored the APB chain to canonical authority:
-  `DOCLING_DEVICE=cpu ingest` → `evidence` → `semantic` → `intent` → `adapt --target isf` on the current
-  release binary, no model server, ~4 minutes — 48 page artifacts / 35 visual / 0 residuals /
-  `automation_confidence high`, and schema now **SourceIR 3 / EvidenceIR 3 /
-  SemanticIR 2 / IntentIR 2**. `scripts/measure_corpus_canonical_currency.py` moves from **24 measurable
-  (30.8%) / 54 legacy** to **25 (32.1%) / 53**, and gold-carrying documents from **2 of 7** to **3 of 7**.
-  The persisted chain was preserved with a SHA-256 manifest under
-  `generated/preserved/WIRE-BASED-100.9b/pre-reingest/` BEFORE any command wrote over it, because the current
-  binary refuses legacy input and cannot regenerate those bytes.
-- TWO OF THE THREE APB SCORES RE-DERIVE EXACTLY. `seed_apb`: `signal_constraint P=R=F1=1.000` (tp=6 fp=0 fn=0)
-  and `actor_signal_relation P=R=F1=1.000` (tp=5 fp=0 fn=0, source-tolerant + filtered), document-level recall
-  6/6 constraints and 6/6 relations — identical, per fact, to what the tree carried. Content anchoring did its
-  job across the re-segmentation the rebuild caused (extracted statements 597 → 598).
-- THE THIRD DOES NOT, AND IS WITHDRAWN RATHER THAN CARRIED. `seed_apb_temporal` scores
-  **`P=R=F1=0.333` (tp=1 fp=2 fn=2)** against the published `1.000`, so the `2026-06-06` "APB is 100% on ALL
-  three extraction aspects" headline is retired. Only the `PSTRB` rule still matches; `PNSE` and `PBUSER` are
-  each missed on their ANTECEDENT, and the scorer prints both missed keys.
-- CAUSE, ATTRIBUTED FROM PRODUCER HISTORY RATHER THAN A DIFF. `git log -S resolve_indexed_signal_family --
-  crates/specforge/src/ir/semantic.rs` returns exactly two commits: `WIRE-BASED-100.4` (`1c28516b`,
-  `2026-06-06`) added it so an un-indexed prose reference (`PSEL`) resolved to the declared indexed family
-  member (`PSELX`), and corrected the gold's antecedent to that canonical identity; then
-  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` (`f88d463d`, `2026-08-12`, *make document identifiers opaque*) DELETED
-  it and installed the opposite behaviour as a tested invariant —
-  `temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling` asserts that with `PSELX`
-  declared, `"PSEL is asserted"` must yield NO predicate. The same commit removed identifier-spelling authority
-  upstream, so the declared identity is now the document's own `PSELx` (visible as `sigcon_0011`'s antecedent
-  moving `PSELX → PSELx` across the re-ingest) — a real move, but **scoring-neutral**, so the cause is the
-  deleted resolver alone. (This paragraph originally called the gold unreachable "by two independent routes";
-  `WIRE-BASED-100.9d` disproved the second one — `eval::temporal_predicate_key`, `eval.rs:458`, uppercases
-  every name before comparison, and AXI's produced `ARESETn` matched the gold's `ARESETN` at `3/3`.)
-- THE RE-INGEST DID NOT CAUSE IT, AND THE PRESERVED BYTES PROVE IT. In the preserved pre-rebuild SemanticIR,
-  `temporal_signal_constraint_sigcon_0009` (`PNSE`) already carries `antecedents: []` and `…_0014` (`PBUSER`)
-  already carries only `PENABLE`+`PREADY`. Both defects were already persisted in the artifact the `1.000` was
-  last associated with; the schema bump three days later made that artifact unscoreable, so the loss was
-  INVISIBLE FOR FOUR WEEKS and the re-ingest is what made it visible. This is exactly the unowned defect `.9a`
-  routed out — nothing fails when a persisted chain falls below the canonical schema — now demonstrated
-  costing a real published number.
-- OWNED, NOT LOGGED, AND THE GOLD WAS NOT TOUCHED. `WIRE-BASED-100.4a` now owns the choice between reinstating
-  a SOURCE-GROUNDED (not spelling-inferred) binding of an un-indexed prose reference to its declared indexed
-  identity, and ruling the two identities distinct and re-anchoring the gold. Editing the gold to recover the
-  headline is the failure mode this tree's governing principle exists to forbid. `.5` reuses the same resolver
-  for AHB `HSELx`, so `.9c` is expected to meet this again and will record it rather than absorb the fix.
-- ONE MORE MOVEMENT, AND IT IS NOT A REGRESSION: the APB ISF adapter went `renderable` → `blocked`
-  (`no source-grounded system clock/reset contract`; the emitted diagnostic reads
-  `(clock __specforge_unresolved_clock)`), because `PCLK`/`PRESETn` were previously recognised as clock and
-  reset from their spellings. That is the documented policy for the whole measurable stratum — every retained
-  adapter manifest is honestly blocked with zero emitted `.isf` — so APB joins that set as the 25th.
-- AND A SECOND FINDING, OWNED AS ITS OWN TREE: **the retained normalized-bundle population can neither grow
-  nor shrink.** The rebuild restored APB's bundle, and `check_chain_currency.sh` fails closed on an undeclared
-  bundle on disk — but declaring it turns `PRODUCTION-GENERICITY` and `RESIDUAL-ACTIONABILITY` red, because
-  `scripts/validate_residual_actionability_contract.py` and `scripts/validate_canonical_recovery_contract.py`
-  pin `len(retained_ids) != 24` as a literal and `scripts/check_behavioral_genericity_contract.py` joins the
-  retained set by SET EQUALITY to a release-blocking behavioral qualification frozen at 24 rows, a 7/17
-  calibration/holdout split and 51 declared held-out attempts. Recording a deliberate reclamation instead is
-  refused by the same two validators (`reclamations != []`). ADR 0025 mandates BOTH operations — a refresh
-  keeps its bundle, and reclamation stays deliberate and task-owned — so the first refresh to exercise it had
-  no compliant move. `.9b` HELD the bundle at
-  `generated/preserved/WIRE-BASED-100.9b/apb-normalized-bundle-held-out/` (repository volume, 25 MB,
-  byte-identical, nothing deleted) and left the declaration at 24, so APB's EvidenceIR replay reads
-  UNMEASURABLE while its SemanticIR/IntentIR/adapter replays stay measurable and current.
-  `RETAINED-BUNDLE-POPULATION-FROZEN` owns the repair and restores the bundle in its `.3`.
-- LOCKSTEP: the book's current 24/54 frontier statements move to 25/53 across the SourceIR, EvidenceIR,
-  SemanticIR, IntentIR, ISF-adapter, architecture-rationale, extraction-architecture and extraction-eval
-  chapters, with dated measurements left as dated rather than rewritten, and proof currency separated from
-  bundle retention wherever the two were stated as one number.
-
-### WIRE-BASED-100.9a — the corpus refresh frontier cannot own the wire re-ingest, and 5 of 7 gold documents cannot be scored
-
-- `.8` closed by handing its remainder away in one sentence — *"Re-ingesting the legacy stratum stays with the
-  corpus refresh frontier"* — and repeated the routing in its `Non-goal`. Re-derived rather than restated, that
-  hand-off names an owner whose own contract excludes the work: the frontier's cohort rule is
-  `excluded_source_prefixes: ["corpus/"]`, documented in `scripts/check_corpus_frontier_census.pl` as *"the
-  tracked in-repo gold/eval corpus — copied into the repository, never part of the host-library refresh
-  program"*. All 18 legacy `corpus/`-sourced documents, the three wire golds among them, sit outside its cohort
-  by construction; its `5 remaining` would still read `5` after every wire gold had rotted.
-- THE MEASURABLE SHARE IS 30.8%, AND NO GATE PUBLISHES IT. Censused read-only over the persisted corpus with
-  the tracked reproducer `scripts/measure_corpus_canonical_currency.py`: **78 documents = 24 measurable + 54
-  legacy**, stratified totally at every stage (SourceIR 54×1 / 24×3, EvidenceIR 54×2 / 24×3, SemanticIR
-  54×1 / 24×2, IntentIR 54×1 / 24×2). "Measurable" is not a convention chosen here — it is the exact predicate
-  `unmeasurable_disposition` (`commands/eval_extraction.rs`) applies before `eval-extraction` will score.
-- TWO GREEN GATES PUBLISH COVERAGE AND NEITHER ANSWERS THE QUESTION. `check_chain_currency.sh` reads
-  `24 replayed / 24 current / 0 stale` — true, and a statement about the REBUILDABLE stratum, which declares
-  the other 54 UNMEASURABLE and does not count them, so it reads 100% while describing 31% of the corpus.
-  `check_corpus_frontier.sh` reads `57 cohort = 52 refreshed + 5 remaining` — true, and a statement about the
-  host-library re-ingest PROGRAM, so it reads 91% done.
-- AND `refreshed` DOES NOT MEAN CURRENT: **31 of the 52 declared-refreshed documents are still legacy.** The
-  census contract is internally honest (it defines `refreshed` as declared completed keys and binds membership
-  to bundle retention, never to a schema), but the line printed on the terminal invites exactly the inference
-  `.8` made. The sweep finished under a SourceIR schema that no longer carries canonical authority (schema 3
-  landed `2026-08-12`, `bb5047c2`; a schema-3 SourceIR carries `proof_context`/`proof_ledger` keys a schema-1
-  artifact does not have at all). Legacy ownership partitions **18 unowned + 31 refreshed + 5 remaining = 54**.
-- THE CONSEQUENCE IS THE NUMBER THAT MATTERS. Deriving the scored set from the eval datasets' own `doc_key`
-  fields: **7 documents carry an eval gold and 2 are measurable** — SWD/ADI and I2C. APB, AHB, AXI and RISC-V
-  Debug have NO OPEN owning leaf; NVMe is owned only incidentally as a frontier `remaining` entry. Six of the
-  eleven tracked eval datasets belong to the three wire golds, so every APB/AHB/AXI number this tree has
-  published is currently un-re-derivable — the claim `CLAIM_VERIFICATION.md` refuses. Confirmed live: the
-  binary prints the UNMEASURABLE disposition, withholds all 16 `seed_apb` gold items, and scores nothing.
-  Stated as a bound rather than a demonstration: `24 measurable` is an ADMISSION count — only 2 of the 24
-  carry a gold at all, and a schema-3 document failing for any OTHER reason aborts the run rather than being
-  dispositioned, deliberately, so a real defect cannot hide inside a disposition.
-- THE CAUSE IS AN INVALIDATED REFRESH, NOT NEGLECT — and finding it required auditing CLOSED leaves, not just
-  the open frontier. `CORPUS-PATTERN-REUSE.3c` (`done`, `2026-06-09`) re-ingested APB/AHB/AXI/AXI-Stream with
-  `DOCLING_DEVICE=cpu`, rebuilt their evidence and re-verified the wire scores at `1.000`. The persisted wire
-  SourceIRs were last written `2026-08-09`; canonical schema 3 landed `2026-08-12` (`bb5047c2`) three days
-  later and silently made that completed refresh legacy. **No gate reported it** — the frontier excludes these
-  documents by cohort rule and chain-currency counts only the already-current stratum. The durable defect
-  underneath is therefore that NOTHING FAILS when a persisted chain falls below the canonical schema; a check
-  would have fired on `2026-08-12` rather than leaving this to a leaf that happened to need the scorer.
-- OWNED, NOT LOGGED. `WIRE-BASED-100.9` now owns the wire re-ingest as `.9b` APB / `.9c` AHB / `.9d` AXI,
-  smallest first, each with its own before/after evidence. The route is demonstrated rather than assumed: the
-  three PDFs are git-tracked under `corpus/` by `.5d`, `specforge doctor` reports the repo-local Docling
-  runtime ready, and the three `corpus/`-sourced documents that ARE measurable were produced through this same
-  route after the schema bump. The golds are content-anchored (`.1`) so they survive re-segmentation, and
-  scoring needs no model server (`--provider skip`).
-- ROUTED OUT, DELIBERATELY NOT ABSORBED: RISC-V Debug is a `PDF-VARIANT-DIGESTION` register-class gold, not a
-  wire spec; whether `refreshed` should keep meaning "sweep completed" is a corpus-program question about 31
-  documents; and the missing canonical-currency gate is a `DOCTRINE-ENFORCEMENT`-class decision. All three are
-  recorded in `.9`'s node so the next session finds them without this tree claiming them.
-- CHALLENGED ON REVIEW BEFORE COMMIT, AND TWO CLAIMS DID NOT SURVIVE. The director asked whether the findings
-  still held; re-derived rather than restated, (a) "no owning leaf at all" is FALSE as written — a closed leaf
-  owned and performed exactly this work — and (b) "24 of 78 can be scored" is an admission bound, not a
-  demonstration. Both corrected in place before publication. Every other conclusion re-derived unchanged: the
-  cohort-rule exclusion, 24/54, 18/31/5, 31-of-52, 7-golds-2-measurable, and the live `seed_apb` refusal.
-- TWO DOCTRINE LESSONS, both earned here. (1) **Read a gate's cohort rule before treating its ratio as coverage
-  of anything** — the denominator a gate publishes is the population it was built for, not the one you are
-  asking about; where a real population has no gate, derive it. (2) **The absence of an OPEN owner is not the
-  absence of an owner** — search closed leaves before publishing a "nobody owns X" claim, because the corrected
-  story (a completed refresh invalidated by a schema bump) points at a different and better fix than the wrong
-  one (neglect).
-- CAUTION RECORDED, NOT RESOLVED: a re-ingest destroys evidence the current binary cannot regenerate, and every
-  wire number published before `2026-08-12` was measured on that evidence. `.9b` carries a
-  preserve-before-rebuild acceptance item, and the publishing posture is `.8c`'s — a re-derived number replaces
-  the published one, and a number that cannot be re-derived is withdrawn rather than carried.
-- No Rust touched, so the wire/register golds and `kg-bench` are orthogonal by construction.
-
-### WIRE-BASED-100.8f — re-challenge the audit: `.8d` survives an attempt to break it, and the trap is recorded
-
-- `.8e` verified `.8d`'s figures against the production gate. It did not ask the harder question: does `.8d`'s
-  CONCLUSION survive a BETTER detector? Tested adversarially, it does — and the test is worth keeping precisely
-  because its raw number is a lie.
-- THE ATTEMPT. Replace the production phase detector with a deliberately permissive proximity rule — a
-  statement "states phase P" if `P` occurs within four tokens of `phase`/`phases` — and a nearest-preceding rule
-  appears to get **5 of 11** right. Read as a rescue, that would say the detector was the problem and `.8d` gave
-  up early.
-- EVERY ONE OF THE FIVE IS A FALSE POSITIVE. `statement_1678` — *"A simple parity check is applied to all packet
-  request and data transfer phases"* — is claimed for SEVEN fields; it names both phases and assigns neither.
-  `statement_1798` is claimed for `Park` and is about a FAULT response. `statement_0813` is claimed for `DATAIN`
-  from 702 statements away. Not one assigns a field to a phase.
-- SO `.8d` IS CONFIRMED BY AN ATTEMPT TO BREAK IT, which is stronger than `.8e`'s confirmation: the conclusion
-  no longer depends on the production detector being right, because a strictly more permissive detector recovers
-  nothing real either. The control now ships in `scripts/measure_swd_frame_phase_scope.py` so the next attempt
-  meets the false positives instead of the number.
-- AND A PRECISION DEFECT IN `.8d`'s OWN WORDING, CORRECTED. It said the document "never states the phase in text
-  at all" for `Start`/`Parity`/`Stop`/`Park`/`A`. The phase WORDS do occur near them; what never occurs is an
-  ASSIGNMENT. That distinction is the entire point — a proximity rule sees the words and mints the wrong phase —
-  so the loose wording would have taught the next reader exactly the wrong lesson. Corrected in the task node,
-  the fact card and the book.
-- OTHER AUDIT LEGS RE-CHECKED AND SOUND: all 11 gold statements fall strictly inside the section anchor
-  attributed to them (`line_start <= line <= line_end`); every frame gold item carries exactly one fact, and the
-  two statements carrying two items each are handled per item.
-- RESIDUAL STATED HONESTLY: `56` remains a PORT-derived figure — the script ports `stated_phase_name` rather
-  than calling it, and only the count-word list is machine-checked. It is not load-bearing: the
-  production-derived fact is the manifest's `serial_frame.bit_range` and `serial_frame.composition` both at
-  `produced: 0`. `11 of 11` is robust to the port — the loose probe and the faithful port agree.
-
-### WIRE-BASED-100.8e — audit on challenge: every conclusion survives, three of `.8d`'s numbers do not
-
-- THE DIRECTOR ASKED WHETHER THE FINDINGS HOLD. Re-deriving them rather than restating them: every CONCLUSION
-  survives and three FIGURES do not, and the reason is the failure mode this lane spent four slices correcting
-  in other people's work — a number read off a probe instead of derived, from a probe that was not a faithful
-  port of the thing it measured.
-- SURVIVES, RE-DERIVED. The restored oracle reproduces its scorecard exactly at HEAD (`serial_frame_field`
-  0/11, `protocol_operation` 4/4, `protocol_state` 0/13, `interface_edge_timing` 1/1). `check_chain_currency.sh`
-  is 24/24. The corpus-wide surface-selective loss holds. `89d8dee7`'s identity gate
-  (`serial wire`/`packet request`/`shift-dr`/`swdio`/`swclk`) and the now-absent `SerialFramePhase` enum hold.
-  Its blast radius holds EXACTLY: four SWD cards superseded, four book chapters updated, and `ROADMAP.md`, the
-  extraction-eval chapter, both owning trees and `swd-derivation-scored-100` untouched. The schema census, the
-  corpus-frontier population, and `picture_0038`/`picture_0039` carrying a caption as their only observation all
-  hold.
-- A POPULATION TRAP THAT DID NOT BITE, CHECKED BECAUSE THE POINTER SAYS TO. `.8c` cited `89d8dee7`'s "five
-  operations and 40 structurally admitted states" as re-deriving today, measured over the 24 schema-3 documents,
-  while the ledger sentence spoke of all 78. Re-measuring both frames: the 54 legacy artifacts carry 0 frame
-  fields, 0 states and 0 operations, so the totals are identical and the citation is sound. Sound by luck of the
-  migration rather than by construction — worth the check.
-- THE THREE THAT FAILED. (a) "61 statements carry a stated phase name" is **56**: the probe dropped the gate's
-  own `parse_count_word` rejection, so "two or three phases" counted as the phase name `three`, and it stripped
-  non-alphabetic characters anywhere in a token instead of trimming only the ends as `trim_matches` does.
-  (b) "wrong for at least 7 of 11" was **never computed** — it is wrong on **11 of 11, correct on 0**. An
-  eyeballed floor published in the voice of a measurement; the evidence was always stronger than the claim.
-  (c) "at most 4 of 11" section titles is not a valid ceiling: 4 land literally, **5** once `ACK responses` is
-  counted.
-- THE FIX IS A DERIVATION, NOT A REWORD. `scripts/measure_swd_frame_phase_scope.py` ports `stated_phase_name`
-  and `parse_count_word` exactly, prints all three figures plus the per-field table, and CHECKS its ported
-  count-word list against the Rust source so the two cannot drift silently. Demonstrated RED: adding a
-  `"thirteen" => Some(13)` arm to a copy of `evidence.rs` makes it exit `parse_count_word drifted`.
-- AND THE RULE GENERALISES TO ITS AUTHOR. `.8c` published that retiring a producer stales the surfaces carrying
-  its NUMBER, not the ones describing its artifact. These three figures had spread to exactly six surfaces —
-  this ledger, `MEMORY.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the task tree, the fact card and the book — in under a
-  day. The `.8d` record below is kept as written; this record withdraws its figures in place.
-- `.8d`'s deferral is unchanged and better supported: scope binding does not work, the binding is in the figure,
-  and `serial_frame_field` stays 0/11 deliberately.
-
-### WIRE-BASED-100.8d — the proposed fix is disproven by its own measurement, and `.8` closes
-
-- `.8d` proposed the obvious generic repair for SWD's retired frame fields: stop requiring the phase name and
-  the bit range in the SAME statement, and bind a document-stated phase to the fields in its scope. Measured
-  read-only against the 11 gold facts before writing any code, **that repair is wrong**, and the measurement is
-  the deliverable.
-- STATEMENT SCOPE FIRES EVERYWHERE AND IS RIGHT A THIRD OF THE TIME. The nearest preceding phase-stating
-  statement resolves for all 11 fields, so the rule would always produce something — and for at least 7 it
-  produces the WRONG phase. `APnDP`/`RnW` would inherit `transfer` against a gold of `request`;
-  `Start`/`Parity`/`Stop` would inherit `transfer` from 28-44 statements back; `Park` would inherit `data`. `A`,
-  `ACK` and `DATAIN` sit **278, 303 and 324** statements past the nearest one, which says `response`.
-- SECTION SCOPE IS HONEST BUT THIN: at most 4 of 11. `Packet requests` gives `request` for `APnDP`/`RnW` and
-  `Data transfers (WDATA and RDATA)` gives `data` for `WDATA`/`RDATA`, but `Start`/`Parity`/`Stop` sit under
-  `B4.2 SWD protocol operation`, `Park` under `B4.2.5 Protocol error response`, `A` under `Attributes`, and
-  `DATAIN` under `OK or FAULT response to a DPACC or APACC access`. No section title contains the word `phase`.
-- BECAUSE THE DOCUMENT DRAWS IT RATHER THAN WRITING IT. For `Start`/`Parity`/`Stop`/`Park`/`A` the phase is
-  never stated in text: the field-to-phase membership is in `Figure B4-1 SWD successful write operation` and
-  `Figure B4-2`. Both are captured (`picture_0038`, `picture_0039`) with role `ambiguous` and a caption as their
-  only observation, so the diagram content was never read. **That also explains the retired extractor's 11/11:
-  it never read the frame either — it assigned the phase from the FIELD NAME (`wdata`/`rdata`/`datain`/`ack[`),
-  which is SWD's field-to-phase table transcribed into production code.** A prose rule cannot replace a lookup
-  that was never a reading.
-- DEFERRED WITH ITS CONSEQUENCE STATED: SWD `serial_frame_field` stays 0/11 and nothing is minted, because a
-  wrong phase is worse than a measured zero. Re-open trigger is figure-content extraction — the typed carrier
-  (`VisualObservationKind::TimingDiagramExtraction`) and the assets already exist, so the gap is the pass, not
-  the schema. Fact card `swd-frame-phase-binding-lives-in-the-figure`.
-- `WIRE-BASED-100.8` CLOSES with every child resolved. Stated plainly, what it does not deliver: the APB, AHB
-  and AXI wire golds it existed to protect are still unmeasurable because their EvidenceIR is legacy, so "the
-  oracle is restored" means restored over the 24 rebuildable chains only.
-
-### CHANGES-LEDGER-ROLLOVER.7 — roll the change ledger in the same transaction that filled it
-
-- `WIRE-BASED-100.8b`'s own record took `CHANGES.md` to 1,633 lines = **90.7%** of its 1,800-line health target,
-  the mandatory rollover signal, with bytes at 88.4%. Shortening the entry that crossed it would mean cutting a
-  27-line record to under 14 — trimming evidence to dodge a declared milestone, which is exactly the Non-Goal
-  the containment doctrine exists to enforce. So the rollover rides inside the same transaction, the established
-  pattern for a blocking pair.
-- SEAM-CLEAN, NOT MINIMAL. The committed root at `4926fa84` held 19 post-migration records; the plan keeps
-  **two** — the `WIRE-BASED-100.8` pair this transaction continues — and seals 17. That is the deepest cut at
-  which every multi-record story below the boundary seals whole: both `KG-ISF-COMPLETENESS.5.iv.a` records, both
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f` records, and the older `.4`/`.7` block. Root 94 → 77 committed records /
-  1,606 → 1,123 lines / 223,007 → 177,679 bytes; with `.8b`'s record riding over the cut the live window is
-  78 records / 1,150 lines (63.9%) / 180,186 bytes (70.7%), about nine records of headroom.
-- AND A CONSTRAINT NOBODY HAD WRITTEN DOWN. The applied run failed once and rolled back cleanly to exact
-  preflight bytes: `staged output identity drift for … manifest.jsonl`, preceded by `Wide character in print at
-  scripts/check_rolling_ledger_protocol.pl line 942`. The manifest writer emits without a UTF-8 layer, so a
-  **non-ASCII byte in a plan `reason`** — an em dash here — makes the staged manifest fail its own identity
-  check. Every earlier plan's reason happens to be ASCII, so the constraint had never been observed. The
-  fail-closed restore behaved exactly as designed; the undocumented constraint is the defect, now recorded in
-  `CHANGES-LEDGER-ROLLOVER.7` and in the plan file. A plan `reason` must be ASCII.
-
-### WIRE-BASED-100.8b — a document the oracle cannot read gets a disposition, not a zero (and the legacy stratum is not schema 1)
-
-- BEFORE: `eval-extraction` on any dataset naming a legacy document printed its header and died —
-  `build_predictions` propagated the load error through `?`, so the whole run produced no output even for its
-  measurable documents. There was exactly one way to represent a refusal: abort.
-- AFTER: the extractor returns `TaskOutcome::{Records, Unmeasurable}`. `unmeasurable_disposition` probes the
-  artifact's OWN `schema_version` through the new `EvidenceIr::persisted_schema_version`; a below-current
-  artifact becomes an UNMEASURABLE disposition carrying that version and its re-ingest route, its remaining
-  tasks are not retried, and its gold items are withheld from every scorer. `seed_apb.json` now reports
-  `persisted EvidenceIR is schema 2, below the current canonical schema 3 … 16 gold item(s) withheld from
-  scoring` and exits 0. **Any other failure still aborts** — a hermetic control pins that, because a disposition
-  must never become a place to absorb real defects.
-- WHY WITHHOLDING MATTERS, PINNED AS A CONTROL: the same test asserts that WITHOUT the filter those labels score
-  as false negatives. Rendering "cannot be measured" as `R=0.000` is the fabricated number this tree forbids.
-- AND A CORRECTION THIS SLICE FOUND IN ITS OWN INHERITED WORDING. `.8` called the 54 legacy documents "schema
-  1". Censusing every persisted artifact instead of assuming: they are SourceIR schema 1 / EvidenceIR schema 2 /
-  SemanticIR schema 1 / IntentIR schema 1, against 3/3/2/2 for the 24 current ones — ZERO schema-1 EvidenceIRs
-  exist. "Legacy schema 1" is true of their SourceIR and false of the EvidenceIR `eval-extraction` refuses. The
-  shorthand had spread into MEMORY.md, LIVE_ACHIEVEMENT_STATUS.md, the book, the `.8a` fact card, two SWD cards,
-  and a `.5j` correction written hours earlier in this same session; all corrected. A stratum whose legacy
-  version differs per stage cannot be named by one number — which is why the disposition prints the artifact's
-  own version rather than a constant.
-- Rebuildable golds unchanged value for value (I2C 1.000 6/6; SWD constraint 1.000, relation 1.000; SWD
-  derivation 4/4 and 1/1 with the retired 0/11 and 0/13). `kg-bench` 156/156; workspace tests green (specforge
-  lib 472, +2 controls). Flow census moved only its three size counters, every authority and protection count
-  unchanged.
-
-### WIRE-BASED-100.8c — the SWD 29/29 is retired, and the miss was a PARTIAL retirement, not an unpropagated one
-
-- RE-DERIVED, `--provider skip`, on the oracle `.8a` restored: `seed_swd_derivation.json` scores
-  `protocol_operation` 1.000 (4/4) and `interface_edge_timing` 1.000 (1/1), but `serial_frame_field` 0.000 (0/11)
-  and `protocol_state` 0.000 (0/13) — document-level **5/29** against a published `29/29 at 1.000`. Content
-  anchoring is not the explanation: 28 of 29 gold statement ids already resolve and the gold sentences match
-  current statements at ratio 1.00.
-- NOT A REGRESSION, ESTABLISHED THREE WAYS RATHER THAN BY READING A DIFF. (1) `check_chain_currency.sh --check`
-  reports 24 replayed / 24 current / 0 stale, so the zeros are the current producer's real output, not a stale
-  artifact. (2) The loss partitions along a published boundary CORPUS-WIDE: a read-only census of all 24 schema-3
-  EvidenceIRs finds 0 serial_frame_fields in every document and `machine_name` on 0 of 40 protocol_states, while
-  protocol_operations total 5 — and `89d8dee7`'s own entry below says the comparison *"retires 22 fixed-phase
-  frame and four named-operation records; the generic producer retains five operations and 40 structurally
-  admitted states."* Five and forty re-derive exactly. (3) Per-revision producer evidence: at `89d8dee7^`
-  `extract_serial_frame_fields` gated the whole document on `serial wire`/`packet request`/`shift-dr`/`swdio`/
-  `swclk` and sorted fields with a fixed `SerialFramePhase {Request, Acknowledge, Data}` enum keyed on
-  `wdata`/`rdata`/`datain`/`ack[`. That enum is gone from today's source.
-- SO THE CAUSE IS STRONGER THAN "A GENERICITY TRADE": ADR 0006 forbids that class of production decision
-  outright, so the 29/29 never measured generic capability — it measured a protocol recogniser. Retiring it was
-  mandatory. The gold is untouched and stays faithful; only the claim that the path is finished is withdrawn.
-- THE MISS WAS PARTIAL, AND ITS SHAPE IS THE REUSABLE LESSON. `89d8dee7` DID supersede four SWD fact cards and
-  update four book chapters. It missed `swd-derivation-scored-100` — the one card whose title asserts the score —
-  plus two more cards, `ROADMAP.md`, `docs/book/src/quality/extraction-eval.md` (the chapter that publishes the
-  number), and both owning task trees. **It retired the artifact-authority surfaces and missed the
-  score-assertion surfaces.** When a change retires a producer, hunt the surfaces publishing its NUMBER; they are
-  rarely the ones describing its ARTIFACT.
-- CORRECTED EVERYWHERE, WITH THE RETIRED NUMBER KEPT AS DATED HISTORY: roadmap, book (a new *"The 29/29 signoff
-  is retired"* section carrying the current scorecard, plus the stale `swd_operation` task name fixed to
-  `protocol_operation`), `WIRE-BASED-100.5j`, the `SWD-SERIAL-EXTRACTION` tree head, a new fact card
-  `swd-serial-frame-score-retired-by-genericity`, `swd-derivation-scored-100` superseded, and two cards corrected.
-- THE RESIDUAL IS LOCALISED AND OWNED (`.8d`): `extract_serial_frame_fields` admits a field only when ONE
-  statement both states a phase name and parses a bit range. SWD states phases in 61 statements and writes
-  `A[3:2]`/`WDATA[31:0]` in others, so the conjunction never holds. The admissible repair is scope binding — a
-  phase named in a section binds the fields in its scope — which is document grammar, not protocol identity.
-  Stated honestly: "0 frame fields corpus-wide" is NOT proof the grammar is dead, because the one document that
-  would exercise its composition-list path (the CAN specification) is a legacy chain and unmeasurable.
-
-### WIRE-BASED-100.8a — give a proof-carrying artifact a supported way to move, and restore the scoring oracle
-
-- THE ORACLE WAS DOWN, AND IT WAS THE ARTIFACT'S ADDRESS, NOT ITS CONTENT. `eval-extraction` refused every
-  document in the corpus; on the rebuildable stratum the diagnostic was `registered derivation
-  'evidence.claim.schema_version.root' output or input topology is stale`. Isolated read-only: two copies of the
-  I2C EvidenceIR, one keeping the `<base>/<document_key>` convention and one flat, each with ONLY
-  `artifact_layout` rewritten and every other byte identical, are both refused by `specforge entity-type`, while
-  the artifact in place verifies and runs. So the flat layout was never the issue — relocation as such was.
-- MECHANISM. `proof_kernel` registers one `evidence.current-replay` derivation over
-  `serde_json::to_vec(public_field_values())` and makes it the sole input of every `evidence.claim.<surface>.<key>`
-  derivation; `public_field_values` inserts `artifact_layout`. Each claim premise's `inputs_sha256` therefore binds
-  the artifact's storage path, and `validate_premise`'s `RegisteredDerivation` arm raises that exact diagnostic when
-  the recomputed topology differs. `extract_on_copy` must relocate, precisely so the corpus is never mutated, so
-  every eval task failed before scoring.
-- THE FIX IS A SUPPORTED OPERATION, NOT A LOOSENED SEAL. `EvidenceIr::load_relocated_to_artifact_base_root`
-  verifies the artifact where it is, moves it to `<base>/<document_key>/evidence_ir.json`, and re-derives its proof
-  for the new location from the same verified SourceIR prefix and the same sealed proof context, mutation chain
-  intact. It cannot launder authority: the artifact must already verify, and `write_to_disk` re-verifies the result
-  against an independent rebuild. An unsealed `artifact_layout` rewrite stays refused, and a hermetic control pins
-  both halves. The deeper fix — taking the replay over everything except the location — was rejected here because
-  it changes the frozen 38-family/170-field producer graph and invalidates all 24 sealed chains at once.
-- MEASURED, `--provider skip`, first re-derivation since `2026-08-09`. I2C `declared_signal` source-tolerant
-  1.000 (tp=6 fp=0 fn=0) with complete-gold precision 6/6; SWD `signal_constraint` 1.000 (1/1) and
-  `actor_signal_relation` source-tolerant 1.000 (1/1); SWD derivation gold `protocol_operation` 1.000 (4/4) and
-  `interface_edge_timing` 1.000 (1/1). The corpus is provably unmutated (both exercised artifacts keep their
-  pre-change mtimes) and `check_chain_currency.sh --check` stays 24 replayed / 24 current / 0 stale.
-- AND THE FIRST THING THE WORKING ORACLE FOUND: the SWD derivation gold also scores `serial_frame_field` 0/11 and
-  `protocol_state` 0/13 — document-level 5/29, against a published `29/29 at 1.000`. That is not a regression and
-  not caused by this slice: it is the published effect of `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` (`89d8dee7`,
-  `2026-08-12`), whose own entry below records that exact comparison *"retires 22 fixed-phase frame and four
-  named-operation records"*. The trade was honest; leaving the retired score standing as current for 20 days was
-  not, and nothing caught it because the oracle that would have was itself down. Owned as `WIRE-BASED-100.8c`.
 
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
 

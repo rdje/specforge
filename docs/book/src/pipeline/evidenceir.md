@@ -470,6 +470,40 @@ had been promoting. Every wire-protocol gold score is unchanged, which is the ho
 episode: a gold tests the facts it names, and this defect was never one of them.
 *Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10a`).
 
+#### A table that ran over a page break, and a cell that names a family (`WIRE-BASED-100.10c`)
+
+Two more ways a perfectly ordinary signal table loses half its content, and both are about reading what
+the document actually wrote.
+
+**A continuation page is the same table.** When a table spans page breaks, specifications repeat its
+caption as *"Table B1.1 Continued from previous page"*. That caption names no column role, so the
+per-table classifier can only call the fragment `unknown` — and an `unknown` table declares nothing, even
+though its first page classified and its rows are identical in shape. SpecForge resolves the fragment to
+its **chain head** and judges it by the head's kind, grounding the join twice: the fragment's caption must
+state the parent's table reference, *and* the nearest preceding non-continuation table with that
+reference must carry the exact same first header row. A head that is itself unclassified, a differing
+header, or a missing parent inherits nothing — an honest residual rather than a guess.
+
+This rule deliberately lives in EvidenceIR rather than in the classifier that assigns the kind, and the
+reason is a property of the proof kernel worth knowing before writing any classification rule: **a
+SourceIR field record is verified by replaying its producer against its own premises, one record at a
+time.** A classifier may therefore only read the table in front of it. A rule that needs its neighbours is
+not wrong, it is *early* — it belongs to the first stage that legitimately holds the whole document,
+which is this one.
+
+**A name cell can declare a family.** Rather than write two near-identical rows, a specification often
+names both members of a read/write pair in one cell: `AWPROT, ARPROT`, `AWIDUNQ, BIDUNQ, ARIDUNQ,
+RIDUNQ`, `reset, reset_n`. Reading only the first token silently drops the other members — on a
+read/write bus, one entire direction of the interface. A cell is split only when it is unambiguously a
+list: **every** comma-separated element is exactly one identifier, **and** all of them share a prefix or
+suffix of at least two characters. That shared affix is what distinguishes a signal family from a
+sentence — *"Chip enable, active LOW."* splits into words that each look like identifiers but share
+nothing, and is refused.
+
+Together the two readers restored the whole read-address side of the AMBA AXI interface, taking its
+declared inventory past what the pre-regression chain had, with every wire-protocol gold score unchanged.
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10c`).
+
 #### Captured requirements don't count as residuals (`WIRE-BASED-100.3b`)
 
 The same honesty applies to the **prose** side of the count. A sentence like "the

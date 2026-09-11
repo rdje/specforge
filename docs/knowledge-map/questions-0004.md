@@ -175,6 +175,8 @@
   > how do I file an FSMGen bug report or feature request
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > how do I let a Continued from previous page table contribute what its first page contributes
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how do I make the NLI verifier actively change extraction / demote claims
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -296,5 +298,3 @@
   > how does SpecForge flag vague or ambiguous spec language
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does SpecForge group a transaction's signals by channel
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how does SpecForge handle Docling clones of a table cell with col_span greater than one

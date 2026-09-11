@@ -1105,26 +1105,52 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: see log.
 
-- ID: `WIRE-BASED-100.10c` · Status: `pending` · Goal: **the AR-side declarations two independent readers
-  still drop**, both measured by `.10a` rather than assumed.
-  (a) **Continuation pages.** `table_0255` (15 real signals) and `table_0251` are
-  `Name | Width | Source | Description` pages captioned `Table B1.1 Continued from previous page`. Their
-  first pages classify (their captions name signals); the continuations do not, because `dee0740f` removed
-  `source`/`destination` from the direction roles and a continuation caption carries no signal noun. Decide
-  the general question — **does a table whose caption declares itself a continuation inherit the kind of the
-  table it continues?** — as document grammar, not by adding a caption phrase to a list. Note the cost
-  before starting: this is a SourceIR classification change, so it stales every persisted SourceIR proof and
-  must ship with its own corpus refresh (`[[qualified-role-header-proves-no-role]]`).
-  (b) **Multi-name cells.** A name cell reading `AWMMUSECSID, ARMMUSECSID` declares only `AWMMUSECSID`;
-  the row loop takes one whitespace token. Every AR-side twin in such a table is silently absent. This is an
-  EvidenceIR change and needs no re-ingest, so it is the cheaper half — but it must not turn a prose cell
-  into a list of declarations, which is exactly the failure `.10a` just removed.
-  Acceptance: each reader's mechanism named at `file:line`; recovered or its retirement published with the
-  count; corpus blast radius measured over every persisted SourceIR before shipping; the six scored numbers
-  unchanged.
+- ID: `WIRE-BASED-100.10c` · Status: `done` (`2026-09-11`; both readers fixed, **zero real AXI signals
+  now missing against the legacy chain**, and the proof kernel corrected the first design) · Goal: **the
+  AR-side declarations two independent readers still drop.**
+
+  **(a) CONTINUATION PAGES — and the constraint that decided where the rule lives.** A table that runs
+  over a page break repeats its caption as `Table B1.1 Continued from previous page`, which names no
+  column role, so the per-table classifier reads it as `unknown` and the page contributes nothing. The
+  first implementation put the inheritance in the **SourceIR** classifier, with label-matched parents and
+  measured blast radius (34 tables corpus-wide, every one with a same-label parent). It was wrong, and the
+  proof kernel said so rather than a test: ADR 0038 verifies a SourceIR field record by replaying its own
+  producer against its own premises, **one record at a time**, so a rule that reads neighbours cannot be
+  reproduced and the migration failed with `structured_tables:record-00000102 classification is not the
+  registered capture/proposal replay`. `classified_table_kind` is obliged to be a pure function of one
+  table. The rule was not wrong, it was **early**: EvidenceIR is the first stage that legitimately holds
+  the whole document. It already had the mechanism —
+  `continuation_inherited_table_heads` (`crates/specforge/src/ir/evidence.rs`, built by
+  `PDF-VARIANT-DIGESTION.12a` for the trapped-row pass), which grounds the join twice (the fragment's
+  caption must state the parent's table reference **and** the nearest preceding non-continuation table
+  with that reference must carry the exact same first-header-row signature). `.10c` wires the ordinary
+  body-row pass to the same resolver, so the SourceIR is untouched and no SourceIR proof is staled.
+  Recorded as `[[sourceir-classification-is-per-record]]`.
+
+  **(b) MULTI-NAME CELLS.** A specification that defines a signal family once writes its members as a
+  comma list in one cell — `AWPROT, ARPROT`, `AWIDUNQ, BIDUNQ, ARIDUNQ, RIDUNQ`, `reset, reset_n` — and
+  the row loop read only the first whitespace token, so every AR-side twin was silently absent.
+  `signal_names_in_name_cell` splits a cell only when it is unambiguously a list: **every**
+  comma-separated element is exactly one identifier, **and** all of them share a prefix or suffix of at
+  least two characters. The shared affix is what separates a family from a sentence — `Chip enable,
+  active LOW.` splits into well-formed-looking words that share nothing, and is refused, as is
+  `Channel, bidirectional`, the single corpus-wide false positive the shape test alone admitted.
+  Measured before shipping over all 3,940 name cells in every persisted `signal_description` table: **36
+  cells are families, worth 38 additional declarations**, and the one prose cell is rejected.
+
+  **ADDRESSED (verified, AXI).** `table_signal_declaration_provenance` **388 → 468** records and
+  **288 → 303** distinct; declared inventory **280 → 295**; ISF interface ports **280 → 295**; 115 `*CHK`
+  and 25 actors unchanged. `ARMMUSECSID`, `ARMMUVALID`, `ARMMUSID`, `ARIDUNQ` and the rest of the AR side
+  are declared for the first time. **The residual against the legacy chain falls 23 → 8, and all 8 are
+  legacy junk, not signals:** `table_0059`'s 4 Presence-column parameters, `table_0187`'s 3 Width-column
+  parameters, and `ARESETN` against today's opaque `ARESETn`. AXI's declared inventory (295) now exceeds
+  the legacy chain's (289) with nothing real left behind. APB (32 declarations, 8 actors) and AHB (40, 25)
+  are byte-stable.
+  **The six scored numbers are unchanged**: AXI `1.000`×4, APB `1.000`/`1.000`/`0.333`, AHB `1.000`×3.
+  Non-goal: re-scoring AXI; widening any gold; `.10b`'s template table.
   Prerequisite: `WIRE-BASED-100.10a`.
-  Verification: pending
-  Commit: pending
+  Verification: see the acceptance checklist below.
+  Commit: see log.
 
 - ID: `WIRE-BASED-100.10b` · Status: `active` (`2026-09-11`: `.10a` removed most of it; what is left is one
   table and one prose token) · Goal: **the prose words in AXI's ISF interface and the actor inflation.**
@@ -1149,6 +1175,40 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Prerequisite: `WIRE-BASED-100.10a`.
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.10c` (RUST CODE CHANGE) — DONE `2026-09-11`
+
+- [x] **REPRODUCE / MEASURE** — from the persisted artifacts before any edit: AXI
+  `table_signal_declaration_provenance` 388 records / 288 distinct, declared inventory 280, ISF ports 280;
+  23 names missing against the legacy chain, 15 of them real signals in `table_0255`; `ARMMUSECSID`,
+  `ARMMUVALID`, `ARMMUSID` and `ARIDUNQ` absent.
+- [x] **ROOT CAUSE (WHY + WHERE)** — two independent readers, each named at its seam.
+  (a) `synthesize_declarations_from_tables` (`crates/specforge/src/ir/evidence.rs`) judged each table on
+  its own `effective_table_kind`, so a `Continued from previous page` fragment Docling dropped to
+  `unknown` was skipped even though its chain head classified. (b) the row loop took one whitespace token
+  from the name cell, so a family cell (`AWPROT, ARPROT`) declared only its first member.
+  **A first design put (a) in the SourceIR classifier and the proof kernel rejected it** —
+  `structured_tables:record-00000102 classification is not the registered capture/proposal replay` —
+  because ADR 0038 replays a SourceIR field record one at a time, so classification may not read
+  neighbours. The rule moved to the consumer that legitimately holds document order.
+- [x] **ADDRESSED (verified)** — per artifact, before → after: provenance `388 → 468` records and
+  `288 → 303` distinct; declared inventory `280 → 295`; ISF ports `280 → 295`; residual against the legacy
+  chain `23 → 8` with **all 8 legacy junk and no real signal left behind**; `*CHK` 115 and actors 25
+  unchanged. Corpus blast radius measured before shipping: 36 family cells worth 38 declarations across
+  3,940 name cells, one prose cell correctly refused.
+- [x] **NO REGRESSION** — named, re-runnable oracles, all green: `cargo test -p specforge-core --lib`
+  1,388 pass including 3 new cases; `-p specforge --lib` 472; `-p specforge-conformance --lib` 168;
+  `cargo fmt --all`; `cargo clippy --all-targets` clean. The six WIRE-BASED-100 numbers re-derive
+  unchanged. APB and AHB byte-stable in every measured dimension. `bash scripts/check_chain_currency.sh`
+  and `bash scripts/check_doctrines.sh` green. **No SourceIR proof was staled** — the final design touches
+  EvidenceIR only, which is why the refresh needed no re-ingest and no re-migration.
+- [x] **GENERICITY (ADR 0006)** — (a) reuses an existing doubly-grounded structural join (caption table
+  reference + exact header signature). (b) reads shape alone: a comma list of single identifiers sharing
+  an affix. No vocabulary, no document identity. Both new tests use alpha-renamed symbols and assert the
+  negatives — a prose cell is never split, an unknown table that continues nothing stays silent.
+- [x] **LOCKSTEP** — mdBook, `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the resume pointer and two
+  Knowledge Map cards updated; `.10a`'s published residual of 23 corrected to 8-and-all-junk; the
+  per-record proof constraint recorded as its own card.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.10a` (RUST CODE CHANGE) — DONE `2026-09-11`
 

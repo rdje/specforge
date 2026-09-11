@@ -7361,6 +7361,14 @@ fn synthesize_declarations_from_tables(
         }
     }
 
+    // A `Continued from previous page` fragment that Docling dropped to `unknown` carries the same
+    // rows as the table it continues; the trapped-row pass already resolves those fragments to their
+    // captioned chain head, and the ordinary body-row pass needs the same resolution or a table that
+    // simply ran over a page break contributes nothing (WIRE-BASED-100.10c). SourceIR cannot do this
+    // itself: its classification is verified record by record, so a rule that reads neighbours is not
+    // reproducible there — the consumer, which holds the whole document, is where it belongs.
+    let inherited_heads = continuation_inherited_table_heads(&source_ir.structured_tables);
+
     for table in &source_ir.structured_tables {
         let table_page = table
             .page_id
@@ -7375,11 +7383,18 @@ fn synthesize_declarations_from_tables(
             .map(|(_, v)| v.clone())
             .unwrap_or((SectionKind::Unknown, String::new()));
 
-        match effective_table_kind(table, prior_guidance) {
+        // A fragment is judged through its chain head: the head carries the caption and the
+        // classified kind, so the head is what the top-level signal-table gate must see.
+        let gate_table = inherited_heads
+            .get(&table.table_id)
+            .map(|&head_index| &source_ir.structured_tables[head_index])
+            .unwrap_or(table);
+
+        match effective_table_kind(gate_table, prior_guidance) {
             TableKind::SignalDescription
                 if should_treat_table_as_top_level_signal_description(
                     source_ir,
-                    table,
+                    gate_table,
                     prior_guidance,
                 ) =>
             {
@@ -9779,6 +9794,63 @@ fn is_signal_value_constraint(text: &str) -> bool {
         .any(is_hardware_signal_token)
 }
 
+/// The signal names a single name cell declares.
+///
+/// Most cells name one signal. A specification that defines a family once instead of twice writes
+/// the members as a comma list in one cell — `AWPROT, ARPROT`, `reset, reset_n`,
+/// `AWIDUNQ, BIDUNQ, ARIDUNQ, RIDUNQ` — and reading only the first token silently drops every other
+/// member, which on a read/write bus means one whole direction of the interface.
+///
+/// A cell is a list only when it is unambiguously one: every comma-separated element is exactly one
+/// identifier, **and** all of them share a prefix or suffix of at least two characters. The shared
+/// affix is what separates a signal family from a sentence — `Chip enable, active LOW.` splits into
+/// well-formed-looking words that share nothing, and is refused. No vocabulary and no document
+/// identity: the rule reads shape alone (ADR 0006).
+fn signal_names_in_name_cell(raw_name: &str) -> Vec<String> {
+    let first_token = |text: &str| -> String {
+        text.split_whitespace()
+            .next()
+            .unwrap_or("")
+            .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+            .to_string()
+    };
+    let single = vec![first_token(raw_name)];
+    if !raw_name.contains(',') {
+        return single;
+    }
+    let mut names = Vec::new();
+    for element in raw_name.split(',') {
+        let element = element.trim();
+        if element.split_whitespace().count() != 1 || !is_hardware_signal_token(element) {
+            return single;
+        }
+        names.push(element.to_string());
+    }
+    if names.len() < 2 {
+        return single;
+    }
+    let lowered: Vec<String> = names.iter().map(|n| n.to_ascii_lowercase()).collect();
+    let shortest = lowered.iter().map(|n| n.len()).min().unwrap_or(0);
+    let shared_prefix = (0..shortest)
+        .take_while(|index| {
+            let byte = lowered[0].as_bytes()[*index];
+            lowered.iter().all(|name| name.as_bytes()[*index] == byte)
+        })
+        .count();
+    let shared_suffix = (1..=shortest)
+        .take_while(|offset| {
+            let byte = lowered[0].as_bytes()[lowered[0].len() - *offset];
+            lowered
+                .iter()
+                .all(|name| name.as_bytes()[name.len() - *offset] == byte)
+        })
+        .count();
+    if shared_prefix < 2 && shared_suffix < 2 {
+        return single;
+    }
+    names
+}
+
 fn synthesize_signal_declarations(
     table: &crate::ir::source::StructuredTableRecord,
     section_kind: SectionKind,
@@ -9912,12 +9984,8 @@ fn synthesize_signal_declarations(
         };
         // Strip footnote markers (e.g. "HSELx a" → use "HSELX").
         let raw_name = name_cell.text.trim();
-        let token = raw_name
-            .split_whitespace()
-            .next()
-            .unwrap_or("")
-            .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_')
-            .to_string();
+        let declared_names = signal_names_in_name_cell(raw_name);
+        let token = declared_names.first().cloned().unwrap_or_default();
         if !is_hardware_signal_token(&token) {
             continue;
         }
@@ -9989,21 +10057,26 @@ fn synthesize_signal_declarations(
             _ => continue, // No direction AND no width — not enough info to synthesize
         };
 
-        *statement_counter += 1;
-        let statement_id = format!("statement_{statement_counter:04}");
-        table_signal_declaration_provenance.push(TableSignalDeclarationProvenanceRecord {
-            statement_id: statement_id.clone(),
-            signal_name: token.clone(),
-            table_id: table.table_id.clone(),
-        });
-        statements.push(ExtractedStatement {
-            statement_id,
-            class: StatementClass::SourceFact,
-            modality: EvidenceModality::Text,
-            text,
-            evidence_span_ids: vec![],
-            related_visual_evidence_ids: vec![],
-        });
+        for name in &declared_names {
+            // The width/direction sentence was built for the cell's first name; every other member
+            // of the family is the same declaration under its own name.
+            let text = text.replacen(token.as_str(), name, 1);
+            *statement_counter += 1;
+            let statement_id = format!("statement_{statement_counter:04}");
+            table_signal_declaration_provenance.push(TableSignalDeclarationProvenanceRecord {
+                statement_id: statement_id.clone(),
+                signal_name: name.clone(),
+                table_id: table.table_id.clone(),
+            });
+            statements.push(ExtractedStatement {
+                statement_id,
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        }
     }
 
     statements
@@ -29270,6 +29343,121 @@ mod wire_based_100_5h {
     }
 
     #[test]
+    fn a_name_cell_listing_a_signal_family_declares_every_member() {
+        let table = StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Name", "Width", "Description"])],
+            body_rows: vec![
+                // A family written once: both members share a suffix.
+                row(&["ZETA_ALPHA, OMEGA_ALPHA", "4", "An item"]),
+                // Four members, sharing a suffix.
+                row(&[
+                    "ZETA_BETA, OMEGA_BETA, PSI_BETA, CHI_BETA",
+                    "1",
+                    "Another item",
+                ]),
+                // A shared prefix counts too, which is how a lowercase `reset, reset_n` pair reads.
+                row(&["gamma, gamma_n", "1", "A third item"]),
+            ],
+            row_count: 4,
+            col_count: 3,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+        );
+        let names: Vec<&str> = stmts
+            .iter()
+            .filter_map(|s| s.text.strip_prefix("Signal "))
+            .filter_map(|s| s.split_whitespace().next())
+            .collect();
+        for expected in [
+            "ZETA_ALPHA",
+            "OMEGA_ALPHA",
+            "ZETA_BETA",
+            "OMEGA_BETA",
+            "PSI_BETA",
+            "CHI_BETA",
+            "gamma",
+            "gamma_n",
+        ] {
+            assert!(
+                names.contains(&expected),
+                "missing {expected}, got {names:?}"
+            );
+        }
+        // Each member keeps its own declaration, and the family's width travels with it.
+        assert!(
+            stmts
+                .iter()
+                .any(|s| s.text == "Signal OMEGA_ALPHA is width 4.")
+        );
+        assert_eq!(prov.len(), stmts.len());
+    }
+
+    #[test]
+    fn a_prose_name_cell_is_never_split_into_a_family() {
+        // Every comma-separated element is a single well-formed word, so a shape check alone would
+        // admit this. The members share no affix, which is what says it is a sentence.
+        let table = StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Name", "Width", "Description"])],
+            body_rows: vec![
+                row(&["Channel, bidirectional", "1", "An item"]),
+                // A comma list whose elements are not single identifiers is not a list either.
+                row(&["ZETA_ALPHA, active LOW", "1", "Another item"]),
+            ],
+            row_count: 3,
+            col_count: 3,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+        );
+        let names: Vec<&str> = stmts
+            .iter()
+            .filter_map(|s| s.text.strip_prefix("Signal "))
+            .filter_map(|s| s.split_whitespace().next())
+            .collect();
+        assert!(
+            !names
+                .iter()
+                .any(|n| n.eq_ignore_ascii_case("bidirectional")),
+            "a prose cell must not become a family, got {names:?}"
+        );
+        assert!(
+            !names.iter().any(|n| n.eq_ignore_ascii_case("active")),
+            "a multi-word element must not become a name, got {names:?}"
+        );
+        // The cells still declare their first token, exactly as before.
+        assert!(names.contains(&"Channel") && names.contains(&"ZETA_ALPHA"));
+    }
+
+    #[test]
     fn paired_name_cells_keep_the_header_designated_column() {
         // The name cell lists a signal PAIR, so its first whitespace token carries a trailing
         // separator. Scoring that column without the row loop's own strip counted ZERO signal
@@ -30440,6 +30628,100 @@ mod extractor_architecture_9c {
             col_count: 2,
         });
         Ok(source_ir)
+    }
+
+    #[test]
+    fn a_continuation_page_declares_through_its_chain_head() -> crate::error::Result<()> {
+        // A table that runs over a page break repeats its caption as a continuation, and Docling
+        // sometimes drops the fragment to `unknown`. SourceIR cannot resolve that itself — its
+        // classification is verified one record at a time — so the reader does it here.
+        let dir = tempdir()?;
+        let source = dir.path().join("continuation.md");
+        fs::write(
+            &source,
+            "# Continuation\nSignal ZETA_HEAD is input width 1.\n",
+        )?;
+        let mut source_ir =
+            SourceIr::build(&source, &dir.path().join("generated").join("source_ir"))?;
+        let header = || {
+            vec![vec![
+                cell("Name", true),
+                cell("Width", true),
+                cell("Source", true),
+            ]]
+        };
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_head".to_string(),
+            asset_id: "asset_head".to_string(),
+            page_id: None,
+            caption_text: Some("Table 7.1: Item signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: header(),
+            body_rows: vec![vec![
+                cell("ZETA_HEAD", false),
+                cell("4", false),
+                cell("Manager", false),
+            ]],
+            row_count: 2,
+            col_count: 3,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_fragment".to_string(),
+            asset_id: "asset_fragment".to_string(),
+            page_id: None,
+            caption_text: Some("Table 7.1 Continued from previous page".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: header(),
+            body_rows: vec![vec![
+                cell("ZETA_TAIL", false),
+                cell("2", false),
+                cell("Manager", false),
+            ]],
+            row_count: 2,
+            col_count: 3,
+        });
+        // An unknown table that never claims to continue anything stays silent.
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_stray".to_string(),
+            asset_id: "asset_stray".to_string(),
+            page_id: None,
+            caption_text: Some("Table 9.9: Unrelated listing".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: header(),
+            body_rows: vec![vec![
+                cell("OMEGA_STRAY", false),
+                cell("1", false),
+                cell("Manager", false),
+            ]],
+            row_count: 2,
+            col_count: 3,
+        });
+
+        let mut counter = 0usize;
+        let mut provenance = Vec::new();
+        let statements =
+            synthesize_declarations_from_tables(&source_ir, &mut counter, None, &mut provenance);
+        let declared: Vec<&str> = provenance.iter().map(|r| r.signal_name.as_str()).collect();
+        assert!(
+            declared.contains(&"ZETA_HEAD"),
+            "head must declare, got {declared:?}"
+        );
+        assert!(
+            declared.contains(&"ZETA_TAIL"),
+            "the continuation page must declare through its head, got {declared:?}"
+        );
+        assert!(
+            !declared.contains(&"OMEGA_STRAY"),
+            "an unknown table that continues nothing must stay silent, got {declared:?}"
+        );
+        assert!(statements.iter().any(|s| s.text.contains("ZETA_TAIL")));
+        Ok(())
     }
 
     #[test]
