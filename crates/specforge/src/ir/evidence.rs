@@ -1865,13 +1865,17 @@ impl EvidenceIr {
         // the table-declaration provenance side-output. This is the statement-ASSEMBLY phase, not the typed
         // surface-extraction phase, so it keeps its own orchestrator rather than the `run_surface` merge
         // driver (see the two-phase / two-category note in `ir/extractor.rs`).
-        let (synthesized, table_signal_declaration_provenance, table_declaration_catalog) =
-            synthesize_signal_declaration_seed(
-                source_ir,
-                &extracted_statements,
-                &mut statement_counter,
-                prior_guidance.as_ref(),
-            );
+        let (
+            synthesized,
+            table_signal_declaration_provenance,
+            table_declaration_catalog,
+            table_declaration_row_accounting,
+        ) = synthesize_signal_declaration_seed(
+            source_ir,
+            &extracted_statements,
+            &mut statement_counter,
+            prior_guidance.as_ref(),
+        );
 
         // KG-ISF-TRANSACTIONS.2m: recover each declared signal's document-grounded CHANNEL
         // from the `<role> channel signals` table captions (joined with the provenance just
@@ -1895,6 +1899,10 @@ impl EvidenceIr {
         // EXTRACTOR-ARCHITECTURE.8 — collect each framework surface's run manifest into a per-document
         // extraction fingerprint (which extractors fired / produced / kept), surfaced on `EvidenceIr`.
         let mut extraction_manifest = ExtractionManifest::default();
+        // SIGNAL-DECLARATION-ROW-DROP.1 — publish the reader's own denominator on the extraction
+        // manifest, so the 18.3% row loss it used to discard silently becomes a number a check can
+        // bound without replaying the build.
+        extraction_manifest.declaration_row_accounting = table_declaration_row_accounting;
 
         // EXTRACTOR-ARCHITECTURE.6 — the register-record surface (register-map + `unknown` field-table
         // strategies, concatenated via `run_surface_concat`, then the width / bit-layout-grid / fragment
@@ -2595,6 +2603,55 @@ pub struct TableSignalDeclarationProvenanceRecord {
     pub statement_id: String,
     pub signal_name: String,
     pub table_id: String,
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.1 — why one signal-description table row produced no declaration.
+///
+/// Every variant is a property of the row's own shape, so the reason vocabulary is grammar and
+/// carries no document, vendor, or protocol identity (ADR 0006).
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum DeclarationRowDropReason {
+    /// The row has no cell at the resolved name column.
+    NoNameCell,
+    /// The name cell's leading token is not an identifier, so the row names no signal.
+    NameNotAnIdentifier,
+    /// A named signal whose row yielded neither a direction nor a width. This is the arm that
+    /// cost Avalon its `readdata`/`writedata` declarations and the corpus 482 rows.
+    NoDirectionAndNoWidth,
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.1 — one row a signal-description table offered that produced no
+/// declaration, retained so the drop can be adjudicated without re-reading the source document.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DroppedDeclarationRow {
+    /// The name cell exactly as the reader read it — the raw cell text, not the derived token, so
+    /// a reader of the artifact can see what the row actually said.
+    pub name_cell: String,
+    pub reason: DeclarationRowDropReason,
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.1 — per-table rows-in against declarations-out for the
+/// body-row declaration path.
+///
+/// Table declarations are the authoritative ones, and the reader used to discard a row it could
+/// not interpret with no record at all: no declaration, no residual, no counter, no validation
+/// entry. That made a loss censused at **482 of 2,637 rows (18.3%)** corpus-wide invisible to every
+/// gate — the scores cannot see it because a gold is evidence only about the facts it names, and
+/// chain-currency cannot see it because a deterministic drop is not drift. Recording the
+/// denominator is what turns the ratio into something a check can bound.
+///
+/// Scope is the body-row path (`synthesize_signal_declarations`). The additive trapped-row
+/// recovery path is a different population and is not counted here.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TableDeclarationRowAccounting {
+    pub table_id: String,
+    /// Body rows the reader examined for this table.
+    pub rows_considered: usize,
+    /// Declaration statements emitted from those rows. One row may declare a family of names, so
+    /// this is not bounded above by `rows_considered`.
+    pub declarations_emitted: usize,
+    pub dropped_rows: Vec<DroppedDeclarationRow>,
 }
 
 /// KG-ISF-TRANSACTIONS.2m — one declared signal's document-grounded CHANNEL, recovered
@@ -7450,8 +7507,10 @@ fn synthesize_signal_declaration_seed(
     Vec<ExtractedStatement>,
     Vec<TableSignalDeclarationProvenanceRecord>,
     TableDeclarationCatalog,
+    Vec<TableDeclarationRowAccounting>,
 ) {
     let mut table_signal_declaration_provenance = Vec::new();
+    let mut row_accounting: Vec<TableDeclarationRowAccounting> = Vec::new();
     // SWD-SERIAL-EXTRACTION.2: the table strategy seeds direct signal declarations + enum facts from
     // structured tables; the prose strategy (below) additionally captures interface signals declared in
     // PROSE (e.g. an appositive "a clock pin, SWCLK"), so serial specs get SWCLK/SWDIO into the catalog.
@@ -7460,6 +7519,7 @@ fn synthesize_signal_declaration_seed(
         statement_counter,
         prior_guidance,
         &mut table_signal_declaration_provenance,
+        &mut row_accounting,
     );
     // The parenthetical prose form (`.3`) runs only as a FALLBACK when the table catalog is sparse
     // (few/no signal-description tables) — so table-rich specs are untouched (no regression).
@@ -7492,7 +7552,12 @@ fn synthesize_signal_declaration_seed(
         &mut synthesized,
         &mut table_signal_declaration_provenance,
     );
-    (synthesized, table_signal_declaration_provenance, catalog)
+    (
+        synthesized,
+        table_signal_declaration_provenance,
+        catalog,
+        row_accounting,
+    )
 }
 
 /// WIRE-BASED-100.10b — the document's TABLE DECLARATION CATALOG: what the signal tables declared
@@ -7665,6 +7730,7 @@ fn synthesize_declarations_from_tables(
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
     table_signal_declaration_provenance: &mut Vec<TableSignalDeclarationProvenanceRecord>,
+    row_accounting: &mut Vec<TableDeclarationRowAccounting>,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
     if source_ir.structured_tables.is_empty() {
@@ -7728,6 +7794,7 @@ fn synthesize_declarations_from_tables(
                     statement_counter,
                     prior_guidance,
                     table_signal_declaration_provenance,
+                    row_accounting,
                 ));
             }
             TableKind::Encoding => {
@@ -10181,11 +10248,16 @@ fn synthesize_signal_declarations(
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
     table_signal_declaration_provenance: &mut Vec<TableSignalDeclarationProvenanceRecord>,
+    row_accounting: &mut Vec<TableDeclarationRowAccounting>,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
     if table.body_rows.is_empty() || table.col_count < 2 {
         return statements;
     }
+    // SIGNAL-DECLARATION-ROW-DROP.1 — every row this reader examines is accounted for from here on,
+    // so the ratio it used to discard silently becomes a number a check can bound.
+    let mut dropped_rows: Vec<DroppedDeclarationRow> = Vec::new();
+    let mut declarations_emitted = 0usize;
 
     // ── Column detection: use headers as a clue, fall back to positional convention ─
     // By convention across all bus protocol specs the signal name is in the leftmost
@@ -10303,6 +10375,10 @@ fn synthesize_signal_declarations(
 
     for row in &table.body_rows {
         let Some(name_cell) = row.get(name_col) else {
+            dropped_rows.push(DroppedDeclarationRow {
+                name_cell: String::new(),
+                reason: DeclarationRowDropReason::NoNameCell,
+            });
             continue;
         };
         // Strip footnote markers (e.g. "HSELx a" → use "HSELX").
@@ -10310,6 +10386,10 @@ fn synthesize_signal_declarations(
         let declared_names = signal_names_in_name_cell(raw_name);
         let token = declared_names.first().cloned().unwrap_or_default();
         if !is_hardware_signal_token(&token) {
+            dropped_rows.push(DroppedDeclarationRow {
+                name_cell: raw_name.to_string(),
+                reason: DeclarationRowDropReason::NameNotAnIdentifier,
+            });
             continue;
         }
 
@@ -10377,7 +10457,16 @@ fn synthesize_signal_declarations(
             (None, Some(WidthHint::Parametric(expr))) => {
                 format!("Signal {token} is width {expr}.")
             }
-            _ => continue, // No direction AND no width — not enough info to synthesize
+            // No direction AND no width — not enough info to synthesize. Recorded rather than
+            // discarded: this arm is the whole of the measured 18.3% loss
+            // (`SIGNAL-DECLARATION-ROW-DROP.0`).
+            _ => {
+                dropped_rows.push(DroppedDeclarationRow {
+                    name_cell: raw_name.to_string(),
+                    reason: DeclarationRowDropReason::NoDirectionAndNoWidth,
+                });
+                continue;
+            }
         };
 
         for name in &declared_names {
@@ -10399,8 +10488,20 @@ fn synthesize_signal_declarations(
                 evidence_span_ids: vec![],
                 related_visual_evidence_ids: vec![],
             });
+            declarations_emitted += 1;
         }
     }
+
+    // SIGNAL-DECLARATION-ROW-DROP.1 — record the table's denominator whenever it offered a row,
+    // including the tables that emitted everything they were given. An accounting kept only for
+    // lossy tables would make the corpus ratio unreadable, because the population it divides by
+    // would itself depend on the loss.
+    row_accounting.push(TableDeclarationRowAccounting {
+        table_id: table.table_id.clone(),
+        rows_considered: table.body_rows.len(),
+        declarations_emitted,
+        dropped_rows,
+    });
 
     statements
 }
@@ -29779,6 +29880,91 @@ mod wire_based_100_5h {
         cells.iter().map(|t| cell(t)).collect()
     }
 
+    /// SIGNAL-DECLARATION-ROW-DROP.1 — the reader must account for every row it is handed,
+    /// including the ones it cannot interpret. Before this leaf a row with neither a direction nor
+    /// a width was discarded with no record at all, which is why a corpus loss of 482 of 2,637 rows
+    /// (18.3%) was invisible to every gate. The control pins the denominator, not the loss: the
+    /// dropped row is still dropped here, but it is now countable.
+    #[test]
+    fn a_row_the_reader_cannot_interpret_is_counted_rather_than_discarded() {
+        let table = StructuredTableRecord {
+            table_id: "table_0012".to_string(),
+            asset_id: "asset_0012".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal Role", "Width", "Direction", "Description"])],
+            body_rows: vec![
+                // Interpretable: a numeric width, so it declares.
+                row(&["ZETAALPHA", "1", "Alpha -> Omega", "A described signal."]),
+                // Named, but neither a readable direction (the arrow form) nor a readable width
+                // (a set of legal widths) — the arm that costs the corpus its 482 rows.
+                row(&[
+                    "OMEGAALPHA",
+                    "8, 16, 32, 64",
+                    "Omega -> Alpha",
+                    "A described signal.",
+                ]),
+                // Not an identifier at all: a spanning group heading.
+                row(&["Wait-State Signals", "", "", ""]),
+            ],
+            row_count: 3,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let mut accounting = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+
+        assert_eq!(
+            accounting.len(),
+            1,
+            "one table offered rows: {accounting:?}"
+        );
+        let account = &accounting[0];
+        assert_eq!(account.table_id, "table_0012");
+        assert_eq!(
+            account.rows_considered, 3,
+            "every body row must be counted, interpretable or not"
+        );
+        assert_eq!(account.declarations_emitted, stmts.len());
+        assert_eq!(
+            account.rows_considered,
+            account.declarations_emitted + account.dropped_rows.len(),
+            "rows in must equal declarations out plus drops: {account:?}"
+        );
+
+        let reasons: Vec<DeclarationRowDropReason> =
+            account.dropped_rows.iter().map(|r| r.reason).collect();
+        assert!(
+            reasons.contains(&DeclarationRowDropReason::NoDirectionAndNoWidth),
+            "the unreadable width/direction row must be recorded: {reasons:?}"
+        );
+        assert!(
+            reasons.contains(&DeclarationRowDropReason::NameNotAnIdentifier),
+            "the group-heading row must be recorded: {reasons:?}"
+        );
+        // The name cell is retained verbatim so the drop can be adjudicated from the artifact
+        // alone, without re-reading the source document.
+        assert!(
+            account
+                .dropped_rows
+                .iter()
+                .any(|r| r.name_cell == "OMEGAALPHA"),
+            "the dropped row must carry its own name cell: {account:?}"
+        );
+    }
+
     #[test]
     fn rotated_signal_table_extracts_name_from_last_column() {
         // header says Name|Destination|Width|Description, but the body is rotated so the name
@@ -29814,6 +30000,7 @@ mod wire_based_100_5h {
             &mut counter,
             None,
             &mut prov,
+            &mut Vec::new(),
         );
         let names: Vec<&str> = stmts
             .iter()
@@ -29866,6 +30053,7 @@ mod wire_based_100_5h {
             &mut counter,
             None,
             &mut prov,
+            &mut Vec::new(),
         );
         let names: Vec<&str> = stmts
             .iter()
@@ -30082,6 +30270,7 @@ mod wire_based_100_5h {
             &mut counter,
             None,
             &mut prov,
+            &mut Vec::new(),
         );
         let names: Vec<&str> = stmts
             .iter()
@@ -30319,6 +30508,7 @@ mod wire_based_100_5h {
             &mut counter,
             None,
             &mut prov,
+            &mut Vec::new(),
         );
         let names: Vec<&str> = stmts
             .iter()
@@ -30370,6 +30560,7 @@ mod wire_based_100_5h {
             &mut counter,
             None,
             &mut prov,
+            &mut Vec::new(),
         );
         let names: Vec<&str> = stmts
             .iter()
@@ -30416,6 +30607,7 @@ mod wire_based_100_5h {
             &mut counter,
             None,
             &mut prov,
+            &mut Vec::new(),
         );
         let names: Vec<&str> = stmts
             .iter()
@@ -31519,8 +31711,13 @@ mod extractor_architecture_9c {
 
         let mut counter = 0usize;
         let mut provenance = Vec::new();
-        let statements =
-            synthesize_declarations_from_tables(&source_ir, &mut counter, None, &mut provenance);
+        let statements = synthesize_declarations_from_tables(
+            &source_ir,
+            &mut counter,
+            None,
+            &mut provenance,
+            &mut Vec::new(),
+        );
         let declared: Vec<&str> = provenance.iter().map(|r| r.signal_name.as_str()).collect();
         assert!(
             declared.contains(&"ZETA_HEAD"),

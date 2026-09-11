@@ -168,6 +168,17 @@ pub struct SurfaceManifest {
 pub struct ExtractionManifest {
     /// Per-surface manifests, in the order the build ran the surfaces.
     pub surfaces: Vec<SurfaceManifest>,
+    /// SIGNAL-DECLARATION-ROW-DROP.1 — the body-row declaration reader's rows-in against
+    /// declarations-out, per table, with the name cell of every row that produced nothing.
+    ///
+    /// This is producer telemetry, not extracted evidence: it states what the reader was handed and
+    /// what it did with it, which is exactly what the manifest is for. Keeping it here rather than
+    /// on `EvidenceIr`'s claim surface is deliberate — a new registered evidence field would restamp
+    /// the stage ruleset digest and un-seal every persisted artifact, and three proof-carrying
+    /// specifications cannot be re-sealed because their normalized bundles are not in the frozen
+    /// retained set. A counter about the reader does not belong in the reader's output anyway.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub declaration_row_accounting: Vec<crate::ir::evidence::TableDeclarationRowAccounting>,
 }
 
 impl ExtractionManifest {

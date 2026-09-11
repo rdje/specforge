@@ -24,9 +24,9 @@
   machine binds only when one statement names both (`0/13 → 8/13`), two machines fail closed. `.10e` then
   refused AXI's property tables — the shape test alone selects 17 of 602 and most are real. Every cheap
   rule this session over-fired until a second condition was added. Census 27 measurable / 51 legacy.
-- Next action: `[[SIGNAL-DECLARATION-ROW-DROP]]`.1 — `.10f`'s premise was FALSE: the authoritative table
-  reader silently drops **482/2637 rows (18.3%)** with no direction AND no width; AXI loses 103 at score
-  1.000. Make the drop visible, then read the arrow/width-set notations; `.10d` impl (5 of 9) after.
+- Next action: `[[SIGNAL-DECLARATION-ROW-DROP]]`.2 — `.1` landed the accounting (ADIv6: 24 rows → 3
+  declarations, 21 dropped). Now teach the reader the arrow direction + enumerated-width-set grammars;
+  quote the RUNTIME denominator both sides, not `.0`'s narrower one. Then `.3` (case), `.10d` (5 of 9).
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **a green score is evidence only about the facts its gold names** — AXI's
   six held while it lost 115 declarations, regained them, moved 134 → 25 → 21 actors, gained its whole AR

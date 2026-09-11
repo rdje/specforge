@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0` census closed, `.1`–`.3` open)
+- Status: `active` (`2026-09-11`; `.0` census + `.1` instrument closed, `.2`/`.3` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -122,15 +122,96 @@ a long tail.
   written, no artifact mutated.
   Commit: see log.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.1` · Status: `pending` · Goal: **make the drop visible, before making it
-  smaller.** Give the reader a per-table accounting — rows considered, emitted, dropped, with the
-  dropped rows' name cells retained — persisted where a check can read it. The order matters: a silent
-  loss that gets quietly smaller is still a silent loss, and every notation added in `.2` needs this
-  denominator to be measured against.
-  Non-goal: reading any new notation; that is `.2`.
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1` · Status: `done` (`2026-09-11`) · Goal: **make the drop visible,
+  before making it smaller.** Give the reader a per-table accounting — rows considered, emitted,
+  dropped, with the dropped rows' name cells retained — persisted where a check can read it. The order
+  matters: a silent loss that gets quietly smaller is still a silent loss, and every notation added in
+  `.2` needs this denominator to be measured against.
+
+  **Implemented on the extraction manifest, and the reason is load-bearing.** The build records one
+  `TableDeclarationRowAccounting { table_id, rows_considered, declarations_emitted, dropped_rows }` per
+  table the body-row reader was handed, and one `DroppedDeclarationRow { name_cell, reason }` for every
+  row that produced nothing, published as `extraction_manifest.declaration_row_accounting`. The reason
+  vocabulary is `no_name_cell` / `name_not_an_identifier` / `no_direction_and_no_width` — each a
+  property of the row's own shape, so it is grammar and names no document, vendor or protocol
+  (ADR 0006). The name cell is retained **verbatim**, not as the derived token, so a drop can be
+  adjudicated from the artifact alone without re-reading the source PDF. A table is accounted for
+  whenever it offered a row, including tables that emitted everything they were given: an accounting
+  kept only for lossy tables would make the ratio unreadable, because its own denominator would depend
+  on the loss.
+  **The first implementation put it on `EvidenceIr` as a registered evidence field, and that was
+  wrong twice over.** Architecturally, a counter describing what the reader was handed is producer
+  telemetry, not extracted evidence — the extraction manifest is precisely the "which extractors fired
+  and what each contributed" surface, and the accounting belongs there. Mechanically, a **new
+  registered rule field restamps the EvidenceIR stage ruleset digest and un-seals every persisted
+  artifact at and below the stage**, and the re-seal cannot complete: `rebuild_stage_cascade.sh --write`
+  rebuilt 24 of 27 and failed on AXI, APB and AHB because their `normalized/` bundles do not exist, and
+  the retained-bundle population is frozen at exactly 24 by three independent doctrine mechanisms
+  (`[[retained-bundle-population-is-frozen]]`). Measured both ways: with the registered field,
+  `check_proof_seal_currency.sh` refuses the persisted seal at evidence, semantic and intent; with the
+  same data on the manifest it reports *"the persisted corpus carries seals the current build
+  accepts"*. Adding an evidence rule field is therefore not merely expensive right now — **it is
+  structurally unlandable**, and that is worth knowing independently of this leaf.
+  **Scope, stated precisely.** This instruments the body-row path (`synthesize_signal_declarations`).
+  The additive trapped-row recovery path is a different population and is deliberately not counted.
+  **The two denominators are not the same number, and must not be compared naively.** `.0` counted
+  `signal_description` body rows whose name cell is a single identifier, read from persisted SourceIR —
+  482 of 2,637 (18.3%). The runtime accounting counts **every** body row of every table this reader is
+  handed, so its denominator is wider by construction. A per-document rate from one is not comparable
+  to the corpus rate from the other; `.2` must quote the runtime number on both sides of its change.
+  **Named residual (CI-tier, before push).** The persisted corpus still carries pre-slice content: the
+  new manifest field is absent from the 27 stored artifacts, so `CHAIN-CURRENCY` will report ADIv6's
+  EvidenceIR as content-changed. The delta is **attributed here** — `declaration_row_accounting`
+  appears on the extraction manifest, nothing else moves — which is exactly the attribution ADR 0025
+  decision 1 requires before the cascade may be re-run. Gate-tier is green; the rebuild is owned by
+  this leaf and must run before the next push.
+  Non-goal: reading any new notation; that is `.2`. Non-goal: failing a build on the ratio — `.1`
+  publishes the denominator, and what bound to enforce is a decision that needs `.2`'s recovery first.
   Prerequisite: `.0`.
-  Verification: pending
-  Commit: pending
+  Verification: see the Acceptance Checklist below.
+  Commit: see log.
+
+## Acceptance Checklist (enforced)
+- [x] **REPRODUCE / MEASURE** — `.0`'s corpus census: **482 of 2,637 signal-description rows (18.3%)**
+  discarded with no declaration, no residual, no counter and no validation-report entry, over all 78
+  persisted `source_ir.json` + `evidence_ir.json` pairs. Four documents lose every row; AXI loses 103
+  across two editions while scoring `1.000` on every aspect.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `synthesize_signal_declarations`: the `(direction, width)` match ended `_ => continue, // No direction
+  AND no width — not enough info to synthesize`. Nothing downstream of that arm records that a row
+  existed, so the reader reported no denominator and no check could bound the ratio. Confirmed on
+  Avalon `table_0012` (typed `signal_description`, first column `Signal Role`, rows `readdata` and
+  `writedata`): direction is the arrow form `Slave → Master`, which
+  `infer_signal_direction_from_actor_text` does not read, and `readdata`'s width is the enumerated set
+  `8, 16, 32, 64, 128, 256, 512, 1024`, which `infer_signal_table_row_width_hint` does not read — so
+  both rows hit the arm. Corroborated by 15 of Avalon's 26 surviving declarations being width-only.
+- [x] **ADDRESSED (verified)** — every row the reader examines is now accounted for. Control
+  `a_row_the_reader_cannot_interpret_is_counted_rather_than_discarded` pins the invariant
+  `rows_considered == declarations_emitted + dropped_rows.len()` and asserts both drop reasons and the
+  retained name cell. Measured on real documents: all **24** chain-current specifications re-run
+  through the instrumented reader (`specforge evidence --dry-run`), and **0 of 24 produce a declaration
+  without also producing an accounting record** — the instrument has no blind document. ADIv6
+  (`ihi0074_a`), the one wire-bearing specification in that set, reports **4 tables, 24 rows
+  considered, 3 declarations emitted, 21 dropped** — 20 `no_direction_and_no_width`, 1
+  `name_not_an_identifier` — with the invariant `rows == emitted + dropped` holding. The retained name
+  cells name **real wires**: `CDBGPWRUPREQ`, `CDBGPWRUPACK`, `CSYSPWRUPREQ`, `DBGTDO`, `DBGTRSTn`. That
+  87.5% loss in a single document was previously invisible in every artifact, score and gate.
+- [x] **NO REGRESSION** — `cargo test --offline -p specforge-core --lib` **1406 passed, 0 failed**
+  (1405 pre-existing + the new control); `cargo test --offline -p specforge --lib` 472 passed;
+  `cargo fmt --all --check` clean; `cargo clippy --offline --all-targets -- -D warnings` clean. The
+  change is purely additive — no declaration is emitted or withheld that was not before, so no score
+  can move. **No registration count moves**: `EVIDENCE_RULE_FIELDS` stays 39 and the genericity rule
+  inventory stays 170, because the accounting is manifest telemetry rather than a new evidence rule —
+  which is also why `check_proof_seal_currency.sh` reports the persisted corpus still sealed.
+- [x] **GENERICITY (ADR 0006)** — the reason vocabulary is three properties of a row's own shape; no
+  chip, vendor, or protocol name appears in the rule or the enum. The retained `name_cell` is document
+  text carried as provenance, not as a rule input. Registered under the existing
+  `evidence.declaration` claim family.
+- [x] **LOCKSTEP** — book updated in `.0`'s commit (`pipeline/evidenceir.md` gains the missing
+  failure-mode section, `quality/extraction-eval.md` gains the recall caveat); fact card
+  `[[declaration-reader-drops-uninterpretable-rows]]`. **Producer sub-clause: no production rule was
+  deleted or replaced** — the `_ => continue` arm still drops the same rows, it now records them — so
+  no book text described behaviour that has gone away.
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `pending` · Goal: **read the two notations the census
   names**, as grammars and not as vendor forms — directional arrow (`A → B`, and its ASCII spellings)

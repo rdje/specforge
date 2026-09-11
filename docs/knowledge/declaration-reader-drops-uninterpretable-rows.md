@@ -51,3 +51,13 @@ not drift; the persisted artifact is exactly what the current binary produces, s
 deterministic is precisely why replay stays green. And no check can bound a ratio that is never
 computed. Owned by `[[SIGNAL-DECLARATION-ROW-DROP]]`; see also
 `[[property-table-is-not-a-signal-inventory]]` for the opposite error in the same reader.
+
+`.1` published the missing denominator as `extraction_manifest.declaration_row_accounting` — rows
+considered, declarations emitted, and the verbatim name cell plus a shape reason for every row that
+produced nothing. It is carried on the **extraction manifest, not on `EvidenceIr`**, and that is not
+a stylistic choice: a new registered evidence rule field restamps the stage ruleset digest and
+un-seals every persisted artifact, and the re-seal cannot complete because AXI, APB and AHB have no
+`normalized/` bundle and the retained population is frozen at 24
+(`[[retained-bundle-population-is-frozen]]`). Measured both ways — registered field: the proof-seal
+gate refuses evidence, semantic and intent; manifest: the corpus stays sealed. **Adding an EvidenceIR
+rule field is currently structurally unlandable**, which is worth knowing well beyond this tree.
