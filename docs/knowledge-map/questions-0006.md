@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how is a roadmap rollover capsule verified
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how is a state machine identifier introduced generically
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > how is a task-tree leaf written in docs/tasks (two forms: the absolute `- ID: `TREE.x` · Status: ...` line used by most trees, and a nested relative ` - `.x` · Status: ...` line used for children written inline under their parent, e.g. DOC-INTENT-TAXONOMY .3b/.3c under .3)
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is a valid post-migration active task continuation verified
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
@@ -255,6 +261,8 @@
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > how many serial frame fields does the current producer emit across the corpus (ZERO, across all 24 rebuildable schema-3 documents; protocol_states carry a machine_name on 0 of 40. protocol_operations still produce 5 corpus-wide — 4 SWD plus 1 Wishbone — which is exactly the five the 2026-08-12 ledger said the generic producer retains)
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > how many signal_description rows are dropped corpus-wide
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -289,11 +297,3 @@
   > how much intent does SpecForge extract across the whole corpus
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how much memory did the guarded AArch64 External Debug ingest use
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > how much memory did the guarded CoreSight Base System ingest use
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how much memory did the guarded Introducing CoreSight ingest use
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how much memory did the guarded OpenCAPI AFU address note ingest use
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Certified Definition ingest use

@@ -304,6 +304,43 @@ implied by the EvidenceIR result.
 
 Many of the project’s recent truthfulness slices have been about tightening exactly those boundaries.
 
+### The failure mode that list was missing: rows that are simply dropped
+
+Every entry above is something *fake getting in*. Measured on `2026-09-11`, the larger loss runs the
+other way — real rows *silently not getting in*.
+
+Signal declarations built from tables are the authoritative ones: a table declaration wins over
+anything derived downstream. The reader builds each declaration from a `(direction, width)` pair, and
+a row that yields neither is skipped — no declaration, no residual, no counter, no entry in the
+validation report. Over every persisted artifact, **482 of 2,637 rows (18.3 %)** are discarded that
+way, counted only over tables SpecForge itself typed as signal descriptions whose name cell is a
+single clean identifier. Four specifications lose **every** such row; the largest single losses are a
+processor TRM at 107 rows and one bus specification at 103 across its two editions.
+
+The Avalon case shows how ordinary the cause is. Its signal table plainly lists `readdata` and
+`writedata`, but that document writes direction as an arrow (`Slave → Master`) and writes one width as
+the set of legal widths (`8, 16, 32, 64, 128, 256, 512, 1024`). SpecForge reads neither notation, so
+both rows disappear — and 15 of that document's 26 surviving declarations carry a width but no
+direction, which is the same gap showing up from the other side.
+
+Three things worth drawing out, because they are why this went unnoticed for so long:
+
+- **A perfect score is compatible with it.** The bus specification that loses 103 rows scores `1.000`
+  on every aspect of its gold, because a gold is evidence only about the facts it happens to name.
+- **The currency check is *supposed* to stay green.** A dropped row is not drift. The stored artifact
+  really is exactly what today's binary produces; the loss being perfectly repeatable is precisely why
+  replay cannot flag it.
+- **No ratio exists to bound.** The reader never reports rows-considered against declarations-emitted,
+  so there was no number for any check to watch.
+
+This also settled an open design question rather than answering it. One path in the pipeline turns a
+*relation* ("the slave drives readdata") into a *declaration*, which contradicts the rule that the
+next stage down owns that authority; it had been kept because deleting it appeared to cost those eight
+genuine Avalon signals. It does not: they are carried by that path only because the authoritative path
+drops their rows. Repairing the reader removes the reason the exception existed — no heuristic and no
+model tier is needed to tell the junk names it also mints from the real ones. Tracked as
+`SIGNAL-DECLARATION-ROW-DROP`, which makes the drop visible before making it smaller.
+
 ## Why provenance is critical here
 
 `EvidenceIR` is where the project first needs to defend itself against "plausible but wrong" extraction.

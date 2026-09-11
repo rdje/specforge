@@ -23,6 +23,7 @@
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
 | [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md) | 2026-08-30 | `current` | The repaired current-claim census freezes exact authority units whose totals ordinary work moves |
 | [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md) | 2026-08-12 | `current` | Decibel-domain timing rows remain source evidence but are non-applicable to executable digital intent |
+| [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md) | 2026-09-11 | `current` | The authoritative signal-declaration reader silently discards 18.3% of the rows it is handed, and the wire go… |
 | [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md) | 2026-08-11 | `current` | Converge emits a guarded per-run ledger for every production command and every capability island |
 | [definitional-signal-capture](../knowledge/definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
 | [dempster-fusion](../knowledge/dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
@@ -60,4 +61,3 @@
 | [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The GIC Overview Guide carries interrupt constraints, not an 83-interface hardware surface |
 | [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md) | 2026-06-11 | `current` | Header-trapped SIGNAL tables — shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-… |
 | [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md) | 2026-08-09 | `superseded` | Historical blocker: the corpus host-library route still named the boot-volume checkout |
-| [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md) | 2026-06-06 | `superseded` | Indexed-family spelling canonicalization was historical and is no longer production authority |

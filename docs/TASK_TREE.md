@@ -55,6 +55,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `RETAINED-BUNDLE-POPULATION-FROZEN` | `active` | the retained normalized-bundle set can neither grow nor shrink | [open](tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md) |
 | `SCRATCH-RESIDUE-CONTAINMENT` | `active` | reclaim repository scratch that nothing can reach | [open](tasks/SCRATCH-RESIDUE-CONTAINMENT.md) |
 | `SIGNAL-CATALOG-CAPTURE-GAP` | `active` | protocol specifications that declare no signals at all | [open](tasks/SIGNAL-CATALOG-CAPTURE-GAP.md) |
+| `SIGNAL-DECLARATION-ROW-DROP` | `active` | the authoritative declaration reader silently discards 18.3% of the rows it was given | [open](tasks/SIGNAL-DECLARATION-ROW-DROP.md) |
 | `SOURCE-IR-REPRODUCIBILITY` | `active` | make SourceIR ingest reproducible, and gate it | [open](tasks/SOURCE-IR-REPRODUCIBILITY.md) |
 | `SPEC-CLARIFICATION-LOOP` | `active` | autonomous-first, user-assisted specification completion | [open](tasks/SPEC-CLARIFICATION-LOOP.md) |
 | `SPEC-TO-INTENT-ALIGNMENT` | `active` | steer PDF evidence into complete executable-intent IR | [open](tasks/SPEC-TO-INTENT-ALIGNMENT.md) |
@@ -64,13 +65,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 152 trees route through 3 derived part(s); open a range to find an id.
+All 153 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-SUBMODULE-BUMP` |
 | [0002](task-catalog/catalog-0002.md) | 56 | `FULL-PAGE-INTENT-CAPTURE` | `R16-WAVEFORM-CONTRACT-MINING` |
-| [0003](task-catalog/catalog-0003.md) | 40 | `R6-CONVERGE-HARDENING` | `WIRE-BASED-100` |
+| [0003](task-catalog/catalog-0003.md) | 41 | `R6-CONVERGE-HARDENING` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

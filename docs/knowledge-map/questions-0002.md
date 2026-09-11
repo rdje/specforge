@@ -142,6 +142,8 @@
   > can specforge emit a symbolic signal width like (width ADDR_WIDTH) to the .isf
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > can strict-valid ISF prove that a PDF was understood (no)
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > can synthesize_directions_from_relations be deleted without losing real signals
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > can the Docling-flattened register diagram table be parsed into bits_high/bits_low (no — garbled: wrong explicit positions, dropped field bands, doubled cells, two stacked halves, or symbolic XLEN-relative positions)
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
@@ -296,5 +298,3 @@
   > does CPU-ISA (category 4) intent need a new ISF construct or does it map onto the existing register/storage abstraction (CSRs map onto storage/register — no new construct; non-register ISA semantics are honest non-targets)
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > does ExtractionContext carry a cross-document cluster profile
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > does FSMGen --strict --check use or validate signal direction (input vs output)

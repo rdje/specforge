@@ -1397,8 +1397,49 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   as named negatives; the six scored numbers unchanged. Candidate: `.6c`'s `ir/entity_typing` as the bounded
   fallback, which is what the tree already names for exactly this discrimination problem.
   Prerequisite: none (`.10b` supplies the census).
-  Verification: pending
-  Commit: pending
+
+  **ROOT-CAUSED `2026-09-11`, READ-ONLY — THIS LEAF'S PREMISE IS FALSE. THE RELATION PATH IS NOT THE
+  ONLY EVIDENCE FOR AVALON'S EIGHT SIGNALS; IT IS COMPENSATION FOR A DECLARATION-READER DROP.**
+  The leaf opened believing the trade was real: delete the doctrine-violating path and lose eight
+  genuine Avalon signals, or keep it and keep the junk (`Manager`, `TCU`, `ATB`). Measurement dissolves
+  the trade.
+  - Avalon **does** declare them. `table_0012` is typed `signal_description` by SpecForge itself, its
+    first column is `Signal Role`, and its rows are `debugaccess`, `read read_n`, `readdata`,
+    `response [1:0]`, `write write_n`, `writedata`. `readdata` and `writedata` are right there.
+  - The reader **drops** those rows. `synthesize_signal_declarations_from_table` ends its
+    `(direction, width)` match with `_ => continue` — "No direction AND no width — not enough info to
+    synthesize". Avalon's direction column is the arrow form `Slave → Master`, which
+    `infer_signal_direction_from_actor_text` does not read, and `readdata`'s width cell is the
+    enumerated set `8, 16, 32, 64, 128, 256, 512, 1024`, which `infer_signal_table_row_width_hint` does
+    not read. Neither is inferable, so the row is silently discarded — and 15 of Avalon's 26 surviving
+    declarations are width-only, confirming the arrow form is never understood.
+  So the relation path is load-bearing for Avalon only because the authoritative path drops the rows.
+  **Repair the reader and the trade disappears**: the eight names come back through the declaration
+  path that doctrine already designates as authoritative, with real directions, and
+  `synthesize_directions_from_relations` becomes deletable without loss. No discriminator is needed, no
+  entity-typing tier, and the question "may an LLM sit in the declaration path" is **not answered but
+  dissolved** — it was only ever forced by a defect. Owned by `[[SIGNAL-DECLARATION-ROW-DROP]]`, which
+  measured the drop corpus-wide at **482 rows (18.3%)**; this leaf blocks on `.1` of that tree.
+  **Correction — the refutation recorded earlier in this leaf was unsound and is withdrawn.** It
+  reported that the signal-vocabulary discriminator scored 0 on every real Avalon signal and therefore
+  ran anti-correlated with the answer. That census matched the **minted uppercase spelling**
+  (`READDATA`) against a document that writes **lowercase** (`readdata`, 75 occurrences; `READDATA`,
+  zero). Case-insensitively the same signals score `ADDRESS 11`, `DATA 42`, `READDATA 8`,
+  `BYTEENABLE 5`, `WRITEDATA 5`, `BURSTCOUNT 4`, `CHANNEL 4`, `ERROR 3` — not 0. The candidate is
+  **untested**, not refuted; only the catalogue-richness threshold is genuinely refuted. Recorded
+  because a false refutation is worse than no measurement: it would have closed off a live option.
+  **A second defect, found in passing and separately owned.** The minted spellings are uppercase ones
+  the document never writes. `known_signals` carries `READDATA`; Avalon writes `readdata` throughout.
+  Under ADR 0037 case carries no alias authority, so emitting a case-variant the source never used is
+  minting an identifier, not grounding one. Avalon also declares `READDATAVALI`, `WRITERESPONS` and
+  `BEGINBURSTTR` — stems of `readdatavalid`, `writeresponsevalid`, `beginbursttransfer`, from a cell
+  whose PDF text layer reads `readdatavali d readdatavali d _ n`. **Predicted and falsified:** that all
+  three are 12 characters looked like a 12-char truncation in SpecForge; the corpus-wide declared-name
+  length histogram is smooth across 2,689 names with no spike at 12, so the fragmentation is Avalon's
+  PDF, not our code. Both are carried by `[[SIGNAL-DECLARATION-ROW-DROP]]`.
+  Verification: read-only over every persisted `source_ir.json` + `evidence_ir.json`; no code changed,
+  no artifact written. Four measurements, two of my own hypotheses falsified by them.
+  Commit: see log.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.10e` (RUST CODE CHANGE) — DONE `2026-09-11`
 

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > does validate report message_field_records
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -292,9 +298,3 @@
   > how does SpecForge combine confidence across modalities or sources
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how does SpecForge decide signal direction (input/output) in the emitted .isf
-- [contested-priors](../knowledge/contested-priors.md)
-  > how does SpecForge detect contradicting or conflicting priors
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > how does SpecForge detect two surfaces disagreeing about one quantity
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how does SpecForge determine what a chip-spec PDF is about / its purpose category

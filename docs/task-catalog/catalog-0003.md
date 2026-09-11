@@ -28,6 +28,7 @@ Complete membership for this range. The bounded landing is
 | `SCRATCH-RESIDUE-CONTAINMENT` | `active` | reclaim repository scratch that nothing can reach | [open](../tasks/SCRATCH-RESIDUE-CONTAINMENT.md) |
 | `SEMANTIC-EMPTY-CATALOG-FILTER` | `done` | stop disabling the grounding filter on documents with no grounding | [open](../tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md) |
 | `SIGNAL-CATALOG-CAPTURE-GAP` | `active` | protocol specifications that declare no signals at all | [open](../tasks/SIGNAL-CATALOG-CAPTURE-GAP.md) |
+| `SIGNAL-DECLARATION-ROW-DROP` | `active` | the authoritative declaration reader silently discards 18.3% of the rows it was given | [open](../tasks/SIGNAL-DECLARATION-ROW-DROP.md) |
 | `SIGNAL-TABLE-COLUMNLESS-RECALL` | `done` | capture signals from column-less Signal\|Description tables | [open](../tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md) |
 | `SIGNOFF-BURNDOWN` | `superseded` | WITHDRAWN — this tree was archaeology | [open](../tasks/SIGNOFF-BURNDOWN.md) |
 | `SIGNOFF-REMEDIATION` | `done` | Restore signoff quality at HEAD | [open](../tasks/SIGNOFF-REMEDIATION.md) |

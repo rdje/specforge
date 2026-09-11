@@ -391,6 +391,25 @@ specforge eval-extraction crates/specforge/test_data/llm_eval/seed_i2c_signals.j
     precision (assumes gold enumerates all signals)  6/6 = 1.000
 ```
 
+### What a `1.000` does not measure: the rows that never reached the scorer
+
+A score compares what was extracted against what the gold names. It is silent about anything the gold
+does not name — including material the pipeline dropped before scoring began.
+
+Measured on `2026-09-11`: the reader that builds signal declarations from tables discards **482 of
+2,637 rows (18.3 %)** corpus-wide, whenever it can infer neither a direction nor a width for the row.
+One bus specification loses **103** such rows across its two editions **while scoring `1.000` on every
+aspect of its gold**. The gold names facts the surviving declarations happen to carry, so a
+three-digit recall loss sits entirely inside the score's blind spot. Four other specifications lose
+100 % of their declaration rows and are not scored at all.
+
+This is the same lesson as the complete-gold precision caveat below, pointed the other way: that
+caveat warns that precision assumes the gold enumerates every signal, and this warns that **recall
+assumes the rows reached the scorer**. Neither assumption is checked by the number. The fix being
+tracked (`SIGNAL-DECLARATION-ROW-DROP`) makes the reader report rows-considered against
+declarations-emitted, so the ratio becomes something a check can bound rather than something only a
+census can find.
+
 Recall is **perfect** (all six real signals) and precision is now **1.000** — but that precision is the
 *result of a fix*, and the story of how it got there is the point. When the gold was first authored,
 precision was **0.600**: the extractor also emitted four things that are *not* bus signals — `ACK` and

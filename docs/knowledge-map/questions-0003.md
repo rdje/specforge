@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > does FSMGen --strict --check use or validate signal direction (input vs output)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > does FSMGen 030f8c273 accept a value-free (sample S as s) transaction body
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
@@ -48,6 +50,10 @@
   > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > does SpecForge preserve certification workflow source evidence
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > does SpecForge read an enumerated width set like 8, 16, 32, 64
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > does SpecForge read the Slave -> Master arrow direction form
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > does SpecForge reject a page metadata staging traversal or symlink escape
 - [contested-priors](../knowledge/contested-priors.md)
@@ -292,9 +298,3 @@
   > does validate follow the embedded artifact layout
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does validate materialize SourceIR normalized manifests
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > does validate report message_field_records
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated

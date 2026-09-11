@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what caused the I2C symbol alpha production failure
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > what causes actor_signal_relations / extracted_statements to differ run-to-run
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > what changed between stale and current OpenCAPI Certified Definition artifacts
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
@@ -193,6 +201,8 @@
   > what does the PUBLISHED-ASSERTIONS doctrine prove
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what does the active task evidence checker verify
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
@@ -287,13 +297,3 @@
   > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what happens to section deep-links when I partition a record (they break unless the retained record keeps the moved headings as redirects; SECTION-ANCHORS gates it, and links inside sealed archive segments can only ever be repaired at the target end)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what happens to self_ref under batched ingest
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > what happens to the doctrine gates when I add a key to doctrine/chain_currency/retained_bundles.json
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what happens to the extraction-quality gauge when the constraint surface is replaced
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what happens when SemanticIR has no authoritative signal declarations
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what happens when SemanticIR has no authoritative signal names
