@@ -35,6 +35,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `BOOK-BEHAVIOUR-CURRENCY` | `active` | the book can describe behaviour the code no longer has, and no gate sees it | [open](tasks/BOOK-BEHAVIOUR-CURRENCY.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](tasks/CLAIM-VERIFICATION-ADOPTION.md) |
 | `CORPUS-COVERAGE` | `active` | build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale | [open](tasks/CORPUS-COVERAGE.md) |
@@ -64,13 +65,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 151 trees route through 3 derived part(s); open a range to find an id.
+All 152 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
-| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FULL-PAGE-INTENT-CAPTURE` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `GRITS-CROSS-TOOL` | `R6-CONVERGE-HARDENING` |
-| [0003](task-catalog/catalog-0003.md) | 39 | `R6-EVIDENCE-HARDENING` | `WIRE-BASED-100` |
+| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-SUBMODULE-BUMP` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FULL-PAGE-INTENT-CAPTURE` | `R16-WAVEFORM-CONTRACT-MINING` |
+| [0003](task-catalog/catalog-0003.md) | 40 | `R6-CONVERGE-HARDENING` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

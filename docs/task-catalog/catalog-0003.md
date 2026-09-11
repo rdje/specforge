@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `R6-CONVERGE-HARDENING` | `done` | Converge Module Test Assertion Hardening | [open](../tasks/R6-CONVERGE-HARDENING.md) |
 | `R6-EVIDENCE-HARDENING` | `done` | Evidence + Adapter Module Test Assertion Hardening | [open](../tasks/R6-EVIDENCE-HARDENING.md) |
 | `R6-FSM-ADAPTER` | `superseded` | `.fsm` Adapter Hardening | [open](../tasks/R6-FSM-ADAPTER.md) |
 | `R6-INTENT-HARDENING` | `done` | Intent Module Test Assertion Hardening | [open](../tasks/R6-INTENT-HARDENING.md) |

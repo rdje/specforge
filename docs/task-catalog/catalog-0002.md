@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](../tasks/FULL-PAGE-INTENT-CAPTURE.md) |
 | `GRITS-CROSS-TOOL` | `done` | a table-structure gold from independent-witness agreement | [open](../tasks/GRITS-CROSS-TOOL.md) |
 | `INTENT-COMPLETENESS-RESEARCH` | `done` | theory + design for detecting & bounding intent-capture misses | [open](../tasks/INTENT-COMPLETENESS-RESEARCH.md) |
 | `ISF-HANDSHAKE-STAGE-LOWERING` | `superseded` | lower HandshakeComplete temporal_rules to `(stage …)` | [open](../tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `R16-MODULE-HARDENING` | `done` | unit-test signoff hardening for the R16 IR modules | [open](../tasks/R16-MODULE-HARDENING.md) |
 | `R16-MULTIMODAL-CONTRACT-FUSION` | `done` | cross-modal evidence → one contract (point #3) | [open](../tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
 | `R16-WAVEFORM-CONTRACT-MINING` | `done` | timing diagram → contract (point #4 — the crux) | [open](../tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
-| `R6-CONVERGE-HARDENING` | `done` | Converge Module Test Assertion Hardening | [open](../tasks/R6-CONVERGE-HARDENING.md) |
 
