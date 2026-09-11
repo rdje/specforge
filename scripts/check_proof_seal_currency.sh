@@ -62,8 +62,25 @@
 # ledger they do not have.
 #
 # Modes:
-#   --check      (default) the census and the canonical probes. Writes nothing.
+#   --check      (default, gate tier) the total census and a SAMPLED probe — one representative per
+#                distinct seal per stage. Cheap enough for a pre-commit hook. Writes nothing.
+#   --total      (CI tier) the same census with EVERY in-scope document probed at every non-terminal
+#                stage. Writes nothing. This is the mode that can see a per-document divergence.
 #   --self-test  prove this script's own controls are fail-closed before trusting a PASS.
+#
+# WHY TWO MODES, measured rather than assumed (SIGNAL-DECLARATION-ROW-DROP.1c). This script used to
+# argue that one probe per distinct seal "is not a sample: the census is what establishes
+# representativeness". That argument is FALSE, and the counterexample is in this repository's
+# history. At `48def695` all 27 evidence artifacts carried ONE seal, so one probe ran and the gate
+# reported green — while the canonical loader REFUSED 4 of the 27, every wire-bearing one, for three
+# commits. The seal is homogeneous precisely because it is a digest over the RULESET and ignores
+# artifact content; the loader also verifies a per-document REPLAY TOPOLOGY
+# (`evidence.claim.<field>.root`'s recorded `inputs_sha256`) which does not. One probe per seal can
+# therefore never see a content-driven divergence. It is `CLAIM_VERIFICATION.md` §2's fourth row
+# exactly: a per-item assertion checked against per-container data, reproducing perfectly while
+# getting it wrong. The sampled mode stays because it is what a pre-commit hook can afford — but it
+# now SAYS it is a sample and names the class it cannot see, and `--total` is registered CI-tier so
+# the class is enforced rather than merely documented.
 #
 # Skips LOUDLY when the corpus root is absent: `generated/` is untracked, so a fresh clone and a
 # hosted CI runner have none and this doctrine does not govern them. Silence would read as a pass.
@@ -82,11 +99,13 @@ specforge_activate_project_data "$ROOT"
 GENERATED_ROOT="${SPECFORGE_PROOF_SEAL_GENERATED_ROOT:-generated}"
 
 MODE=check
+PROBE_SCOPE=sample
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --check)     MODE=check ;;
+    --check)     MODE=check; PROBE_SCOPE=sample ;;
+    --total)     MODE=check; PROBE_SCOPE=total ;;
     --self-test) MODE=self-test ;;
-    *) printf 'Usage: %s [--check|--self-test]\n' "$0" >&2; exit 2 ;;
+    *) printf 'Usage: %s [--check|--total|--self-test]\n' "$0" >&2; exit 2 ;;
   esac
   shift
 done
@@ -106,6 +125,11 @@ fail_note() { printf '[proof-seal] FAIL: %s\n' "$1" >&2; }
 # match is still a breach — it is reported as an unclassified one, never downgraded.
 STALE_SEAL_PATTERN='(cumulative )?proof ledger ruleset hash is stale'
 
+# The diagnostic a probe emits when its own INPUT is missing rather than its subject being unsealed.
+# A held-out normalized bundle makes `evidence --dry-run` unrunnable for that document; the check
+# then has no verdict, and saying so is the honest outcome (never a pass, never a breach).
+ABSENT_PRECONDITION_PATTERN='path does not exist'
+
 # remedy_for <stage> — the task-owned command that re-earns a stale seal at this stage.
 remedy_for() {
   case "$1" in
@@ -118,7 +142,7 @@ remedy_for() {
 
 # ── Self-test: prove the controls are fail-CLOSED before trusting a PASS ────
 run_self_test() {
-  local work passed=0 total=16 output status
+  local work passed=0 total=19 output status
   work="$(mktemp -d)" || { fail_note 'cannot create a repository-local self-test workspace'; return 1; }
 
   local hex_a hex_b hex_c
@@ -198,11 +222,14 @@ run_self_test() {
     else fail_note "self-test 8: the terminal stage did not report an absent probe (status $status)"; fi
   fi
 
-  # A miniature corpus: two documents, both sealed, used by the end-to-end controls below.
+  # A miniature corpus: three documents, all sealed. `doc_c` carries the SAME seal as `doc_a`, which
+  # is what makes the sampled/total distinction testable at all — a homogeneous neighbour is exactly
+  # where a divergent document hides.
   local mini="$work/mini"
-  mkdir -p "$mini/source_ir/doc_a" "$mini/source_ir/doc_b"
+  mkdir -p "$mini/source_ir/doc_a" "$mini/source_ir/doc_b" "$mini/source_ir/doc_c"
   cp "$work/compact.json" "$mini/source_ir/doc_a/source_ir.json"
   cp "$work/nested.json"  "$mini/source_ir/doc_b/source_ir.json"
+  cp "$work/compact.json" "$mini/source_ir/doc_c/source_ir.json"
 
   # A recording stub that ACCEPTS: every probe succeeds, so the gate must pass and must have asked.
   local accept_stub="$work/accepting-specforge"
@@ -276,6 +303,50 @@ run_self_test() {
   case "$output" in *'SKIP'*) : ;; *) status=99 ;; esac
   if [ "$status" -eq 0 ]; then passed=$((passed + 1))
   else fail_note "self-test 16: an absent corpus root did not skip loudly (status $status, output '$output')"; fi
+
+  # 17) THE SAMPLING CONTROL, and the reason this script has two modes. A loader that accepts
+  #     `doc_a` and REFUSES `doc_c` — which carries the SAME seal — must be invisible to the sampled
+  #     probe and caught by the total one. This is `.1b`'s shape in miniature: one seal, a divergent
+  #     document, and a gate that reported green over it for three commits.
+  local selective_stub="$work/selective-specforge"
+  printf '%s\n' '#!/usr/bin/env bash' \
+    'case "$*" in' \
+    '  *doc_c*) printf "EvidenceIR proof verification failed: registered derivation output or input topology is stale\n" >&2; exit 1 ;;' \
+    'esac' \
+    'exit 0' > "$selective_stub"
+  chmod +x "$selective_stub"
+  output="$(SPECFORGE_PROOF_SEAL_GENERATED_ROOT="$mini" \
+            SPECFORGE_PROOF_SEAL_BIN="$selective_stub" \
+            "$ROOT/scripts/check_proof_seal_currency.sh" --check 2>&1)"; status=$?
+  if [ "$status" -eq 0 ]; then passed=$((passed + 1))
+  else fail_note "self-test 17: the sampled probe was expected to MISS a divergent same-seal document (status $status)"; fi
+
+  # 18) ...and `--total` catches exactly that document, by name.
+  output="$(SPECFORGE_PROOF_SEAL_GENERATED_ROOT="$mini" \
+            SPECFORGE_PROOF_SEAL_BIN="$selective_stub" \
+            "$ROOT/scripts/check_proof_seal_currency.sh" --total 2>&1)"; status=$?
+  case "$status:$output" in
+    0:*) fail_note 'self-test 18: --total passed over a document its own loader refuses' ;;
+    *doc_c*) passed=$((passed + 1)) ;;
+    *) fail_note "self-test 18: --total failed without naming the divergent document (output '$output')" ;;
+  esac
+
+  # 19) A probe whose own INPUT is absent yields NO VERDICT — never an acceptance, never a breach.
+  #     The three wire golds' normalized bundles are held out, so their `evidence --dry-run` probe
+  #     cannot run; counting that as a pass would be the same error this leaf exists to remove.
+  local absent_stub="$work/absent-input-specforge"
+  printf '%s\n' '#!/usr/bin/env bash' \
+    'printf "error: path does not exist: /nope/normalized/doc.md\n" >&2' \
+    'exit 1' > "$absent_stub"
+  chmod +x "$absent_stub"
+  output="$(SPECFORGE_PROOF_SEAL_GENERATED_ROOT="$mini" \
+            SPECFORGE_PROOF_SEAL_BIN="$absent_stub" \
+            "$ROOT/scripts/check_proof_seal_currency.sh" --total 2>&1)"; status=$?
+  case "$status:$output" in
+    0:*'with no verdict'*) passed=$((passed + 1)) ;;
+    0:*) fail_note "self-test 19: an absent probe input passed WITHOUT being reported as no-verdict (output '$output')" ;;
+    *) fail_note "self-test 19: an absent probe input was reported as a seal breach (status $status)" ;;
+  esac
 
   rm -rf "$work"
   if [ "$passed" -eq "$total" ]; then note "self-test $total/$total passed."; return 0; fi
@@ -372,15 +443,22 @@ for stage in $(chain_stages); do
     continue
   fi
 
-  # One representative per DISTINCT seal — representativeness established by the census above.
+  # Which artifacts get asked. SAMPLE: one representative per distinct seal — cheap, and blind to a
+  # divergence the seal cannot express. TOTAL: every sealed artifact at this stage.
   REPS="$WORK/reps.$stage"
-  awk -F'\t' '!seen[$2]++ { print $2 "\t" $1 }' "$SEALS" > "$REPS"
-  distinct="$(wc -l < "$REPS" | tr -d ' ')"
+  distinct="$(awk -F'\t' '!seen[$2]++' "$SEALS" | wc -l | tr -d ' ')"
+  if [ "$PROBE_SCOPE" = 'total' ]; then
+    awk -F'\t' '{ print $2 "\t" $1 }' "$SEALS" > "$REPS"
+  else
+    awk -F'\t' '!seen[$2]++ { print $2 "\t" $1 }' "$SEALS" > "$REPS"
+  fi
+  probes="$(wc -l < "$REPS" | tr -d ' ')"
   summary="$stage — $sealed/$in_scope persisted and sealed, $distinct distinct seal(s)"
 
   accepted=0
   rejected=0
   unprobed=0
+  precondition_absent=0
   while IFS=$'\t' read -r seal representative; do
     chain_stage_readonly_probe "$stage" "$representative" "$WORK/probe.err"
     case "$?" in
@@ -395,8 +473,18 @@ for stage in $(chain_stages); do
         fail=1
         ;;
       *)
-        rejected=$((rejected + 1))
         diagnostic="$(tr '\n' ' ' < "$WORK/probe.err" | sed 's/  */ /g' | cut -c1-200)"
+        # A probe whose own INPUT is absent has no verdict to give. The three wire golds' normalized
+        # bundles are deliberately held out of the corpus (`retained-bundle-population-is-frozen`),
+        # so the `evidence --dry-run` probe for them cannot run at all. That is reported as an
+        # absent verdict — never as an acceptance, and never as a seal breach it is not evidence of.
+        if printf '%s' "$diagnostic" | grep -Eq "$ABSENT_PRECONDITION_PATTERN"; then
+          precondition_absent=$((precondition_absent + 1))
+          note "$stage — NO VERDICT for $representative: the probe's own input is absent"
+          note "$stage — ($diagnostic). Censused and sealed, but unprobeable here."
+          continue
+        fi
+        rejected=$((rejected + 1))
         fail_note "$stage — the current build REFUSES the persisted seal $(printf '%.8s' "$seal")… carried by"
         fail_note "$stage — $representative"
         fail_note "$stage — loader: $diagnostic"
@@ -419,14 +507,24 @@ for stage in $(chain_stages); do
     note "$stage — canonical probe exists, and CHAIN-CURRENCY does not close the gap either (its"
     note "$stage — content comparison excludes the proof surface). The only loader that would answer"
     note "$stage — for it is \`specforge validate\`, which mutates the artifact and the chain above it."
+  elif [ "$PROBE_SCOPE" = 'total' ]; then
+    note "$summary; TOTAL probe: $accepted of $sealed accepted, $rejected refused, $precondition_absent with no verdict"
   else
-    note "$summary; $accepted accepted, $rejected refused by the current build's canonical loader"
+    note "$summary; SAMPLED probe ($probes of $sealed documents, one per distinct seal): $accepted accepted, $rejected refused, $precondition_absent with no verdict"
   fi
 done
 
 if [ "$fail" -eq 0 ]; then
-  note 'the persisted corpus carries seals the current build accepts. CHAIN-CURRENCY (CI tier) still'
-  note 'owns whether those artifacts are the CONTENT the current binary reproduces.'
+  if [ "$PROBE_SCOPE" = 'total' ]; then
+    note 'every probeable persisted artifact is accepted by the current build, asked one document at a'
+    note 'time. CHAIN-CURRENCY (CI tier) still owns whether those artifacts are the CONTENT the'
+    note 'current binary reproduces.'
+  else
+    note 'the sampled persisted artifacts carry seals the current build accepts. THIS IS A SAMPLE: one'
+    note 'document per distinct seal, so it cannot see a per-document replay-topology divergence —'
+    note 'measured once at 23 accepted / 4 refused under a single seal. Run --total (CI tier) for the'
+    note 'per-document verdict, and CHAIN-CURRENCY for whether the content still reproduces.'
+  fi
 else
   fail_note 'the persisted corpus is out of seal with the current build. Re-seal it under its owning'
   fail_note 'task leaf with before/after evidence — never as a side effect of an unrelated slice.'

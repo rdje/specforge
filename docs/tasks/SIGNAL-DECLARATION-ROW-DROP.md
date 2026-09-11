@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.2a`/`.2b` closed; `.2` split into `.2a`-`.2d`; `.1c`/`.2c`/`.2d`/`.3` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b` closed; `.2` split into `.2a`-`.2d`; `.2c`/`.2d`/`.3` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -241,7 +241,7 @@ a long tail.
   Verification: see the `.1b` checklist below.
   Commit: see log.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.1c` · Status: `pending` · Goal: **make the canonical probe
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1c` · Status: `done` (`2026-09-11`) · Goal: **make the canonical probe
   per-document, because "one probe per distinct seal" is a sample of the property that actually
   broke.** `scripts/check_proof_seal_currency.sh` states its own argument in its header: the probe is
   *"REPRESENTATIVE, one per distinct seal per stage. That is not a sample: the census is what
@@ -254,9 +254,16 @@ a long tail.
   Decide the tier honestly: measure a full per-document sweep first, and if it costs more than the
   gate tier can carry, move the total probe to CI and leave a cheap prefilter at the gate — but never
   leave a sampled probe *describing itself* as total.
+  **Decided by measurement: the total sweep is 19m02s, so it is CI tier and the gate keeps sampling —
+  but the gate now says it samples.** The sampled run is 4 probes; the total run is 108 (27 documents ×
+  4 non-terminal stages). Both modes live in one script because the census, the stratum, the seal
+  predicate and the loader probe must not fork; `scripts/check_proof_seal_total.sh` exists only because
+  the driver's registry names one argument-less executable per row.
+  Non-goal: making the gate tier total. A pre-commit hook that costs 19 minutes is a hook that gets
+  bypassed, which is a worse outcome than a sample that admits what it is.
   Prerequisite: `.1b`.
-  Verification: pending
-  Commit: pending
+  Verification: see the `.1c` checklist below.
+  Commit: see log.
 
 ## Acceptance Checklist (enforced)
 - [x] **REPRODUCE / MEASURE** — `.0`'s corpus census: **482 of 2,637 signal-description rows (18.3%)**
@@ -411,6 +418,42 @@ a long tail.
   `.1c` rather than left as a remark.
 
 
+## Acceptance Checklist — `.1c` (enforced)
+- [x] **REPRODUCE / MEASURE** — the gate's own output, before: `source-ir — 27/27 persisted and sealed,
+  1 distinct seal(s); 1 accepted, 0 refused`. One probe stood for 27 documents at every stage, and
+  `.1b` measured that exact configuration answering 23 accepted / 4 refused. The script's header
+  argued this "is not a sample: the census is what establishes representativeness"; the census
+  establishes representativeness **of the seal**, which is a digest over the ruleset, and the loader
+  also verifies a per-document replay topology the seal cannot express.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/check_proof_seal_currency.sh`: the probe list was
+  `awk '!seen[$2]++'` over the seal census, so exactly one artifact per distinct seal was ever asked.
+  `CLAIM_VERIFICATION.md` §2 row 4 names the class — a per-item assertion checked against per-container
+  data, which reproduces perfectly while getting it wrong.
+- [x] **ADDRESSED (verified)** — `--total` probes every in-scope artifact at every non-terminal stage;
+  the gate tier keeps sampling and now **reports that it samples**, with the sample size and the class
+  it cannot see. Measured on this corpus: `source-ir 24 of 27 accepted, 0 refused, 3 with no verdict`
+  (the three held-out normalized bundles, each named), `evidence/semantic/intent 27 of 27 accepted`,
+  exit 0, **19m02s** — which is what puts it at CI tier. **Observed RED, on the exact defect shape:**
+  self-test 17 runs a loader that accepts `doc_a` and refuses `doc_c`, its **same-seal** neighbour, and
+  asserts the sampled mode MISSES it; self-test 18 asserts `--total` fails and names `doc_c`; self-test
+  19 asserts a probe whose own input is absent yields NO VERDICT rather than an acceptance. Without the
+  change, 18 cannot pass.
+- [x] **NO REGRESSION** — `bash scripts/check_proof_seal_currency.sh --self-test` **19/19 passed**
+  (16 pre-existing + 3 new); `./scripts/check_proof_seal_total.sh --self-test` reaches the same 19
+  rather than a weaker copy. `bash scripts/check_doctrines.sh` ALL 13 executed PASS (**15 registered**,
+  up from 14); `bash scripts/check_project_data_locality.sh` PASS — the wrapper carries the same
+  repository-root data contract, which it failed until it did. No Rust source is touched, so no score,
+  artifact, or gold can move; `cargo test` 1414 / 472 unchanged from `.2b`.
+- [x] **GENERICITY (ADR 0006)** — shell tooling only; no rule, vocabulary, or document text.
+- [x] **LOCKSTEP** — `DOCTRINE_ENFORCEMENT.md` §10 gains the `PROOF-SEAL-TOTAL` row and its
+  `PROOF-SEAL-CURRENCY` row stops claiming representativeness;
+  `docs/book/src/reference/doctrine-enforcement.md` corrects the same claim in prose — it said *"a total
+  census, not a sample … representativeness is measured rather than assumed"* — and gains the two-tier
+  explanation plus a fourth property for the no-verdict case. Fact card
+  `[[evidence-rule-field-content-stales-every-proof]]` updated with the repair. **Producer sub-clause:
+  the sampled probe is not deleted**, it is relabelled, so no text describes behaviour that has gone away.
+
+
 ## Acceptance Checklist — `.2a` (enforced)
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_row_notations.py` over all 78
   persisted `source_ir.json`: **12** name cells in `signal_description` tables whose leading token is
@@ -563,8 +606,9 @@ a long tail.
   `bash scripts/check_doctrines.sh` all gate-tier PASS. CHAIN-CURRENCY is CI-tier: `.1b` ran it green
   over this exact corpus (*"every measurable persisted artifact is exactly what the current binary
   produces"*), and this leaf's producer output is byte-identical for all 27 proof-carrying documents,
-  so the corpus cannot have moved; it is re-running as a confirmatory check and must be green before
-  the next push.
+  so the corpus cannot have moved. Confirmed after the commit: the re-run reports *"every measurable
+  persisted artifact is exactly what the current binary produces"* — evidence 24/24/0,
+  semantic·intent·isf-adapter 27/27/0, retention 24.
 - [x] **GENERICITY (ADR 0006)** — the rule is seven arrow spellings, seven disqualifying markers, and
   the role taxonomy that already existed; no document, vendor, or protocol name enters it. The 13
   corpus cell forms appear only in a test fixture. Registered under the existing `evidence.declaration`
@@ -580,11 +624,9 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `SIGNAL-DECLARATION-ROW-DROP.1c` — make the canonical proof probe per-document. First, because a
-   sampled probe that calls itself total is how the corpus stayed broken for three commits.
-2. `SIGNAL-DECLARATION-ROW-DROP.2c` — the enumerated width set. Decide the representation of a legal
+1. `SIGNAL-DECLARATION-ROW-DROP.2c` — the enumerated width set. Decide the representation of a legal
    width set in the leaf before writing code; 7 cells in 2 documents.
-3. `SIGNAL-DECLARATION-ROW-DROP.3` — the emitted spelling must be the document's spelling. Independent
+2. `SIGNAL-DECLARATION-ROW-DROP.3` — the emitted spelling must be the document's spelling. Independent
    of `.2`; census first.
-4. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+3. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.

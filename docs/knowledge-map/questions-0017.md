@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why is the latest reviewed population replay not published
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -22,6 +24,8 @@
   > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why is the total proof-seal probe CI-tier rather than gate-tier
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > why is there no fields-without-positions completeness gap
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)

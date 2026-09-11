@@ -69,6 +69,7 @@ other re-derivable trace.
 | `PUBLISHED-ASSERTIONS` | deterministic-oracle | every published value in a governed prose region re-derives against its named producer field, because the producer is executed and its report compared — the one thing a digest binding cannot do, since a digest proves a region has not changed and never that its numbers still re-derive. A value may instead be gated by a control with a known-bad case, authored by a decision, or anchored to a revision; there is no outcome for a value carried because it has not moved lately. Two surfaces stating different values for one field fail without running anything, a set is compared as an enumeration rather than a size, and a record whose enumeration could include its own publishing surface must declare that exclusion |
 | `RESIDUAL-ACTIONABILITY` | derive-and-diff | the frozen required-residual contract still describes the artifact it claims to describe: its witness pins the tracked reviewed result by digest, its cell decomposition and published ratio re-derive from that result instead of being restated, and every typed residual cause resolves to a real carrier in production source or an honest `null`. It was added after the contract sat red for 43 commits — a later leaf legitimately republished the reviewed result and nothing required the frozen contract to be re-examined, which is precisely the drift an executable contract exists to prevent |
 | `PROOF-SEAL-CURRENCY` | oracle | every persisted artifact under `generated/` records a proof seal today's build still accepts — censused across every stage of the proof-carrying stratum, and probed through the product's own loader by running the consuming stage in dry-run form rather than by validating, which would mutate what it reads |
+| `PROOF-SEAL-TOTAL` | oracle | the same census with every in-scope artifact probed individually at every non-terminal stage — the only way to see a divergence between documents that share a seal, and CI-tier because a per-document sweep is minutes rather than seconds |
 | `CHAIN-CURRENCY` | oracle | every proof-current artifact under `generated/` is exactly what today's binary reproduces from verified upstream authority; a legacy/proofless compatibility refusal is reported as an explicit unmeasurable frontier, while a stale current proof still fails — and retained normalized bundles match their declaration exactly |
 
 `PUBLISHED-ASSERTIONS` exists because of a defect this manual is itself a past instance of. SpecForge publishes
@@ -311,12 +312,26 @@ slice ran could observe the transition.
 
 `scripts/check_proof_seal_currency.sh` closes that specific gap at gate tier, on every commit. It reads
 the seal every persisted artifact records, at every stage, for every document in the proof-carrying
-stratum — a total census, not a sample — and then asks today's build whether it still accepts that seal.
-The census is what makes the asking cheap: where every artifact at a stage records the same seal, one
-canonical probe settles the stage, and where seals diverge, each distinct seal earns its own probe. So
-representativeness is measured rather than assumed.
+stratum — a total census — and then asks today's build whether it still accepts that seal.
 
-Three properties of that check are worth stating, because each is a mistake it would have been easy to
+For a long time the check asked about **one document per distinct seal**, and argued that this was not a
+sample because the census established representativeness. That argument was wrong, and the corpus proved
+it. A change to an already-registered EvidenceIR field's *content* leaves the seal exactly where it is —
+the seal is a digest over the ruleset — while the loader also verifies a per-document replay topology,
+which the content does move. Every one of the 27 artifacts carried the same seal, so one probe ran and
+reported green; the loader was in fact refusing four of them, and those four were every wire-bearing
+specification in the corpus. The scoring oracle refused every gold for three commits underneath a green
+gate. It is the failure `CLAIM_VERIFICATION.md` tabulates as *a per-item assertion checked against
+per-container data*: it reproduces perfectly while getting it wrong.
+
+So the check now has two tiers and says which one it is running. The gate tier still samples — that is
+what a pre-commit hook can afford — but its output names the sample size and the class it cannot see.
+`--total` probes every document at every non-terminal stage and is registered as its own CI-tier
+doctrine. On this corpus the sampled run is four probes; the total run is 108, and takes about nineteen
+minutes. The script's own self-test pins the difference with a loader that accepts one document and
+refuses its same-seal neighbour: the sampled mode must miss it, and the total mode must name it.
+
+Four properties of that check are worth stating, because each is a mistake it would have been easy to
 make:
 
 - **It asks the product's own loader, and asks it read-only.** `specforge validate` is the obvious way to
@@ -329,6 +344,10 @@ make:
   canonical probe exists for it at all, and chain currency does not close that gap either because its
   content comparison excludes the proof surface by construction. That stage is censused and reported as
   unprobed rather than quietly counted as a pass.
+- **A probe whose own input is missing yields no verdict, not a pass.** Three documents' normalized
+  bundles are deliberately held out of the corpus, so the probe for them cannot run at all. The total
+  mode names each one and counts it separately from the accepted set. Counting an unanswerable question
+  as an answer is the same error in a smaller place.
 - **It is narrower than chain currency, deliberately.** A current seal says the persisted proof is one
   today's build issues. It says nothing about whether the artifact is still the content today's binary
   would reproduce. That remains chain currency's question, and it remains CI-tier.

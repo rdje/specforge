@@ -191,6 +191,8 @@
   > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > what does check_book_current_truth.sh actually cover
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > what does check_proof_seal_currency.sh --total do
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > what does check_rolling_ledger_protocol --report actually measure
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -295,5 +297,3 @@
   > what global provenance and stage-conservation gates apply before executable lowering
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what grounded content survives the Cortex-A76 optimization guide refresh
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what grounded heuristic only interface evidence is preserved

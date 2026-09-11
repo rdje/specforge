@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the FSMGen issue bundle protocol
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is the I2C declared-signal recall / precision
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -296,5 +298,3 @@
   > what real PDF proves the FigureRegion vertical path
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what remains before the repaired reviewed population can be published
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > what remains under-extracted in OpenCAPI Discovery Configuration

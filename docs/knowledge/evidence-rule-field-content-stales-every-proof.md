@@ -8,6 +8,8 @@ answers:
   - "why did only four documents refuse to load after an EvidenceIR producer change"
   - "why did check_proof_seal_currency.sh pass while four artifacts would not load"
   - "is one canonical probe per distinct seal a sample"
+  - "what does check_proof_seal_currency.sh --total do"
+  - "why is the total proof-seal probe CI-tier rather than gate-tier"
   - "what is replay_bytes and what depends on it"
   - "how do I rebuild the AXI APB AHB chains when their normalized bundles are held out"
   - "can rebuild_stage_cascade.sh land a deliberate content change"
@@ -51,9 +53,19 @@ homogeneous precisely because it does not depend on artifact content, and the lo
 per-document replay topology that does.** All 27 evidence artifacts carried one seal, so one probe
 ran, and it happened to be one of the 23 that worked. This is `CLAIM_VERIFICATION.md` §2's fourth
 row — a per-item assertion checked against per-container data, which reproduces perfectly while
-getting it wrong. Owned by `SIGNAL-DECLARATION-ROW-DROP.1c`;
-`[[doctrine-driver-runs-no-cargo-gate]]` is the same session's other instance of a report that is
-silent rather than negative.
+getting it wrong. `[[doctrine-driver-runs-no-cargo-gate]]` is the same session's other instance of a
+report that is silent rather than negative.
+
+**Repaired in `SIGNAL-DECLARATION-ROW-DROP.1c`, and the tiering is measured rather than asserted.**
+`check_proof_seal_currency.sh --total` probes every in-scope artifact at every non-terminal stage: on
+this corpus that is 108 probes against the sampled mode's 4, and it takes **19m02s**, which is why it
+is registered as its own CI-tier doctrine (`PROOF-SEAL-TOTAL`, `scripts/check_proof_seal_total.sh`)
+rather than made the gate. The gate still samples — a 19-minute pre-commit hook is a bypassed hook —
+but its output now names the sample size and the class it cannot see. Self-tests 17 and 18 pin the
+difference with a loader that accepts one document and refuses its same-seal neighbour: the sampled
+mode must miss it, the total mode must name it. Self-test 19 pins the third outcome — a probe whose own
+input is absent (a held-out normalized bundle) yields NO VERDICT, counted and named separately, never
+folded into the accepted set.
 
 ## How the corpus is repaired
 
