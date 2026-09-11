@@ -49,6 +49,24 @@ commit** (`scripts/check_task_acceptance.sh`). Copy this into the leaf:
 - [ ] **LOCKSTEP** — <mdBook / live-docs / KM card updated, or N/A + reason>
 ```
 
+**LOCKSTEP has one sub-clause that only a producer change can satisfy.** If the slice **deletes or
+replaces a production rule**, say which book text described the old behaviour and what happened to it —
+or state that none did. A deleted producer leaves its description standing, and the book is the owner's
+only window: `WIRE-BASED-100.4a` found the temporal chapter asserting a resolver that had been gone for
+a month, with every gate green. `BOOK-BEHAVIOUR-CURRENCY.0` measured the two ways to look, and only one
+of them works:
+
+```bash
+# Useless here: no deleted production function is named by symbol anywhere in the book (measured: 167
+# removed functions, 0 true hits). Do not build a symbol scanner on this evidence.
+# What actually finds it — the ~18-line present-tense behavioural population, adjudicate by hand:
+grep -rnE 'SpecForge (now|currently) [a-z]+|(now|currently) (resolves|infers|uses|treats|derives|applies|promotes|accepts|recognizes|recognises|canonicalizes|canonicalises|expands|merges)' docs/book/src --include='*.md'
+```
+
+This is deliberately **not** hard-gated. The measured exposure is one stale claim per quarter, and the
+hard-gated boxes are reserved for what a green build must never hide; a required tick for a rare,
+judgement-bound check buys false positives, not currency (`[[book-behaviour-currency-instrument]]`).
+
 **Hard-gated (required, must be ticked + evidence-backed): ROOT CAUSE, ADDRESSED, NO REGRESSION.**
 REPRODUCE/MEASURE, GENERICITY, and LOCKSTEP are part of the template and good practice (and SpecForge's
 own doctrine), but are not hard-blocked by the gate, to avoid false-positives. The whole task tree's

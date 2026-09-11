@@ -35,7 +35,6 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
-| `BOOK-BEHAVIOUR-CURRENCY` | `active` | the book can describe behaviour the code no longer has, and no gate sees it | [open](tasks/BOOK-BEHAVIOUR-CURRENCY.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](tasks/CLAIM-VERIFICATION-ADOPTION.md) |
 | `CORPUS-COVERAGE` | `active` | build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale | [open](tasks/CORPUS-COVERAGE.md) |

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `BOOK-BEHAVIOUR-CURRENCY`
-- Status: `active`
+- Status: `done` (`2026-09-11`; `.0` census + `.1` obligation; the FSMGen probe is a named residual)
 - Roadmap lane: `R0` (live-doc continuity / accuracy)
 - Created: `2026-09-11`
 - Last updated: `2026-09-11`
@@ -71,7 +71,7 @@ template detector.
 
 ## Task Tree
 
-- ID: `BOOK-BEHAVIOUR-CURRENCY` · Status: `active` (`.0` done `2026-09-11`; `.1` open) · Children: `.0`, `.1`
+- ID: `BOOK-BEHAVIOUR-CURRENCY` · Status: `done` (`2026-09-11`; both leaves closed, one residual named) · Children: `.0`, `.1`
 
 - ID: `BOOK-BEHAVIOUR-CURRENCY.0` · Status: `done` (`2026-09-11`) · Goal: **census what else is stale
   right now.** Before adding any obligation, measure the standing exposure rather than generalise from
@@ -119,14 +119,33 @@ template detector.
   Verification: see this leaf's arms — every figure above is reproducible from the commands it names.
   Commit: see log.
 
-- ID: `BOOK-BEHAVIOUR-CURRENCY.1` · Status: `open` (`2026-09-11`; **scoped down by `.0`'s census** — the
-  standing exposure is one stale claim, so this stays a checklist obligation and must not grow into a
-  scanner) · Goal: **make the obligation part of the acceptance checklist a slice already has to pass.** A deletion or replacement of a production
-  rule must state, in its LOCKSTEP item, either the `reject_literal` it added for the phrasing that
-  described the old behaviour or that no book text described it. This is enforceable by the existing
-  task-acceptance check, which already reads the checklist, so it needs no new gate tier.
-  Acceptance: the `TOOLBOX.md` template carries the sub-item; `scripts/check_task_acceptance.sh`
-  recognises it; one worked example (the `.4a` rewrite, retrofitted) shows the intended shape.
+- ID: `BOOK-BEHAVIOUR-CURRENCY.1` · Status: `done` (`2026-09-11`) · Goal: **put the obligation where a
+  slice already looks, sized by `.0`'s measured exposure.**
+
+  **This leaf's own acceptance was wrong when it was written, and the correction is the finding.** It
+  said `scripts/check_task_acceptance.sh` "already reads the checklist" and could recognise a new
+  sub-item. It does not: the script names none of the checklist boxes, and `TOOLBOX.md` states that only
+  ROOT CAUSE, ADDRESSED and NO REGRESSION are hard-gated, precisely "to avoid false-positives". So the
+  sentence described a gate that does not exist. Rather than build one to match it, the leaf is
+  re-scoped to what the measurement supports.
+
+  **Shipped.** `TOOLBOX.md`'s LOCKSTEP item gains one sub-clause: a slice that deletes or replaces a
+  production rule states which book text described the old behaviour and what happened to it, or that
+  none did. It ships with the **working instrument** — `.0`'s present-tense assertion grep, ~18 lines,
+  adjudicated by hand — and with the explicit warning that the symbol-scanner alternative measured
+  **zero true positives** over 167 removed functions, so nobody rebuilds it from first principles.
+  `[[book-behaviour-currency-instrument]]` records both arms and the residual.
+
+  **Deliberately NOT hard-gated, and the reason is proportionality.** `.0` measured the standing exposure
+  at one stale claim per quarter. The hard-gated boxes are reserved for what a green build must never
+  hide; a required tick on a rare, judgement-bound check buys false positives rather than currency. A
+  guidance clause carrying a working command is worth more than a box nobody can honestly earn.
+  Acceptance: `TOOLBOX.md` carries the sub-clause and the command; the fact card answers "how do I check
+  the book for stale behavioural claims"; no gate tier, ceiling or contract widened;
+  `scripts/check_doctrines.sh` green. Non-goal: the FSMGen probe `.0` left as a named residual — it needs
+  `fsmgen --strict --check` against the pinned submodule and is owned by whoever next touches ISF
+  temporal lowering.
   Prerequisite: `BOOK-BEHAVIOUR-CURRENCY.0` (so the obligation is sized by real exposure).
-  Verification: pending
-  Commit: pending
+  Verification: `grep -n 'LOCKSTEP has one sub-clause' TOOLBOX.md`; the card's own `reverify` command
+  reproduces the 18-line population.
+  Commit: see log.

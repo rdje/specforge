@@ -13,7 +13,7 @@ Complete membership for this range. The bounded landing is
 | `ARTIFACT-PATH-PORTABILITY` | `done` | repository-relative IR provenance and move-safe generated artifacts | [open](../tasks/ARTIFACT-PATH-PORTABILITY.md) |
 | `AUDIT-DOC-RECONCILE` | `done` | fix doc drift found by the post-ISF-ONLY audit | [open](../tasks/AUDIT-DOC-RECONCILE.md) |
 | `AUDIT-PROVIDER-FRAMING-RECONCILE` | `done` | reconcile live-doc framing that the LLM/VLM provider "doesn't exist" / R16 CVE crux is "upstream-blocked" | [open](../tasks/AUDIT-PROVIDER-FRAMING-RECONCILE.md) |
-| `BOOK-BEHAVIOUR-CURRENCY` | `active` | the book can describe behaviour the code no longer has, and no gate sees it | [open](../tasks/BOOK-BEHAVIOUR-CURRENCY.md) |
+| `BOOK-BEHAVIOUR-CURRENCY` | `done` | the book can describe behaviour the code no longer has, and no gate sees it | [open](../tasks/BOOK-BEHAVIOUR-CURRENCY.md) |
 | `BOOK-COMMAND-COVERAGE` | `done` | mdBook command-surface drift reconciliation | [open](../tasks/BOOK-COMMAND-COVERAGE.md) |
 | `BOOK-METHOD-DOC` | `done` | per-task-tree implementation & verification, in the book | [open](../tasks/BOOK-METHOD-DOC.md) |
 | `BOOK-USER-FRIENDLY-BACKFILL` | `done` | upgrade existing book subsections to the user-friendly standard | [open](../tasks/BOOK-USER-FRIENDLY-BACKFILL.md) |

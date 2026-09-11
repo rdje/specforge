@@ -14,31 +14,32 @@
   `.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
   `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
   `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`;
-  `CHANGES-LEDGER-ROLLOVER.4`; `BOOK-BEHAVIOUR-CURRENCY.1` (`.0` censused: one stale book claim, now fixed).
-- Current state: **Two slices, each decided by measuring a candidate rule before shipping it.** `.10b` took
-  7 names out of AXI's ISF interface (ports `295 → 288`, actors `25 → 21`, constraints `53 → 44`, rules
-  `133 → 110`) after the obvious suffix-shape detector was **falsified** — 10 tables / 42 declarations
-  corpus-wide, 9 of those tables real, until the **mirror test** cut it to 1 table / 6. `.4a` restored APB's
-  dropped select antecedent from the identity the document states about itself — one appositive role phrase
-  before both `PSELx` and `PSEL` — not from the `x`: APB temporal `0.333 → 1.000`, gold untouched, both
-  ADR-0037 controls passing, zero movement across the other 26 chains. Census 27 measurable / 51 legacy.
+  `CHANGES-LEDGER-ROLLOVER.4`.
+- Current state: **Three slices, each decided by measuring a candidate rule before shipping it.** `.10b`
+  took 7 names out of AXI's ISF interface after the obvious suffix-shape detector was **falsified** (10
+  tables / 42 declarations, 9 of those tables real; the **mirror test** cut it to 1 table / 6). `.4a`
+  restored APB's dropped select antecedent from the identity the document states about itself — one
+  appositive role phrase before `PSELx` and `PSEL`, not the `x`: APB temporal `0.333 → 1.000`, gold
+  untouched, ADR-0037 controls passing, zero movement elsewhere. `BOOK-BEHAVIOUR-CURRENCY` censused the
+  book: a symbol scanner finds **0 true positives** over 167 removed functions; the ~18-line present-tense
+  population found the one stale claim. Census 27 measurable / 51 legacy.
 - Next action: `WIRE-BASED-100.5`/SWD — the only wire-based spec still below `1.000` (`5/29`:
-  `serial_frame_field` 0/11, `protocol_state` 0/13), and the tree's bar is not met until it moves. Or
-  `.10d` (expand a template's obligations over its instantiations — 9 AXI constraints), `.10e`, `.10f`.
+  `serial_frame_field` 0/11, `protocol_state` 0/13, both with NO ADR-0006-compliant producer since `.8c`
+  removed the name-recognising one), and the tree's bar is not met until it moves. Or `.10d` (expand a
+  template's obligations over its instantiations — 9 AXI constraints), `.10e`, `.10f`.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **a green score is evidence only about the facts its gold names** — AXI's
   six held while it lost 115 declarations, regained them, moved 134 → 25 → 21 actors, gained its whole AR
   side and lost 7 phantom ports. **Measure a candidate rule corpus-wide before shipping, and look at what it
-  selects, not how many** — `.10b`'s shape rule had a 9-of-10 false-positive rate no count would have shown
-  (`[[base-name-template-table-is-not-a-catalogue]]`).
+  selects, not how many** — `.10b`'s shape rule had a 9-of-10 false-positive rate no count would show (`[[base-name-template-table-is-not-a-catalogue]]`).
   **A relation can become a declaration**: `synthesize_directions_from_relations` is the one EvidenceIR path
   that mints a name no table declared (`[[alpha-variant-placeholder-is-not-a-wire]]`). **An identifier may
   bind to another only when the document says so twice** — ADR 0037 forbids the spelling guess
   (`[[document-stated-identifier-coreference]]`). **The book can carry a false current-behaviour claim for a
   month**: the temporal chapter still described a resolver deleted on `2026-08-12`, and no gate covers
-  behavioural prose. **A SourceIR classification rule may not read its
-  neighbours** (`[[sourceir-classification-is-per-record]]`); **two readers of one datum must tokenize
-  identically**; a producer change stales every persisted proof at and below its stage, repaired by
+  behavioural prose. **A SourceIR classification rule may not read its neighbours**
+  (`[[sourceir-classification-is-per-record]]`); **two readers of one datum must tokenize identically**;
+  a producer change stales every persisted proof at and below its stage, repaired by
   `source_proof_migrate`, not a re-ingest, and the wire golds' bundles are restored for the chain and
   returned byte-identical (`[[retained-bundle-population-is-frozen]]`). **Do not predict a re-derivation's
   verdict.** Read a gate's cohort rule before treating its ratio as coverage

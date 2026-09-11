@@ -92,6 +92,8 @@
   > does an explicit timing row unit override a caption unit
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > does any command report the live record count of a rolling ledger
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > does any gate catch a book paragraph describing deleted behaviour
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does any gate fail when a persisted chain falls below the current canonical schema
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -296,5 +298,3 @@
   > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > has the corpus task evidence migration landed
