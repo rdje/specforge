@@ -9843,6 +9843,11 @@ fn synthesize_signal_declarations(
     // HREADY) still gets extracted. Purely positional/structural — no signal name hardcoded
     // (ADR 0006). WIRE-BASED-100.5h (the .3a-deferred extractor fix).
     let col_count = table.body_rows.iter().map(|r| r.len()).max().unwrap_or(0);
+    // Score a column exactly the way the row loop below reads it: first whitespace token,
+    // stripped of leading/trailing non-identifier characters. Scoring without that strip made
+    // the two disagree, and a name cell listing a signal pair (`AWMMUSID, ARMMUSID`) scored
+    // ZERO here while the row loop read it fine — so the override handed the table to whatever
+    // prose column happened to start with capitalised words (WIRE-BASED-100.10a).
     let signal_token_distinct = |col: usize| -> usize {
         let mut toks: Vec<String> = table
             .body_rows
@@ -9853,6 +9858,9 @@ fn synthesize_signal_declarations(
                     .split_whitespace()
                     .next()
                     .unwrap_or("")
+                    .trim_matches(|character: char| {
+                        !character.is_ascii_alphanumeric() && character != '_'
+                    })
                     .to_ascii_uppercase()
             })
             .filter(|t| is_hardware_signal_token(t))
@@ -9866,14 +9874,22 @@ fn synthesize_signal_declarations(
         .map(|col| (col, signal_token_distinct(col)))
         .max_by_key(|&(_, distinct)| distinct)
         .unwrap_or((name_col, header_name_distinct));
-    // Override only on a clear content disagreement (a different column is the real name
+    // Override only on a CLEAR content disagreement (a different column is the real name
     // column): aligned tables keep best_col == name_col → offset 0 → no behavior change.
-    let (name_col, offset) =
-        if best_col != name_col && best_distinct >= 2 && best_distinct > header_name_distinct {
-            (best_col, best_col as isize - name_col as isize)
-        } else {
-            (name_col, 0isize)
-        };
+    // "Clear" is a decisive margin, not a single token. A one-token lead is noise — a prose
+    // column reaches it whenever one more sentence happens to open with a capitalised word —
+    // and overruling an explicit `Signal`/`Name` header on that is how a description column
+    // became the signal catalogue. Every rotation this override exists for wins by far more
+    // (APB `table_0016` 18 vs 5, AHB `table_0033` 19 vs 4), so the margin costs none of them.
+    const NAME_COLUMN_OVERRIDE_MARGIN: usize = 2;
+    let (name_col, offset) = if best_col != name_col
+        && best_distinct >= 2
+        && best_distinct >= header_name_distinct + NAME_COLUMN_OVERRIDE_MARGIN
+    {
+        (best_col, best_col as isize - name_col as isize)
+    } else {
+        (name_col, 0isize)
+    };
     let remap = |col: Option<usize>| -> Option<usize> {
         match col {
             Some(c) if offset != 0 && col_count > 0 => {
@@ -29251,6 +29267,123 @@ mod wire_based_100_5h {
             !names.iter().any(|n| n.eq_ignore_ascii_case("MANAGER")),
             "the Destination actor must not become a signal, got {names:?}"
         );
+    }
+
+    #[test]
+    fn paired_name_cells_keep_the_header_designated_column() {
+        // The name cell lists a signal PAIR, so its first whitespace token carries a trailing
+        // separator. Scoring that column without the row loop's own strip counted ZERO signal
+        // tokens in it, and the override handed the table to the Description column — whose
+        // sentences begin with capitalised words that read as identifiers. The declarations
+        // then WERE those words (AXI `table_0187`: `Secure`, `Stream`, `Asserted`).
+        let table = StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Name", "Width", "Default", "Description"])],
+            body_rows: vec![
+                row(&[
+                    "ZETA_ALPHA, OMEGA_ALPHA",
+                    "4",
+                    "0b0",
+                    "Secure identifier for a thing",
+                ]),
+                row(&[
+                    "ZETA_BETA, OMEGA_BETA",
+                    "1",
+                    "0b0",
+                    "Stream identifier for a thing",
+                ]),
+                row(&[
+                    "ZETA_GAMMA, OMEGA_GAMMA",
+                    "2",
+                    "0b0",
+                    "Asserted HIGH to indicate a thing",
+                ]),
+            ],
+            row_count: 3,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+        );
+        let names: Vec<&str> = stmts
+            .iter()
+            .filter_map(|s| s.text.strip_prefix("Signal "))
+            .filter_map(|s| s.split_whitespace().next())
+            .collect();
+        assert!(
+            names.contains(&"ZETA_ALPHA") && names.contains(&"ZETA_BETA"),
+            "the paired name column must still be the name column, got {names:?}"
+        );
+        for prose in ["SECURE", "STREAM", "ASSERTED"] {
+            assert!(
+                !names.iter().any(|n| n.eq_ignore_ascii_case(prose)),
+                "a description word must never become a declaration, got {names:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn one_token_lead_does_not_overrule_an_explicit_name_header() {
+        // A single extra token is noise, not a rotation: one more sentence opening with a
+        // capitalised word is enough to produce it. The override needs a decisive margin, and
+        // every real rotation clears it by many tokens (see the test above this one).
+        let table = StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Field Name", "Bits", "Definition"])],
+            body_rows: vec![
+                row(&["-", "7:4", "Reserved; must be zero."]),
+                row(&["ZETA_ALPHA", "3", "Exclusion range."]),
+                row(&["ZETA_BETA", "2", "Write permission."]),
+                row(&["ZETA_GAMMA", "1", "Read permission."]),
+                row(&["ZETA_DELTA", "0", "Unit address mapping."]),
+            ],
+            row_count: 5,
+            col_count: 3,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+        );
+        let names: Vec<&str> = stmts
+            .iter()
+            .filter_map(|s| s.text.strip_prefix("Signal "))
+            .filter_map(|s| s.split_whitespace().next())
+            .collect();
+        assert!(
+            names.contains(&"ZETA_ALPHA"),
+            "the declared field names must survive, got {names:?}"
+        );
+        for prose in ["RESERVED", "EXCLUSION", "WRITE", "READ", "UNIT"] {
+            assert!(
+                !names.iter().any(|n| n.eq_ignore_ascii_case(prose)),
+                "a definition word must never become a declaration, got {names:?}"
+            );
+        }
     }
 
     #[test]

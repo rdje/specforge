@@ -1,3 +1,60 @@
+### WIRE-BASED-100.10a — the scorer and the row loop disagreed, and that disagreement was minting prose as signals
+
+- THIS LEAF'S OWN HYPOTHESIS WAS WRONG AND THE MEASUREMENT SAYS SO. `.10a` predicted that `table_0059`,
+  `table_0187` and `table_0259` lose rows to the `_ => continue` width/direction arm — `.9d`'s seam, kept
+  alive here as the one place it could still be true. It is not true there either.
+- ROOT CAUSE, DERIVED PER COLUMN FROM THE ARTIFACTS: `synthesize_signal_declarations`
+  (`crates/specforge/src/ir/evidence.rs`) scores every column with `signal_token_distinct` to detect a
+  rotated table, and **that scorer tokenized differently from the row loop twelve lines below it**. The row
+  loop strips a cell's leading/trailing non-identifier characters; the scorer did not. So a name cell
+  listing a signal pair — AXI writes `AWMMUSECSID, ARMMUSECSID` — scored its first token as
+  `AWMMUSECSID,`, which `is_hardware_signal_token` rejects, and the **name column scored zero**. The
+  override then handed the table to the highest-scoring column, which is the Description column, because
+  English sentences begin with capitalised words that read as identifiers. Measured: `table_0187` Name 0 vs
+  Description 8, `table_0059` Name 0 vs Description 4.
+- THE FIX IS PARITY PLUS A MARGIN. `signal_token_distinct` now applies the row loop's own `trim_matches`
+  before testing a token, and the override requires `best_distinct >= header_name_distinct + 2` rather than
+  any one-token lead — the code's own stated intent ("override only on a clear content disagreement"). A
+  one-token lead is noise a prose column reaches whenever one more sentence opens with a capitalised word.
+- BLAST RADIUS MEASURED BEFORE SHIPPING, over all 571 `signal_description` tables in the 78 persisted
+  SourceIRs: **18 tables change their selected name column and all 18 move TO the header-designated
+  column** — headers like `Signal name | Type | Source or destination | Description` and
+  `Signal | Width | Direction | Description`. The override had been overruling explicit `Signal`/`Name`
+  headers far more often than it was rescuing a rotation. Every rotation `.5h` relies on still fires and
+  clears the new margin by a wide gap (APB `table_0016` 18 vs 5, AHB `table_0033` 19 vs 4, AHB `table_0009`
+  4 vs 1, AHB `table_0019` 6 vs 0). Two variants were rejected on measurement: trimming alone still let a
+  prose column win one table by a single token, and excluding the longest-text column from candidacy changed
+  60+ tables and disabled rotations `.5h` deliberately added.
+- ADDRESSED (AXI). `table_0059` `The`/`LOW`/`Physical`/`Extends` → `AWPROT`/`AWNSE`/`AWPRIV`/`AWINST`/
+  `AWPAS`; `table_0187` `Secure`/`Stream`/`Asserted`/… → the nine real `AWMMU*` signals. Declared inventory
+  **277 → 280**, ISF ports **277 → 280**, `*CHK` 110 unchanged.
+- AND IT COLLAPSED MOST OF `.10b`: **the actor count fell `134 → 25`**, in line with APB (8) and AHB (25),
+  because those prose declarations were exactly what the actor synthesis had been promoting. Four of the
+  eleven prose members in the AXI ISF interface (`The`, `Asserted`, `Secure`, `Stream`) are gone. `.9d`
+  bundled this junk with the declaration loss and `.10` disproved that bundling; the real link was a third
+  defect neither leaf had looked at. `.10b` keeps the seven that remain — six of them from one table that
+  genuinely lists **generic channel-signal templates** (`VALID`, `PENDING`, `CRDT`, …) rather than concrete
+  wires, which is a semantic question, not a column heuristic.
+- THE SIX SCORED NUMBERS ARE UNCHANGED: AXI `1.000`×4, APB `1.000`/`1.000`/`0.333`, AHB `1.000`×3. APB and
+  AHB are byte-stable in every measured dimension (32 and 40 declarations, 8 and 25 actors).
+- AND `.10`'s PUBLISHED RESIDUAL IS CORRECTED DOWNWARD RATHER THAN LEFT STANDING: 23 names remain
+  undeclared against the legacy chain, not 30, and **only 15 of them are real signals** (`table_0255`, a
+  continuation page still classified `unknown` → `.10c`). The rest were legacy junk this leaf correctly
+  stopped producing — `table_0059`'s 4 were Presence-column *parameters* and `table_0187`'s 3 were
+  Width-column parameters, both minted by the legacy chain's own wrong-column selection — plus one
+  `ARESETN`/`ARESETn` spelling. `table_0251`'s 7 are declared today from `table_0122`.
+- ONE NEW GAP EXPOSED RATHER THAN FIXED, published with its shape: a name cell listing two signals declares
+  only the first (`AWMMUSECSID` yes, `ARMMUSECSID` no), because the row loop reads one whitespace token.
+  Routed to `.10c` with the continuation-page question, since both cost AR-side signals.
+- THE REFRESH SHIPPED WITH THE CHANGE. This is an EvidenceIR production change, so it stales every persisted
+  EvidenceIR proof but leaves SourceIR untouched: all 27 current chains were re-run through
+  `evidence → semantic → intent → adapt` with no re-ingest. The three wire golds needed their held-out
+  normalized bundles restored read-only for the rebuild and returned to the hold afterwards, byte-identical;
+  the retained set is unchanged at the declared 24 and the census stays 27 measurable (34.6%) / 51 legacy.
+- VERIFIED: `scripts/check_doctrines.sh` green; `cargo test -p specforge-core --lib` 1,385 pass (2 new
+  cases), `-p specforge --lib` 472, `-p specforge-conformance --lib` 168; `cargo fmt --all`;
+  `scripts/check_chain_currency.sh` green.
+
 ### WIRE-BASED-100.10 — the loss was in the SourceIR classifier, .9d's two attributions are corrected, and 123 declarations come back without moving a score
 
 - ATTRIBUTED TO A REVISION AND A PRODUCER FUNCTION, by re-deriving each revision's own classifier on the

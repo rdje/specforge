@@ -438,6 +438,38 @@ flagged for review — the honest result. Verified by unit tests (covered-by-
 inventory gold, the Property-column tie, an unknown-signal negative).
 *Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md`.
 
+#### The column a table's names live in (`WIRE-BASED-100.10a`)
+
+Reading a signal table starts with one decision: **which column holds the names?** The header usually says —
+`Signal`, `Name`, `Port`, `Pin` — but a PDF table extractor sometimes rotates a body so the names land
+somewhere else entirely. SpecForge therefore scores every column by how many distinct hardware-signal-shaped
+tokens it carries and lets content overrule the header when the two clearly disagree.
+
+Two properties make that override safe, and both were learned from it going wrong.
+
+**The scorer must read a cell exactly the way the extractor does.** It did not. The extractor strips a cell's
+leading and trailing punctuation before testing a token; the scorer tested the raw token. A specification
+that lists a signal pair in one cell — AXI writes `AWMMUSECSID, ARMMUSECSID` — therefore scored that cell as
+`AWMMUSECSID,`, which is not a valid identifier, and the **name column scored zero**. The override then
+picked the highest-scoring column, which is the *Description* column, because English sentences begin with
+capitalised words that look exactly like identifiers. The result was a signal catalogue made of prose:
+`Secure`, `Stream`, `Asserted`, `The`, `LOW` — declared as wires, promoted to actors, and emitted as ports
+in the `.isf` interface.
+
+**"Clearly disagree" has to mean a decisive margin.** A one-token lead is noise: a prose column reaches it as
+soon as one more sentence happens to open with a capitalised word. Overruling an explicit `Signal` header on
+that basis is how a description column became a catalogue, so the override now needs a lead of at least two
+distinct tokens. That costs no real rotation — the ones this override exists for win by a wide gap (the APB
+version matrix 18 tokens against 5, an AHB matrix 19 against 4).
+
+Measured across every `signal_description` table in the persisted corpus, the correction moves **18 tables,
+and all 18 move back to the column their header always named**. On the AXI specification it replaced twelve
+prose "signals" with the fourteen real ones those tables declare, and the document's actor count fell from
+134 to 25 — in line with APB's 8 and AHB's 25 — because the prose declarations were what the actor synthesis
+had been promoting. Every wire-protocol gold score is unchanged, which is the honest reading of the whole
+episode: a gold tests the facts it names, and this defect was never one of them.
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10a`).
+
 #### Captured requirements don't count as residuals (`WIRE-BASED-100.3b`)
 
 The same honesty applies to the **prose** side of the count. A sentence like "the

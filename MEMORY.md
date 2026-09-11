@@ -6,45 +6,45 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`WIRE-BASED-100.10` CLOSED `2026-09-11`** — AXI's lost typed declarations attributed and
-  recovered. Open in this tree: `.10a` (30 declarations still missing), `.10b` (AXI's 11 prose ISF members,
-  now proven independent), `.4a`, `.2`/`.3`/`.4`/`.5`. Also open:
-  `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`/`.2`/`.3`; `KG-ISF-COMPLETENESS` beyond `.5`;
+- Active unit: **`WIRE-BASED-100.10a` CLOSED `2026-09-11`** — the name-column scorer disagreed with its own
+  row loop and was minting prose as declarations. Open in this tree: `.10c` (continuation pages + multi-name
+  cells), `.10b` (7 ISF prose members left, 6 from one template table), `.4a`, `.2`/`.3`/`.4`/`.5`. Also
+  open: `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`/`.2`/`.3`; `KG-ISF-COMPLETENESS` beyond `.5`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`;
   `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION`
   `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
   `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`.
-- Current state: **The 115-declaration loss was in the SourceIR table classifier, not `evidence.rs`.**
-  `dee0740f` (`2026-08-12`, `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`) narrowed role matching to whole-label
-  equality, so `Name | Signals covered | Width | Check enable` fell to `unknown` — and an `unknown` table
-  never reaches declaration synthesis (`evidence.rs:4041`), so `.9d`'s `_ => continue` seam and its
-  "SourceIR structurally identical" exoneration are both **corrected where they were published**. The fix
-  reads a generic interface noun as a whole word in a column label; over all 11,033 persisted tables it
-  moves **exactly 7**. AXI provenance `265 → 388` / distinct `170 → 293` / `*CHK` `0 → 115`; declared
-  inventory and ISF ports both `159 → 277`. **All six wire numbers re-derive unchanged**; census holds at
-  **27 measurable (34.6%) / 51 legacy**, 5 of 7 golds.
-- Next action: `WIRE-BASED-100.10a` — the 30 AXI declarations still missing, in two disjoint groups:
-  `table_0251`/`table_0255` (22) are `Name | Width | Source | Description` continuation pages that lost
-  `Source`-as-direction and have no signal-naming caption; `table_0059`/`table_0187`/`table_0259` (8) are
-  already `signal_description` and lose rows inside `synthesize_signal_declarations` — the only place
-  `.9d`'s `_ => continue` hypothesis can still hold. Or `.10b`, `.4a`, `RETAINED-BUNDLE-POPULATION-FROZEN.1`.
+- Current state: **Two defects in two days, both invisible to all six scores in both directions.** `.10`
+  fixed a SourceIR classifier that had dropped 115 typed AXI declarations; `.10a` fixed
+  `signal_token_distinct` in `synthesize_signal_declarations`, which tokenized differently from the row loop
+  beside it — a paired name cell (`AWMMUSECSID, ARMMUSECSID`) scored its column at ZERO, so the rotation
+  override handed two tables to their Description column and `Secure`/`Stream`/`Asserted`/`The` became
+  declarations, actors and `.isf` ports. Fix = tokenization parity + a ≥2-token override margin; 18 tables
+  move and all 18 move back to their header column. AXI declared `277 → 280`, **actors `134 → 25`** (APB 8,
+  AHB 25). Census 27 measurable (34.6%) / 51 legacy.
+- Next action: `WIRE-BASED-100.10c` — the AR-side declarations two readers still drop. (a) `table_0255`
+  (15 real signals) is a `Name | Width | Source | Description` page captioned "Continued from previous
+  page": decide whether a self-declared continuation inherits its parent's kind, as document grammar — a
+  SourceIR change, so it must ship with its own refresh. (b) a name cell listing two signals declares only
+  the first (`AWMMUSECSID` yes, `ARMMUSECSID` no) — EvidenceIR-only, the cheaper half. Or `.10b`, `.4a`,
+  `RETAINED-BUNDLE-POPULATION-FROZEN.1`.
 - In-flight uncommitted: none after this commit.
 - Blockers: none that stop work. Standing hazards: **a green score is evidence only about the facts its gold names** —
-  AXI kept all six numbers while losing 115 declarations AND while regaining 118. **A SourceIR production change
-  stales every persisted SourceIR proof at once**, so budget the refresh into the same slice; **equal artifact counts
-  do not prove an identical artifact**; and **measure a classifier change over every persisted SourceIR before
-  shipping it** — all three, with commands, are `[[qualified-role-header-proves-no-role]]`. **The retained
-  normalized-bundle set can neither grow nor shrink**; APB/AHB/AXI bundles are HELD under
-  `generated/preserved/WIRE-BASED-100.9b|9c|10/`, so their replays read UNMEASURABLE by design
-  (`[[retained-bundle-population-is-frozen]]`). **Do not predict a re-derivation's verdict** — `.9b`, `.9d` and
-  `.10`'s own junk-actor hypothesis were all wrong; measure, then publish. Read a gate's cohort rule before treating
+  AXI kept all six while losing 115 declarations, regaining them, and moving 134 → 25 actors. **Two readers of the
+  same data must tokenize identically.** **A SourceIR production change stales every persisted SourceIR proof at
+  once** (an EvidenceIR change stales only EvidenceIR and below, no re-ingest), so budget the refresh into the same
+  slice; **equal counts do not prove an identical artifact**; **measure a producer change over every persisted
+  SourceIR before shipping** — all four, with commands, are `[[qualified-role-header-proves-no-role]]`. The retained
+  bundle set cannot grow or shrink; APB/AHB/AXI bundles are HELD under `generated/preserved/WIRE-BASED-100.9b|9c|10/`
+  and may be restored read-only for a rebuild and returned byte-identical
+  (`[[retained-bundle-population-is-frozen]]`). **Do not predict a re-derivation's verdict** — `.9b`, `.9d`, `.10`'s
+  junk-actor hypothesis and `.10a`'s own stated mechanism were all wrong. Read a gate's cohort rule before treating
   its ratio as coverage (`[[corpus-canonical-currency-and-ownership]]`). Never infer ownership from a mention.
-  Attribute a regression from producer history (`git log -S`, `git show <rev>:<path>`), never a diff. A probe is not a
-  port. A re-ingest destroys evidence no rebuild can restore — preserve first. A live-surface edit sets off
-  `[[live-surface-edit-bookkeeping-chain]]`; this file's cap is 50 lines. `docs/tasks/WIRE-BASED-100.md` is at
-  **91.5%** of its 272 KB ceiling — past its 90% rollover milestone and unowned;
-  `LIVE_ACHIEVEMENT_STATUS.md`/`CHANGES.md` are past 80% under `STATUS-LEDGER-ROLLOVER.2` and
-  `CHANGES-LEDGER-ROLLOVER.4`. Owned, not fixed: `SOURCE-IR-REPRODUCIBILITY.13`;
-  `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.4` — never run the fixture suite with
-  the locality gate. `durability.stale_check` is never executed by any gate (`.18`), and no gate runs
-  `scripts/validate_canonical_recovery_contract.py`.
+  Attribute a regression from producer history, never a diff. A probe is not a port. Preserve before a re-ingest. A
+  live-surface edit sets off `[[live-surface-edit-bookkeeping-chain]]`; this file's cap is 50 lines.
+  `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md` is at 91.5% of the 272 KB task ceiling, past its 90% rollover, with
+  `scripts/check_active_task_evidence.pl --migrate` as the precedent; `LIVE_ACHIEVEMENT_STATUS.md`/`CHANGES.md` are
+  past 80% under `STATUS-LEDGER-ROLLOVER.2`/`CHANGES-LEDGER-ROLLOVER.4`. Owned, not fixed:
+  `SOURCE-IR-REPRODUCIBILITY.13`; `CLAIM-VERIFICATION-ADOPTION.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.4` —
+  never run the fixture suite with the locality gate. `durability.stale_check` is never executed by any gate (`.18`),
+  and no gate runs `scripts/validate_canonical_recovery_contract.py`.

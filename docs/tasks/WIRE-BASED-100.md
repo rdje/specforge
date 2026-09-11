@@ -1047,41 +1047,140 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: see the acceptance checklist below.
   Commit: see log.
 
-- ID: `WIRE-BASED-100.10a` · Status: `pending` · Goal: **the 30 AXI table declarations `.10` did not
-  recover**, measured per table and split by mechanism rather than reported as one number.
-  Group A (22): `table_0251` (7) and `table_0255` (15) are `Name | Width | Source | Description`
-  continuation pages of `Table B1.1`/`B1.4`. Their first pages still classify (their captions name
-  signals); the continuations do not, because `dee0740f` also removed `source`/`destination` from the
-  direction roles and a "Continued from previous page" caption carries no signal noun. Decide the general
-  question — **does a continuation caption inherit its parent table's kind, or is a `Source` column
-  direction authority?** — and do not answer it by adding a caption phrase to a list.
-  Group B (8): `table_0059` (4), `table_0187` (3), `table_0259` (1) are **already** `signal_description`
-  and lose rows *inside* `synthesize_signal_declarations`. This is the only place `.9d`'s `_ => continue`
-  hypothesis can still be true; test it against the 56 AXI sections whose `section_kind` moved
-  `signal_description → normative` at the same seam, since that field feeds
-  `infer_signal_direction_from_section` and therefore the `default_dir` a row falls back to.
-  Acceptance: each group's mechanism named at `file:line`; recovered or its retirement published with the
-  count; the six scored numbers unchanged; corpus blast radius measured over all persisted SourceIRs
-  before shipping, as `.10` did.
+- ID: `WIRE-BASED-100.10a` · Status: `done` (`2026-09-11`; the mechanism was not the one this leaf named,
+  and fixing the real one also collapsed `.10b`'s actor inflation) · Goal: **the 30 AXI table declarations
+  `.10` did not recover**, measured per table and split by mechanism.
+
+  **THIS LEAF'S OWN GROUP-B HYPOTHESIS IS WRONG, AND THE MEASUREMENT SAYS SO.** It predicted that
+  `table_0059`/`table_0187`/`table_0259` lose rows to the `_ => continue` width/direction arm — `.9d`'s
+  seam, kept alive here as the one place it could still be true. It is not true there either. The three
+  tables lose their rows to **name-column selection**: `synthesize_signal_declarations` scores each column
+  with `signal_token_distinct` to detect a rotated table, and that scorer tokenized **differently from the
+  row loop twelve lines below it**. The row loop strips a cell's leading/trailing non-identifier characters;
+  the scorer did not. So a name cell listing a signal pair — AXI writes `AWMMUSECSID, ARMMUSECSID` — scored
+  its first token as `AWMMUSECSID,`, which `is_hardware_signal_token` rejects, and the whole **name column
+  scored zero**. The override then handed the table to whichever column scored highest, which is the
+  Description column, because English sentences begin with capitalised words that read as identifiers.
+  `table_0187` declared `Secure`, `Stream`, `Asserted`, `Indicates`, `HIGH`, `Protected`, `Substream`,
+  `MMUqualifier`; `table_0059` declared `The`, `LOW`, `Physical`, `Extends`.
+
+  **THE FIX — make the two agree, and require a decisive margin.** `signal_token_distinct` now applies the
+  row loop's own `trim_matches` before testing the token, and the override requires
+  `best_distinct >= header_name_distinct + 2` instead of any one-token lead. The margin is the code's own
+  stated intent ("override only on a clear content disagreement"): a one-token lead is noise a prose column
+  reaches whenever one more sentence opens with a capitalised word. Every rotation the override exists for
+  clears the margin by far more — APB `table_0016` 18 vs 5, AHB `table_0033` 19 vs 4, AHB `table_0009`
+  4 vs 1, AHB `table_0019` 6 vs 0 — so none of them is weakened.
+
+  **BLAST RADIUS MEASURED BEFORE SHIPPING, over all 571 `signal_description` tables in the 78 persisted
+  SourceIRs: 18 tables change their selected name column and ALL 18 move TO the header-designated column** —
+  headers like `Signal name | Type | Source or destination | Description`, `Signal | Width | Direction |
+  Description`, `Signal Role | … | Description`. The override was overruling explicit `Signal`/`Name`
+  headers with the Description column far more often than it was rescuing a rotation. Two variants were
+  measured and rejected: trimming alone still let a prose column win one table by a single token
+  (`48882…/table_0351`), and excluding the longest-text column from candidacy changed 60+ tables and
+  disabled rotations `.5h` deliberately added.
+
+  **ADDRESSED (verified, AXI).** `table_0059` `The`/`LOW`/`Physical`/`Extends` → `AWPROT`/`AWNSE`/`AWPRIV`/
+  `AWINST`/`AWPAS`; `table_0187` `Secure`/`Stream`/`Asserted`/… → the nine real `AWMMU*` signals. Twelve
+  prose names left the declared inventory and fourteen real ones entered it. **The actor count fell
+  `134 → 25`** — in line with APB (8) and AHB (25) — because those prose declarations were what the actor
+  synthesis had been promoting. Four of `.10b`'s eleven ISF prose members (`The`, `Asserted`, `Secure`,
+  `Stream`) are gone. AXI declared inventory `277 → 280`, ISF ports `277 → 280`, `*CHK` 110 unchanged.
+  APB and AHB are byte-stable in every measured dimension (32 and 40 declarations, 8 and 25 actors).
+
+  **THE RESIDUAL IS SMALLER THAN `.10` PUBLISHED, AND THE CORRECTION IS PUBLISHED WITH IT.** Against the
+  legacy chain 23 names remain undeclared, not 30 — and **only 15 of them are real signals**:
+  `table_0255` (15) is the genuine loss, a `Name | Width | Source | Description` continuation page still
+  classified `unknown` → `.10c`. The rest were legacy junk this leaf correctly stopped producing:
+  `table_0059` (4) were Presence-column *parameters* (`PROT_PRESENT`, `RME_SUPPORT`, …) and `table_0187`
+  (3) were Width-column parameters (`SID_WIDTH`, …), both minted by the legacy chain's own
+  wrong-column selection; `table_0259` (1) is `ARESETN` against today's opaque `ARESETn`, a spelling, not a
+  loss. `table_0251`'s 7 are declared today from `table_0122`.
+  **One genuinely new gap this leaf exposes rather than fixes:** a name cell that lists two signals declares
+  only the first — `AWMMUSECSID` yes, `ARMMUSECSID` no — because the row loop reads one whitespace token.
+  Owned by `.10c` with the continuation-page question, since both cost AR-side signals.
+  Acceptance: see the checklist below. Non-goal: re-scoring AXI; widening any gold.
   Prerequisite: `WIRE-BASED-100.10`.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
+
+- ID: `WIRE-BASED-100.10c` · Status: `pending` · Goal: **the AR-side declarations two independent readers
+  still drop**, both measured by `.10a` rather than assumed.
+  (a) **Continuation pages.** `table_0255` (15 real signals) and `table_0251` are
+  `Name | Width | Source | Description` pages captioned `Table B1.1 Continued from previous page`. Their
+  first pages classify (their captions name signals); the continuations do not, because `dee0740f` removed
+  `source`/`destination` from the direction roles and a continuation caption carries no signal noun. Decide
+  the general question — **does a table whose caption declares itself a continuation inherit the kind of the
+  table it continues?** — as document grammar, not by adding a caption phrase to a list. Note the cost
+  before starting: this is a SourceIR classification change, so it stales every persisted SourceIR proof and
+  must ship with its own corpus refresh (`[[qualified-role-header-proves-no-role]]`).
+  (b) **Multi-name cells.** A name cell reading `AWMMUSECSID, ARMMUSECSID` declares only `AWMMUSECSID`;
+  the row loop takes one whitespace token. Every AR-side twin in such a table is silently absent. This is an
+  EvidenceIR change and needs no re-ingest, so it is the cheaper half — but it must not turn a prose cell
+  into a list of declarations, which is exactly the failure `.10a` just removed.
+  Acceptance: each reader's mechanism named at `file:line`; recovered or its retirement published with the
+  count; corpus blast radius measured over every persisted SourceIR before shipping; the six scored numbers
+  unchanged.
+  Prerequisite: `WIRE-BASED-100.10a`.
   Verification: pending
   Commit: pending
 
-- ID: `WIRE-BASED-100.10b` · Status: `pending` · Goal: **the 11 prose words in AXI's ISF interface and the
-  `21 → 134` actor inflation**, now known to be independent of the declaration loss.
-  `.10` measured the coupling `.9d` assumed: restoring 118 typed declarations moved the actor count
-  `134 → 134` and removed none of `The`, `Asserted`, `Secure`, `Stream`, `VALID`, `PENDING`, `RP`, `CRDT`,
-  `CRDTSH`, `SHAREDCRD`, `AxLEN`. APB (8 actors) and AHB (25) were re-ingested by the same binary and did
-  not inflate, so this is AXI-shaped, not a blanket actor-synthesis change. Attribute it the way `.10`
-  attributed the classifier — re-derive from each revision's own producer across `2026-08-12..HEAD` — and
-  note that `AxLEN` reaching the interface *while the declared `AXLEN` disappeared* is one observation, not
-  two. `.6c`'s `ir/entity_typing` bounded-LLM actor discrimination already exists and is the candidate
-  general fallback.
-  Acceptance: cause named with a revision and a producer function; the prose members gone or their
-  presence explained; APB/AHB actor counts unmoved; the six scored numbers unchanged.
-  Prerequisite: `WIRE-BASED-100.10`.
+- ID: `WIRE-BASED-100.10b` · Status: `active` (`2026-09-11`: `.10a` removed most of it; what is left is one
+  table and one prose token) · Goal: **the prose words in AXI's ISF interface and the actor inflation.**
+  **Most of this leaf was the same defect as `.10a`, which is why it did not respond to `.10`.** `.9d`
+  bundled the junk with the declaration loss; `.10` disproved that bundling (restoring 118 declarations
+  moved the actor count `134 → 134`); `.10a` then found the real cause — a name-column scorer that handed
+  two tables to their Description column — and fixing it took the actor count **`134 → 25`** and removed
+  `The`, `Asserted`, `Secure` and `Stream` from the interface. AXI is now in line with APB (8 actors) and
+  AHB (25).
+  **What remains is seven members and two distinct questions.** Six (`VALID`, `PENDING`, `RP`, `CRDT`,
+  `CRDTSH`, `SHAREDCRD`) come from one table, `table_0011` "Table A2.3: Credited channel signals", whose
+  Name column genuinely holds those tokens — the table is a **generic channel template** describing the
+  per-channel signal *pattern* (`AWVALID`, `AWPENDING`, `AWCRDT`), not a declaration of concrete wires. The
+  extraction is faithful to the table; the defect is that a template is read as a catalogue, so the fix is
+  semantic, not a column heuristic. The seventh, `AxLEN`, reaches the interface from prose while the
+  declared `AXLEN` does not — one observation, not two.
+  `.6c`'s `ir/entity_typing` bounded-LLM actor discrimination already exists and is the candidate general
+  fallback for the template case.
+  Acceptance: the template reader named at `file:line` and its output either withheld or typed as a
+  pattern rather than a declaration; `AxLEN`/`AXLEN` resolved; APB/AHB actor counts unmoved; the six scored
+  numbers unchanged.
+  Prerequisite: `WIRE-BASED-100.10a`.
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.10a` (RUST CODE CHANGE) — DONE `2026-09-11`
+
+- [x] **REPRODUCE / MEASURE** — from the persisted artifacts before any edit: AXI `table_0187` declared
+  `Secure`, `Stream`, `Asserted`, `Indicates`, `HIGH`, `Protected`, `Substream`, `MMUqualifier` and
+  `table_0059` declared `The`, `LOW`, `Physical`, `Extends`, while `AWMMUSID`, `AWMMUSECSID`, `AWPROT`,
+  `AWNSE` were absent; 30 names were missing against the legacy chain; the actor count was 134 against
+  APB's 8 and AHB's 25.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `signal_token_distinct` and the row loop inside
+  `synthesize_signal_declarations` (`crates/specforge/src/ir/evidence.rs`) tokenized differently: the row
+  loop strips leading/trailing non-identifier characters, the scorer did not, so a paired name cell
+  (`AWMMUSECSID, ARMMUSECSID`) scored its column at **zero** and the rotation override handed the table to
+  the Description column. Derived per column from the artifacts, not inferred: `table_0187` Name 0 vs
+  Description 8; `table_0059` Name 0 vs Description 4. Not the `_ => continue` arm this leaf itself
+  predicted, and that prediction is withdrawn where it was written.
+- [x] **ADDRESSED (verified)** — per table, before → after: `table_0059` 4 prose names → the 5 real
+  protection signals; `table_0187` 8 prose names → the 9 real `AWMMU*` signals. Actor count `134 → 25`;
+  AXI declared inventory `277 → 280`; ISF ports `277 → 280` with 4 prose members gone; residual against the
+  legacy chain `30 → 23`, of which only 15 are real signals (published per table, owned by `.10c`).
+- [x] **NO REGRESSION** — named, re-runnable oracles, all green: `cargo test -p specforge-core --lib` 1,385
+  pass including 2 new cases; `-p specforge --lib` 472; `-p specforge-conformance --lib` 168;
+  `cargo fmt --all`. The six WIRE-BASED-100 numbers re-derive unchanged via `specforge eval-extraction …
+  --provider skip` (AXI `1.000`×4, APB `1.000`/`1.000`/`0.333`, AHB `1.000`×3). APB and AHB are byte-stable
+  in every measured dimension. `bash scripts/check_chain_currency.sh` and `bash scripts/check_doctrines.sh`
+  green. All five rotation overrides `.5h` relies on keep firing, checked individually by their margins.
+- [x] **GENERICITY (ADR 0006)** — the change is tokenization parity plus a numeric margin. No vocabulary,
+  no chip/vendor/protocol name, no corpus phrase. Both new tests use alpha-renamed symbols
+  (`ZETA_ALPHA`, `OMEGA_ALPHA`) and assert the negative — that a description word never becomes a
+  declaration.
+- [x] **LOCKSTEP** — mdBook, `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the resume pointer and the
+  Knowledge Map card updated; `.10`'s published residual of 30 corrected to 23-of-which-15-are-real;
+  `.10b` rescoped against measurement; `.10c` opened.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.10` (RUST CODE CHANGE) — DONE `2026-09-11`
 

@@ -13,6 +13,9 @@ answers:
   - "why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle"
   - "how do I measure a classifier change's blast radius before shipping it"
   - "why is a green wire-protocol score not evidence that extraction is intact"
+  - "why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)"
+  - "which column does synthesize_signal_declarations read names from, and when does content overrule the header (a distinct-hardware-token score per column, overruling the header only on a lead of at least two tokens)"
+  - "why did AXI have 134 actors when APB has 8 and AHB has 25"
 date: 2026-09-11
 status: current
 tags: [sourceir, classification, adr-0006, proof-kernel, chain-currency, wire-based-100, regression]
@@ -67,6 +70,17 @@ SourceIR from the retained normalized bundle in seconds, refreshing the proof wi
 followed by re-running `evidence → semantic → intent → adapt`. It reaches only documents that still hold a
 bundle: APB, AHB and AXI are held out under `RETAINED-BUNDLE-POPULATION-FROZEN`, so they need a real
 re-ingest. Budget that refresh into the same slice as the producer change.
+
+## The same shape, one stage later
+
+`WIRE-BASED-100.10a` found the identical failure mode inside `synthesize_signal_declarations`: its
+column scorer and its row loop disagreed about how to read a cell, so a name column full of signal *pairs*
+scored zero and the override handed the table to its Description column. Prose became declarations, then
+actors, then `.isf` ports. The repair is the same shape as the one above — make the two readers agree — plus
+a decisive-margin rule, because a one-token lead is noise a prose column reaches by accident. Corpus-wide it
+moved 18 tables and every one moved back to the column its header always named; AXI's actor count fell
+`134 → 25`. **Both defects were invisible to all six wire-protocol scores, in both directions:** the scores
+did not move when the facts were lost and did not move when they came back.
 
 Links: [[live-surface-edit-bookkeeping-chain]], [[chain-currency-doctrine]],
 [[retained-bundle-population-is-frozen]], [[corpus-canonical-currency-and-ownership]].
