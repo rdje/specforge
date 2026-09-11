@@ -1302,11 +1302,38 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   withholding costs. Open questions the leaf must answer before it writes anything: whether expansion is
   sound for **every** predicate kind or only for the reset/stability class; whether a prefix that
   instantiates only part of the template may expand at all; and whether the expanded facts carry the
-  template row's provenance or a derived one. Acceptance: per-fact table of every expanded obligation with
-  the declared wire it lands on and the row it came from; zero expansion onto a wire the document does not
-  declare; the six scored numbers unchanged. Non-goal: re-scoring; widening any gold.
+  template row's provenance or a derived one.
+
+  **MEASURED `2026-09-11` — AND THIS LEAF'S OWN PREMISE IS CORRECTED: only 5 of the 9 are expandable.**
+  The claim above ("Those obligations are **real**") was written from each constraint's SUBJECT and never
+  checked against its SOURCE, and the sources split the population sharply. Read off the pre-`.10b` chain:
+
+  | # | subject | kind | source shape | expandable |
+  |---|---|---|---|---|
+  | 1 | `VALID` | `must_be_low` (reset) | prose — *"VALID signals must be LOW during reset."* | yes |
+  | 2 | `VALID` | `must_be_high` | prose — *"When VALID is asserted, it must remain asserted until the handshake occurs…"* | yes |
+  | 3 | `VALID` | `must_be_stable` | prose — *"VALID must not be asserted when the channel transmitter has zero credits."* | yes |
+  | 4 | `CRDT` | `must_be_low` | prose — *"During reset … All CRDT and CRDTSH signals must be LOW"* | yes |
+  | 5 | `CRDTSH` | `must_be_low` | the same sentence | yes |
+  | 6-7 | `SHAREDCRD`, `CRDTSH` | `must_be_low` | **table cell** — a `Manager: False` compatibility row stating those signals are tied LOW / unconnected | **NO** |
+  | 8-9 | `SHAREDCRD`, `CRDTSH` | `must_be_low` | **table cell** — a second compatibility row of the same shape | **NO** |
+
+  Rows 6-9 come from a **configuration-compatibility matrix**: they describe what one particular
+  configuration looks like, where those signals are absent or tied off. They are not obligations on the
+  pattern, and expanding them across the template's seven channel prefixes would fabricate a rule the
+  document never states — the same failure `.8d` refused when it declined to mint a wrong phase.
+  The split happens to be visible in the source shape (a markdown table row begins with a pipe), but
+  **source shape is a symptom, not the rule**: the implementing slice must establish which CONTEXTS govern
+  a template and measure that corpus-wide the way `.10b` measured the template rule itself, rather than
+  keying on a pipe character. The honest recall this leaf can claim is therefore **5 facts on AXI, not 9**,
+  and its first obligation is a census of expandable contexts.
+
+  Acceptance: per-fact table of every expanded obligation with
+  the declared wire it lands on and the row it came from; **zero expansion from a configuration-compatibility
+  context**; zero expansion onto a wire the document does not declare; the six scored numbers unchanged.
+  Non-goal: re-scoring; widening any gold.
   Prerequisite: `WIRE-BASED-100.10b`.
-  Verification: pending
+  Verification: pending (design measured; implementation open)
   Commit: pending
 
 - ID: `WIRE-BASED-100.10e` · Status: `done` (`2026-09-11`; the junk was larger than the polarity record

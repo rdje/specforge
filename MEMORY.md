@@ -8,7 +8,8 @@
 ## Current state (OVERWRITE this block each update — do not append)
 
 - Active unit: **`WIRE-BASED-100.10e` CLOSED `2026-09-11`** — a property table is no longer a signal
-  inventory; `(type False (bits 2))` leaves AXI's `.isf`. Open in this tree: `.10d`/`.10f`,
+  inventory; `(type False (bits 2))` leaves AXI's `.isf`; `.10d`'s premise corrected by measurement.
+  Open in this tree: `.10d`/`.10f`,
   `.2`/`.3`/`.5` (SWD `13/29`: `serial_frame_field` 0/11 stays deferred). Also open: `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`;
   `KG-ISF-COMPLETENESS` beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/
   `.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
@@ -23,10 +24,9 @@
   machine binds only when one statement names both (`0/13 → 8/13`), two machines fail closed. `.10e` then
   refused AXI's property tables — the shape test alone selects 17 of 602 and most are real. Every cheap
   rule this session over-fired until a second condition was added. Census 27 measurable / 51 legacy.
-- Next action: `.10d` (expand a template's obligations over its instantiations — 9 AXI constraints) or
-  `.10f` (a relation becoming a declaration; censused over 25 documents, and the obvious threshold gate
-  costs 8 real Avalon signals). SWD's remaining `16/29` needs figure-content extraction plus the 5
-  unextracted SWD-line states — both builds, not tuning.
+- Next action: `.10d` implementation — premise now corrected by measurement: only **5 of 9** withheld
+  obligations expand; 4 are configuration-compatibility cells, and the first obligation is a corpus census
+  of expandable CONTEXTS (source shape is a symptom, not the rule). Or `.10f`.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **a green score is evidence only about the facts its gold names** — AXI's
   six held while it lost 115 declarations, regained them, moved 134 → 25 → 21 actors, gained its whole AR
