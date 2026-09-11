@@ -238,7 +238,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` (`f88d463d`), which removed identifier-spelling authority from the
   pipeline; the temporal score returned to exactly the `0.333` (tp=1 fp=2 fn=2) baseline diagnosed above. The
   fix and its demonstration stand as history; the current number does not. Recovery is `.4a`.
-- ID: `WIRE-BASED-100.4a` · Status: `pending` · Goal: **decide how an un-indexed prose signal reference binds to
+- ID: `WIRE-BASED-100.4a` · Status: `done` (`2026-09-11`; (b) refuted on evidence, (a) shipped on a
+  document-stated footing, APB temporal `0.333 → 1.000` with the gold untouched) · Goal: **decide how an un-indexed prose signal reference binds to
   its declared indexed identity under the identifier-opacity doctrine, and restore APB temporal to a number the
   binary can produce.** Opened by `.9b`, which re-derived `seed_apb_temporal` at `P=R=F1=0.333` (tp=1 fp=2 fn=2)
   against the carried `1.000` and root-caused it: `.4` canonicalized prose `PSEL` to the declared `PSELX` and
@@ -272,8 +273,49 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Non-goal: reverting `f88d463d`, or weakening
   `temporal_condition_does_not_alias_an_undeclared_name_from_suffix_spelling` to make a score move.
   Prerequisite: `WIRE-BASED-100.9b` (the re-derivation that exposed it).
-  Verification: pending
-  Commit: pending
+
+  **MEASURED `2026-09-11` — the mechanism is exact, and (b) is now refuted on evidence.** From the current
+  persisted APB chain, three temporal rules decide this leaf. `sigcon_0011` (`PAUSER`) **keeps** its
+  antecedent `PSELx` because its source text writes the declared spelling. `sigcon_0009` (`PNSE`) and
+  `sigcon_0014` (`PBUSER`) **lose** theirs — `sigcon_0009` has `antecedents: []` and `sigcon_0014` keeps
+  `PENABLE` and `PREADY` and drops only the select — because their source text writes the un-indexed `PSEL`,
+  which the declaration catalogue does not contain (APB declares `PSELx` and `PSELxCHK`, nothing else).
+  Spelling case is not involved: `eval::temporal_predicate_key` uppercases, so a produced `PSELx` would
+  satisfy the gold's `PSELX` (`.9d` demonstrated exactly that with `ARESETn`/`ARESETN`).
+  **(b) is refuted because the identity it would anchor never reaches the product boundary.** `PSEL` is not
+  in APB's 32-signal declared inventory and the token does not occur anywhere in the emitted `.isf`, while
+  `PSELx` occurs three times. A gold re-anchored to `PSEL` would be satisfied by a fact that cannot lower —
+  it would move the score without moving the product. The `PSEL` identity that `SPEC-TO-INTENT-ALIGNMENT.7a`
+  legitimately recovers (`sigcon_0016`, from the same-clause appositive) is a **constraint subject**, which
+  is a different and correct outcome for that span; it is not an antecedent identity.
+  **(a) has a source-grounded footing that is not a spelling inference, and it is measured.** The APB
+  document writes the SAME appositive role phrase before both identifiers: `Select signal, PSELx`
+  (`elem_00215`) and `Select signal, PSEL` (`elem_00252`), alongside `The select signal, PSEL, is asserted`
+  (`elem_00205`) and `the appropriate select signal, PSELx, is asserted` (`elem_00359`). The link is read
+  from the document's own repeated phrase, not from the `x`. Alpha-renaming either identifier preserves it;
+  the pinned negative control still emits nothing, because a synthetic `PSEL`-with-only-`PSELX`-declared
+  case has no second appositive to co-refer with.
+  **Corpus census of that rule, run before any code was written** (all 78 persisted SourceIRs; role phrase =
+  the ≤4 words before the comma ending in `signal`, leading determiner dropped, identifier followed by a
+  comma/period/end as `.7a`'s appositive punctuation requires): **2 multi-identifier role phrases corpus-wide,
+  and both are this same fact** — `select signal → {PSEL, PSELx}` in `ihi0024_d` and `ihi0024_e`. Zero other
+  candidates, so zero false positives available to measure. Without the punctuation guard the census admits
+  4 sentence-continuation phrases (`, Table`, `, this`, `, although`, `, and`); each is already refused by
+  the "exactly one of the two is declared" rule, and the punctuation guard removes them at the source.
+  Open design question the implementation must still answer: SpecForge already treats alias-grounded facts
+  as **weaker** grounding (`signal_alias_map`, the `alias_dependent` flag and the
+  `semantic_alias_dependent_handshake_completion` clarification packet), so a recovered antecedent should
+  probably carry that provisional marking rather than arrive indistinguishable from a directly-declared one.
+  **Answered: it should not, and the reason is the grounding class.** `alias_dependent` exists for the
+  LLM-learned prose alias (`signal_alias_map`, "address bus" → `HADDR`), which is an inference about what a
+  description means. A repeated appositive is the document stating an identity in its own words — the same
+  class of evidence `.7a` already accepted as local declaration authority — so marking it provisional would
+  misreport direct source evidence as inferred. The honest weakening is refusal, and the rule refuses
+  whenever the document does not say it twice.
+  Acceptance: see the checklist below. Non-goal: SWD, which `.8c` re-derived at 5/29 and which this leaf
+  does not touch; widening any gold; `.3`'s full-document completeness question.
+  Verification: see the acceptance checklist below.
+  Commit: see log.
 - ID: `WIRE-BASED-100.5` · Status: `active` · Goal: cross-spec generalization (AHB → AXI → SWD).
   Children: `.5a` (AHB constraint baseline) → more AHB facts → AXI → SWD. Reuses `.4` index-family
   resolver (AHB `HSELx`), `.3a`/`.3b` gauge fixes, `.1`/`.6`/`.7` eval.
@@ -1258,6 +1300,55 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Prerequisite: none (`.10b` supplies the census).
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.4a` (RUST CODE CHANGE) — DONE `2026-09-11`
+
+- [x] **REPRODUCE / MEASURE** — from the persisted artifacts before any edit: `seed_apb_temporal`
+  `P=R=F1=0.333` (tp=1 fp=2 fn=2). The three rules that decide it: `sigcon_0011` (`PAUSER`) **keeps**
+  `PSELx` because its source writes the declared spelling; `sigcon_0009` (`PNSE`) has `antecedents: []`
+  and `sigcon_0014` (`PBUSER`) keeps `PENABLE`/`PREADY` and drops only the select, because their source
+  writes the un-indexed `PSEL`, which is not in APB's 32-signal inventory (`PSELx`, `PSELxCHK` only).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `find_known_signal_name`
+  (`crates/specforge/src/ir/semantic.rs`) resolves a temporal clause only by exact or unique case-fold
+  match against the declared catalogue, so a prose spelling the catalogue does not carry resolves to
+  nothing and the antecedent is dropped silently. That is ADR 0037 behaving correctly; what was missing is
+  any way for the document to *state* the identity itself.
+- [x] **ADDRESSED (verified)** — `document_signal_coreferences` reads the co-references a document states
+  in its own words: the same appositive role phrase before two identifiers, exactly one of them declared.
+  APB writes `Select signal, PSELx` (`statement_0211`) and `Select signal, PSEL` (`statement_0243`).
+  Per rule, before → after: `sigcon_0009` `[]` → `[PSELx=ASSERTED]`; `sigcon_0014` `[PENABLE, PREADY]` →
+  `[PSELx, PENABLE, PREADY]` all `ASSERTED`; `sigcon_0007` `[PENABLE=LOW, PREADY=LOW]` →
+  `[PSELx=LOW, PENABLE=LOW, PREADY=LOW]`; `sigcon_0012` `[PWRITE]` → `[PSELx, PWRITE]`. Five antecedent
+  predicates recovered across four rules, every one of them the select signal its own source sentence
+  names. `seed_apb_temporal` **`0.333 → 1.000`** (tp=1→3, fp=2→0, fn=2→0) **with the gold file untouched**.
+  A second defect surfaced and was fixed en route: the matched alias text was read back as the clause's
+  VALUE (`PSELx = "PSEL"`), which also broke shared-value distribution and silently dropped `PENABLE` from
+  a three-signal condition — a co-reference key is now rejected as a value exactly as a declared name is.
+- [x] **NO REGRESSION** — named, re-runnable oracles, all green: `cargo test -p specforge-core --lib` 1,398
+  pass including 5 new cases; `-p specforge --lib` 472; `-p specforge-conformance --lib` 168;
+  `cargo fmt --all`; `cargo clippy --all-targets` clean. **The two pinned opacity controls still pass** —
+  `temporal_condition_does_not_infer_numeric_or_x_index_aliases` and
+  `…_does_not_alias_an_undeclared_name_from_suffix_spelling` — because a synthetic single-appositive case
+  has nothing to co-refer with. All other eight wire numbers re-derive unchanged (AXI `1.000`×3, APB
+  `1.000`/`1.000`, AHB `1.000`×3), and **SWD re-derives unchanged at 5/29**. Corpus blast radius over the 27
+  proof-carrying chains: **zero movement** in ports, actors, declared inventory, provenance, constraints or
+  emitted ISF signal/rule counts, and the temporal signature of the other 26 chains is identical.
+  `bash scripts/check_doctrines.sh` and `bash scripts/check_chain_currency.sh` green.
+- [x] **GENERICITY (ADR 0006 / ADR 0037)** — the link is the document's own repeated phrase, matched only
+  against itself; its words are never interpreted, and both identifiers may be alpha-renamed without moving
+  the result. The census that sized it ran over every persisted chain before any code was written: **two
+  role phrases name more than one identifier corpus-wide, and exactly one links** — this APB fact. Five new
+  tests use alpha-renamed symbols and assert the negatives: one appositive alone never links, two declared
+  identifiers stay distinct, three identifiers are ambiguous, an unclosed mid-sentence comma is not an
+  appositive, and a co-referenced alias is never a value.
+- [x] **HONEST LIMIT** — the recovery improves canonical IntentIR and the score; it does **not** move the
+  emitted product. APB's `.isf` is unchanged (`PSELx` ×3, rule_count 32) because those temporal rules were
+  already residualized at lowering for an unrelated, already-published reason — `VALID` is not an ISF
+  literal. The tree's bar is **not** met either: this closes the last sub-1.000 number on the three
+  parallel-bus golds; SWD stays at 5/29 and `.3`'s full-document completeness question is untouched.
+- [x] **LOCKSTEP** — mdBook, `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the resume pointer, the roadmap
+  (whose "APB temporal `1.000` retired" line is now false) and a new Knowledge Map card updated;
+  `indexed-signal-family-canonicalization` and `inference-antecedent-state-loss` gain a forward link.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.10b` (RUST CODE CHANGE) — DONE `2026-09-11`
 

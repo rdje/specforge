@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
@@ -133,6 +135,8 @@
   > how can a collection use a membership index outside its own surface
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > how can a live surface null a size dimension
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > how can a prose signal spelling bind to a declared one without a suffix inference
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how can a script ask the SpecForge canonical loader without mutating the artifact
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -294,7 +298,3 @@
   > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how does SpecForge extract register fields from tables
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > how does SpecForge flag vague or ambiguous spec language

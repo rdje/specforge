@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > how much page content escapes both the structured-element path and the region-crop path
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > how should Rust version copies be verified across Cargo README book and CI
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > how should a behavior-preserving evidence refactor be verified given the non-determinism
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > how should a red check be attributed to a change
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how should an AXI gold or extraction be structured (per channel)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -290,11 +298,3 @@
   > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > is the ingest drift purely additive
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > is the ingest drift run-to-run noise
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > is the jesd235 HBM artifact a truncated ingest
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale

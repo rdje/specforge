@@ -31,3 +31,8 @@ For the current reviewed APB recovery, `PSEL` is not obtained from declared `PSE
 appositive as local declaration authority and separately proves that a bare `PSEL` cannot alias `PSELX` by
 shape. Follow [[inference-antecedent-state-loss]] for current truth. The June temporal score and PSELX gold
 correction remain accurate history at their own revision, not authority for present extraction.
+
+`WIRE-BASED-100.4a` later restored the APB antecedent on a footing that is *not* this rule: the document
+writes the same appositive role phrase before both identifiers (`Select signal, PSELx` and
+`Select signal, PSEL`), so the identity is read from what the document states rather than from the `x`.
+A single appositive still links nothing. See [[document-stated-identifier-coreference]].

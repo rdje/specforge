@@ -73,13 +73,13 @@
    "planned_outputs": [
       {
          "metrics": {
-            "bytes": 1047,
+            "bytes": 1074,
             "line_bytes": 190,
             "lines": 11
          },
          "path": "docs/knowledge/INDEX.md",
          "role": "landing",
-         "sha256": "a5f73e616554aac851d83154e7b47832c3d1f64b85e7d9be3e7c67602b75f686"
+         "sha256": "3b5613b2247af5beaefb603c5a827c8c4d042d2add03285959329d71415a28c9"
       },
       {
          "metrics": {
@@ -93,13 +93,13 @@
       },
       {
          "metrics": {
-            "bytes": 12544,
+            "bytes": 12579,
             "line_bytes": 276,
             "lines": 63
          },
          "path": "docs/knowledge-catalog/titles-0002.md",
          "role": "title_part",
-         "sha256": "1cc38e90c068de9a8a29b6523dacd7e586f445494731acb231c67dcec603d9e2"
+         "sha256": "825f585fcf16d39566b9d96ab76a263dfceeaed0071d8a402b6107cda83d3d8d"
       },
       {
          "metrics": {
@@ -109,27 +109,27 @@
          },
          "path": "docs/knowledge-catalog/titles-0003.md",
          "role": "title_part",
-         "sha256": "a8bfb6a3e0d611c3bd194852aca6ad524e5fde964320dfb81414e5fc3679f7c9"
+         "sha256": "9b632069ff8710b7946d29f6710123c41b293496e7fda061aadee757e209d287"
       },
       {
          "metrics": {
-            "bytes": 12528,
+            "bytes": 12495,
             "line_bytes": 260,
             "lines": 63
          },
          "path": "docs/knowledge-catalog/titles-0004.md",
          "role": "title_part",
-         "sha256": "5264efc2947d10b226ed914d468c5baca623aaeea7272e6655f1c30955a22ed9"
+         "sha256": "98eab144933c95c74dce236af3c7e6970907492258f97a38103585849e76dab8"
       },
       {
          "metrics": {
-            "bytes": 9258,
+            "bytes": 9497,
             "line_bytes": 256,
-            "lines": 48
+            "lines": 49
          },
          "path": "docs/knowledge-catalog/titles-0005.md",
          "role": "title_part",
-         "sha256": "cbe6750cfe530a0d169c8b9bf3923404ba611f6151df5d43c18d8ea20dd18e18"
+         "sha256": "c949fe7d2f29c1666f0882a1c52bb628164b68a1976a586df3c630be81e4d9e5"
       }
    ],
    "schema_version": 1,

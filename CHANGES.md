@@ -1,3 +1,55 @@
+### WIRE-BASED-100.4a — the identity a document states about itself, and the last sub-1.000 wire number
+
+- APB TEMPORAL WAS 0.333 BECAUSE AN ANTECEDENT WAS DROPPED SILENTLY, NOT BECAUSE A FACT WAS MISSPELLED.
+  Measured per rule from the persisted chain: `sigcon_0011` (PAUSER) KEEPS its `PSELx` antecedent because
+  its source writes the declared spelling; `sigcon_0009` (PNSE) has `antecedents: []` and `sigcon_0014`
+  (PBUSER) keeps PENABLE/PREADY and drops only the select, because their source writes the un-indexed
+  `PSEL`, which is not in APB's 32-signal inventory (`PSELx`, `PSELxCHK` only). Case is not involved:
+  `eval::temporal_predicate_key` uppercases, as `.9d` demonstrated with `ARESETn`/`ARESETN`.
+- THE LEAF'S SECOND OPTION IS REFUTED ON EVIDENCE, NOT DECLINED ON TASTE. Re-anchoring the gold to `PSEL`
+  would satisfy it with an identity that never reaches the product: `PSEL` is absent from APB's declared
+  inventory and the token does not occur anywhere in the emitted .isf, while `PSELx` occurs three times.
+  That would move the score without moving anything else.
+- THE LINK IS READ FROM WHAT THE DOCUMENT STATES, NOT FROM THE `x`. APB writes the SAME appositive role
+  phrase before both identifiers — `Select signal, PSELx` (statement_0211) and `Select signal, PSEL`
+  (statement_0243). `document_signal_coreferences` reads exactly that: `SPEC-TO-INTENT-ALIGNMENT.7a`'s
+  appositive punctuation, a role phrase of at most four words ending in `signal` with a leading determiner
+  dropped, and a link only when one phrase names EXACTLY TWO identifiers of which EXACTLY ONE is declared.
+  The phrase is matched only against itself; its words are never interpreted, and both identifiers may be
+  alpha-renamed without moving the result.
+- ADR 0037 IS UNTOUCHED AND ITS CONTROLS PROVE IT. A single appositive links nothing, so
+  `temporal_condition_does_not_infer_numeric_or_x_index_aliases` and
+  `…_does_not_alias_an_undeclared_name_from_suffix_spelling` both still pass unchanged. Two DECLARED
+  identifiers under one phrase are two real wires; three are ambiguous; a comma that continues a sentence is
+  not an appositive. Censused over every persisted chain BEFORE any code was written: two role phrases name
+  more than one identifier corpus-wide and exactly one links — this APB fact.
+- ADDRESSED, per rule, before -> after: `sigcon_0009` [] -> [PSELx=ASSERTED]; `sigcon_0014`
+  [PENABLE, PREADY] -> [PSELx, PENABLE, PREADY] all ASSERTED; `sigcon_0007` [PENABLE=LOW, PREADY=LOW] ->
+  [PSELx=LOW, PENABLE=LOW, PREADY=LOW]; `sigcon_0012` [PWRITE] -> [PSELx, PWRITE]. Five antecedent
+  predicates recovered across four rules, every one the select signal its own sentence names.
+  **`seed_apb_temporal` 0.333 -> 1.000 (tp 1->3, fp 2->0, fn 2->0) with the gold file untouched.**
+- A SECOND DEFECT SURFACED AND WAS FIXED EN ROUTE. The matched alias text was read back as the clause's
+  VALUE (`PSELx = "PSEL"`), which put two distinct values in a coordinated list, disabled the shared-value
+  distribution and silently dropped PENABLE as well. A co-reference key is now rejected as a value exactly
+  as a declared name already was.
+- AND THE BOOK WAS CARRYING A FALSE CURRENT-BEHAVIOUR CLAIM. The temporal chapter's "Indexed signal families
+  in antecedents" said SpecForge "now resolves an un-indexed prose reference ... using the universal x/digit
+  index convention" — describing the resolver `f88d463d` deleted on 2026-08-12. It has been false for a
+  month and no gate caught it, because the book-currency checks cover routes and contracts rather than
+  behavioural prose. Rewritten to what the code does, including the four refusals.
+- SCOPE, STATED HONESTLY: this closes the last sub-1.000 number on the three PARALLEL-BUS golds — APB, AHB
+  and AXI now score 1.000 on every aspect. It does NOT meet the tree's bar. SWD re-derives unchanged at
+  5/29 (serial_frame_field 0/11, protocol_state 0/13) and `.3`'s full-document completeness question is
+  untouched. It also does not move the emitted product: APB's .isf is unchanged (PSELx x3, rule_count 32)
+  because those rules are already residualized at lowering for an unrelated published reason — `VALID` is
+  not an ISF literal.
+- CORPUS BLAST RADIUS over the 27 proof-carrying chains: **zero movement** in ports, actors, declared
+  inventory, provenance, constraints or emitted ISF signal/rule counts, and the other 26 chains' temporal
+  signatures are identical. EvidenceIR is untouched, so only semantic -> intent -> adapt was rebuilt.
+- VERIFIED: `cargo test -p specforge-core --lib` 1,398 pass (5 new cases), `-p specforge --lib` 472,
+  `-p specforge-conformance --lib` 168; `cargo fmt --all`; `cargo clippy --all-targets` clean;
+  `scripts/check_doctrines.sh` and `scripts/check_chain_currency.sh` green.
+
 ### WIRE-BASED-100.10b — the names a specification writes but never declares, and the cheap rule that was wrong
 
 - TWO PRODUCERS WERE PUTTING NAMES INTO THE AXI INTERFACE THAT NAME NO WIRE, each at its own seam in

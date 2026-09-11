@@ -230,6 +230,8 @@
   > does the alpha harness expose transform recipes to production core
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does the authority empty repair preserve formal and system contract interfaces
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > does the co-reference rule resurrect resolve_indexed_signal_family
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does the converge NLI pass measure quality or demote unsupported intent
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -296,5 +298,3 @@
   > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > has the corpus task evidence migration landed
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > have the PDF task migration destinations been created

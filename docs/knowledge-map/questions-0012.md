@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where are Docling models stored for SpecForge
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > where are Docling page sidecar paths normalized
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > where are actual replay stage hashes stored
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > where are administrative workflows filtered
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > where are behavioral paraphrase and harmless layout recipes registered
+- [contested-priors](../knowledge/contested-priors.md)
+  > where are cross-document prior contradictions surfaced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > where are section-derived semantic phases built
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -283,17 +297,3 @@
   > which boot-volume Rust directories are allowed
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > which canonical Markdown collections still rely only on git query
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > which caption grammar can supply a unit to every timing row
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > which checks pin the retained-bundle population at 24
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control-audit fields are gated and which must be read from the report
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > which claim family owns captured_region_residuals
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > which collection order changes may the behavioral comparator normalize
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > which column does synthesize_signal_declarations read names from, and when does content overrule the header (a distinct-hardware-token score per column, overruling the header only on a lead of at least two tokens)

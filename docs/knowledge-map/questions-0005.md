@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how does SpecForge extract register fields from tables
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > how does SpecForge flag vague or ambiguous spec language
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
@@ -26,6 +30,8 @@
   > how does SpecForge recover a timing unit from a table caption
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > how does SpecForge relate to GoldMine Texada Pnueli Ammons
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > how does SpecForge resolve PSEL to PSELx in a temporal condition
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge resolve a persisted path after the repository moves
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -292,9 +298,3 @@
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how is an unless/except exception clause handled in a temporal condition
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > how is copied artifact validation path containment tested
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > how is corpus SOURCE_PDF_REGISTRY currentness checked
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > how is corpus_kb currentness checked

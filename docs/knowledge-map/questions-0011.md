@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what is the corpus task evidence writer transaction after migration
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the current corpus refresh frontier after refresh 48
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the declared-signal eval surface / EvalTask::DeclaredSignal
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > what is the difference between PROOF-SEAL-CURRENCY and CHAIN-CURRENCY
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what is the difference between ingest batch activation and adaptive batch size
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -284,17 +298,3 @@
   > when should the activate-only ExtractionProfile consume contract be built
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > when was the upstream claim-verification standard last re-read
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where are Docling models stored for SpecForge
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > where are Docling page sidecar paths normalized
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > where are actual replay stage hashes stored
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > where are administrative workflows filtered
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > where are behavioral paraphrase and harmless layout recipes registered
-- [contested-priors](../knowledge/contested-priors.md)
-  > where are cross-document prior contradictions surfaced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md) | 2026-08-10 | `current` | Parenthetical data heads require an adjacent wire qualifier |
 | [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md) | 2026-08-10 | `current` | A passive obligation's constraint subject must be named before its must/shall be\|remain lead |
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
@@ -60,4 +61,3 @@
 | [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md) | 2026-08-11 | `current` | The first reviewed source-to-IntentIR result is incomplete in all six categories and fails upstream |
 | [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md) | 2026-08-11 | `current` | The first source-to-IntentIR vertical population locks twelve reviewed documents without extractor tuning |
 | [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md) | 2026-08-11 | `current` | Vertical evaluation is a strict data-defined oracle over pinned four-stage snapshots |
-| [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md) | 2026-09-11 | `current` | SourceIR classification is proof-verified one record at a time, so a classification rule may never read its n… |

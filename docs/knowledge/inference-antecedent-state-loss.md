@@ -36,7 +36,9 @@ but the reviewed span itself uses the appositive `select signal, PSEL` and the f
 0037 forbids deriving an alias from the `X` suffix. `.7a` therefore treats the same-clause appositive as a local
 declaration of opaque `PSEL`, retains `PSELX` as a distinct declaration, and adds a negative control proving that
 bare `PSEL` with only `PSELX` declared emits nothing. This supersedes the historical indexed-family behavior;
-see [[indexed-signal-family-canonicalization]].
+see [[indexed-signal-family-canonicalization]]. That separation still holds for this constraint SUBJECT;
+`WIRE-BASED-100.4a` separately resolves a TEMPORAL ANTECEDENT spelling when the document itself repeats one
+appositive role phrase before both identifiers — see [[document-stated-identifier-coreference]].
 
 The selected evidence also establishes no active-high or active-low polarity. The former gold key refined
 `asserted` to `HIGH` without authority, contradicting the production polarity post-pass, which deliberately

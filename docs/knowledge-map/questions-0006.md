@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > how is copied artifact validation path containment tested
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > how is corpus SOURCE_PDF_REGISTRY currentness checked
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how is corpus_kb currentness checked
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
@@ -187,6 +193,8 @@
   > how many generated artifacts still mention the deleted boot-volume repository
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how many governed claim producers are tracked
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > how many identifier co-references exist corpus-wide
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -289,11 +297,3 @@
   > how much of the reviewed trajectory population has current binary replay evidence
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > how much of the specforge persisted corpus can actually be scored / is canonically current
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > how much page content escapes both the structured-element path and the region-crop path
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > how should Rust version copies be verified across Cargo README book and CI
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > how should a behavior-preserving evidence refactor be verified given the non-determinism
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > how should a red check be attributed to a change

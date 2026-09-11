@@ -62,22 +62,38 @@ The actor-grounded predicates are important because they connect timing obligati
 
 For example, if the graph says `Requester` drives `PSEL`, a temporal rule can express that actor responsibility instead of only saying `PSEL` changes.
 
-### Indexed signal families in antecedents
+### When prose spells a declared signal differently
 
-Specs routinely declare a per-instance signal with an index — the bus select is
-declared `PSELx` (one per completer), but prose refers to it bare as `PSEL`
-("PNSE must be valid **when PSEL is asserted**"). The bare name is not literally a
-declared signal, so an antecedent that mentioned only `PSEL` used to be dropped —
-silently weakening the recovered condition (e.g. "when PSEL, PENABLE, and PREADY
-are asserted" would keep only PENABLE and PREADY).
+Specs routinely declare a per-instance signal with an index — the bus select is declared
+`PSELx`, one per completer — and then write ordinary obligations about the bare name:
+*"PNSE must be valid **when PSEL is asserted**"*. The bare name is not a declared signal,
+so an antecedent mentioning only `PSEL` is dropped, silently weakening the recovered
+condition (*"when PSEL, PENABLE, and PREADY are asserted"* keeps only two of three).
 
-SpecForge now resolves an un-indexed prose reference to its declared indexed family
-member (`PSEL` → `PSELx`, including numeric indices like `FOO0`) using the universal
-`x`/digit index convention — so the temporal rule records the **same canonical signal
-identity** the catalog and the connectivity graph use, rather than a second spelling.
-This is grammar (the index convention), not a hardcoded signal name, and it is purely
-additive: it only fires when the bare token is not itself a declared signal, so it can
-never override a real declaration or invent a signal that has no declared family.
+**SpecForge does not guess the link from the spelling.** Identifiers in the current
+document are opaque: case, prefix, suffix and numeric shape carry no alias authority, so
+`PSEL` may not become `PSELx` because of the `x`. That rule is pinned by executable
+controls, and an earlier index-convention resolver was deliberately removed.
+
+What SpecForge reads instead is the link **the document states about itself**. A
+specification that uses two spellings for one wire normally introduces both the same way,
+with the same appositive role phrase: APB writes `Select signal, PSELx` in one signal list
+and `Select signal, PSEL` in another. When one role phrase introduces exactly two
+identifiers and exactly one of them is declared, the undeclared spelling resolves to the
+declared one, and the temporal rule records the **same canonical identity** the catalog and
+the connectivity graph use.
+
+Everything about that is refusable, and the refusals are the point:
+
+- one appositive links nothing — there is no second spelling to co-refer with, so the
+  spelling-shape guess stays forbidden;
+- two *declared* identifiers under one phrase are two real wires and stay distinct;
+- three identifiers are ambiguous and link nothing;
+- a comma that merely continues a sentence is not an appositive.
+
+The role phrase is matched only against itself — its words are never interpreted — so
+renaming either identifier throughout the document leaves the result unchanged. Across
+SpecForge's whole persisted corpus this rule links exactly one pair.
 
 ## Cycle windows
 

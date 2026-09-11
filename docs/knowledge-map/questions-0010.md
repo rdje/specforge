@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > what is ADR 0025
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > what is ADR 0026
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > what is ADR 0027
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > what is ADR 0029
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what is ADR 0030
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > what is ADR 0031
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -92,6 +102,8 @@
   > what is aggregate_composition in surfaces.jsonl
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > what is an alpha-variant placeholder
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > what is an appositive role phrase co-reference
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -124,6 +136,8 @@
   > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what is document_intent_category / the 6-category purpose recognizer
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > what is document_signal_coreferences
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_type_declared / front_matter_doc_type_hint
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -283,17 +297,3 @@
   > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > what is the corpus impact of the authority empty interface fallback
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what is the corpus task evidence writer transaction after migration
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what is the current corpus refresh frontier after refresh 48
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is the declared-signal eval surface / EvalTask::DeclaredSignal
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > what is the difference between PROOF-SEAL-CURRENCY and CHAIN-CURRENCY
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > what is the difference between a refreshed EvidenceIR and a retained normalized bundle

@@ -8587,6 +8587,7 @@ fn build_temporal_rules(
                 .map(|signal| signal.signal_name.clone())
         })
         .collect::<BTreeSet<_>>();
+    let coreferences = document_signal_coreferences(&context.statements, &known_signals);
     let default_clock = temporal_clock_signal(context, system_contract);
     let default_edge = if default_clock.is_some() {
         ClockEdge::Rising
@@ -8605,6 +8606,7 @@ fn build_temporal_rules(
                 parse_temporal_condition_predicates(
                     text,
                     &known_signals,
+                    &coreferences,
                     TickPhase::PreTick,
                     &handshake_role_context,
                 )
@@ -8650,6 +8652,7 @@ fn build_temporal_rules(
         let consequents = temporal_consequents_from_conditional_rule(
             rule,
             &known_signals,
+            &coreferences,
             &unique_producer_by_signal,
             &handshake_role_context,
         );
@@ -8659,6 +8662,7 @@ fn build_temporal_rules(
         let antecedents = parse_temporal_condition_predicates(
             &rule.antecedent_text,
             &known_signals,
+            &coreferences,
             TickPhase::PreTick,
             &handshake_role_context,
         );
@@ -8701,6 +8705,7 @@ fn build_temporal_rules(
             timing,
             description,
             &known_signals,
+            &coreferences,
             default_clock.as_deref(),
             actor_names,
             prior_guidance,
@@ -8729,6 +8734,7 @@ fn temporal_clock_signal(
 fn parse_temporal_condition_predicates(
     text: &str,
     known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
     phase: TickPhase,
     handshake_role_context: &HandshakeRoleContext,
 ) -> Vec<TemporalPredicateRecord> {
@@ -8761,11 +8767,12 @@ fn parse_temporal_condition_predicates(
     // "PSEL, PENABLE, and PREADY are asserted") is kept with value=None so a single shared
     // trailing value can be distributed across the list (TEMPORAL-ANTECEDENT-RECALL).
     let mut parts: Vec<(String, Option<String>)> =
-        split_temporal_condition_clauses(normalized, known_signals)
+        split_temporal_condition_clauses(normalized, known_signals, coreferences)
             .into_iter()
             .filter_map(|clause| {
-                find_known_signal_name(&clause, known_signals).map(|signal| {
-                    let value = temporal_clause_value(&clause, &signal, known_signals);
+                find_known_signal_name(&clause, known_signals, coreferences).map(|signal| {
+                    let value =
+                        temporal_clause_value(&clause, &signal, known_signals, coreferences);
                     (signal, value)
                 })
             })
@@ -8808,7 +8815,11 @@ fn parse_temporal_condition_predicates(
     enrich_handshake_completion_predicates(predicates, handshake_role_context)
 }
 
-fn split_temporal_condition_clauses(text: &str, known_signals: &BTreeSet<String>) -> Vec<String> {
+fn split_temporal_condition_clauses(
+    text: &str,
+    known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
+) -> Vec<String> {
     let mut segments = text
         .split(',')
         .flat_map(|segment| segment.split("&&"))
@@ -8826,6 +8837,7 @@ fn split_temporal_condition_clauses(text: &str, known_signals: &BTreeSet<String>
         clauses.extend(split_temporal_condition_segment_on_and(
             &segment,
             known_signals,
+            coreferences,
         ));
     }
     clauses
@@ -8834,6 +8846,7 @@ fn split_temporal_condition_clauses(text: &str, known_signals: &BTreeSet<String>
 fn split_temporal_condition_segment_on_and(
     text: &str,
     known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
 ) -> Vec<String> {
     let lowered = text.to_ascii_lowercase();
     if !lowered.contains(" and ") {
@@ -8851,9 +8864,9 @@ fn split_temporal_condition_segment_on_and(
     parts.push(text[last_start..].trim().to_string());
 
     let all_parts_are_signal_anchored = parts.len() > 1
-        && parts
-            .iter()
-            .all(|part| !part.is_empty() && find_known_signal_name(part, known_signals).is_some());
+        && parts.iter().all(|part| {
+            !part.is_empty() && find_known_signal_name(part, known_signals, coreferences).is_some()
+        });
     if all_parts_are_signal_anchored {
         parts
     } else {
@@ -8872,6 +8885,7 @@ fn temporal_clause_value(
     text: &str,
     signal_name: &str,
     known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
 ) -> Option<String> {
     if contains_phrase_case_insensitive(text, "LOW") {
         Some("LOW".to_string())
@@ -8883,9 +8897,17 @@ fn temporal_clause_value(
         Some("DEASSERTED".to_string())
     } else {
         extract_symbolic_value(text, Some(signal_name)).filter(|candidate| {
+            // WIRE-BASED-100.4a — a co-reference key names a signal exactly as a declared name does,
+            // so it is never a value either. Without this the clause `PSEL` in
+            // `PSEL, PENABLE, and PREADY are asserted` resolves its SIGNAL to `PSELx` and then reads
+            // its own alias text back as the VALUE, which also breaks the shared-value distribution
+            // for every other member of the list.
             !known_signals
                 .iter()
                 .any(|known| known.eq_ignore_ascii_case(candidate))
+                && !coreferences
+                    .keys()
+                    .any(|alias| alias.eq_ignore_ascii_case(candidate))
         })
     }
 }
@@ -9513,6 +9535,7 @@ fn temporal_consequents_from_signal_constraint(
 fn temporal_consequents_from_conditional_rule(
     rule: &ConditionalRuleRecord,
     known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
     unique_producer_by_signal: &BTreeMap<String, String>,
     handshake_role_context: &HandshakeRoleContext,
 ) -> Vec<TemporalPredicateRecord> {
@@ -9609,6 +9632,7 @@ fn temporal_consequents_from_conditional_rule(
             parse_temporal_condition_predicates(
                 action,
                 known_signals,
+                coreferences,
                 TickPhase::PostTick,
                 handshake_role_context,
             )
@@ -9667,11 +9691,12 @@ fn temporal_rule_from_timing_constraint(
     timing: &TimingConstraintRecord,
     description: &str,
     known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
     default_clock: Option<&str>,
     actor_names: &BTreeSet<String>,
     prior_guidance: Option<&SemanticPriorGuidance>,
 ) -> Option<TemporalRuleRecord> {
-    let signal_name = find_known_signal_name(description, known_signals)?;
+    let signal_name = find_known_signal_name(description, known_signals, coreferences)?;
     let description_lower = description.to_ascii_lowercase();
     let explicit_clock_signal = explicit_clock_signal_from_text(description, known_signals);
     let default_edge = if default_clock.is_some() {
@@ -10886,7 +10911,138 @@ fn parse_diagram_cycle_count_value(token: &str) -> Option<u32> {
     })
 }
 
-fn find_known_signal_name(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
+/// WIRE-BASED-100.4a — the identifier co-references a document states about itself.
+///
+/// A specification sometimes writes the SAME appositive role phrase before two different
+/// identifiers for one wire. AMBA APB writes `Select signal, PSELx` in one list and
+/// `Select signal, PSEL` in another, then carries real temporal conditions on the un-indexed form
+/// (`PNSE must be valid when PSEL is asserted`). Only `PSELx` is declared, so those antecedents
+/// were dropped and the obligations lost their condition entirely.
+///
+/// **The link is read from the document's own repeated phrase, never from spelling shape.** ADR 0037
+/// forbids deriving `PSEL` → `PSELx` from the `x`, and this rule refuses exactly that case: one
+/// appositive has nothing to co-refer with, so the pinned
+/// `temporal_condition_does_not_infer_numeric_or_x_index_aliases` control still emits nothing. Both
+/// identifiers may be alpha-renamed without moving the result, and the role phrase is matched only
+/// against itself — its words are never interpreted.
+///
+/// The grammar reuses `SPEC-TO-INTENT-ALIGNMENT.7a`'s appositive punctuation rather than inventing
+/// one: `<role phrase>, IDENTIFIER` where the identifier is closed by a comma, a period, or the end
+/// of the statement, and the role phrase is the at-most-four words before that comma whose last word
+/// is `signal`, with a leading determiner dropped so `Select signal` and `The select signal` are the
+/// same phrase. A phrase links only when it names **exactly two** identifiers of which **exactly one**
+/// is declared: three identifiers is ambiguous, and two declared ones are two real wires.
+///
+/// Measured over every persisted chain before shipping: two role phrases name more than one
+/// identifier corpus-wide, and exactly one of them links — this APB fact.
+fn document_signal_coreferences(
+    statements: &[StatementContext],
+    known_signals: &BTreeSet<String>,
+) -> BTreeMap<String, String> {
+    let mut by_phrase: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for statement in statements {
+        for (phrase, identifier) in signal_role_appositives(&statement.text) {
+            by_phrase.entry(phrase).or_default().insert(identifier);
+        }
+    }
+
+    let mut coreferences = BTreeMap::new();
+    for identifiers in by_phrase.into_values() {
+        if identifiers.len() != 2 {
+            continue;
+        }
+        let declared: Vec<&String> = identifiers
+            .iter()
+            .filter(|name| known_signals.contains(*name))
+            .collect();
+        let undeclared: Vec<&String> = identifiers
+            .iter()
+            .filter(|name| !known_signals.contains(*name))
+            .collect();
+        if declared.len() != 1 || undeclared.len() != 1 {
+            continue;
+        }
+        coreferences.insert(undeclared[0].clone(), declared[0].clone());
+    }
+    coreferences
+}
+
+/// One statement's `<role phrase>, IDENTIFIER` appositives, keyed by the normalized role phrase.
+fn signal_role_appositives(text: &str) -> Vec<(String, String)> {
+    const MAX_ROLE_WORDS: usize = 4;
+    let mut found = Vec::new();
+    let bytes = text.as_bytes();
+    for (comma_index, _) in text.match_indices(',') {
+        let after = &text[comma_index + 1..];
+        let identifier_start = comma_index + 1 + (after.len() - after.trim_start().len());
+        let Some((start, end)) = leading_identifier_span(&text[identifier_start..]) else {
+            continue;
+        };
+        let (start, end) = (identifier_start + start, identifier_start + end);
+        // `.7a`'s appositive punctuation: the identifier must be closed, not continue a sentence.
+        let closed = text[end..]
+            .trim_start()
+            .chars()
+            .next()
+            .is_none_or(|character| character == ',' || character == '.');
+        if !closed {
+            continue;
+        }
+        let clause_start = text[..comma_index]
+            .rfind(['.', ';', ':', '(', ')', '[', ']'])
+            .map(|index| index + 1)
+            .unwrap_or(0);
+        let mut words: Vec<&str> = text[clause_start..comma_index]
+            .split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+            .filter(|word| !word.is_empty())
+            .collect();
+        while matches!(
+            words.first().map(|word| word.to_ascii_lowercase()),
+            Some(ref first) if first == "the" || first == "a" || first == "an"
+        ) {
+            words.remove(0);
+        }
+        if !words
+            .last()
+            .is_some_and(|word| word.eq_ignore_ascii_case("signal"))
+        {
+            continue;
+        }
+        if words.len() > MAX_ROLE_WORDS {
+            words.drain(..words.len() - MAX_ROLE_WORDS);
+        }
+        let phrase = words
+            .iter()
+            .map(|word| word.to_ascii_lowercase())
+            .collect::<Vec<_>>()
+            .join(" ");
+        let _ = bytes;
+        found.push((phrase, text[start..end].to_string()));
+    }
+    found
+}
+
+/// The identifier at the very start of `text`, if it begins with one.
+fn leading_identifier_span(text: &str) -> Option<(usize, usize)> {
+    let mut end = 0usize;
+    for (index, character) in text.char_indices() {
+        let identifier_character = character.is_ascii_alphanumeric() || character == '_';
+        if index == 0 && !(character.is_ascii_alphabetic() || character == '_') {
+            return None;
+        }
+        if !identifier_character {
+            break;
+        }
+        end = index + character.len_utf8();
+    }
+    (end > 0).then_some((0, end))
+}
+
+fn find_known_signal_name(
+    text: &str,
+    known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
+) -> Option<String> {
     let mut exact_matches = known_signals
         .iter()
         .filter(|signal_name| contains_text_phrase(text, signal_name))
@@ -10899,11 +11055,29 @@ fn find_known_signal_name(text: &str, known_signals: &BTreeSet<String>) -> Optio
     let mut folded_matches = known_signals
         .iter()
         .filter(|signal_name| contains_phrase_case_insensitive(text, signal_name));
-    let canonical = folded_matches.next()?;
-    if folded_matches.next().is_some() {
-        return None;
+    if let Some(canonical) = folded_matches.next() {
+        if folded_matches.next().is_some() {
+            return None;
+        }
+        return Some(canonical.clone());
     }
-    Some(canonical.clone())
+
+    // WIRE-BASED-100.4a — LAST, so a declared spelling always wins: an identifier the document
+    // itself co-references to a declared one (`document_signal_coreferences`) resolves to that
+    // declaration. Two keys naming different declarations in one clause is ambiguous and fails
+    // closed rather than picking one.
+    let mut resolved: Option<&String> = None;
+    for (alias, canonical) in coreferences {
+        if !contains_text_phrase(text, alias) {
+            continue;
+        }
+        match resolved {
+            None => resolved = Some(canonical),
+            Some(existing) if existing == canonical => {}
+            Some(_) => return None,
+        }
+    }
+    resolved.cloned()
 }
 
 fn contains_phrase_case_insensitive(text: &str, phrase: &str) -> bool {
@@ -24232,7 +24406,11 @@ mod tests {
     fn split_temporal_on_and_two_anchored_parts() {
         // Lines 7280-7283: >→>= and &&→|| — both parts contain known signals, should split.
         let signals = known_signal_bset(&["CLK", "RST"]);
-        let result = super::split_temporal_condition_segment_on_and("CLK and RST", &signals);
+        let result = super::split_temporal_condition_segment_on_and(
+            "CLK and RST",
+            &signals,
+            &BTreeMap::new(),
+        );
         assert_eq!(
             result,
             vec!["CLK".to_string(), "RST".to_string()],
@@ -24244,7 +24422,8 @@ mod tests {
     fn split_temporal_on_and_single_part_no_separator() {
         // Line 7280: >→>= — single part (no "and") should return vec of original text.
         let signals = known_signal_bset(&["CLK"]);
-        let result = super::split_temporal_condition_segment_on_and("CLK", &signals);
+        let result =
+            super::split_temporal_condition_segment_on_and("CLK", &signals, &BTreeMap::new());
         assert_eq!(
             result,
             vec!["CLK".to_string()],
@@ -24256,7 +24435,11 @@ mod tests {
     fn split_temporal_on_and_unanchored_part_returns_original() {
         // Lines 7281-7283: &&→|| — unanchored part (no known signal) should not split.
         let signals = known_signal_bset(&["CLK"]);
-        let result = super::split_temporal_condition_segment_on_and("CLK and UNKNOWN", &signals);
+        let result = super::split_temporal_condition_segment_on_and(
+            "CLK and UNKNOWN",
+            &signals,
+            &BTreeMap::new(),
+        );
         assert_eq!(
             result,
             vec!["CLK and UNKNOWN".to_string()],
@@ -24284,10 +24467,12 @@ mod tests {
         };
         let signals = known_signal_bset(&["CLK"]);
         let actors = BTreeSet::new();
+        let coreferences = BTreeMap::new();
         let result = super::temporal_rule_from_timing_constraint(
             &timing,
             "unknown signal sampled",
             &signals,
+            &coreferences,
             None,
             &actors,
             None,
@@ -24316,10 +24501,12 @@ mod tests {
         };
         let signals = known_signal_bset(&["CLK"]);
         let actors = BTreeSet::new();
+        let coreferences = BTreeMap::new();
         let result = super::temporal_rule_from_timing_constraint(
             &timing,
             "CLK sampled on rising edge",
             &signals,
+            &coreferences,
             None,
             &actors,
             None,
@@ -24348,7 +24535,11 @@ mod tests {
         let producers = BTreeMap::new();
         let handshake = super::HandshakeRoleContext::default();
         let result = super::temporal_consequents_from_conditional_rule(
-            &rule, &signals, &producers, &handshake,
+            &rule,
+            &signals,
+            &BTreeMap::new(),
+            &producers,
+            &handshake,
         );
         assert!(
             result.is_empty(),
@@ -24372,7 +24563,11 @@ mod tests {
         let producers = BTreeMap::new();
         let handshake = super::HandshakeRoleContext::default();
         let result = super::temporal_consequents_from_conditional_rule(
-            &rule, &signals, &producers, &handshake,
+            &rule,
+            &signals,
+            &BTreeMap::new(),
+            &producers,
+            &handshake,
         );
         assert!(
             !result.is_empty(),
@@ -24396,7 +24591,11 @@ mod tests {
         let producers = BTreeMap::new();
         let handshake = super::HandshakeRoleContext::default();
         let result = super::temporal_consequents_from_conditional_rule(
-            &rule, &signals, &producers, &handshake,
+            &rule,
+            &signals,
+            &BTreeMap::new(),
+            &producers,
+            &handshake,
         );
         assert!(
             !result.is_empty(),
@@ -24416,6 +24615,7 @@ mod tests {
         let predicates = super::parse_temporal_condition_predicates(
             "PSEL , PENABLE , and PREADY are asserted.",
             &known,
+            &BTreeMap::new(),
             super::TickPhase::PreTick,
             &handshake,
         );
@@ -24452,6 +24652,7 @@ mod tests {
         let predicates = super::parse_temporal_condition_predicates(
             "PSEL is asserted.",
             &known,
+            &BTreeMap::new(),
             super::TickPhase::PreTick,
             &handshake,
         );
@@ -24474,6 +24675,7 @@ mod tests {
         let predicates = super::parse_temporal_condition_predicates(
             "HSEL is asserted",
             &known,
+            &BTreeMap::new(),
             super::TickPhase::PreTick,
             &handshake,
         );
@@ -24489,6 +24691,134 @@ mod tests {
         assert!(asserted.is_empty());
     }
 
+    fn coreference_statements(texts: &[&str]) -> Vec<super::StatementContext> {
+        texts
+            .iter()
+            .enumerate()
+            .map(|(index, text)| super::StatementContext {
+                statement_id: format!("statement_{index:04}"),
+                class: super::StatementClass::SourceFact,
+                text: (*text).to_string(),
+                related_visual_evidence_ids: Vec::new(),
+                section_ids: Vec::new(),
+                signals: Vec::new(),
+                supporting_table_ids: Vec::new(),
+            })
+            .collect()
+    }
+
+    #[test]
+    fn a_repeated_appositive_role_phrase_co_references_two_identifiers() {
+        // WIRE-BASED-100.4a — the document writes the same role phrase before a declared identifier
+        // and an undeclared one, so it is the document, not the spelling, that says they are one wire.
+        let known = known_signal_bset(&["ZETA_ALPHAx", "OMEGA_ALPHA"]);
+        let statements = coreference_statements(&[
+            "- Gamma signal, ZETA_ALPHAx",
+            "- Gamma signal, ZETA_ALPHA",
+            "OMEGA_ALPHA must be valid when ZETA_ALPHA is asserted.",
+        ]);
+        let coreferences = super::document_signal_coreferences(&statements, &known);
+        assert_eq!(
+            coreferences.get("ZETA_ALPHA").map(String::as_str),
+            Some("ZETA_ALPHAx"),
+            "expected the undeclared spelling to resolve to the declared one, got {coreferences:?}"
+        );
+
+        let handshake = super::HandshakeRoleContext::default();
+        let predicates = super::parse_temporal_condition_predicates(
+            "ZETA_ALPHA is asserted",
+            &known,
+            &coreferences,
+            super::TickPhase::PreTick,
+            &handshake,
+        );
+        assert!(
+            predicates.iter().any(|predicate| matches!(
+                predicate,
+                super::TemporalPredicateRecord::SignalValue { signal_name, value, .. }
+                    if signal_name == "ZETA_ALPHAx" && value == "ASSERTED"
+            )),
+            "the antecedent must carry the DECLARED identity, got {predicates:?}"
+        );
+    }
+
+    #[test]
+    fn one_appositive_alone_never_co_references_by_spelling() {
+        // The ADR 0037 case: the declared name exists, the prose writes a shorter spelling, and
+        // there is NO second appositive. Nothing may link, or this would resurrect the deleted
+        // suffix-family inference.
+        let known = known_signal_bset(&["ZETA_ALPHAx"]);
+        let statements = coreference_statements(&[
+            "- Gamma signal, ZETA_ALPHAx",
+            "OMEGA_ALPHA must be valid when ZETA_ALPHA is asserted.",
+        ]);
+        assert!(super::document_signal_coreferences(&statements, &known).is_empty());
+    }
+
+    #[test]
+    fn a_role_phrase_naming_two_declared_identifiers_keeps_them_distinct() {
+        // Two declared wires sharing a role phrase are two wires, not an alias pair.
+        let known = known_signal_bset(&["ZETA_ALPHA", "ZETA_BETA"]);
+        let statements =
+            coreference_statements(&["- Gamma signal, ZETA_ALPHA", "- Gamma signal, ZETA_BETA"]);
+        assert!(super::document_signal_coreferences(&statements, &known).is_empty());
+        // Three identifiers under one phrase is ambiguous and also refuses.
+        let known3 = known_signal_bset(&["ZETA_ALPHA"]);
+        let statements3 = coreference_statements(&[
+            "- Gamma signal, ZETA_ALPHA",
+            "- Gamma signal, ZETA_BETA",
+            "- Gamma signal, ZETA_PSI",
+        ]);
+        assert!(super::document_signal_coreferences(&statements3, &known3).is_empty());
+    }
+
+    #[test]
+    fn an_unclosed_appositive_is_a_sentence_not_a_role_phrase() {
+        // `.7a`'s appositive punctuation: the identifier must be closed by a comma, a period, or the
+        // end of the statement. A mid-sentence continuation is not an appositive.
+        let known = known_signal_bset(&["ZETA_ALPHAx"]);
+        let statements = coreference_statements(&[
+            "- Gamma signal, ZETA_ALPHAx",
+            "A module may not use every gamma signal, Table 2 shows which apply.",
+        ]);
+        assert!(super::document_signal_coreferences(&statements, &known).is_empty());
+    }
+
+    #[test]
+    fn a_co_referenced_alias_is_a_signal_name_never_a_value() {
+        // The alias names a signal exactly as a declared name does, so a coordinated list must
+        // distribute its shared value instead of reading the alias text back as one.
+        let known = known_signal_bset(&["ZETA_ALPHAx", "OMEGA_ALPHA", "PSI_ALPHA"]);
+        let statements =
+            coreference_statements(&["- Gamma signal, ZETA_ALPHAx", "- Gamma signal, ZETA_ALPHA"]);
+        let coreferences = super::document_signal_coreferences(&statements, &known);
+        let handshake = super::HandshakeRoleContext::default();
+        let predicates = super::parse_temporal_condition_predicates(
+            "ZETA_ALPHA, OMEGA_ALPHA, and PSI_ALPHA are asserted",
+            &known,
+            &coreferences,
+            super::TickPhase::PreTick,
+            &handshake,
+        );
+        let carried: Vec<(String, String)> = predicates
+            .iter()
+            .filter_map(|predicate| match predicate {
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name, value, ..
+                } => Some((signal_name.clone(), value.clone())),
+                _ => None,
+            })
+            .collect();
+        for expected in ["ZETA_ALPHAx", "OMEGA_ALPHA", "PSI_ALPHA"] {
+            assert!(
+                carried
+                    .iter()
+                    .any(|(name, value)| name == expected && value == "ASSERTED"),
+                "missing {expected}=ASSERTED, got {carried:?}"
+            );
+        }
+    }
+
     #[test]
     fn temporal_condition_fails_closed_on_case_folded_identifier_collision() {
         let known: BTreeSet<String> = ["sig", "SIG"]
@@ -24500,6 +24830,7 @@ mod tests {
         let exact = super::parse_temporal_condition_predicates(
             "SIG is asserted",
             &known,
+            &BTreeMap::new(),
             super::TickPhase::PreTick,
             &handshake,
         );
@@ -24511,7 +24842,7 @@ mod tests {
             )
         }));
 
-        let ambiguous = super::find_known_signal_name("SiG is asserted", &known);
+        let ambiguous = super::find_known_signal_name("SiG is asserted", &known, &BTreeMap::new());
         assert!(ambiguous.is_none());
     }
 
@@ -24524,6 +24855,7 @@ mod tests {
         let predicates = super::parse_temporal_condition_predicates(
             "HREADY signal is HIGH, unless HRESP signal is ERROR",
             &known,
+            &BTreeMap::new(),
             super::TickPhase::PreTick,
             &handshake,
         );
@@ -24553,6 +24885,7 @@ mod tests {
         let predicates = super::parse_temporal_condition_predicates(
             "WIDGET is asserted",
             &known,
+            &BTreeMap::new(),
             super::TickPhase::PreTick,
             &handshake,
         );
@@ -24570,6 +24903,7 @@ mod tests {
         let predicates = super::parse_temporal_condition_predicates(
             "PSEL is HIGH and PREADY is LOW",
             &known,
+            &BTreeMap::new(),
             super::TickPhase::PreTick,
             &handshake,
         );
@@ -24605,7 +24939,8 @@ mod tests {
     fn find_known_signal_prefers_longest_match() {
         // Line 9326: >=→< — longer signal name should replace shorter match.
         let signals = known_signal_bset(&["CLK", "SYS_CLK"]);
-        let result = super::find_known_signal_name("SYS_CLK is the main clock", &signals);
+        let result =
+            super::find_known_signal_name("SYS_CLK is the main clock", &signals, &BTreeMap::new());
         assert_eq!(
             result,
             Some("SYS_CLK".to_string()),
@@ -24617,7 +24952,7 @@ mod tests {
     fn find_known_signal_no_match_returns_none() {
         // Line 9326: match guard true — no signal match should return None.
         let signals = known_signal_bset(&["CLK", "RST"]);
-        let result = super::find_known_signal_name("no signals here", &signals);
+        let result = super::find_known_signal_name("no signals here", &signals, &BTreeMap::new());
         assert!(result.is_none(), "no match: expected None, got {result:?}");
     }
 

@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why is a conditional rule in EvidenceIR but not in SemanticIR
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why is a constraint subject CLK when the document says CLK_I
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a digest binding not enough to watch a number in prose
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why is a fact-card aggregate ceiling the file bound times the per-file bound
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why is a field name accepted or rejected from a description cell
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why is a figure caption not coverage for the figure
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why is a file-level line ceiling not enough for a bounded snapshot
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why is a gate's own numeral grammar part of its contract
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
@@ -100,6 +116,8 @@
   > why is the NLI framing better than free-form labeling
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > why is the PSEL antecedent dropped in a temporal rule
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > why is the SpecForge fact-card catalog almost out of capacity
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -161,6 +179,8 @@
   > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > why must a check and the thing it checks not share a parent
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why must a co-reference key be rejected as a clause value
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > why must a collection aggregate be at least files times per-file
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)

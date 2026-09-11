@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md) | 2026-08-16 | `current` | The current APB canonical miss is an independently explicit inference-antecedent state loss |
 | [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md) | 2026-06-14 | `current` | ingest sizes each page-range batch to the host's total physical RAM so a small machine completes |
 | [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md) | 2026-06-14 | `current` | ingest disk pre-flight refuses before launching when free disk is below a source-size-scaled requirement |
 | [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md) | 2026-08-28 | `current` | Ingest used to discard every text the converter put inside a figure; since 2026-08-28 it carries them on the… |
@@ -60,4 +61,3 @@
 | [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md) | 2026-08-09 | `current` | OpenCAPI Ready and Certified note refreshes reject acronym-derived DL signals |
 | [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md) | 2026-06-10 | `current` | Packet/flit protocols declare message FIELDS in field-titled tables — the header vocabulary types the rows |
 | [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md) | 2026-06-14 | `current` | Per-page full-res PNGs are not read downstream — ingest skips persisting them for large PDFs |
-| [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md) | 2026-08-10 | `current` | Parenthetical data heads require an adjacent wire qualifier |

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > is the ingest drift purely additive
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > is the ingest drift run-to-run noise
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > is the jesd235 HBM artifact a truncated ingest
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > is the off-volume scratchpad hazard mechanically gated (NO, and do not assume it is: the files never enter the repository, so check_project_data_locality has nothing to walk and the SCRATCH-RESIDUE-CONTAINMENT.3 census cannot see them. Retrieval is the only control, which is why this card exists)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -80,6 +88,8 @@
   > should SpecForge file an FSMGen FR for cat-3 topology (NOT YET — premature: capture is sparse/noisy AND ISF may deliberately be a per-actor format with topology owned by the integrator above per-module synthesis; resolve with FSMGen after .4c.i, never a speculative FR — feedback_verify_fsmgen_before_fr)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > should SpecForge use one weighted progress score
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > should a co-referenced antecedent be marked alias_dependent
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > should a corpus refresh clean the normalized bundle when it finishes
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -287,13 +297,3 @@
   > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what determines the fact_key of a projected captured-region residual
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what did KG-ISF-TRANSACTIONS.2l measure / decide
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what did KG-ISF-TRANSACTIONS.2n measure / decide
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
