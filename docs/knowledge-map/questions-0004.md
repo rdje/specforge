@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > has the corpus task evidence migration landed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -278,6 +280,8 @@
   > how does SourceIR proof migration handle a classifier implementation change
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how does SpecForge bind a protocol state to its state machine
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
@@ -294,7 +298,3 @@
   > how does SpecForge detect two surfaces disagreeing about one quantity
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge determine what a chip-spec PDF is about / its purpose category
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > how does SpecForge distinguish a timing table category from a scalar min typ max layout
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > how does SpecForge distinguish legal conditions from protocol conditions

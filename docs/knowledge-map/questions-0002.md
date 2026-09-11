@@ -190,6 +190,8 @@
   > did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > did SpecForge re-adopt the upstream claim-verification standard after ADR 0042
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > did WIRE-BASED-100.8g restore the retired SWD 29/29
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > did a clean clone prove corpus task continuation after migration
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
@@ -296,5 +298,3 @@
   > does ExtractionContext carry a cross-document cluster profile
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does FSMGen --strict --check use or validate signal direction (input vs output)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > does FSMGen 030f8c273 accept a value-free (sample S as s) transaction body

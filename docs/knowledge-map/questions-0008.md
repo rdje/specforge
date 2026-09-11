@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > is the eval gold / answer key trustworthy or reliable
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > is the eval-extraction temporal precision 0.6 a real defect
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > is the extraction audit chip-spec-PDF agnostic (yes)
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > is the figure-interior gap drift or standing
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > is the frozen source to intent result current binary output
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -290,11 +298,3 @@
   > what changed between stale and current OpenCAPI Ready Definition artifacts
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > what changed between the persisted source_ir and a fresh ingest
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > what class of defect does a given check still permit
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > what confidence axis correlates with extracted-constraint correctness
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what conserves between the PDF and SourceIR
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what debug/diagnostic tools does specforge have (TOOLBOX.md)

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why does I2S SD remain a signal
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why does Instruction group not count as an ns unit and why does SMIN not count as min
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > why does OpenCAPI Discovery Configuration no longer emit ISF
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why does ROADMAP.md have per-section line bounds
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -44,6 +56,8 @@
   > why does a sentence-period caption label yield nothing
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > why does a source edit un-seal every persisted artifact
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why does a state naming two machines stay unbound
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why does a symbolic bit cell reject the whole table
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -283,17 +297,3 @@
   > why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why is PSELx not treated as a metavariable
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why is Reset value not a semantic phase
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why is SWD per-signal phase membership degenerate / empty
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > why is SWD serial_frame_field left at 0/11 instead of being partially recovered (because every candidate rule that fires often enough to help also mis-assigns the phase on most fields, and a wrong phase is fabrication. A measured zero is the honest result; WIRE-BASED-100.8d is deferred with that consequence stated)
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why is SWD/ADI hard / different from APB AHB AXI
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is SWIO not captured as a third SWP signal

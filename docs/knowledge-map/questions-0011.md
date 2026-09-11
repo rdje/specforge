@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > what is the cheapest falsification oracle available in this repository
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > what is the claim verification registry schema
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > what is the complete parenthetical data-head declaration census
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what is the completeness gauge over-counting on APB
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the condition-read-as-obligation error class and its gate
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > what is the constraint-subject-must-be-declared filter
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -288,13 +298,3 @@
   > when has a falsification leg illustrated instead of tested
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > when is a bracket-slice leading token a field name
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > when is a single letter a field name
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > when may a commit use Published-claims none
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > when may a semantic family or source modality be marked non-applicable
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > when must workflow-standard capacity be measured again

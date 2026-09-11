@@ -19,6 +19,7 @@
 | [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md) | 2026-06-07 | `current` | Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern |
 | [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md) | 2026-06-08 | `current` | Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule |
 | [prose-signal-capture](../knowledge/prose-signal-capture.md) | 2026-06-08 | `current` | Signals introduced in PROSE (not tables) are captured — pin appositive + parenthetical abbreviation, as a s… |
+| [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md) | 2026-09-11 | `current` | A protocol state binds to its machine only when the document names both in one statement, and two machines fa… |
 | [published-assertion-gate](../knowledge/published-assertion-gate.md) | 2026-08-30 | `current` | A published value re-derives against its producer field, or names the control, decision, or revision that fix… |
 | [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md) | 2026-08-16 | `current` | The a4a0 canonical-recovery replay is the current 40/0/0 reviewed population |
 | [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md) | 2026-09-11 | `current` | A column header that qualifies a closed role proved no role, which is why one classifier change silently empt… |
@@ -60,4 +61,3 @@
 | [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md) | 2026-08-08 | `current` | Git-indexed corpus PDFs are the source-registry membership authority |
 | [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md) | 2026-08-15 | `current` | Source proof migration replays neutral classification context instead of blessing stale labels |
 | [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md) | 2026-08-11 | `current` | The first reviewed source-to-IntentIR result is incomplete in all six categories and fails upstream |
-| [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md) | 2026-08-11 | `current` | The first source-to-IntentIR vertical population locks twelve reviewed documents without extractor tuning |

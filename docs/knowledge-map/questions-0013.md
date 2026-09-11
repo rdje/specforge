@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > which SWD protocol facts are safe to lower today
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > which SemanticIR fields carry supporting_table_ids
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SourceIR and EvidenceIR paths serialize repository relative
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which active task tree is next at the live document warning
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which active task tree now requires bounded evidence containment
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
@@ -287,13 +297,3 @@
   > why can a shipped standalone extractor fail to improve the default end-to-end result
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > why can an active task legacy route use a shorthand source literal
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why can an extra blank line fail harmless layout comparison
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why can eval-extraction score only SWD/ADI and I2C
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why can the 80-record status window never be reached
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle

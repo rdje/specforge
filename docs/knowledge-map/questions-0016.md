@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why is PSELx not treated as a metavariable
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why is ProtocolStateRecord machine_name always None
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why is Reset value not a semantic phase
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why is SWD per-signal phase membership degenerate / empty
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > why is SWD serial_frame_field left at 0/11 instead of being partially recovered (because every candidate rule that fires often enough to help also mis-assigns the phase on most fields, and a wrong phase is fabrication. A measured zero is the honest result; WIRE-BASED-100.8d is deferred with that consequence stated)
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why is SWD/ADI hard / different from APB AHB AXI
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is SWIO not captured as a third SWP signal
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > why is SpecForge called forward specification mining
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
@@ -100,6 +116,8 @@
   > why is repeating the same check not independent verification
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why is residual actionability 8 of 16 in the current reviewed result
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why is scope binding not used for protocol states
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > why is section-title boilerplate filtering insufficient
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -279,22 +297,3 @@
   > why was the spike's 'manager Reads ARID' direction error not in production
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > why was the task-tree count in live-docs.md wrong
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > why were BDF DL and VPD removed from OpenCAPI Discovery
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why were PWR and OPEN promoted as conditional-rule consequent signals
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were RISC-V/TRM register tables unextracted (unknown table_kind)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were register names synthetic register_table_NNNN and how is the heading association done
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > will a new standalone extraction command fail if converge does not account for it
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > will generated stage artifacts survive moving the repository
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > would a MORE PERMISSIVE phase detector rescue the SWD frame fields (NO, and the attempt is a documented trap: a proximity rule that accepts the phase word within four tokens of phase/phases appears to rescue 5 of 11, but every hit is a false positive - statement_1678 names both phases and assigns neither yet is claimed for seven fields, statement_1798 is about a FAULT response,
-  > and statement_0813 is 702 statements away. Run the adversarial control in scripts/measure_swd_frame_phase_scope.py)

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > when is a single letter a field name
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > when may a commit use Published-claims none
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > when may a semantic family or source modality be marked non-applicable
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > when must workflow-standard capacity be measured again
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > when should SpecForge request a new ISF or FSMGen construct
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -287,13 +297,3 @@
   > which PDF task history ids exist only as tree-relative shorthand
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > which README.md regions are pinned by line number (the census pins L1 as the document identity anchor, L30 as the rust_prerequisite_copies derived value, and L88-L104 as the entrypoint route block; the line numbers are current as of 2026-08-31 and must be re-derived, not assumed)
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > which SWD protocol facts are safe to lower today
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > which SemanticIR fields carry supporting_table_ids
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SourceIR and EvidenceIR paths serialize repository relative
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree is next at the live document warning

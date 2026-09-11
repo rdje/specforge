@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > does FSMGen 030f8c273 accept a value-free (sample S as s) transaction body
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does FSMGen accept a symbolic (width PARAM) or only a concrete integer width
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -296,5 +298,3 @@
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed

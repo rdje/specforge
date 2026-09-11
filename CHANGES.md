@@ -1,3 +1,44 @@
+### WIRE-BASED-100.8g — the state machine a document names beside its own states, and SWD 5/29 -> 13/29
+
+- SWD'S TWO ZEROS HAD DIFFERENT CAUSES AND .8d ONLY DISPROVED ONE OF THEM. serial_frame_field 0/11 is
+  deferred behind a figure-extraction trigger: 5 of 11 fields are never assigned to a phase in prose at
+  all, the membership is drawn in Figure B4-1/B4-2, and no prose rule can replace a lookup that was never
+  a reading. protocol_state 0/13 is NOT that problem — the extractor already produced 8 of the 13 state
+  names correctly and missed the gold only because its key is machine|state and machine_name has been
+  None since 89d8dee7 retired the protocol-named carrier. The typed field survived
+  (ir/evidence.rs:714, Option<String>, skip_serializing_if), so nothing about the schema or the frozen
+  producer graph had to move; it was simply never populated.
+- THE BINDING IS IN THE SAME CLAUSE, WHICH IS WHY THIS IS NOT THE SCOPE BINDING .8d REFUTED. Every one of
+  the eight statements names the machine beside the state: "When the DBGTAPSM goes through the Capture-IR
+  state", "While the DBGTAPSM is in the Shift-IR state", through "DBGTRSTn asynchronously takes the
+  DBGTAPSM to the Test-Logic-Reset". The identifier is introduced by the document itself — "The Debug TAP
+  State Machine (DBGTAPSM) controls the operation of a JTAG-DP" — the same role-phrase appositive shape
+  .4a reads for signals, with a parenthesis instead of a comma. .8d measured that a SCOPE binding is
+  wrong 11 of 11 for frame fields; same-statement co-occurrence is a different and much stronger claim,
+  and it is the only one accepted. Two machines in one statement FAIL CLOSED, which is .8d's own
+  conclusion about minting a wrong phase applied to machines.
+- CENSUSED BEFORE THE CODE WAS WRITTEN AND REPRODUCED AFTER: 12 of 45 states bind across the 27
+  proof-carrying chains — 8 in ADIv6 (DBGTAPSM) and 4 in USB 3.2 (LTSSM, SPSM). USB 3.2 also supplies the
+  refusals the rule has to make: 4 states name two machines in one sentence and stay unbound, 22 name
+  none. AXI (3 states), APB (2) and the USB4 connection-manager guide (2) introduce no machine and are
+  untouched; four CCIX revisions introduce one but carry no states.
+- ADDRESSED: SWD protocol_state 0/13 -> 8/13 (source-tolerant + filtered F1 0.000 -> 0.762, P=1.000
+  R=0.615, tp=8 fp=0 fn=5); document-level recall 5/29 -> 13/29. THE PREDICTION THE LEAF STATED BEFORE
+  ANY CODE WAS WRITTEN HELD EXACTLY, including which five would remain: the SWD line state machine's
+  protocol error / lockout / reset / dormant / operating, which the extractor does not produce at all —
+  a separate recall gap, not a binding one.
+- WHAT THIS DOES NOT CLAIM: it does not restore the retired 29/29. That score measured a protocol
+  recogniser which keyed phases off field names (.8c); this rule names no protocol and no field.
+  serial_frame_field stays honestly at 0/11, so SWD is 13/29 and the tree's bar is still not met.
+- THE SIX WIRE NUMBERS ARE UNCHANGED (AXI 1.000 x3, APB 1.000 x3, AHB 1.000 x3), and
+  SWD-SERIAL-EXTRACTION.4's own negative control extracts_hyphenated_states_without_inventing_machine_name
+  still passes. CORPUS BLAST RADIUS over the 27 chains: zero movement in ports, actors, declared
+  inventory, provenance, constraints or emitted ISF signal/rule counts. The three wire golds' held-out
+  bundles were restored for the chain and returned byte-identical (658 / 136 / 283 files).
+- VERIFIED: cargo test -p specforge-core --lib 1,402 pass (4 new cases), -p specforge --lib 472,
+  -p specforge-conformance --lib 168; cargo fmt --all; cargo clippy --all-targets clean;
+  scripts/check_doctrines.sh and scripts/check_chain_currency.sh green.
+
 ### WIRE-BASED-100.4a — the identity a document states about itself, and the last sub-1.000 wire number
 
 - APB TEMPORAL WAS 0.333 BECAUSE AN ANTECEDENT WAS DROPPED SILENTLY, NOT BECAUSE A FACT WAS MISSPELLED.

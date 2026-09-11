@@ -210,8 +210,11 @@ Three independent observations separate a retirement from a regression. The pers
 the currency gate replays every rebuildable document and finds them byte-identical to what today's binary
 builds, so these zeros are the real output of the current producer. The loss partitions exactly along the
 retirement boundary and does so corpus-wide: across all measurable documents (24 when this was measured) the
-current producer emits zero serial frame fields and binds a machine name on none of its 40 protocol states,
-while protocol operations still produce five. And the retirement's own published accounting predicted that shape in advance, down to the counts.
+current producer emits zero serial frame fields, while protocol operations still produce five. (The
+machine-name half of that observation was true when it was written and has since been repaired by `.8g`:
+the current producer binds a machine on 12 of the 45 protocol states across the proof-carrying chains,
+refusing the four that name two machines in one sentence and the twenty-two that name none.) And the
+retirement's own published accounting predicted that shape in advance, down to the counts.
 
 What the current generic grammar needs looked narrow and nameable, and measuring it changed the answer. The
 grammar admits a frame field only from a statement that itself states a phase name *and* carries the bit range;

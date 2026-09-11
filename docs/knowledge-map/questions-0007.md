@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how much memory did the guarded USB4 Connection Manager ingest use
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > how much memory did the guarded USB4 Inter-Domain ingest use
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how much of the Docling document reaches SourceIR
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how much of the converter output does ingest drop as a defect
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > how much of the corpus does the ingest drift affect
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
@@ -289,11 +297,3 @@
   > is the empty catalog caused by the table authority gate rejecting real signal tables
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > is the eval gold / answer key trustworthy or reliable
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > is the eval-extraction temporal precision 0.6 a real defect
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > is the extraction audit chip-spec-PDF agnostic (yes)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > is the figure-interior gap drift or standing

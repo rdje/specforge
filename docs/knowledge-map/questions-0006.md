@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how is an active task evidence migration written atomically
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is an active task source locked before migration
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -215,6 +221,8 @@
   > how many placeholder tokens exist corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many production rules does the registry declare
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how many protocol states carry a machine name corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many public fields do SemanticIR and IntentIR declare
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
@@ -289,11 +297,3 @@
   > how much memory did the guarded OpenCAPI Ready Definition ingest use
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how much memory did the guarded OpenCAPI Ready ingest use
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how much memory did the guarded USB4 Connection Manager ingest use
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how much memory did the guarded USB4 Inter-Domain ingest use
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how much of the Docling document reaches SourceIR
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how much of the converter output does ingest drop as a defect

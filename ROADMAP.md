@@ -82,7 +82,7 @@ all real agents, relations, constraints, behaviors, transactions, symbols, and s
 fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-ISF-COMPLETENESS.md) and [`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar;
 [`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md) is the hard wire-protocol gate. `.8a` restored its scoring
 oracle and `.9` re-ingested the APB/AHB/AXI golds, so 27 chains are re-derivable and 51 stay legacy;
-re-derivation retired SWD `29/29` (`.8c`) and restored APB temporal `1.000` (`.4a`, on a document-stated identity footing), so APB/AHB/AXI score `1.000` on every aspect and SWD `5/29` is the frontier; it also exposed AXI's 115 lost declarations, a classification regression `.10`/`.10a`/`.10b`/`.10c` attributed and closed with every score re-derived unchanged, opening `.10d`/`.10e`/`.10f`.
+re-derivation retired SWD `29/29` (`.8c`) and restored APB temporal `1.000` (`.4a`, on a document-stated identity footing), so APB/AHB/AXI score `1.000` on every aspect and SWD is `13/29` after `.8g` rebound its states; it also exposed AXI's 115 lost declarations, a classification regression `.10`/`.10a`/`.10b`/`.10c` attributed and closed with every score re-derived unchanged, opening `.10d`/`.10e`/`.10f`.
 
 The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical `IntentIR` before adapter expressiveness can be called the blocker.
 ISF/FSMGen remains the eventual executable boundary, but SpecForge does not anticipate a language gap without a source-grounded value. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).

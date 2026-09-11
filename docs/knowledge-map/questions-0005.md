@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > how does SpecForge distinguish a timing table category from a scalar min typ max layout
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > how does SpecForge distinguish legal conditions from protocol conditions
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -288,13 +292,9 @@
   > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how is a roadmap rollover capsule verified
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how is a state machine identifier introduced generically
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how is a task-tree leaf written in docs/tasks (two forms: the absolute `- ID: `TREE.x` · Status: ...` line used by most trees, and a nested relative ` - `.x` · Status: ...` line used for children written inline under their parent, e.g. DOC-INTENT-TAXONOMY .3b/.3c under .3)
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is a valid post-migration active task continuation verified
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how is an active task evidence migration written atomically
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is an active task source locked before migration
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > how is an external PDF labeled in Docling metadata

@@ -13908,7 +13908,148 @@ fn protocol_state_surface(
         state.state_name.to_ascii_uppercase()
     });
     manifest.record(&run);
-    run.records
+    let mut records = run.records;
+    bind_protocol_state_machines(&mut records, statements);
+    records
+}
+
+/// WIRE-BASED-100.8g — the state machine a document names beside its own states.
+///
+/// `ProtocolStateRecord::machine_name` has been `None` since `89d8dee7` retired the protocol-named
+/// carrier, so a gold keyed `machine|state` cannot resolve even when every state name is extracted
+/// correctly. The binding is recoverable without naming any protocol, because the document supplies
+/// both halves:
+///
+/// - it **introduces** the machine through its own role phrase — *"The Debug TAP **State Machine**
+///   (DBGTAPSM) controls …"* — the same role-phrase appositive shape `WIRE-BASED-100.4a` reads for
+///   signals, with a parenthesis in place of the comma;
+/// - it then **names that identifier in the same statement as the state** — *"When the DBGTAPSM goes
+///   through the Capture-IR state"*.
+///
+/// Same-statement co-occurrence is deliberately the only binding accepted. `WIRE-BASED-100.8d`
+/// measured a *scope* binding (nearest preceding statement, owning section title) for serial frame
+/// fields and refuted it — 11 of 11 wrong on the nearest-statement reading — so a rule that reaches
+/// outside the statement is not admissible here either. **Two machines in one statement fail closed**:
+/// an ambiguous binding is worse than an absent one, exactly as `.8d` concluded about minting a wrong
+/// phase.
+///
+/// Measured over every persisted EvidenceIR before shipping: `ihi0074_a` binds 8 of 8 states to its one
+/// machine; `usb_3_2` binds 4 of 30, refuses 4 as ambiguous and leaves 22 unbound; AXI, APB and the
+/// USB4 connection-manager guide introduce no machine, so their states are untouched; four CCIX
+/// revisions introduce one but carry no states.
+fn bind_protocol_state_machines(
+    states: &mut [ProtocolStateRecord],
+    statements: &[ExtractedStatement],
+) {
+    if states.is_empty() {
+        return;
+    }
+    let mut machines: BTreeSet<String> = BTreeSet::new();
+    for statement in statements {
+        machines.extend(state_machine_introductions(&statement.text));
+    }
+    if machines.is_empty() {
+        return;
+    }
+    let text_by_id: BTreeMap<&str, &str> = statements
+        .iter()
+        .map(|statement| (statement.statement_id.as_str(), statement.text.as_str()))
+        .collect();
+
+    for state in states.iter_mut() {
+        let mut named: BTreeSet<&String> = BTreeSet::new();
+        for statement_id in &state.supporting_statement_ids {
+            let Some(text) = text_by_id.get(statement_id.as_str()) else {
+                continue;
+            };
+            for machine in &machines {
+                if contains_identifier_word(text, machine) {
+                    named.insert(machine);
+                }
+            }
+        }
+        // Exactly one machine, or nothing: an ambiguous state is left unbound rather than assigned.
+        if named.len() == 1 {
+            state.machine_name = named.into_iter().next().map(|machine| machine.to_string());
+        }
+    }
+}
+
+/// Identifiers a statement introduces as a state machine: a role phrase ending in `state machine`
+/// followed by `(IDENT)` or `, IDENT`. The role phrase is matched as literal document grammar and its
+/// words are never interpreted; the identifier is opaque (ADR 0006/0037).
+fn state_machine_introductions(text: &str) -> Vec<String> {
+    const ROLE: &str = "state machine";
+    let lowered = text.to_ascii_lowercase();
+    let mut found = Vec::new();
+    let mut search = 0usize;
+    while let Some(offset) = lowered[search..].find(ROLE) {
+        let role_start = search + offset;
+        let role_end = role_start + ROLE.len();
+        search = role_end;
+        // `state machine` must be a whole phrase, not the tail of a longer word.
+        if lowered[..role_start]
+            .chars()
+            .next_back()
+            .is_some_and(is_ascii_identifier_char)
+        {
+            continue;
+        }
+        let rest = &text[role_end..];
+        let after_role = rest.trim_start();
+        let Some(opener) = after_role.chars().next() else {
+            continue;
+        };
+        if opener != '(' && opener != ',' {
+            continue;
+        }
+        let candidate = after_role[opener.len_utf8()..].trim_start();
+        let end = candidate
+            .find(|character: char| !is_ascii_identifier_char(character))
+            .unwrap_or(candidate.len());
+        if end == 0 {
+            continue;
+        }
+        let identifier = &candidate[..end];
+        if !identifier
+            .chars()
+            .next()
+            .is_some_and(|first| first.is_ascii_alphabetic() || first == '_')
+        {
+            continue;
+        }
+        // The introduction must be CLOSED the way `.7a`'s appositive punctuation requires, so an
+        // ordinary sentence that merely runs on after the phrase introduces nothing.
+        let closer = candidate[end..].trim_start().chars().next();
+        let closed = match opener {
+            '(' => closer == Some(')'),
+            _ => matches!(closer, Some(',') | Some('.') | None),
+        };
+        if closed {
+            found.push(identifier.to_string());
+        }
+    }
+    found
+}
+
+fn is_ascii_identifier_char(character: char) -> bool {
+    character.is_ascii_alphanumeric() || character == '_'
+}
+
+/// Whole-word containment for an opaque identifier (case-sensitive: identity is exact).
+fn contains_identifier_word(text: &str, identifier: &str) -> bool {
+    text.match_indices(identifier).any(|(start, _)| {
+        let before_ok = !text[..start]
+            .chars()
+            .next_back()
+            .is_some_and(is_ascii_identifier_char);
+        let after = start + identifier.len();
+        let after_ok = !text[after..]
+            .chars()
+            .next()
+            .is_some_and(is_ascii_identifier_char);
+        before_ok && after_ok
+    })
 }
 
 /// Extract one- or two-word *named* states after an explicit transition verb and before `state`.
@@ -29666,6 +29807,93 @@ mod wire_based_100_5h {
                 .any(|s| s.text == "Signal OMEGA_ALPHA is width 4.")
         );
         assert_eq!(prov.len(), stmts.len());
+    }
+
+    fn state_statements(texts: &[&str]) -> Vec<ExtractedStatement> {
+        texts
+            .iter()
+            .enumerate()
+            .map(|(index, text)| ExtractedStatement {
+                statement_id: format!("statement_{index:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: (*text).to_string(),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect()
+    }
+
+    fn state_record(id: &str, name: &str, support: &[&str]) -> ProtocolStateRecord {
+        ProtocolStateRecord {
+            state_id: id.to_string(),
+            machine_name: None,
+            state_name: name.to_string(),
+            action: None,
+            supporting_statement_ids: support.iter().map(|s| (*s).to_string()).collect(),
+        }
+    }
+
+    #[test]
+    fn a_state_binds_to_the_machine_its_own_statement_names() {
+        // WIRE-BASED-100.8g — the document introduces the machine with its own role phrase and then
+        // names it beside the state. Alpha-renamed: no protocol vocabulary is involved.
+        let statements = state_statements(&[
+            "The Zeta Alpha State Machine (ZETA_ALPHASM) controls the omega interface.",
+            "- When the ZETA_ALPHASM goes through the Capture-Omega state, data is latched.",
+        ]);
+        let mut states = vec![state_record("s1", "Capture-Omega", &["statement_0001"])];
+        bind_protocol_state_machines(&mut states, &statements);
+        assert_eq!(states[0].machine_name.as_deref(), Some("ZETA_ALPHASM"));
+    }
+
+    #[test]
+    fn two_machines_in_one_statement_leave_the_state_unbound() {
+        // An ambiguous binding is worse than an absent one — WIRE-BASED-100.8d's own conclusion about
+        // minting a wrong phase, applied to machines.
+        let statements = state_statements(&[
+            "The Zeta State Machine (ZETASM) and the Omega State Machine (OMEGASM) are independent.",
+            "- The ZETASM and the OMEGASM both enter the Idle-Alpha state after reset.",
+        ]);
+        let mut states = vec![state_record("s1", "Idle-Alpha", &["statement_0001"])];
+        bind_protocol_state_machines(&mut states, &statements);
+        assert!(states[0].machine_name.is_none());
+    }
+
+    #[test]
+    fn a_state_whose_statement_names_no_machine_stays_unbound() {
+        let statements = state_statements(&[
+            "The Zeta State Machine (ZETASM) controls the link.",
+            "- The receiver enters the Idle-Alpha state after reset.",
+        ]);
+        let mut states = vec![state_record("s1", "Idle-Alpha", &["statement_0001"])];
+        bind_protocol_state_machines(&mut states, &statements);
+        assert!(states[0].machine_name.is_none());
+    }
+
+    #[test]
+    fn a_machine_introduction_must_be_closed_and_whole() {
+        // An unclosed parenthetical introduces nothing, and `state machine` must be the whole phrase.
+        assert_eq!(
+            state_machine_introductions("The Zeta State Machine (ZETASM) controls the link."),
+            vec!["ZETASM".to_string()]
+        );
+        assert_eq!(
+            state_machine_introductions("The Zeta state machine, ZETASM, controls the link."),
+            vec!["ZETASM".to_string()]
+        );
+        assert!(
+            state_machine_introductions("The state machine (see Figure 2 for details) is shown.")
+                .is_empty(),
+            "an unclosed or non-identifier parenthetical introduces nothing"
+        );
+        assert!(
+            state_machine_introductions(
+                "A substate machine (ZETASM) is not a state machine intro."
+            )
+            .is_empty(),
+            "`state machine` must be a whole phrase, not the tail of a longer word"
+        );
     }
 
     #[test]

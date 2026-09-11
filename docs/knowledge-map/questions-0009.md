@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > what class of defect does a given check still permit
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > what confidence axis correlates with extracted-constraint correctness
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what conserves between the PDF and SourceIR
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what debug/diagnostic tools does specforge have (TOOLBOX.md)
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > what declaration catalog does the placeholder check read
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -289,11 +297,3 @@
   > what happens when a timing observation has no explicit tick-addressed samples
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what happens when document intent category is unresolved
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what happens when ingest cannot count PDF pages
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what happens when old identity-scoped prior memory is loaded
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what happens when the NLI provider is down
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what identifies the canonical inputs to generated Knowledge Map shards

@@ -7,9 +7,9 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`WIRE-BASED-100.4a` CLOSED `2026-09-11`** — APB temporal `0.333 → 1.000` with the gold
-  untouched, so APB/AHB/AXI score `1.000` on every aspect. Open in this tree: `.10d`/`.10e`/`.10f`,
-  `.2`/`.3`/`.5` (SWD at `5/29` is the frontier). Also open: `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`;
+- Active unit: **`WIRE-BASED-100.8g` CLOSED `2026-09-11`** — SWD `5/29 → 13/29`; with `.4a`'s APB
+  temporal `1.000`, every parallel-bus number is `1.000`. Open in this tree: `.10d`/`.10e`/`.10f`,
+  `.2`/`.3`/`.5` (SWD `13/29`: `serial_frame_field` 0/11 stays deferred). Also open: `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`;
   `KG-ISF-COMPLETENESS` beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/
   `.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
   `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
@@ -19,14 +19,14 @@
   took 7 names out of AXI's ISF interface after the obvious suffix-shape detector was **falsified** (10
   tables / 42 declarations, 9 of those tables real; the **mirror test** cut it to 1 table / 6). `.4a`
   restored APB's dropped select antecedent from the identity the document states about itself — one
-  appositive role phrase before `PSELx` and `PSEL`, not the `x`: APB temporal `0.333 → 1.000`, gold
-  untouched, ADR-0037 controls passing, zero movement elsewhere. `BOOK-BEHAVIOUR-CURRENCY` censused the
-  book: a symbol scanner finds **0 true positives** over 167 removed functions; the ~18-line present-tense
-  population found the one stale claim. Census 27 measurable / 51 legacy.
-- Next action: `WIRE-BASED-100.5`/SWD — the only wire-based spec still below `1.000` (`5/29`:
-  `serial_frame_field` 0/11, `protocol_state` 0/13, both with NO ADR-0006-compliant producer since `.8c`
-  removed the name-recognising one), and the tree's bar is not met until it moves. Or `.10d` (expand a
-  template's obligations over its instantiations — 9 AXI constraints), `.10e`, `.10f`.
+  appositive role phrase before `PSELx` and `PSEL`, not the `x`. `.8g` used the same shape for states: a
+  machine binds only when one statement names both (`0/13 → 8/13`), two machines fail closed, 12 of 45
+  bound corpus-wide. `BOOK-BEHAVIOUR-CURRENCY` censused the book: a symbol scanner finds **0 true
+  positives** over 167 removed functions. Census 27 measurable / 51 legacy.
+- Next action: `.10d` (expand a template's obligations over its instantiations — 9 AXI constraints),
+  `.10e`, or `.10f`. SWD's remaining `16/29` needs figure-content extraction (`.8d`'s re-open trigger:
+  5 of 11 frame fields are never assigned a phase in prose) plus the 5 unextracted SWD-line states —
+  both builds, not tuning.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **a green score is evidence only about the facts its gold names** — AXI's
   six held while it lost 115 declarations, regained them, moved 134 → 25 → 21 actors, gained its whole AR

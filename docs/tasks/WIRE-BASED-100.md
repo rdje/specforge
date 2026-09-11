@@ -406,7 +406,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   judged against the proof doctrine, and `.8b` is a command-behaviour change in `eval-extraction` that has to
   be judged against the scoring/honesty doctrine. `.8c` was then opened by what the restored oracle found,
   and `.8d` by what `.8c` localised. Children: `WIRE-BASED-100.8a`, `WIRE-BASED-100.8b`,
-  `WIRE-BASED-100.8c`, `WIRE-BASED-100.8d`, `WIRE-BASED-100.8e`, `WIRE-BASED-100.8f`.
+  `WIRE-BASED-100.8c`, `WIRE-BASED-100.8d`, `WIRE-BASED-100.8e`, `WIRE-BASED-100.8f`,
+  `WIRE-BASED-100.8g`.
   **CLOSED `2026-09-01`.** `.8a`/`.8b`/`.8c` are `done` and `.8d` is `deferred` with its consequence recorded,
   so every child is resolved. The oracle runs, refuses nothing silently, and its first re-derivation since
   `2026-08-09` retired a published score rather than confirming it — which is the outcome this leaf existed to
@@ -606,6 +607,58 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Non-goal: re-opening `.8d`, whose deferral the corrected figures support more strongly than the originals.
   Prerequisite: `WIRE-BASED-100.8d`.
   Verification: `python3 scripts/measure_swd_frame_phase_scope.py`
+  Commit: see log.
+
+- ID: `WIRE-BASED-100.8g` · Status: `done` (`2026-09-11`; the prediction stated before the code was
+  written held exactly) · Goal: **rebind a protocol state to the
+  machine the document names in the same sentence — the recoverable half of SWD's `0/13`.**
+
+  **The two halves of SWD's score have different causes, and `.8d` only disproved one of them.**
+  `serial_frame_field` `0/11` is deferred with a stated re-open trigger: 5 of 11 fields are never assigned
+  to a phase in prose at all, the membership is drawn in `Figure B4-1`/`B4-2`, and no prose rule can
+  replace a lookup that was never a reading. **`protocol_state` `0/13` is not that problem.** The
+  extractor already produces **8 of the 13 state names correctly** — `Capture-IR`, `Shift-IR`, `Update-IR`,
+  `Capture-DR`, `Shift-DR`, `Update-DR`, `Run-Test/Idle`, `Test-Logic-Reset` — and misses the gold only
+  because the key is `machine|state` and `machine_name` has been `None` since `89d8dee7` removed the named
+  carrier. The typed carrier itself survived: `ProtocolStateRecord.machine_name: Option<String>` is still
+  declared (`ir/evidence.rs:714`, `skip_serializing_if`), so **no schema or producer-graph change is
+  needed** — the field is simply never populated.
+
+  **The binding is in the same clause, which is why this is not the scope binding `.8d` refuted.** Every
+  one of the eight statements names the machine beside the state: *"When the **DBGTAPSM** goes through the
+  **Capture-IR** state"* (`statement_1380`), *"While the **DBGTAPSM** is in the **Shift-IR** state"*
+  (`statement_1384`), … through *"DBGTRSTn asynchronously takes the **DBGTAPSM** to the
+  **Test-Logic-Reset**"* (`statement_1398`). `.8d` measured that a *scope* binding is wrong 11/11 for frame
+  fields; this is same-statement co-occurrence, the strongest binding available, and a different claim.
+  The machine identifier is introduced by the document itself: *"The Debug TAP **State Machine**
+  (**DBGTAPSM**) controls the operation of a JTAG-DP"* (`statement_1374`) — the same role-phrase-appositive
+  shape `.4a` built for signals (`[[document-stated-identifier-coreference]]`), here with a parenthesis
+  instead of a comma. No protocol name enters production; `.8c`'s non-goal is respected.
+
+  **CORPUS CENSUS, run before any code was written**, over every persisted EvidenceIR — a machine is an
+  identifier a statement introduces after a role phrase ending in `state machine` via `(` or `,`, and a
+  state binds when exactly one such identifier appears in its own supporting statement:
+  - `ihi0074_a` (SWD/ADIv6): 8 states, 1 machine (`DBGTAPSM`), **8 bound, 0 ambiguous, 0 unbound**;
+  - `usb_3_2`: 30 states, 12 machines (`LTSSM`, `RTSSM`, `SPSM`, …), **4 bound, 4 ambiguous, 22 unbound** —
+    the ambiguous four name two machines in one statement and must fail closed;
+  - AXI (3 states), APB (2), USB4-CM (2): machine intros absent, so every state stays unbound, unchanged;
+  - the four CCIX revisions introduce `LTSSM` but carry no states: nothing to bind.
+  Blast radius is therefore **2 documents and 12 bound states**, with 4 refusals the rule must make
+  explicitly rather than by picking one.
+
+  **Expected effect, stated before implementing so it is falsifiable:** SWD `protocol_state` `0/13 → 8/13`
+  and document-level recall `5/29 → 13/29`. The remaining 5 gold states belong to the *SWD line state
+  machine* (`protocol error`, `lockout`, `reset`, `dormant`, `operating`), which the extractor does not
+  produce at all — a separate recall gap this leaf does not touch and must not be confused with the
+  binding.
+  Acceptance: the rule named at `file:line`, reading only document grammar; the census above reproduced
+  after the change with the same 12/4 split; SWD `protocol_state` at the predicted `8/13` or the
+  prediction withdrawn with its cause; ambiguity fails closed with a test; APB/AHB/AXI's six numbers and
+  `kg-bench` unchanged; no protocol, vendor or signal name in production.
+  Non-goal: `serial_frame_field`, which stays deferred at `0/11` behind `.8d`'s figure-extraction trigger;
+  the SWD line state machine's five unextracted states.
+  Prerequisite: `WIRE-BASED-100.8d` (whose disproof scopes this leaf away from scope binding).
+  Verification: see the acceptance checklist below.
   Commit: see log.
 
 - ID: `WIRE-BASED-100.8f` · Status: `done` (`2026-09-01`) · Goal: **re-challenge `.8e`'s own audit, and record
@@ -1300,6 +1353,53 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Prerequisite: none (`.10b` supplies the census).
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `WIRE-BASED-100.8g` (RUST CODE CHANGE) — DONE `2026-09-11`
+
+- [x] **REPRODUCE / MEASURE** — from the persisted artifacts before any edit: `seed_swd_derivation`
+  `protocol_state` **0/13** while the extractor already produced **8 of the 13 state names correctly**;
+  every one of its `ProtocolStateRecord`s carried `machine_name: None`, and the gold's key is
+  `machine|state`. The typed carrier was never removed — `ir/evidence.rs:714` still declares
+  `machine_name: Option<String>` — so the gap was population, not schema.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `protocol_state_surface` (`crates/specforge/src/ir/evidence.rs`)
+  merges four state extractors and none of them ever sets `machine_name`; `89d8dee7` retired the
+  protocol-named carrier that used to, and nothing replaced it. The document supplies both halves the
+  binding needs: it introduces the identifier through its own role phrase (*"The Debug TAP **State
+  Machine** (DBGTAPSM) controls …"*, `statement_1374`) and then names it in the same statement as the
+  state (*"When the **DBGTAPSM** goes through the **Capture-IR** state"*, `statement_1380`).
+- [x] **ADDRESSED (verified)** — `bind_protocol_state_machines` binds a state only from its **own**
+  supporting statement. SWD `protocol_state` **0/13 → 8/13** (source-tolerant + filtered F1
+  `0.000 → 0.762`, P=1.000 R=0.615, tp=8 fp=0 fn=5); document-level recall **5/29 → 13/29**. The 5
+  remaining misses are exactly the *SWD line state machine* states this leaf declared out of scope, and
+  the raw per-statement block reads tp=7 fp=2 because two states are evidenced by a different statement
+  than the gold names — the attribution convention `.1b` already accounts for, not a new fact.
+  **The prediction stated in the leaf before any code was written held exactly**: 8/13 and 5/29 → 13/29.
+- [x] **NO REGRESSION** — named, re-runnable oracles, all green: `cargo test -p specforge-core --lib`
+  1,402 pass including 4 new cases; `-p specforge --lib` 472; `-p specforge-conformance --lib` 168;
+  `cargo fmt --all`; `cargo clippy --all-targets` clean. **The six wire numbers re-derive unchanged**
+  (AXI `1.000`×3, APB `1.000`×3, AHB `1.000`×3). `SWD-SERIAL-EXTRACTION.4`'s own negative control
+  `extracts_hyphenated_states_without_inventing_machine_name` still passes. Corpus blast radius over the
+  27 proof-carrying chains: **zero movement** in ports, actors, declared inventory, provenance,
+  constraints or emitted ISF signal/rule counts. `bash scripts/check_doctrines.sh` and
+  `bash scripts/check_chain_currency.sh` green; the three wire golds' held-out bundles were restored for
+  the chain and returned byte-identical (658 / 136 / 283 files).
+- [x] **GENERICITY (ADR 0006 / ADR 0037)** — the rule reads the document's own role-phrase introduction
+  and same-statement co-occurrence; the role phrase is matched literally and its words are never
+  interpreted, and the identifier stays opaque. **Censused before shipping and reproduced after**: 12 of
+  45 states bind across the 27 chains — 8 in ADIv6 (`DBGTAPSM`), 4 in USB 3.2 (`LTSSM`, `SPSM`) — with 4
+  USB states naming two machines in one sentence and **failing closed**, 22 naming none, and AXI (3),
+  APB (2) and the USB4 connection-manager guide (2) introducing no machine at all. Four new tests use
+  alpha-renamed symbols and assert the negatives: two machines leave a state unbound, a statement naming
+  none leaves it unbound, and an unclosed parenthetical or a `substate machine` prefix introduces nothing.
+- [x] **HONEST LIMIT** — this does **not** close SWD. `serial_frame_field` stays at **0/11** behind
+  `.8d`'s figure-extraction re-open trigger, and the 5 SWD-line-state-machine states are unextracted, so
+  the tree's bar still is not met: SWD is **13/29**, not 29/29. Nothing about the retired 29/29 is
+  restored — that score measured a protocol recogniser (`.8c`), and this rule names no protocol.
+- [x] **LOCKSTEP** — mdBook, `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the resume pointer, the roadmap
+  (whose "SWD stays at `5/29`" line is now false) and a new Knowledge Map card updated. Per `TOOLBOX.md`'s
+  new LOCKSTEP sub-clause: this slice deletes no production rule, so no book text described removed
+  behaviour — but it **corrects** one that described the absence, and the `now|currently` population was
+  re-adjudicated at 18 lines with no new stale claim.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.4a` (RUST CODE CHANGE) — DONE `2026-09-11`
 

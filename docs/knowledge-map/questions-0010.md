@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what happens when ingest cannot count PDF pages
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what happens when old identity-scoped prior memory is loaded
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what happens when the NLI provider is down
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what identifies the canonical inputs to generated Knowledge Map shards
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > what inputs define corpus KB managed block currentness
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -114,6 +122,8 @@
   > what is an appositive role phrase co-reference
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > what is bind_protocol_state_machines
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is capture_signal_presence_rows and who shares it
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -287,13 +297,3 @@
   > what is the canonical declared signal inventory key on SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > what is the canonical knowledge-map architecture path
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > what is the cheapest falsification oracle available in this repository
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > what is the claim verification registry schema
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > what is the complete parenthetical data-head declaration census
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what is the completeness gauge over-counting on APB
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the condition-read-as-obligation error class and its gate

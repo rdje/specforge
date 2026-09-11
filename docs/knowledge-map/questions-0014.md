@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > why can an extra blank line fail harmless layout comparison
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why can eval-extraction score only SWD/ADI and I2C
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why can the 80-record status window never be reached
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > why can the fact-card maximum not simply be raised from 198
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -70,6 +80,8 @@
   > why did RESERVED-only NOT ship as a header-naming exclusion (build_symbol_definitions keys members by NAME per document and drops any member whose value conflicts, so HALF the RESERVED-only cases are eliminated downstream with no name-side gate — 6 of 12 in the .5.iv census frame, 4 of 10 in the shipped-predicate frame, the SAME six survivors either way: SMMU
   > STALL_MODEL/TTENDIAN/HTTU/PGS and CHI-C2C CONTFORMAT/EVENTTYPE. Those survivors are structurally indistinguishable from 31 legitimate single-distinct-member tables (TTL 0b00=NO_LEVEL_HINT_INFORMATION, CD2L, S1P, PRI, GRAN4K...), leaving only the word RESERVED itself as a discriminator — exactly the spec-assigned value vocabulary ADR 0006 forbids. Re-derive:
   > scripts/measure_header_sourced_enum_naming.py --reserved-split)
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why did SWD protocol_state score 0/13 when the state names were right
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
@@ -286,15 +298,3 @@
   > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why does GIC 400 emit fifteen registers with missing access
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why does I2S SD remain a signal
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why does Instruction group not count as an ns unit and why does SMIN not count as min
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > why does OpenCAPI Discovery Configuration no longer emit ISF
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > why does ROADMAP.md have per-section line bounds
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
