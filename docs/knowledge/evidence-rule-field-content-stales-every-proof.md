@@ -12,6 +12,8 @@ answers:
   - "why is the total proof-seal probe CI-tier rather than gate-tier"
   - "what is replay_bytes and what depends on it"
   - "how do I rebuild the AXI APB AHB chains when their normalized bundles are held out"
+  - "path does not exist normalized/<key>.md when running specforge evidence"
+  - "where are the held-out APB AXI AHB normalized bundles kept"
   - "can rebuild_stage_cascade.sh land a deliberate content change"
   - "how do I re-score the WIRE-BASED-100 golds"
 date: 2026-09-11

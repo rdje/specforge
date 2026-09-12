@@ -88,13 +88,20 @@ been able to move them without any local signal.
   `doctrine/` — where every other doctrine's expectations already live — and have the flow check fail
   closed on a mismatch, naming the field and both values. The analysis is already being paid for, so
   this adds a comparison, not a run.
-  Open question this leaf must answer first: the numbers move on ordinary feature work, so a hard
-  equality would make every function-adding commit also a contract-editing commit. Measure how often
-  they actually move — the drift accrued over 29 commits, which says nothing about how many of the 29
-  moved a pin, and that number decides the design — then choose between exact equality, a declared
-  band, and a "the contract names the owning leaf of the last change" discipline. Do not ship a gate
-  that turns into ceremony.
-  Prerequisite: `.0`. Verification: observed RED against a perturbed count; green on the true tree.
+  **The open question is answered and the design is chosen** (`2026-09-12`, four-for-four measurement
+  above): neither an exact pin nor a band, but the repository's own `aggregate_change` idiom — the same
+  one `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total, another
+  derived number that legitimately moves on ordinary work. A contract under `doctrine/` carries
+  `baseline` + `delta` + `owner` + `rationale`; the flow check compares `baseline + delta` against what
+  it already derives and fails closed naming the field and both values. The per-commit edit is not
+  removed — it is converted from *re-pinning a literal in a test that cannot see it at commit cadence*
+  into *attributing a census change to the leaf that caused it*, which is what the other doctrines
+  already require. **`tools/production-genericity-graph`'s test then reads the same contract instead of
+  carrying its own four literals**, which is the actual root cause: the pin and the deriver were two
+  places that could disagree, and they did, for 29 commits.
+  Prerequisite: `.0`. Verification: observed RED against a perturbed count in EACH of the four fields,
+  and against a contract whose `baseline + delta` is right but whose `owner` is absent; green on the
+  true tree; the Rust test carries no census literal afterwards.
 
 - ID: `PRODUCTION-GRAPH-CENSUS-PIN.2` · Status: `pending` · Goal: **find the other censuses that print
   without comparing.** This one was found by accident, by a slice that happened to run `cargo test`.
@@ -125,13 +132,23 @@ Ordered; PNT selects the first eligible leaf.
 - `2026-09-12` — **the fix is not "run the full suite per commit".** That would answer this defect by
   reversing a throughput decision the owner made deliberately. The cheaper answer is that the check
   which *already runs and already derives these numbers* should compare them.
+- `2026-09-12` — **the design is `aggregate_change`, not a band, and the reason is precedent not
+  taste.** A declared band has to answer "how wide", and any answer is arbitrary: the census only ever
+  grows, so a band either admits a jump worth noticing or has to be re-based on the same cadence an
+  exact pin would. This repository already solved the identical problem for the book's byte total —
+  a derived number that moves on ordinary work — with `baseline` + `delta` + `owner` + `rationale`, and
+  that idiom makes the per-commit edit informative rather than ceremonial: it records *who* moved the
+  census and *why*, which is exactly what was missing across the 29 silent commits.
 
 ## Open Questions
 
-- How often do the four numbers legitimately move? If it is nearly every commit, an exact pin is a
-  tax and a declared band or an owning-leaf discipline is the honest design. `.1` must measure this
-  before choosing, and is allowed to conclude that a per-commit gate is not worth it — provided it
-  records the cost it weighed.
+- ~~How often do the four numbers legitimately move?~~ **Answered `2026-09-12`: every slice that adds a
+  production predicate, four for four.** `ACTOR-NOUN-RELATION-DECLARATION.1`,
+  `INVARIANT-SHAPE-ADMISSION.1`, `PROSE-NAME-CELL-DECLARATION.2` and now
+  `INVARIANT-SHAPE-ADMISSION.3` (+6 functions / +32 helper edges / +29 decision sites / +2 semantic
+  macros) each had to edit the pins to land. So an exact pin in a push-cadence test is the worst of
+  both: it taxes every ordinary commit AND detects nothing until push. `.1` now has its measurement
+  and a design to build; see the decision below.
 
 ## Blockers
 

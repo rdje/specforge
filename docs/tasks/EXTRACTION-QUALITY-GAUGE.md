@@ -623,6 +623,29 @@ honestly-qualified) path to "human-SpecForge in Rust."
   document's own refresh re-ingests it; the replay proves the code is correct and ADR 0025's currency check
   reports the unmeasurable population rather than implying coverage.
 
+- ID: `EXTRACTION-QUALITY-GAUGE.3i` · Status: `pending` (opened `2026-09-12` by
+  `INVARIANT-SHAPE-ADMISSION.3`) · Goal: **a negation on top of the classifier's untyped fallback is a
+  fabricated obligation.** `classify_signal_constraint_kind` ends in a generic arm that returns
+  `MustBeStable` when no value-binding phrase matched — a **default, not a reading**. `obligation_is_negated`
+  is computed independently, so when both fire the record asserts the negation of a default: the document's
+  `PSTRB must not be active during a read transfer` is published as `must_be_stable, negated: true`, i.e.
+  *"PSTRB must not be stable"*, which the document does not say. The same pair reads wrong in the other
+  direction too — `must_be_stable` already means "must not change", so negating it says "may change"
+  (AHB `sigcon_0003`: `The size of the transfer, as indicated by HSIZE, must not be changed.`).
+  **Measured population, read-only over the persisted corpus:** 20 negated records corpus-wide —
+  `must_be_stable` **9**, `must_be_high` 5, `must_be_low` 3, `must_be_value` 3. Only the `must_be_stable`
+  nine are in scope: the other eleven negate a kind the classifier actually matched, where the negation is
+  the document's own word. `must_not_change` and `must_be_deasserted` are already excluded from `negated` by
+  the `WIRE-BASED-100.5b` guard, which is the precedent this extends — that guard refuses a negation on a
+  kind that *encodes* one; this refuses a negation on a kind that was *never read*.
+  **Decide, do not assume, between three dispositions**, and state the choice: drop the `negated` flag and
+  keep the obligation; keep the record but mark it an untyped residual; or refuse it. Dropping the record is
+  the one option to argue against — `PSTRB must not be active` is a real requirement and
+  `[[ANCHORLESS-INVARIANT-DROP]]` is the standing reminder that a silent drop is its own defect.
+  Prerequisite: none. Verification: all 9 adjudicated individually (small enough not to sample); observed
+  RED; the chain rebuilt for every document whose artifacts move — AHB, APB and the CXS/DTI documents are
+  affected, and the AMBA bundles are restored per `[[evidence-rule-field-content-stales-every-proof]]`.
+
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3h`
 
 - [x] **REPRODUCE / MEASURE** — read-only census over all 248 deterministic constraint records: exactly one

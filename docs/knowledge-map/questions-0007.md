@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how many protocol states carry a machine name corpus-wide
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many public fields do SemanticIR and IntentIR declare
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how many quantitative prose candidates are in the SpecForge book
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -293,7 +297,3 @@
   > is the 46 percent figure the defect rate
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > is the 640-line research record ceiling correctly calibrated
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > is the AArch64 External Debug Guide current-binary refresh complete
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > is the APB PSTRB must be LOW constraint extracted

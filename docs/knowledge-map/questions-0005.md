@@ -128,6 +128,8 @@
   > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > how does a width parameter's obligation become a signal constraint
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > how does an unknown-kind Continued from previous page table fragment get a kind
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -184,6 +186,8 @@
   > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge currently capture transactions and why is it thin
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > how does specforge decide whether a description cell constrains the row's signal
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how does specforge declare a signal mentioned only in prose
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -294,7 +298,3 @@
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > how good is prose signal capture / .3a quality
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how is AXI organized / what are the AXI channels
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how is AXI per-signal channel membership recovered without a VLM

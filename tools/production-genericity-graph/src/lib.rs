@@ -79,6 +79,10 @@ mod tests {
     /// Third consecutive slice to move it by one predicate (`INVARIANT-SHAPE-ADMISSION.1`): three for
     /// three, which is the answer to `.1`'s open question about how often these numbers legitimately
     /// move. An exact pin makes every predicate-adding commit a contract-editing commit.
+    /// FOURTH consecutive slice (`INVARIANT-SHAPE-ADMISSION.3`, +6 functions / +32 helper edges /
+    /// +29 decision sites / +2 semantic macros for one table reader). Four for four: the question
+    /// `PRODUCTION-GRAPH-CENSUS-PIN.1` opened is no longer open — an exact pin on a count that moves
+    /// with every ordinary production slice measures the commit rate, not the boundary.
     #[test]
     fn current_repository_flow_is_complete_local_and_deterministic() {
         let root = repository_root();
@@ -98,12 +102,12 @@ mod tests {
         assert_eq!(first.trusted_regions, 11);
         assert_eq!(first.non_authoritative_regions, 6);
         assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_401);
-        assert_eq!(first.helper_edges, 14_951);
-        assert_eq!(first.decision_sites, 12_951);
+        assert_eq!(first.analyzed_functions, 2_407);
+        assert_eq!(first.helper_edges, 14_983);
+        assert_eq!(first.decision_sites, 12_980);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
-        assert_eq!(first.semantic_macros, 1_469);
+        assert_eq!(first.semantic_macros, 1_471);
         assert_eq!(
             serde_json::to_vec(&first).expect("serialize first flow report"),
             serde_json::to_vec(&second).expect("serialize repeated flow report")

@@ -294,6 +294,64 @@ surface: its scored extraction fidelity is described in [Extraction eval](../qua
 projection into SemanticIR, IntentIR, and `.isf` remains an explicit architecture frontier rather than being
 implied by the EvidenceIR result.
 
+## An obligation in a table cell belongs to whatever precedes its modal
+
+A signal-description table row declares a signal in its name cell and describes it in its description
+cell — and that description may state a requirement:
+
+```text
+| RRESP | RRESP_WIDTH | 0b000 (OKAY) | Response for transactions on the read channels.
+                                       Must be valid when RVALID is asserted. |
+```
+
+That is a real obligation on `RRESP`, and nothing in the sentence says so. The subject lives in the
+row's **header**, which is exactly what serializing the row into one `| … | … |` statement throws away.
+So SpecForge reads these obligations from the structured table, where the row is still a row.
+
+The rule is one sentence of English grammar: **an obligation binds to the nominal that immediately
+precedes its modal.** A description cell is prose *about* a signal, not a sentence *whose subject is*
+that signal, so each `must`/`shall` clause in the cell is judged on its own:
+
+| what precedes the modal | example | disposition |
+| --- | --- | --- |
+| nothing — the clause opens with the modal | `Must be valid when RVALID is asserted.` | the row's signal is the subject |
+| the row's own signal | `PSTRB must not be active during a read transfer.` | the row's signal is the subject |
+| a different nominal | `HBURST_WIDTH must be 0 or 3.` | **refused** — this constrains the width parameter |
+| a pronoun | `… it must remain constant throughout a burst transfer.` | **refused** — see below |
+
+The third row is the one that matters for precision. `HBURST_WIDTH must be 0 or 3` sits in `HBURST`'s
+own description cell, and a reader that merely looks for a declared signal *somewhere* in the row will
+attribute the requirement to `HBURST` — publishing "HBURST must be 0", which the document never says and
+which drops the alternative `3` on the way.
+
+> **Currently only half-applied.** The table reader described here refuses such a clause, so it mints no
+> such record. SpecForge's older statement-level readers, which see the row only as one serialized
+> `| … | … |` line, still attribute it — AHB's persisted artifacts carry `HBURST must_be_value 0` and
+> `HPROT must_be_value 0` today. Removing those is tracked as `INVARIANT-SHAPE-ADMISSION.5`; they are
+> named here rather than left for a reader to discover.
+
+The pronoun refusal is deliberate and is an honest residual rather than a guess. Both of these are
+signal-description rows, both obligations are headed by `it`, and the referents differ:
+
+```text
+| HWRITE | … It has the same timing as the address signals, however,
+            it must remain constant throughout a burst transfer. |        → it = HWRITE
+| HSELx  | … When the Subordinate is initially selected, it must also
+            monitor the status of HREADY … |                             → it = the Subordinate
+```
+
+Resolving that is anaphora, not a rule, so SpecForge promotes neither. The serialized rows stay in the
+artifact — a residual you can read is better than a requirement invented from a coin toss.
+
+One more property follows from working per clause rather than per cell: a cell stating three obligations
+yields three records. The serialized statement keeps only the first, which is why a bulleted
+`USER`-signal row used to publish a single constraint no matter how much it required.
+
+The name cell is never authority on its own. A row's signal must resolve through the document's own
+declared-signal catalog before any obligation is attributed to it, so a table naming something the
+document never declares produces nothing. Production code contains no protocol, vendor, or signal-name
+list — only the modal, a closed list of helper words, and a closed list of pronouns.
+
 ## Typical evidence-level failure modes
 
 - field tables leaking fake signals

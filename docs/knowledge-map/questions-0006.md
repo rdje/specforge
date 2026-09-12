@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how is AXI organized / what are the AXI channels
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how is AXI per-signal channel membership recovered without a VLM
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > how is AXI per-signal phase membership recoverable without a VLM
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -293,7 +297,3 @@
   > how many production rules does the registry declare
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > how many property tables are admitted as signal tables corpus-wide
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > how many protocol states carry a machine name corpus-wide
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how many public fields do SemanticIR and IntentIR declare

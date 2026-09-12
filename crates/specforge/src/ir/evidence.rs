@@ -9633,6 +9633,362 @@ fn extract_normative_signal_constraints(
     records
 }
 
+/// Whether an obligation's modal is explicitly negated (`must not`, `shall never`, `cannot`).
+/// `lowered` is already ASCII-lower-cased. Shared by every path that mints a
+/// `SignalConstraintRecord`, so one obligation reads the same however the record was reached.
+fn obligation_is_negated(lowered: &str) -> bool {
+    contains_any(
+        lowered,
+        &[
+            "must not",
+            "shall not",
+            "must never",
+            "shall never",
+            "cannot",
+            "will not",
+        ],
+    )
+}
+
+/// Map an obligation's value-binding phrase onto a typed [`SignalConstraintKind`].
+/// `lowered` is already ASCII-lower-cased. Extracted verbatim from `extract_signal_constraints`
+/// so the table-row reader (`INVARIANT-SHAPE-ADMISSION.3`) classifies an obligation exactly as
+/// the statement paths do: one classifier, not two that can drift apart.
+fn classify_signal_constraint_kind(lowered: &str) -> SignalConstraintKind {
+    if contains_any(
+        lowered,
+        &[
+            "must not change",
+            "shall not change",
+            "must remain stable",
+            "shall remain stable",
+        ],
+    ) {
+        SignalConstraintKind::MustNotChange
+    } else if contains_any(
+        lowered,
+        &[
+            "must be stable",
+            "shall be stable",
+            "must hold",
+            "shall hold",
+        ],
+    ) {
+        SignalConstraintKind::MustBeStable
+    } else if contains_any(
+        lowered,
+        &[
+            "must be high",
+            "shall be high",
+            "must remain high",
+            "shall remain high",
+            "must be driven high",
+        ],
+    ) {
+        SignalConstraintKind::MustBeHigh
+    } else if contains_any(
+        lowered,
+        &[
+            "must be low",
+            "shall be low",
+            "must remain low",
+            "shall remain low",
+            "must be driven low",
+        ],
+    ) {
+        SignalConstraintKind::MustBeLow
+    } else if contains_any(
+        lowered,
+        &[
+            "must be asserted",
+            "shall be asserted",
+            "must remain asserted",
+            "shall remain asserted",
+        ],
+    ) {
+        SignalConstraintKind::MustBeAsserted
+    } else if contains_any(
+        lowered,
+        &[
+            "must be deasserted",
+            "shall be deasserted",
+            "must remain deasserted",
+            "shall remain deasserted",
+        ],
+    ) {
+        SignalConstraintKind::MustBeDeasserted
+    } else if contains_any(lowered, &["must be valid", "shall be valid"]) {
+        // Look for a specific protocol state value after "must be" / "shall be"
+        if let Some(value) = extract_protocol_state_value(lowered) {
+            SignalConstraintKind::MustBeValue { value }
+        } else {
+            SignalConstraintKind::MustBeStable
+        }
+    } else {
+        // Generic: try to find a protocol state value
+        if let Some(value) = extract_protocol_state_value(lowered) {
+            SignalConstraintKind::MustBeValue { value }
+        } else {
+            SignalConstraintKind::MustBeStable
+        }
+    }
+}
+
+/// Which nominal an obligation clause binds its modal to, read off the clause's own grammar.
+///
+/// English binds an obligation to the nominal that IMMEDIATELY precedes its modal, so the clause's
+/// last content token before `must`/`shall` is the thing being constrained. The existing anaphora
+/// idiom (`resolve_pronoun_subject_anaphora`) already takes the subject head this way — "the subject
+/// head closest to the verb"; this names the same move for the table-row reader.
+#[derive(Debug, PartialEq, Eq)]
+enum ObligationSubject<'a> {
+    /// No `must`/`shall`: the clause states no obligation at all.
+    NotAnObligation,
+    /// The modal OPENS the clause, so the clause carries no subject of its own and something
+    /// outside it must supply one — for a table row, its header.
+    Absent,
+    /// The nominal the obligation binds to.
+    Head(&'a str),
+}
+
+/// Helper tokens that sit between a subject and its verb, skipped when walking back to the head.
+/// The pronouns themselves are deliberately NOT listed: a pronoun IS a subject head, and reporting
+/// it as one is what lets the caller refuse it.
+const OBLIGATION_SUBJECT_HELPERS: &[&str] = &[
+    "also",
+    "always",
+    "and",
+    "are",
+    "be",
+    "been",
+    "begin",
+    "begins",
+    "but",
+    "first",
+    "had",
+    "has",
+    "have",
+    "however",
+    "immediately",
+    "is",
+    "now",
+    "only",
+    "or",
+    "started",
+    "still",
+    "subsequently",
+    "then",
+    "therefore",
+    "to",
+    "was",
+    "were",
+];
+
+/// Read the subject an obligation clause binds to. `INVARIANT-SHAPE-ADMISSION.3`.
+fn obligation_subject(clause: &str) -> ObligationSubject<'_> {
+    let lowered = clause.to_ascii_lowercase();
+    let Some(modal_start) = ["must", "shall"]
+        .iter()
+        .filter_map(|modal| find_whole_identifier(&lowered, modal))
+        .min()
+    else {
+        return ObligationSubject::NotAnObligation;
+    };
+    // Byte layout is preserved by ASCII lowercasing, so the offset indexes `clause` directly.
+    for token in clause[..modal_start].split_whitespace().rev() {
+        let word = token.trim_matches(|character: char| {
+            !(character.is_ascii_alphanumeric() || character == '_')
+        });
+        if word.is_empty()
+            || OBLIGATION_SUBJECT_HELPERS
+                .iter()
+                .any(|helper| word.eq_ignore_ascii_case(helper))
+        {
+            continue;
+        }
+        return ObligationSubject::Head(word);
+    }
+    ObligationSubject::Absent
+}
+
+/// Byte offset of `needle` in `haystack` at identifier boundaries, if present. Both are ASCII-lower.
+fn find_whole_identifier(haystack: &str, needle: &str) -> Option<usize> {
+    let is_ident = |byte: u8| byte.is_ascii_alphanumeric() || byte == b'_';
+    let bytes = haystack.as_bytes();
+    let mut scan = 0usize;
+    while let Some(offset) = haystack[scan..].find(needle) {
+        let start = scan + offset;
+        let end = start + needle.len();
+        let before_ok = start == 0 || !is_ident(bytes[start - 1]);
+        let after_ok = end == bytes.len() || !is_ident(bytes[end]);
+        if before_ok && after_ok {
+            return Some(start);
+        }
+        scan = start + 1;
+    }
+    None
+}
+
+/// `INVARIANT-SHAPE-ADMISSION.3` — read the obligation a SIGNAL-DESCRIPTION ROW states about the
+/// signal that same row declares.
+///
+/// `.2` established that a published table-row constraint is a matrix row whose subject lives in the
+/// header, and that serialization throws the header away. This is the one shape the reader already
+/// understands end to end: the name cell it has already turned into `Signal X is …`, beside a
+/// description cell that may state an obligation. Working from `StructuredTableRecord` is the whole
+/// point — the serialized statement no longer knows which cell was the name.
+///
+/// The refusal is the substance. A description cell is prose about a signal, not a sentence whose
+/// subject is that signal, so an obligation inside it may be about something else entirely. Each
+/// clause is admitted only when it binds to THIS row's signal:
+///
+/// * `Absent` — `| RRESP | RRESP_WIDTH | 0b000 (OKAY) | … Must be valid when RVALID is asserted. |`
+///   opens with the modal, so only the header can supply the subject. This is the case the
+///   statement path cannot reach at all: with no subject in the clause, its subject scan collects
+///   the clause's own words (`Must`, `be`, `valid`), finds none of them declared, and drops the
+///   record.
+/// * `Head` equal to the row's signal — `| PSTRB | … | PSTRB must not be active during a read
+///   transfer. |`.
+///
+/// and refused otherwise:
+///
+/// * a DIFFERENT nominal — `| HBURST | Subordinate | HBURST_WIDTH | … HBURST_WIDTH must be 0 or 3. |`
+///   constrains the width PARAMETER, not the signal; `| WTAGUPDATE | … | Indicates which tags must
+///   be written to memory … |` constrains the tags.
+/// * a PRONOUN — `| HWRITE | … it must remain constant throughout a burst transfer. |` means the
+///   signal, but `| HSELx | … When the Subordinate is initially selected, it must also monitor the
+///   status of HREADY … |` means the Subordinate. Telling them apart is anaphora, not a rule, so
+///   both stay residual and the row stays published (`.2`).
+///
+/// Universal grammar only (ADR 0006): no document, protocol, vendor, or signal name appears here.
+/// One clause per record, so a cell stating three obligations yields three — the serialized
+/// statement collapses them into one and keeps only the first.
+fn extract_signal_description_row_constraints(
+    source_ir: &SourceIr,
+    statements: &[ExtractedStatement],
+    known_signals: &HashSet<String>,
+    counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<SignalConstraintRecord> {
+    let mut records = Vec::new();
+
+    for table in &source_ir.structured_tables {
+        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
+            continue;
+        }
+        let header_texts: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+        let name_col = header_texts
+            .iter()
+            .position(|h| {
+                h.contains("signal")
+                    || h.contains("name")
+                    || h.contains("port")
+                    || h.contains("pin")
+            })
+            .unwrap_or(0);
+        // The same description-column idiom `synthesize_signal_semantic_hints_from_tables` uses.
+        // A table with no description column states no obligation in prose and is skipped.
+        let Some(description_col) = header_texts.iter().position(|h| {
+            h.contains("description") || h.contains("meaning") || h.contains("function")
+        }) else {
+            continue;
+        };
+        if description_col == name_col {
+            continue;
+        }
+
+        for row in &table.body_rows {
+            let Some(name_cell) = row.get(name_col) else {
+                continue;
+            };
+            let proposed = name_cell
+                .text
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .trim_matches(|character: char| {
+                    !character.is_ascii_alphanumeric() && character != '_'
+                });
+            // Cell spelling is never authority: the name must resolve through this document's own
+            // declaration catalog, exactly as the semantic-hint pass requires.
+            let Some(signal_name) = resolve_declared_signal_identifier(proposed, known_signals)
+            else {
+                continue;
+            };
+            let Some(description_cell) = row.get(description_col) else {
+                continue;
+            };
+            let description = description_cell.text.trim();
+            if description.is_empty() {
+                continue;
+            }
+
+            // The serialized row IS a statement, and citing it keeps the residual-honesty accounting
+            // correct: a normative statement no typed record cites is counted as an uncaptured miss.
+            // Resolved once per row, not once per clause — every obligation in the cell comes from
+            // the same row.
+            let row_statement_id = serialized_row_statement_id(statements, description);
+
+            // The same clause split `constraint_bearing_sentence` uses, so a bulleted cell stating
+            // several obligations is read as several rather than as one run-on sentence.
+            for clause in description.split(['.', ';', '•', '\n']) {
+                match obligation_subject(clause) {
+                    ObligationSubject::NotAnObligation => continue,
+                    ObligationSubject::Absent => {}
+                    ObligationSubject::Head(head) if head.eq_ignore_ascii_case(&signal_name) => {}
+                    ObligationSubject::Head(_) => continue,
+                }
+                let clause_text = clause.trim();
+                let lowered = clause_text.to_ascii_lowercase();
+                let constraint_kind = classify_signal_constraint_kind(&lowered);
+                // The same guard the statement path applies: a kind that already encodes its own
+                // negation must not also carry `negated`, or the pair reads as a double negative.
+                let negated = obligation_is_negated(&lowered)
+                    && !matches!(
+                        constraint_kind,
+                        SignalConstraintKind::MustNotChange
+                            | SignalConstraintKind::MustBeDeasserted
+                    );
+                *counter += 1;
+                records.push(SignalConstraintRecord {
+                    constraint_id: format!("row_sigcon_{counter:04}"),
+                    subject_signal: signal_name.clone(),
+                    constraint_kind,
+                    target_value: None,
+                    condition_text: extract_condition_clause(clause_text),
+                    negated,
+                    // The document's own words for this one obligation — not the serialized row,
+                    // whose other cells are what made the published constraint unreadable.
+                    source_text: clause_text.to_string(),
+                    supporting_statement_ids: row_statement_id.clone().into_iter().collect(),
+                    automation_confidence: AutomationConfidence::Medium,
+                });
+            }
+        }
+    }
+
+    records
+}
+
+/// The id of the serialized-table-row statement carrying `description`, when the document has one.
+/// Deterministic: the first row statement (leading `|`, the repository-wide row marker) that
+/// contains the cell verbatim.
+fn serialized_row_statement_id(
+    statements: &[ExtractedStatement],
+    description: &str,
+) -> Option<String> {
+    statements
+        .iter()
+        .find(|statement| {
+            statement.text.trim_start().starts_with('|') && statement.text.contains(description)
+        })
+        .map(|statement| statement.statement_id.clone())
+}
+
 /// Level 2 NLP — Extract `SignalConstraintRecord` entries from `SignalValueConstraint` sentences.
 /// Operates only on already-classified sentences to keep precision high.
 ///
@@ -9699,95 +10055,8 @@ fn extract_signal_constraints(
             continue;
         }
         // Determine constraint kind and negation from the value-binding phrase.
-        let negated = contains_any(
-            &lowered,
-            &[
-                "must not",
-                "shall not",
-                "must never",
-                "shall never",
-                "cannot",
-                "will not",
-            ],
-        );
-
-        let constraint_kind = if contains_any(
-            &lowered,
-            &[
-                "must not change",
-                "shall not change",
-                "must remain stable",
-                "shall remain stable",
-            ],
-        ) {
-            SignalConstraintKind::MustNotChange
-        } else if contains_any(
-            &lowered,
-            &[
-                "must be stable",
-                "shall be stable",
-                "must hold",
-                "shall hold",
-            ],
-        ) {
-            SignalConstraintKind::MustBeStable
-        } else if contains_any(
-            &lowered,
-            &[
-                "must be high",
-                "shall be high",
-                "must remain high",
-                "shall remain high",
-                "must be driven high",
-            ],
-        ) {
-            SignalConstraintKind::MustBeHigh
-        } else if contains_any(
-            &lowered,
-            &[
-                "must be low",
-                "shall be low",
-                "must remain low",
-                "shall remain low",
-                "must be driven low",
-            ],
-        ) {
-            SignalConstraintKind::MustBeLow
-        } else if contains_any(
-            &lowered,
-            &[
-                "must be asserted",
-                "shall be asserted",
-                "must remain asserted",
-                "shall remain asserted",
-            ],
-        ) {
-            SignalConstraintKind::MustBeAsserted
-        } else if contains_any(
-            &lowered,
-            &[
-                "must be deasserted",
-                "shall be deasserted",
-                "must remain deasserted",
-                "shall remain deasserted",
-            ],
-        ) {
-            SignalConstraintKind::MustBeDeasserted
-        } else if contains_any(&lowered, &["must be valid", "shall be valid"]) {
-            // Look for a specific protocol state value after "must be" / "shall be"
-            if let Some(value) = extract_protocol_state_value(&lowered) {
-                SignalConstraintKind::MustBeValue { value }
-            } else {
-                SignalConstraintKind::MustBeStable
-            }
-        } else {
-            // Generic: try to find a protocol state value
-            if let Some(value) = extract_protocol_state_value(&lowered) {
-                SignalConstraintKind::MustBeValue { value }
-            } else {
-                SignalConstraintKind::MustBeStable
-            }
-        };
+        let negated = obligation_is_negated(&lowered);
+        let constraint_kind = classify_signal_constraint_kind(&lowered);
 
         // Keep only subjects that are DECLARED signals — a property/config name or doc-meta token
         // is not in the catalog and is dropped. An empty catalog grants no authority.
@@ -17871,13 +18140,31 @@ fn converge_evidence_extractions(
         );
 
         let mut constraint_counter = 1usize;
-        let signal_constraints = extract_normative_signal_constraints(
+        let mut signal_constraints = extract_normative_signal_constraints(
             &extracted_statements,
             &known_signals,
             &discovered_values,
             &signal_polarity.resolved,
             &mut constraint_counter,
         );
+        // INVARIANT-SHAPE-ADMISSION.3 — the statement paths above read a signal-description row
+        // only as serialized text, where the header that names the row's subject is already gone.
+        // This pass reads the row itself. Appended, never substituted: it adds the obligations
+        // those paths cannot reach and re-states the ones they can, and the established-count
+        // dedup keeps an already-minted record rather than a second copy of it.
+        let established_constraints = signal_constraints.len();
+        let mut row_constraints = extract_signal_description_row_constraints(
+            source_ir,
+            &extracted_statements,
+            &known_signals,
+            &mut constraint_counter,
+            prior_guidance,
+        );
+        // Refine BEFORE the dedup, or an appended record whose kind refines onto an established
+        // one would no longer match it and would survive as a second copy.
+        apply_signal_polarity_to_constraints(&mut row_constraints, &signal_polarity.resolved);
+        signal_constraints.extend(row_constraints);
+        dedup_appended_signal_constraints(&mut signal_constraints, established_constraints);
         let conditional_rules =
             extract_conditional_rules(&extracted_statements, &mut constraint_counter);
 
@@ -34338,6 +34625,294 @@ mod wire_based_100_8a {
         expected.artifact_layout = reloaded.artifact_layout.clone();
         expected.proof_ledger = reloaded.proof_ledger.clone();
         assert_eq!(expected, reloaded);
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod invariant_shape_admission_3 {
+    //! `INVARIANT-SHAPE-ADMISSION.3` — a signal-description row's description cell may state an
+    //! obligation, and the obligation is only about that row's signal when the clause's own
+    //! grammar binds it there. `.2` measured 20 such clauses across the 27-document
+    //! proof-carrying corpus; 12 bind (1 with no subject at all, 11 naming the row's signal), 5
+    //! head with a pronoun and 3 with a different nominal.
+    use super::*;
+    use crate::error::Result;
+    use crate::ir::source::StructuredTableRecord;
+    use std::fs;
+    use tempfile::tempdir;
+
+    fn cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
+
+    fn row(cells: &[&str], is_header: bool) -> Vec<StructuredTableCellRecord> {
+        cells.iter().map(|text| cell(text, is_header)).collect()
+    }
+
+    /// The grammar, pinned over the census's own four shapes and over the near-misses that would
+    /// widen it. Nothing here names a signal: the rule is which token precedes the modal.
+    #[test]
+    fn an_obligation_binds_to_the_nominal_immediately_before_its_modal() {
+        // ABSENT — the modal opens the clause, so the clause has no subject of its own. This is
+        // the shape only the row's header can complete.
+        assert_eq!(
+            obligation_subject(" Must be valid when RVALID is asserted"),
+            ObligationSubject::Absent
+        );
+        assert_eq!(
+            obligation_subject("Shall be stable"),
+            ObligationSubject::Absent
+        );
+        // HEAD — the nominal the obligation binds to, helper words skipped.
+        assert_eq!(
+            obligation_subject(" PSTRB must not be active during a read transfer"),
+            ObligationSubject::Head("PSTRB")
+        );
+        assert_eq!(
+            obligation_subject(
+                " When a Subordinate is selected for a non-IDLE transfer, HSELx must be asserted"
+            ),
+            ObligationSubject::Head("HSELx")
+        );
+        // A width PARAMETER is a different nominal from the signal whose row states it.
+        assert_eq!(
+            obligation_subject(" HBURST_WIDTH must be 0 or 3"),
+            ObligationSubject::Head("HBURST_WIDTH")
+        );
+        // A common noun heads just as a signal name does — the rule reads position, not vocabulary.
+        assert_eq!(
+            obligation_subject(" Indicates which tags must be written to memory"),
+            ObligationSubject::Head("tags")
+        );
+        // A pronoun IS a head and is reported as one, which is what lets the reader refuse it.
+        assert_eq!(
+            obligation_subject(" It must be the same for every response of the transaction"),
+            ObligationSubject::Head("It")
+        );
+        assert_eq!(
+            obligation_subject(
+                " It has the same timing as the address signals, however, it must remain constant"
+            ),
+            ObligationSubject::Head("it")
+        );
+        assert_eq!(
+            obligation_subject(" A user-defined value that must be reflected from a write request"),
+            ObligationSubject::Head("that")
+        );
+        // NOT AN OBLIGATION — a descriptive cell, including one carrying a weaker modal word that
+        // the `is_invariant_like` admission list would accept but an obligation is not built from.
+        assert_eq!(
+            obligation_subject(" Asserted high to indicate that an exclusive access is required"),
+            ObligationSubject::NotAnObligation
+        );
+        assert_eq!(
+            obligation_subject("Response for transactions on the read channels"),
+            ObligationSubject::NotAnObligation
+        );
+        // Whole-identifier matching: a longer word merely containing a modal is not one.
+        assert_eq!(
+            obligation_subject("The mustard-coloured marshalling buffer"),
+            ObligationSubject::NotAnObligation
+        );
+        assert_eq!(obligation_subject(""), ObligationSubject::NotAnObligation);
+    }
+
+    fn read_rows(
+        body_rows: Vec<Vec<StructuredTableCellRecord>>,
+    ) -> Result<Vec<SignalConstraintRecord>> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Signal descriptions\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let col_count = body_rows.first().map(Vec::len).unwrap_or(0) as u32;
+        let row_count = body_rows.len() as u32 + 1;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "asset_0001".to_string(),
+            page_id: None,
+            caption_text: Some("Signal descriptions".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal", "Width", "Source", "Description"], true)],
+            body_rows,
+            row_count,
+            col_count,
+        });
+        let known: HashSet<String> = ["ZETAREADY", "OMEGABURST", "ALPHACHUNK", "SIGMASTRB"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let mut counter = 0usize;
+        Ok(extract_signal_description_row_constraints(
+            &source_ir,
+            &[],
+            &known,
+            &mut counter,
+            None,
+        ))
+    }
+
+    fn subjects(records: &[SignalConstraintRecord]) -> Vec<&str> {
+        records
+            .iter()
+            .map(|record| record.subject_signal.as_str())
+            .collect()
+    }
+
+    /// The reader, over one table carrying every shape the census found. The two admissions are
+    /// the leaf's recall; the three refusals are its precision, and the `_WIDTH` row is the one
+    /// the serialized-statement path currently mis-attributes to the signal.
+    #[test]
+    fn a_row_states_a_constraint_only_when_its_clause_binds_to_that_row_signal() -> Result<()> {
+        let records = read_rows(vec![
+            // ABSENT: the header is the only place the subject exists.
+            row(
+                &[
+                    "ZETAREADY",
+                    "1",
+                    "Requester",
+                    "Response for transactions on the read channels. Must be valid when ALPHACHUNK is asserted.",
+                ],
+                false,
+            ),
+            // HEAD == the row's own signal.
+            row(
+                &[
+                    "SIGMASTRB",
+                    "8",
+                    "Requester",
+                    "Write strobe. SIGMASTRB must not be active during a read transfer.",
+                ],
+                false,
+            ),
+            // HEAD == a width parameter: the obligation is about the parameter, not the signal.
+            row(
+                &[
+                    "OMEGABURST",
+                    "OMEGABURST_WIDTH",
+                    "Completer",
+                    "Indicates how many transfers are in the burst. OMEGABURST_WIDTH must be 0 or 3.",
+                ],
+                false,
+            ),
+            // HEAD == a pronoun: the referent is unresolved, so the row stays residual.
+            row(
+                &[
+                    "ALPHACHUNK",
+                    "1",
+                    "Completer",
+                    "Asserted high to indicate validity. It must be the same for every response.",
+                ],
+                false,
+            ),
+            // No obligation at all: a descriptive cell states nothing to promote.
+            row(
+                &[
+                    "ZETAREADY",
+                    "1",
+                    "Requester",
+                    "Asserted high to indicate that an exclusive access is required.",
+                ],
+                false,
+            ),
+        ])?;
+
+        assert_eq!(
+            subjects(&records),
+            vec!["ZETAREADY", "SIGMASTRB"],
+            "only the subjectless and self-named clauses bind: {records:?}"
+        );
+        assert!(
+            !records
+                .iter()
+                .any(|record| record.subject_signal == "OMEGABURST"),
+            "a width parameter's obligation must not be attributed to the signal: {records:?}"
+        );
+
+        // The subjectless clause keeps the document's own words and its condition, and the row
+        // supplies the subject the clause never states.
+        let absent = &records[0];
+        assert_eq!(
+            absent.source_text,
+            "Must be valid when ALPHACHUNK is asserted"
+        );
+        assert_eq!(
+            absent.condition_text.as_deref(),
+            Some("ALPHACHUNK is asserted")
+        );
+        // The self-named clause carries its negation, and the record is one clause, not one cell.
+        let named = &records[1];
+        assert!(
+            named.negated,
+            "`must not` is a negated obligation: {named:?}"
+        );
+        assert_eq!(
+            named.source_text,
+            "SIGMASTRB must not be active during a read transfer"
+        );
+        Ok(())
+    }
+
+    /// A cell stating several obligations yields several records. The serialized statement the
+    /// other paths read collapses them into one and keeps only the first, which is why APB's
+    /// three-bullet USER-signal rows publish a single constraint today.
+    #[test]
+    fn each_obligation_clause_in_a_cell_becomes_its_own_record() -> Result<()> {
+        let records = read_rows(vec![row(
+            &[
+                "SIGMASTRB",
+                "8",
+                "Requester",
+                "User-defined request attribute. • SIGMASTRB must be valid when ZETAREADY is asserted. \
+                 • SIGMASTRB must have the same value in every cycle during the Access phase.",
+            ],
+            false,
+        )])?;
+        assert_eq!(records.len(), 2, "one record per obligation: {records:?}");
+        assert!(
+            records
+                .iter()
+                .all(|record| record.subject_signal == "SIGMASTRB")
+        );
+        assert_eq!(
+            records[0].condition_text.as_deref(),
+            Some("ZETAREADY is asserted")
+        );
+        // `during` is one of the condition markers the shared clause reader already recognizes,
+        // so the second obligation's scope lands in `condition_text` rather than in its text.
+        assert_eq!(
+            records[1].condition_text.as_deref(),
+            Some("the Access phase")
+        );
+        assert_eq!(
+            records[1].source_text,
+            "SIGMASTRB must have the same value in every cycle during the Access phase"
+        );
+        Ok(())
+    }
+
+    /// The name cell is never authority on its own: a row naming something this document has not
+    /// declared states no signal constraint, however well-formed its cell reads.
+    #[test]
+    fn an_undeclared_name_cell_yields_no_constraint() -> Result<()> {
+        let records = read_rows(vec![row(
+            &[
+                "KAPPAUNDECLARED",
+                "1",
+                "Requester",
+                "KAPPAUNDECLARED must be valid when ZETAREADY is asserted.",
+            ],
+            false,
+        )])?;
+        assert!(records.is_empty(), "undeclared subject: {records:?}");
         Ok(())
     }
 }

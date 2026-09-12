@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `INVARIANT-SHAPE-ADMISSION`
-- Status: `active` (`2026-09-12`; `.0`-`.2` done; `.3` open — one bounded increment; `.4` is a program, not a slice)
+- Status: `active` (`2026-09-12`; `.0`-`.3` done; `.4` is a program, not a slice; `.5` opened by `.3`)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -85,7 +85,7 @@ else in the artifact, which is why this tree splits rather than shipping one rul
 
 ## Task Tree
 
-- ID: `INVARIANT-SHAPE-ADMISSION` · Status: `active` (`2026-09-12`) · Children: `.0`-`.2`
+- ID: `INVARIANT-SHAPE-ADMISSION` · Status: `active` (`2026-09-12`) · Children: `.0`-`.5`
 
 - ID: `INVARIANT-SHAPE-ADMISSION.0` · Status: `done` (`2026-09-12`) · Goal: **decide where the shape is
   refused, and what happens to a table row's content.** Both decided; the second answer split the tree.
@@ -118,16 +118,20 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   below; the work splits into `.3` (bounded) and `.4` (a program).
   Commit: `INVARIANT-SHAPE-ADMISSION.2`
 
-- ID: `INVARIANT-SHAPE-ADMISSION.3` · Status: `pending` · Goal: **a signal-description row whose
+- ID: `INVARIANT-SHAPE-ADMISSION.3` · Status: `done` (`2026-09-12`) · Goal: **a signal-description row whose
   description cell states an obligation about the signal that row declares is a `signal_constraint`.**
-  Bounded and well-typed: the reader already has the table, already identifies the signal, and already
-  emits `signal_constraints` (84 in the current stratum). Measured population: **17 rows** across APB
-  (7), AXI (6) and AHB (4) — e.g. `RRESP` / *"Must be valid when RVALID is asserted"*, `AWLOOP` /
-  *"A user-defined value that must be reflected from a write request to response transfers"*.
-  Small, so the bar is precision: 17 is a population that can be adjudicated in full rather than
-  sampled, and it should be.
-  Prerequisite: `.2`. Verification: all 17 adjudicated individually; no existing `signal_constraint`
-  changes; chain rebuilt; observed RED.
+  The 17 rows reproduced exactly (APB 7, AXI 6, AHB 4) under `is_invariant_like`'s wide modal list; under
+  the constraint extractor's own `must`/`shall` idiom they are 15 rows carrying **20 obligation clauses**,
+  and all 20 were adjudicated individually rather than sampled.
+  **Two of this leaf's premises were false and the result below says so**: the rows are not an untouched
+  gap (9 of the 17 already produce a constraint, 3 of them fabricated), and *"no existing
+  `signal_constraint` changes"* could not be the bar, because the same reading that admits the good rows
+  is what names the bad ones. That half is `.5`.
+  Producer: `python3 scripts/measure_signal_row_obligation_subject.py`.
+  Prerequisite: `.2`. Verification: all 20 clauses adjudicated; observed RED; the three AMBA chains
+  rebuilt from the evidence stage with their held-out bundles restored — **+12 constraints, −0, and the
+  prose families unmoved**.
+  Commit: `INVARIANT-SHAPE-ADMISSION.3`
 
 - ID: `INVARIANT-SHAPE-ADMISSION.4` · Status: `pending` · Goal: **read a requirement matrix.** The
   remaining ~380 obligation-bearing rows are permission matrices, truth tables and parameter tables —
@@ -136,6 +140,213 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   the leaf exists so it is tracked rather than implied. Do not start it as a slice; scope it first,
   and consider whether an existing table-semantics tree should own it.
   Prerequisite: `.3`. Verification: scoping is the deliverable.
+
+- ID: `INVARIANT-SHAPE-ADMISSION.5` · Status: `pending` · Goal: **a serialized row's obligation must not be
+  attributed to the row's name-cell signal when the clause binds to a different nominal.** Opened by `.3`'s
+  adjudication, which found the statement paths already reading these rows — and getting three of them
+  wrong. `is_post_passive_binding_only_subject` is the predicate that would refuse exactly this, and its
+  **gate 2 exempts a table row** on the reasoning that *"a table row supplies subject context from its
+  other cells"*. That is true for `RRESP` and false for `HBURST`, whose cell constrains `HBURST_WIDTH`.
+  Measured population, adjudicated in full: **3 clauses** — `HBURST_WIDTH must be 0 or 3` →
+  `dyn_sigcon_0013` `HBURST must_be_value 0`; `HPROT_WIDTH must be 0, 4, or 7` → `dyn_sigcon_0014`
+  `HPROT must_be_value 0`; `Indicates which tags must be written to memory` → `WTAGUPDATE`. The first two
+  are fabricated twice over: wrong subject, and a value that is one alternative of a set the document
+  writes as `0 or 3`.
+  `.3` already ships the predicate this needs (`obligation_subject`), so the leaf is a placement decision,
+  not a new rule.
+  All three live in AHB and AXI, whose evidence stage is replayable only with the held-out bundles
+  restored from `generated/preserved/WIRE-BASED-100.10/` — budget for that rebuild
+  (`[[evidence-rule-field-content-stales-every-proof]]`).
+  Prerequisite: `.3`. Verification: all 3 adjudicated; observed RED; each removed record named
+  individually, per this tree's standing residual rule.
+
+## `.3` — result (`2026-09-12`)
+
+### The 17 reproduce, and reading them clause by clause is what makes them adjudicable
+
+`.2` recorded **17 rows** across APB (7), AXI (6) and AHB (4). That reproduces exactly — but only under
+`is_invariant_like`'s **wide** modal list, which is an *admission* list, not an obligation list. Two of
+the 17 are admitted by `required` alone and state no obligation at all:
+
+```text
+| AWLOCK, ARLOCK | 1 | 0b0 | Asserted high to indicate that an exclusive access is required. |
+| PSELx | Requester | 1 | Select. … PSELx indicates that the Completer is selected and that a data
+                          transfer is required. |
+```
+
+Under the constraint extractor's own idiom (`constraint_bearing_sentence`: `must`/`shall`) the
+population is **15 rows carrying 20 obligation clauses**. Clauses, not rows, is the unit that can be
+adjudicated, because a cell states up to three obligations and the serialized statement keeps only the
+first — which is why APB's three-bullet `PAUSER`/`PWUSER` rows published one constraint each before this
+leaf and three after.
+
+### All 20, by what heads the obligation
+
+`python3 scripts/measure_signal_row_obligation_subject.py`, over 567 declared signal-description rows in
+the 27 proof-carrying documents:
+
+| head | clauses | verdict |
+| --- | ---: | --- |
+| `absent` — the modal opens the clause | 1 | **admit**: only the row's header can supply the subject |
+| `self` — the row's own declared signal | 11 | **admit** |
+| `pronoun` — `it` / `that` | 5 | refuse: the referent needs anaphora, not a rule |
+| `other` — a different nominal | 3 | refuse: the obligation is about something else |
+
+Admissible: **12**. The rule is one line of English — *an obligation binds to the nominal immediately
+preceding its modal* — and it is the sharpened form of a principle the repository already states, in
+`is_post_passive_binding_only_subject`'s own doc-comment.
+
+The pronoun refusal is not timidity. **Four of the five mean the signal and one does not**, and nothing
+in the clause separates them:
+
+```text
+| HWRITE | … It has the same timing as the address signals, however, it must remain constant … |   → HWRITE
+| HSELx  | … When the Subordinate is initially selected, it must also monitor the status of HREADY … | → the Subordinate
+```
+
+Both cells are signal-description rows, both heads are `it`, and only the document's meaning separates
+them — no property of the clause does. Admitting all five would buy four real obligations at the price of
+one fabricated one, and this leaf's stated bar is precision over a population small enough to adjudicate.
+So all five stay residual: the rows remain published (`.2`), their text is intact, and `.4`'s
+table-semantics programme is where anaphora would belong if it is ever worth resolving.
+
+### The premise that was false: these rows are already being read, and three readings are wrong
+
+`.3` was scoped as a recall gap. Measured, **9 of the 17 rows already produce a `signal_constraint`** —
+the statement paths reach the serialized row and scan the whole of it for a declared-signal subject.
+Five of those readings are right *by accident of the cell repeating its own name* (`PNSE must be valid
+when PSEL is asserted`). Three are wrong:
+
+| persisted record | the cell actually says | the obligation is about |
+| --- | --- | --- |
+| `dyn_sigcon_0013` `HBURST must_be_value 0` | `HBURST_WIDTH must be 0 or 3` | the width parameter |
+| `dyn_sigcon_0014` `HPROT must_be_value 0` | `HPROT_WIDTH must be 0, 4, or 7` | the width parameter |
+| `sigcon_0002` `HSELx must_be_asserted` | condition lifted from the *preceding* sentence | right kind, wrong condition |
+
+The first two are fabricated twice over: wrong subject, and a value that is one alternative of a set.
+
+**So the leaf's stated bar — "no existing `signal_constraint` changes" — could not survive contact with
+the population.** The same reading that admits `RRESP` is what identifies `HBURST` as mis-subjected.
+Splitting rather than widening: `.3` ships the admission, `.5` owns the refusal.
+
+### And the loss the same blindness causes
+
+`| RRESP | RRESP_WIDTH | 0b000 (OKAY) | … Must be valid when RVALID is asserted. |` is classified
+`signal_value_constraint`, reaches the extractor, and yields **nothing**. After narrowing to the
+obligation and cutting the condition, the subject scan is left with `Must be valid` — whose three words
+all pass the permissive `is_hardware_signal_token` identifier test, so `subject_signals` is non-empty and
+the full-text fallback never runs; then all three are dropped as undeclared. A subjectless obligation
+defeats a subject scan by having no subject to find, which is `.2`'s thesis in mechanical form.
+
+### Corpus effect: +12 constraints, −0, exactly the 12 the census predicted
+
+The three documents were rebuilt from the evidence stage down. The **12 admissible clauses became 12
+records and nothing else moved** — the prediction was made from the census before the rebuild and the
+rebuild confirmed it rather than being used to find it.
+
+| | before | after | delta |
+| --- | ---: | ---: | ---: |
+| EvidenceIR `signal_constraints` (APB 15→25, AXI 44→45, AHB 15→16) | 74 | **86** | **+12** |
+| IntentIR `signal_constraints` | 73 | 85 | +12 |
+| IntentIR `temporal_invariants` | 1,171 | 1,183 | +12 |
+| IntentIR `actor_contracts` | 49 | 53 | +4 |
+| lowered `.isf` rules (APB 32→51, AXI 110→112, AHB 35→37) | 177 | **200** | +23 |
+| SemanticIR `invariants` — **the prose family** | 1,098 | **1,098** | **0** |
+| IntentIR `constraints` — **the prose family** | 1,117 | **1,117** | **0** |
+| records removed, any stage | | | **0** |
+
+The two zero rows are this tree's acceptance criterion discharged: *"the count of published constraints
+that are prose does not fall"*. Nothing was deleted anywhere, which is the other one.
+
+All 12 records carry the document's own words as `source_text` and cite the serialized row statement
+they came from, so the residual-honesty accounting counts that statement as captured rather than as an
+uncaptured normative miss.
+
+### Three limits, each stated rather than implied
+
+**1. No new `.isf` FILE is emitted, and none was before.** All three documents stay
+`is_renderable: false` with the same single blocking reason they already had — *"no source-grounded
+system clock/reset contract"* — so the +23 rules are inside the adapter's lowered text and its residual
+decisions, not in an emitted artifact. That is unchanged behaviour, not a new block.
+
+**2. One of the 12 carries an imprecise KIND.** `PSTRB must not be active during a read transfer`
+classifies as `must_be_stable` with `negated: true`, which reads as *"PSTRB must not be stable"* — not
+what the document says. The cause is the shared classifier, not this leaf's rule: its generic arm
+returns `MustBeStable` as a **default when nothing matched**, and the independently-computed negation
+is then stacked on that default. It is a **pre-existing corpus shape** — 9 `must_be_stable + negated`
+records existed before this change, including AHB's own `HSIZE must not be changed` — so this is one
+more instance of a known class, not a new one. Keeping it is deliberate: the obligation is real, its
+`source_text` states it verbatim, and dropping it would be the silent loss
+`[[ANCHORLESS-INVARIANT-DROP]]` warns against. Owned by `EXTRACTION-QUALITY-GAUGE.3i`, opened here with
+the population measured (9 records, adjudicable in full).
+
+**3. The AMBA chains needed their held-out bundles restored, and this leaf nearly concluded they could
+not be rebuilt at all.** APB, AXI and AHB are the three proof-carrying documents with no
+`normalized/` directory, and `specforge evidence` reports only
+`path does not exist: …/normalized/<key>.md` — which names the missing input, not the place it is kept.
+The bundles are in `generated/preserved/WIRE-BASED-100.10/`, the procedure is
+`[[evidence-rule-field-content-stales-every-proof]]`, and **the Knowledge Map already answered this
+under a question this leaf did not think to ask.** Restored, rebuilt, `diff -r`-verified byte-identical
+and removed again; the declared retained population stays at exactly 24.
+
+## Acceptance Checklist (enforced) — `.3`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_signal_row_obligation_subject.py`: 20 obligation
+  clauses over 567 declared signal-description rows in the 27 proof-carrying documents — `absent` 1,
+  `self` 11, `pronoun` 5, `other` 3. `.2`'s 17 rows reproduce exactly under the wide modal list
+  (APB 7 / AXI 6 / AHB 4) and are 15 rows under `must`/`shall`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`. Two mechanisms, both located:
+  `extract_signal_constraints` finds a subject by scanning the clause, so a **subjectless** obligation
+  (`Must be valid when RVALID is asserted`) yields `Must`/`be`/`valid` — all identifiers under
+  `is_hardware_signal_token` — which suppresses the full-text fallback and then drops all three as
+  undeclared (RRESP: 0 records from a statement classed `signal_value_constraint`). And
+  `is_post_passive_binding_only_subject` gate 2 exempts a table row, so the whole-statement scan in
+  `extract_dynamic_signal_constraints` attributes `HBURST_WIDTH must be 0 or 3` to `HBURST`
+  (`dyn_sigcon_0013`, persisted).
+- [x] **ADDRESSED (verified)** — `obligation_subject` + `extract_signal_description_row_constraints`.
+  Control `a_row_states_a_constraint_only_when_its_clause_binds_to_that_row_signal` admits the
+  subjectless and self-named rows and refuses the `_WIDTH` and pronoun ones;
+  `each_obligation_clause_in_a_cell_becomes_its_own_record` pins one record per obligation (2 from a
+  two-bullet cell, where the serialized statement yields 1);
+  `an_undeclared_name_cell_yields_no_constraint` pins the catalog gate.
+  **Observed RED**: with `ObligationSubject::Head(_) => continue` removed, the first control fails and
+  emits `OMEGABURST must_be_value "0"` from `OMEGABURST_WIDTH must be 0 or 3` — the fixture reproduces
+  `dyn_sigcon_0013` exactly, so the control is measuring the live defect and not a toy.
+  **Corpus, rebuilt**: the three AMBA chains rebuilt `evidence → validate → semantic → validate → intent
+  → validate → adapt`, zero failures. EvidenceIR `signal_constraints` 74 → **86** (+12, −0), IntentIR
+  `signal_constraints` 73 → 85, `temporal_invariants` 1,171 → 1,183, `actor_contracts` 49 → 53, lowered
+  `.isf` rules 177 → 200. **SemanticIR `invariants` 1,098 → 1,098 and IntentIR `constraints` 1,117 →
+  1,117** — the prose families did not move, which is this tree's precision criterion. The 12 records are
+  exactly the 12 clauses the census called admissible, predicted before the rebuild.
+- [x] **NO REGRESSION** — `cargo test` 472 / 168 / **1427** / 4 green (1423 → 1427 = the four new
+  controls), after re-pinning the production-graph census (`PRODUCTION-GRAPH-CENSUS-PIN`: analyzed
+  functions 2,401 → 2,407, helper edges 14,951 → 14,983, decision sites 12,951 → 12,980, semantic macros
+  1,469 → 1,471 — the **fourth consecutive** slice to move it by one predicate). `cargo fmt --check` and
+  `cargo clippy --all-targets -D warnings` green. `scripts/check_chain_currency.sh`: the evidence stage
+  replayed for the **24 replayable documents, 24 current, 0 stale** — the new pass emits nothing on any
+  document outside the three, exactly as the census predicted. The three AMBA chains were rebuilt rather
+  than replayed, and they **loaded cleanly at HEAD before this change** (probed per document with the
+  HEAD binary), so their staleness is this change adding content to those three artifacts and nothing
+  else. Held-out bundles restored, `diff -r`-verified unchanged by the rebuild, and removed: retention
+  stays at the declared 24. Every new fidelity finding is the standard per-contract gate row; the one
+  failing gate (`realizable_boundary`, the clock not being on the actor boundary) already failed for
+  **every** pre-existing contract in these documents (APB 12/12, AXI 23/23), so the new contracts join a
+  universal pre-existing disposition rather than introducing a failure.
+  The classifier extraction (`classify_signal_constraint_kind` / `obligation_is_negated` lifted verbatim
+  out of `extract_signal_constraints`) is behaviour-preserving and is covered by the frozen
+  `extract_normative_signal_constraints` contract cases, which are unchanged.
+- [x] **GENERICITY (ADR 0006)** — pure grammar: the token before the modal, a closed helper list, and a
+  closed pronoun-refusal (a pronoun is *reported* as a head, never resolved). No document, protocol,
+  vendor, signal, or value name appears in the rule or the fixtures — the controls use invented names
+  (`ZETAREADY`, `OMEGABURST`, `SIGMASTRB`, `ALPHACHUNK`) so a fixture cannot become a name list.
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/evidenceir.md` gains "An obligation in a table cell belongs
+  to whatever precedes its modal", with both admissions, both refusals, and the reason the pronoun case
+  stays residual. Fact card `[[table-row-obligation-binds-to-the-token-before-its-modal]]` carries the
+  rule and the three live mis-attributions;
+  `[[evidence-rule-field-content-stales-every-proof]]` gains two question keys so the
+  `path does not exist: …/normalized/<key>.md` error leads to the remedy it already documents — the
+  discovery failure this leaf actually hit. No production rule was deleted or replaced, so no book text
+  became false.
 
 ## `.2` — result (`2026-09-12`)
 
@@ -213,7 +424,8 @@ is discharged here for the table-row half.
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `INVARIANT-SHAPE-ADMISSION.3` — the 17-row signal-constraint increment. Bounded, fully adjudicable.
+1. `INVARIANT-SHAPE-ADMISSION.5` — refuse the mis-subjected serialized-row constraint. 3 clauses, fully
+   adjudicated; the predicate already exists. Read its blocked-on note before starting.
 2. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice.**
 
 ## `.0` — result (`2026-09-12`)
@@ -325,6 +537,26 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.3`. All **20** obligation clauses adjudicated individually, not sampled: 1 `absent`,
+  11 `self`, 5 `pronoun`, 3 `other`, each printed in full with its table id, name cell and description
+  cell by `scripts/measure_signal_row_obligation_subject.py`. `.2`'s 17 rows re-derived from persisted
+  SourceIR joined to `table_signal_declaration_provenance` — they reproduce exactly, and the modal list
+  that produces 17 rather than 15 was identified rather than assumed.
+  **Observed RED**: removing the `ObligationSubject::Head(_) => continue` arm fails
+  `a_row_states_a_constraint_only_when_its_clause_binds_to_that_row_signal` and mints
+  `OMEGABURST must_be_value "0"` from a `_WIDTH` obligation — the same shape as the persisted
+  `dyn_sigcon_0013`.
+  `cargo test` 472 / 168 / **1427** / 4 green; `cargo fmt --check` and
+  `cargo clippy --all-targets -D warnings` green; `scripts/check_doctrines.sh` green;
+  `scripts/check_chain_currency.sh` green — the evidence stage replayed for all 24 replayable documents
+  with the current binary, proving the new pass is inert on every document the corpus can rebuild.
+  Chain: the 24 replayable documents replayed at the evidence stage by `check_chain_currency.sh` — 24
+  current, 0 stale. The three AMBA chains rebuilt in full after restoring their held-out bundles from
+  `generated/preserved/WIRE-BASED-100.10/`; pre-rebuild snapshot at
+  `generated/preserved/INVARIANT-SHAPE-ADMISSION.3/pre-rebuild/`; bundles `diff -r`-verified unchanged by
+  the rebuild and removed, so the declared retained population stays at exactly 24. Baseline established
+  rather than assumed: all three loaded cleanly with the HEAD binary before the change.
+
 - `2026-09-12` — `.2`. Read-only; no artifact written, rebuilt or mutated. Classification by first cell
   and by modal presence over all 769 current table-row constraints, with samples printed per class and
   adjudicated by hand. The 17-row increment was measured from persisted SourceIR
@@ -352,10 +584,19 @@ None.
 - Opened in the commit that closed `ANCHORLESS-INVARIANT-DROP.0` (`ec2b5a31`).
 - `.0` — `INVARIANT-SHAPE-ADMISSION.0` (`481c2d39`).
 - `.1` — `INVARIANT-SHAPE-ADMISSION.1` (`e3d22be0`).
-- `.2` — `INVARIANT-SHAPE-ADMISSION.2`.
+- `.2` — `INVARIANT-SHAPE-ADMISSION.2` (`e30fed04`).
+- `.3` — `INVARIANT-SHAPE-ADMISSION.3`.
 
 ## Changelog
 
+- `2026-09-12` — `.3` closed, and it closed differently than it opened. The 17 rows are 20 obligation
+  clauses; 12 bind to the row's own signal and are now read from the table, where the header still
+  exists. The other 8 are refused with a stated reason. Two premises failed on measurement: 9 of the 17
+  rows already produce a constraint (3 of them fabricated — `HBURST_WIDTH must be 0 or 3` published as
+  `HBURST must_be_value 0`), so "no existing `signal_constraint` changes" could not be the bar, and the
+  refusal half became `.5`. Rebuilt across APB, AXI and AHB: EvidenceIR `signal_constraints` 74 → **86**
+  (+12, −0), `.isf` rules 177 → 200, and the prose families unmoved at 1,098 invariants / 1,117
+  constraints.
 - `2026-09-12` — `.2` closed. A table row is a matrix row whose subject lives in its header, and
   serialization discarded the header — so these constraints are unreadable where they are published.
   396 of 769 carry an obligation; the readable increment is 17 rows (`.3`) and the rest is a
