@@ -139,23 +139,37 @@ checks publish about the **repository** — `278 canonical cards`, `301 facts`, 
 survives one level up instead, in what each check reports about its **own coverage**. Of the 16 that
 print a self-test count, **12 cannot detect a change in it**:
 
-| how the report line produces the number | checks | delete a self-test case → |
+The test to apply is narrow, and **it is not the shape of the printed ratio**:
+
+> Does DELETING one self-test case make this check fail?
+
+It does only when the expected total is declared **independently of the suite** — a literal. Everything
+co-derived from the same loop is blind to a case leaving it. Hand-adjudicated over the 16:
+
+| shape | checks | delete a self-test case → |
 | --- | ---: | --- |
-| `$passed/$total`, computed independently | 4 | they differ, the check **fails** |
+| `$passed` compared to a **literal** (`!= 13`, `-ne 22`) | **3** | they differ, the check **fails** |
+| `$passed/$total` with `$total++` in the same case loop | 4 | both drop; still `N/N` |
 | `$passed/$passed` | 4 | prints `59/59`; exit 0 |
-| a literal in the message — `"self-test 15/15 passed."` | 5 | prints `15/15` forever |
-| a running counter with no declared total | 3 | the counter moves; nothing reads it |
+| a literal in the message — `"self-test 15/15 passed."` | 2 | prints `15/15` forever |
+| a bare counter with no declared total | 3 | the counter moves; nothing reads it |
 
-**Write the denominator so that something computes it independently.** `$passed/$total` is the whole
-fix and four checks already do it. A literal is the worst form, because it does not move with the suite
-at all and so reads as coverage evidence while being a string.
+**`$passed/$total` looks like the fix and is not one** when both sides count the same loop. It detects
+a *failing* case, which is a real but different property. Write a literal.
 
-State the limit honestly when you report this class: a self-test that **fails** still fails these
-checks — they `die` on a failing case. What is unguarded is **coverage**, which is a weaker defect than
-a wrong published number and is still the same shape.
+Two limits to state whenever this class is reported, because omitting either overclaims:
 
-`PRODUCTION-GRAPH-CENSUS-PIN.3` owns the remediation; `python3 scripts/measure_self_test_coverage_reports.py`
-re-derives the population.
+1. A self-test that **fails** still fails all of these checks — they `die` on a failing case. What is
+   unguarded is **coverage**.
+2. **The property is not regex-decidable.** `PRODUCTION-GRAPH-CENSUS-PIN.2` published a classification
+   produced by one and got it wrong in both directions: a script that prints `13/13` and compares
+   `$passed != 13` forty lines away was filed as unguarded, and the four `$passed/$total` checks were
+   held up as the working precedent. `.2a` re-derived it by hand. So
+   `scripts/measure_self_test_coverage_reports.py` now emits the report lines and the candidate
+   comparisons as **evidence**, and the verdict lives in the task leaf — a producer that guesses this
+   property publishes the very defect the doctrine is about.
+
+`PRODUCTION-GRAPH-CENSUS-PIN.3` owns the remediation.
 
 ---
 

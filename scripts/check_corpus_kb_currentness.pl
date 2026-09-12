@@ -16,6 +16,15 @@ use JSON::PP;
 binmode STDOUT, ':encoding(UTF-8)';
 binmode STDERR, ':encoding(UTF-8)';
 
+# PRODUCTION-GRAPH-CENSUS-PIN.3 — the self-test line used to print the literal `15/15`, which was
+# derived from nothing and so could not be checked against the suite: delete a case and it still said
+# 15. The count is now taken by the assertions themselves (`assert_valid`/`assert_invalid` below) and
+# compared against this declaration, so a case removed — or one added and not declared — fails the
+# check instead of silently moving a number nobody reads. `$passed/$total` is the shape four sibling
+# checks already use; the declaration lives beside the suite it counts rather than in a contract file.
+our $SELF_TEST_PASSED = 0;
+our $SELF_TEST_EXPECTED = 15;
+
 my $mode = 'check';
 my $root = File::Spec->catdir($Bin, '..');
 my $relative_contract = 'doctrine/live_document_size/corpus_kb.json';
@@ -44,7 +53,10 @@ die "corpus-kb-currentness: unsafe contract path\n"
 
 if ($mode eq 'self-test') {
     run_self_test($base, $relative_contract);
-    print "corpus-kb-currentness: self-test 15/15 passed.\n";
+    die "corpus-kb-currentness: self-test ran $SELF_TEST_PASSED assertions, "
+        . "declaration expects $SELF_TEST_EXPECTED — re-derive the declaration beside the suite\n"
+        if $SELF_TEST_PASSED != $SELF_TEST_EXPECTED;
+    print "corpus-kb-currentness: self-test $SELF_TEST_PASSED/$SELF_TEST_EXPECTED passed.\n";
     exit 0;
 }
 
@@ -583,12 +595,14 @@ sub assert_valid {
     my ($name, @args) = @_;
     my @errors = validate_contract(@args);
     die "corpus-kb-currentness self-test `$name` unexpectedly failed: @errors\n" if @errors;
+    $SELF_TEST_PASSED++;
 }
 
 sub assert_invalid {
     my ($name, @args) = @_;
     my @errors = validate_contract(@args);
     die "corpus-kb-currentness self-test `$name` unexpectedly passed\n" if !@errors;
+    $SELF_TEST_PASSED++;
 }
 
 sub copy_relative {

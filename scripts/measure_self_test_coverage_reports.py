@@ -1,33 +1,31 @@
 #!/usr/bin/env python3
-"""Census how each registered doctrine check reports its own self-test coverage (read-only).
+"""Report how each doctrine check counts its own self-tests — EVIDENCE, not a verdict (read-only).
 
-`PRODUCTION-GRAPH-CENSUS-PIN.2`.
+`PRODUCTION-GRAPH-CENSUS-PIN.2a`.
 
-`.0` found a gate-tier check that derived a repository-wide census, printed it, and compared none of
-it — so the pins drifted across 29 commits with every gate green. `.1` fixed that one and
-`DOCTRINE_ENFORCEMENT.md` section 3 named the shape: **a census that reports is not a check**. This
-census sweeps the registry for the same shape one level up — not in what the checks measure about the
-repository, but in what they report about THEMSELVES.
+**This producer deliberately does not classify.** Its first version did, and it was wrong twice:
 
-Nearly every check prints a reassuring self-test line. This classifies how that number is produced:
+1. It read only the PRINT line, so a script printing the literal `13/13` was called unguarded even
+   though it compares `$passed != 13` forty lines earlier. Three of five were misclassified.
+2. The repair attempt — "find a comparison involving a counter anywhere" — produced false positives
+   (`$lines != $parts`, `$count != 1`) and a false negative on a case already verified by hand.
 
-  * `derived`     `$passed/$total` — two independently-computed values. Delete a self-test case and
-                  they differ, so the check fails. This is the one that works.
-  * `TAUTOLOGY`   `$passed/$passed` — the numerator IS the denominator. The line can never be anything
-                  but `N/N`; deleting a case silently reduces both.
-  * `DECORATIVE`  a hardcoded literal in the message (`"self-test 15/15 passed."`). The number is not
-                  derived from anything at all, so it keeps asserting the same figure whatever the
-                  suite contains.
-  * `BARE`        a running counter with no declared total to compare against.
+The property is not regex-decidable, and a producer that guesses it publishes exactly the defect this
+tree is about: a number nothing verified. So this prints the EVIDENCE a human needs — every self-test
+report line, and every comparison involving a counted variable — and the adjudication lives in the
+task leaf, per `.2`'s own acceptance criterion: *the census is the deliverable; a count with no
+adjudication is not.*
 
-**The honest limit, which this census does not overstate:** in every class a self-test that FAILS
-still fails the check — these scripts `die` on a failing case. What is unguarded is COVERAGE. A case
-silently removed, or one never added, is invisible; and for the decorative class the printed number
-cannot be checked against the suite at all, so whether it is currently right is undecidable from the
-script's own output.
+The question to adjudicate, per check, is narrow:
 
-Read-only and deterministic: no network, no clock, no randomness, no write. It reads the check scripts
-as text and classifies their report lines; it does not execute them.
+    Does DELETING one self-test case make this check fail?
+
+It does only when the expected total is declared INDEPENDENTLY of the suite — a literal. The
+`$passed/$total` form does NOT qualify when `$total` is incremented in the same loop as `$passed`
+(`my ($passed, $total) = (0, 0); for my $case (@cases) { $total++; ... }`): deleting a case drops both
+and the ratio stays `N/N`. That form detects a FAILING case, which is a different and weaker property.
+
+Read-only and deterministic: reads the check scripts as text, executes nothing.
 
 Usage:
     python3 scripts/measure_self_test_coverage_reports.py
@@ -37,19 +35,11 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import collections
 import glob
 import json
 import os
 import re
 import sys
-
-TAUTOLOGY = re.compile(r"\$\{?([A-Za-z_]+)\}?/\$\{?\1\}?(?![A-Za-z_])")
-DERIVED = re.compile(r"\$\{?([A-Za-z_]+)\}?/\$\{?([A-Za-z_]+)\}?(?![A-Za-z_])")
-LITERAL = re.compile(r"(?:self-test|passed:?)\s+(\d+)/(\d+)")
-BARE = re.compile(r"all \$\{?[A-Za-z_]+\}? [^\"\n]*(?:checks|tests|cases) pass")
-REPORT_LINE = re.compile(r"\b(?:print|printf|echo|note)\b")
-REPORT_SUBJECT = re.compile(r"(?:pass|self-test|cases|checks|tests)")
 
 GLOBS = (
     "scripts/check_*.pl",
@@ -58,38 +48,29 @@ GLOBS = (
     "scripts/test_*.pl",
     "knowledge-map/scripts/check_*.sh",
 )
-ORDER = {"TAUTOLOGY": 0, "DECORATIVE": 1, "BARE": 2, "derived": 3}
+REPORT = re.compile(
+    r"^\s*(?:print|printf|echo|note|fail_note)\b.*(?:self-test|cases pass|checks pass|tests pass)",
+    re.IGNORECASE,
+)
+# Any comparison that could be a coverage guard. Deliberately broad: the adjudicator needs the
+# candidates, not this script's opinion of them.
+COMPARISON = re.compile(
+    r"[^\n]*(?:!=\s*\d+|-ne\s+\d+|!=\s*\$\w+|expected\s+\d+\s+(?:case|check|test))[^\n]*"
+)
+# Counter increments in perl (`$passed++`) and shell (`passed=$((passed + 1))`). The shell form
+# needs the doubled parenthesis: an earlier version omitted it and silently dropped
+# check_chain_currency.sh's real guard from the evidence — the same failure this producer exists
+# to stop reporting as a clean result.
+COUNTER = re.compile(r"(\w+)\s*(?:\+\+|=\s*\$?\(*\s*\$?\w+\s*\+\s*1)")
 
 
 def repo_root() -> str:
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def classify(text: str) -> tuple[str, str] | None:
-    """Classify a script by how its own report line produces its coverage number."""
-    reported = "\n".join(
-        line
-        for line in text.splitlines()
-        if REPORT_LINE.search(line) and REPORT_SUBJECT.search(line)
-    )
-    match = TAUTOLOGY.search(reported)
-    if match:
-        name = match.group(1)
-        return ("TAUTOLOGY", f"${name}/${name} — the numerator is the denominator")
-    match = LITERAL.search(reported)
-    if match and match.group(1) == match.group(2):
-        return ("DECORATIVE", f"{match.group(1)}/{match.group(2)} hardcoded in the message")
-    match = DERIVED.search(reported)
-    if match and match.group(1) != match.group(2):
-        return ("derived", f"${match.group(1)}/${match.group(2)}")
-    if BARE.search(reported):
-        return ("BARE", "a running counter with no declared total")
-    return None
-
-
-def census(root: str) -> list[dict]:
+def evidence(root: str) -> list[dict]:
     rows = []
-    seen = set()
+    seen: set[str] = set()
     for pattern in GLOBS:
         for path in sorted(glob.glob(os.path.join(root, pattern))):
             if path in seen:
@@ -100,50 +81,52 @@ def census(root: str) -> list[dict]:
                     text = handle.read()
             except OSError:
                 continue
-            verdict = classify(text)
-            if verdict is None:
+            reports = [line.strip() for line in text.splitlines() if REPORT.match(line)]
+            if not reports:
                 continue
+            counters = sorted({m.group(1) for m in COUNTER.finditer(text)})
+            comparisons = [
+                line.strip()
+                for line in text.splitlines()
+                if COMPARISON.search(line) and any(c in line for c in counters)
+            ]
             rows.append(
                 {
                     "check": os.path.relpath(path, root),
-                    "class": verdict[0],
-                    "detail": verdict[1],
+                    "report_lines": reports,
+                    "counter_comparisons": comparisons,
                 }
             )
-    rows.sort(key=lambda row: (ORDER[row["class"]], row["check"]))
     return rows
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--json", action="store_true", help="emit the census as JSON")
+    parser.add_argument("--json", action="store_true", help="emit the evidence as JSON")
     args = parser.parse_args()
-    rows = census(repo_root())
-    counts = collections.Counter(row["class"] for row in rows)
+    rows = evidence(repo_root())
 
     if args.json:
-        json.dump(
-            {"by_class": dict(sorted(counts.items())), "checks": rows},
-            sys.stdout,
-            indent=2,
-            sort_keys=True,
-        )
+        json.dump({"checks": rows}, sys.stdout, indent=2, sort_keys=True)
         sys.stdout.write("\n")
         return 0
 
-    print("=== how each registered check reports its own self-test coverage (read-only) ===")
-    print(f"{'CHECK':46s} {'CLASS':11s} HOW THE NUMBER IS PRODUCED")
+    print("=== self-test report lines and their candidate coverage guards (read-only evidence) ===")
+    print("Adjudicate per check: does DELETING one self-test case make this check fail?")
+    print("It does only if the expected total is a LITERAL, declared independently of the suite.")
     for row in rows:
-        print(f"{os.path.basename(row['check']):46s} {row['class']:11s} {row['detail']}")
+        print()
+        print(f"--- {row['check']}")
+        for line in row["report_lines"]:
+            print(f"    reports : {line[:150]}")
+        if row["counter_comparisons"]:
+            for line in row["counter_comparisons"][:4]:
+                print(f"    compares: {line[:150]}")
+        else:
+            print("    compares: (no comparison involving a counted variable)")
     print()
-    unguarded = sum(count for cls, count in counts.items() if cls != "derived")
-    for cls in ("TAUTOLOGY", "DECORATIVE", "BARE", "derived"):
-        if counts.get(cls):
-            print(f"    {cls:11s} {counts[cls]}")
-    print(f"    checks whose own coverage is unguarded: {unguarded} of {len(rows)}")
-    print()
-    print("A failing self-test still fails every one of these checks. What is unguarded is COVERAGE:")
-    print("a case silently removed, or never added, changes the reported number and nothing compares it.")
+    print(f"{len(rows)} checks report a self-test count. The verdict for each is recorded in")
+    print("docs/tasks/PRODUCTION-GRAPH-CENSUS-PIN.md, not inferred here.")
     return 0
 
 

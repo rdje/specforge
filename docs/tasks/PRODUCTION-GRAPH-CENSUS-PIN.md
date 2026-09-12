@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PRODUCTION-GRAPH-CENSUS-PIN`
-- Status: `active` (`2026-09-12`; `.0`-`.2` done; `.3` opened by `.2`)
+- Status: `active` (`2026-09-12`; `.0`-`.2` done, `.2a` corrects `.2`; `.3` open)
 - Roadmap lane: `process / doctrine enforcement`
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -122,10 +122,11 @@ been able to move them without any local signal.
 
 - ID: `PRODUCTION-GRAPH-CENSUS-PIN.3` · Status: `pending` (opened `2026-09-12` by `.2`) · Goal: **give
   the twelve unguarded self-test reports a denominator something compares.** The remedy is already
-  written and already in the repository: four checks do it correctly with `$passed/$total`, where the
-  two values are computed independently and a deleted case makes them differ. The other twelve need the
-  same one-line shape, and no contract file — the declaration belongs next to the suite it counts.
-  **Do the DECORATIVE five first and expect to find a wrong number.** Those print a literal
+  written and already in the repository — but **`.2a` corrects which shape it is**. `$passed/$total` is
+  NOT it: four checks use that form with `$total` incremented in the same case loop, so deleting a case
+  drops both and the ratio stays `N/N`. The remedy is a LITERAL expected total, declared beside the
+  suite, which is what the only three genuinely guarded checks do (`13`, `10`, `22`). No contract file.
+  **Do the two remaining literal-print checks first and expect to find a wrong number.** Those print a literal
   (`"self-test 15/15 passed."`) that is derived from nothing, so it cannot be checked against the suite
   and is the only class where the published figure may already be false. A hand count of
   `check_persisted_artifact_paths.pl` does not obviously reproduce its 15 — 12 entries in `@cases` plus
@@ -304,6 +305,102 @@ value is that it bounds the problem as well as locating it.
   from `.1`; this leaf adds the self-coverage corollary to it. Not a book change: doctrine machinery,
   not user-visible product behaviour.
 
+## `.2a` — `.2`'s census was wrong, and wrong in the direction that matters (`2026-09-12`)
+
+### What `.2` published, and what is actually true
+
+`.2` classified 16 checks, reported **12 unguarded**, and named `$passed/$total` in four checks as
+"the remedy that already exists in the repository" for `.3` to copy. Re-derived by hand, both halves
+are wrong:
+
+| | `.2` published | actually |
+| --- | ---: | ---: |
+| coverage-guarded | 4 | **3** |
+| unguarded | 12 | **13** |
+| the named "working precedent" | `$passed/$total`, 4 checks | **not a coverage guard at all** |
+
+**`$passed/$total` does not guard coverage.** Read in full:
+
+```perl
+my ($passed, $total) = (0, 0);
+for my $case (@cases) {
+    $total++;
+    ...
+}
+```
+
+`$total` counts the same loop as `$passed`. Delete a case and BOTH drop; the ratio stays `N/N`. That
+form detects a **failing** case — a real property, and a different, weaker one than the question this
+tree asks. All four checks `.2` held up as the precedent are in this shape.
+
+Conversely, three checks `.2` filed as `DECORATIVE` — because their print line carries a literal — do
+compare a counted variable against a literal elsewhere in the script, and are the only genuinely
+coverage-guarded members of the population:
+
+```text
+check_source_pdf_registry_currentness.pl   die "... expected 13 cases, passed $passed" if $passed != 13;
+check_validation_snapshot_currentness.pl  die "... expected 10 cases, passed $passed" if $passed != 10;
+check_chain_currency.sh                   if [ "$passed" -ne 22 ]; then ...
+```
+
+### The corrected rule, which is simpler than `.2`'s
+
+**A self-test count is coverage-guarded only when the expected total is declared INDEPENDENTLY of the
+suite — a literal.** Anything co-derived from the same loop cannot see a case leave it. By that single
+test, hand-adjudicated over the 16:
+
+| | checks | shape |
+| --- | ---: | --- |
+| **guarded** | **3** | `$passed` compared to a literal (13, 10, 22) |
+| unguarded — co-derived total | 4 | `$passed/$total`, `$total++` inside the case loop |
+| unguarded — tautology | 4 | `$passed/$passed` |
+| unguarded — literal print, no comparison | 2 | `"self-test 15/15 passed."` |
+| unguarded — bare counter | 3 | `all $test_number checks pass` |
+
+### How `.2` got it wrong, because the mechanism is this tree's own subject
+
+`.2`'s producer classified by the **shape of the print line** and inferred the guard from how the
+number was formatted there. A script can print a literal and compare elsewhere; three did. The repair
+attempt — "find a comparison involving a counter anywhere in the file" — then produced false positives
+(`$lines != $parts`, `$count != 1`) and a false negative on a check already verified by hand.
+
+**The property is not regex-decidable, and `.2` published a number a regex had guessed.** That is
+exactly the defect this tree exists to name. `.2`'s own acceptance criterion said so — *"the census is
+the deliverable; a count with no adjudication is not"* — and its producer was doing the adjudicating.
+
+`scripts/measure_self_test_coverage_reports.py` is rewritten to **emit evidence and refuse to
+classify**: per check, its self-test report lines and every comparison involving a counted variable.
+The verdict lives here. Broadening it to stop under-capturing also raised the population from 16 to
+**31 report lines**, so the 16 `.2` adjudicated were not the whole surface either; enumerating the rest
+is `.3`'s.
+
+### One worked remediation, because a correction should show the corrected remedy
+
+`check_corpus_kb_currentness.pl` now counts in its own `assert_valid`/`assert_invalid` helpers and
+compares against a declared literal beside the suite. **Observed RED**: deleting one `assert_invalid`
+case yields `self-test ran 14 assertions, declaration expects 15` and **exit 2**, where before it
+printed `15/15` and exited 0. Its 15 was correct all along; what it lacked was anything that would
+notice if it stopped being.
+
+## Acceptance Checklist (enforced) — `.2a`
+
+- [x] **REPRODUCE / MEASURE** — hand-adjudication of all 16 checks `.2` censused, by the single test
+  "does deleting one self-test case make this check fail?". 3 guarded, 13 not; `.2` said 4 and 12.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/measure_self_test_coverage_reports.py` as `.2` shipped it
+  classified on the print line's format. `check_source_pdf_registry_currentness.pl` prints `13/13` and
+  compares `$passed != 13` at line 538; the producer never looked there. Its replacement regex then
+  mis-fired in both directions, which is the evidence that the property is not regex-decidable.
+- [x] **ADDRESSED (verified)** — the producer emits evidence and no verdict; this leaf carries the
+  adjudication; `.3`'s brief is corrected from `$passed/$total` to a declared literal; and
+  `check_corpus_kb_currentness.pl` is remediated as the worked example, with an observed RED at exit 2.
+- [x] **NO REGRESSION** — `perl -c` clean on the edited script; its self-test prints `15/15` from a
+  derived count; `scripts/check_doctrines.sh` green. No production rule, contract, ceiling or corpus
+  artifact touched.
+- [x] **GENERICITY (ADR 0006)** — the corrected rule is a property of the code shape (is the expected
+  total independent of the suite?), not a list of script names.
+- [x] **LOCKSTEP** — `DOCTRINE_ENFORCEMENT.md` §3's self-coverage corollary carried `.2`'s wrong table
+  and its wrong remedy; both corrected there. Not a book change: doctrine machinery.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
@@ -352,6 +449,18 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.2a`. All 16 checks `.2` censused re-adjudicated BY HAND against the single question
+  "does deleting one self-test case make this check fail?", by reading each script's count guard rather
+  than its print line. 3 guarded, 13 not, where `.2` published 4 and 12 — and the four it named as the
+  working precedent are the shape that does not work. Two automated classifiers were written and both
+  were wrong (the first on print format, the second with false positives `$lines != $parts` /
+  `$count != 1` and a false negative on a hand-verified case), which is the evidence recorded for the
+  "not regex-decidable" claim rather than an assertion of it.
+  **Observed RED** on the one remediation: `check_corpus_kb_currentness.pl` with one `assert_invalid`
+  deleted exits **2** with `self-test ran 14 assertions, declaration expects 15`; before the change the
+  same deletion printed `15/15` and exited 0.
+  `perl -c` clean; `scripts/check_doctrines.sh` green. Read-only otherwise; no corpus rebuild.
+
 - `2026-09-12` — `.2`. Read-only; no artifact written, executed or mutated — the census reads the check
   scripts as text. All 16 self-test report lines classified individually by how the number is produced:
   4 `derived`, 4 `TAUTOLOGY`, 5 `DECORATIVE`, 3 `BARE`. The classification was verified by reading the
@@ -382,6 +491,12 @@ None.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`.
 
 ## Changelog
+
+- `2026-09-12` — `.2a` corrects `.2`. The census was 3 guarded / 13 unguarded, not 4 / 12, and the
+  `$passed/$total` form `.2` named as the remedy is not a coverage guard at all — `$total` counts the
+  same loop, so a deleted case drops both. The producer no longer classifies: it emits the report lines
+  and candidate guards as evidence and the adjudication lives in the leaf, because two regexes tried
+  and both were wrong. One worked remediation ships with the correction.
 
 - `2026-09-12` — `.2` closed, and the population is not where the leaf expected it. The registry's
   repository-facing numbers are compared; what is unguarded is what each check reports about its own
