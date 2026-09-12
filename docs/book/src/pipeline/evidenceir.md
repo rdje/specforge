@@ -391,6 +391,31 @@ obligation twice: once in the `PSTRB` signal-description row above, and once in 
 those two places independently, and they now produce the same typed constraint. Before this change
 they disagreed, and the disagreement was the defect rather than a real ambiguity in the specification.
 
+## A specification writes "the same value" when it means "does not change"
+
+The kind table reads `must be stable`, `must remain stable`, `must hold`, `must not change`. APB
+states the same obligation in a form none of those match:
+
+```text
+| PAUSER | ... | • PAUSER must be valid when PSELx is asserted.
+                 • PAUSER must have the same value in the Setup and Access phase of a transfer. |
+```
+
+One value across two phases, or across every cycle of one, is a signal that does not change — so the
+phrase now types as `must_not_change` instead of falling through to the fallback.
+
+Where the phrase sits in the table is not cosmetic. A signal-description cell often states several
+obligations, and the first phrase that matches types the whole record. Placed ahead of the validity
+rule, `must have the same value` took over cells like the one above and `PAUSER must be valid` stopped
+being recorded at all. It sits behind that rule instead, so it fires only where nothing else matched —
+which is exactly the case it was added for.
+
+The phrases carry their modal, so the many descriptive uses in the corpus — *"implementations that
+have the same value"*, *"It does not have the same value"* — state nothing normative and are read as
+nothing. And *"the same value **in** the Setup and Access phase"* stays distinct from *"the same value
+**as** PWUSER"*: the second is a relation between two operands, which SpecForge refuses rather than
+flattens.
+
 ## A passive obligation puts its verb where the value goes
 
 When a sentence binds a value — *"must be"*, *"shall be"*, *"must remain"* — SpecForge reads the word

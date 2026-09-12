@@ -880,16 +880,28 @@ honestly-qualified) path to "human-SpecForge in Rust."
   derived with `replay-constraints` over the NOT-REPRODUCED set, where these now sit.
   Prerequisite: none. Verification: the derived population adjudicated individually; observed RED;
   the chain rebuilt for every document whose artifacts move.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2c` · Status: `pending` (opened `2026-09-12` by `.3k.2a`) · Goal:
-  **the affirmative spelling this corpus uses for a stability obligation.** APB writes it as
-  *"PAUSER must have the same value in the Setup and Access phase of a transfer"* and *"… in every
-  cycle during the Access phase"*; the phrase table knows `must be stable`, `must remain stable`,
-  `must hold` and nothing of this form, so 4 `row_sigcon_*` records reach the untyped fallback and are
-  published as `must_be_stable` by accident rather than by reading. They are the only reason `.3k.2a`
-  had to leave the row path's fallback in place. Decide between `MustNotChange` (the value does not
-  change) and `MustBeStable`, and note that `.3d`'s equality refusal must keep NOT firing on it —
-  *"the same value in …"* is not *"the same value as …"*. Prerequisite: none. Verification: all 4
-  adjudicated; observed RED; APB rebuilt and diffed.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2c` · Status: `done` (`2026-09-12`, CODE) · Goal: **the spelling
+  this corpus uses for a no-change obligation.** APB writes it as *"PAUSER must have the same value in
+  the Setup and Access phase of a transfer"* and *"… in every cycle during the Access phase"*; the
+  phrase table knew `must be stable`, `must remain stable`, `must hold` and nothing of this form, so
+  4 `row_sigcon_*` records reached the untyped fallback and were published as `must_be_stable` by
+  accident. They are the only reason `.3k.2a` had to leave the row path's fallback in place.
+  **Typed as `MustNotChange`**, because that is what the sentence says: the value is the SAME across
+  two phases, or across every cycle of one — it does not change. The table already reads *"must
+  remain stable"* (the same obligation over time) that way.
+  **The placement is the load-bearing decision, and it was measured.** A serialized signal-description
+  cell routinely carries BOTH obligations — *"• PAUSER must be valid when PSELx is asserted. • PAUSER
+  must have the same value …"* — and the first arm to match types the whole record. Ahead of the
+  validity arm, this phrase retyped APB `sigcon_0009`/`0010` from `must_be_value VALID` to
+  `must_not_change`, losing a fact the document states. Behind it, it fires exactly where nothing else
+  matched. Both the phrase and its position carry their own RED control.
+  **Measured: 4 records retyped, 0 added, 0 removed, one document** — APB `row_sigcon_0018`/`0019`/
+  `0021`/`0022`, `must_be_stable` → `must_not_change`; `sigcon_0009`/`0010` keep `must_be_value VALID`.
+  The 56 corpus statements containing *"have the same value"* are almost all descriptive
+  (*"implementations that have the same value"*, *"It does not have the same value"*) and are untouched
+  because the phrases carry their modal.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2c`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.3` · Status: `pending` · Goal: **the kind reads its own obligation
   clause** — the original `.3k` goal, at its true size.
   `classify_signal_constraint_kind(&text.to_ascii_lowercase())` becomes
@@ -947,6 +959,38 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2c`
+
+- [x] **REPRODUCE / MEASURE** — 56 persisted statements contain *"have/has the same value"*; only 6
+  deterministic records come from one: APB `sigcon_0009`/`0010` (typed by the validity arm, correct)
+  and `row_sigcon_0018`/`0019`/`0021`/`0022` (the untyped fallback, published as `must_be_stable`).
+  The 4 row records were read against source: each states that a signal holds one value across two
+  phases or across every cycle of one, which is a no-change obligation.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `classify_signal_constraint_kind`: the phrase table carries `must not change`, `must remain stable`,
+  `must be stable` and `must hold`, and no form of *"must have the same value"*. The obligation is
+  real and the reader had no spelling for it, so it fell through to the terminal arm.
+- [x] **ADDRESSED (verified)** — a new arm for `must have the same value` / `shall have the same
+  value` → `MustNotChange`, placed AFTER the validity arm. APB rebuilt
+  (`evidence → validate → semantic → validate → intent → validate → adapt`): **4 records retyped, 0
+  added, 0 removed**, and `sigcon_0009`/`0010` keep `must_be_value VALID`. **Two observed-RED
+  controls, one per decision:** removing the phrase makes
+  `the_same_value_spelling_types_as_no_change` fail with `MustBeStable`, and moving the arm ahead of
+  the validity arm makes `a_cell_stating_both_obligations_keeps_its_validity_kind` fail with
+  `MustNotChange` where `MustBeValue { value: "VALID" }` is correct. Both pass restored.
+- [x] **NO REGRESSION** — `kg-bench` **156/156**; WIRE-BASED-100 golds `signal_constraint P=R=F1=1.000`
+  on APB, AHB, AXI and SWD. `cargo fmt --all --check`, `cargo clippy --all-targets -D warnings`,
+  `cargo test` green; `specforge-core` lib 1,453 → 1,456. `replay-constraints` corpus unchanged at
+  171 persisted / **125** reproduced / 46 not-reproduced / 1 named skip — the retype is inside the
+  row stratum, which the replay does not judge, and it moved nothing in the two it does. Retention
+  back at **24**, APB's bundle `diff -r`-verified byte-identical before removal.
+- [x] **GENERICITY (ADR 0006)** — two phrase strings of ordinary English, each carrying its modal so a
+  descriptive *"implementations that have the same value"* is untouched. No document, protocol, vendor
+  or signal name; the controls use invented names (`ZETAUSER`, `ZETASELX`, `ZETAWUSER`, `ZETAPMCR`).
+- [x] **LOCKSTEP** — code, this leaf, the book's EvidenceIR chapter, and the resume pointer agree
+  before commit. `.3d`'s equality refusal is asserted to keep NOT firing on *"the same value IN …"*
+  while still firing on *"the same value AS …"*, so the two rules stay distinguishable.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2b`
 

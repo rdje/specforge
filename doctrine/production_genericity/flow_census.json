@@ -25,19 +25,19 @@
   "volume": {
     "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
     "aggregate_change": {
-      "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2b-PARTICIPLE-IS-NOT-A-VALUE",
-      "owner": "EXTRACTION-QUALITY-GAUGE.3k.2b",
-      "rationale": "One predicate, is_admissible_state_value, which refuses the past-participle shape in a value slot unless the document itself declares that word as a value, plus the document value vocabulary now derived at both deterministic call sites. A passive obligation puts its VERB where the value goes: \"must be invalidated\" published must_be_value INVALIDATED.",
+      "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2c-SAME-VALUE-IS-NO-CHANGE",
+      "owner": "EXTRACTION-QUALITY-GAUGE.3k.2c",
+      "rationale": "One arm added to the kind phrase table for \"must have the same value\", the spelling AMBA APB uses for a no-change obligation, placed behind the validity arm so a cell stating both keeps the validity fact. One decision site.",
       "baseline": {
-        "analyzed_functions": 2418,
-        "decision_sites": 13019,
-        "helper_edges": 15072,
+        "analyzed_functions": 2419,
+        "decision_sites": 13028,
+        "helper_edges": 15106,
         "semantic_macros": 1482
       },
       "delta": {
-        "analyzed_functions": 1,
-        "decision_sites": 9,
-        "helper_edges": 34,
+        "analyzed_functions": 0,
+        "decision_sites": 1,
+        "helper_edges": 0,
         "semantic_macros": 0
       }
     }

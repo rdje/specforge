@@ -10124,6 +10124,27 @@ fn classify_signal_constraint_kind(
         } else {
             SignalConstraintKind::MustBeStable
         }
+    } else if contains_any(
+        lowered,
+        &[
+            // EXTRACTION-QUALITY-GAUGE.3k.2c — the spelling this corpus uses for a no-change
+            // obligation. AMBA APB states it as `PAUSER must have the same value in the Setup and
+            // Access phase of a transfer` and `… in every cycle during the Access phase`: the value
+            // is the same across cycles, which is what `MustNotChange` means. Without it, four
+            // table-row obligations reached the untyped fallback and were published as
+            // `must_be_stable` by accident rather than by reading.
+            //
+            // Deliberately placed AFTER the validity arm and not with `must remain stable`. A
+            // serialized signal-description cell often carries BOTH obligations — `• PAUSER must be
+            // valid when PSELx is asserted. • PAUSER must have the same value …` — and the first arm
+            // to match types the whole record. Ahead of the validity arm this phrase retyped APB's
+            // `PAUSER`/`PWUSER must_be_value VALID` records, losing a fact the document states;
+            // behind it, it fires exactly where nothing else matched.
+            "must have the same value",
+            "shall have the same value",
+        ],
+    ) {
+        SignalConstraintKind::MustNotChange
     } else {
         // Generic: try to find a protocol state value, under the same admissibility test.
         match extract_protocol_state_value(lowered) {
@@ -36026,12 +36047,15 @@ mod extraction_quality_gauge_3k_2a {
 
     /// The asymmetry itself, pinned where it lives: the row path's classifier still answers
     /// `MustBeStable` for an obligation the phrase table cannot type, while the statement path's
-    /// asks a question the row path does not and gets `None`. `must have the same value …` is the
-    /// live APB shape — a real stability obligation with a spelling the table lacks (`.3k.2c`).
+    /// asks a question the row path does not and gets `None`.
+    ///
+    /// The example moved once, and the move is the family working. This control originally used
+    /// `must have the same value …`, the live APB shape; `.3k.2c` gave that obligation its own arm,
+    /// so it is no longer untyped. The shape used now is the live AXI one — a presence cell, which
+    /// states no obligation at all and which no spelling should ever type.
     #[test]
     fn the_row_path_fallback_is_unchanged_where_the_statement_path_refuses() {
-        let lowered =
-            "zetauser must have the same value in the setup and access phase of a transfer";
+        let lowered = "zetachunken is not present and the manager must ignore it";
         let discovered = HashSet::new();
         assert_eq!(
             classify_signal_constraint_kind(lowered, &discovered),
@@ -36160,5 +36184,68 @@ mod extraction_quality_gauge_3k_2b {
             )),
             Some("must_be_value:VALID".to_string())
         );
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_2c {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.2c` — the spelling this corpus uses for a no-change obligation.
+    //! AMBA APB writes it as `PAUSER must have the same value in the Setup and Access phase of a
+    //! transfer`; the phrase table knew `must be stable`, `must remain stable` and `must hold`, so
+    //! four table-row obligations reached the untyped fallback and were published as
+    //! `must_be_stable` by accident rather than by reading. They are the reason `.3k.2a` had to
+    //! leave the row path's fallback in place.
+    use super::*;
+
+    fn kind(text: &str) -> SignalConstraintKind {
+        classify_signal_constraint_kind(&text.to_ascii_lowercase(), &HashSet::new())
+    }
+
+    /// The defect: a real no-change obligation typed by the fallback.
+    #[test]
+    fn the_same_value_spelling_types_as_no_change() {
+        assert_eq!(
+            kind("ZETAUSER must have the same value in the Setup and Access phase of a transfer"),
+            SignalConstraintKind::MustNotChange
+        );
+        assert_eq!(
+            kind("ZETAUSER shall have the same value in every cycle during the Access phase"),
+            SignalConstraintKind::MustNotChange
+        );
+    }
+
+    /// The ORDER is the load-bearing part, and this is the pair that pins it. A serialized
+    /// signal-description cell carries both obligations; the first arm to match types the whole
+    /// record, so this phrase sits BEHIND the validity arm. Ahead of it, APB's
+    /// `PAUSER`/`PWUSER must_be_value VALID` records were retyped and a stated fact was lost.
+    #[test]
+    fn a_cell_stating_both_obligations_keeps_its_validity_kind() {
+        assert_eq!(
+            kind(
+                "User-defined request attribute. • ZETAUSER must be valid when ZETASELX is \
+                 asserted. • ZETAUSER must have the same value in the Setup and Access phase of a \
+                 transfer."
+            ),
+            SignalConstraintKind::MustBeValue {
+                value: "VALID".to_string()
+            }
+        );
+    }
+
+    /// The phrase is an OBLIGATION's, not a description's. A register field that merely *has* the
+    /// same value as another states nothing normative, and `.3d`'s inter-operand equality refusal
+    /// must keep not firing on `the same value IN …`, which is a different preposition entirely.
+    #[test]
+    fn a_descriptive_same_value_sentence_is_not_this_obligation() {
+        assert_ne!(
+            kind("This register is distinct from ZETAPMCR. It does not have the same value."),
+            SignalConstraintKind::MustNotChange
+        );
+        assert!(!is_relational_equality_constraint(
+            "ZETAUSER must have the same value in the Setup and Access phase of a transfer"
+        ));
+        assert!(is_relational_equality_constraint(
+            "ZETAUSER must have the same value as ZETAWUSER"
+        ));
     }
 }
