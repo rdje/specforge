@@ -24,6 +24,7 @@ use crate::error::{AppError, Result};
 use crate::ir::evidence::{
     ConstraintReplayReport, EvidenceIr, replay_persisted_signal_constraints,
 };
+use crate::ir::source::SourceIr;
 
 pub fn run(args: ReplayConstraintsArgs) -> Result<()> {
     match (args.evidence_ir, args.evidence_root) {
@@ -44,11 +45,35 @@ fn load_report(path: &Path) -> Result<ConstraintReplayReport> {
     // is exactly the legacy/proofless artifacts the canonical loader refuses, and replaying a
     // statement set requires no proof — nothing here is written back or promoted.
     let ir = EvidenceIr::load_for_inspection(path)?;
+    // EXTRACTION-QUALITY-GAUGE.3k.2g — the table-row producer needs the document's own SourceIr, and
+    // the artifact already names it, repository-root-relative.
+    let source_ir = sibling_source_ir(&ir);
     Ok(replay_persisted_signal_constraints(
         &ir.extracted_statements,
         &ir.signal_constraints,
         &ir.signal_polarities,
+        source_ir.as_ref(),
     ))
+}
+
+/// The `SourceIr` the artifact itself names, when it is readable AND still carries the typed table
+/// classifications the row producer reads.
+///
+/// The second condition is the load-bearing one. `load_for_inspection` accepts a legacy artifact but
+/// **neutralizes every source classification to `Unknown`**, so the row producer — which selects
+/// tables by `TableKind::SignalDescription` — would see none and mint nothing. Returning that as a
+/// judged stratum would report an empty result as if the document stated no row obligation, which is
+/// exactly the silent zero this instrument exists to retire. Measured on AMBA LTI: its persisted
+/// SourceIR marks 25 tables `signal_description`, and after a legacy load 0 of its 88 tables pass the
+/// producer's own gate.
+fn sibling_source_ir(ir: &EvidenceIr) -> Option<SourceIr> {
+    let path = ir.source_ir_path.as_path();
+    if !path.is_file() {
+        return None;
+    }
+    SourceIr::load_for_inspection(path)
+        .ok()
+        .filter(SourceIr::carries_canonical_source_classifications)
 }
 
 fn run_one(path: &Path, json: bool) -> Result<()> {
@@ -80,6 +105,8 @@ fn run_corpus(root: &Path, json: bool) -> Result<()> {
     let mut granted_total = 0usize;
     let mut skipped: Vec<(String, String)> = Vec::new();
     let mut rows: Vec<(String, usize, usize)> = Vec::new();
+    let mut row_judged = 0usize;
+    let mut row_unjudged = 0usize;
 
     for path in &documents {
         let key = path
@@ -93,6 +120,11 @@ fn run_corpus(root: &Path, json: bool) -> Result<()> {
                 persisted_total += report.persisted_total;
                 reproduced_total += reproduced;
                 granted_total += report.granted_declarations.len();
+                if report.row_stratum_judged {
+                    row_judged += 1;
+                } else {
+                    row_unjudged += 1;
+                }
                 if report.persisted_total > 0 {
                     rows.push((key, reproduced, report.persisted_total));
                 }
@@ -109,6 +141,8 @@ fn run_corpus(root: &Path, json: bool) -> Result<()> {
             "reproduced": reproduced_total,
             "not_reproduced": persisted_total - reproduced_total,
             "granted_declarations": granted_total,
+            "row_stratum_judged_documents": row_judged,
+            "row_stratum_unjudged_documents": row_unjudged,
             "skipped": skipped
                 .iter()
                 .map(|(key, reason)| serde_json::json!({"document": key, "reason": reason}))
@@ -136,6 +170,15 @@ fn run_corpus(root: &Path, json: bool) -> Result<()> {
     println!("reproduced: {reproduced_total}");
     println!("not_reproduced: {}", persisted_total - reproduced_total);
     println!("granted_declarations: {granted_total}");
+    println!(
+        "row_stratum_judged_documents: {row_judged} (row_sigcon_* replayed from a current-schema \
+SourceIR)"
+    );
+    println!(
+        "row_stratum_unjudged_documents: {row_unjudged} (legacy SourceIR — its table \
+classifications are neutralized on load, so the row producer is blind and its records are NOT \
+counted here)"
+    );
     for (key, reproduced, persisted) in &rows {
         if reproduced != persisted {
             println!("document: {key} {reproduced}/{persisted}");
@@ -173,6 +216,15 @@ declaration so their records could still be judged)",
         "unpersisted_replay_records: {} (NOT a drift measure — the build applies convergence \
 stages this replay does not, and this replay runs a widened catalog)",
         report.unpersisted_replay_records.len()
+    );
+    println!(
+        "row_stratum_judged: {} ({})",
+        report.row_stratum_judged,
+        if report.row_stratum_judged {
+            "row_sigcon_* replayed from the document's own SourceIr; prior guidance is not applied"
+        } else {
+            "no current-schema SourceIR — row_sigcon_* records are NOT judged here"
+        }
     );
 
     for verdict in report.verdicts.iter().filter(|v| !v.reproduced) {

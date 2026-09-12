@@ -2265,6 +2265,20 @@ fn verify_source_rule_relation(context: RuleVerificationContext<'_>) -> Derivati
 }
 
 impl SourceIr {
+    /// EXTRACTION-QUALITY-GAUGE.3k.2g — whether this artifact's typed source classifications
+    /// (`table_kind`, `diagram_kind`, `section_kind`) are the ones the document produced.
+    ///
+    /// A legacy artifact loaded for inspection has every one of them **neutralized to `Unknown`** by
+    /// [`neutralize_legacy_source_classifications`], because only the current schema plus a verified
+    /// proof ledger carries canonical classification authority. That is correct, and it means a
+    /// consumer that reads a classification must ask this first: over a legacy artifact, any pass
+    /// keyed on `TableKind::SignalDescription` sees NOTHING and returns an empty result that is
+    /// indistinguishable from "this document states none". A diagnostic that reports such a zero
+    /// without reporting this is publishing a silent absence.
+    pub fn carries_canonical_source_classifications(&self) -> bool {
+        self.schema_version == SOURCE_IR_SCHEMA_VERSION
+    }
+
     pub fn load_from_path(path: &Path) -> Result<Self> {
         Self::load_with_verified_proof(path).map(|(source_ir, _)| source_ir)
     }

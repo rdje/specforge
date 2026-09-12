@@ -904,33 +904,49 @@ honestly-qualified) path to "human-SpecForge in Rust."
   rcv state. … |`, whose subject is the serialized row's own NOTE marker. Teaching the classifier a
   modal the sentence scan cannot find moves the record's span to the whole row; teaching both leaves
   the obligation with a sentence of its own, and the marker is not in it.
-  **Four findings routed rather than absorbed:** `.3k.2e` (the row path's untyped fallback, 17 of 17
-  wrong), `.3k.2f` (the row path applies neither vocabulary-slot refusal), `.3k.2g`
-  (`replay-constraints` does not judge the `row_sigcon_*` stratum at all), `.3k.2h` (`obligation_subject`
-  is the next function still reading `must`/`shall` only, and a continuation row's empty name cell
-  drops every obligation in it), `.3k.2i` (the row path's generic-value arm, 4 right / 5 wrong).
+  **Four findings routed rather than absorbed:** `.3k.2e` (the row path's untyped fallback), `.3k.2f`
+  (the row path applies neither vocabulary-slot refusal), `.3k.2g` (`replay-constraints` does not judge
+  the `row_sigcon_*` stratum at all), `.3k.2h` (`obligation_subject` is the next function still reading
+  `must`/`shall` only, and a continuation row's empty name cell drops every obligation in it), `.3k.2i`
+  (the row path's generic-value arm).
+  **Correction (`2026-09-13`, by `.3k.2g`) — the row-path populations this leaf routed were measured
+  with a MIRROR and three of them are withdrawn.** The census selected tables on the persisted
+  `table_kind`; the producer selects on the loaded one, and a legacy artifact has every classification
+  neutralized to `Unknown`. Re-derived with the real producer, the row path mints 12 records over the
+  whole corpus, all already published: `.3k.2e`'s "17 of 17 wrong" is **0 actionable**, and `.3k.2i`'s
+  "4 right / 5 wrong" is likewise unmeasurable rather than current. Each node carries its own
+  re-derivation; the readings stand as estimates for the 51 legacy documents, never as counts.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.2d`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2e` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
-  **the row path's untyped fallback is not an under-typed obligation, it is an unexpressible one.**
-  `.3k.2a` refused the terminal `MustBeStable` in the statement path and kept it in the row path,
-  reasoning that the row path has already proved via `obligation_subject` that its clause binds to its
-  row's own signal, so an untyped obligation there is a real obligation with a spelling the table
-  lacks. **That reasoning is now falsified by its own successor plus a census.** The population it
-  reasoned from was 4 APB `must have the same value` clauses, and `.3k.2c` supplied that spelling, so
-  they no longer reach the fallback. The population that DOES reach it — enumerated over all 78
-  documents' `signal_description` tables, name cell resolving through the document's catalog and the
-  clause binding to the row's signal: 50 admitted clauses, of which **17 reach the untyped fallback,
-  and 17 of 17 are wrong.** Every one states a relation the constraint vocabulary has no slot for:
-  MATCH (*"LCCTAG must match the value that is given in LRCTAG"*, *"LRADDR must match LAADDR"*, MMU-700
-  and LTI ×6), ALIGNMENT (*"Must be aligned to a size"*, TileLink ×6; *"The value of the address must
-  align to the data width"*, Avalon), COMPARISON (*"The value of LRSIZE must not be greater than
-  (LTI_LRADDR_WIDTH-12)"*), or PRESENCE (*"Must not be present"*). Binding the SUBJECT correctly does
-  not make the KIND readable. **None of the 12 currently published `row_sigcon_*` records reaches the
-  fallback** (APB 10, AXI-L 1, AHB 1, all typed by a stated arm), so the refusal costs nothing measured
-  and prevents 17 fabrications the moment those documents are re-ingested — the same live-class /
-  empty-published-population shape `.3k.1` shipped on. Prerequisite: none. Verification: the 17
-  re-derived and adjudicated individually; observed RED; APB/AHB/AXI-L rebuilt and proven unmoved.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2e` · Status: `pending` (opened `2026-09-12` by `.3k.2d`; **population
+  falsified and re-sized `2026-09-13` by `.3k.2g`**) · Goal: **the row path's untyped fallback is not an
+  under-typed obligation, it is an unexpressible one.** `.3k.2a` refused the terminal `MustBeStable` in
+  the statement path and kept it in the row path, reasoning that the row path has already proved via
+  `obligation_subject` that its clause binds to its row's own signal, so an untyped obligation there is
+  a real obligation with a spelling the table lacks. The population it reasoned from was 4 APB
+  `must have the same value` clauses, and `.3k.2c` supplied that spelling, so they no longer reach the
+  fallback.
+  **`.3k.2d` published "17 of 17 wrong" for what reaches it now. That number is withdrawn.** It came
+  from a Python census that selected tables on the PERSISTED `table_kind` field. The producer selects
+  on the LOADED one, and a legacy artifact has every classification neutralized to `Unknown`
+  (`.3k.2g`). Re-derived with the real producer over the 26 documents whose classifications the current
+  loader accepts: the row path mints **12 records, all of them the ones already published, none on the
+  untyped fallback, and zero unpersisted**. The actionable population is **0**, not 17.
+  **The class is nevertheless live and demonstrable, which is why this stays open rather than closing
+  as covered** — the same footing `.3k.1` shipped on. Fed a current-schema signal-description table
+  through the real reader, the fallback still fires and still fabricates: *"The value of ZETAREADY must
+  not be greater than (OMEGABURST_WIDTH-12)"* publishes `ZETAREADY must_be_stable, negated`, i.e.
+  *"ZETAREADY must not be stable"*, and *"Must not be present"* publishes the same kind from a presence
+  cell — both classes the statement path already refuses.
+  **The 17 clauses are not fiction; they are unmeasurable.** They are what the row path would produce
+  over the 51 legacy documents if those were re-ingested, read off classifications this build has not
+  re-derived — the persisted-vs-current distinction of
+  `[[persisted-census-measures-published-not-current]]`, one layer deeper, since `table_kind` is itself
+  frozen at the generation that wrote it. Their reading stands as an estimate and must be re-derived
+  per document as re-ingest reaches it, never quoted as a current count.
+  Prerequisite: none. Verification: the refusal's effect re-derived with `replay-constraints` (row
+  stratum judged) rather than with a mirror; the demonstrable class pinned by an observed-RED control on
+  the real reader; APB/AHB/AXI-L proven unmoved.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2f` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
   **the vocabulary-slot refusals are wired into one caller, not into the rule.** `.3d`'s
   `is_relational_equality_constraint` and `.3k.1`'s `is_reference_magnitude_constraint` both say the
@@ -944,19 +960,41 @@ honestly-qualified) path to "human-SpecForge in Rust."
   distinct from `.3k.2e`: that one refuses a clause whose kind is untyped, this one refuses a clause
   whose kind types fine and whose MEANING has no slot. Prerequisite: `.3k.2e`. Verification: the
   predicate reached from both callers; observed RED on the demonstrated shape; corpus delta measured.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2g` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
-  **the replay instrument does not judge a whole producer stratum.** `.3k.6` shipped
-  `replay-constraints` so a change could be sized against what today's extractor actually mints, and
-  `.3k.2a`–`.3k.2d` each used it. It filters the persisted deterministic set to `sigcon_*` and
-  `dyn_sigcon_*`, so the 12 published `row_sigcon_*` records are invisible to it — `.3k.2c` had to say
-  so in prose (*"the retype is inside the row stratum, which the replay does not judge"*) and `.3k.2d`
-  had to prove the row stratum unmoved by rebuilding APB instead. The row producer needs `SourceIr`,
-  which the artifact already names in `source_ir_path`, and the catalog widening needs
-  `collect_signal_names_from_tables` alongside the granted declarations, exactly as the build composes
-  them. A silent omission in the instrument a family sizes itself with is the same defect class the
-  instrument exists to end. Prerequisite: none. Verification: the corpus totals re-derived with the
-  stratum included; the three documents that publish row records verified against their own artifacts;
-  the honest limits (no prior guidance) stated in the report rather than assumed away.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2g` · Status: `done` (`2026-09-13`, CODE) · Goal: **the replay
+  instrument judged two of the three deterministic producers and said nothing about the third.**
+  `.3k.6` shipped `replay-constraints` so a change could be sized against what today's extractor
+  actually mints, and `.3k.2a`–`.3k.2d` each used it — while it filtered the judged set to `sigcon_*`
+  and `dyn_sigcon_*`. So `.3k.2c` had to state in prose that its retype *"is inside the row stratum,
+  which the replay does not judge"*, and `.3k.2d` had to restore a held-out bundle and rebuild a whole
+  document chain to prove that same stratum unmoved. An instrument a family sizes itself with cannot
+  have a producer-shaped hole in it.
+  Shipped: `replay_persisted_signal_constraints` takes the document's own `SourceIr` — which the
+  artifact already names, repository-root-relative — and composes the table-row pass exactly as the
+  build does (append after the statement paths, refine polarity BEFORE the dedup, then dedup against
+  the established count), with the build's own catalog (statement declarations ∪ the
+  signal-description tables' names). `row_sigcon_*` joins the judged set when and only when that pass
+  actually ran.
+  **The second half had to be measured rather than assumed, and it is the leaf's main result.** A
+  LEGACY `SourceIr` loads, and `neutralize_legacy_source_classifications` sets every `table_kind` to
+  `Unknown` — correctly, because only the current schema plus a verified proof ledger carries
+  classification authority. The row producer selects tables by `TableKind::SignalDescription`, so over
+  such an artifact it selects NONE and returns an empty result **indistinguishable from "this document
+  states no row obligation"**. Measured on AMBA LTI: its persisted SourceIR marks 25 tables
+  `signal_description`, and after a legacy load **0 of its 88 tables pass the producer's own gate**.
+  Reporting that as a judged stratum would publish a silent zero — the exact failure `.3k.6` exists to
+  retire. `SourceIr::carries_canonical_source_classifications` gates it, and the report publishes both
+  halves: **26 documents judged, 51 not** (51 legacy SourceIRs; one document is the named EvidenceIR
+  skip).
+  **Corpus result: 171 → 183 persisted deterministic records, 125 → 137 reproduced, `not_reproduced`
+  unchanged at 46.** All 12 published `row_sigcon_*` records reproduce — which re-derives, without a
+  rebuild, exactly what `.3k.2d` had to rebuild APB to establish, and extends it to AHB and AXI-L.
+  **This leaf's first act was to falsify a population `.3k.2d` published one commit earlier.**
+  `.3k.2e` was opened saying the row path's untyped fallback is *"17 of 17 wrong"*, from a Python
+  census that selected tables on the persisted `table_kind` field. The real producer selects on the
+  LOADED one, and over the 26 judgeable documents it mints **12 row records and not one more** — zero
+  on the untyped fallback, zero unpersisted. `.3k.2e` is re-sized in place; see its node.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2g`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2h` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
   **the row path's two remaining readers of a narrower vocabulary.** (a) `obligation_subject` decides
   whether a description clause states an obligation by looking for `must`/`shall` only, so the modal
@@ -972,7 +1010,11 @@ honestly-qualified) path to "human-SpecForge in Rust."
   over the corpus separately; the admitted set adjudicated; observed RED.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2i` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
   **the row path's generic-value arm, read.** The same census that sized `.3k.2e` found 9 admitted row
-  clauses reaching the `generic_value` arm, and it is **4 right / 5 wrong**. Right: `LAPM must be 0`,
+  clauses reaching the `generic_value` arm, read as 4 right / 5 wrong. **Both numbers are withdrawn as
+  CURRENT by `.3k.2g`** for the same reason `.3k.2e`'s are: the census selected tables on the persisted
+  `table_kind` and the producer selects on the loaded one, so none of the 9 is reachable today. They are
+  the reading for 51 legacy documents whose classifications this build has not re-derived, and the leaf
+  must re-derive its own population with `replay-constraints` (row stratum judged) before it ships. Right: `LAPM must be 0`,
   `LAPRIV must be 0`, `LRHWATTR must be 0`, `LRMECID must be 0`. Wrong, and each for its own reason:
   *"LAPAS must be Non-secure or Secure"* publishes `NON` — the value binder splits at the hyphen, and
   the clause is a DISJUNCTION the slot cannot hold either (×2); *"LRATTR must be Snoopable Write-Back"*
@@ -1061,6 +1103,51 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2g`
+
+- [x] **REPRODUCE / MEASURE** — the instrument's own blind spot, stated as a census rather than an
+  impression: `replay_persisted_signal_constraints` filtered the judged set to `sigcon_*` and
+  `dyn_sigcon_*`, so the 12 published `row_sigcon_*` records (APB 10, AXI-L 1, AHB 1) were invisible to
+  every corpus figure `.3k.6` and `.3k.2a`–`.3k.2d` quoted. Baseline
+  `replay-constraints --evidence-root generated/evidence_ir`: 171 persisted / 125 reproduced / 46 not.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `replay_persisted_signal_constraints`: the `deterministic` filter names two id prefixes, and the
+  replay never calls `extract_signal_description_row_constraints` because that producer needs a
+  `SourceIr` the function was not given. The second cause was found by probing the real producer, not
+  by reading: with LTI's persisted `SourceIr` loaded through `load_for_inspection`,
+  `should_treat_table_as_top_level_signal_description` passes **0 of 88** tables — because
+  `neutralize_legacy_source_classifications` (`crates/specforge/src/ir/source.rs`) sets every
+  `table_kind` to `Unknown` for a legacy artifact, while that document's persisted JSON marks 25 tables
+  `signal_description`.
+- [x] **ADDRESSED (verified)** — the row pass is composed exactly as the build composes it and the
+  stratum is gated on `SourceIr::carries_canonical_source_classifications`. Corpus: **183 persisted /
+  137 reproduced / 46 not-reproduced**, i.e. +12 persisted and +12 reproduced — **all 12 row records
+  reproduce**, which re-derives without a rebuild what `.3k.2d` had to rebuild APB to establish, and
+  extends it to AHB and AXI-L. The statement and dynamic strata are byte-identical to the baseline,
+  compared record by record. **Three observed-RED controls, one per decision:** (a) suppressing the row
+  pass while still judging the stratum makes
+  `the_row_stratum_is_judged_only_when_its_producer_can_run` fail, reporting a live record as lost;
+  (b) removing the schema gate makes the corpus report claim **77 documents judged instead of 26**,
+  including LTI, whose producer sees nothing — the silent zero itself; (c) neutralizing `table_kind` on
+  an otherwise identical `SourceIr` empties the row producer's output in
+  `a_legacy_source_ir_is_not_a_classification_authority`. All restored green.
+- [x] **NO REGRESSION** — `cargo fmt --all --check`, `cargo clippy --offline --all-targets -D warnings`
+  and the whole workspace suite green; `specforge-core` lib **1,461 → 1,464**. `kg-bench` **156/156**.
+  WIRE-BASED-100 golds `signal_constraint P=R=F1=1.000` on APB/AHB/AXI/SWD, `temporal_rule 1.000` on
+  APB/AHB/AXI. `scripts/check_doctrines.sh` all 13 gate-tier PASS. `flow_census.json` re-derived and
+  attributed to this leaf (+2 analyzed functions, +9 decision sites, +6 helper edges, +1 semantic
+  macro); the workspace's own `current_repository_flow_is_complete_local_and_deterministic` caught the
+  drift before the driver did, which is the second gate working.
+- [x] **GENERICITY (ADR 0006)** — no document, protocol, vendor or signal name enters the production
+  path; the gate is a schema comparison and the composition mirrors the build's. The controls build
+  their own `SourceIr` with invented names (`ZETAREADY`, `ZETASELX`). AMBA LTI is named only in a
+  comment and in this leaf, as the measured instance.
+- [x] **LOCKSTEP** — code, this leaf, `.3k.2e`/`.3k.2i` (whose populations this leaf withdraws), the
+  book's EvidenceIR chapter, `TOOLBOX.md` §5.5, and the resume pointer agree before commit. No
+  production rule is deleted or replaced. Knowledge Map card
+  `[[legacy-source-classifications-are-neutralized-on-load]]` records the mechanism, because a pass
+  keyed on any typed source classification hits it and the empty result looks like an answer.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2d`
 
@@ -1455,6 +1542,20 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-09-13` — **`.3k.2g` CLOSED (CODE) — the replay judges the third producer, and its first act was to
+  withdraw a population `.3k.2d` published one commit earlier.** `replay-constraints` filtered the
+  judged set to `sigcon_*` and `dyn_sigcon_*`, so every corpus figure this family quoted was blind to
+  the 12 `row_sigcon_*` records; it now takes the document's own `SourceIr` and composes the row pass
+  the way the build does. **171 → 183 persisted, 125 → 137 reproduced, `not_reproduced` unchanged at
+  46: all 12 row records reproduce**, re-deriving without a rebuild what `.3k.2d` had to rebuild APB to
+  establish. The half that had to be measured: a LEGACY `SourceIr` loads with every `table_kind`
+  neutralized to `Unknown`, so the row producer selects no table and returns an empty result
+  indistinguishable from *"this document states no row obligation"* — AMBA LTI marks 25 tables
+  `signal_description` in its persisted JSON and passes **0 of 88** after a legacy load. The stratum is
+  therefore gated on the schema and the report publishes **26 judged / 51 not**. That same fact
+  falsifies `.3k.2e`'s *"17 of 17 wrong"* and `.3k.2i`'s *"4 right / 5 wrong"*: both were mirrored off
+  the persisted `table_kind`, and the real producer mints 12 row records corpus-wide and not one more.
+  Both nodes are re-sized in place; the readings stand as estimates for the 51 legacy documents.
 - `2026-09-12` — **`.3k.2d` CLOSED (CODE) — one modal vocabulary for the whole record, and the
   mechanism the leaf opened with was refuted by its own census.** The leaf said
   `extract_protocol_state_value` has no negated form, citing *"The DV operand must not be 1 for

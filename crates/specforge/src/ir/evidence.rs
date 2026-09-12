@@ -9789,6 +9789,14 @@ pub struct ConstraintReplayReport {
     /// a synthetic declaration so their records could still be judged. A non-empty list means the
     /// document's catalog has moved, and is itself a finding.
     pub granted_declarations: Vec<String>,
+    /// EXTRACTION-QUALITY-GAUGE.3k.2g — whether the table-row producer
+    /// (`extract_signal_description_row_constraints`, the `row_sigcon_*` stratum) was replayed. It
+    /// needs the document's `SourceIr`, and specifically one that still carries its typed table
+    /// classifications: a legacy artifact has them neutralized to `Unknown` on load, so the producer
+    /// selects no table and returns an empty result indistinguishable from "this document states no
+    /// row obligation". A stratum that is silently absent from a verdict is exactly the shape of
+    /// number this instrument exists to retire — so the report says which question it answered.
+    pub row_stratum_judged: bool,
     /// Records this replay mints that the artifact does not carry. **This is not a drift measure and
     /// must never be read as one.** The build applies convergence stages after this producer —
     /// alias resolution, the table-row pass, cross-pass dedup — and this replay deliberately runs a
@@ -9847,10 +9855,20 @@ fn refusing_subject_gates(text: &str, subject: &str) -> Vec<&'static str> {
 /// Calibrated against artifacts the current binary did write: APB reproduces 15/15 and AHB 13/13,
 /// both rebuilt by `EXTRACTION-QUALITY-GAUGE.3i`. Corpus-wide the figure is 120 of 179 — a third of
 /// the published deterministic constraint surface is not what this code would produce today.
+///
+/// EXTRACTION-QUALITY-GAUGE.3k.2g — `source_ir` is the document's own `SourceIr` when the caller can
+/// supply it. With it, the TABLE-ROW producer is replayed too, in the build's own composition order
+/// (append, refine polarity, then dedup against the established count) and against the build's own
+/// catalog (the statement declarations UNION the signal-description tables' name cells). Without it,
+/// the `row_sigcon_*` stratum is not judged and [`ConstraintReplayReport::row_stratum_judged`] says
+/// so. One honest limit either way: prior guidance is not applied, so a table promoted to
+/// `SignalDescription` only by corpus memory is invisible here — which can make a published row
+/// record read as not-reproduced, the one direction this instrument's asymmetry does not cover.
 pub fn replay_persisted_signal_constraints(
     statements: &[ExtractedStatement],
     persisted: &[SignalConstraintRecord],
     signal_polarities: &[SignalPolarityRecord],
+    source_ir: Option<&SourceIr>,
 ) -> ConstraintReplayReport {
     // Widen the catalog the way the BUILD widens it — with declaration STATEMENTS, not with a set
     // the extractors never read. Both deterministic paths derive their own catalog from the
@@ -9878,7 +9896,14 @@ pub fn replay_persisted_signal_constraints(
         });
     }
     let statements = statements.as_slice();
-    let declared = collect_known_signal_names(statements);
+    // The build's own catalog: statement declarations UNION the signal-description tables' name
+    // cells (`known_signals = signal_names_from_tables + collect_known_signal_names`). The row
+    // producer reads the catalog it is HANDED, so without the table half it would resolve almost no
+    // row and report a stratum of zero as if the producer had nothing to say.
+    let mut declared = collect_known_signal_names(statements);
+    if let Some(source_ir) = source_ir {
+        declared.extend(collect_signal_names_from_tables(source_ir, None));
+    }
     let discovered = collect_discovered_enum_values(&[statements]);
     let polarity: HashMap<String, SignalPolarity> = signal_polarities
         .iter()
@@ -9886,20 +9911,41 @@ pub fn replay_persisted_signal_constraints(
         .collect();
 
     let mut counter = 1usize;
-    let replayed = extract_normative_signal_constraints(
+    let mut replayed = extract_normative_signal_constraints(
         statements,
         &declared,
         &discovered,
         &polarity,
         &mut counter,
     );
+    // The row pass, composed exactly as the build composes it: appended after the statement paths,
+    // polarity-refined BEFORE the dedup (or a record whose kind refines onto an established one
+    // would no longer match it), then deduped against the established count.
+    if let Some(source_ir) = source_ir {
+        let established = replayed.len();
+        let mut row_records = extract_signal_description_row_constraints(
+            source_ir,
+            statements,
+            &declared,
+            &mut counter,
+            None,
+        );
+        apply_signal_polarity_to_constraints(&mut row_records, &polarity);
+        replayed.extend(row_records);
+        dedup_appended_signal_constraints(&mut replayed, established);
+    }
+    let replayed = replayed;
     let replayed_keys: HashSet<String> = replayed.iter().map(signal_constraint_merge_key).collect();
 
+    // EXTRACTION-QUALITY-GAUGE.3k.2g — the `row_sigcon_*` stratum joins the judged set exactly when
+    // it was replayed. Judging a record no producer ran would report every one of them as lost.
+    let judge_rows = source_ir.is_some();
     let deterministic: Vec<&SignalConstraintRecord> = persisted
         .iter()
         .filter(|record| {
             record.constraint_id.starts_with("sigcon_")
                 || record.constraint_id.starts_with("dyn_sigcon_")
+                || (judge_rows && record.constraint_id.starts_with("row_sigcon_"))
         })
         .collect();
     let persisted_keys: HashSet<String> = deterministic
@@ -9942,6 +9988,7 @@ pub fn replay_persisted_signal_constraints(
         replayed_total: replayed.len(),
         verdicts,
         granted_declarations: granted.into_iter().collect(),
+        row_stratum_judged: judge_rows,
         unpersisted_replay_records,
     }
 }
@@ -35911,7 +35958,7 @@ mod extraction_quality_gauge_3k_6 {
             SignalConstraintKind::MustBeStable,
             text,
         )];
-        let report = replay_persisted_signal_constraints(&statements, &persisted, &[]);
+        let report = replay_persisted_signal_constraints(&statements, &persisted, &[], None);
         assert_eq!(report.persisted_total, 1);
         assert!(report.verdicts[0].reproduced, "{:?}", report.verdicts);
         assert!(report.verdicts[0].refused_by.is_empty());
@@ -35939,7 +35986,7 @@ mod extraction_quality_gauge_3k_6 {
             SignalConstraintKind::MustBeStable,
             text,
         )];
-        let report = replay_persisted_signal_constraints(&statements, &persisted, &[]);
+        let report = replay_persisted_signal_constraints(&statements, &persisted, &[], None);
         let verdict = &report.verdicts[0];
         assert!(!verdict.reproduced);
         assert!(
@@ -35977,7 +36024,7 @@ mod extraction_quality_gauge_3k_6 {
             SignalConstraintKind::MustBeStable,
             text,
         )];
-        let report = replay_persisted_signal_constraints(&statements, &persisted, &[]);
+        let report = replay_persisted_signal_constraints(&statements, &persisted, &[], None);
         assert!(
             report.verdicts[0].reproduced,
             "the published subject is admitted to the replay catalog: {:?}",
@@ -36019,10 +36066,245 @@ mod extraction_quality_gauge_3k_6 {
                 text,
             ),
         ];
-        let report = replay_persisted_signal_constraints(&statements, &persisted, &[]);
+        let report = replay_persisted_signal_constraints(&statements, &persisted, &[], None);
         assert_eq!(report.persisted_total, 1);
         assert_eq!(report.verdicts.len(), 1);
         assert_eq!(report.verdicts[0].constraint_id, "sigcon_0001");
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_2g {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.2g` — the replay instrument judged two of the three deterministic
+    //! producers and said nothing about the third. `.3k.2c` had to state in prose that its retype
+    //! "is inside the row stratum, which the replay does not judge", and `.3k.2d` had to rebuild a
+    //! whole document chain to prove that same stratum unmoved. An instrument a family sizes itself
+    //! with cannot have a producer-shaped hole in it.
+    //!
+    //! The second half is the one that had to be measured rather than assumed: a LEGACY `SourceIr`
+    //! loads, but every typed classification on it is neutralized to `Unknown`, so the row producer
+    //! selects no table and returns an empty result — indistinguishable, to a caller, from "this
+    //! document states no row obligation". Judging the stratum on such an artifact would publish a
+    //! silent zero, which is the exact failure this instrument exists to retire.
+    use super::*;
+    use tempfile::tempdir;
+
+    fn statement(id: &str, class: StatementClass, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn cell(text: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        }
+    }
+
+    /// A `SourceIr` carrying one signal-description table, built by the real builder so it is
+    /// current-schema and its classifications are canonical.
+    fn source_with_signal_table() -> Result<SourceIr> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Signal descriptions\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let body = vec![vec![
+            cell("ZETAREADY"),
+            cell("1"),
+            cell("Requester"),
+            cell("ZETAREADY must be stable when ZETASELX is asserted."),
+        ]];
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "asset_0001".to_string(),
+            page_id: None,
+            caption_text: Some("Signal descriptions".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                StructuredTableCellRecord {
+                    text: "Signal".to_string(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+                StructuredTableCellRecord {
+                    text: "Width".to_string(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+                StructuredTableCellRecord {
+                    text: "Source".to_string(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+                StructuredTableCellRecord {
+                    text: "Description".to_string(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+            ]],
+            body_rows: body,
+            row_count: 2,
+            col_count: 4,
+        });
+        Ok(source_ir)
+    }
+
+    fn statements() -> Vec<ExtractedStatement> {
+        vec![
+            statement(
+                "declare",
+                StatementClass::SourceFact,
+                "Signal ZETAREADY is input width 1. Signal ZETASELX is input width 1.",
+            ),
+            statement(
+                "row",
+                StatementClass::SourceFact,
+                "| ZETAREADY | 1 | Requester | ZETAREADY must be stable when ZETASELX is asserted. |",
+            ),
+        ]
+    }
+
+    fn published_row() -> SignalConstraintRecord {
+        SignalConstraintRecord {
+            constraint_id: "row_sigcon_0001".to_string(),
+            subject_signal: "ZETAREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: Some("ZETASELX is asserted".to_string()),
+            negated: false,
+            source_text: "ZETAREADY must be stable when ZETASELX is asserted".to_string(),
+            supporting_statement_ids: vec!["row".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    /// The gap itself: with the document's own `SourceIr`, a published `row_sigcon_*` record is
+    /// judged and reproduces. Without it the record is not counted at all — and the pair is the
+    /// property, because the alternative to "not judged" is not "judged fine", it is "reported lost".
+    #[test]
+    fn the_row_stratum_is_judged_only_when_its_producer_can_run() -> Result<()> {
+        let source_ir = source_with_signal_table()?;
+        let statements = statements();
+        let persisted = vec![published_row()];
+
+        let judged =
+            replay_persisted_signal_constraints(&statements, &persisted, &[], Some(&source_ir));
+        assert!(judged.row_stratum_judged);
+        assert_eq!(judged.persisted_total, 1, "{:?}", judged.verdicts);
+        assert!(
+            judged.verdicts[0].reproduced,
+            "the row producer still mints it: {:?}",
+            judged.verdicts
+        );
+
+        let unjudged = replay_persisted_signal_constraints(&statements, &persisted, &[], None);
+        assert!(!unjudged.row_stratum_judged);
+        assert_eq!(
+            unjudged.persisted_total, 0,
+            "an unreplayed stratum is excluded, never reported as lost: {:?}",
+            unjudged.verdicts
+        );
+        Ok(())
+    }
+
+    /// The catalog half, stated with the measurement that bounds it. The row producer resolves its
+    /// row's name through the catalog it is HANDED, so the replay unions the signal-description
+    /// tables' own names in, exactly as the build's `known_signals` does.
+    ///
+    /// **This control asserts the composition, not an effect, and the difference is deliberate.**
+    /// Measured over the corpus, dropping the union changes nothing in either direction: the totals
+    /// stay at 183 persisted / 137 reproduced and `unpersisted_replay_records` stays at 126 with
+    /// zero row records in it. It cannot change a VERDICT at all, because the replay already grants
+    /// a synthetic declaration to every published subject — so a reproduction test written against
+    /// it would pass either way and would be no check
+    /// (`CLAIM_VERIFICATION.md` §2). The union is kept for the soundness argument rather than for a
+    /// number: the replay's verdict is trustworthy only while it runs the producer on the BUILD's
+    /// inputs, and `unpersisted_replay_records` — the direction `.3k.2e` has to read — would silently
+    /// under-report on the first document whose row subjects are declared by table alone.
+    #[test]
+    fn the_replay_catalog_composes_the_same_two_halves_the_build_does() -> Result<()> {
+        let source_ir = source_with_signal_table()?;
+        let statements = vec![statement(
+            "declare",
+            StatementClass::SourceFact,
+            "Signal ZETASELX is input width 1.",
+        )];
+        let from_statements = collect_known_signal_names(&statements);
+        let from_tables = collect_signal_names_from_tables(&source_ir, None);
+        assert!(!from_statements.contains("ZETAREADY"));
+        assert!(
+            from_tables.contains("ZETAREADY"),
+            "the table half is the only source of this row's name: {from_tables:?}"
+        );
+        Ok(())
+    }
+
+    /// The measured reason the stratum is gated on the SCHEMA and not merely on the file existing.
+    /// A legacy artifact loads and then reports `Unknown` for every classification, so a pass keyed
+    /// on `SignalDescription` sees nothing. AMBA LTI is the corpus instance: its persisted SourceIR
+    /// marks 25 tables `signal_description`, and after a legacy load 0 of its 88 tables pass the
+    /// producer's gate.
+    #[test]
+    fn a_legacy_source_ir_is_not_a_classification_authority() -> Result<()> {
+        let source_ir = source_with_signal_table()?;
+        assert!(source_ir.carries_canonical_source_classifications());
+
+        let mut legacy = source_ir.clone();
+        legacy.schema_version -= 1;
+        assert!(
+            !legacy.carries_canonical_source_classifications(),
+            "a legacy artifact's classifications were neutralized on load and cannot authorize a verdict"
+        );
+
+        // And the mechanism the gate exists for: neutralization is what a legacy load DOES, and it
+        // leaves the row producer selecting no table at all. Same document, same rows, same
+        // catalog — only the classification is gone, and the stratum silently empties.
+        for table in &mut legacy.structured_tables {
+            table.table_kind = TableKind::Unknown;
+        }
+        let mut counter = 0usize;
+        let mut declared = collect_known_signal_names(&statements());
+        declared.extend(collect_signal_names_from_tables(&source_ir, None));
+        assert_eq!(
+            extract_signal_description_row_constraints(
+                &source_ir,
+                &statements(),
+                &declared,
+                &mut counter,
+                None
+            )
+            .len(),
+            1,
+            "the canonical artifact states one row obligation"
+        );
+        let mut counter = 0usize;
+        assert!(
+            extract_signal_description_row_constraints(
+                &legacy,
+                &statements(),
+                &declared,
+                &mut counter,
+                None
+            )
+            .is_empty(),
+            "neutralized classifications make the producer blind, not the document silent"
+        );
+        Ok(())
     }
 }
 

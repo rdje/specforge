@@ -373,9 +373,37 @@ Two properties make the output usable:
   convergence stages this replay does not, so `unpersisted_replay_records` is evidence to read rather
   than a number to quote.
 
-Calibration: artifacts the current binary itself wrote reproduce completely — APB 15/15 and AHB
-13/13. Across the corpus the figure is **144 of 179**, so roughly one published deterministic
-constraint in five is no longer what this code would produce.
+Calibration is a shape rather than a pair of numbers, because the numbers move with every extraction
+slice: an artifact the current binary itself wrote reproduces completely, while a document frozen at
+an older generation reproduces partially or not at all. Run the command for the current figures.
+
+### Which producers it judged, and which it could not
+
+Three deterministic producers mint constraint records: the statement path, the dynamic value-binding
+path, and the table-row reader. The first two need only the artifact's own statements. The third
+reads the document's structured tables, so it needs the `SourceIr` — and, less obviously, one whose
+typed classifications survived being loaded.
+
+They do not always survive. An artifact written by an older schema is loaded with every
+classification reset to `Unknown`, deliberately: only the current schema plus a verified proof ledger
+carries the authority to say *this table is a signal description*. A reader that selects tables by
+that classification therefore selects **none** over such a document, and returns an empty result that
+looks exactly like a document with no table obligations in it.
+
+So the report says which question it answered:
+
+```text
+row_stratum_judged_documents: 26 (row_sigcon_* replayed from a current-schema SourceIR)
+row_stratum_unjudged_documents: 51 (legacy SourceIR — its table classifications are neutralized
+                                    on load, so the row producer is blind and its records are NOT
+                                    counted here)
+```
+
+The second number is not a clean bill and not a defect count. It is the population this instrument
+cannot see, and it shrinks only as those documents are re-ingested. Prior guidance is not applied
+either, so a table that only corpus memory would promote to a signal description is invisible here as
+well — stated rather than assumed away, because an unmeasured stratum reported as zero is precisely
+the failure this command exists to end.
 
 ## `corpus-cluster`
 

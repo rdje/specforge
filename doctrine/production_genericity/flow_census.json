@@ -25,20 +25,20 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2d-ONE-MODAL-VOCABULARY",
-   "owner": "EXTRACTION-QUALITY-GAUGE.3k.2d",
-   "rationale": "Two helpers, one rule: `normalize_obligation_modal` reduces the equivalent negative modals (`cannot`, `can not`, `will not`, `must never`, `shall never`) to the `must not` form the kind phrase table is written in, and `sentence_states_an_obligation` gives the obligation-sentence scan that same vocabulary so a clause stated with one of them has a sentence of its own. Two analyzed functions and three helper edges; decision sites fall by one because the disjunction `constraint_bearing_sentence` spelled inline becomes one `contains_any` call.",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2g-REPLAY-JUDGES-THE-ROW-STRATUM",
+   "owner": "EXTRACTION-QUALITY-GAUGE.3k.2g",
+   "rationale": "The constraint replay gains the third deterministic producer: `replay_persisted_signal_constraints` takes the document's own SourceIr, composes the table-row pass the way the build composes it (append, refine polarity, dedup), unions the tables' names into the catalog, and admits `row_sigcon_*` to the judged set. `SourceIr::carries_canonical_source_classifications` and the command's `sibling_source_ir` gate that on a current-schema artifact, because a legacy load neutralizes the very classifications the row producer selects on. Two production helpers, one report field, and the branching each needs.",
    "baseline": {
-    "analyzed_functions": 2419,
-    "decision_sites": 13029,
-    "helper_edges": 15106,
+    "analyzed_functions": 2421,
+    "decision_sites": 13028,
+    "helper_edges": 15109,
     "semantic_macros": 1482
    },
    "delta": {
     "analyzed_functions": 2,
-    "decision_sites": -1,
-    "helper_edges": 3,
-    "semantic_macros": 0
+    "decision_sites": 9,
+    "helper_edges": 6,
+    "semantic_macros": 1
    }
   }
  }

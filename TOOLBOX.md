@@ -340,6 +340,16 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **READ THE VERDICT ASYMMETRICALLY:** "not reproduced" is sound, because the replay runs a widened
   catalog and a wider catalog can only admit more subjects. `unpersisted_replay_records` is not a drift
   measure — the build applies convergence stages this replay does not.
+- **CHECK WHICH STRATA IT JUDGED** (`EXTRACTION-QUALITY-GAUGE.3k.2g`). All three deterministic
+  producers are replayed — the statement path, the dynamic path and the table-row path — but the row
+  path needs the document's own `SourceIr`, and specifically one whose typed classifications survived
+  loading. A legacy artifact is loaded with every `table_kind` neutralized to `Unknown`, so a pass
+  keyed on `SignalDescription` selects nothing and returns an empty result that reads like "this
+  document states none". The report therefore prints `row_stratum_judged_documents` and
+  `row_stratum_unjudged_documents`, and the second number is a population you cannot measure, not a
+  population you measured as zero (`[[legacy-source-classifications-are-neutralized-on-load]]`).
+  Prior guidance is not applied either, so a table promoted to `SignalDescription` only by corpus
+  memory is invisible here.
 
 ### 5.4 `grits-consensus <witnesses-json>`
 - **WHAT:** scores how faithfully Docling read a document's TABLES against a CROSS-TOOL consensus gold
