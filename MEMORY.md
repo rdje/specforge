@@ -7,38 +7,39 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k` SCOPED + SPLIT `2026-09-12`** into `.3k.1`-`.3k.4`, and the scoping falsified BOTH numbers it
-  inherited. `scripts/measure_constraint_part_span.py` (new; `--self-test` 9/9, `--check` fails closed when the classifier's call sites move)
-  stratifies the 349-record constraint table by PRODUCER. `classify_signal_constraint_kind` has exactly TWO callers: the pattern path
-  (`sigcon_*`, whole statement) and the row path (`row_sigcon_*`, already one clause). The dynamic path types from its VALUE BINDER and the LLM path
-  parses the kind the model NAMED — **neither reaches the classifier**. So the kind-span population is **4, not 18**, and the "7 negated records on an
-  untyped default" **do not exist**: all 7 are `dyn_sigcon_*`, which never publishes the untyped default (77/77 carry a binder-typed kind).
-  Open: `.3k.1`-`.3k.4`; **`.3j`** (the LLM path applies no positional subject gate); `INVARIANT-SHAPE-ADMISSION.4`;
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.1` CLOSED `2026-09-12` (CODE)** — a comparative MAGNITUDE whose right operand is a REFERENCE is
+  refused, `.3d`'s equality refusal one relation along. `is_reference_magnitude_constraint` in both deterministic paths; +6 tests, core lib
+  1,435 -> 1,441. **Its own population statement was falsified, and that is the leaf's main result.** It opened on "4 records, all DTI" —
+  published, but **today's extractor reproduces none of them**: every candidate subject in DTI's sentence is named only AFTER the obligation's
+  lead, so `CORPUS-COVERAGE.2.50a` refuses it first (probe: `records=[]`, `post_passive OAS=true DTI=true`). The CLASS is live anyway, which is
+  why it shipped: the same grammar with the subject named BEFORE the lead still mints `MustBeStable`+`negated` = *"must not be stable"*, and the
+  dynamic path mints the right operand as a second subject. Open: `.3k.2`-`.3k.6`; **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`;
   `PROSE-NAME-CELL-DECLARATION.3`; `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`; `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS`
   beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY`
   `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
   `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`; `WIRE-BASED-100`
   `.10d`/`.10f`/`.2`/`.3`/`.5` (SWD `13/29`).
-- Current state: the standing lesson has a second form. `PRODUCTION-GRAPH-CENSUS-PIN` taught that **a textual proxy fails silently**; `.3k` adds that
-  **a census must be stratified by the producer the rule edits** — counting one record table measured four different rules at once, and 15 of the 19
-  hits belonged to code the change cannot touch. Recorded as `[[constraint-record-producer-strata]]`. The 4 DTI records that DO carry a negation on an
-  untyped default are the SAME 4 as the relational magnitudes, not a separate 7 plus 4: DTI publishes *"OAS must not be stable"* from *"The range given
-  by this field must not be greater than the size indicated by the OAS field …"*. 15 registered doctrines, 13 at gate tier. 280 fact cards.
-- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.1`** — refuse a comparative MAGNITUDE whose right operand is a REFERENCE, extending `.3d`'s equality
-  refusal one relation along. Population **4 records, all `sigcon_*`, all DTI** (`sigcon_0002`-`0005`); strictly subtractive, and it removes the whole
-  negation-on-untyped-default class plus 4 spurious subjects (`OAS` is the right operand, `DTI` a message-name prefix) at once. A magnitude against a
-  LITERAL (`must be greater than 0`) must stay untouched. Then `.3k.2` (the untyped default + the ungated `generic_value` arm — 26 + 11 `sigcon_*`
-  records; it MUST land before `.3k.3`, or narrowing the kind's span moves NVMe onto a fabricated `must_be_value UNIQUE`), then `.3k.3` (the kind's
-  span, 4 records), then `.3k.4` (the dynamic path's clause — it needs a BINDING-bearing clause, since its records need not contain a modal at all).
+- Current state: the standing lesson now has three forms, and this session hit all three. A textual proxy fails silently
+  (`PRODUCTION-GRAPH-CENSUS-PIN`); a census must be stratified by the PRODUCER the rule edits (`[[constraint-record-producer-strata]]`, `.3k`); and
+  **a census over `generated/` measures what SpecForge PUBLISHED, not what today's extractor does** — only 24 of 78 documents keep a normalized
+  bundle, so 54 artifacts are frozen at the generation that wrote them (`[[persisted-census-measures-published-not-current]]`, `.3k.1`). The only
+  instrument that answers "is this record still reproducible" is running the REAL producer on its own `source_text`. 281 fact cards (6 title parts,
+  at the declared `max_parts`); 15 registered doctrines, 13 at gate tier.
+- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.6`** — build that instrument BEFORE `.3k.2` is sized, because `.3k.2`'s population is 37 records and
+  hand-probing each one does not scale. It must run the real producer over each persisted record's own `source_text` and report reproduced /
+  not-reproduced with the gate that intercepted it; a Python mirror of the rule answers a question about itself (`CLAIM_VERIFICATION.md` section 2).
+  Then `.3k.2` (the untyped `MustBeStable` default, 26 published `sigcon_*`, and the ungated `generic_value` arm, 11 — re-size both with the
+  instrument first), then `.3k.3` (the kind's span, 4 published), `.3k.5` (the refusal gates are statement-scoped while the records they suppress are
+  clause-scoped — 4 of 181 equality statements differ), `.3k.4` (the dynamic path's clause; it needs a BINDING-bearing clause since its records need
+  not contain a modal).
 - In-flight uncommitted: none after this commit.
-- Blockers: none. Standing hazards: **a census counts the population of the FUNCTION being changed, not of the table the records land in**
-  (`[[constraint-record-producer-strata]]`). **An obligation binds to the token immediately before its modal** — `HBURST_WIDTH must be …` is not about
-  `HBURST`. **A subjectless clause defeats a subject scan by having no subject to find.** **`specforge evidence` says only `path does not exist:
-  …/normalized/<key>.md` — the bundles are in `generated/preserved/WIRE-BASED-100.10/`** (`[[evidence-rule-field-content-stales-every-proof]]`).
-  **Grep `KNOWLEDGE_MAP.md` for the wall, not just for the feature** — `[[live-surface-edit-bookkeeping-chain]]` is the fact card that turns a
-  fact-card addition from five failed gate runs into one. **A leaf's own stated bar can be falsified by its population** — measure before trusting it.
-  **A table row's subject lives in its header, which serialization throws away.** **A check that prints a number is not a check**
-  (`PRODUCTION-GRAPH-CENSUS-PIN`). **The doctrine driver runs no cargo gate** (`[[doctrine-driver-runs-no-cargo-gate]]`) and `check_chain_currency.sh`
-  is CI-tier, not gate-tier. An evidence-stage change stales every persisted proof whose content moves; a semantic-stage change needs no bundle
-  (`[[retained-chain-rebuild-order]]`). Never run the fixture suite with the locality gate (`SCRATCH-RESIDUE-CONTAINMENT.4`). This file's cap is 50
-  lines.
+- Blockers: none. Standing hazards: **a persisted record is not evidence that current code produces it** — 54 of 78 documents cannot be rebuilt
+  (`[[persisted-census-measures-published-not-current]]`). **A census counts the population of the FUNCTION being changed, not of the table the
+  records land in** (`[[constraint-record-producer-strata]]`). **A new Markdown file must be `git add`ed before `check_live_document_size.pl` can see
+  it** — it enumerates tracked paths, so an untracked generated part reads as a missing index member. **An obligation binds to the token immediately
+  before its modal.** **A subjectless clause defeats a subject scan by having no subject to find.** **`specforge evidence` says only `path does not
+  exist: …/normalized/<key>.md`** (`[[evidence-rule-field-content-stales-every-proof]]`). **Grep `KNOWLEDGE_MAP.md` for the wall, not just the
+  feature** — `[[live-surface-edit-bookkeeping-chain]]` turns a fact-card addition from five failed gate runs into one. **A Rust change moves
+  `doctrine/production_genericity/flow_census.json`** — re-derive baseline+delta and name the owning leaf. **A check that prints a number is not a
+  check.** **The doctrine driver runs no cargo gate** (`[[doctrine-driver-runs-no-cargo-gate]]`). Never run the fixture suite with the locality gate
+  (`SCRATCH-RESIDUE-CONTAINMENT.4`). This file's cap is 50 lines.

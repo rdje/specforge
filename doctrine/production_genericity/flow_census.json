@@ -25,9 +25,9 @@
   "volume": {
     "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
     "aggregate_change": {
-      "authority_id": "PRODUCTION-GRAPH-CENSUS-PIN.1-CENSUS-IS-DECLARED-NOT-PINNED",
-      "owner": "PRODUCTION-GRAPH-CENSUS-PIN.1",
-      "rationale": "The opening declaration. Baseline is the census at EXTRACTION-QUALITY-GAUGE.3i, the last slice to re-pin the literals by hand; this leaf adds the contract and the comparison and moves the counts itself by the verifier it introduces.",
+      "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.1-REFERENCE-MAGNITUDE-REFUSAL",
+      "owner": "EXTRACTION-QUALITY-GAUGE.3k.1",
+      "rationale": "One pure predicate, is_reference_magnitude_constraint, plus the disjunct that calls it in each of the two deterministic constraint extractors. It refuses a comparative magnitude whose right operand is a reference, the class AMBA DTI published as \"OAS must not be stable\". The counts move by exactly what a new phrase-matching predicate and two call sites cost.",
       "baseline": {
         "analyzed_functions": 2409,
         "decision_sites": 12984,
@@ -35,9 +35,9 @@
         "semantic_macros": 1471
       },
       "delta": {
-        "analyzed_functions": 0,
-        "decision_sites": 0,
-        "helper_edges": 0,
+        "analyzed_functions": 1,
+        "decision_sites": 5,
+        "helper_edges": 2,
         "semantic_macros": 0
       }
     }

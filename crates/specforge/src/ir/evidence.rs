@@ -7095,6 +7095,76 @@ fn is_relational_equality_constraint(text: &str) -> bool {
     RELATIONAL.iter().any(|phrase| lowered.contains(phrase))
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3k.1 — recognize a comparative MAGNITUDE whose right operand is a
+/// REFERENCE ("this field must not be greater than the size indicated by the OAS field"). This is
+/// [`is_relational_equality_constraint`]'s class one relation along: the constraint vocabulary has a
+/// slot for "this signal must be <value>" and none for "this field is bounded by that field", so the
+/// deterministic paths mint a fabricated record from such a sentence. AMBA DTI published
+///
+///   `OAS must_be_stable, negated` and `DTI must_be_stable, negated`
+///
+/// — i.e. *"OAS must not be stable"* — from *"The range given by this field must not be greater than
+/// the size indicated by the OAS field of the DTI_TBU_CONDIS_ACK message"*, a sentence that names no
+/// stability at all, whose subject is *"this field"*, whose `OAS` is the RIGHT operand and whose
+/// `DTI` is a message-name prefix. Returns `true` → the caller refuses the whole sentence; an honest
+/// residual is correct where a fabricated fact is not (`.3d`'s own reasoning).
+///
+/// Honest population: those four published records are no longer reproducible — every candidate
+/// subject in that sentence is named only AFTER the obligation's lead, so `CORPUS-COVERAGE.2.50a`
+/// reaches it first, and the artifact is frozen at the code generation that predates that gate
+/// because the document has no normalized bundle to rebuild from. The CLASS is nevertheless live:
+/// the same grammar with the constrained signal named before the lead — *"ZETARANGE must not be
+/// greater than the size indicated by the ZETAOAS field"* — still mints `MustBeStable` + `negated`
+/// without this gate, which the controls in `mod extraction_quality_gauge_3k_1` demonstrate.
+///
+/// Keyed the same way `.3d` is keyed — on a phrase that unambiguously references ANOTHER operand's
+/// attribute, never on the bare comparative. A magnitude against a LITERAL carries no such lead and
+/// is left untouched: *"must be greater than 0"*, *"sets DBI HIGH when the number of transitioning
+/// data bits within a byte is greater than 4"*, *"speeds greater than 1 MHz"* all still extract.
+///
+/// The lead list is deliberately the MEASURED one. Over the persisted corpus, extending it with
+/// `that supported by` / `the maximum` / `the minimum` refuses two further records (RISC-V IOMMU
+/// `dyn_sigcon_0008`/`0009`) whose own obligation clause states no relation — the relation is in a
+/// LATER sentence of the same statement. Refusing those here would be right by accident and wrong by
+/// construction, since this gate, like `.3d`'s, is evaluated over the whole statement; the span of
+/// the refusal itself is `EXTRACTION-QUALITY-GAUGE.3k.5`, and those leads belong to it.
+///
+/// Universal phrasing, no signal/vendor/document names (ADR 0006).
+fn is_reference_magnitude_constraint(text: &str) -> bool {
+    let lowered = text.to_ascii_lowercase();
+    // Each carries its trailing space, so the reference lead is matched immediately after the
+    // comparative rather than anywhere later in the sentence.
+    const COMPARATIVES: &[&str] = &[
+        "greater than ",
+        "less than ",
+        "larger than ",
+        "smaller than ",
+        "more than ",
+        "fewer than ",
+        "longer than ",
+        "shorter than ",
+        "wider than ",
+        "narrower than ",
+    ];
+    const REFERENCE_OPERANDS: &[&str] = &[
+        "the value of",
+        "the value indicated by",
+        "the size of",
+        "the size indicated by",
+        "the number of",
+        "the width of",
+        "that indicated by",
+    ];
+    COMPARATIVES.iter().any(|comparative| {
+        lowered.match_indices(comparative).any(|(index, _)| {
+            let operand = &lowered[index + comparative.len()..];
+            REFERENCE_OPERANDS
+                .iter()
+                .any(|lead| operand.starts_with(lead))
+        })
+    })
+}
+
 /// EXTRACTION-QUALITY-GAUGE.3e — recognize a SPURIOUS constraint subject lifted from the DESCRIPTIVE
 /// BODY of a register/structure field-definition cell. Such a cell narrates what the field IS — its
 /// own name PRECEDES a `"This field <descriptive-verb>"` marker ("… Controller Base Address (CBA):
@@ -7486,7 +7556,12 @@ fn extract_dynamic_signal_constraints(
         // the value of ALLOW_PW") has no typed slot in the constraint vocabulary, so the
         // value-binding path mis-mints a garbage `must_be_value` (a truncated value off a condition
         // token). Refuse the whole sentence (honest residual) rather than fabricate a wrong fact.
-        if is_relational_equality_constraint(&statement.text) {
+        // EXTRACTION-QUALITY-GAUGE.3k.1: the same refusal for a comparative MAGNITUDE against a
+        // REFERENCE operand. Measured population here is ZERO — every current instance is in the
+        // pattern path — and the gate is wired in both so the class cannot re-enter through this one.
+        if is_relational_equality_constraint(&statement.text)
+            || is_reference_magnitude_constraint(&statement.text)
+        {
             continue;
         }
 
@@ -10082,7 +10157,10 @@ fn extract_signal_constraints(
         // EXTRACTION-QUALITY-GAUGE.3d: an inter-signal/field EQUALITY ("X must be (less than or)
         // equal to the value of Y") has no typed slot — refuse it here too (this pattern path mints
         // the same garbage as the dynamic path otherwise). Honest residual over a fabricated fact.
-        if is_relational_equality_constraint(text) {
+        // EXTRACTION-QUALITY-GAUGE.3k.1: and a comparative MAGNITUDE against a REFERENCE operand
+        // ("must not be greater than the size indicated by the OAS field") has no typed slot for the
+        // same reason — the whole measured population of that gate is this path's, 4 DTI records.
+        if is_relational_equality_constraint(text) || is_reference_magnitude_constraint(text) {
             continue;
         }
 
@@ -35226,5 +35304,168 @@ mod extraction_quality_gauge_3i {
             changed.first().expect("record").constraint_kind.as_str(),
             "must_not_change"
         );
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_1 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.1` — a comparative MAGNITUDE whose right operand is a REFERENCE
+    //! states a relation the constraint vocabulary cannot hold, so the deterministic paths fabricate
+    //! one. AMBA DTI published `OAS must_be_stable, negated` and `DTI must_be_stable, negated` —
+    //! *"OAS must not be stable"* — from a sentence about a range comparison. Measured population:
+    //! 4 records, all in the pattern path, all in that one document; 0 in the dynamic, row and LLM
+    //! paths. The controls below are the line the rule must not cross: a magnitude against a
+    //! LITERAL is a value binding and still extracts.
+    use super::*;
+
+    fn declarations(names: &[&str]) -> Vec<ExtractedStatement> {
+        names
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect()
+    }
+
+    fn pattern_records(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let mut statements = declarations(declared);
+        statements.push(ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_signal_constraints(&statements, &mut counter)
+    }
+
+    fn dynamic_records(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let mut statements = declarations(declared);
+        statements.push(ExtractedStatement {
+            statement_id: "narration".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_dynamic_signal_constraints(&statements, &mut counter, &HashSet::new())
+    }
+
+    /// The defect as the CURRENT extractor still reaches it: a bound stated against another
+    /// operand, with the constrained signal named before the obligation's lead. No phrase in the
+    /// kind table matches, so the classifier falls to its untyped default and the `must not` is
+    /// stacked on top — the record asserts *"ZETARANGE must not be stable"*, which is not what the
+    /// sentence says and not a thing any sentence of this shape says.
+    ///
+    /// Reverting either call site makes this emit `MustBeStable`/`negated: true`, which is exactly
+    /// the pair AMBA DTI published.
+    #[test]
+    fn a_magnitude_against_a_referenced_operand_yields_no_constraint() {
+        let records = pattern_records(
+            "ZETARANGE must not be greater than the size indicated by the ZETAOAS field.",
+            &["ZETARANGE", "ZETAOAS"],
+        );
+        assert!(
+            records.is_empty(),
+            "a bound stated against another operand has no typed slot: {records:?}"
+        );
+    }
+
+    /// The PUBLISHED shape, and the honest reason it is not this leaf's reproducer: AMBA DTI's own
+    /// sentence puts every candidate subject AFTER the obligation's lead (`OAS` and `DTI` are named
+    /// only in *"must not be greater than the size indicated by the OAS field of the
+    /// DTI\_TBU\_CONDIS\_ACK message"*), so `CORPUS-COVERAGE.2.50a`'s pre-lead subject authority
+    /// reaches it first and today's extractor already yields nothing. The four records the persisted
+    /// artifact still carries predate that gate; the artifact is frozen because the document has no
+    /// normalized bundle to rebuild from.
+    ///
+    /// This test therefore passes with or without this leaf's gate, and says so. It is here to pin
+    /// the claim — it fails the day the upstream gate stops covering the published shape, which is
+    /// the day this leaf's gate becomes the only thing standing between that sentence and a
+    /// fabricated record.
+    #[test]
+    fn the_published_shape_is_already_refused_by_the_pre_lead_subject_authority() {
+        // The escaped underscores are the document's own: the normalizer emits
+        // `ZETADTI\_TBU\_CONDIS\_ACK` and the subject tokenizer splits on the backslash, which is how
+        // a message-name PREFIX became a constraint subject in the first place.
+        let text = "The range given by this field must not be greater than the size indicated by \
+                    the ZETAOAS field of the ZETADTI\\_TBU\\_CONDIS\\_ACK message. For example, if \
+                    the ZETAOAS is 4GB, this field must indicate a range of 1GB or less.";
+        assert!(is_post_passive_binding_only_subject(text, "ZETAOAS"));
+        assert!(is_post_passive_binding_only_subject(text, "ZETADTI"));
+        assert!(pattern_records(text, &["ZETAOAS", "ZETADTI"]).is_empty());
+    }
+
+    /// The control that keeps the refusal from becoming a comparative ban: the SAME grammar with a
+    /// LITERAL right operand is an ordinary value binding and still extracts.
+    #[test]
+    fn a_magnitude_against_a_literal_still_yields_its_constraint() {
+        let records = pattern_records(
+            "The value of ZETARANGE must be greater than 0.",
+            &["ZETARANGE"],
+        );
+        assert!(
+            !records.is_empty(),
+            "a magnitude against a literal is a value binding, not a relation"
+        );
+    }
+
+    /// The dynamic path carries the same gate even though its measured population is zero, so the
+    /// class cannot re-enter through the producer this one did not reach.
+    #[test]
+    fn a_magnitude_against_a_referenced_operand_yields_no_dynamic_constraint() {
+        let records = dynamic_records(
+            "The controller drives ZETARANGE LOW whenever the requested span is larger than the \
+             number of entries the ZETAOAS field reports.",
+            &["ZETARANGE", "ZETAOAS"],
+        );
+        assert!(
+            records.is_empty(),
+            "the dynamic value-binding path refuses the same relation: {records:?}"
+        );
+    }
+
+    /// The dynamic path's own literal control — the shape the corpus actually contains (HBM2 sets a
+    /// signal HIGH when a COUNT exceeds a number). The binding survives the gate.
+    #[test]
+    fn a_logic_level_binding_past_a_literal_magnitude_still_extracts() {
+        let records = dynamic_records(
+            "The device inverts read data and sets ZETADBI HIGH when the number of transitioning \
+             data bits within a byte is greater than 4.",
+            &["ZETADBI"],
+        );
+        assert_eq!(
+            records
+                .iter()
+                .map(|record| record.constraint_kind.as_str())
+                .collect::<Vec<_>>(),
+            vec!["must_be_high"],
+            "a count compared against a literal is not a relational magnitude"
+        );
+    }
+
+    /// The reference lead must follow the comparative IMMEDIATELY. A sentence that merely mentions
+    /// "the value of X" somewhere and separately compares against a literal is not this class —
+    /// otherwise the gate would refuse by co-occurrence, which is how `.3g` over-killed.
+    #[test]
+    fn the_reference_lead_must_immediately_follow_the_comparative() {
+        assert!(is_reference_magnitude_constraint(
+            "must not be greater than the size indicated by the ZETAOAS field"
+        ));
+        assert!(!is_reference_magnitude_constraint(
+            "the value of ZETAOAS must be greater than 4"
+        ));
+        assert!(!is_reference_magnitude_constraint(
+            "speeds greater than 1 MHz drive the controller"
+        ));
     }
 }

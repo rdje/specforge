@@ -391,6 +391,39 @@ obligation twice: once in the `PSTRB` signal-description row above, and once in 
 those two places independently, and they now produce the same typed constraint. Before this change
 they disagreed, and the disagreement was the defect rather than a real ambiguity in the specification.
 
+## A bound stated against another operand is not a value
+
+The constraint vocabulary can say *"this signal must be `HIGH`"*, *"must be stable"*, *"must not
+change"*. It has no way to say *"this field is bounded by that field"*, and a specification says that
+constantly:
+
+```text
+The range given by this field must not be greater than the size indicated by the OAS field
+of the DTI_TBU_CONDIS_ACK message.
+```
+
+Nothing in that sentence is a value, and nothing in it is stable. Read as a value constraint it
+produced two records asserting that `OAS` and `DTI` **must not be stable** — a fact the document does
+not state, attached to a signal it does not constrain. `OAS` is the right-hand operand of the
+comparison; `DTI` is the leading fragment of a message name.
+
+SpecForge refuses the sentence instead. That is the same answer it already gives to an inter-operand
+*equality* (*"X must be equal to the value of Y"*): an explicit residual is honest where a fabricated
+constraint is not, and the relation stays visible in the evidence for a later stage that can hold it.
+
+The line is drawn at what the comparison is made against, not at the comparison itself. A magnitude
+against a **literal** is an ordinary binding and still extracts:
+
+| the document writes | SpecForge |
+| --- | --- |
+| `... must not be greater than the size indicated by the OAS field` | refused — the bound is another operand |
+| `... must not be wider than the value of the ALLOW_PW field` | refused — same shape |
+| `The value of PRANGE must be greater than 0` | kept — the bound is a literal |
+| `... sets DBI HIGH when the number of transitioning data bits within a byte is greater than 4` | kept — a count against a literal |
+
+The reference phrase must follow the comparative immediately. A sentence that merely mentions "the
+value of X" somewhere and separately compares against a number is not this shape, and is untouched.
+
 ## Typical evidence-level failure modes
 
 - field tables leaking fake signals

@@ -650,7 +650,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Commit: `EXTRACTION-QUALITY-GAUGE.3i`
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3k` · Status: `active` (opened `2026-09-12` by `.3i`; **scoped +
-  split** `2026-09-12`) · Children: `.3k.1`, `.3k.2`, `.3k.3`, `.3k.4` · Goal: **every part of a
+  split** `2026-09-12`) · Children: `.3k.1`–`.3k.6` · Goal: **every part of a
   published constraint must be read from the span that produced the record.** `.3i` established that
   for the negation; this container owns the rest. Its first result is that **both numbers `.3i`
   handed it were measured over the wrong population**, so the leaf is split around the populations
@@ -692,10 +692,18 @@ honestly-qualified) path to "human-SpecForge in Rust."
   rather than "call the same helper in both paths". The LLM path is out of scope here: a model names
   a subject and a kind deliberately rather than scanning a span, so the span question is a different
   question (`.3j`).
-  **Ordering rationale.** `.3k.1` is strictly subtractive and lands first. `.3k.2` must land before
+  **Ordering rationale.** `.3k.1` is strictly subtractive and landed first. `.3k.2` must land before
   `.3k.3`, because narrowing the kind's span moves 3 of its 4 records onto the ungated `generic_value`
   arm (NVMe would publish `ANAGRPID must_be_value UNIQUE`, a value lifted off the adjective following
-  `shall be`); fixing the span before the arm would trade one fabricated fact for another.
+  `shall be`); fixing the span before the arm would trade one fabricated fact for another. `.3k.6`
+  (opened by `.3k.1`) should land before `.3k.2` is sized, for the reason `.3k.1` discovered.
+  **Amendment (`2026-09-12`, from `.3k.1`) — every population in this node is a PUBLISHED population,
+  not an actionable one.** Only 24 of the 78 documents keep a normalized bundle, so the other 54
+  evidence artifacts are frozen at whatever generation wrote them and can carry records the current
+  extractor would not mint. `.3k.1`'s four DTI records turned out to be exactly that: published, and
+  reproducible by nothing. Every remaining child must re-derive its population by running the real
+  producer on each record's own `source_text` before sizing its change
+  (`[[persisted-census-measures-published-not-current]]`); `.3k.6` exists to make that mechanical.
   Verification: `python3 scripts/measure_constraint_part_span.py --self-test` (9/9) and `--check`
   (`kind-classifier call sites unchanged (2 callers, 1 reading the whole statement)`) both green; the
   census above re-derived from the persisted corpus, every listed record adjudicated against its own
@@ -707,19 +715,67 @@ honestly-qualified) path to "human-SpecForge in Rust."
   independently of the case list, the `PRODUCTION-GRAPH-CENSUS-PIN.3` property.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.1` · Status: `pending` · Goal: **refuse a comparative MAGNITUDE
-  whose right operand is a REFERENCE.** `.3d` already refuses an inter-operand EQUALITY (*"X must be
-  equal to the value of Y"*) because the constraint vocabulary has no slot for it; *"must not be
-  greater than the size indicated by the OAS field"* is the same shape one relation along, and the
-  vocabulary has no slot for it either. A magnitude against a LITERAL (*"must be greater than 0"*)
-  must stay untouched — it is a value binding, and `.3d`'s own line between "the value of <other>"
-  and a literal is the line to reuse.
-  **Population: 4 records, all `sigcon_*`, all DTI** (`sigcon_0002`–`0005`), and it is simultaneously
-  the entire negation-on-untyped-default population and 4 spurious subjects (`OAS` is the right
-  operand; `DTI` is a message-name prefix). Strictly subtractive: nothing is retyped, 4 fabricated
-  records are removed. Zero records in any other document, zero in the dynamic/row/LLM strata.
-  Prerequisite: none. Verification: the census re-run to 0; a control pair (reference operand refused,
-  literal operand kept); observed RED; DTI rebuilt and diffed.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.1` · Status: `done` (`2026-09-12`, CODE) · Goal: **refuse a
+  comparative MAGNITUDE whose right operand is a REFERENCE.** `.3d` already refuses an inter-operand
+  EQUALITY (*"X must be equal to the value of Y"*) because the constraint vocabulary has no slot for
+  it; *"must not be greater than the size indicated by the OAS field"* is the same shape one relation
+  along, and the vocabulary has no slot for it either. A magnitude against a LITERAL (*"must be
+  greater than 0"*) must stay untouched — it is a value binding, and `.3d`'s own line between "the
+  value of <other>" and a literal is the line this reuses.
+  **The population statement this leaf opened with was wrong, and finding out why is its main
+  result.** It said *"4 records, all `sigcon_*`, all DTI"*. Those four records are published, but
+  **today's extractor reproduces none of them**: every candidate subject in DTI's sentence is named
+  only AFTER the obligation's lead, so `CORPUS-COVERAGE.2.50a`'s pre-lead subject authority
+  (`is_post_passive_binding_only_subject`) reaches it first and `extract_signal_constraints` returns
+  an empty vector. Verified by running the real producer on the live sentence with `OAS`/`DTI`
+  declared — `records=[]`, `post_passive OAS=true DTI=true`. The four records predate that gate and
+  the document has no retained normalized bundle, so the artifact is frozen where it is.
+  **The CLASS is nevertheless live, and that is why this shipped rather than closing as covered.**
+  The same grammar with the constrained signal named BEFORE the lead still mints the fabricated pair:
+  *"ZETARANGE must not be greater than the size indicated by the ZETAOAS field"* → `MustBeStable` +
+  `negated: true`, i.e. **"ZETARANGE must not be stable"** — exactly what DTI published. The dynamic
+  path is reachable too: *"The controller drives ZETARANGE LOW whenever the requested span is larger
+  than the number of entries the ZETAOAS field reports"* → `ZETARANGE must_be_low` AND
+  `ZETAOAS must_be_low`, the right operand minted as a second subject.
+  Shipped: pure `is_reference_magnitude_constraint` — a comparative marker IMMEDIATELY followed by a
+  phrase naming another operand's attribute — wired beside `.3d`'s refusal in BOTH deterministic
+  paths. +6 tests, `specforge-core` lib 1,435 → 1,440.
+  **Honest limits, both named rather than absorbed:** (a) the four DTI records stay in the persisted
+  artifact until that document is re-ingested, exactly as `.3h`'s NVMe `FFFF` record does; (b) the
+  lead list is the measured one — extending it with `that supported by` / `the maximum` / `the
+  minimum` would refuse RISC-V IOMMU `dyn_sigcon_0008`/`0009`, whose own obligation clause states no
+  relation at all, which would be right by accident and is owned by `.3k.5`.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.1`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.5` · Status: `pending` (opened `2026-09-12` by `.3k.1`) · Goal:
+  **the refusal gates are statement-scoped while the records they suppress are clause-scoped.**
+  `is_relational_equality_constraint` (`.3d`) and `is_reference_magnitude_constraint` (`.3k.1`) are
+  both evaluated over the WHOLE statement, so a relation stated in one sentence refuses an obligation
+  minted from another — the same span defect this container is about, one level up, on the refusal
+  side. **Measured, read-only over 261,508 persisted statements:** the equality phrase appears in 181
+  statements and lies OUTSIDE the obligation clause in **4** of them; clause-scoping would admit
+  those 4, which recovers one real constraint (NVMe `statement_4474`, *"all bytes of this field shall
+  be cleared to 0h"*, currently refused because the cell's descriptive body says *"contains the same
+  value as reported in …"*) and exposes one fabricated one (NVMe `statement_5826`, *"The Port
+  Identifier … shall be unique"* → `must_be_value UNIQUE`, which is `.3k.2`'s class). Two more are
+  unadjudicated. The magnitude leads this leaf owns (`that supported by`, `the maximum`, `the
+  minimum`) can only be added once the span is decided: statement-scoped they refuse RISC-V IOMMU
+  `dyn_sigcon_0008`/`0009` for a relation in a later sentence. Prerequisite: `.3k.2` (so the
+  admitted-set is not a fabrication set). Verification: all 4 plus the new leads adjudicated
+  individually; observed RED; the chain rebuilt for every document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.6` · Status: `pending` (opened `2026-09-12` by `.3k.1`) · Goal:
+  **an instrument that answers "does today's extractor still produce this persisted record".** `.3k`
+  sized its children from the persisted corpus and `.3k.1` then discovered that the corpus is not one
+  code generation: only 24 of 78 documents keep a normalized bundle (plus APB/AHB/AXI held out under
+  `generated/preserved/WIRE-BASED-100.10/`), so the other 54 artifacts are frozen at whatever
+  generation wrote them. The published population and the actionable population are different
+  numbers, and today the only way to tell them apart is to hand-write a unit test per record
+  (`[[persisted-census-measures-published-not-current]]`). That does not scale to
+  `.3k.2`'s 37 records. Deliver a replay that runs the REAL producer over each persisted record's own
+  `source_text` and reports reproduced / not-reproduced with the gate that intercepted it — never a
+  Python mirror of the rule, which would answer a question about itself (`CLAIM_VERIFICATION.md` §2).
+  Prerequisite: none; `.3k.2` should not be sized without it. Verification: the instrument's own RED
+  matrix, plus agreement with the four records `.3k.1` adjudicated by hand.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `pending` · Goal: **what a clause that types nothing
   may publish.** Two arms of `classify_signal_constraint_kind` emit a fact the document did not
   state: the terminal `untyped_default` publishes `MustBeStable` for any obligation no phrase matched
@@ -776,6 +832,55 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.1`
+
+- [x] **REPRODUCE / MEASURE** — two censuses, and the second one overturned the first.
+  (1) `python3 scripts/measure_constraint_part_span.py` over the 78 persisted artifacts: the
+  `reference-operand magnitude` row is **4** in the `sigcon_*` stratum and **0** in `dyn_sigcon_*`,
+  `row_sigcon_*` and `llm_sigcon_*` — AMBA DTI `sigcon_0002`–`0005`, publishing
+  `OAS must_be_stable, negated` and `DTI must_be_stable, negated`, i.e. *"OAS must not be stable"*.
+  The same four are the ENTIRE `negation on untyped default` population, so the two halves `.3k`
+  inherited as "7 plus 4" are one set of 4.
+  (2) **Running the real producer on that exact sentence yields `records=[]`.** A probe calling
+  `extract_signal_constraints` with `OAS`/`DTI` declared reported
+  `PROBE records=[] … post_passive OAS=true DTI=true`: `CORPUS-COVERAGE.2.50a` already refuses both
+  subjects because the sentence names them only after `must not be`. The four records predate that
+  gate, and DTI has no retained normalized bundle, so nothing has rewritten them
+  (`[[persisted-census-measures-published-not-current]]`).
+  (3) The class is reachable anyway — a third probe on the same grammar with the subject named BEFORE
+  the lead returned `ZETARANGE MustBeStable negated: true`, and on the dynamic path
+  `ZETARANGE MustBeLow` plus `ZETAOAS MustBeLow`. That is what this leaf gates.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`.
+  `is_relational_equality_constraint` (`.3d`) expresses the refusal for an inter-operand EQUALITY and
+  nothing for a comparative MAGNITUDE, so a bound stated against another operand reaches the kind
+  classifier, matches no phrase in its table, falls to the terminal `MustBeStable` default, and then
+  carries the sentence's `must not` on top — a record asserting that a signal must not be stable,
+  which no sentence of this shape says. The right operand is additionally minted as a second subject
+  (`ZETAOAS must_be_low` above; `OAS` in the live artifact).
+- [x] **ADDRESSED (verified)** — pure `is_reference_magnitude_constraint(text)`: a comparative marker
+  (`greater than `, `less than `, `larger than `, … each carrying its trailing space) IMMEDIATELY
+  followed by a phrase naming another operand's attribute (`the value of`, `the size indicated by`,
+  `the number of`, `that indicated by`, …). Wired beside the `.3d` refusal in BOTH deterministic
+  extractors. **Observed RED with both call sites reverted:**
+  `a_magnitude_against_a_referenced_operand_yields_no_constraint` fails emitting
+  `MustBeStable, negated: true` from *"ZETARANGE must not be greater than the size indicated by the
+  ZETAOAS field"*, and `…_yields_no_dynamic_constraint` fails emitting two `MustBeLow` records; both
+  pass restored. The literal controls hold in both directions: *"The value of ZETARANGE must be
+  greater than 0"* still extracts, and the HBM2 shape *"sets ZETADBI HIGH when the number of
+  transitioning data bits within a byte is greater than 4"* still yields exactly `must_be_high`.
+- [x] **NO REGRESSION** — `cargo fmt --all --check` green; `cargo clippy --all-targets -D warnings`
+  green; `cargo test` green with `specforge-core` lib **1,435 → 1,440** and no existing expectation
+  changed. `scripts/check_doctrines.sh` green (13/13 executed, 2 CI-tier deferred). No persisted
+  artifact moves: the only corpus instance is in a document with no normalized bundle, so there is
+  nothing to rebuild and nothing to diff — stated as a limit, not as coverage, exactly as `.3h` did
+  for NVMe `FFFF`.
+- [x] **GENERICITY (ADR 0006)** — two phrase lists of ordinary English comparatives and reference
+  leads. No document, protocol, vendor, register or signal name appears in the rule; every control
+  uses invented names (`ZETARANGE`, `ZETAOAS`, `ZETADTI`, `ZETADBI`).
+- [x] **LOCKSTEP** — code, this leaf, the two Knowledge Map cards, the book's EvidenceIR gate
+  narrative, and the resume pointer agree before commit. The refusal's own span defect is not
+  silently inherited: it is written down and owned by `.3k.5`.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3i`
 

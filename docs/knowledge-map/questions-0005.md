@@ -2,12 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how do I reverify the published-assertion gate
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > how do I run a Docling ingest or re-ingest on this machine
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how do I see which ingested PDFs form structural families (the corpus-cluster command)
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > how do I size the population of an extractor change
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I tell a comma family from a footnote marker from a phrase without a word list
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
@@ -17,6 +21,8 @@
   > how do I tell whether a doctrine check guards its own self-test coverage
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I tell whether a persisted SourceIR was produced before or after the classification narrowing
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > how do I tell whether a persisted constraint record is still reproducible
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -291,9 +297,3 @@
   > how does the register reader recover a field name with no name column
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how does the section-heading field reader tell a message container from a register container
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how does the tiling gate keep register-bit recovery honest (no fabrication)
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
