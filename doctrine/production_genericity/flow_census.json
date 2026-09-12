@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "contract_id": "production-genericity-flow-census",
+  "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
+  "authority": "ADR 0025 decision 2 / DOCTRINE_ENFORCEMENT.md §3 — a census that reports is not a check. `check_production_genericity_flow.sh` already derives all eighteen counts on every commit; this is the declaration it compares them against, so a drift is caught at commit cadence instead of at push cadence by a cargo test.",
+  "boundary": {
+    "rationale": "These describe the genericity boundary itself — which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed.",
+    "pinned": {
+      "boundary_rows": 141,
+      "canonical_seams": 12,
+      "grammar_declassifiers": 64,
+      "non_authoritative_regions": 6,
+      "proof_gates": 25,
+      "protected_calls": 28,
+      "protected_constructions": 19,
+      "protected_types": 15,
+      "rule_roots": 120,
+      "source_fields": 13,
+      "source_parameters": 3,
+      "source_returns": 2,
+      "source_types": 22,
+      "trusted_regions": 11
+    }
+  },
+  "volume": {
+    "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
+    "aggregate_change": {
+      "authority_id": "PRODUCTION-GRAPH-CENSUS-PIN.1-CENSUS-IS-DECLARED-NOT-PINNED",
+      "owner": "PRODUCTION-GRAPH-CENSUS-PIN.1",
+      "rationale": "The opening declaration. Baseline is the census at EXTRACTION-QUALITY-GAUGE.3i, the last slice to re-pin the literals by hand; this leaf adds the contract and the comparison and moves the counts itself by the verifier it introduces.",
+      "baseline": {
+        "analyzed_functions": 2409,
+        "decision_sites": 12984,
+        "helper_edges": 14988,
+        "semantic_macros": 1471
+      },
+      "delta": {
+        "analyzed_functions": 0,
+        "decision_sites": 0,
+        "helper_edges": 0,
+        "semantic_macros": 0
+      }
+    }
+  }
+}

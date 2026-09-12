@@ -94,6 +94,46 @@ use **evidence** only where the thing being enforced is an *action/process* that
 re-derivable trace. For evidence checks, make them as oracle-like as possible (re-run the cited
 command) so they are not bypassable by pasting fake output.
 
+### A census that reports is not a check
+
+Whichever archetype you pick, the check must **compare**. A script that derives a number, prints it,
+and compares nothing permits every drift — and reads as green while doing it.
+
+`PRODUCTION-GRAPH-CENSUS-PIN.0` is the measured instance.
+`scripts/check_production_genericity_flow.sh` is gate-tier, runs on every commit, and printed all
+eighteen repository-wide census counts:
+
+```text
+production-genericity-flow: 141 boundary rows; … 2409 functions; 14988 helper edges; …
+```
+
+It compared none of them. The only comparison lived in a `cargo test`, which this repository runs
+before a push rather than per commit — so the comparison fired at push cadence while the drift accrued
+at commit cadence, and the pins were wrong by **+18 functions, +179 helper edges and +226 decision
+sites across 29 commits** with every gate green throughout. The number was in the output the whole
+time; nothing read it.
+
+**Two rules follow, and the second is the one people get wrong.**
+
+1. If a check derives a value, give it a declaration to compare against and fail closed naming the
+   field and both values. The derivation is already being paid for; only the comparison is new.
+2. **Say which of your numbers are boundaries and which are sizes**, because they need different
+   declarations. `doctrine/production_genericity/flow_census.json` splits them:
+   - *boundary* counts (which types are sources, which roots are rules, which regions are trusted)
+     describe the authority structure, do not move on ordinary feature work, and are pinned exactly;
+   - *volume* counts (functions, helper edges, decision sites, macros) are sizes that move whenever
+     production code is added. **Six consecutive slices moved them**, each having to edit a literal to
+     land. An exact pin on those measures the commit rate, not the boundary.
+
+   Volume counts therefore use the `baseline` + `delta` + `owner` + `rationale` shape that
+   `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total. That does not
+   remove the per-commit edit — it converts it from re-pinning a number nothing compares into
+   **attributing a census change to the leaf that caused it**, which is what was missing across the 29
+   silent commits.
+
+The general shape — *a doctrine check that derives a number, reports it, and compares nothing* — is
+mechanical to search for, and `PRODUCTION-GRAPH-CENSUS-PIN.2` owns that sweep.
+
 ---
 
 ## 4. The check-script contract (precise — this is what makes it portable)

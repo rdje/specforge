@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PRODUCTION-GRAPH-CENSUS-PIN`
-- Status: `active` (`2026-09-12`; `.0` done, `.1`-`.2` open)
+- Status: `active` (`2026-09-12`; `.0`-`.1` done, `.2` open)
 - Roadmap lane: `process / doctrine enforcement`
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -82,7 +82,7 @@ been able to move them without any local signal.
   which is an independent execution path to the same analyzer.
   Commit: `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`
 
-- ID: `PRODUCTION-GRAPH-CENSUS-PIN.1` · Status: `pending` · Goal: **make the printing gate compare.**
+- ID: `PRODUCTION-GRAPH-CENSUS-PIN.1` · Status: `done` (`2026-09-12`) · Goal: **make the printing gate compare.**
   `check_production_genericity_flow.sh` already derives all four numbers on every commit; the missing
   half is a declaration to compare them against. Put the expected census in a tracked contract under
   `doctrine/` — where every other doctrine's expectations already live — and have the flow check fail
@@ -102,6 +102,9 @@ been able to move them without any local signal.
   Prerequisite: `.0`. Verification: observed RED against a perturbed count in EACH of the four fields,
   and against a contract whose `baseline + delta` is right but whose `owner` is absent; green on the
   true tree; the Rust test carries no census literal afterwards.
+  **Shipped.** `doctrine/production_genericity/flow_census.json` + `--check-census` in the flow gate +
+  `census::disagreements`; the test's eighteen literals are gone and it reads the same contract.
+  Commit: `PRODUCTION-GRAPH-CENSUS-PIN.1`
 
 - ID: `PRODUCTION-GRAPH-CENSUS-PIN.2` · Status: `pending` · Goal: **find the other censuses that print
   without comparing.** This one was found by accident, by a slice that happened to run `cargo test`.
@@ -112,12 +115,97 @@ been able to move them without any local signal.
   Prerequisite: `.1` (its design decides what "comparing" should look like here).
   Verification: the census is the deliverable; a count with no adjudication is not.
 
+## `.1` — result (`2026-09-12`)
+
+### One contract, read by the gate and by the test
+
+The defect `.0` recorded was not that the numbers drifted. It was that **the pin and the deriver were
+two places that could disagree** — the gate derived all eighteen counts every commit and printed them,
+while the only comparison sat in a `cargo test` that runs before a push. Keeping literals in the test
+and adding a second declaration elsewhere would have reproduced exactly that shape. So there is one
+file, and both read it:
+
+```text
+doctrine/production_genericity/flow_census.json
+    ├── scripts/check_production_genericity_flow.sh   (gate-tier, every commit, --check-census)
+    └── tests::current_repository_flow_is_complete_local_and_deterministic
+```
+
+The test keeps what only it can prove — that the derivation is deterministic across two runs and emits
+no absolute path — and has no census literal left.
+
+### Boundaries and sizes are different numbers and get different declarations
+
+This is the substance of the design, and it is what `.1`'s open question was actually asking.
+
+| | fields | declaration | why |
+| --- | ---: | --- | --- |
+| **boundary** | 14 | exact pin | which types are sources, which roots are rules, which regions are trusted. Measured **unchanged across all six** slices that moved the volume counts. A change here is a real change to the product's authority structure. |
+| **volume** | 4 | `baseline` + `delta` + `owner` + `rationale` | functions, helper edges, decision sites, macros are SIZES. **Six consecutive slices moved them**, each having to edit a literal to land. |
+
+A declared band was rejected on the argument, not on taste: the census only ever grows, so any band
+either admits a jump worth noticing or has to be re-based on the same cadence an exact pin would. The
+`aggregate_change` shape is the repository's own answer to the identical problem for the book's byte
+total, and it makes the per-commit edit informative rather than ceremonial — it records **who** moved
+the census and **why**, which is precisely what was missing across the 29 silent commits.
+
+### Observed RED, one probe per failure mode
+
+```text
+boundary.pinned.rule_roots            RED  'rule_roots' is 120, contract declares 121
+volume.baseline.analyzed_functions    RED  'analyzed_functions' is 2409, contract declares 2410
+volume.delta.helper_edges             RED  'helper_edges' is 14988, contract declares 14989
+volume.aggregate_change.owner = ""    RED  owner names no leaf; a census change must be attributed
+```
+
+The delta probe is the one that matters for the design: it proves `baseline + delta` is the compared
+total, so a slice cannot land by editing the baseline and leaving its own change unattributed. Four
+unit controls additionally pin the comparison itself — a disagreement names the field and both values,
+a census field the contract does not declare is a breach, and a declared field the census stopped
+reporting is a breach rather than a silent pass. That last pair is what stops the contract quietly
+ceasing to cover the surface it claims, which is the same failure mode in a different dress.
+
+### The cost, stated
+
+The per-commit edit is not removed. A slice that adds production code still edits one file — but it
+edits a doctrine contract that something compares, under an owner and a rationale, instead of four
+literals in a test that could not see them until push.
+
+## Acceptance Checklist (enforced) — `.1`
+
+- [x] **REPRODUCE / MEASURE** — six consecutive slices moved the volume counts and none moved a
+  boundary count: `ACTOR-NOUN-RELATION-DECLARATION.1`, `INVARIANT-SHAPE-ADMISSION.1`,
+  `PROSE-NAME-CELL-DECLARATION.2`, `INVARIANT-SHAPE-ADMISSION.3` (+6/+32/+29/+2),
+  `INVARIANT-SHAPE-ADMISSION.5` (+2/+4/+4/0), `EXTRACTION-QUALITY-GAUGE.3i` (0/+1/0/0). That 6-for-6
+  split is the measurement `.1` was required to take before choosing a design.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/check_production_genericity_flow.sh` ran
+  `--flow`, which prints `InformationFlowReport::summary()` and compares nothing;
+  `tools/production-genericity-graph/src/lib.rs` held the only comparison, as eighteen
+  `assert_eq!` literals in a test the repository's CI policy runs before a push.
+- [x] **ADDRESSED (verified)** — the contract, `--check-census`, `census::disagreements`, and the test
+  rewritten to read the contract. Observed RED on all four probes above; the flow gate green on the
+  true tree; `cargo test -p specforge-production-graph` 8 passed (4 pre-existing + 4 new controls).
+- [x] **NO REGRESSION** — `cargo test` green; `cargo fmt --check` and
+  `cargo clippy --all-targets -D warnings` green (two findings from the new test helpers fixed rather
+  than allowed); `scripts/check_doctrines.sh` green. No corpus artifact is touched: this leaf changes
+  no production rule, and `tools/` is outside the analyzed production surface, so the census it
+  declares is unmoved by the code that declares it.
+- [x] **GENERICITY (ADR 0006)** — a JSON contract and a map comparison; no document, protocol, vendor,
+  or name list. The census field set is derived from the report struct's own fields rather than
+  restated, so a new field cannot escape the contract silently.
+- [x] **LOCKSTEP** — `DOCTRINE_ENFORCEMENT.md` §3 gains "A census that reports is not a check", with
+  the measured instance and the boundary-vs-size rule, which is this tree's acceptance criterion that
+  the distinction be stated where the next author will meet it. Not a book change: this is doctrine
+  machinery, not user-visible product behaviour.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `PRODUCTION-GRAPH-CENSUS-PIN.1` — make the gate that already derives the numbers compare them.
-2. `PRODUCTION-GRAPH-CENSUS-PIN.2` — the same shape elsewhere in the registry.
+1. `PRODUCTION-GRAPH-CENSUS-PIN.2` — the same shape elsewhere in the registry. `.1` shipped the
+   pattern and `DOCTRINE_ENFORCEMENT.md` §3 now names it, so the sweep has a definition to match
+   against: every registered check that emits a numeral in its success line, adjudicated by hand
+   against whether anything fails when that numeral changes.
 
 ## Decisions
 
@@ -159,6 +247,16 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.1`. Observed RED on four probes, one per failure mode: a perturbed boundary pin, a
+  perturbed volume baseline, a perturbed volume **delta** (which proves `baseline + delta` is the
+  compared total, so a slice cannot land by editing the baseline and leaving its change unattributed),
+  and an emptied `owner` (refused — a census change must name a leaf). Green on the true tree.
+  `cargo test -p specforge-production-graph` 8 passed, of which 4 are new controls on the comparison
+  itself: a disagreement names the field and both values; a census field the contract does not declare
+  is a breach; a declared field the census stopped reporting is a breach rather than a silent pass.
+  `cargo fmt --check` and `cargo clippy --all-targets -D warnings` green; `scripts/check_doctrines.sh`
+  green. No corpus rebuild: this leaf changes no production rule.
+
 - `2026-09-12` — `.0`. Baseline established by measurement, not inference: `git stash push` of the
   slice's only modified source file, then `scripts/check_production_genericity_flow.sh` at
   `4bb6c1c8` → `2398 functions; 14942 helper edges; 12931 decision sites; 1469 semantic macros`;
@@ -170,6 +268,13 @@ None.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`.
 
 ## Changelog
+
+- `2026-09-12` — `.1` closed. The census moved out of eighteen test literals into
+  `doctrine/production_genericity/flow_census.json`, which the gate-tier flow check now COMPARES
+  against on every commit and the test reads instead of restating. Boundary counts (14) are pinned
+  exactly; volume counts (4) are declared as `baseline + delta + owner + rationale`, because six
+  consecutive slices moved them and none moved a boundary count. `DOCTRINE_ENFORCEMENT.md` §3 states
+  the distinction so `.2`'s sweep has a definition to match against.
 
 - `2026-09-12` — tree created. A `cargo test` pin of four repository-wide census numbers was found
   stale by +18 / +179 / +226 / +3 while the gate-tier doctrine that derives the same numbers on every

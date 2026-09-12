@@ -5,6 +5,7 @@
 //! it does not make semantic information-flow decisions by itself.
 
 mod analyzer;
+mod census;
 mod config;
 mod flow;
 mod inventory;
@@ -13,6 +14,7 @@ mod model;
 
 use std::path::Path;
 
+pub use census::{FLOW_CENSUS_CONTRACT, FlowCensus, load_flow_census};
 pub use model::{InformationFlowReport, ProductionGraph};
 
 /// Derive the production graph from Cargo targets and the checked module inventory.
@@ -65,30 +67,19 @@ mod tests {
         );
     }
 
-    /// PRODUCTION-GRAPH-CENSUS-PIN.0 — these four numbers are a repository-wide census, and they
-    /// are pinned HERE and nowhere else. `scripts/check_production_genericity_flow.sh`, the
-    /// gate-tier doctrine that runs on every commit, *prints* them; only this test compares them.
-    /// Since ordinary commits run the doctrine driver rather than `cargo test` (the repository
-    /// runs the full suite before a push, not per commit), the pins drifted by +18 functions,
-    /// +179 helper edges, +226 decision sites and +3 semantic macros before anything noticed.
-    /// Re-pinned at that measured truth; the gap between the printing gate and the comparing test
-    /// is the tree's own frontier. Moved again by `ACTOR-NOUN-RELATION-DECLARATION.1` (+1 function,
-    /// +4 helper edges, +5 decision sites for one predicate at three call sites) — the second slice
-    /// in a row to add a single predicate and have to edit this contract to land, which is the
-    /// evidence `.1` of that tree needs before choosing between an exact pin and a declared band.
-    /// Third consecutive slice to move it by one predicate (`INVARIANT-SHAPE-ADMISSION.1`): three for
-    /// three, which is the answer to `.1`'s open question about how often these numbers legitimately
-    /// move. An exact pin makes every predicate-adding commit a contract-editing commit.
-    /// FOURTH consecutive slice (`INVARIANT-SHAPE-ADMISSION.3`, +6 functions / +32 helper edges /
-    /// +29 decision sites / +2 semantic macros for one table reader). Four for four: the question
-    /// `PRODUCTION-GRAPH-CENSUS-PIN.1` opened is no longer open — an exact pin on a count that moves
-    /// with every ordinary production slice measures the commit rate, not the boundary.
-    /// FIFTH (`INVARIANT-SHAPE-ADMISSION.5`, +2 functions / +4 helper edges / +4 decision sites for
-    /// ONE narrowed gate condition) — and this one is the sharpest case for `.1`'s chosen design: the
-    /// slice removed two fabricated records and added no behaviour, yet still had to edit four
-    /// literals in a test that cannot observe them until push.
-    /// SIXTH (`EXTRACTION-QUALITY-GAUGE.3i`, +1 helper edge for a narrowed span and four phrase
-    /// strings) — six for six, and this one moved a single field of a single struct.
+    /// `PRODUCTION-GRAPH-CENSUS-PIN.1` — the census this test used to pin as eighteen literals now
+    /// lives in `doctrine/production_genericity/flow_census.json`, and this test reads THAT.
+    ///
+    /// The reason is the defect `.0` recorded. The pins were here and nowhere else;
+    /// `scripts/check_production_genericity_flow.sh` — the gate-tier doctrine that runs on every
+    /// commit — derived the same numbers and only *printed* them. So the comparison fired at push
+    /// cadence while the drift accrued at commit cadence, and the pins were wrong by +18 functions,
+    /// +179 helper edges and +226 decision sites across 29 commits with every gate green. **The pin
+    /// and the deriver were two places that could disagree, and they did.** One contract read by both
+    /// is the fix; keeping literals here would leave the same two places.
+    ///
+    /// What this test still proves, which the shell gate cannot: that the derivation is
+    /// DETERMINISTIC (two runs agree) and that its output carries no absolute path.
     #[test]
     fn current_repository_flow_is_complete_local_and_deterministic() {
         let root = repository_root();
@@ -96,24 +87,14 @@ mod tests {
         let second =
             analyze_information_flow(&root).expect("repeat current information-flow boundary");
 
-        assert_eq!(first.boundary_rows, 141);
-        assert_eq!(first.source_types, 22);
-        assert_eq!(first.source_fields, 13);
-        assert_eq!(first.source_parameters, 3);
-        assert_eq!(first.source_returns, 2);
-        assert_eq!(first.rule_roots, 120);
-        assert_eq!(first.grammar_declassifiers, 64);
-        assert_eq!(first.canonical_seams, 12);
-        assert_eq!(first.proof_gates, 25);
-        assert_eq!(first.trusted_regions, 11);
-        assert_eq!(first.non_authoritative_regions, 6);
-        assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_409);
-        assert_eq!(first.helper_edges, 14_988);
-        assert_eq!(first.decision_sites, 12_984);
-        assert_eq!(first.protected_constructions, 19);
-        assert_eq!(first.protected_calls, 28);
-        assert_eq!(first.semantic_macros, 1_471);
+        let census = super::load_flow_census(&root).expect("declared flow census");
+        assert_eq!(
+            census.disagreements(&first),
+            Vec::<String>::new(),
+            "the derived census must equal the declared one; re-derive {} and name the owning leaf",
+            super::FLOW_CENSUS_CONTRACT
+        );
+
         assert_eq!(
             serde_json::to_vec(&first).expect("serialize first flow report"),
             serde_json::to_vec(&second).expect("serialize repeated flow report")

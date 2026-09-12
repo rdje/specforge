@@ -110,7 +110,7 @@ impl ProductionGraph {
     }
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct InformationFlowReport {
     pub schema_version: u32,
     pub boundary_rows: usize,
@@ -134,6 +134,36 @@ pub struct InformationFlowReport {
 }
 
 impl InformationFlowReport {
+    /// The census this report publishes, by field name — the surface
+    /// `doctrine/production_genericity/flow_census.json` declares and
+    /// `check_production_genericity_flow.sh` compares (`PRODUCTION-GRAPH-CENSUS-PIN.1`).
+    ///
+    /// Derived from the struct's own fields rather than restated, so a field added to the report and
+    /// forgotten here cannot silently escape the contract: the comparison reports any field present on
+    /// one side and absent on the other.
+    pub fn census_fields(&self) -> std::collections::BTreeMap<&'static str, usize> {
+        std::collections::BTreeMap::from([
+            ("boundary_rows", self.boundary_rows),
+            ("source_types", self.source_types),
+            ("source_fields", self.source_fields),
+            ("source_parameters", self.source_parameters),
+            ("source_returns", self.source_returns),
+            ("rule_roots", self.rule_roots),
+            ("grammar_declassifiers", self.grammar_declassifiers),
+            ("canonical_seams", self.canonical_seams),
+            ("proof_gates", self.proof_gates),
+            ("trusted_regions", self.trusted_regions),
+            ("non_authoritative_regions", self.non_authoritative_regions),
+            ("protected_types", self.protected_types),
+            ("analyzed_functions", self.analyzed_functions),
+            ("helper_edges", self.helper_edges),
+            ("decision_sites", self.decision_sites),
+            ("protected_constructions", self.protected_constructions),
+            ("protected_calls", self.protected_calls),
+            ("semantic_macros", self.semantic_macros),
+        ])
+    }
+
     pub fn summary(&self) -> String {
         format!(
             "production-genericity-flow: {} boundary rows; {} source types; {} source fields; {} source parameters; {} source returns; {} rule roots; {} grammar declassifiers; {} canonical seams; {} proof gates; {} trusted regions; {} non-authoritative regions; {} protected types; {} functions; {} helper edges; {} decision sites; {} protected constructions; {} protected calls; {} semantic macros",

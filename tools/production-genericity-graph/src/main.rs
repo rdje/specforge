@@ -1,7 +1,7 @@
 use std::env;
 use std::path::PathBuf;
 
-use specforge_production_graph::{analyze_information_flow, analyze_repository};
+use specforge_production_graph::{analyze_information_flow, analyze_repository, load_flow_census};
 
 fn main() {
     if let Err(error) = run() {
@@ -16,6 +16,7 @@ fn run() -> Result<(), String> {
     let mut root = PathBuf::from(".");
     let mut emit_json = false;
     let mut flow = false;
+    let mut check_census = false;
     while let Some(argument) = args.next() {
         match argument.to_str() {
             Some("--root") => {
@@ -26,9 +27,13 @@ fn run() -> Result<(), String> {
             }
             Some("--json") => emit_json = true,
             Some("--flow") => flow = true,
+            Some("--check-census") => {
+                flow = true;
+                check_census = true;
+            }
             Some("--help") | Some("-h") => {
                 println!(
-                    "Usage: specforge-production-graph [--root REPOSITORY_ROOT] [--json] [--flow]"
+                    "Usage: specforge-production-graph [--root REPOSITORY_ROOT] [--json] [--flow] [--check-census]"
                 );
                 return Ok(());
             }
@@ -38,6 +43,22 @@ fn run() -> Result<(), String> {
     }
     if flow {
         let report = analyze_information_flow(&root)?;
+        // PRODUCTION-GRAPH-CENSUS-PIN.1 — a census that reports is not a check. The analysis is
+        // already paid for above; this adds the comparison, not a run.
+        if check_census {
+            let breaches = load_flow_census(&root)?.disagreements(&report);
+            if !breaches.is_empty() {
+                for breach in &breaches {
+                    eprintln!("{breach}");
+                }
+                return Err(format!(
+                    "the derived census disagrees with {} in {} field(s) — re-derive the contract and \
+                     name the owning leaf, do not edit the number alone",
+                    specforge_production_graph::FLOW_CENSUS_CONTRACT,
+                    breaches.len()
+                ));
+            }
+        }
         if emit_json {
             println!(
                 "{}",
