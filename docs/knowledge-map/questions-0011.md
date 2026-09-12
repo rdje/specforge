@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is is_condition_only_subject / conditional_clause_spans
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what is max_unverified_routes
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > what is obligation_subject / ObligationSubject
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > what is one-way grounding from EvidenceIR to ISF
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > what is promotion_status not_promoted_review_required and where does the canonical mutation live
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -109,6 +119,8 @@
   > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > what is the behavioral genericity held-out population
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what is the behavioural oracle for a coverage guard
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > what is the bit-exact adjacency chain rule
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -285,15 +297,3 @@
   > what made 14 corpus documents stop emitting an .isf
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > what makes a SpecForge published claim verified
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > what makes a behavioral genericity run invalid unmeasurable or failed
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what makes a corpus document unmeasurable for chain currency
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > what makes a source-to-Intent residual actionable
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > what makes a valid activate-only opt-in extractor candidate
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > what makes legacy absolute path rebasing safe and unambiguous
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > what message field metrics does validate emit

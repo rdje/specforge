@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > where is adaptive_batch_pages / BatchSizePolicy in the code
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > where is build_fixture.py digest pinned
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > where is coordinated-object actor-signal relation extraction implemented
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > where is current binary replay evidence stored
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -286,15 +298,3 @@
   > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > which reviewed categories are currently supported
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which reviewed category did the captured-region carrier close
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > which reviewed cells are region-scoped and which are fact-scoped
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which reviewed cells still need a typed actionable residual
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > which root rolling ledger is currently above its rollover signal

@@ -86,6 +86,8 @@
   > does a SIGKILL prove that Docling ran out of memory
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does a blocked adapter remove a previously emitted isf
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > does a check notice when one of its own self-test cases is deleted
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -296,5 +298,3 @@
   > does the figure carrier change artifacts already on disk
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > does the legal statement classifier use a vendor or document denylist
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > does the live-document registry reject unknown fields oversized arrays or oversized scalars

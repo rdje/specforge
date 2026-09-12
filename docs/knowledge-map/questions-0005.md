@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > how do I tell whether a doctrine check guards its own self-test coverage
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > how do I tell whether a persisted SourceIR was produced before or after the classification narrowing
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -294,7 +298,3 @@
   > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how expensive is reading the proof seal from the whole persisted corpus
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how flexible is the register model / what register-table shapes are handled
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > how good is prose signal capture / .3a quality

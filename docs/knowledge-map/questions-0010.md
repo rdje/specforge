@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what does the PUBLISHED-ASSERTIONS doctrine prove
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what does the active task evidence checker verify
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > what does the active task migration roll back after a validation failure
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > what does the bounded current ROADMAP contain
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -288,13 +298,3 @@
   > what is index-family signal canonicalization
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what is interior_texts in SourceIR
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is is_condition_only_subject / conditional_clause_spans
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what is max_unverified_routes
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > what is obligation_subject / ObligationSubject
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > what is one-way grounding from EvidenceIR to ISF

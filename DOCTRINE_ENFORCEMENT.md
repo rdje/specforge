@@ -139,37 +139,46 @@ checks publish about the **repository** — `278 canonical cards`, `301 facts`, 
 survives one level up instead, in what each check reports about its **own coverage**. Of the 16 that
 print a self-test count, **12 cannot detect a change in it**:
 
-The test to apply is narrow, and **it is not the shape of the printed ratio**:
+**The test is behavioural, and it is the only reliable one:**
 
-> Does DELETING one self-test case make this check fail?
+```bash
+# delete one self-test case, then:
+perl scripts/check_<name>.pl --self-test >/dev/null; echo $?
+```
 
-It does only when the expected total is declared **independently of the suite** — a literal. Everything
-co-derived from the same loop is blind to a case leaving it. Hand-adjudicated over the 16:
+`0` means the check cannot see its own coverage shrink. Do **not** try to answer this by reading the
+line the check prints — `PRODUCTION-GRAPH-CENSUS-PIN` tried three times and was wrong three times:
 
-| shape | checks | delete a self-test case → |
-| --- | ---: | --- |
-| `$passed` compared to a **literal** (`!= 13`, `-ne 22`) | **3** | they differ, the check **fails** |
-| `$passed/$total` with `$total++` in the same case loop | 4 | both drop; still `N/N` |
-| `$passed/$passed` | 4 | prints `59/59`; exit 0 |
-| a literal in the message — `"self-test 15/15 passed."` | 2 | prints `15/15` forever |
-| a bare counter with no declared total | 3 | the counter moves; nothing reads it |
+| printed | actually |
+| --- | --- |
+| `self-test 13/13 passed.` — a hardcoded literal | **guarded**: `$passed != 13` forty lines earlier |
+| `self-test $total/$total passed.` — looks tautological | **guarded**: `total=19` is a literal, compared with `[ "$passed" -eq "$total" ]` |
+| `self-test $passed/$total` — looks independently derived | **NOT guarded** when `$total++` is in the same case loop |
+| `self-test $passed/$passed` | not guarded, and honest about it |
 
-**`$passed/$total` looks like the fix and is not one** when both sides count the same loop. It detects
-a *failing* case, which is a real but different property. Write a literal.
+**`$passed/$total` is the trap.** It reads as two independent values and usually is not: with
+`$total++` inside the case loop, deleting a case drops both and the exit code stays 0. Measured:
+`check_book_quantitative_claims.pl` went `19/19` → `18/18`, exit 0. That form detects a **failing**
+case, which is a real and different property.
+
+The remedy is a **literal expected count declared beside the suite**, with a `die` on mismatch — not a
+contract file, and not `$passed/$total`. After `PRODUCTION-GRAPH-CENSUS-PIN.3` all sixteen checks that
+report a self-test count fail closed when a case is removed; before it, twelve did not, and one
+(`check_persisted_artifact_paths.pl`) had been publishing 15 for a suite of 18.
 
 Two limits to state whenever this class is reported, because omitting either overclaims:
 
-1. A self-test that **fails** still fails all of these checks — they `die` on a failing case. What is
+1. A self-test that **fails** still failed all of these checks — they `die` on a failing case. What was
    unguarded is **coverage**.
-2. **The property is not regex-decidable.** `PRODUCTION-GRAPH-CENSUS-PIN.2` published a classification
-   produced by one and got it wrong in both directions: a script that prints `13/13` and compares
-   `$passed != 13` forty lines away was filed as unguarded, and the four `$passed/$total` checks were
-   held up as the working precedent. `.2a` re-derived it by hand. So
-   `scripts/measure_self_test_coverage_reports.py` now emits the report lines and the candidate
-   comparisons as **evidence**, and the verdict lives in the task leaf — a producer that guesses this
-   property publishes the very defect the doctrine is about.
+2. **A number printed into a void is not evidence.** `check_project_data_locality.sh` runs
+   `check_persisted_artifact_paths.pl --self-test >/dev/null`, so its figure never reached a log at
+   all. The guard has to be in the exit code, not the message.
 
-`PRODUCTION-GRAPH-CENSUS-PIN.3` owns the remediation.
+`scripts/measure_self_test_coverage_reports.py` emits the report lines and candidate guards as
+**evidence and renders no verdict** — a producer that guesses this property publishes the very defect
+the doctrine is about. `[[self-test-coverage-guard-is-in-the-exit-path]]` records the method.
+
+
 
 ---
 

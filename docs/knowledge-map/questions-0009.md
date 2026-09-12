@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what are APB's remaining completeness candidate misses
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > what are SpecForge's five portable architectures
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > what are examples of false prose relations in Introducing CoreSight
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
@@ -282,19 +290,11 @@
   > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what does scripts/check_chain_currency.sh check
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what does self-test 15/15 passed actually prove
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what does signal_table_covered_by_inventory do
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > what does source_literal mean in the active task evidence contract
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what does synthesize_signal_declarations do when the body is rotated
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > what does the PUBLISHED-ASSERTIONS doctrine prove
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what does the active task evidence checker verify
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > what does the active task migration roll back after a validation failure

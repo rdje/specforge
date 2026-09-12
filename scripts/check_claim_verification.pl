@@ -886,6 +886,14 @@ sub run_self_test {
 
     remove_tree($fixture);
     die "claim-verification self-test: residue remains at $fixture\n" if -e $fixture;
+    # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$total` detects a FAILING case but not a
+    # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
+    # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
+    # expected case count is therefore declared here, independently of the loop.
+    my $expected_cases = 27;
+    die "claim-verification: self-test ran $total cases, declaration expects $expected_cases — "
+        . "re-derive the declaration beside the suite\n"
+        if $total != $expected_cases;
     print "claim-verification: self-test $passed/$total positive, missing, unknown, duplicate, stale, untracked, and bound cases pass.\n";
 }
 

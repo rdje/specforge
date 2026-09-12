@@ -2,6 +2,15 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the .5.ii enum member-quality gate landed (yes, LANDED 2026-06-24: is_prose_fragment_member_name + PROSE_SENTENCE_SPINE_WORDS in ir/evidence.rs gate the member loop in synthesize_encoding_declarations_for_enum, one seam for both call paths; AXI manager.isf now emits (BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7)) recovering
+  > codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > is the .isf affected by transaction membership (no — emitter lowers steps, not ports/phase_membership)
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > is the 46 percent figure the defect rate
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > is the 640-line research record ceiling correctly calibrated
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > is the AArch64 External Debug Guide current-binary refresh complete
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -289,11 +298,3 @@
   > what architecture contains an oversized active task tree
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > what architecture contains the active CORPUS-COVERAGE task tree
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what are APB's remaining completeness candidate misses
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > what are SpecForge's five portable architectures

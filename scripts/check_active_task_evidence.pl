@@ -2337,5 +2337,13 @@ sub run_self_test {
     remove_tree($writer_fixture);
     die $derived_failure if defined $derived_failure;
     $passed += 2;
-    print "active-task-evidence self-test: $passed/$passed source/topology/route/payload/bound cases pass.\n";
+    my $expected = 61;
+    # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
+    # and both sides drop together. The expected total is declared here, independently of the
+    # suite, so a case removed — or one added and not declared — fails instead of moving a
+    # number nothing compares.
+    die "active-task-evidence self-test ran $passed assertions, declaration expects $expected — "
+        . "re-derive the declaration beside the suite\n"
+        if $passed != $expected;
+    print "active-task-evidence self-test: $passed/$expected source/topology/route/payload/bound cases pass.\n";
 }

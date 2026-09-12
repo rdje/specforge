@@ -15,6 +15,14 @@ binmode STDOUT, ':encoding(UTF-8)';
 binmode STDERR, ':encoding(UTF-8)';
 
 my $root = abs_path(File::Spec->catdir($Bin, '..'));
+# PRODUCTION-GRAPH-CENSUS-PIN.3 — the self-test line printed the literal `15/15`, derived from
+# nothing, while the suite actually runs 18 named assertions: 12 `@cases` entries plus six standalone
+# seam/migration checks. The number was not merely underived but UNREAD — `check_project_data_locality.sh`
+# invokes this with `--self-test >/dev/null`, so only the exit code carries information. The guard
+# therefore lives in the exit code: the assertions count themselves and a mismatch dies.
+our $SELF_TEST_PASSED = 0;
+our $SELF_TEST_EXPECTED = 18;
+
 my $mode = 'check';
 my $legacy_root;
 my @external_source_roots;
@@ -51,7 +59,10 @@ die "persisted-artifact-paths: --execute requires --migrate-legacy-root\n"
 
 if ($mode eq 'self-test') {
     run_self_test();
-    print "persisted-artifact-paths: self-test 15/15 passed.\n";
+    die "persisted-artifact-paths: self-test ran $SELF_TEST_PASSED assertions, "
+        . "declaration expects $SELF_TEST_EXPECTED — re-derive the declaration beside the suite\n"
+        if $SELF_TEST_PASSED != $SELF_TEST_EXPECTED;
+    print "persisted-artifact-paths: self-test $SELF_TEST_PASSED/$SELF_TEST_EXPECTED passed.\n";
     exit 0;
 }
 
@@ -668,14 +679,18 @@ JSON
         scan_text($kind, $raw, $meta, \@errors, $name);
         die "persisted-artifact-paths self-test '$name' failed\n"
             if ($should_pass && @errors) || (!$should_pass && !@errors);
+        $SELF_TEST_PASSED++;
     }
 
     die "persisted-artifact-paths self-test 'crate-visible seam' failed\n"
         if !has_callable_rust_function('pub(crate) fn resolve_existing(', 'resolve_existing');
+    $SELF_TEST_PASSED++;
     die "persisted-artifact-paths self-test 'public seam' failed\n"
         if !has_callable_rust_function('pub fn resolve_existing (', 'resolve_existing');
+    $SELF_TEST_PASSED++;
     die "persisted-artifact-paths self-test 'private seam rejection' failed\n"
         if has_callable_rust_function('fn resolve_existing(', 'resolve_existing');
+    $SELF_TEST_PASSED++;
 
     my $legacy = '/retired/specforge';
     my $raw = '{"source_ir_path":"/retired/specforge/generated/source_ir/doc/source_ir.json",'
@@ -685,6 +700,7 @@ JSON
     my $changed = ($updated =~ s/\Q$needle\E/"/g);
     die "persisted-artifact-paths self-test 'migration rewrite' failed\n"
         if $changed != 2 || index($updated, $legacy) >= 0;
+    $SELF_TEST_PASSED++;
 
     my $origins = {
         doc => {source => 'external_input', promoted => 'repository_owned'},
@@ -700,6 +716,7 @@ JSON
     );
     die "persisted-artifact-paths self-test 'source origin insertion' failed\n"
         if @source_errors || $source_added != 1 || $source !~ /"path_origin": "external_input"/;
+    $SELF_TEST_PASSED++;
 
     my $evidence = "{\n  \"source_ir_path\": \"generated/source_ir/doc/source_ir.json\",\n  \"stage\": \"evidence_ir\"\n}\n";
     my @evidence_errors;
@@ -714,6 +731,7 @@ JSON
         if @evidence_errors
         || $evidence_added != 1
         || $evidence !~ /"source_path_origin": "repository_owned"/;
+    $SELF_TEST_PASSED++;
 }
 
 sub metadata_from_text {

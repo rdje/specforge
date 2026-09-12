@@ -1629,6 +1629,9 @@ sub run_self_test {
         ['migrated card addition without regeneration', 'migrated', sub { write_raw($_[0], 'docs/knowledge/delta.md', fixture_card('delta', 'Delta title')) }, qr/migrated output differs/],
     );
 
+    # PRODUCTION-GRAPH-CENSUS-PIN.3 — the 26 is a hardcoded base for assertions this suite makes
+    # before the loop and does not count; it is preserved as-is, and the DECLARED total below is
+    # what makes the whole figure checkable. Reducing the base or deleting a case now fails.
     my $passed = 26;
     for my $index (0 .. $#cases) {
         my ($name, $state, $mutator, $expected) = @{$cases[$index]};
@@ -1677,5 +1680,13 @@ sub run_self_test {
         if -e absolute($write_fixture, 'docs/knowledge-catalog/titles-9999.md');
     remove_tree($write_fixture);
     $passed++;
-    print "fact-card-catalog: $passed/$passed source/plan/route/residue/bound cases pass.\n";
+    my $expected = 60;
+    # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
+    # and both sides drop together. The expected total is declared here, independently of the
+    # suite, so a case removed — or one added and not declared — fails instead of moving a
+    # number nothing compares.
+    die "fact-card-catalog: self-test ran $passed assertions, declaration expects $expected — "
+        . "re-derive the declaration beside the suite\n"
+        if $passed != $expected;
+    print "fact-card-catalog: self-test $passed/$expected source/plan/route/residue/bound cases pass.\n";
 }

@@ -7,26 +7,28 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`PRODUCTION-GRAPH-CENSUS-PIN.2a` — a CORRECTION to `.2`, committed the same day (`2026-09-12`).** `.2` published "12 of 16 checks
-  cannot detect a change in their own self-test coverage" and named `$passed/$total` as the remedy. **Both halves were wrong.** Hand-re-derived: **3
-  guarded, 13 not**, and `$passed/$total` is NOT a coverage guard — `$total` is incremented in the same case loop as `$passed`, so deleting a case drops
-  both and the ratio stays `N/N`. The only guarded shape is a **literal** expected total (`$passed != 13`, `-ne 22`), which three checks already use and
-  `.2` had filed as unguarded because it judged the PRINT line instead of looking for the guard.
-  Open: **`PRODUCTION-GRAPH-CENSUS-PIN.3`** (13 remediations; brief corrected — declare a literal, not `$passed/$total`; the true population is 31 report
-  lines, not 16); **`EXTRACTION-QUALITY-GAUGE.3k`** (scope first) / **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`;
-  `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`; `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`;
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
-  `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`; `WIRE-BASED-100`
-  `.10d`/`.10f`/`.2`/`.3`/`.5` (SWD `13/29`).
-- Current state: **the census producer is now forbidden to classify.** Two regex classifiers were written for the coverage-guard property and both were
-  wrong — the first judged the print format, the second gave false positives (`$lines != $parts`) and a false negative on a hand-verified case. The
-  producer emits report lines + candidate guards as EVIDENCE; the verdict lives in the task leaf. That is `.2`'s own acceptance criterion, which `.2`
-  itself violated by letting a regex do the adjudicating. 15 registered doctrines, 13 at gate tier. Census 27 measurable / 51 legacy.
-- Next action: **`PRODUCTION-GRAPH-CENSUS-PIN.3`** — remediate the 13, starting with `check_persisted_artifact_paths.pl`, the one remaining
-  literal-print check, which prints `15/15` and runs **18** named self-tests (12 `@cases` + 6 standalone). The remedy is the one `.2a` demonstrates on
-  `check_corpus_kb_currentness.pl`: count in the assertion helpers, compare against a declared literal beside the suite, observed RED at exit 2. **Do not
-  copy `$passed/$total`.** Also enumerate the rest of the 31 report lines: the 16 `.2` adjudicated were not the whole surface.
+- Active unit: **`PRODUCTION-GRAPH-CENSUS-PIN.3` CLOSED `2026-09-12`; `.0`-`.3` all closed.** Every registry check that reports a self-test count now
+  fails closed when one of its cases is removed — 12 remediated, 4 already guarded. `check_persisted_artifact_paths.pl` had been publishing **15 for a
+  suite of 18**, and printing it to `/dev/null`. **This leaf corrects BOTH earlier statements of its own census**: `.2` said 4/12 with entirely wrong
+  membership (the four it named as the remedy are the blind ones), `.2a` said 3/13 by misreading `$total/$total` where `total=19` is a literal.
+  Open: **`EXTRACTION-QUALITY-GAUGE.3k`** (scope first — the two deterministic paths disagree on what a clause is) / **`.3j`** (the LLM path applies no
+  positional subject gate); `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`; `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`;
+  `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM`
+  `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
+  `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
+  `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`; `WIRE-BASED-100` `.10d`/`.10f`/`.2`/`.3`/`.5`
+  (SWD `13/29`).
+- Current state: **the standing lesson of this session is that a textual proxy fails silently and looks clean.** It happened four times: a grep ERE
+  backreference matched nothing (would have reported ZERO tautologies); a replacement classifier gave false positives AND a false negative; a producer's
+  counter regex missed `passed=$((passed + 1))` and dropped a real guard; and twice a census was published from one. The fix each time was a
+  **behavioural** oracle — delete a case, read the exit code — recorded as `[[self-test-coverage-guard-is-in-the-exit-path]]`. 15 registered doctrines,
+  13 at gate tier. Census 27 measurable / 51 legacy.
+- Next action: **`EXTRACTION-QUALITY-GAUGE.3k`** — SCOPE IT FIRST, the leaf says why: the pattern path narrows subjects with
+  `constraint_bearing_sentence`, the dynamic path with `text_before_condition_marker`, and its value binder reads the whole statement, so the two do not
+  agree on what a clause is. Decide that before moving the KIND's span. Population measured: **18 of 349** records match their kind phrase outside their
+  own clause — including AHB `sigcon_0002`, whose clause has no kind phrase at all, which is the mechanism behind the mis-conditioned `HSELx` record.
+  Plus 7 negations on an untyped default and 4 relational magnitudes. Then `.3j`, and a `generated/preserved/` retention rule — **whose first finding is
+  that "delete closed leaves' snapshots" is WRONG**: `WIRE-BASED-100.10` (528 MB of 2.4 GB) holds the only copies of the APB/AXI/AHB normalized bundles.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **an obligation binds to the token immediately before its modal** — `HBURST_WIDTH must be …` is not about `HBURST`.
   **A subjectless clause defeats a subject scan by having no subject to find**: `collect_subject_signal_tokens(" Must be valid")` returns

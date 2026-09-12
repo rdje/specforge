@@ -1099,5 +1099,13 @@ if ($failures) {
     print STDERR "live-document-size-tests: $failures of $test_number checks failed\n";
     exit 1;
 }
-print STDERR "live-document-size-tests: all $test_number lifecycle and control-plane checks pass\n";
+# PRODUCTION-GRAPH-CENSUS-PIN.3 — `all $test_number ... pass` is a running counter with nothing
+# to compare it against: delete a check and the line simply reports one fewer. The expected
+# count is declared here, independently of the suite, so a check removed — or one added and not
+# declared — fails instead of silently shrinking the coverage this reports.
+my $expected_checks = 93;
+die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
+    . "re-derive the declaration beside the suite\n"
+    if $test_number != $expected_checks;
+print STDERR "live-document-size-tests: $test_number/$expected_checks lifecycle and control-plane checks pass\n";
 exit 0;

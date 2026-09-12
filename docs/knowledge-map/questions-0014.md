@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > which reviewed categories are currently supported
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which reviewed category did the captured-region carrier close
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > which reviewed cells are region-scoped and which are fact-scoped
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which reviewed cells still need a typed actionable residual
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > which root rolling ledger is currently above its rollover signal
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -233,6 +245,8 @@
   > why did OpenCAPI email review become an IntentIR behavior
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > why did PRODUCTION-GRAPH-CENSUS-PIN.2's census have to be corrected twice
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why did RESERVED-only NOT ship as a header-naming exclusion (build_symbol_definitions keys members by NAME per document and drops any member whose value conflicts, so HALF the RESERVED-only cases are eliminated downstream with no name-side gate — 6 of 12 in the .5.iv census frame, 4 of 10 in the shipped-predicate frame, the SAME six survivors either way: SMMU
   > STALL_MODEL/TTENDIAN/HTTU/PGS and CHI-C2C CONTFORMAT/EVENTTYPE. Those survivors are structurally indistinguishable from 31 legitimate single-distinct-member tables (TTL 0b00=NO_LEVEL_HINT_INFORMATION, CD2L, S1P, PRI, GRAN4K...), leaving only the word RESERVED itself as a discriminator — exactly the spec-assigned value vocabulary ADR 0006 forbids. Re-derive:
@@ -283,17 +297,3 @@
   > why did check_doctrines.sh pass while the build did not lint
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why did check_proof_seal_currency.sh pass while four artifacts would not load
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > why did eight Introducing CoreSight ports and four connectivity edges disappear
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > why did generated artifact scanning miss FigureRegion raw_image_path
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why did ingest stop with 'ingest aborted before launching'
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > why did ingest stop with 'ingest aborted to protect the host'
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why did max_facts become 379
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did normalize_prior_phrase grow a string exponentially

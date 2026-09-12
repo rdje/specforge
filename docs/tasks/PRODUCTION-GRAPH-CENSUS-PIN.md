@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PRODUCTION-GRAPH-CENSUS-PIN`
-- Status: `active` (`2026-09-12`; `.0`-`.2` done, `.2a` corrects `.2`; `.3` open)
+- Status: `active` (`2026-09-12`; `.0`-`.3` done; `.3` corrects both `.2` and `.2a`)
 - Roadmap lane: `process / doctrine enforcement`
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -120,7 +120,7 @@ been able to move them without any local signal.
   below; the fix is `.3`. Producer: `python3 scripts/measure_self_test_coverage_reports.py`.
   Commit: `PRODUCTION-GRAPH-CENSUS-PIN.2`
 
-- ID: `PRODUCTION-GRAPH-CENSUS-PIN.3` · Status: `pending` (opened `2026-09-12` by `.2`) · Goal: **give
+- ID: `PRODUCTION-GRAPH-CENSUS-PIN.3` · Status: `done` (`2026-09-12`) · Goal: **give
   the twelve unguarded self-test reports a denominator something compares.** The remedy is already
   written and already in the repository — but **`.2a` corrects which shape it is**. `$passed/$total` is
   NOT it: four checks use that form with `$total` incremented in the same case loop, so deleting a case
@@ -401,13 +401,89 @@ notice if it stopped being.
 - [x] **LOCKSTEP** — `DOCTRINE_ENFORCEMENT.md` §3's self-coverage corollary carried `.2`'s wrong table
   and its wrong remedy; both corrected there. Not a book change: doctrine machinery.
 
+## `.3` — result (`2026-09-12`), and the third and final correction of this census
+
+### The settled table, obtained behaviourally
+
+`.2` and `.2a` both answered "does this check notice a deleted self-test case?" by **reading the line
+it prints**. Both were wrong. The answer is obtained by deleting a case and reading the **exit code**,
+and on that test the population at `HEAD` was:
+
+| | checks | shape |
+| --- | ---: | --- |
+| **guarded** | **4** | `check_proof_seal_currency.sh` (`total=19`), `check_chain_currency.sh` (22), `check_source_pdf_registry_currentness.pl` (13), `check_validation_snapshot_currentness.pl` (10) |
+| unguarded — co-derived `$passed/$total` | 4 | `book_quantitative_claims`, `claim_verification`, `corpus_frontier_census`, `current_claim_census` |
+| unguarded — `$passed/$passed` | 3 | `fact_card_catalog`, `active_task_evidence`, `task_tree_archive` |
+| unguarded — literal print, no comparison | 2 | `corpus_kb_currentness`, `persisted_artifact_paths` |
+| unguarded — bare counter | 3 | `test_derived_state_authorities`, `test_derived_state_contracts`, `test_live_document_size` |
+
+**All 12 are remediated by this leaf. None exits 0 on a deleted case any more.**
+
+### What `.2` and `.2a` each got wrong
+
+- **`.2` published 4 guarded / 12 unguarded.** The counts were right **and the membership was entirely
+  wrong**: the four it held up as "the remedy that already exists in the repository" are all unguarded,
+  and four it filed as broken are the only guarded ones.
+- **`.2a` published 3 / 13.** Wrong, because `check_proof_seal_currency.sh` prints `$total/$total` —
+  which reads as a tautology until you notice `total=19` is a declared literal, compared at line 352
+  with `[ "$passed" -eq "$total" ]`.
+
+Three attempts, three textual proxies, three wrong answers. The method failure is recorded as
+`[[self-test-coverage-guard-is-in-the-exit-path]]` rather than left as an anecdote.
+
+### The claim that mattered most, falsified behaviourally
+
+`.2` instructed this leaf to copy `$passed/$total`. Measured on `check_book_quantitative_claims.pl`:
+
+```text
+before .3   delete one case → "self-test 18/18", exit 0     ← blind
+after  .3   delete one case → "ran 18 cases, declaration expects 19", exit 2
+```
+
+`$total` is incremented inside the same case loop, so both sides drop together. The form detects a
+**failing** case, which is real and is not this property.
+
+### One number was already false, as `.2a` predicted
+
+`check_persisted_artifact_paths.pl` printed `self-test 15/15 passed.` and runs **18** named assertions
+— 12 `@cases` entries plus six standalone seam/migration checks. It now reports `18/18`, derived.
+
+It was also **unread**: `check_project_data_locality.sh` invokes it as `--self-test >/dev/null`, so the
+figure never reached a log. That is why the remedy has to be an exit-code guard rather than a better
+message, and it generalises — a number printed into a void is not evidence of anything.
+
+## Acceptance Checklist (enforced) — `.3`
+
+- [x] **REPRODUCE / MEASURE** — the behavioural oracle, per check: delete one self-test case, read the
+  exit code. 4 of 16 guarded at `HEAD`; 12 not. `check_persisted_artifact_paths.pl`'s published 15 was
+  wrong by 3.
+- [x] **ROOT CAUSE (WHY + WHERE)** — four distinct shapes, all in the report path: a literal string
+  (`"self-test 15/15 passed."`), `$passed/$passed`, `$passed/$total` with `$total++` in the case loop,
+  and a bare counter. None of the four can observe a case leaving the suite.
+- [x] **ADDRESSED (verified)** — each of the 12 now declares its expected count as a literal beside its
+  suite and dies on mismatch. All 16 pass with derived counts: 60/60, 61/61, 15/15, 18/18, 15/15,
+  19/19, 27/27, 13/13, 27/27, 25/25, 47/47, 93/93, plus the 4 already guarded.
+  **Observed RED** on one member of every class: `fact_card_catalog` exit 2, `active_task_evidence`
+  255, `task_tree_archive` 255, `persisted_artifact_paths` 25, `corpus_kb_currentness` 2,
+  `book_quantitative_claims` 2, `test_derived_state_authorities` 255.
+- [x] **NO REGRESSION** — `perl -c` clean on all 12; every self-test green with the derived count;
+  `scripts/check_doctrines.sh` green. No production rule, contract, ceiling or corpus artifact touched,
+  so no rebuild.
+- [x] **GENERICITY (ADR 0006)** — one shape applied uniformly: a declared literal beside the suite. No
+  contract file, no registry of script names, nothing document- or vendor-specific.
+- [x] **LOCKSTEP** — `DOCTRINE_ENFORCEMENT.md` §3 carried `.2`'s wrong table and `.2a`'s wrong count;
+  both corrected with the behavioural test stated as the only reliable one. Fact card
+  `[[self-test-coverage-guard-is-in-the-exit-path]]` records the method failure. Not a book change:
+  doctrine machinery.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `PRODUCTION-GRAPH-CENSUS-PIN.3` — give the twelve unguarded self-test reports a denominator
-   something compares. The remedy already exists in four sibling checks; start with the decorative
-   five, where the published figure may already be false.
+1. *(none open)* — `.0`-`.3` are closed. The census is declared and compared at commit cadence, the
+   registry sweep is done, and every check that reports a self-test count now fails closed when one is
+   removed. A future leaf would be about the 15 further report lines the broadened producer surfaces
+   beyond the 16 adjudicated here.
 
 ## Decisions
 
@@ -448,6 +524,17 @@ Ordered; PNT selects the first eligible leaf.
 None.
 
 ## Verification Log
+
+- `2026-09-12` — `.3`. Adjudicated **behaviourally**, not textually: for each check, delete one
+  self-test case and read the exit code. That is the third method this tree has used and the first
+  correct one; `.2` read the print format and `.2a` read it again. 4 of 16 guarded at `HEAD`, 12 not.
+  **Observed RED on a member of every class after remediation** — `fact_card_catalog` exit 2,
+  `active_task_evidence` 255, `task_tree_archive` 255, `persisted_artifact_paths` 25,
+  `corpus_kb_currentness` 2, `book_quantitative_claims` 2, `test_derived_state_authorities` 255 — and
+  the decisive before/after on the form `.2` recommended: `check_book_quantitative_claims.pl` went
+  `19/19` → `18/18` **exit 0** before, and `ran 18 cases, declaration expects 19` **exit 2** after.
+  All 16 pass with derived counts. `perl -c` clean on all 12 edited scripts;
+  `scripts/check_doctrines.sh` green. Read-only as to the corpus; no rebuild.
 
 - `2026-09-12` — `.2a`. All 16 checks `.2` censused re-adjudicated BY HAND against the single question
   "does deleting one self-test case make this check fail?", by reading each script's count guard rather
@@ -491,6 +578,13 @@ None.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`.
 
 ## Changelog
+
+- `2026-09-12` — `.3` closed, and it corrects BOTH earlier statements of this census. The settled
+  figure is 4 guarded / 12 unguarded at `HEAD`: `.2`'s counts were right with entirely wrong membership,
+  `.2a`'s membership was right with the wrong count. All 12 are remediated with a literal declared
+  beside the suite, and `check_persisted_artifact_paths.pl`'s published 15 turned out to be a suite of
+  18. The method failure — three textual proxies, three wrong answers — is recorded as
+  `[[self-test-coverage-guard-is-in-the-exit-path]]`.
 
 - `2026-09-12` — `.2a` corrects `.2`. The census was 3 guarded / 13 unguarded, not 4 / 12, and the
   `$passed/$total` form `.2` named as the remedy is not a coverage guard at all — `$total` counts the

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many production rules does the registry declare
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > how many property tables are admitted as signal tables corpus-wide
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how many protocol states carry a machine name corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -14,6 +18,8 @@
   > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > how many registry checks guard their own coverage
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how many retained documents depended entirely on heuristic SemanticIR interfaces
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -156,6 +162,8 @@
   > how will the shared rolling ledger archive index be partitioned
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > in what order do I rebuild a retained corpus chain
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > is $passed/$total a coverage guard
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is 'X, which connects to Y, drives Z and W' clause distribution handled
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -288,12 +296,3 @@
   > is source_ir.json bounded in size for very large PDFs
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the .5.ii enum member-quality gate landed (yes, LANDED 2026-06-24: is_prose_fragment_member_name + PROSE_SENTENCE_SPINE_WORDS in ir/evidence.rs gate the member loop in synthesize_encoding_declarations_for_enum, one seam for both call paths; AXI manager.isf now emits (BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7)) recovering
-  > codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > is the .isf affected by transaction membership (no — emitter lowers steps, not ports/phase_membership)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > is the 46 percent figure the defect rate
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > is the 640-line research record ceiling correctly calibrated

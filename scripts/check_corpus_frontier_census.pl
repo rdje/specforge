@@ -524,6 +524,14 @@ sub self_test {
         print STDERR "corpus-frontier-census: self-test $passed/$total passed, $failed FAILED.\n";
         return 0;
     }
+    # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$total` detects a FAILING case but not a
+    # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
+    # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
+    # expected case count is therefore declared here, independently of the loop.
+    my $expected_cases = 13;
+    die "corpus-frontier-census: self-test ran $total cases, declaration expects $expected_cases — "
+        . "re-derive the declaration beside the suite\n"
+        if $total != $expected_cases;
     print "corpus-frontier-census: self-test $passed/$total passed.\n";
     return 1;
 }

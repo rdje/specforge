@@ -734,5 +734,13 @@ sub run_self_test {
         remove_tree($fixture);
         $passed++;
     }
-    print "task-tree-archive self-test: $passed/$passed source/route/identity/boundary cases pass.\n";
+    my $expected = 15;
+    # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
+    # and both sides drop together. The expected total is declared here, independently of the
+    # suite, so a case removed — or one added and not declared — fails instead of moving a
+    # number nothing compares.
+    die "task-tree-archive self-test ran $passed assertions, declaration expects $expected — "
+        . "re-derive the declaration beside the suite\n"
+        if $passed != $expected;
+    print "task-tree-archive self-test: $passed/$expected source/route/identity/boundary cases pass.\n";
 }

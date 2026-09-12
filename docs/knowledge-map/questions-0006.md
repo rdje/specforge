@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how flexible is the register model / what register-table shapes are handled
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > how good is prose signal capture / .3a quality
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -293,7 +297,3 @@
   > how many phrase name cells does the current reader accept
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > how many placeholder tokens exist corpus-wide
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how many production rules does the registry declare
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > how many property tables are admitted as signal tables corpus-wide

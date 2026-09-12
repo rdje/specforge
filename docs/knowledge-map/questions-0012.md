@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > what makes a behavioral genericity run invalid unmeasurable or failed
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what makes a corpus document unmeasurable for chain currency
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > what makes a source-to-Intent residual actionable
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > what makes a valid activate-only opt-in extractor candidate
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > what makes legacy absolute path rebasing safe and unambiguous
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > what message field metrics does validate emit
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > what model do converge / enrich / nlp-enrich use by default
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -285,15 +297,3 @@
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > where is actor-signal relation drive/read direction decided in evidence.rs
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > where is adaptive_batch_pages / BatchSizePolicy in the code
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > where is build_fixture.py digest pinned
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > where is coordinated-object actor-signal relation extraction implemented
