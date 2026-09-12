@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PRODUCTION-GRAPH-CENSUS-PIN`
-- Status: `active` (`2026-09-12`; `.0`-`.1` done, `.2` open)
+- Status: `active` (`2026-09-12`; `.0`-`.2` done; `.3` opened by `.2`)
 - Roadmap lane: `process / doctrine enforcement`
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -106,7 +106,7 @@ been able to move them without any local signal.
   `census::disagreements`; the test's eighteen literals are gone and it reads the same contract.
   Commit: `PRODUCTION-GRAPH-CENSUS-PIN.1`
 
-- ID: `PRODUCTION-GRAPH-CENSUS-PIN.2` · Status: `pending` · Goal: **find the other censuses that print
+- ID: `PRODUCTION-GRAPH-CENSUS-PIN.2` · Status: `done` (`2026-09-12`) · Goal: **find the other censuses that print
   without comparing.** This one was found by accident, by a slice that happened to run `cargo test`.
   The general shape — a doctrine check that derives a number, reports it, and compares nothing —
   is mechanical to search for: every registered check in `scripts/check_doctrines.sh` that emits a
@@ -114,6 +114,26 @@ been able to move them without any local signal.
   changes. Report the population; open leaves only for the ones where a silent change would matter.
   Prerequisite: `.1` (its design decides what "comparing" should look like here).
   Verification: the census is the deliverable; a count with no adjudication is not.
+  **Answered, and the population is not where the leaf expected to find it.** The registry's checks do
+  compare what they measure about the REPOSITORY. What none of them compares is what they report about
+  THEMSELVES: 12 of the 16 that print a self-test coverage count cannot detect a change in it. Result
+  below; the fix is `.3`. Producer: `python3 scripts/measure_self_test_coverage_reports.py`.
+  Commit: `PRODUCTION-GRAPH-CENSUS-PIN.2`
+
+- ID: `PRODUCTION-GRAPH-CENSUS-PIN.3` · Status: `pending` (opened `2026-09-12` by `.2`) · Goal: **give
+  the twelve unguarded self-test reports a denominator something compares.** The remedy is already
+  written and already in the repository: four checks do it correctly with `$passed/$total`, where the
+  two values are computed independently and a deleted case makes them differ. The other twelve need the
+  same one-line shape, and no contract file — the declaration belongs next to the suite it counts.
+  **Do the DECORATIVE five first and expect to find a wrong number.** Those print a literal
+  (`"self-test 15/15 passed."`) that is derived from nothing, so it cannot be checked against the suite
+  and is the only class where the published figure may already be false. A hand count of
+  `check_persisted_artifact_paths.pl` does not obviously reproduce its 15 — 12 entries in `@cases` plus
+  4 standalone assertions — but `.2` deliberately did not settle it, because *"nobody can tell"* is the
+  finding and guessing the true number would paper over it. Settle each by making the script count.
+  Prerequisite: `.2`. Verification: observed RED per class — delete one self-test case from one check of
+  each class and confirm the check now fails; and state, per decorative check, what the number actually
+  was.
 
 ## `.1` — result (`2026-09-12`)
 
@@ -198,14 +218,99 @@ literals in a test that could not see them until push.
   the distinction be stated where the next author will meet it. Not a book change: this is doctrine
   machinery, not user-visible product behaviour.
 
+## `.2` — result (`2026-09-12`)
+
+### The shape is there, one level up from where the leaf looked
+
+`.2` was opened to sweep the registry for `.0`'s shape — a check that derives a number, reports it, and
+compares nothing. The checks turn out to compare what they measure about the **repository** rather well.
+What none of them compares is what they report about **themselves**.
+
+Nearly every registered check ends with a reassuring self-test line. `python3
+scripts/measure_self_test_coverage_reports.py` classifies how that number is produced, over 16 checks:
+
+| class | checks | how the number is produced | delete a self-test case → |
+| --- | ---: | --- | --- |
+| `derived` | **4** | `$passed/$total`, computed independently | they differ, the check **fails** |
+| `TAUTOLOGY` | **4** | `$passed/$passed` | prints `59/59`; exit 0 |
+| `DECORATIVE` | **5** | a literal in the message: `"self-test 15/15 passed."` | prints `15/15` forever |
+| `BARE` | **3** | a running counter, no declared total | the counter moves; nothing reads it |
+
+**12 of 16 cannot detect a change in their own coverage.**
+
+```text
+TAUTOLOGY   check_active_task_evidence.pl  check_fact_card_catalog.pl
+            check_proof_seal_currency.sh   check_task_tree_archive.pl
+DECORATIVE  check_chain_currency.sh        check_corpus_kb_currentness.pl
+            check_persisted_artifact_paths.pl
+            check_source_pdf_registry_currentness.pl
+            check_validation_snapshot_currentness.pl
+BARE        test_derived_state_authorities.pl  test_derived_state_contracts.pl
+            test_live_document_size.pl
+```
+
+### The limit, stated, because the headline would otherwise overclaim
+
+**A self-test that FAILS still fails every one of these checks.** They `die` on a failing case; the
+verdict is real. What is unguarded is **coverage** — a case silently removed, or one never added, moves
+the reported number and nothing compares it. That is a weaker defect than `.0`'s and it is still the
+same shape: the number is in the output, and nothing reads it.
+
+### Why `DECORATIVE` is the worst of the three
+
+A tautology at least moves with the suite. A hardcoded literal does not move at all:
+
+```perl
+if ($mode eq 'self-test') {
+    run_self_test();
+    print "persisted-artifact-paths: self-test 15/15 passed.\n";
+}
+```
+
+`15` is a string. It is not derived from the suite, cannot be compared against it, and will keep
+asserting `15` whatever `run_self_test` contains. A reader meets `15/15` and reads coverage evidence.
+
+**This leaf deliberately does not settle whether that 15 is currently right.** A hand count finds 12
+entries in `@cases` plus 4 standalone assertions, which does not obviously reproduce it — but resolving
+it by hand would replace an underivable number with a number derived by me, and *"nobody can tell"* is
+the finding. `.3` settles each by making the script count.
+
+### What the sweep did NOT find, stated so the absence is evidence
+
+Every check that publishes a number about the repository — `278 canonical cards`, `301 facts / 2475
+question keys`, `158 task trees`, `946 files / 57 surfaces`, `22 tracked PDFs`, `156/156 KG fixtures` —
+**is compared**, by a derive-and-diff, a contract, or a gold score. `.0`'s defect was genuinely the
+exception among repository-facing numbers rather than the rule, which is worth knowing: the sweep's
+value is that it bounds the problem as well as locating it.
+
+## Acceptance Checklist (enforced) — `.2`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_self_test_coverage_reports.py`: 16 checks
+  report a self-test coverage count; 4 `derived`, 4 `TAUTOLOGY`, 5 `DECORATIVE`, 3 `BARE`. Each class is
+  named by how the number is produced, not by whether it looks plausible.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the report line itself. `check_fact_card_catalog.pl` prints
+  `"$passed/$passed …"`, so the ratio is structurally incapable of being anything but `N/N`;
+  `check_persisted_artifact_paths.pl` prints the literal `"self-test 15/15 passed."` after calling
+  `run_self_test()`, so the figure is independent of the suite entirely.
+- [x] **ADDRESSED (verified)** — the census IS this leaf's deliverable, per its own stated verification
+  ("a count with no adjudication is not"). All 16 are classified individually and the four `derived`
+  checks are named as the working precedent the fix should copy, so `.3` has a remedy that already
+  exists in the repository rather than a new mechanism.
+- [x] **NO REGRESSION** — read-only: the census reads the check scripts as text and does not execute
+  them. No production rule, contract, ceiling, or corpus artifact is touched.
+- [x] **GENERICITY (ADR 0006)** — classification is by the shape of the report expression, not by script
+  name; a new check is classified by the same four patterns without being listed anywhere.
+- [x] **LOCKSTEP** — `DOCTRINE_ENFORCEMENT.md` §3 already carries "A census that reports is not a check"
+  from `.1`; this leaf adds the self-coverage corollary to it. Not a book change: doctrine machinery,
+  not user-visible product behaviour.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `PRODUCTION-GRAPH-CENSUS-PIN.2` — the same shape elsewhere in the registry. `.1` shipped the
-   pattern and `DOCTRINE_ENFORCEMENT.md` §3 now names it, so the sweep has a definition to match
-   against: every registered check that emits a numeral in its success line, adjudicated by hand
-   against whether anything fails when that numeral changes.
+1. `PRODUCTION-GRAPH-CENSUS-PIN.3` — give the twelve unguarded self-test reports a denominator
+   something compares. The remedy already exists in four sibling checks; start with the decorative
+   five, where the published figure may already be false.
 
 ## Decisions
 
@@ -247,6 +352,15 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.2`. Read-only; no artifact written, executed or mutated — the census reads the check
+  scripts as text. All 16 self-test report lines classified individually by how the number is produced:
+  4 `derived`, 4 `TAUTOLOGY`, 5 `DECORATIVE`, 3 `BARE`. The classification was verified by reading the
+  printing statement in each case rather than by pattern-matching a name; an early grep using an ERE
+  backreference silently matched nothing and would have reported 0 tautologies, so the producer uses a
+  real regex engine and the counts were cross-checked against the printed lines from a full
+  `check_doctrines.sh` run. The question of whether any decorative literal is currently WRONG is
+  deliberately left open for `.3` — see the result section.
+
 - `2026-09-12` — `.1`. Observed RED on four probes, one per failure mode: a perturbed boundary pin, a
   perturbed volume baseline, a perturbed volume **delta** (which proves `baseline + delta` is the
   compared total, so a slice cannot land by editing the baseline and leaving its change unattributed),
@@ -268,6 +382,11 @@ None.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`.
 
 ## Changelog
+
+- `2026-09-12` — `.2` closed, and the population is not where the leaf expected it. The registry's
+  repository-facing numbers are compared; what is unguarded is what each check reports about its own
+  coverage — 12 of 16 self-test counts cannot detect a case being removed. `.3` opened for the fix,
+  which already exists in four sibling checks as `$passed/$total`.
 
 - `2026-09-12` — `.1` closed. The census moved out of eighteen test literals into
   `doctrine/production_genericity/flow_census.json`, which the gate-tier flow check now COMPARES

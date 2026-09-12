@@ -131,8 +131,31 @@ time; nothing read it.
    **attributing a census change to the leaf that caused it**, which is what was missing across the 29
    silent commits.
 
-The general shape — *a doctrine check that derives a number, reports it, and compares nothing* — is
-mechanical to search for, and `PRODUCTION-GRAPH-CENSUS-PIN.2` owns that sweep.
+### …including the number a check reports about ITSELF
+
+`PRODUCTION-GRAPH-CENSUS-PIN.2` ran that sweep and found the registry in good shape on the numbers its
+checks publish about the **repository** — `278 canonical cards`, `301 facts`, `946 files / 57 surfaces`,
+`156/156 KG fixtures` are all compared by a derive-and-diff, a contract, or a gold score. The shape
+survives one level up instead, in what each check reports about its **own coverage**. Of the 16 that
+print a self-test count, **12 cannot detect a change in it**:
+
+| how the report line produces the number | checks | delete a self-test case → |
+| --- | ---: | --- |
+| `$passed/$total`, computed independently | 4 | they differ, the check **fails** |
+| `$passed/$passed` | 4 | prints `59/59`; exit 0 |
+| a literal in the message — `"self-test 15/15 passed."` | 5 | prints `15/15` forever |
+| a running counter with no declared total | 3 | the counter moves; nothing reads it |
+
+**Write the denominator so that something computes it independently.** `$passed/$total` is the whole
+fix and four checks already do it. A literal is the worst form, because it does not move with the suite
+at all and so reads as coverage evidence while being a string.
+
+State the limit honestly when you report this class: a self-test that **fails** still fails these
+checks — they `die` on a failing case. What is unguarded is **coverage**, which is a weaker defect than
+a wrong published number and is still the same shape.
+
+`PRODUCTION-GRAPH-CENSUS-PIN.3` owns the remediation; `python3 scripts/measure_self_test_coverage_reports.py`
+re-derives the population.
 
 ---
 
