@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why does one appositive never establish a signal alias
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > why does one register appear as several RegisterRecords / how are split register-field tables merged
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > why does recover-register-bits still recover 0 bits after the plumbing is complete
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -196,6 +202,8 @@
   > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why is a comma-separated signal family safe when a space-separated one is not
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > why is a conditional rule in EvidenceIR but not in SemanticIR
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -290,11 +298,3 @@
   > why is section-title boilerplate filtering insufficient
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > why is signal direction hard to lower faithfully to a single .isf module
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why is source_ref ambiguous
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why is statement_0223 still a normative statement
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why is subs/fsmgen empty in a git worktree
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > why is synthesize_directions_from_relations load-bearing for Avalon

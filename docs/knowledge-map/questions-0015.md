@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why did the Cortex-A76 reviewed source region disappear
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -291,9 +297,3 @@
   > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why does my visual asset have no interior_texts key
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why does one appositive never establish a signal alias
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why does one register appear as several RegisterRecords / how are split register-field tables merged
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)

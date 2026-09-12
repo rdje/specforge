@@ -64,6 +64,8 @@
   > can EvidenceIR represent protocol structure without hardcoding a specification
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > can FigureRegion raw_image_path store an absolute path
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > can I apply the shared-prefix family test to whitespace
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -296,5 +298,3 @@
   > does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > does .2m change the emitted .isf or the WIRE-BASED-100 surfaces (no — provably orthogonal)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)

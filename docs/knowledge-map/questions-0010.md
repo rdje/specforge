@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > what does the residual actionability denominator actually count
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does traverse_pictures False do to SpecForge ingest
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does uncaptured_normative_statement_ids do
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > what dominates the source_ir.json size (content_elements? page_artifacts?)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -292,9 +298,3 @@
   > what is scripts/check_doctrines.sh / the doctrine driver
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > what is select_initiator_actor / initiator_perspective_directions
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is signal_presence_records and what does a SignalPresenceRecord hold
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is snap_subject_to_sentence_token and when does it fire
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what is source_batch in SourceIR

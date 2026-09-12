@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what are the blocked clean replay source to IntentIR counts
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > what are the canonical SWD protocol surface counts
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what are the corrected 17-document behavioral held-out outcomes
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
@@ -254,6 +258,8 @@
   > what does opaque identifier mean in SpecForge
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > what does record-00000102 mean in a SourceIR proof verification failure
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what does refusing a phrase name cell cost
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > what does resolve_indexed_signal_family do
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -292,9 +298,3 @@
   > what does the name-column override score, and what does it refuse
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > what does the pre-commit hook NOT check
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > what does the residual actionability denominator actually count
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what does traverse_pictures False do to SpecForge ingest
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does uncaptured_normative_statement_ids do

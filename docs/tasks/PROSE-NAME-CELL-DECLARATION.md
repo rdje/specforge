@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PROSE-NAME-CELL-DECLARATION`
-- Status: `active` (`2026-09-12`; `.0` + `.2` done; `.1`, `.3`, `.4` open)
+- Status: `active` (`2026-09-12`; `.0`, `.1`, `.2` done; `.3`, `.4` open)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-11`
 - Last updated: `2026-09-12`
@@ -75,16 +75,13 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
   deliverables.
   Commit: `PROSE-NAME-CELL-DECLARATION.0`
 
-- ID: `PROSE-NAME-CELL-DECLARATION.1` · Status: `pending` · Goal: **the phrase refusal rule.** Refuse a
-  name cell classified `phrase`, ordered strictly after the four legitimate shapes so each survives by
-  construction: `comma-family` (the reader's own `signal_names_in_name_cell` admission),
-  `footnote-marked`, `bracket-suffixed`, `repeated-token`. Population it newly refuses, from `.0`:
-  **2 of 604 current, 15 of 1,251 joined legacy**. Its value is not those 2 — it is that
-  `SIGNAL-DECLARATION-ROW-DROP.2c` stays deferred until a guard exists, and `.0` measured that the
-  guard is worth 3 of the 4 rows `.2c` would newly mint in eMMC `table_0020`.
-  Prerequisite: `.2` (see its decision — shipping `.1` first would erase `.2`'s only current evidence).
-  Verification: corpus-wide refusal count + adjudicated sample; each of the four legitimate shapes shown
-  to survive; wire golds re-scored, not assumed.
+- ID: `PROSE-NAME-CELL-DECLARATION.1` · Status: `done` (`2026-09-12`) · **No rule shipped, and the
+  measurement is why.** The leaf was to refuse a `phrase` name cell, ordered after the four legitimate
+  shapes. `.2` took its current-stratum population to 0, so its whole remaining justification was to be
+  the guard `SIGNAL-DECLARATION-ROW-DROP.2c` waits on. Measured against exactly that population, it is
+  the wrong guard — see `.1` below. Superseded as a guard by `.4`, which dominates it on the same rows.
+  Verification: read-only; `python3 scripts/measure_declaration_name_cell_shapes.py --guard-population`.
+  Commit: `PROSE-NAME-CELL-DECLARATION.1`
 
 - ID: `PROSE-NAME-CELL-DECLARATION.2` · Status: `done` (`2026-09-12`) · Goal: **the content-based
   name-column override cannot fire on a short table, and that was the whole current-stratum phrase
@@ -255,6 +252,57 @@ favour of their **Description** column and stop doing so — a recall repair tha
 `HRESETn` — the document's own active-LOW spelling — reaches IntentIR for the first time. `table_0033`
 supplies `HRESET`, a text-layer truncation, and supplied it alone until now.
 
+## `.1` — the guard measured against the population it guards (`2026-09-12`)
+
+Producer: `python3 scripts/measure_declaration_name_cell_shapes.py --guard-population`. Read-only.
+
+`.2` took the phrase population in the current stratum to **0**, so `.1` had exactly one remaining
+justification: to be the guard `SIGNAL-DECLARATION-ROW-DROP.2c` is deferred waiting for. That guard can
+therefore be judged on one population — **the 7 rows an enumerated-width reading would newly admit**,
+all of them legacy, in two documents:
+
+| document | table | width cell | name cell | shape | a phrase rule |
+| --- | --- | --- | --- | --- | --- |
+| Avalon | `table_0011` | `2, 4, 8, 16, 32, 64, 128` | `byteenable byteenable_n` | `phrase` | **refuses a real wire** |
+| Avalon | `table_0012` | `8, 16, 32, …, 1024` | `readdata` | `single-token` | admits (correct) |
+| Avalon | `table_0012` | `8, 16, 32, …, 1024` | `writedata` | `single-token` | admits (correct) |
+| eMMC | `table_0020` | `1, 4, 8` | `Backwards Compatibility with legacy MMCcard` | `phrase` | refuses a phantom |
+| eMMC | `table_0020` | `1,4, 8` | `High Speed SDR` | `phrase` | refuses a phantom |
+| eMMC | `table_0020` | `4, 8` | `High Speed DDR` | `phrase` | refuses a phantom |
+| eMMC | `table_0020` | `4, 8` | `HS200` | `single-token` | **admits a phantom** |
+
+It refuses 4 and admits 3. Three of the four refusals are right and one is a real signal pair; one of
+the three admissions is a phantom it cannot see. As a guard it takes `.2c` from 3 real / 4 phantom
+(43% precision) to 2 real / 1 phantom (67%) — **and loses `byteenable`.**
+
+### The obvious escape hatch is refused by its own selection
+
+`byteenable byteenable_n` is a pair written with a space instead of a comma, so the natural repair is to
+apply `signal_names_in_name_cell`'s shared-affix test to whitespace as well. Measured, that rule selects
+**9** cells:
+
+- **real pairs (6)**: Avalon's `reset reset_n`, `read read_n`, `write write_n`, `irq irq_n`,
+  `byteenable byteenable_n`, and GIC-600's `icpdtready icpdtvalid`.
+- **not signals (3)**: AXI-H `table_0076`'s `WriteClean WriteBack` and `WriteUnique WriteLineUnique`,
+  which are **transaction names** sharing the prefix `write`, and USB 3.2's `Enhanced SuperSpeed`, a
+  plain phrase whose two words happen to share the suffix `ed`.
+
+The asymmetry is the finding, and it is general: **a comma is an author enumerating; a space is the
+default separator between any two words.** The same two-character affix test that is safe after a comma
+is a coincidence detector after a space. One in three is not a rule.
+
+### Why `.4` dominates, which is the actual decision
+
+Every phantom in the guarded population is **one table** — eMMC `table_0020`, the bus-mode matrix.
+Refuse it at the table or fix the SourceIR classification that typed it `signal_description`, and the
+population `.2c` newly admits becomes the three Avalon rows: `readdata`, `writedata`, `byteenable` —
+**3 real, 0 phantom, 100% precision**, and a phrase rule at that point does nothing but delete
+`byteenable`. A guard that is unnecessary once the real defect is fixed, and harmful in the meantime,
+is not a guard.
+
+`.1` therefore ships no rule. The `phrase` class stays what `.0` built it to be — a measurement
+instrument and the shape test `.2`'s column score is built on — rather than becoming a refusal.
+
 ## Acceptance Checklist (enforced)
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_name_cell_shapes.py`: current stratum
   604 declarations, **2 phrase**, both AHB `table_0004`. `specforge eval-extraction` + the persisted
@@ -291,13 +339,11 @@ supplies `HRESET`, a text-layer truncation, and supplied it alone until now.
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `PROSE-NAME-CELL-DECLARATION.1` — the phrase refusal rule, re-measured after `.2`. Its current-stratum
-   population is now **0**; its remaining justification is the guard `SIGNAL-DECLARATION-ROW-DROP.2c`
-   waits on, and the 11 legacy phrase declarations a re-ingest would reproduce. The leaf is allowed to
-   conclude that the column score already covers the case and close without a rule.
-2. `PROSE-NAME-CELL-DECLARATION.4` — the level question for a mode matrix. Unaffected by `.2`: eMMC
-   `table_0020`'s name column is genuinely column 0, so no column score reaches it.
-3. `PROSE-NAME-CELL-DECLARATION.3` — a sentence is not a parametric width. Ordered last because `.2`
+1. `PROSE-NAME-CELL-DECLARATION.4` — the level question for a mode matrix. Promoted by `.1`: **all four
+   phantoms in the population `.2c` would newly admit are one table**, and refusing that table takes
+   `.2c` from 43% precision to 100% without costing a wire. Unaffected by `.2`, whose column score
+   leaves eMMC `table_0020` reading column 0 exactly as before.
+2. `PROSE-NAME-CELL-DECLARATION.3` — a sentence is not a parametric width. Ordered last because `.2`
    removed both of its live instances; see the leaf.
 
 ## Decisions
@@ -324,9 +370,13 @@ Ordered; PNT selects the first eligible leaf.
   is the same question `.0` had already answered. Written down rather than replaced silently.
 - `2026-09-12` — **the margin stayed at 2.** A margin of 1 under the new score changes nothing in the
   current stratum. Two variables were available and only one needed to move.
-- `2026-09-12` — **`.1` is kept despite a current-stratum population of 2.** It is not justified by
-  those two. It is the guard `SIGNAL-DECLARATION-ROW-DROP.2c` was deferred waiting for, and `.0`
-  measured its worth there: 3 of the 4 rows `.2c` would newly mint in eMMC `table_0020`.
+- `2026-09-12` — **`.1` was kept for the guard, then closed by measuring it against the guarded
+  population.** `.0` justified the leaf by "3 of the 4 rows `.2c` would newly mint in eMMC
+  `table_0020`". Measured over all 7 rows rather than that one table, the rule also refuses Avalon's
+  `byteenable byteenable_n` and still admits `HS200`. The number that justified the leaf was true and
+  the leaf was still wrong, because it was counted on a subset of its own population.
+- `2026-09-12` — **no whitespace-family rule.** Its selection is 6 real pairs and 3 false positives,
+  and the reason is structural rather than a tuning problem: a comma is an author enumerating.
 
 ## Open Questions
 
@@ -346,6 +396,10 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.1`. Read-only decision leaf; no code change, no artifact written or mutated.
+  `python3 scripts/measure_declaration_name_cell_shapes.py --guard-population` — 7 enumerated-width
+  rows with their name-cell shapes, and the 9 whitespace-family candidates, both printed verbatim for
+  adjudication. The default census mode is unchanged and still reports current 604/604, 0 phrase.
 - `2026-09-12` — `.2`. Controls, both **observed RED** against the exact defect they guard, not asserted:
   `a_short_rotated_table_is_scored_by_the_cells_the_reader_reads_whole` fails with
   `["Clock", "Reset"]` when the `name_cell_is_read_whole` filter is removed from the score; and
@@ -386,12 +440,16 @@ None.
 
 - Opened in the commit that deferred `SIGNAL-DECLARATION-ROW-DROP.2c`.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.0` (`4bb6c1c8`).
-- `.2` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`.
+- `.2` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0` (`ba9e9a74`).
+- `.1` — `PROSE-NAME-CELL-DECLARATION.1`.
 
 ## Changelog
 
 - `2026-09-11` — tree created from `SIGNAL-DECLARATION-ROW-DROP.2c`'s adjudication, which found 4 of 7
   enumerated-width cells to be a misclassified bus-mode matrix already minting `HS400` as a signal.
+- `2026-09-12` — `.1` closed with **no rule**. Measured against the 7 rows it exists to guard, a phrase
+  refusal loses Avalon's `byteenable byteenable_n` and still admits eMMC `HS200`; the whitespace-family
+  escape hatch selects 3 false positives in 9. `.4` dominates it and is promoted to the frontier.
 - `2026-09-12` — `.2` closed. The leaf's own ratio proposal was falsified by census (fixes nothing,
   breaks AHB `table_0034`); shipped `name_cell_is_read_whole` instead. AHB `table_0004` now declares
   `HCLK`/`HRESETn`; current-stratum phrase declarations 2 → 0, IntentIR interface signals 40 → 41.

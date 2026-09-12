@@ -355,6 +355,105 @@ def candidate_row_approximation(root: str) -> dict:
     return {"rows": rows, "documents": len(documents)}
 
 
+# ── the guard population (`PROSE-NAME-CELL-DECLARATION.1`) ──────────────────────────
+
+WIDTH_HEADER_TERMS = ("width", "size", "bits")
+
+
+def is_enumerated_width(text: str) -> bool:
+    """A width cell listing two or more positive integers names a SET, not a width.
+
+    `SIGNAL-DECLARATION-ROW-DROP.2c` was deferred pending a guard against what reading it
+    would newly admit; this is that notation, mirrored from that leaf's own census.
+    """
+    stripped = text.strip()
+    if "," not in stripped:
+        return False
+    members = [part.strip() for part in stripped.split(",")]
+    return len(members) >= 2 and all(m.isdigit() and int(m) > 0 for m in members)
+
+
+def whitespace_family(raw_name: str) -> list[str] | None:
+    """The comma-family rule with a SPACE as the separator — a candidate, not a rule.
+
+    `byteenable byteenable_n` is a real pair the phrase class refuses, and the obvious
+    escape hatch is to apply `signal_names_in_name_cell`'s shared-affix test to whitespace.
+    Printed for adjudication precisely because the adjudication is what refuses it: a comma
+    is an author enumerating, whereas a space is the default separator between any two
+    words, so the same affix test admits `Enhanced SuperSpeed` and two AXI transaction-name
+    pairs. Kept here as measured evidence against a rule, not as one.
+    """
+    tokens = raw_name.split()
+    if len(tokens) < 2 or not all(is_hardware_signal_token(t) for t in tokens):
+        return None
+    lowered = [t.lower() for t in tokens]
+    shortest = min(len(t) for t in lowered)
+    prefix = 0
+    while prefix < shortest and all(t[prefix] == lowered[0][prefix] for t in lowered):
+        prefix += 1
+    suffix = 0
+    while suffix < shortest and all(
+        t[len(t) - 1 - suffix] == lowered[0][len(lowered[0]) - 1 - suffix] for t in lowered
+    ):
+        suffix += 1
+    return tokens if (prefix >= 2 or suffix >= 2) else None
+
+
+def guard_population(root: str) -> dict:
+    """What a phrase-refusal rule would guard, and what it would cost.
+
+    Two read-only populations over the persisted SourceIR corpus:
+      * `enumerated_width_rows` — the rows an enumerated-width reading would newly admit,
+        each with the shape of its name cell, so the guard's benefit and its cost are the
+        same table rather than two arguments;
+      * `whitespace_families` — every `phrase` cell whose tokens are all identifiers sharing
+        a two-character affix, for adjudication.
+    """
+    enumerated, families = [], []
+    for path in sorted(glob.glob(os.path.join(root, "generated/source_ir/*/source_ir.json"))):
+        key = os.path.basename(os.path.dirname(path))
+        evidence_path = os.path.join(root, "generated/evidence_ir", key, "evidence_ir.json")
+        declared: set[str] = set()
+        schema = None
+        if os.path.exists(evidence_path):
+            with open(evidence_path, "r", encoding="utf-8") as handle:
+                evidence = json.load(handle)
+            schema = evidence.get("schema_version")
+            declared = {
+                r["signal_name"]
+                for r in (evidence.get("table_signal_declaration_provenance") or [])
+            }
+        with open(path, "r", encoding="utf-8") as handle:
+            source = json.load(handle)
+        for table in source.get("structured_tables", []):
+            if table.get("table_kind") != "signal_description":
+                continue
+            headers = header_texts(table)
+            width_col = next(
+                (i for i, h in enumerate(headers)
+                 if any(term in h for term in WIDTH_HEADER_TERMS)),
+                None,
+            )
+            col = name_column(table)
+            for row in (table.get("body_rows") or []):
+                if col >= len(row):
+                    continue
+                raw = row[col]["text"].strip()
+                shape = classify_name_cell(raw)
+                if shape == "phrase" and whitespace_family(raw):
+                    families.append({"document": key, "table_id": table["table_id"], "cell": raw})
+                if width_col is None or width_col >= len(row):
+                    continue
+                if not is_enumerated_width(row[width_col]["text"]):
+                    continue
+                enumerated.append({
+                    "document": key, "schema_version": schema, "table_id": table["table_id"],
+                    "width_cell": row[width_col]["text"].strip(), "cell": raw, "shape": shape,
+                    "declares_today": bool(set(signal_names_in_name_cell(raw)) & declared),
+                })
+    return {"enumerated_width_rows": enumerated, "whitespace_families": families}
+
+
 def summarise(result: dict) -> dict:
     strata = {}
     for stratum in ("current", "legacy"):
@@ -383,9 +482,33 @@ def summarise(result: dict) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--json", action="store_true", help="emit the census as JSON")
+    parser.add_argument(
+        "--guard-population",
+        action="store_true",
+        help="print what a phrase-refusal rule would guard and what it would cost "
+             "(PROSE-NAME-CELL-DECLARATION.1)",
+    )
     args = parser.parse_args()
 
     root = repo_root()
+    if args.guard_population:
+        current_schema = read_schema_constant(root)
+        guard = guard_population(root)
+        rows = guard["enumerated_width_rows"]
+        print("=== what a phrase-refusal rule would guard, and what it would cost (read-only) ===")
+        print(f"  rows an enumerated-width reading would newly admit: {len(rows)}")
+        for row in rows:
+            stratum = "CURRENT" if row["schema_version"] == current_schema else "legacy"
+            print(f"    [{stratum}] {row['document'][:26]:28s} {row['table_id']:12s} "
+                  f"width={row['width_cell']!r:34s} name={row['cell'][:44]!r:46s} "
+                  f"shape={row['shape']:14s} declares_today={row['declares_today']}")
+        refused = [r for r in rows if r["shape"] == "phrase"]
+        print(f"  of those, a phrase rule refuses {len(refused)} and admits {len(rows) - len(refused)}")
+        families = guard["whitespace_families"]
+        print(f"\n  `phrase` cells that a whitespace-family rule would rescue: {len(families)}")
+        for family in families:
+            print(f"    {family['document'][:26]:28s} {family['table_id']:12s} {family['cell']!r}")
+        return 0
     result = census(root)
     strata = summarise(result)
     approximation = candidate_row_approximation(root)

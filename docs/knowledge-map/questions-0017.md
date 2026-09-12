@@ -3,6 +3,14 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why is source_ref ambiguous
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why is statement_0223 still a normative statement
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why is subs/fsmgen empty in a git worktree
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > why is synthesize_directions_from_relations load-bearing for Avalon
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why is text inside a diagram missing from SourceIR
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap

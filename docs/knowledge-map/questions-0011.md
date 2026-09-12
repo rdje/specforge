@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is signal_presence_records and what does a SignalPresenceRecord hold
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is snap_subject_to_sentence_token and when does it fire
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what is source_batch in SourceIR
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > what is synthesize_register_field_tables
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
@@ -291,9 +297,3 @@
   > what must SpecForge derive to fully capture SWD; what are the gaps (as of 2026-09-01 generic extraction reaches 5 of the 29 verified facts: the four packet operations and the one interface-edge record; the frame fields and machine-bound states need a generic phase-scope grammar)
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > what must a slice that deletes a production rule say about the book
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > what must be rebuilt after moving the SpecForge repository
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > what must change together with the population replay orchestrator
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > what must happen before the USB4 inter-domain corpus refresh can run

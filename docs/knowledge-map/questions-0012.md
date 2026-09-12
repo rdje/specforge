@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > what must be rebuilt after moving the SpecForge repository
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > what must change together with the population replay orchestrator
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > what must happen before the USB4 inter-domain corpus refresh can run
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what owns containment of the live document adoption task history
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
@@ -291,9 +297,3 @@
   > where is the .6d.ii.f behavioral signoff recorded
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > where is the 12 document current replay manifest
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > where is the APB normalized bundle after WIRE-BASED-100.9b
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > where is the I2C signal gold seed
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > where is the LTL renderer for temporal rules

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the path portability contract cover FigureRegion raw images
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does the persisted path gate cover dormant schemas
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -296,5 +298,3 @@
   > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I waive or range-scope the task-acceptance check
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how do Published-claims ids resolve

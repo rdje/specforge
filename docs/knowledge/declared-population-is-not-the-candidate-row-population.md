@@ -19,6 +19,10 @@ answers:
   - "does refusing a phrase name cell recover the wire the row was hiding"
   - "can a row-level rule refuse the eMMC bus-mode matrix"
   - "how do I measure a declaration population through the reader rather than through a filter"
+  - "why is a comma-separated signal family safe when a space-separated one is not"
+  - "can I apply the shared-prefix family test to whitespace"
+  - "should SpecForge refuse a name cell that is a phrase"
+  - "what does refusing a phrase name cell cost"
 date: 2026-09-12
 status: current
 tags: [evidence-ir, declarations, census-method, adr-0006, legacy-artifacts, prose-name-cell-declaration]
@@ -101,6 +105,21 @@ Corpus-wide the score changes the name column on 7 of 602 `signal_description` t
 stratum: that one repair, and six USB 3.2 register/field tables mis-typed as signal tables which
 declare nothing either way — proven inert, because the proof seal accepted all 27 current EvidenceIR
 artifacts and only AHB's needed rebuilding.
+
+## A comma is an author enumerating; a space is not
+
+`signal_names_in_name_cell` admits `AWSIZE, ARSIZE` as two names because the members share a
+two-character affix. Avalon writes the same kind of pair with a space — `byteenable byteenable_n`,
+`read read_n`, `irq irq_n` — so applying that affix test to whitespace looks like the obvious
+generalisation. Measured, it selects **9** cells and **3 are wrong**: AXI-H's `WriteClean WriteBack` and
+`WriteUnique WriteLineUnique` are *transaction* names sharing the prefix `write`, and USB 3.2's
+`Enhanced SuperSpeed` is a plain phrase whose two words happen to end in `ed`.
+
+The separator is doing the work, not the affix. A comma is an author enumerating; a space is the default
+separator between any two words, so the same test becomes a coincidence detector. This is why
+`PROSE-NAME-CELL-DECLARATION.1` shipped no phrase-refusal rule: without a whitespace family the rule
+refuses `byteenable byteenable_n`, a real pair, and it still cannot refuse `HS200`. Reproduce with
+`python3 scripts/measure_declaration_name_cell_shapes.py --guard-population`.
 
 ## What no shape can separate
 
