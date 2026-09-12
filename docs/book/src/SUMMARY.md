@@ -14,6 +14,8 @@
   - [SourceIR](pipeline/sourceir.md)
   - [EvidenceIR](pipeline/evidenceir.md)
   - [Register And Bit-Layout Table Shapes](pipeline/register-tables.md)
+  - [Reading A Normative Obligation](pipeline/obligation-reading.md)
+  - [Evidence-Level Failure Modes](pipeline/evidence-failure-modes.md)
   - [Multimodal Evidence And Visual Grounding](pipeline/multimodal-evidence.md)
   - [SemanticIR](pipeline/semanticir.md)
   - [IntentIR](pipeline/intentir.md)
