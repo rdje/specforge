@@ -10467,6 +10467,22 @@ fn extract_signal_description_row_constraints(
                     ObligationSubject::Head(_) => continue,
                 }
                 let clause_text = clause.trim();
+                // EXTRACTION-QUALITY-GAUGE.3k.2f — the two refusals that say the constraint
+                // VOCABULARY has no slot for what this clause states. `.3d` refuses an inter-operand
+                // EQUALITY and `.3k.1` a comparative MAGNITUDE against a reference operand; both were
+                // wired into `extract_signal_constraints` only, so the same sentence was refused as a
+                // statement and published as a table row. They belong to the rule, not to one caller:
+                // whichever producer is holding the clause, `X must be equal to the value of Y` has
+                // nowhere to go but a fabricated kind.
+                //
+                // Evaluated over the CLAUSE, which is this producer's own unit and is also the scope
+                // `EXTRACTION-QUALITY-GAUGE.3k.5` is moving the statement path's copies toward — a
+                // relation stated in one clause must not refuse an obligation minted from another.
+                if is_relational_equality_constraint(clause_text)
+                    || is_reference_magnitude_constraint(clause_text)
+                {
+                    continue;
+                }
                 let lowered = clause_text.to_ascii_lowercase();
                 let constraint_kind = classify_signal_constraint_kind(&lowered, &discovered_values);
                 // The same guard the statement path applies: a kind that already encodes its own
@@ -36070,6 +36086,132 @@ mod extraction_quality_gauge_3k_6 {
         assert_eq!(report.persisted_total, 1);
         assert_eq!(report.verdicts.len(), 1);
         assert_eq!(report.verdicts[0].constraint_id, "sigcon_0001");
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_2f {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.2f` — a refusal that says the constraint VOCABULARY has no slot
+    //! for what a clause states belongs to the rule, not to one caller.
+    //!
+    //! `.3d` refuses an inter-operand EQUALITY and `.3k.1` a comparative MAGNITUDE against a
+    //! reference operand, and both were evaluated only inside `extract_signal_constraints`. The
+    //! table-row reader called neither, so the same sentence was refused as a statement and published
+    //! as a row — with a kind nothing in it states.
+    use super::*;
+    use tempfile::tempdir;
+
+    fn header(text: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: true,
+        }
+    }
+
+    fn cell(text: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        }
+    }
+
+    /// One signal-description table carrying `rows`, read by the REAL row producer.
+    fn read_rows(rows: Vec<Vec<StructuredTableCellRecord>>) -> Result<Vec<SignalConstraintRecord>> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Signal descriptions\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let row_count = rows.len() as u32 + 1;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "asset_0001".to_string(),
+            page_id: None,
+            caption_text: Some("Signal descriptions".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                header("Signal"),
+                header("Width"),
+                header("Source"),
+                header("Description"),
+            ]],
+            body_rows: rows,
+            row_count,
+            col_count: 4,
+        });
+        let known: HashSet<String> = ["ZETARANGE", "ZETAOAS", "OMEGABURST", "ZETAREADY"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let mut counter = 0usize;
+        Ok(extract_signal_description_row_constraints(
+            &source_ir,
+            &[],
+            &known,
+            &mut counter,
+            None,
+        ))
+    }
+
+    /// The defect, in both of its shapes. Each clause binds to its own row's signal, so the row
+    /// reader admits it and then has to name a kind — and the vocabulary has none, so it invents one:
+    /// a comparative magnitude becomes `must not be stable`, an equality becomes a value lifted out
+    /// of the phrase `the value of`.
+    #[test]
+    fn a_clause_with_no_vocabulary_slot_is_refused_in_the_row_path_too() -> Result<()> {
+        let records = read_rows(vec![
+            vec![
+                cell("ZETARANGE"),
+                cell("6"),
+                cell("Requester"),
+                cell("ZETARANGE must not be greater than the size indicated by the ZETAOAS field."),
+            ],
+            vec![
+                cell("OMEGABURST"),
+                cell("2"),
+                cell("Completer"),
+                cell("OMEGABURST must be equal to the value of ZETAREADY."),
+            ],
+        ])?;
+        assert!(
+            records.is_empty(),
+            "neither relation has a typed slot; an honest residual is correct where a fabricated \
+             fact is not: {records:?}"
+        );
+        Ok(())
+    }
+
+    /// The line both refusals are keyed on, asserted from the row path so the gate cannot quietly
+    /// widen into ordinary value bindings. A magnitude against a LITERAL carries no reference lead
+    /// and is a real constraint; the refusals must keep not firing on it.
+    #[test]
+    fn a_bound_against_a_literal_is_still_a_constraint() -> Result<()> {
+        let records = read_rows(vec![vec![
+            cell("ZETARANGE"),
+            cell("6"),
+            cell("Requester"),
+            cell("ZETARANGE must be stable when ZETAREADY is asserted."),
+        ]])?;
+        assert_eq!(
+            records.len(),
+            1,
+            "an ordinary row obligation is untouched: {records:?}"
+        );
+        assert_eq!(records[0].subject_signal, "ZETARANGE");
+        assert_eq!(records[0].constraint_kind.as_str(), "must_be_stable");
+        assert!(!is_reference_magnitude_constraint(
+            "ZETARANGE must be greater than 0"
+        ));
+        assert!(!is_relational_equality_constraint(
+            "ZETARANGE must have the same value in the Setup and Access phase"
+        ));
+        Ok(())
     }
 }
 

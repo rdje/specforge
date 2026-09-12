@@ -25,20 +25,20 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2g-REPLAY-JUDGES-THE-ROW-STRATUM",
-   "owner": "EXTRACTION-QUALITY-GAUGE.3k.2g",
-   "rationale": "The constraint replay gains the third deterministic producer: `replay_persisted_signal_constraints` takes the document's own SourceIr, composes the table-row pass the way the build composes it (append, refine polarity, dedup), unions the tables' names into the catalog, and admits `row_sigcon_*` to the judged set. `SourceIr::carries_canonical_source_classifications` and the command's `sibling_source_ir` gate that on a current-schema artifact, because a legacy load neutralizes the very classifications the row producer selects on. Two production helpers, one report field, and the branching each needs.",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2f-VOCABULARY-REFUSALS-BELONG-TO-THE-RULE",
+   "owner": "EXTRACTION-QUALITY-GAUGE.3k.2f",
+   "rationale": "The table-row reader now calls the two refusals that say the constraint vocabulary has no slot for what a clause states: `.3d`'s inter-operand equality and `.3k.1`'s comparative magnitude against a reference operand, both previously wired into the statement path alone. One guard clause over the clause the reader is already holding: one decision site and the two calls.",
    "baseline": {
-    "analyzed_functions": 2421,
-    "decision_sites": 13028,
-    "helper_edges": 15109,
-    "semantic_macros": 1482
+    "analyzed_functions": 2423,
+    "decision_sites": 13037,
+    "helper_edges": 15115,
+    "semantic_macros": 1483
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 9,
-    "helper_edges": 6,
-    "semantic_macros": 1
+    "analyzed_functions": 0,
+    "decision_sites": 1,
+    "helper_edges": 2,
+    "semantic_macros": 0
    }
   }
  }

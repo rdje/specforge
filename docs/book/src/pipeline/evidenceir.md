@@ -548,6 +548,15 @@ against a **literal** is an ordinary binding and still extracts:
 The reference phrase must follow the comparative immediately. A sentence that merely mentions "the
 value of X" somewhere and separately compares against a number is not this shape, and is untouched.
 
+**The refusal is a property of the rule, so every reader applies it.** For a while it was not: both
+refusals were wired into the prose reader only, and the table-row reader — which reaches obligations
+the prose reader cannot see at all — asked the same sentence the same question and got a fabricated
+answer. A description cell stating the comparison above published *"must not be stable"*, and one
+stating the equality published a value binding whose value was the word `value`, lifted straight out of
+the phrase *the value of*. Both readers now refuse, for the same reason, on the clause each is holding.
+No corpus document currently states either relation in a signal-description cell; the rule is there
+because the next one will.
+
 ## Typical evidence-level failure modes
 
 - field tables leaking fake signals

@@ -947,19 +947,35 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the refusal's effect re-derived with `replay-constraints` (row
   stratum judged) rather than with a mirror; the demonstrable class pinned by an observed-RED control on
   the real reader; APB/AHB/AXI-L proven unmoved.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2f` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
-  **the vocabulary-slot refusals are wired into one caller, not into the rule.** `.3d`'s
-  `is_relational_equality_constraint` and `.3k.1`'s `is_reference_magnitude_constraint` both say the
-  same thing — *the constraint vocabulary has no slot for "this operand is bounded by that one", so
-  refuse rather than fabricate* — and both are evaluated only inside `extract_signal_constraints`. The
-  row path never calls either. Demonstrated with the real producer:
-  `| OMEGABURST | … | OMEGABURST must be equal to the value of ZETAREADY. |` publishes
-  `OMEGABURST must_be_value`, from a sentence the statement path refuses outright. Corpus population
-  today is **0** (no admitted row clause matches either predicate), so this is a live class with an
-  empty published population and must be sized that way rather than as a record count. Related but
-  distinct from `.3k.2e`: that one refuses a clause whose kind is untyped, this one refuses a clause
-  whose kind types fine and whose MEANING has no slot. Prerequisite: `.3k.2e`. Verification: the
-  predicate reached from both callers; observed RED on the demonstrated shape; corpus delta measured.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2f` · Status: `done` (`2026-09-13`, CODE) · Goal: **a refusal that
+  says the constraint VOCABULARY has no slot for what a clause states belongs to the rule, not to one
+  caller.** `.3d`'s `is_relational_equality_constraint` and `.3k.1`'s `is_reference_magnitude_constraint`
+  make the same argument — *the vocabulary can say "this signal must be `HIGH`" and cannot say "this
+  operand is bounded by that one", so refuse rather than fabricate* — and both were evaluated only
+  inside `extract_signal_constraints`. The table-row reader called neither, so one sentence was refused
+  as a statement and published as a row.
+  Shipped: both predicates evaluated over the CLAUSE the row reader is already holding, which is this
+  producer's own unit and is also the scope `.3k.5` is moving the statement path's copies toward.
+  **Measured corpus effect: zero. That is the honest result and it is stated as a class, not as a
+  count.** With the row stratum judged (`.3k.2g`), `replay-constraints` is unchanged at 183 persisted /
+  137 reproduced / 46 not-reproduced, and no admitted row clause in the 26 judgeable documents matches
+  either predicate. The leaf ships on `.3k.1`'s footing — a live, demonstrable class with an empty
+  published population — and the demonstration is the observed-RED control, run through the REAL row
+  reader rather than a mirror:
+  *"ZETARANGE must not be greater than the size indicated by the ZETAOAS field"* → `ZETARANGE
+  must_be_stable, negated: true`, i.e. **"ZETARANGE must not be stable"** — the exact AMBA DTI
+  fabrication `.3k.1` closed in the statement path — and *"OMEGABURST must be equal to the value of
+  ZETAREADY"* → `OMEGABURST must_be_value VALUE`, the value lifted out of the phrase *the value of*.
+  Both vanish with the refusal wired and both return when it is removed.
+  **Honest limit, inherited not absorbed:** 51 of 78 documents have their table classifications
+  neutralized on load (`[[legacy-source-classifications-are-neutralized-on-load]]`), so "no admitted row
+  clause matches" is a statement about the 26 the producer can see. It is not a clean bill for the rest.
+  Prerequisite: `.3k.2e` — **waived**, deliberately. `.3k.2e` refuses a clause whose kind is UNTYPED;
+  this one refuses a clause whose kind types perfectly well and whose MEANING has no slot, which is why
+  the `must_be_value VALUE` shape above is invisible to `.3k.2e` and survives it. The two are
+  independent, and ordering them was an assumption `.3k.2g`'s re-sizing removed.
+  Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2f`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2g` · Status: `done` (`2026-09-13`, CODE) · Goal: **the replay
   instrument judged two of the three deterministic producers and said nothing about the third.**
   `.3k.6` shipped `replay-constraints` so a change could be sized against what today's extractor
@@ -1103,6 +1119,40 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2f`
+
+- [x] **REPRODUCE / MEASURE** — a set claim, carried with its enumeration in both directions.
+  `is_relational_equality_constraint` and `is_reference_magnitude_constraint` have exactly one caller
+  each, `extract_signal_constraints`; the row reader calls neither. Population over the corpus, derived
+  with the real producer now that the row stratum is judged (`.3k.2g`): of the row clauses the 26
+  judgeable documents admit, **0** match either predicate. Baseline `replay-constraints
+  --evidence-root generated/evidence_ir`: 183 persisted / 137 reproduced / 46 not-reproduced.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `extract_signal_description_row_constraints`: the clause goes from `obligation_subject` straight to
+  `classify_signal_constraint_kind`, with no vocabulary-slot gate between them. Demonstrated through
+  the real reader, not read off a diff: a signal-description table whose cell states either relation
+  publishes `ZETARANGE must_be_stable, negated: true` and `OMEGABURST must_be_value VALUE`.
+- [x] **ADDRESSED (verified)** — both predicates evaluated over the clause, before classification.
+  `a_clause_with_no_vocabulary_slot_is_refused_in_the_row_path_too` goes from two fabricated records to
+  none. **Observed RED:** removing the guard restores exactly those two records, with the kinds quoted
+  above; restored green. Corpus re-measured after the change: **183 / 137 / 46, unchanged** — 0 added,
+  0 removed, 0 retyped, and no persisted artifact moves.
+- [x] **NO REGRESSION** — `cargo fmt --all --check`, `cargo clippy --offline --all-targets -D warnings`
+  and the whole workspace suite green; `specforge-core` lib **1,464 → 1,466**. `kg-bench` **156/156**.
+  WIRE-BASED-100 golds `signal_constraint P=R=F1=1.000` on APB/AHB/AXI/SWD and `temporal_rule 1.000` on
+  APB/AHB/AXI. All 13 gate-tier doctrines PASS. `flow_census.json` re-derived and attributed to this
+  leaf (+1 decision site, +2 helper edges). The over-kill guard is its own control: an ordinary row
+  obligation still extracts, and both predicates are asserted to keep NOT firing on a magnitude against
+  a literal (*"must be greater than 0"*) or on `.3k.2c`'s *"the same value IN …"*.
+- [x] **GENERICITY (ADR 0006)** — no new rule; two existing predicates reach a second caller. Both are
+  keyed on ordinary English comparatives and reference leads, and the controls use invented names
+  (`ZETARANGE`, `ZETAOAS`, `OMEGABURST`, `ZETAREADY`).
+- [x] **LOCKSTEP** — code, this leaf, and the book's EvidenceIR chapter agree before commit: the "A
+  bound stated against another operand is not a value" section said the deterministic paths refuse
+  these sentences, which was true of one path and is now true of both, so the chapter's claim is
+  repaired rather than extended. No production rule is deleted or replaced. The resume pointer's next
+  action moves on.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2g`
 
@@ -1542,6 +1592,17 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-09-13` — **`.3k.2f` CLOSED (CODE) — the two vocabulary-slot refusals reach the row path.**
+  `.3d`'s inter-operand equality and `.3k.1`'s comparative magnitude both argue that the vocabulary has
+  no slot for the sentence, and both were wired into `extract_signal_constraints` alone — so one
+  sentence was refused as a statement and published as a table row. Corpus effect is **zero** (183 /
+  137 / 46 unchanged, no admitted row clause matches either predicate in the 26 judgeable documents),
+  so the leaf ships on `.3k.1`'s footing and the class is demonstrated instead of counted: through the
+  REAL row reader, the guard's removal republishes `ZETARANGE must_be_stable, negated` — *"must not be
+  stable"*, the exact AMBA DTI fabrication `.3k.1` closed — and `OMEGABURST must_be_value VALUE`, the
+  value lifted out of the phrase *the value of*. `.3k.2e` was listed as its prerequisite and the
+  requirement is waived with a reason: that leaf refuses an UNTYPED kind, this one refuses a clause
+  whose kind types perfectly well, so neither reaches the other's population.
 - `2026-09-13` — **`.3k.2g` CLOSED (CODE) — the replay judges the third producer, and its first act was to
   withdraw a population `.3k.2d` published one commit earlier.** `replay-constraints` filtered the
   judged set to `sigcon_*` and `dyn_sigcon_*`, so every corpus figure this family quoted was blind to
