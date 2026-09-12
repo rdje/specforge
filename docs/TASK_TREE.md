@@ -35,6 +35,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `ACTOR-NOUN-RELATION-DECLARATION` | `active` | the relation path declares an actor role as a wire | [open](tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](tasks/CLAIM-VERIFICATION-ADOPTION.md) |
 | `CORPUS-COVERAGE` | `active` | build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale | [open](tasks/CORPUS-COVERAGE.md) |
@@ -67,13 +68,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 155 trees route through 3 derived part(s); open a range to find an id.
+All 156 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
-| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-SUBMODULE-BUMP` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FULL-PAGE-INTENT-CAPTURE` | `R16-MODULE-HARDENING` |
-| [0003](task-catalog/catalog-0003.md) | 43 | `R16-MULTIMODAL-CONTRACT-FUSION` | `WIRE-BASED-100` |
+| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-SUBMODULE-BUMP` | `R16-KG-PROTOCOL-ONTOLOGY` |
+| [0003](task-catalog/catalog-0003.md) | 44 | `R16-MODULE-HARDENING` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

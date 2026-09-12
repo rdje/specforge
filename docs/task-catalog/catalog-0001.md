@@ -9,6 +9,7 @@ Complete membership for this range. The bounded landing is
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `done` | keep active task history bounded and resumable | [open](../tasks/ACTIVE-TASK-EVIDENCE-CONTAINMENT.md) |
+| `ACTOR-NOUN-RELATION-DECLARATION` | `active` | the relation path declares an actor role as a wire | [open](../tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
 | `AMBIGUITY-PHRASE-DETECTOR` | `done` | flag vague / under-specified spec prose for review | [open](../tasks/AMBIGUITY-PHRASE-DETECTOR.md) |
 | `ARTIFACT-PATH-PORTABILITY` | `done` | repository-relative IR provenance and move-safe generated artifacts | [open](../tasks/ARTIFACT-PATH-PORTABILITY.md) |
 | `AUDIT-DOC-RECONCILE` | `done` | fix doc drift found by the post-ISF-ONLY audit | [open](../tasks/AUDIT-DOC-RECONCILE.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-REFRESH-INTEGRATE-7` | `done` | refresh the FSMGen pin and integrate the latest upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-7.md) |
 | `FSMGEN-REFRESH-INTEGRATE-8` | `done` | refresh the FSMGen pin and audit the new upstream delta | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-8.md) |
 | `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE.md) |
-| `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](../tasks/FSMGEN-SUBMODULE-BUMP.md) |
 

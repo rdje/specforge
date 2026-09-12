@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PROSE-NAME-CELL-DECLARATION`
-- Status: `active` (`2026-09-12`; `.0`, `.1`, `.2`, `.4` done; `.3` open)
+- Status: `active` (`2026-09-12`; `.0`, `.1`, `.2`, `.4` done; `.3` deferred on a measured blocker)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-11`
 - Last updated: `2026-09-12`
@@ -94,7 +94,8 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
   entirely, reusing `.0`'s shape taxonomy. Scoring only; no row's declaration changes by this test.
   Commit: `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`
 
-- ID: `PROSE-NAME-CELL-DECLARATION.3` · Status: `pending` · Goal: **a width cell that is a sentence is
+- ID: `PROSE-NAME-CELL-DECLARATION.3` · Status: `deferred` (`2026-09-12`, by its own adjudication;
+  blocked on `[[ACTOR-NOUN-RELATION-DECLARATION]]`) · Goal: **a width cell that is a sentence is
   not a parametric width.** `infer_signal_table_row_width_hint` accepted
   `The bus clock times all bus transfers. All signal timings are related to the rising edge of HCLK .
   See Clock on page 7-72.` as `WidthHint::Parametric`, producing
@@ -351,6 +352,61 @@ sibling tree on a folded *spelling*, `.2` here on a *column* choice, and `.4` on
 Each time the artifact was read as a statement about behaviour. **Ask which producer wrote the field
 before treating it as a defect** — `[[persisted-table-kind-is-a-classifier-generation-artefact]]`.
 
+## `.3` — the rule is right, its only live effect is wrong (`2026-09-12`)
+
+`.3` was expected to close as *accepted, unexercised*: `.2` had taken its declared population to
+**0 of 601** current width-bearing declarations. It did not close that way, because measuring the
+mechanism rather than the declarations found a live population and then a blocker.
+
+### The population, at two levels
+
+| level | current stratum | legacy |
+| --- | ---: | ---: |
+| declarations carrying a sentence-shaped width | **0** of 601 | 108 of 1,085 |
+| width **cells** the parser admits as `Parametric` | 178 | 294 |
+| of those, cells that read as prose | **6** | ~9 |
+
+The declared population is zero only because other gates happen to stop those six rows today. That is
+not stability: two of the six *were* declarations yesterday, and what removed them was `.2`, an
+unrelated change to which column a table's names are in.
+
+### The discriminator, and its measured margin
+
+Two conditions, both required, following the `WIRE-BASED-100.10e` precedent:
+
+1. more than six expression tokens;
+2. a sentence terminator followed by whitespace.
+
+On the current stratum **the two select exactly the same 6 cells**, and all 6 are description sentences
+from rotated AHB tables. The cost side is a margin rather than a tuned threshold: the widest legitimate
+expression is **5** tokens (`ceil((ID_W_WIDTH + int(Unique_ID_Support))/8)`) and the narrowest prose is
+**7**; no legitimate form carries a terminator followed by a space, because a footnote marker rides the
+expression directly (`ceil(ADDR_WIDTH/8) a`).
+
+Written, and **observed RED**: without the guard the control declares
+`Signal ZETA_ALPHA is width The zeta clock times all zeta transfers. …`.
+
+### Why it is not shipped
+
+The rule was applied and AHB's chain rebuilt to measure the blast radius rather than assume it.
+Declarations: 79 → 79, identical set. But **AHB's IntentIR interface count went 42 → 62**, and all 24
+additions are `…_manager` groupings.
+
+The cause is not the rule. AHB already declares `Manager` — an actor role, not a wire — through the
+relation→declaration path. Its statement read
+`Signal Manager is output width Exclusive okay, selected by the decoder. a.` and became
+`Signal Manager is output.` **Removing the garbage width made the phantom well-formed, and a
+well-formed phantom propagates.**
+
+So the honest result is a deferral with the rule in hand, not a rule shipped. Publishing a 48% increase
+in one document's interface count, all phantom, to fix a width that no declaration currently carries is
+the wrong trade in both directions. The blocker is tracked as
+`[[ACTOR-NOUN-RELATION-DECLARATION]]`; when it closes, `.3` re-measures and ships.
+
+This is `.2`-before-`.1` again, and it is becoming the tree's characteristic finding: **when two
+changes touch the same rows, the one that repairs the cause goes first, because the other one only
+changes how the defect looks.**
+
 ## Acceptance Checklist (enforced) — `.2`, the tree's only production change
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_name_cell_shapes.py`: current stratum
   604 declarations, **2 phrase**, both AHB `table_0004`. `specforge eval-extraction` + the persisted
@@ -410,11 +466,10 @@ before treating it as a defect** — `[[persisted-table-kind-is-a-classifier-gen
 
 ## Current Frontier
 
-Ordered; PNT selects the first eligible leaf.
-
-1. `PROSE-NAME-CELL-DECLARATION.3` — a sentence is not a parametric width. The last leaf, and `.2`
-   removed both of its live instances, so it is expected to close as *accepted, unexercised* rather
-   than to acquire a rule. Re-measure first; do not invent a population for it.
+No eligible leaf. `.3` is the only one left and it is **deferred on a measured blocker**: its rule is
+written, measured and observed RED, and its only live effect in the corpus is to make an existing
+phantom declaration well-formed, which takes AHB's IntentIR interface count from 42 to 62. The blocker
+is `[[ACTOR-NOUN-RELATION-DECLARATION]]`; when that closes, re-measure and ship `.3`.
 
 ## Decisions
 
@@ -466,6 +521,17 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.3`. The rule was implemented, controlled and measured, then **reverted**; the tree
+  keeps it so re-applying is mechanical. Controls (both passed with the guard, RED without):
+  `a_description_sentence_is_not_a_parametric_width` — without the guard the declaration comes back as
+  `Signal ZETA_ALPHA is width The zeta clock times all zeta transfers. …`, while
+  `ceil((ID_W_WIDTH + int(Unique_ID_Support))/8)` and `ceil(ADDR_WIDTH/8) a` survive; and
+  `a_width_expression_reads_as_prose_only_when_both_conditions_agree` over each form.
+  Blast radius measured on the artifact: AHB's bundle restored from
+  `generated/preserved/WIRE-BASED-100.10/`, the chain rebuilt in the interleaved order, diffed against
+  `generated/preserved/PROSE-NAME-CELL-DECLARATION.3/pre-rebuild/`, then **rolled back to exactly those
+  bytes** and `scripts/check_chain_currency.sh` re-run to prove the corpus is current again. The
+  preserved bundle is byte-identical before and after and retention stays at the declared 24.
 - `2026-09-12` — `.4`. Control: `a_matrix_that_qualifies_every_role_with_its_subject_is_not_a_signal_table`
   runs the real `classified_table_kind` over the matrix's exact shape, over the same shape alpha-renamed
   (ADR 0006), and over a GREEN control with unqualified roles that must still be a signal table. It
@@ -521,12 +587,17 @@ None.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.0` (`4bb6c1c8`).
 - `.2` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0` (`ba9e9a74`).
 - `.1` — `PROSE-NAME-CELL-DECLARATION.1` (`8199be47`).
-- `.4` — `PROSE-NAME-CELL-DECLARATION.4`.
+- `.4` — `PROSE-NAME-CELL-DECLARATION.4` (`c6d61393`).
+- `.3` — `PROSE-NAME-CELL-DECLARATION.3` (deferred).
 
 ## Changelog
 
 - `2026-09-11` — tree created from `SIGNAL-DECLARATION-ROW-DROP.2c`'s adjudication, which found 4 of 7
   enumerated-width cells to be a misclassified bus-mode matrix already minting `HS400` as a signal.
+- `2026-09-12` — `.3` deferred by its own adjudication. The rule is written, measured (6 prose cells in
+  178 admitted, with a 5-vs-7 token margin) and observed RED, but applying it takes AHB's IntentIR
+  interface count from 42 to 62 by making the phantom `Manager` declaration well-formed. Blocker opened
+  as `[[ACTOR-NOUN-RELATION-DECLARATION]]`; the corpus was rolled back to its pre-measurement bytes.
 - `2026-09-12` — `.4` closed. The premise was a legacy fact: the current classifier already refuses the
   bus-mode matrix, and 124 legacy tables minting 598 declarations carry a `table_kind` it would not
   assign, against 0 in the current stratum. `SIGNAL-DECLARATION-ROW-DROP.2c`'s deferral reason is
