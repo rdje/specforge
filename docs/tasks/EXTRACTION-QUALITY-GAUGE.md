@@ -798,7 +798,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.6`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `active` (split `2026-09-12` after `.3k.6` re-sized it)
-  · Children: `.3k.2a`, `.3k.2b`, `.3k.2c` · Goal: **what a clause that types nothing may publish.**
+  · Children: `.3k.2a`, `.3k.2b`, `.3k.2c`, `.3k.2d` · Goal: **what a clause that types nothing may
+  publish.**
   Two arms of `classify_signal_constraint_kind` emit a fact the document did not state: the terminal
   `untyped_default` publishes `MustBeStable` for any obligation no phrase matched, and the
   `generic_value` arm lifts whatever word follows `must be `/`shall be ` as a typed value with no gate
@@ -835,18 +836,50 @@ honestly-qualified) path to "human-SpecForge in Rust."
   to rebuild from, and `replay-constraints` now reports them as not-reproduced rather than hiding them.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.2a`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2b` · Status: `pending` (opened `2026-09-12` by `.3k.2a`) · Goal:
-  **gate the ungated `generic_value` arm.** `extract_protocol_state_value` lifts the first non-filler
-  word after `must be `/`shall be `/`must remain `/`shall remain ` and publishes it as a typed value,
-  with no check that the word IS a value. **Population: 4 reproduced `sigcon_*`, and it is 2-2** —
-  right: AXI `AWTAGOP must_be_value INVALID` from *"AWTAGOP must be Invalid"* (a real TagOp enum
-  member) and HBM2 `CKE must_be_value LOW` from *"CKE must be held LOW"*; wrong: RISC-V IOMMU
-  `GSCID must_be_value INVALIDATED` and DTI `DO_NOT_CACHE must_be_value INVALIDATED`, both of which
-  lift a past participle out of *"must be invalidated"* — a VERB, not a value. So this arm must be
-  GATED, never refused: the document's own discovered enum values and the logic levels are the
-  admissible set, and `extract_discovered_state_value_from_text` already knows how to ask.
-  Prerequisite: none. Verification: all 4 adjudicated; observed RED; the chain rebuilt for every
-  document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2b` · Status: `done` (`2026-09-12`, CODE) · Goal: **a passive
+  obligation puts its VERB in the value slot.** `extract_protocol_state_value` lifts the first
+  non-filler word after `must be `/`shall be `/`must remain `/`shall remain ` and says nothing about
+  what it is. **Population: 4 reproduced `sigcon_*`, and it is 2-2** — right: AXI
+  `AWTAGOP must_be_value INVALID` from *"AWTAGOP must be Invalid"* (an adjective) and HBM2
+  `CKE must_be_value LOW` from *"CKE must be held LOW"* (a logic level); wrong: RISC-V IOMMU
+  `GSCID` and DTI `DO_NOT_CACHE`, both `INVALIDATED` lifted out of *"must be invalidated"* — a past
+  participle, which is what happens TO the thing, not what it equals.
+  **The first design was too wide, was measured, and was reverted before it shipped.** Gating every
+  value arm against the document's discovered enum values retyped **13 correct APB and 4 correct AHB
+  records** from `must_be_value VALID` to `must_be_stable`: the `must be valid` arm's value is the
+  validity CONVENTION `.8` established, not a word admitted on position, and `VALID` is in no
+  document's enum set. The validity arm is therefore explicitly not gated, and the code says why.
+  Gating only the generic arm against discovered values then still cost the one correct record whose
+  enum table the discovery pass does not read (`AWTAGOP … Invalid`).
+  **What shipped is exactly as wide as the evidence**: `is_admissible_state_value` admits a value the
+  document declares, a logic level, or a numeric literal, and otherwise refuses only the PAST
+  PARTICIPLE shape. So `Invalid` binds, `INVALIDATED` and `UPDATED` do not, and a participle-shaped
+  enum member the specification does declare (`Shared`) is admitted through the document route — the
+  pair that makes the override meaningful rather than decorative.
+  **Measured effect: 2 fabricated records refused, 0 correct records lost, 0 artifacts changed.**
+  Both instances live in documents with no normalized bundle, so `replay-constraints` reports them as
+  not-reproduced (125 of 171, up from 127 of 171 by exactly these two) and nothing in `generated/`
+  moves — the leaf is its own illustration of why the published and actionable populations differ.
+  **Residual named, not absorbed:** AXI `WTAGUPDATE must_be_value UPDATED` survives, because its cell
+  reaches the UNGATED validity arm on a `must be valid` later in the same cell while
+  `extract_protocol_state_value` binds from the first `must be ` in the text. That is a span defect,
+  and it belongs to `.3k.3`.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2b`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2d` · Status: `pending` (opened `2026-09-12` by `.3k.2b`) · Goal:
+  **a NEGATED value binding is unreadable.** `extract_protocol_state_value` binds on `must be `,
+  `shall be `, `must remain `, `shall remain ` and has no negated form, so *"The DV operand must not
+  be 1 for IODIR"* — a perfectly ordinary obligation — matches nothing, falls to the untyped default,
+  and since `.3k.2a` publishes nothing at all. That is an improvement on what it used to publish (the
+  value came from the NEXT sentence's `a command must be issued`, giving `must_be_value ISSUED`), but
+  the requirement itself is still uncaptured. This is the remaining half of `.3i`'s second finding —
+  *"all 20 negated records sit on a kind the classifier never matched, because every phrase in the
+  table is affirmative"* — and the constraint vocabulary already has the slot: `MustBeValue` plus
+  `negated`. Read the binding, keep the flag, and re-check the `WIRE-BASED-100.5b` double-negative
+  guard, which reserves `negated` for kinds whose plain form is affirmative. Population must be
+  derived with `replay-constraints` over the NOT-REPRODUCED set, where these now sit.
+  Prerequisite: none. Verification: the derived population adjudicated individually; observed RED;
+  the chain rebuilt for every document whose artifacts move.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2c` · Status: `pending` (opened `2026-09-12` by `.3k.2a`) · Goal:
   **the affirmative spelling this corpus uses for a stability obligation.** APB writes it as
   *"PAUSER must have the same value in the Setup and Access phase of a transfer"* and *"… in every
@@ -868,8 +901,18 @@ honestly-qualified) path to "human-SpecForge in Rust."
   kind phrase at all, and the published `must_be_asserted` comes from the NEXT sentence, *"HSELx must
   be asserted in the same cycle…"* — kind from one clause, condition from another. NVMe
   `sigcon_0005`/`0006`/`0007` take `must_not_change` from a sentence two clauses later whose own
-  obligation is conditional on a capability bit. Prerequisite: `.3k.2` (see the container's ordering
-  rationale). Verification: all 4 adjudicated; observed RED; AHB + NVMe rebuilt and diffed.
+  obligation is conditional on a capability bit.
+  **Inherited from `.3k.2b` (`2026-09-12`) — the same defect in the VALUE slot.** AXI
+  `WTAGUPDATE must_be_value UPDATED` survives every gate this family has built because its table cell
+  matches the `must be valid` arm on a phrase LATER in the cell while `extract_protocol_state_value`
+  binds from the FIRST `must be ` in the text, which is *"the tags in memory must be updated"*. The
+  arm matched on one span and its value came from another, so narrowing the classifier's span fixes
+  the value binder at the same time — re-measure the value slot here, not only the kind.
+  **The population must be re-derived with `replay-constraints` before this ships**: the 4 above are
+  a PUBLISHED count taken before `.3k.2a` and `.3k.2b` moved three of those documents.
+  Prerequisite: `.3k.2` (see the container's ordering rationale). Verification: the re-derived
+  population adjudicated individually; observed RED; the chain rebuilt for every document whose
+  artifacts move.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.4` · Status: `pending` · Goal: **the dynamic path's span
   discipline.** After `.3i` it reads its negation from `constraint_bearing_sentence` while its
   subject (`text_before_condition_marker(&statement.text)`), its value binder
@@ -904,6 +947,43 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2b`
+
+- [x] **REPRODUCE / MEASURE** — the reproduced `generic_value` population is 4 `sigcon_*` records, all
+  read against source: AXI `AWTAGOP must_be_value INVALID` (*"- AWTAGOP must be Invalid."*, correct),
+  HBM2 `CKE must_be_value LOW` (*"CKE must be held LOW"*, correct), RISC-V IOMMU `GSCID` and DTI
+  `DO_NOT_CACHE` (both `INVALIDATED` from *"must be invalidated"*, fabricated). A fifth instance,
+  AXI `WTAGUPDATE must_be_value UPDATED` from *"the tags in memory must be updated"*, surfaced during
+  the rebuild and is recorded as this leaf's residual rather than absorbed.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `classify_signal_constraint_kind`'s generic arm: `extract_protocol_state_value` returns the first
+  non-filler word after a binding lead and the arm publishes it as a typed value with no test of what
+  the word is. In a passive obligation that word is the obligation's verb.
+- [x] **ADDRESSED (verified)** — `is_admissible_state_value(value, discovered_values)`: the document's
+  own declared enum members first, then logic levels, then numeric literals, and otherwise a refusal
+  of the past-participle shape only. Both deterministic call sites now derive the document's value
+  vocabulary with `collect_discovered_enum_values`, the same set the dynamic path already binds
+  against. **Two measurements steered the design and both are recorded above**: gating every value arm
+  retyped 13 APB + 4 AHB correct records (reverted), and gating the generic arm against discovered
+  values alone lost `AWTAGOP … Invalid` (narrowed). **Observed RED** with the admissibility test
+  removed: `a_passive_participle_in_the_value_slot_is_not_a_value` emits
+  `Some("must_be_value:INVALIDATED")` — the live `GSCID` defect on invented names — and
+  `a_participle_the_document_declares_as_a_value_is_admitted` fails on its negative half; both pass
+  restored.
+- [x] **NO REGRESSION** — the chain was rebuilt for all three documents with a held-out bundle (APB,
+  AHB, AXI-L): **0 records removed, 0 added, 0 retyped** in the final shape, and each bundle
+  `diff -r`-verified byte-identical before removal, retention back at **24**. `kg-bench` **156/156**.
+  WIRE-BASED-100 golds `signal_constraint P=R=F1=1.000` on APB, AHB, AXI and SWD.
+  `cargo fmt --all --check`, `cargo clippy --all-targets -D warnings`, `cargo test` green;
+  `specforge-core` lib 1,449 → 1,454. `replay-constraints` corpus: 171 persisted, **125** reproduced
+  (was 127 — exactly the two fabrications), 46 not-reproduced, 1 named skip.
+- [x] **GENERICITY (ADR 0006)** — universal English participle grammar plus the document's own
+  declared vocabulary. No value list, no protocol, vendor, document or signal name; the controls use
+  invented names (`ZETAGSCID`, `ZETATAGOP`, `ZETASTATE`, `ZETACKE`, `ZETAUSER`, `ZETASEL`) and an
+  invented enum (`ZETASTATES Shared = 0`).
+- [x] **LOCKSTEP** — code, this leaf, the book's EvidenceIR chapter, and the resume pointer agree
+  before commit; the `WTAGUPDATE` residual is written into `.3k.3` rather than left in a comment.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2a`
 

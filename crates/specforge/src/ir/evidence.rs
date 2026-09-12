@@ -9973,8 +9973,11 @@ fn obligation_is_negated(lowered: &str) -> bool {
 /// not a default, it is a fabrication: it asserts stability about a sentence that never mentions it.
 /// Callers that can prove the clause is an obligation about a known signal may still fall back to it
 /// ([`classify_signal_constraint_kind`]); the statement path, which cannot, refuses instead.
-fn classify_signal_constraint_kind_typed(lowered: &str) -> Option<SignalConstraintKind> {
-    let kind = classify_signal_constraint_kind(lowered);
+fn classify_signal_constraint_kind_typed(
+    lowered: &str,
+    discovered_values: &HashSet<String>,
+) -> Option<SignalConstraintKind> {
+    let kind = classify_signal_constraint_kind(lowered, discovered_values);
     // The one shape that means "nothing matched": the fall-through arm returns the stable default
     // with no stability phrase anywhere in the clause. `must be stable` / `must remain stable` /
     // `must hold` all reach `MustBeStable` or `MustNotChange` through an arm the document wrote.
@@ -9996,7 +9999,45 @@ fn classify_signal_constraint_kind_typed(lowered: &str) -> Option<SignalConstrai
     Some(kind)
 }
 
-fn classify_signal_constraint_kind(lowered: &str) -> SignalConstraintKind {
+/// EXTRACTION-QUALITY-GAUGE.3k.2b — is the word in the value slot a VALUE, or the obligation's verb?
+///
+/// `extract_protocol_state_value` lifts the first non-filler word after `must be `/`shall be ` and
+/// says nothing about what it is. **A passive obligation puts its VERB there**: *"the entry must be
+/// invalidated"* says what happens to the entry, not what it equals, and it published
+/// `GSCID must_be_value INVALIDATED`. *"the tags in memory must be updated"* published
+/// `WTAGUPDATE must_be_value UPDATED`. The same slot in *"AWTAGOP must be Invalid"* holds an
+/// adjective, and that one is a real value.
+///
+/// So the refusal is exactly as wide as the evidence: a past participle is refused **unless the
+/// document itself uses that word as a value**. The document-grounded route comes first and is what
+/// keeps a genuine participle-shaped enum member (`Shared`, `Reserved`) admissible wherever the
+/// specification declares one; logic levels and numeric literals are values by construction.
+///
+/// Universal English grammar plus the document's own vocabulary — no value list (ADR 0006).
+fn is_admissible_state_value(value: &str, discovered_values: &HashSet<String>) -> bool {
+    if discovered_values.contains(value) {
+        return true;
+    }
+    let lowered = value.to_ascii_lowercase();
+    if crate::ir::normative_vocab::LOGIC_HIGH_VALUES.contains(&lowered.as_str())
+        || crate::ir::normative_vocab::LOGIC_LOW_VALUES.contains(&lowered.as_str())
+    {
+        return true;
+    }
+    // A numeric literal, radix suffix and all (`0`, `0h`, `1b`, `0x10`).
+    if value.starts_with(|c: char| c.is_ascii_digit()) {
+        return true;
+    }
+    // Everything else is admissible unless it wears the passive participle's ending, which is what
+    // a passive obligation's verb looks like. The length guard keeps short words that merely end in
+    // those letters (`red`) out of the rule.
+    !(lowered.len() > 3 && lowered.ends_with("ed"))
+}
+
+fn classify_signal_constraint_kind(
+    lowered: &str,
+    discovered_values: &HashSet<String>,
+) -> SignalConstraintKind {
     if contains_any(
         lowered,
         &[
@@ -10073,18 +10114,23 @@ fn classify_signal_constraint_kind(lowered: &str) -> SignalConstraintKind {
     ) {
         SignalConstraintKind::MustBeDeasserted
     } else if contains_any(lowered, &["must be valid", "shall be valid"]) {
-        // Look for a specific protocol state value after "must be" / "shall be"
+        // Look for a specific protocol state value after "must be" / "shall be". This arm is NOT
+        // gated by `.3k.2b`: the clause already said `must be valid`, so the word it lifts is the
+        // validity convention this project established in `.8` (`must be valid` → `must_be_value`
+        // with value `VALID`), not a word admitted on the strength of its position. Gating it was
+        // measured and reverted — it retyped 13 correct APB and 4 correct AHB records.
         if let Some(value) = extract_protocol_state_value(lowered) {
             SignalConstraintKind::MustBeValue { value }
         } else {
             SignalConstraintKind::MustBeStable
         }
     } else {
-        // Generic: try to find a protocol state value
-        if let Some(value) = extract_protocol_state_value(lowered) {
-            SignalConstraintKind::MustBeValue { value }
-        } else {
-            SignalConstraintKind::MustBeStable
+        // Generic: try to find a protocol state value, under the same admissibility test.
+        match extract_protocol_state_value(lowered) {
+            Some(value) if is_admissible_state_value(&value, discovered_values) => {
+                SignalConstraintKind::MustBeValue { value }
+            }
+            _ => SignalConstraintKind::MustBeStable,
         }
     }
 }
@@ -10232,6 +10278,10 @@ fn extract_signal_description_row_constraints(
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<SignalConstraintRecord> {
     let mut records = Vec::new();
+    // EXTRACTION-QUALITY-GAUGE.3k.2b — the document's own value vocabulary, derived from the same
+    // statements this reader is already given, so a value slot is admitted only for a word the
+    // specification uses as a value.
+    let discovered_values = collect_discovered_enum_values(&[statements]);
 
     for table in &source_ir.structured_tables {
         if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
@@ -10305,7 +10355,7 @@ fn extract_signal_description_row_constraints(
                 }
                 let clause_text = clause.trim();
                 let lowered = clause_text.to_ascii_lowercase();
-                let constraint_kind = classify_signal_constraint_kind(&lowered);
+                let constraint_kind = classify_signal_constraint_kind(&lowered, &discovered_values);
                 // The same guard the statement path applies: a kind that already encodes its own
                 // negation must not also carry `negated`, or the pair reads as a double negative.
                 let negated = obligation_is_negated(&lowered)
@@ -10368,6 +10418,10 @@ fn extract_signal_constraints(
     // constraints (e.g. AXI "RME_Support must be False" → "RME"; "MPAM_WIDTH must be 11" → "MPAM";
     // "granted to LICENSEE" → "LICENSEE") without any hardcoded list (ADR 0006). WIRE-BASED-100.5i.
     let declared_signals = collect_known_signal_names(statements);
+    // EXTRACTION-QUALITY-GAUGE.3k.2b — the document's own value vocabulary, derived exactly as the
+    // dynamic path derives it, so this path stops admitting a word into a value slot on the strength
+    // of its POSITION alone.
+    let discovered_values = collect_discovered_enum_values(&[statements]);
 
     for statement in statements {
         if !matches!(statement.class, StatementClass::SignalValueConstraint) {
@@ -10436,7 +10490,9 @@ fn extract_signal_constraints(
         // keeps the gap visible. The ROW path keeps the fallback deliberately: it has already proved
         // its clause binds to its row's signal, so an untyped obligation there is a real obligation
         // with a spelling the table lacks (`.3k.2c`), not a sentence about something else.
-        let Some(constraint_kind) = classify_signal_constraint_kind_typed(&lowered) else {
+        let Some(constraint_kind) =
+            classify_signal_constraint_kind_typed(&lowered, &discovered_values)
+        else {
             continue;
         };
 
@@ -35468,23 +35524,34 @@ mod extraction_quality_gauge_3i {
     }
 
     /// The control that keeps the narrowing honest: the SAME negation, moved INTO the obligation
-    /// clause, still negates it. The pair is the property — the flag follows the clause, not the
-    /// statement.
+    /// clause, is read from that clause. The pair is the property — the flag follows the clause, not
+    /// the statement.
+    ///
+    /// **Amended by `EXTRACTION-QUALITY-GAUGE.3k.2a`/`.3k.2b`.** This used to assert on a published
+    /// record, and the record it was reading had a fabricated kind: the classifier could not type
+    /// `must not be 1` (no affirmative phrase matches a negated obligation — `.3i`'s own finding), so
+    /// the value came from the OTHER sentence's `a command must be issued` and the record was
+    /// `must_be_value ISSUED`. `.3k.2b` refuses that participle and `.3k.2a` then refuses the untyped
+    /// remainder, so the statement now publishes nothing at all — which is correct, and which makes
+    /// the real gap visible: **`extract_protocol_state_value` has no negated form, so
+    /// `must not be 1` is unreadable** (`.3k.2d`). The property this control exists for is asserted
+    /// where it actually lives, on the span the flag is read from.
     #[test]
     fn a_negation_in_this_obligation_still_negates_it() {
-        let records = constraint(
-            "The ZETADV operand must not be 1 for ZETADIR. A command must be issued while the \
-             queue is empty.",
-            &["ZETADV", "ZETADIR"],
-        );
-        let record = records.first().expect("one record");
-        assert!(
-            record.negated,
-            "`must not` is this clause's own: {record:?}"
-        );
-        // The KIND is still the untyped default here, because no affirmative phrase matches a
-        // negated obligation — that is the remaining half of this defect and is owned by
-        // `EXTRACTION-QUALITY-GAUGE.3k`, not asserted as correct by this control.
+        let statement = "The ZETADV operand must not be 1 for ZETADIR. A command must be issued \
+                         while the queue is empty.";
+        assert!(obligation_is_negated(
+            &constraint_bearing_sentence(statement).to_ascii_lowercase()
+        ));
+        // And the whole statement is NOT the span: its second sentence is affirmative, so reading
+        // the flag from there would answer differently.
+        assert!(!obligation_is_negated(
+            &constraint_bearing_sentence("A command must be issued while the queue is empty.")
+                .to_ascii_lowercase()
+        ));
+        // Today the clause types nothing, so no record is published — the honest residual `.3k.2d`
+        // owns, never a constraint carrying a value lifted out of the next sentence.
+        assert!(constraint(statement, &["ZETADV", "ZETADIR"]).is_empty());
     }
 
     /// The passive and negative spellings of two obligations the phrase table only carried in the
@@ -35965,10 +36032,133 @@ mod extraction_quality_gauge_3k_2a {
     fn the_row_path_fallback_is_unchanged_where_the_statement_path_refuses() {
         let lowered =
             "zetauser must have the same value in the setup and access phase of a transfer";
+        let discovered = HashSet::new();
         assert_eq!(
-            classify_signal_constraint_kind(lowered),
+            classify_signal_constraint_kind(lowered, &discovered),
             SignalConstraintKind::MustBeStable
         );
-        assert_eq!(classify_signal_constraint_kind_typed(lowered), None);
+        assert_eq!(
+            classify_signal_constraint_kind_typed(lowered, &discovered),
+            None
+        );
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_2b {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.2b` — a passive obligation puts its VERB in the value slot.
+    //! *"the entry must be invalidated"* published `GSCID must_be_value INVALIDATED`; *"the tags in
+    //! memory must be updated"* published `WTAGUPDATE must_be_value UPDATED`. The same slot in
+    //! *"AWTAGOP must be Invalid"* holds an adjective, and that one is a real value — which is why
+    //! this is a gate on the participle's shape, overridden by the document's own vocabulary, and
+    //! not a refusal of the arm.
+    use super::*;
+
+    fn records(
+        text: &str,
+        declared: &[&str],
+        enum_members: &[&str],
+    ) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        for (index, member) in enum_members.iter().enumerate() {
+            statements.push(ExtractedStatement {
+                statement_id: format!("enum_{index}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Enum ZETASTATES {member} = {index}."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        }
+        statements.push(ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_signal_constraints(&statements, &mut counter)
+    }
+
+    fn kind_of(records: &[SignalConstraintRecord]) -> Option<String> {
+        records.first().map(|record| match &record.constraint_kind {
+            SignalConstraintKind::MustBeValue { value } => format!("must_be_value:{value}"),
+            other => other.as_str().to_string(),
+        })
+    }
+
+    /// The defect: the obligation's own verb published as the signal's value. With `.3k.2a` the
+    /// clause then types nothing at all, so the statement path refuses it outright.
+    #[test]
+    fn a_passive_participle_in_the_value_slot_is_not_a_value() {
+        assert_eq!(
+            kind_of(&records(
+                "The ZETAGSCID entry must be invalidated.",
+                &["ZETAGSCID"],
+                &[]
+            )),
+            None
+        );
+    }
+
+    /// The control that keeps the gate from becoming a refusal of the arm: the same slot holding an
+    /// ADJECTIVE is a real value and still binds. This is the live AXI `AWTAGOP must be Invalid`.
+    #[test]
+    fn an_adjective_in_the_value_slot_still_binds() {
+        assert_eq!(
+            kind_of(&records("ZETATAGOP must be Invalid.", &["ZETATAGOP"], &[])),
+            Some("must_be_value:INVALID".to_string())
+        );
+    }
+
+    /// The document's own vocabulary overrides the shape: a participle-shaped enum member the
+    /// specification declares is a value, and stays one.
+    #[test]
+    fn a_participle_the_document_declares_as_a_value_is_admitted() {
+        assert_eq!(
+            kind_of(&records(
+                "ZETASTATE must be Shared.",
+                &["ZETASTATE"],
+                &["Shared"]
+            )),
+            Some("must_be_value:SHARED".to_string())
+        );
+        // ... and without that declaration the same word is refused, which is the pair that makes
+        // the override meaningful rather than decorative.
+        assert_eq!(
+            kind_of(&records("ZETASTATE must be Shared.", &["ZETASTATE"], &[])),
+            None
+        );
+    }
+
+    /// Logic levels and the `.8` validity convention are values by construction, and neither goes
+    /// through this gate. Gating the validity arm was measured and reverted: it retyped 13 correct
+    /// APB and 4 correct AHB records.
+    #[test]
+    fn logic_levels_and_the_validity_convention_are_untouched() {
+        assert_eq!(
+            kind_of(&records("ZETACKE must be held LOW.", &["ZETACKE"], &[])),
+            Some("must_be_value:LOW".to_string())
+        );
+        assert_eq!(
+            kind_of(&records(
+                "ZETAUSER must be valid when ZETASEL is asserted.",
+                &["ZETAUSER", "ZETASEL"],
+                &[]
+            )),
+            Some("must_be_value:VALID".to_string())
+        );
     }
 }

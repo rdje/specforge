@@ -391,6 +391,30 @@ obligation twice: once in the `PSTRB` signal-description row above, and once in 
 those two places independently, and they now produce the same typed constraint. Before this change
 they disagreed, and the disagreement was the defect rather than a real ambiguity in the specification.
 
+## A passive obligation puts its verb where the value goes
+
+When a sentence binds a value — *"must be"*, *"shall be"*, *"must remain"* — SpecForge reads the word
+that follows it. In a passive obligation that word is not a value at all:
+
+| the document writes | what the slot holds |
+| --- | --- |
+| `the entry must be invalidated` | `invalidated` — what happens TO the entry |
+| `the tags in memory must be updated` | `updated` — an action |
+| `AWTAGOP must be Invalid` | `Invalid` — a state the signal is in |
+
+The first two published typed constraints saying a signal equals `INVALIDATED` and `UPDATED`. The
+third is a real value.
+
+The rule is written to be exactly as wide as that difference. A word is accepted as a value when the
+**document itself declares it** as one, when it is a logic level, or when it is a numeric literal.
+Only the remaining case — a bare past participle nothing in the specification calls a value — is
+refused. A protocol whose cache states include `Shared` keeps it, because that protocol declares it.
+
+The validity convention is deliberately outside this test. *"PNSE must be valid when PSEL is
+asserted"* types as `must_be_value VALID` by an older and separate rule, where `VALID` comes from the
+phrase rather than from a value vocabulary; subjecting it to the same check was measured and reverted
+after it retyped seventeen correct records across two protocol specifications.
+
 ## An obligation that names no kind states no constraint
 
 The constraint vocabulary has a fixed set of kinds — stable, high, low, asserted, deasserted, must
