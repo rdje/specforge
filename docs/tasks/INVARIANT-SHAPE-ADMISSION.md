@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `INVARIANT-SHAPE-ADMISSION`
-- Status: `active` (`2026-09-12`; `.0` and `.1` done; `.2` open — the extraction half)
+- Status: `active` (`2026-09-12`; `.0`-`.2` done; `.3` open — one bounded increment; `.4` is a program, not a slice)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -104,7 +104,7 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   Shipped as `statement_is_a_caption`, refused between the modal route and the two weaker ones.
   Commit: `INVARIANT-SHAPE-ADMISSION.1`
 
-- ID: `INVARIANT-SHAPE-ADMISSION.2` · Status: `pending` · Goal: **read a table row instead of publishing
+- ID: `INVARIANT-SHAPE-ADMISSION.2` · Status: `done` (`2026-09-12`) · Goal: **read a table row instead of publishing
   it.** 699 of the 769 table-row constraints carry content found nowhere else, and the sample is
   normative: `| Secure | Must be zero |`, `| True | | When Burst type is WRAP, the transaction must be
   cache line sized and Modifiable. |`, `| BRESP_WIDTH | 0, 2, 3 | 2 | Width of BRESP in bits. Must be 3
@@ -114,7 +114,71 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   constraint, a response-code definition? Only 70 duplicate a declaration the reader already made, so
   subtraction is not the answer for the other 699.
   Prerequisite: `.1` (it removes the caption noise this census would otherwise have to filter).
-  Verification: the census is the deliverable; a count with no adjudication is not.
+  **Answered: they cannot be read where they are published, and the readable part is small.** Result
+  below; the work splits into `.3` (bounded) and `.4` (a program).
+  Commit: `INVARIANT-SHAPE-ADMISSION.2`
+
+- ID: `INVARIANT-SHAPE-ADMISSION.3` · Status: `pending` · Goal: **a signal-description row whose
+  description cell states an obligation about the signal that row declares is a `signal_constraint`.**
+  Bounded and well-typed: the reader already has the table, already identifies the signal, and already
+  emits `signal_constraints` (84 in the current stratum). Measured population: **17 rows** across APB
+  (7), AXI (6) and AHB (4) — e.g. `RRESP` / *"Must be valid when RVALID is asserted"*, `AWLOOP` /
+  *"A user-defined value that must be reflected from a write request to response transfers"*.
+  Small, so the bar is precision: 17 is a population that can be adjudicated in full rather than
+  sampled, and it should be.
+  Prerequisite: `.2`. Verification: all 17 adjudicated individually; no existing `signal_constraint`
+  changes; chain rebuilt; observed RED.
+
+- ID: `INVARIANT-SHAPE-ADMISSION.4` · Status: `pending` · Goal: **read a requirement matrix.** The
+  remaining ~380 obligation-bearing rows are permission matrices, truth tables and parameter tables —
+  `| Read* | Shareable | Permitted to hit | Must hit | … |`, `| 0 | 0 | Non-secure | Non-secure | 0 |
+  Non-trusted request that must target a Non-secure PAS. |`. **This is a program, not a slice**, and
+  the leaf exists so it is tracked rather than implied. Do not start it as a slice; scope it first,
+  and consider whether an existing table-semantics tree should own it.
+  Prerequisite: `.3`. Verification: scoping is the deliverable.
+
+## `.2` — result (`2026-09-12`)
+
+### A table row is a matrix row, and serialization threw away what reads it
+
+Across the 769 table-row constraints, **396 carry a modal verb** and are therefore real obligations.
+But almost none is a sentence. The obligation is a **cell**, and its subject comes from the row's other
+cells and from the table's header:
+
+```text
+| Read*      | Shareable | Permitted to hit | Must hit         | Permitted to hit | Must hit |
+| 0 | 0 | Non-secure | Non-secure | 0 | Non-trusted request that must target a Non-secure PAS. |
+| BRESP_WIDTH | 0, 2, 3 | 2 | Width of BRESP in bits. Must be 3 if: Untranslated_Transactions = v2 … |
+| Non-secure | Must be zero |
+```
+
+The codebase already says this in another pass: `is_post_passive_binding_only_subject` skips a row
+because *"a table row supplies subject context from its other cells"*. **The published statement does
+not carry the header**, so the subject is unrecoverable at the level where these constraints exist. Any
+real reading has to happen where the table is still a table — in EvidenceIR from
+`StructuredTableRecord`, the same place `synthesize_signal_declarations` already works.
+
+By first cell, the 769 split: 438 phrase, 109 number or range, 100 identifier, 70 an already-declared
+signal, 30 an encoded value, 22 empty (continuation rows).
+
+### The readable part is smaller than it looks
+
+The natural first increment is the one shape the reader already understands end to end: a
+signal-description row for a signal it has just declared, whose description cell states an obligation
+about that signal. **17 rows corpus-wide**, against 84 existing `signal_constraints` — a real but
+modest gain, and small enough that all 17 can be adjudicated rather than sampled. That is `.3`.
+
+The other ~380 are matrices, and reading them is a table-semantics programme rather than a rule. `.4`
+exists to hold it, explicitly not as a slice.
+
+### Meanwhile, the rows stay published — deliberately
+
+`.1` removed captions because they state nothing. These state something, so removing them would lose
+it, and `[[ANCHORLESS-INVARIANT-DROP]]` is the standing reminder that a silent drop is its own defect.
+They are also not currently reaching a machine consumer: the ISF adapter reports 27 blocked states and
+0 emitted files, so today these records serve audit, where a serialized row is legible to a person.
+**Stated rather than left implicit** — that is what this tree's acceptance criteria asked for, and it
+is discharged here for the table-row half.
 
 ## Acceptance Checklist (enforced) — `.1`
 
@@ -149,9 +213,8 @@ else in the artifact, which is why this tree splits rather than shipping one rul
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `INVARIANT-SHAPE-ADMISSION.2` — the table-row census, now on a clean population: 769 rows and no
-   caption noise. Remember what `.1` measured about them — only 70 duplicate a declaration, so this is
-   an extraction gap and subtraction is not the answer.
+1. `INVARIANT-SHAPE-ADMISSION.3` — the 17-row signal-constraint increment. Bounded, fully adjudicable.
+2. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice.**
 
 ## `.0` — result (`2026-09-12`)
 
@@ -262,6 +325,11 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.2`. Read-only; no artifact written, rebuilt or mutated. Classification by first cell
+  and by modal presence over all 769 current table-row constraints, with samples printed per class and
+  adjudicated by hand. The 17-row increment was measured from persisted SourceIR
+  `signal_description` tables joined to each document's own declared set, not from the serialized
+  statements — deliberately, since the point of the leaf is that the statements are unreadable.
 - `2026-09-12` — `.1`. Controls, **observed RED**: with the refusal removed,
   `a_caption_is_not_an_invariant_unless_it_states_an_obligation` fails on
   `"Figure 3-1: HCLK debug state entry and exit"`, which route 2 admits for carrying `state` beside a
@@ -283,10 +351,15 @@ None.
 
 - Opened in the commit that closed `ANCHORLESS-INVARIANT-DROP.0` (`ec2b5a31`).
 - `.0` — `INVARIANT-SHAPE-ADMISSION.0` (`481c2d39`).
-- `.1` — `INVARIANT-SHAPE-ADMISSION.1`.
+- `.1` — `INVARIANT-SHAPE-ADMISSION.1` (`e3d22be0`).
+- `.2` — `INVARIANT-SHAPE-ADMISSION.2`.
 
 ## Changelog
 
+- `2026-09-12` — `.2` closed. A table row is a matrix row whose subject lives in its header, and
+  serialization discarded the header — so these constraints are unreadable where they are published.
+  396 of 769 carry an obligation; the readable increment is 17 rows (`.3`) and the rest is a
+  table-semantics programme (`.4`). The rows stay published meanwhile, and the reason is stated.
 - `2026-09-12` — `.1` closed. `statement_is_a_caption` removes 739 captions across the rebuilt
   proof-carrying corpus; published constraints 5,927 → 5,188 with **prose and table rows unchanged**.
 - `2026-09-12` — `.0` closed and split the tree. Captions (739 admitted by `r2`/`r3`, 20 by `r1`) are a
