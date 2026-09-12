@@ -171,7 +171,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
 ## Task Tree
 
 - ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3k`, and
-  `.3k.1`–`.3k.4`)
+  `.3k.1`–`.3k.6` with `.3k.2a`–`.3k.2i`)
 - ID: `EXTRACTION-QUALITY-GAUGE.gauge` · Status: `done` · Goal: establish the NLI-oracle not-entailed
   rate as a per-doc extraction-quality gauge; measure CHI (~83%) + APB (~29%), hand-validate (18/18).
 - ID: `EXTRACTION-QUALITY-GAUGE.1` · Status: `done` (prototype) · Goal: **entity discrimination** —
@@ -650,7 +650,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Commit: `EXTRACTION-QUALITY-GAUGE.3i`
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3k` · Status: `active` (opened `2026-09-12` by `.3i`; **scoped +
-  split** `2026-09-12`) · Children: `.3k.1`–`.3k.6` · Goal: **every part of a
+  split** `2026-09-12`) · Children: `.3k.1`–`.3k.6` (`.3k.2` carries `.3k.2a`–`.3k.2i`) · Goal: **every part of a
   published constraint must be read from the span that produced the record.** `.3i` established that
   for the negation; this container owns the rest. Its first result is that **both numbers `.3i`
   handed it were measured over the wrong population**, so the leaf is split around the populations
@@ -797,8 +797,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
   control written before the number was published.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.6`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `active` (split `2026-09-12` after `.3k.6` re-sized it)
-  · Children: `.3k.2a`, `.3k.2b`, `.3k.2c`, `.3k.2d` · Goal: **what a clause that types nothing may
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `active` (split `2026-09-12` after `.3k.6` re-sized it;
+  re-split `2026-09-12` by `.3k.2d`'s census) · Children: `.3k.2a`-`.3k.2i` · Goal: **what a clause that types nothing may
   publish.**
   Two arms of `classify_signal_constraint_kind` emit a fact the document did not state: the terminal
   `untyped_default` publishes `MustBeStable` for any obligation no phrase matched, and the
@@ -866,20 +866,122 @@ honestly-qualified) path to "human-SpecForge in Rust."
   and it belongs to `.3k.3`.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.2b`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2d` · Status: `pending` (opened `2026-09-12` by `.3k.2b`) · Goal:
-  **a NEGATED value binding is unreadable.** `extract_protocol_state_value` binds on `must be `,
-  `shall be `, `must remain `, `shall remain ` and has no negated form, so *"The DV operand must not
-  be 1 for IODIR"* — a perfectly ordinary obligation — matches nothing, falls to the untyped default,
-  and since `.3k.2a` publishes nothing at all. That is an improvement on what it used to publish (the
-  value came from the NEXT sentence's `a command must be issued`, giving `must_be_value ISSUED`), but
-  the requirement itself is still uncaptured. This is the remaining half of `.3i`'s second finding —
-  *"all 20 negated records sit on a kind the classifier never matched, because every phrase in the
-  table is affirmative"* — and the constraint vocabulary already has the slot: `MustBeValue` plus
-  `negated`. Read the binding, keep the flag, and re-check the `WIRE-BASED-100.5b` double-negative
-  guard, which reserves `negated` for kinds whose plain form is affirmative. Population must be
-  derived with `replay-constraints` over the NOT-REPRODUCED set, where these now sit.
-  Prerequisite: none. Verification: the derived population adjudicated individually; observed RED;
-  the chain rebuilt for every document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2d` · Status: `done` (`2026-09-12`, CODE) · Goal: **one modal
+  vocabulary for the whole record.** Three functions read an obligation clause for its modal and each
+  carried its own vocabulary: `obligation_is_negated` accepts `must not`/`shall not`/`must never`/
+  `shall never`/`cannot`/`will not`; `constraint_bearing_sentence` looked only for `must`/`shall`; and
+  every phrase in `classify_signal_constraint_kind` is spelled `must`/`shall`. So an obligation a
+  document states with `cannot` was flagged NEGATED by the first, given no sentence of its own by the
+  second, and typed as nothing by the third. This is the remaining half of `.3i`'s second finding
+  (*"every phrase in the table is affirmative"*) one level up: every phrase in the table is also
+  MODAL-specific, and `.3i` answered that with three more literals rather than with the rule.
+  **The leaf opened on a different mechanism and its own census refuted it.** It said
+  `extract_protocol_state_value` has no negated binder, citing *"The DV operand must not be 1 for
+  IODIR"*. That sentence is a TEST STRING, not a corpus record: the document's own statement is
+  RISC-V IOMMU `statement_1033`, class `conditional_rule`, and its records are `dyn_sigcon_0008`/
+  `0009` — the DYNAMIC path, which never reaches this classifier at all. The rule was written from a
+  description of the producer instead of from the producer (`CLAIM_VERIFICATION.md` §3 Leg 2).
+  **The census, over all 78 persisted artifacts, enumerating the full cross product of the six modals
+  `obligation_is_negated` accepts with the binder verbs `extract_protocol_state_value` reads.**
+  Statement path: **31** `signal_value_constraint` statements carry a negated binder — 13 reach
+  `must_not_change`, 6 reach `must_be_deasserted`, **12 reach the generic/untyped arm**. All 12 read
+  against source: **9** are *"cannot be changed"* / *"will not be changed"* (eMMC ×2, USB4 ×5, SMBus,
+  Wishbone) — a no-change obligation whose modal the table lacks; **2** are DTI reference magnitudes,
+  correctly refused by `.3k.1`; **1** is AMBA LPI *"QREQn cannot be driven HIGH until the handshake is
+  completed"* — a level obligation the table ALSO already owns (`must be driven high`), blocked by the
+  same modal. Row path: 50 admitted obligation clauses, **0** carrying one of these modals.
+  **So the value binder's own population is zero.** Not one of the 12 needs a negated binder; ten of
+  them need the modal, and the vocabulary slot `.3k.2b` named (`MustBeValue` + `negated`) is reached
+  by no corpus clause in either caller. The gap is real as a capability and empty as a population.
+  Shipped: `normalize_obligation_modal` reduces the equivalent negative modals to the `must not` form
+  the table is written in, and `sentence_states_an_obligation` gives the obligation-sentence scan that
+  same vocabulary. **Measured over all 78 artifacts, record by record: 0 added, 0 removed, 0 retyped**
+  — `replay-constraints` is identical before and after (171 persisted / 125 reproduced / 46 not / 126
+  unpersisted), and APB rebuilt to the same 23 records with the same ids.
+  **The zero is the result, not the absence of one, and the intermediate measurement proves the two
+  halves cannot ship apart.** With only the classifier half, the replay gains exactly 2 records —
+  eMMC `NOTE must_not_change` twice, from `| NOTE 1 | … A Device … will not change its state to the
+  rcv state. … |`, whose subject is the serialized row's own NOTE marker. Teaching the classifier a
+  modal the sentence scan cannot find moves the record's span to the whole row; teaching both leaves
+  the obligation with a sentence of its own, and the marker is not in it.
+  **Four findings routed rather than absorbed:** `.3k.2e` (the row path's untyped fallback, 17 of 17
+  wrong), `.3k.2f` (the row path applies neither vocabulary-slot refusal), `.3k.2g`
+  (`replay-constraints` does not judge the `row_sigcon_*` stratum at all), `.3k.2h` (`obligation_subject`
+  is the next function still reading `must`/`shall` only, and a continuation row's empty name cell
+  drops every obligation in it), `.3k.2i` (the row path's generic-value arm, 4 right / 5 wrong).
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2d`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2e` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
+  **the row path's untyped fallback is not an under-typed obligation, it is an unexpressible one.**
+  `.3k.2a` refused the terminal `MustBeStable` in the statement path and kept it in the row path,
+  reasoning that the row path has already proved via `obligation_subject` that its clause binds to its
+  row's own signal, so an untyped obligation there is a real obligation with a spelling the table
+  lacks. **That reasoning is now falsified by its own successor plus a census.** The population it
+  reasoned from was 4 APB `must have the same value` clauses, and `.3k.2c` supplied that spelling, so
+  they no longer reach the fallback. The population that DOES reach it — enumerated over all 78
+  documents' `signal_description` tables, name cell resolving through the document's catalog and the
+  clause binding to the row's signal: 50 admitted clauses, of which **17 reach the untyped fallback,
+  and 17 of 17 are wrong.** Every one states a relation the constraint vocabulary has no slot for:
+  MATCH (*"LCCTAG must match the value that is given in LRCTAG"*, *"LRADDR must match LAADDR"*, MMU-700
+  and LTI ×6), ALIGNMENT (*"Must be aligned to a size"*, TileLink ×6; *"The value of the address must
+  align to the data width"*, Avalon), COMPARISON (*"The value of LRSIZE must not be greater than
+  (LTI_LRADDR_WIDTH-12)"*), or PRESENCE (*"Must not be present"*). Binding the SUBJECT correctly does
+  not make the KIND readable. **None of the 12 currently published `row_sigcon_*` records reaches the
+  fallback** (APB 10, AXI-L 1, AHB 1, all typed by a stated arm), so the refusal costs nothing measured
+  and prevents 17 fabrications the moment those documents are re-ingested — the same live-class /
+  empty-published-population shape `.3k.1` shipped on. Prerequisite: none. Verification: the 17
+  re-derived and adjudicated individually; observed RED; APB/AHB/AXI-L rebuilt and proven unmoved.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2f` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
+  **the vocabulary-slot refusals are wired into one caller, not into the rule.** `.3d`'s
+  `is_relational_equality_constraint` and `.3k.1`'s `is_reference_magnitude_constraint` both say the
+  same thing — *the constraint vocabulary has no slot for "this operand is bounded by that one", so
+  refuse rather than fabricate* — and both are evaluated only inside `extract_signal_constraints`. The
+  row path never calls either. Demonstrated with the real producer:
+  `| OMEGABURST | … | OMEGABURST must be equal to the value of ZETAREADY. |` publishes
+  `OMEGABURST must_be_value`, from a sentence the statement path refuses outright. Corpus population
+  today is **0** (no admitted row clause matches either predicate), so this is a live class with an
+  empty published population and must be sized that way rather than as a record count. Related but
+  distinct from `.3k.2e`: that one refuses a clause whose kind is untyped, this one refuses a clause
+  whose kind types fine and whose MEANING has no slot. Prerequisite: `.3k.2e`. Verification: the
+  predicate reached from both callers; observed RED on the demonstrated shape; corpus delta measured.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2g` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
+  **the replay instrument does not judge a whole producer stratum.** `.3k.6` shipped
+  `replay-constraints` so a change could be sized against what today's extractor actually mints, and
+  `.3k.2a`–`.3k.2d` each used it. It filters the persisted deterministic set to `sigcon_*` and
+  `dyn_sigcon_*`, so the 12 published `row_sigcon_*` records are invisible to it — `.3k.2c` had to say
+  so in prose (*"the retype is inside the row stratum, which the replay does not judge"*) and `.3k.2d`
+  had to prove the row stratum unmoved by rebuilding APB instead. The row producer needs `SourceIr`,
+  which the artifact already names in `source_ir_path`, and the catalog widening needs
+  `collect_signal_names_from_tables` alongside the granted declarations, exactly as the build composes
+  them. A silent omission in the instrument a family sizes itself with is the same defect class the
+  instrument exists to end. Prerequisite: none. Verification: the corpus totals re-derived with the
+  stratum included; the three documents that publish row records verified against their own artifacts;
+  the honest limits (no prior guidance) stated in the report rather than assumed away.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2h` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
+  **the row path's two remaining readers of a narrower vocabulary.** (a) `obligation_subject` decides
+  whether a description clause states an obligation by looking for `must`/`shall` only, so the modal
+  gap `.3k.2d` closed for the statement path is still open one function along: a row cell stating
+  *"X cannot be asserted while Y is high"* is `NotAnObligation` and the clause is dropped. (b) A
+  signal-description table split across pages emits continuation rows whose NAME cell is empty, and
+  `resolve_declared_signal_identifier("")` fails, so every obligation in the continuation is dropped —
+  AMBA LTI `table_0014` (*"Table B4.1 Continued from previous page"*) loses two, including
+  *"When LAMMUV is 1 and LAPM is 1, LAFLOW must not be Stall"*, the corpus's only genuine NEGATED VALUE
+  binding and therefore the only clause that would have given `.3k.2d`'s original mechanism a
+  population. Both are recall, both are in the row reader, and (b) decides whether the vocabulary slot
+  `MustBeValue` + `negated` is ever reached at all. Prerequisite: none. Verification: each half sized
+  over the corpus separately; the admitted set adjudicated; observed RED.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2i` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
+  **the row path's generic-value arm, read.** The same census that sized `.3k.2e` found 9 admitted row
+  clauses reaching the `generic_value` arm, and it is **4 right / 5 wrong**. Right: `LAPM must be 0`,
+  `LAPRIV must be 0`, `LRHWATTR must be 0`, `LRMECID must be 0`. Wrong, and each for its own reason:
+  *"LAPAS must be Non-secure or Secure"* publishes `NON` — the value binder splits at the hyphen, and
+  the clause is a DISJUNCTION the slot cannot hold either (×2); *"LRATTR must be Snoopable Write-Back"*
+  publishes `SNOOPABLE`, the first word of a two-word value; *"One write response must be sent for each
+  write command"* publishes `SENT`, a passive verb `.3k.2b`'s participle rule misses because `sent` does
+  not end in `ed`; *"… LRATTR must match LAATTR, with the exception of the allocation hint which must be
+  Allocate …"* publishes `ALLOCATE`, a value lifted from a different clause of the same sentence
+  (`.3k.3`'s span defect, in the row path). Prerequisite: `.3k.2e`. Verification: each of the 9
+  adjudicated; observed RED per rule; the corpus delta measured with the row stratum judged (`.3k.2g`).
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2c` · Status: `done` (`2026-09-12`, CODE) · Goal: **the spelling
   this corpus uses for a no-change obligation.** APB writes it as *"PAUSER must have the same value in
   the Setup and Access phase of a transfer"* and *"… in every cycle during the Access phase"*; the
@@ -959,6 +1061,60 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2d`
+
+- [x] **REPRODUCE / MEASURE** — the population enumerated in both directions over all 78 persisted
+  artifacts, as the full cross product of the six modals `obligation_is_negated` accepts with the
+  binder verbs `extract_protocol_state_value` reads, not the four spellings the leaf opened with
+  (which gave 2 and was wrong). Statement path: **31** `signal_value_constraint` statements carry a
+  negated binder — 13 `must_not_change`, 6 `must_be_deasserted`, **12 generic/untyped**. All 12 read
+  against source: 9 `cannot/will not be changed`, 2 DTI reference magnitudes (`.3k.1` refuses them),
+  1 AMBA LPI *"QREQn cannot be driven HIGH until the handshake is completed"*. Row path: 50 admitted
+  obligation clauses, 0 carrying one of these modals. Baseline `replay-constraints --evidence-root
+  generated/evidence_ir`: 171 persisted / 125 reproduced / 46 not / 126 unpersisted, captured per
+  record before the change.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`. Three functions read one
+  clause for its modal with three vocabularies: `obligation_is_negated` (six modals),
+  `constraint_bearing_sentence` (`must`/`shall` only, so an obligation stated with `cannot` gets no
+  sentence and the span silently falls back to the whole statement), and
+  `classify_signal_constraint_kind` (every phrase spelled `must`/`shall`, so the same clause types as
+  nothing and — since `.3k.2a` — publishes nothing). Not the mechanism the leaf named: the record it
+  cited, RISC-V IOMMU `dyn_sigcon_0008`/`0009`, comes from `statement_1033`, class `conditional_rule`,
+  through the dynamic path, which does not call this classifier. Verified by locating the statement
+  and its records in the artifact, not by reading the leaf.
+- [x] **ADDRESSED (verified)** — `normalize_obligation_modal` reduces `cannot`/`can not`/`will not`/
+  `must never`/`shall never` to `must not`; `sentence_states_an_obligation` gives the sentence scan the
+  same set. **Corpus effect measured record by record over all 78 artifacts: 0 added, 0 removed, 0
+  retyped** — the per-record `replay-constraints` dump is byte-identical to the baseline. APB rebuilt
+  (`evidence → validate → semantic → validate → intent → validate → adapt`): 23 constraint records,
+  identical identities AND identical ids, all 10 `row_sigcon_*` included; only `proof_context`,
+  `proof_ledger` and `validation_reports` differ, and the restored bundle was `diff -r` byte-identical
+  before removal (retention back at 24). **Two observed-RED controls, one per decision, each isolating
+  the other:** disabling `normalize_obligation_modal` fails
+  `the_equivalent_negative_modals_reach_the_same_kinds` with `MustBeStable` where `MustNotChange` is
+  correct (and `a_self_negating_kind_still_refuses_the_flag_under_any_modal` with it); narrowing
+  `sentence_states_an_obligation` back to `must`/`shall` fails
+  `the_obligation_sentence_is_found_by_the_same_modal_the_kind_is`, returning the whole serialized row
+  where the obligation's own sentence is correct. Both restored green.
+- [x] **NO REGRESSION** — `cargo fmt --all --check`, `cargo clippy --offline --all-targets -D warnings`
+  and the full suite green; `specforge-core` lib **1,456 → 1,461**. `kg-bench` **156/156**.
+  WIRE-BASED-100 golds `signal_constraint P=R=F1=1.000` on APB/AHB/AXI/SWD and `temporal_rule
+  P=R=F1=1.000` on APB/AHB/AXI. `scripts/check_doctrines.sh` all 13 gate-tier PASS after
+  `doctrine/production_genericity/flow_census.json` was re-derived and attributed to this leaf
+  (`analyzed_functions` +2, `helper_edges` +3, `decision_sites` −1 — the inline disjunction
+  `constraint_bearing_sentence` spelled becomes one `contains_any` call). Corpus replay unchanged at
+  171 / 125 / 46 / 126.
+- [x] **GENERICITY (ADR 0006)** — universal English modal equivalence. Five modal strings and one
+  canonical form, no document, protocol, vendor or signal name; the set is exactly
+  `obligation_is_negated`'s, so the two halves of a record cannot again recognise different modals.
+  Controls use invented names (`ZETALEN`, `ZETAOKAY`, `ZETARESP`, `ZETASEL`, `ZETADATA`, `ZETASTRB`,
+  `ZETANOTE`).
+- [x] **LOCKSTEP** — code, this leaf, the book's EvidenceIR chapter and the resume pointer agree before
+  commit. No production rule is deleted or replaced, so no book text describes behaviour that is now
+  gone; the chapter gains the modal rule beside `.3i`'s negation rule and `.3k.2c`'s phrase rule.
+  Knowledge Map card `[[one-modal-vocabulary-per-constraint-record]]` records the measured zero so the
+  next session does not re-derive it.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2c`
 
@@ -1299,6 +1455,23 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-09-12` — **`.3k.2d` CLOSED (CODE) — one modal vocabulary for the whole record, and the
+  mechanism the leaf opened with was refuted by its own census.** The leaf said
+  `extract_protocol_state_value` has no negated form, citing *"The DV operand must not be 1 for
+  IODIR"*; that is a TEST STRING, and the document's own statement is RISC-V IOMMU `statement_1033`,
+  class `conditional_rule`, whose records come from the DYNAMIC path and never reach this classifier.
+  Enumerating the real population — the full cross product of the six modals `obligation_is_negated`
+  accepts with the binder verbs — gives **31** statements, of which **12** reach the untyped arm; all
+  12 read against source, and **the negated value binder is needed by none of them**. Ten need the
+  MODAL: every phrase in the kind table is spelled `must`/`shall` while the negation detector accepts
+  `cannot`/`will not`/`must never`/`shall never`, so one clause was read with two vocabularies.
+  `constraint_bearing_sentence` was the third reader and the narrowest, which is why the two halves
+  ship together: with only the classifier taught, the corpus gains 2 records whose subject is a
+  serialized row's `NOTE` marker; with both, it gains none. **Measured over all 78 artifacts, record
+  by record: 0 added, 0 removed, 0 retyped**, and APB rebuilt to the same 23 records with the same
+  ids. Five findings routed to `.3k.2e`–`.3k.2i` rather than absorbed, the largest being that the row
+  path's untyped fallback — kept deliberately by `.3k.2a` — is **17 of 17 wrong** once `.3k.2c`
+  removed the four records `.3k.2a` reasoned from.
 - `2026-09-12` — **`.3k` SCOPED + SPLIT** into `.3k.1`–`.3k.4`, and the scoping falsified both numbers
   it inherited. `scripts/measure_constraint_part_span.py` (new, read-only, 78 artifacts / 349 records)
   stratifies the constraint table by PRODUCER, because `classify_signal_constraint_kind` has exactly

@@ -76,6 +76,8 @@
   > does SpecForge reject a page metadata staging traversal or symlink escape
 - [contested-priors](../knowledge/contested-priors.md)
   > does SpecForge revise or decay priors
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > does SpecForge type an obligation stated with cannot or will not
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > does SpecForge uppercase declared signal names
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
@@ -286,6 +288,8 @@
   > does the co-reference rule resurrect resolve_indexed_signal_family
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does the converge NLI pass measure quality or demote unsupported intent
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > does the corpus contain a negated value binding the extractor cannot read
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -294,7 +298,3 @@
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > does the drop model agree with docling iterate_items
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > does the dynamic constraint path use classify_signal_constraint_kind
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > does the emitted .isf signal direction affect FSMGen downstream correctness

@@ -1,45 +1,45 @@
 {
-  "schema_version": 1,
-  "contract_id": "production-genericity-flow-census",
-  "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
-  "authority": "ADR 0025 decision 2 / DOCTRINE_ENFORCEMENT.md §3 — a census that reports is not a check. `check_production_genericity_flow.sh` already derives all eighteen counts on every commit; this is the declaration it compares them against, so a drift is caught at commit cadence instead of at push cadence by a cargo test.",
-  "boundary": {
-    "rationale": "These describe the genericity boundary itself — which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point — it has no authority over any artifact, and the boundary should say so.",
-    "pinned": {
-      "boundary_rows": 143,
-      "canonical_seams": 12,
-      "grammar_declassifiers": 64,
-      "non_authoritative_regions": 8,
-      "proof_gates": 25,
-      "protected_calls": 28,
-      "protected_constructions": 19,
-      "protected_types": 15,
-      "rule_roots": 120,
-      "source_fields": 13,
-      "source_parameters": 3,
-      "source_returns": 2,
-      "source_types": 22,
-      "trusted_regions": 11
-    }
-  },
-  "volume": {
-    "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
-    "aggregate_change": {
-      "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2c-SAME-VALUE-IS-NO-CHANGE",
-      "owner": "EXTRACTION-QUALITY-GAUGE.3k.2c",
-      "rationale": "One arm added to the kind phrase table for \"must have the same value\", the spelling AMBA APB uses for a no-change obligation, placed behind the validity arm so a cell stating both keeps the validity fact. One decision site.",
-      "baseline": {
-        "analyzed_functions": 2419,
-        "decision_sites": 13028,
-        "helper_edges": 15106,
-        "semantic_macros": 1482
-      },
-      "delta": {
-        "analyzed_functions": 0,
-        "decision_sites": 1,
-        "helper_edges": 0,
-        "semantic_macros": 0
-      }
-    }
+ "schema_version": 1,
+ "contract_id": "production-genericity-flow-census",
+ "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
+ "authority": "ADR 0025 decision 2 / DOCTRINE_ENFORCEMENT.md §3 — a census that reports is not a check. `check_production_genericity_flow.sh` already derives all eighteen counts on every commit; this is the declaration it compares them against, so a drift is caught at commit cadence instead of at push cadence by a cargo test.",
+ "boundary": {
+  "rationale": "These describe the genericity boundary itself — which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point — it has no authority over any artifact, and the boundary should say so.",
+  "pinned": {
+   "boundary_rows": 143,
+   "canonical_seams": 12,
+   "grammar_declassifiers": 64,
+   "non_authoritative_regions": 8,
+   "proof_gates": 25,
+   "protected_calls": 28,
+   "protected_constructions": 19,
+   "protected_types": 15,
+   "rule_roots": 120,
+   "source_fields": 13,
+   "source_parameters": 3,
+   "source_returns": 2,
+   "source_types": 22,
+   "trusted_regions": 11
   }
+ },
+ "volume": {
+  "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
+  "aggregate_change": {
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2d-ONE-MODAL-VOCABULARY",
+   "owner": "EXTRACTION-QUALITY-GAUGE.3k.2d",
+   "rationale": "Two helpers, one rule: `normalize_obligation_modal` reduces the equivalent negative modals (`cannot`, `can not`, `will not`, `must never`, `shall never`) to the `must not` form the kind phrase table is written in, and `sentence_states_an_obligation` gives the obligation-sentence scan that same vocabulary so a clause stated with one of them has a sentence of its own. Two analyzed functions and three helper edges; decision sites fall by one because the disjunction `constraint_bearing_sentence` spelled inline becomes one `contains_any` call.",
+   "baseline": {
+    "analyzed_functions": 2419,
+    "decision_sites": 13029,
+    "helper_edges": 15106,
+    "semantic_macros": 1482
+   },
+   "delta": {
+    "analyzed_functions": 2,
+    "decision_sites": -1,
+    "helper_edges": 3,
+    "semantic_macros": 0
+   }
+  }
+ }
 }

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how do I reverify the frozen current claim census
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > how do I reverify the frozen mdBook quantitative census
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how do I reverify the published-assertion gate
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
@@ -293,7 +297,3 @@
   > how does the no-re-ingest canonical promotion protocol stay in place
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how does the published-assertion gate decide which surfaces are watched
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > how does the register reader recover a field name with no name column
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how does the section-heading field reader tell a message container from a register container

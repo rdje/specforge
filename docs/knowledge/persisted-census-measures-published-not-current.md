@@ -15,7 +15,7 @@ date: 2026-09-12
 status: current
 tags: [evidence-ir, census, claim-verification, corpus, chain-currency, extraction-quality-gauge]
 evidence: generated/source_ir/*/normalized (24 of 78); generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out; crates/specforge/src/ir/evidence.rs (is_post_passive_binding_only_subject, CORPUS-COVERAGE.2.50a); docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.3k, .3k.1); docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md
-reverify: "cargo run -- replay-constraints --evidence-root generated/evidence_ir — expect 144 of 179 persisted deterministic records reproduced, 67 granted declarations, and one named skip"
+reverify: "cargo run -- replay-constraints --evidence-root generated/evidence_ir — expect a reproduced count strictly below persisted_deterministic_records, and one named skip (um11732 I2C, current-schema with a stale proof). The totals are repository-derived and move with every extractor slice, so read them from the command rather than from this card."
 ---
 
 The persisted corpus is **not one code generation**. Only 24 of the 78 documents keep a
@@ -56,18 +56,25 @@ no information (`CLAIM_VERIFICATION.md` §2).
 
 ```bash
 cargo run -- replay-constraints --evidence-root generated/evidence_ir
-# persisted_deterministic_records: 179   reproduced: 144   granted_declarations: 67   skipped: 1
+# persisted_deterministic_records / reproduced / granted_declarations / skipped
 ```
+
+The totals are **not carried here**. They are a function of this repository and they move whenever an
+extractor slice lands: `.3k.6` measured 144 of 179, and `.3k.1`, `.3k.2a` and `.3k.2b` each moved both
+halves within the same week. Read them from the command. What is durable is the shape — reproduced is
+strictly below persisted, and the gap is the frozen generations, not a defect count.
 
 Read the verdict **asymmetrically**. "Not reproduced" is sound: the replay grants a declaration to any
 published subject the artifact no longer declares, and a wider catalog can only admit more subjects,
 never withdraw one. The opposite direction is not sound — the build applies convergence stages the
 replay does not — so `unpersisted_replay_records` is evidence to read, never a number to quote.
 
-Calibration: artifacts the current binary itself wrote reproduce completely (APB 15/15, AHB 13/13,
-both rebuilt by `EXTRACTION-QUALITY-GAUGE.3i`), and AMBA CXS reproduces 0/2 because `.3i` retyped
-exactly its `must not be asserted` shape — two independent confirmations that the instrument is
-measuring generation drift rather than noise.
+Calibration is a shape, not a pair of numbers: an artifact the current binary itself wrote
+reproduces **completely** — run it on APB (`ihi0024_e`) or AHB (`ihi0033_c`), both kept current by the
+rebuild every constraint slice performs — while AMBA CXS (`ihi0079_b`) reproduces **none**, because
+`.3i` retyped exactly its `must not be asserted` shape and that document has no bundle to rebuild
+from. Two independent confirmations that the instrument measures generation drift rather than noise,
+and both survive the totals moving.
 
 Do this before sizing any extractor change; the artifact census tells you where to look, not what will
 move.

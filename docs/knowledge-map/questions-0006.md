@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > how does the register reader recover a field name with no name column
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how does the section-heading field reader tell a message container from a register container
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -219,6 +223,8 @@
   > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many converter text items does iterate_items yield across the corpus
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > how many corpus constraints need a negated form of extract_protocol_state_value
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > how many corpus documents carry markdown-escaped underscores in their statements
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -291,9 +297,3 @@
   > how many falsification controls are cited by verified SpecForge claims
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many figure interior texts does the corpus hold
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > how many generated SourceIR records still name the old livework checkout
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > how many generated artifacts still mention the deleted boot-volume repository
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how many governed claim producers are tracked

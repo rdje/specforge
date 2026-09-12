@@ -10034,10 +10034,55 @@ fn is_admissible_state_value(value: &str, discovered_values: &HashSet<String>) -
     !(lowered.len() > 3 && lowered.ends_with("ed"))
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3k.2d — the obligation modals a specification writes, reduced to the one
+/// the phrase table carries.
+///
+/// A classifier that matches literal phrases states its vocabulary twice: once in the WORDS it looks
+/// for, and once in the MODAL it spells them with. [`obligation_is_negated`] already accepts
+/// `cannot`, `will not`, `must never` and `shall never` as negations of an obligation, so a clause
+/// using one of them is published with `negated: true`. Every phrase in
+/// [`classify_signal_constraint_kind`], though, is spelled with `must` or `shall`: *"must not be
+/// changed"* types as `MustNotChange` while *"cannot be changed"* — the same obligation, often the
+/// same document — matches nothing and falls to the terminal arm. The two halves of one record were
+/// reading one clause against two different modal vocabularies.
+///
+/// The gap is closed where it opens, by rewriting only the MODAL onto the canonical `must not` form
+/// the table already carries. Nothing else about the clause is touched: the negation stays exactly
+/// where the document put it, so an arm that encodes its own negation still matches its own spelling
+/// and the `WIRE-BASED-100.5b` guard still decides the flag. This is the other half of
+/// `EXTRACTION-QUALITY-GAUGE.3i`'s second finding — that one taught the table the negative spellings
+/// of two kinds, this one stops the table needing a spelling per modal at all.
+///
+/// Universal English modal equivalence, no document/protocol/vendor vocabulary (ADR 0006). The set
+/// is exactly `obligation_is_negated`'s, minus the two forms the table is already written in, so the
+/// two halves of a record cannot again recognise different modals.
+fn normalize_obligation_modal(lowered: &str) -> std::borrow::Cow<'_, str> {
+    const EQUIVALENT_NEGATIVE_MODALS: &[&str] = &[
+        "cannot ",
+        "can not ",
+        "will not ",
+        "must never ",
+        "shall never ",
+    ];
+    const CANONICAL: &str = "must not ";
+    if !contains_any(lowered, EQUIVALENT_NEGATIVE_MODALS) {
+        return std::borrow::Cow::Borrowed(lowered);
+    }
+    let mut rewritten = lowered.to_string();
+    for modal in EQUIVALENT_NEGATIVE_MODALS {
+        rewritten = rewritten.replace(modal, CANONICAL);
+    }
+    std::borrow::Cow::Owned(rewritten)
+}
+
 fn classify_signal_constraint_kind(
     lowered: &str,
     discovered_values: &HashSet<String>,
 ) -> SignalConstraintKind {
+    // EXTRACTION-QUALITY-GAUGE.3k.2d — one modal vocabulary for the whole record: the phrase table
+    // below is written in `must`/`shall`, and the document's other negative modals are normalized
+    // onto it before any arm is tried.
+    let lowered = &*normalize_obligation_modal(lowered);
     if contains_any(
         lowered,
         &[
@@ -10591,12 +10636,29 @@ fn constraint_bearing_sentence(text: &str) -> &str {
     // obligation per clause rather than one constraint carrying the whole cell
     // (CONSTRAINT-EXTRACTION-V2.2).
     for sentence in text.split(['.', ';', '•', '\n']) {
-        let lowered = sentence.to_ascii_lowercase();
-        if lowered.contains("must") || lowered.contains("shall") {
+        // EXTRACTION-QUALITY-GAUGE.3k.2d — the same modal vocabulary the record's other parts use.
+        // Spelled `must`/`shall` only, this scan cannot FIND an obligation a document states with
+        // `cannot` or `will not`, so the narrowing silently fails open and the record's span becomes
+        // the whole statement — while `obligation_is_negated` reads those same modals happily and
+        // flags the record negated. eMMC `| NOTE 1 | … A Device … will not change its state to the
+        // rcv state… |` is the shape: the obligation has a sentence of its own, and only a scan that
+        // recognises its modal can return it.
+        if sentence_states_an_obligation(&sentence.to_ascii_lowercase()) {
             return sentence;
         }
     }
     text
+}
+
+/// Whether a lowered sentence carries an obligation modal at all — the one vocabulary every part of
+/// a constraint record reads a clause with (`EXTRACTION-QUALITY-GAUGE.3k.2d`).
+///
+/// It is exactly [`obligation_is_negated`]'s modal set plus the two affirmative modals, because a
+/// negated obligation is an obligation: a scan that admits `cannot` as a NEGATION while refusing it
+/// as a MODAL answers two questions about one clause with two vocabularies, and the wider answer
+/// then rides a span the narrower one never located.
+fn sentence_states_an_obligation(lowered: &str) -> bool {
+    contains_any(lowered, &["must", "shall", "cannot", "can not", "will not"])
 }
 
 /// If the sentence states an antecedent and then *infers* an obligation
@@ -36247,5 +36309,174 @@ mod extraction_quality_gauge_3k_2c {
         assert!(is_relational_equality_constraint(
             "ZETAUSER must have the same value as ZETAWUSER"
         ));
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_2d {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.2d` — one modal vocabulary for the whole record.
+    //!
+    //! Three functions read a clause for its modal and each carried its own vocabulary:
+    //! `obligation_is_negated` accepts `cannot`/`will not`/`must never`/`shall never`,
+    //! `constraint_bearing_sentence` looked only for `must`/`shall`, and every phrase in
+    //! `classify_signal_constraint_kind` is spelled `must`/`shall`. So an obligation a document
+    //! states with `cannot` was flagged NEGATED by the first, given no sentence of its own by the
+    //! second, and typed as nothing by the third. The two halves of one record read one clause
+    //! against two different vocabularies, which is the same defect `.3i` found for the negation
+    //! and `.3k.3` owns for the span.
+    use super::*;
+
+    fn constraint(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let declarations = ExtractedStatement {
+            statement_id: "declarations".into(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: declared
+                .iter()
+                .map(|name| format!("Signal {name} is input width 1."))
+                .collect::<Vec<_>>()
+                .join(" "),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let statement = ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let mut counter = 0usize;
+        extract_signal_constraints(&[declarations, statement], &mut counter)
+    }
+
+    fn kind(text: &str) -> SignalConstraintKind {
+        classify_signal_constraint_kind(&text.to_ascii_lowercase(), &HashSet::new())
+    }
+
+    /// Half one of the defect: the kind. The same obligation, the same arm, a different modal —
+    /// `must not be changed` typed and `cannot be changed` did not. Every kind the table spells
+    /// negatively is asserted, so the rule is the modal and not one phrase.
+    #[test]
+    fn the_equivalent_negative_modals_reach_the_same_kinds() {
+        for text in [
+            "The ZETALEN parameter cannot be changed once the burst has started",
+            "The ZETALEN parameter can not be changed once the burst has started",
+            "The ZETALEN parameter will not be changed once the burst has started",
+            "The ZETALEN parameter must never be changed once the burst has started",
+            "The ZETALEN parameter shall never be changed once the burst has started",
+        ] {
+            assert_eq!(kind(text), SignalConstraintKind::MustNotChange, "{text:?}");
+        }
+        for text in [
+            "ZETAOKAY cannot be asserted in the same cycle as ZETARESP is asserted",
+            "ZETAOKAY will not be active during a read transfer",
+        ] {
+            assert_eq!(
+                kind(text),
+                SignalConstraintKind::MustBeDeasserted,
+                "{text:?}"
+            );
+        }
+    }
+
+    /// The kinds that already matched keep matching: normalization rewrites the MODAL only, so an
+    /// affirmative clause is not touched and a negation stays exactly where the document put it.
+    #[test]
+    fn the_affirmative_and_canonical_spellings_are_untouched() {
+        assert_eq!(
+            normalize_obligation_modal("zetasel must be asserted"),
+            "zetasel must be asserted"
+        );
+        assert!(matches!(
+            normalize_obligation_modal("zetasel must be asserted"),
+            std::borrow::Cow::Borrowed(_)
+        ));
+        assert_eq!(
+            kind("ZETASEL must be asserted"),
+            SignalConstraintKind::MustBeAsserted
+        );
+        assert_eq!(
+            kind("ZETADATA must not be changed"),
+            SignalConstraintKind::MustNotChange
+        );
+        assert_eq!(
+            normalize_obligation_modal("zetalen cannot be changed"),
+            "zetalen must not be changed"
+        );
+    }
+
+    /// `WIRE-BASED-100.5b` still decides the flag, and it decides it the same way for every modal:
+    /// a kind that encodes its own negation does not also carry `negated`, or the pair reads as a
+    /// double negative.
+    #[test]
+    fn a_self_negating_kind_still_refuses_the_flag_under_any_modal() {
+        for text in [
+            "ZETALEN cannot be changed once the burst has started",
+            "ZETALEN must not be changed once the burst has started",
+        ] {
+            let records = constraint(text, &["ZETALEN"]);
+            let record = records
+                .iter()
+                .find(|record| record.subject_signal == "ZETALEN")
+                .unwrap_or_else(|| panic!("no record for {text:?}"));
+            assert_eq!(
+                record.constraint_kind.as_str(),
+                "must_not_change",
+                "{text:?}"
+            );
+            assert!(!record.negated, "{text:?}: {record:?}");
+        }
+    }
+
+    /// Half two of the defect, and the reason the two halves ship together. A statement whose
+    /// obligation is stated with `cannot`/`will not` had no obligation SENTENCE, so
+    /// `constraint_bearing_sentence` fell back to the whole text and the subject scan swept the
+    /// serialized row's other cells. eMMC's `| NOTE 1 | … A Device that treats … as an illegal
+    /// command will not change its state to the rcv state. … |` is the measured shape: teaching the
+    /// classifier the modal WITHOUT teaching the sentence scan the same modal published two records
+    /// whose subject is the row's `NOTE` marker. Narrowed, the row marker is not in the obligation's
+    /// own sentence and no record is minted from it.
+    #[test]
+    fn the_obligation_sentence_is_found_by_the_same_modal_the_kind_is() {
+        let row = "| ZETANOTE 1 | Due to legacy considerations, a device may treat a write during \
+                   a programming state as a legal or an illegal command. A device that treats it \
+                   as an illegal command will not change its state to the receive state. |";
+        assert_eq!(
+            constraint_bearing_sentence(row).trim(),
+            "A device that treats it as an illegal command will not change its state to the \
+             receive state"
+        );
+        assert!(
+            constraint(row, &["ZETANOTE"]).is_empty(),
+            "the row marker is not in the obligation's own sentence"
+        );
+    }
+
+    /// The scan's vocabulary is exactly the negation detector's plus the two affirmative modals,
+    /// asserted as a property rather than as a list of examples: every modal that can make a record
+    /// NEGATED must also be able to give that record a sentence.
+    #[test]
+    fn every_negating_modal_can_locate_its_own_obligation_sentence() {
+        for modal in [
+            "must not",
+            "shall not",
+            "must never",
+            "shall never",
+            "cannot",
+            "will not",
+        ] {
+            let text = format!("The bus is idle. ZETASTRB {modal} be driven during this phase.");
+            let sentence = constraint_bearing_sentence(&text);
+            assert!(
+                sentence.contains("ZETASTRB"),
+                "{modal}: narrowed to {sentence:?}"
+            );
+            assert!(
+                obligation_is_negated(&sentence.to_ascii_lowercase()),
+                "{modal}: not read as negated"
+            );
+        }
     }
 }

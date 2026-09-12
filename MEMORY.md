@@ -7,38 +7,41 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.2c` CLOSED `2026-09-12` (CODE)** — a specification writes *"must have the same value"* when it
-  means *"does not change"*. APB states it that way and the phrase table had no form of it, so 4 `row_sigcon_*` obligations fell to the untyped
-  fallback and were published as `must_be_stable` by accident. Typed as **`MustNotChange`**, and **placed BEHIND the validity arm**: a
-  signal-description cell routinely states both, the first matching arm types the whole record, and ahead of validity this phrase retyped APB
-  `sigcon_0009`/`0010` out of `must_be_value VALID`. Both the phrase and its position carry their own RED control. Measured: **4 retyped, 0
-  added, 0 removed, one document**. `.3k.2` is now `.3k.2a`-`.3k.2d`, with `.3k.2d` the only one open.
-  Open: `.3k.2d`/`.3k.3`/`.3k.4`/`.3k.5`; **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`;
-  `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`; `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`;
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
-  `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
-  `WIRE-BASED-100` `.10d`/`.10f`/`.2`/`.3`/`.5` (SWD `13/29`).
-- Current state: six commits. The family's method is settled and is worth keeping: size with `replay-constraints`, READ every record in the
-  actionable population, let the reading choose the rule, and route what the reading finds into its own leaf. Every leaf so far has corrected a
-  number a previous one published, including its own. **Arm ORDER in `classify_signal_constraint_kind` is now load-bearing** — the first match
-  types the whole record and a table cell states several obligations — so a new phrase needs a placement control, not just a membership one.
-  281 fact cards; 15 doctrines, 13 at gate tier; core lib 1,456; corpus replay 125 of 171.
-- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.2d`** — a NEGATED value binding is unreadable.
-  `extract_protocol_state_value` binds on `must be `/`shall be `/`must remain `/`shall remain ` and has no negated form, so *"The DV operand
-  must not be 1 for IODIR"* matches nothing, falls to the untyped default, and since `.3k.2a` publishes nothing at all. The vocabulary already
-  has the slot (`MustBeValue` + `negated`); re-check the `WIRE-BASED-100.5b` double-negative guard, which reserves `negated` for kinds whose
-  plain form is affirmative. Derive the population from the NOT-REPRODUCED set with `replay-constraints`. Then `.3k.3` (the kind's span — its
-  published 4 predate three rebuilds, and it also inherits the `WTAGUPDATE` value-span residual), `.3k.5`, `.3k.4`.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.2d` CLOSED `2026-09-12` (CODE)** — **one modal vocabulary for the whole record.** Three functions
+  read the same clause for its modal with three different sets: `obligation_is_negated` (six modals), `constraint_bearing_sentence`
+  (`must`/`shall` only), `classify_signal_constraint_kind` (every phrase spelled `must`/`shall`). So an obligation written with `cannot` was
+  flagged NEGATED, given no sentence of its own, and typed as NOTHING. Shipped `normalize_obligation_modal` + `sentence_states_an_obligation`.
+  **The leaf's own opening mechanism was refuted by its census**: the negated VALUE binder it was opened for has population **0** in both
+  classifier callers (12 untyped negated-binder statements read against source: 9 need the modal, 2 are `.3k.1` magnitudes, 1 needs the modal;
+  50 admitted row clauses carry none). Its cited instance was a TEST STRING; the real record is dynamic-path. **Measured: 0 added, 0 removed,
+  0 retyped** over all 78 artifacts; APB rebuilt to the same 23 records with the same ids. Open: `.3k.2e`-`.3k.2i` (new), `.3k.3`/`.3k.4`/`.3k.5`;
+  **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`; `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`;
+  `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM`
+  `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
+  `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
+  `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`; `WIRE-BASED-100` `.10d`/`.10f`/`.2`/`.3`/`.5`.
+- Current state: seven commits. **The frontier has moved from the statement path to the ROW path.** Every statement-path arm this family has
+  touched is now measured clean, and `.3k.2d`'s census found the row path carrying what the statement path shed: its untyped fallback is
+  **17 of 17 wrong** (MATCH/ALIGN/COMPARE/PRESENCE relations the vocabulary cannot express), it applies neither `.3d`'s nor `.3k.1`'s
+  vocabulary-slot refusal, its generic-value arm is 4 right / 5 wrong, `obligation_subject` still reads `must`/`shall` only, and
+  `replay-constraints` does not judge the `row_sigcon_*` stratum at all. 305 fact cards; 15 doctrines, 13 at gate tier; core lib 1,461;
+  corpus replay 125 of 171 (unchanged by this leaf).
+- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.2e`** — refuse the untyped fallback in the ROW path too. `.3k.2a` kept it there, reasoning that
+  `obligation_subject` proves the clause binds to the row's own signal so an untyped obligation must be a real one with a missing spelling.
+  `.3k.2c` supplied that spelling and removed all four records that reasoning rested on; the 17 clauses that reach the fallback now are 17 of 17
+  wrong. None of the 12 published `row_sigcon_*` records reaches it, so the refusal costs nothing measured — re-derive that before shipping.
+  Consider `.3k.2g` (teach `replay-constraints` the row stratum) FIRST: without it the row path can only be verified by rebuilding APB/AHB/AXI-L.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **an evidence-stage change stales the proof of every current-schema artifact whose content moves and they
   then refuse to LOAD** — rebuild (`evidence → validate → semantic → validate → intent → validate → adapt`, each validated exactly once,
   upstream-first). Only APB/AHB/AXI-L have held-out bundles (`generated/preserved/WIRE-BASED-100.10/`): restore, rebuild, `diff -r`, remove,
-  retention back to 24. **Run `replay-constraints` before sizing any extractor change**
-  (`[[persisted-census-measures-published-not-current]]`). **A census counts the population of the FUNCTION being changed**
-  (`[[constraint-record-producer-strata]]`). **`extract_protocol_state_value` binds from the FIRST `must be ` in the whole text.** **Both
-  deterministic paths derive their own catalog from the statements.** **A Rust change moves `flow_census.json`; a new module
-  `module_inventory.tsv`; a new command `CLI_SURFACE_REGISTRY`; a new raw-evidence reader `information_flow_boundary.tsv`** — all fail closed.
-  **A new Markdown file must be `git add`ed before `check_live_document_size.pl` sees it.** **Grep `KNOWLEDGE_MAP.md` for the wall** —
-  `[[live-surface-edit-bookkeeping-chain]]`. **The doctrine driver runs no cargo gate** (`[[doctrine-driver-runs-no-cargo-gate]]`). Never run
-  the fixture suite with the locality gate (`SCRATCH-RESIDUE-CONTAINMENT.4`). This file's cap is 50 lines.
+  retention back to 24. **Run `replay-constraints` before sizing any extractor change** (`[[persisted-census-measures-published-not-current]]`)
+  — and note it is BLIND to `row_sigcon_*`. **A census counts the population of the FUNCTION being changed**
+  (`[[constraint-record-producer-strata]]`), and **enumerate a modal/phrase set in full before publishing a zero** — four spellings gave 2 where
+  the true cross product gives 12 (`[[one-modal-vocabulary-per-constraint-record]]`). **`extract_protocol_state_value` binds from the FIRST
+  `must be ` in the whole text.** **Both deterministic paths derive their own catalog from the statements.** **A Rust change moves
+  `flow_census.json` and the re-derivation must ATTRIBUTE the delta to the owning leaf**; a new module moves `module_inventory.tsv`; a new
+  command `CLI_SURFACE_REGISTRY`; a new raw-evidence reader `information_flow_boundary.tsv` — all fail closed. **A new Markdown file must be
+  `git add`ed before `check_live_document_size.pl` sees it.** **Grep `KNOWLEDGE_MAP.md` for the wall** — `[[live-surface-edit-bookkeeping-chain]]`.
+  **The doctrine driver runs no cargo gate** (`[[doctrine-driver-runs-no-cargo-gate]]`). Never run the fixture suite with the locality gate
+  (`SCRATCH-RESIDUE-CONTAINMENT.4`). This file's cap is 50 lines.

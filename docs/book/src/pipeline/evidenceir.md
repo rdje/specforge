@@ -476,6 +476,45 @@ written in a spelling the table lacks:
 That IS a stability requirement. The statement path has no such proof and cannot tell that case from
 a waveform caption, so the two paths answer differently on purpose.
 
+## One clause, one modal vocabulary
+
+Three different parts of a constraint record each ask the same question of the same clause — *does
+this state an obligation, and is it negated?* — and for a while each of them answered with its own
+list of modal words:
+
+| what it decides | the modals it read |
+| --- | --- |
+| is the obligation negated | `must not`, `shall not`, `must never`, `shall never`, `cannot`, `will not` |
+| which sentence IS the obligation | `must`, `shall` |
+| which kind the obligation states | every phrase in the table is spelled `must` or `shall` |
+
+So a requirement a specification writes with `cannot` was recognised as negated by the first reader,
+given no sentence of its own by the second, and typed as nothing by the third:
+
+```text
+The PATH_CS_0.PM Packet Support bit cannot be changed after the path valid bit is set to 1b.
+```
+
+`must not be changed` types as `must_not_change`. The sentence above is the same obligation, and it
+matched nothing. The fix is not another phrase — it is to stop the table needing one phrase per
+modal. The equivalent negative modals are reduced to the one form the table is written in before any
+phrase is tried, and the sentence scan reads the same set, so all three readers now agree about what
+counts as an obligation.
+
+Both halves are necessary, and the reason is worth stating because it is easy to ship only the first.
+Teaching the classifier a modal the *sentence* scan still cannot find leaves the record's span falling
+back to the whole statement, which for a serialized table row means the row's other cells. Measured
+over the corpus, that alone published two constraints whose subject was a row's `NOTE` marker, lifted
+from a legacy-considerations note. With both readers taught, the obligation has a sentence of its own,
+the marker is not in it, and nothing is published.
+
+The measured effect on the corpus is **no change at all**: re-running the real producer over every
+persisted document's own statements yields exactly the records it yielded before — none added, none
+removed, none retyped. That is the honest result. The corpus states these obligations about register
+fields and packet bits rather than about declared wires, so they are refused a step later for a
+different and correct reason; the classifier is now right about them regardless, and the next document
+that states one about a wire will be read rather than dropped.
+
 ## A bound stated against another operand is not a value
 
 The constraint vocabulary can say *"this signal must be `HIGH`"*, *"must be stable"*, *"must not
