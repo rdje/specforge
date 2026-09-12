@@ -7550,16 +7550,10 @@ fn extract_dynamic_signal_constraints(
         }
 
         let condition_text = extract_condition_clause(&statement.text);
-        let negated = contains_any(
-            &lowered,
-            &[
-                "must not",
-                "shall not",
-                "must never",
-                "shall never",
-                "cannot",
-                "will not",
-            ],
+        // EXTRACTION-QUALITY-GAUGE.3i — read from the obligation clause, not the whole statement,
+        // and through the one shared predicate rather than a second copy of its phrase list.
+        let negated = obligation_is_negated(
+            &constraint_bearing_sentence(&statement.text).to_ascii_lowercase(),
         );
 
         for subject_signal in subject_signals {
@@ -9711,6 +9705,11 @@ fn classify_signal_constraint_kind(lowered: &str) -> SignalConstraintKind {
         &[
             "must not change",
             "shall not change",
+            // EXTRACTION-QUALITY-GAUGE.3i — the PASSIVE form of the same obligation. Without it
+            // `the size of the transfer … must not be changed` falls to the untyped default and
+            // then carries a negation on top of it (AHB `sigcon_0003`).
+            "must not be changed",
+            "shall not be changed",
             "must remain stable",
             "shall remain stable",
         ],
@@ -9765,6 +9764,14 @@ fn classify_signal_constraint_kind(lowered: &str) -> SignalConstraintKind {
             "shall be deasserted",
             "must remain deasserted",
             "shall remain deasserted",
+            // EXTRACTION-QUALITY-GAUGE.3i — a document states the polarity-neutral not-asserted
+            // obligation in the negative just as often as in the positive, and `deasserted` is
+            // exactly its affirmative spelling. Reached only after the `must be asserted` arm, which
+            // these strings do not contain, so an affirmative obligation is untouched.
+            "must not be asserted",
+            "shall not be asserted",
+            "must not be active",
+            "shall not be active",
         ],
     ) {
         SignalConstraintKind::MustBeDeasserted
@@ -10112,7 +10119,13 @@ fn extract_signal_constraints(
             continue;
         }
         // Determine constraint kind and negation from the value-binding phrase.
-        let negated = obligation_is_negated(&lowered);
+        // EXTRACTION-QUALITY-GAUGE.3i — the negation is read from the OBLIGATION CLAUSE, the same
+        // bounded span the subject and the condition already come from. Read from the whole
+        // statement it can belong to a different sentence entirely: RISC-V IOMMU published
+        // `The DV operand must be 1 for IODIR` as a NEGATED constraint because a later sentence in
+        // the same cell says `must not`.
+        let negated =
+            obligation_is_negated(&constraint_bearing_sentence(text).to_ascii_lowercase());
         let constraint_kind = classify_signal_constraint_kind(&lowered);
 
         // Keep only subjects that are DECLARED signals — a property/config name or doc-meta token
@@ -34905,11 +34918,16 @@ mod invariant_shape_admission_3 {
             absent.condition_text.as_deref(),
             Some("ALPHACHUNK is asserted")
         );
-        // The self-named clause carries its negation, and the record is one clause, not one cell.
+        // The self-named clause is one clause, not one cell, and its obligation is TYPED rather than
+        // defaulted: `EXTRACTION-QUALITY-GAUGE.3i` taught the classifier the negative spelling of
+        // `deasserted`, so this reads `must_be_deasserted` instead of the untyped `must_be_stable`
+        // that `.3` shipped and recorded as imprecise. `negated` is then false by the
+        // `WIRE-BASED-100.5b` guard, because the kind already encodes the negation.
         let named = &records[1];
+        assert_eq!(named.constraint_kind.as_str(), "must_be_deasserted");
         assert!(
-            named.negated,
-            "`must not` is a negated obligation: {named:?}"
+            !named.negated,
+            "must_be_deasserted encodes its own negation: {named:?}"
         );
         assert_eq!(
             named.source_text,
@@ -35082,5 +35100,131 @@ mod invariant_shape_admission_5 {
         assert_eq!(content_head(" ZETAREADY is "), Some("ZETAREADY"));
         assert_eq!(content_head("   "), None);
         assert_eq!(content_head(" and to be "), None);
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3i {
+    //! `EXTRACTION-QUALITY-GAUGE.3i` — a flag that MODIFIES an obligation must be read from that
+    //! obligation. `negated` was computed over the whole statement while the subject and the
+    //! condition came from the obligation clause, so a `must not` in one sentence flipped a
+    //! constraint minted from another. Measured: 4 of 20 negated records corpus-wide carry a
+    //! negation that is not in their own clause.
+    use super::*;
+
+    fn constraint(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let declarations = ExtractedStatement {
+            statement_id: "declarations".into(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: declared
+                .iter()
+                .map(|name| format!("Signal {name} is input width 1."))
+                .collect::<Vec<_>>()
+                .join(" "),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let statement = ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let mut counter = 0usize;
+        extract_signal_constraints(&[declarations, statement], &mut counter)
+    }
+
+    /// The defect: a negation in a DIFFERENT sentence of the same statement flipped the record.
+    /// Reproduces RISC-V IOMMU `dyn_sigcon_0008`/`0009` on invented names.
+    #[test]
+    fn a_negation_in_another_sentence_does_not_negate_this_obligation() {
+        let records = constraint(
+            "The ZETADV operand must be 1 for ZETADIR. A command must not be issued while the queue \
+             is full.",
+            &["ZETADV", "ZETADIR"],
+        );
+        assert!(!records.is_empty(), "the obligation still extracts");
+        for record in &records {
+            assert!(
+                !record.negated,
+                "the `must not` belongs to the second sentence: {record:?}"
+            );
+        }
+    }
+
+    /// The control that keeps the narrowing honest: the SAME negation, moved INTO the obligation
+    /// clause, still negates it. The pair is the property — the flag follows the clause, not the
+    /// statement.
+    #[test]
+    fn a_negation_in_this_obligation_still_negates_it() {
+        let records = constraint(
+            "The ZETADV operand must not be 1 for ZETADIR. A command must be issued while the \
+             queue is empty.",
+            &["ZETADV", "ZETADIR"],
+        );
+        let record = records.first().expect("one record");
+        assert!(
+            record.negated,
+            "`must not` is this clause's own: {record:?}"
+        );
+        // The KIND is still the untyped default here, because no affirmative phrase matches a
+        // negated obligation — that is the remaining half of this defect and is owned by
+        // `EXTRACTION-QUALITY-GAUGE.3k`, not asserted as correct by this control.
+    }
+
+    /// The passive and negative spellings of two obligations the phrase table only carried in the
+    /// active/affirmative form, so they fell to the untyped default and then took a negation on top
+    /// of it — AHB `sigcon_0003`/`0005`, APB `row_sigcon_0017`.
+    #[test]
+    fn the_passive_and_negative_spellings_reach_their_own_kinds() {
+        for (text, signal, kind) in [
+            (
+                "The size of the transfer, as indicated by ZETASIZE, must not be changed.",
+                "ZETASIZE",
+                "must_not_change",
+            ),
+            (
+                "ZETAOKAY must not be asserted in the same cycle as ZETARESP is asserted.",
+                "ZETAOKAY",
+                "must_be_deasserted",
+            ),
+            (
+                "ZETASTRB must not be active during a read transfer.",
+                "ZETASTRB",
+                "must_be_deasserted",
+            ),
+        ] {
+            let records = constraint(text, &[signal, "ZETARESP"]);
+            let record = records
+                .iter()
+                .find(|r| r.subject_signal == signal)
+                .unwrap_or_else(|| panic!("no record for {signal} from {text:?}"));
+            assert_eq!(record.constraint_kind.as_str(), kind, "{text:?}");
+            // WIRE-BASED-100.5b: a kind that encodes its own negation must not also carry the flag,
+            // or the pair reads as a double negative.
+            assert!(
+                !record.negated,
+                "{kind} already encodes the negation: {record:?}"
+            );
+        }
+    }
+
+    /// Guard: the affirmative forms are untouched — the new strings are reached only after the
+    /// `must be asserted` arm and do not contain it.
+    #[test]
+    fn the_affirmative_forms_are_unchanged() {
+        let asserted = constraint("ZETASEL must be asserted.", &["ZETASEL"]);
+        assert_eq!(
+            asserted.first().expect("record").constraint_kind.as_str(),
+            "must_be_asserted"
+        );
+        let changed = constraint("ZETAADDR must remain stable.", &["ZETAADDR"]);
+        assert_eq!(
+            changed.first().expect("record").constraint_kind.as_str(),
+            "must_not_change"
+        );
     }
 }

@@ -357,6 +357,40 @@ declared-signal catalog before any obligation is attributed to it, so a table na
 document never declares produces nothing. Production code contains no protocol, vendor, or signal-name
 list — only the modal, a closed list of helper words, and a closed list of pronouns.
 
+## A negation belongs to the obligation it modifies
+
+A statement often carries several sentences, and only one of them is the obligation a given constraint
+records. SpecForge already took the constraint's **subject** and its **condition** from that one
+sentence. It took the `negated` flag from the whole statement — so a `must not` anywhere in the text
+inverted a requirement minted from somewhere else entirely:
+
+```text
+The DV operand must be 1 for IODIR. A command must not be issued while the queue is full.
+```
+
+The first sentence is the obligation. The second supplied a `must not`, and the published record said
+`IODIR must NOT be 1` — the opposite of what the document states. The flag is now read from the same
+bounded clause the subject comes from, so it can only ever describe the obligation it modifies.
+
+The same change completes two obligations the phrase table only knew in the affirmative. A
+specification writes the not-asserted requirement in the negative about as often as in the positive,
+and `deasserted` is simply its affirmative spelling:
+
+| the document writes | typed as |
+| --- | --- |
+| `HEXOKAY must not be asserted in the same cycle as HRESP is asserted.` | `must_be_deasserted` |
+| `PSTRB must not be active during a read transfer.` | `must_be_deasserted` → `must_be_low` once polarity is known |
+| `The size of the transfer, as indicated by HSIZE, must not be changed.` | `must_not_change` |
+
+Without those, each fell to an untyped default and then carried a negation on top of it — a record
+asserting that a signal "must not be stable", which is not a thing any of these sentences say.
+
+The `PSTRB` row is worth following, because it is where the pipeline checked itself. APB states that
+obligation twice: once in the `PSTRB` signal-description row above, and once in prose —
+*"For read transfers, the Requester must drive all bits of PSTRB LOW."* Two extraction paths reach
+those two places independently, and they now produce the same typed constraint. Before this change
+they disagreed, and the disagreement was the defect rather than a real ambiguity in the specification.
+
 ## Typical evidence-level failure modes
 
 - field tables leaking fake signals

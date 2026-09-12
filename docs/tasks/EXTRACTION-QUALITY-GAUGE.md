@@ -623,28 +623,52 @@ honestly-qualified) path to "human-SpecForge in Rust."
   document's own refresh re-ingests it; the replay proves the code is correct and ADR 0025's currency check
   reports the unmeasurable population rather than implying coverage.
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3i` · Status: `pending` (opened `2026-09-12` by
-  `INVARIANT-SHAPE-ADMISSION.3`) · Goal: **a negation on top of the classifier's untyped fallback is a
-  fabricated obligation.** `classify_signal_constraint_kind` ends in a generic arm that returns
-  `MustBeStable` when no value-binding phrase matched — a **default, not a reading**. `obligation_is_negated`
-  is computed independently, so when both fire the record asserts the negation of a default: the document's
-  `PSTRB must not be active during a read transfer` is published as `must_be_stable, negated: true`, i.e.
-  *"PSTRB must not be stable"*, which the document does not say. The same pair reads wrong in the other
-  direction too — `must_be_stable` already means "must not change", so negating it says "may change"
-  (AHB `sigcon_0003`: `The size of the transfer, as indicated by HSIZE, must not be changed.`).
-  **Measured population, read-only over the persisted corpus:** 20 negated records corpus-wide —
-  `must_be_stable` **9**, `must_be_high` 5, `must_be_low` 3, `must_be_value` 3. Only the `must_be_stable`
-  nine are in scope: the other eleven negate a kind the classifier actually matched, where the negation is
-  the document's own word. `must_not_change` and `must_be_deasserted` are already excluded from `negated` by
-  the `WIRE-BASED-100.5b` guard, which is the precedent this extends — that guard refuses a negation on a
-  kind that *encodes* one; this refuses a negation on a kind that was *never read*.
-  **Decide, do not assume, between three dispositions**, and state the choice: drop the `negated` flag and
-  keep the obligation; keep the record but mark it an untyped residual; or refuse it. Dropping the record is
-  the one option to argue against — `PSTRB must not be active` is a real requirement and
-  `[[ANCHORLESS-INVARIANT-DROP]]` is the standing reminder that a silent drop is its own defect.
-  Prerequisite: none. Verification: all 9 adjudicated individually (small enough not to sample); observed
-  RED; the chain rebuilt for every document whose artifacts move — AHB, APB and the CXS/DTI documents are
-  affected, and the AMBA bundles are restored per `[[evidence-rule-field-content-stales-every-proof]]`.
+- ID: `EXTRACTION-QUALITY-GAUGE.3i` · Status: `done` (`2026-09-12`) · Goal: **a flag that modifies an
+  obligation must be read from that obligation.** Opened by `INVARIANT-SHAPE-ADMISSION.3` over one
+  imprecise record and closed over a larger and sharper defect: `negated` was computed across the WHOLE
+  statement while the subject and the condition already came from `constraint_bearing_sentence`, so a
+  `must not` in one sentence flipped a constraint minted from another. RISC-V IOMMU published
+  `The DV operand must be 1 for IODIR` as a **negated** constraint for exactly that reason.
+  **Measured, read-only over the persisted corpus:** 20 negated records; **4** carry a negation that is
+  not in their own obligation clause; **all 20** sit on a kind the classifier never matched, because
+  every phrase in the table is affirmative (`must be X`) and a negated obligation never contains one.
+  Shipped: the narrowing in BOTH deterministic paths (the dynamic path also stopped carrying a second
+  copy of the negator list), plus the two spellings whose absence caused the defaulting —
+  `must not be changed` → `MustNotChange`, and `must not be asserted` / `must not be active` →
+  `MustBeDeasserted`, reached only after the affirmative `must be asserted` arm, which those strings do
+  not contain.
+  Rebuilt APB + AHB: **3 records retyped, 0 added, 0 removed** —
+  `PSTRB` `must_be_stable`+negated → **`must_be_low`**, `HSIZE` → `must_not_change`,
+  `HEXOKAY` → `must_be_deasserted`. `PSTRB` is the corroboration: it is refined to `LOW` by the polarity
+  layer and now **agrees with `dyn_sigcon_0015`**, the same document's prose
+  *"For read transfers, the Requester must drive all bits of PSTRB LOW"*. Two independent extraction
+  paths, two different places in the document, one typed obligation — where before `3i` they
+  contradicted each other, which is why APB's `actor_contracts` fall 15 → 14.
+  Producer: the census in this leaf's Verification Log; controls in `mod extraction_quality_gauge_3i`.
+  Prerequisite: none. Verification: all 20 adjudicated; observed RED; APB + AHB rebuilt.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3i`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3k` · Status: `pending` (opened `2026-09-12` by `.3i`) · Goal: **the
+  KIND must come from the obligation clause too, and a kind the classifier never read cannot carry a
+  negation.** `.3i` fixed the flag's span; the kind's span is the other half and is a larger question.
+  **Measured: 18 of 349 persisted constraints have a kind whose phrase match lies OUTSIDE their own
+  obligation clause.** The clearest is AHB `sigcon_0002`: its clause is
+  *"When the Subordinate is initially selected, it must also monitor the status of HREADY…"*, which
+  contains no kind phrase at all — the published `must_be_asserted` comes from the NEXT sentence,
+  *"HSELx must be asserted in the same cycle…"*. **That is the mechanism behind the mis-conditioned
+  `HSELx` record `INVARIANT-SHAPE-ADMISSION.3` reported without explaining**: the kind is taken from one
+  clause and the condition from another.
+  The second half: after `.3i`, every remaining negated record still sits on the untyped
+  `MustBeStable` default, and a negation stacked on a default asserts something the document does not —
+  *"must not be stable"*. Refuse it. **Population after `.3i`: 7 such records**, plus **4 relational
+  magnitudes** (`must not be greater than the size indicated by the OAS field`) which have no typed slot
+  and extend `.3d`'s equality refusal to a comparative whose right operand is a REFERENCE rather than a
+  literal — `must be greater than 0` must stay untouched.
+  **Scope the kind-span change before shipping it**: the dynamic path narrows subjects with
+  `text_before_condition_marker`, not `constraint_bearing_sentence`, and its value binder reads the whole
+  statement, so the two paths do not currently agree on what a clause is. Decide that first.
+  Prerequisite: `.3i`. Verification: all 18 + 11 adjudicated individually; observed RED; the chain
+  rebuilt for every document whose artifacts move.
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j` · Status: `pending` (opened `2026-09-12` by
   `INVARIANT-SHAPE-ADMISSION.5`) · Goal: **the LLM-primary constraint path applies none of the
@@ -668,6 +692,49 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3i`
+
+- [x] **REPRODUCE / MEASURE** — two read-only censuses over the 78-document persisted corpus. 20 records
+  carry `negated`; **4** have no negator in their own obligation clause (RISC-V IOMMU
+  `dyn_sigcon_0008`/`0009` from `The DV operand must be 1 for IODIR`, NVMe `dyn_sigcon_0018`, I2C
+  `dyn_sigcon_0008`); **20 of 20** sit on a kind no phrase matched, because every phrase in the table is
+  affirmative and a negated obligation never contains one. The second census — phrase match over the
+  clause vs over the whole text — differs on **18 of 349** and is the population `.3k` inherits.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`. `extract_signal_constraints`
+  computed `let lowered = text.to_ascii_lowercase()` over the WHOLE statement and used it for both kind
+  and negation, while the subject used `constraint_bearing_sentence(text)` and the condition said so in
+  its own comment (*"from the SAME bounded obligation the subject came from"*,
+  `CONSTRAINT-EXTRACTION-V2.2`). `extract_dynamic_signal_constraints` did the same with its own inline
+  copy of the negator list. The record's parts were drawn from different spans of one statement.
+- [x] **ADDRESSED (verified)** — `obligation_is_negated(&constraint_bearing_sentence(…).to_ascii_lowercase())`
+  in both paths, the dynamic path's duplicated list replaced by the shared predicate `.3` extracted, and
+  the two missing spellings added. APB + AHB rebuilt `evidence → validate → semantic → validate → intent
+  → validate → adapt`, zero failures: **3 retyped, 0 added, 0 removed**. `PSTRB`
+  `must_be_stable`+negated → `must_be_low`, `HSIZE` → `must_not_change`, `HEXOKAY` →
+  `must_be_deasserted`. **`PSTRB` is the corroboration**: polarity-refined to `LOW`, it now agrees with
+  `dyn_sigcon_0015`, the same document's prose *"For read transfers, the Requester must drive all bits
+  of PSTRB LOW"* — two independent extraction paths converging where they previously contradicted, which
+  is why APB's `actor_contracts` fall 15 → 14.
+  **Observed RED**: with the narrowing reverted,
+  `a_negation_in_another_sentence_does_not_negate_this_obligation` fails and emits
+  `MustBeValue { value: "1" }, negated: true` from `The ZETADV operand must be 1 for ZETADIR` — the
+  fixture reproduces the live `dyn_sigcon_0008` exactly.
+- [x] **NO REGRESSION** — `cargo test` 472 / 168 / **1435** / 4 green. One existing control changed
+  expectation, and it is **the fix landing rather than a regression**:
+  `invariant_shape_admission_3::a_row_states_a_constraint_only_when_its_clause_binds_to_that_row_signal`
+  asserted `PSTRB` was `negated`; `INVARIANT-SHAPE-ADMISSION.3`'s own result recorded that record as
+  imprecise and named this leaf as its owner. It now asserts `must_be_deasserted` with `negated: false`
+  by the `WIRE-BASED-100.5b` guard. `cargo fmt --check` and `cargo clippy --all-targets -D warnings`
+  green; `scripts/check_doctrines.sh` green. Retention at the declared 24: both held-out bundles
+  restored from `generated/preserved/WIRE-BASED-100.10/`, `diff -r`-verified unchanged by the rebuild,
+  and removed. Pre-rebuild snapshot at `generated/preserved/EXTRACTION-QUALITY-GAUGE.3i/pre-rebuild/`.
+- [x] **GENERICITY (ADR 0006)** — a span narrowing plus four phrase strings that are the negative
+  spellings of forms already in the table. No document, protocol, vendor, or signal name appears in the
+  rule; the controls use invented names (`ZETADV`, `ZETASIZE`, `ZETAOKAY`, `ZETASTRB`).
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/evidenceir.md` gains "A negation belongs to the obligation
+  it modifies". No production rule was deleted; two phrase forms were added and one span narrowed, and
+  the book says which.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3h`
 
@@ -758,6 +825,15 @@ honestly-qualified) path to "human-SpecForge in Rust."
   EvidenceIR pages) + README + KM card.
 
 ## Changelog
+
+- `2026-09-12` — `.3i` closed, and it closed over a larger defect than it opened on. `negated` was read
+  from the whole statement while the subject and condition came from the obligation clause, so a
+  `must not` in one sentence flipped a constraint minted from another — 4 records corpus-wide, including
+  `The DV operand must be 1 for IODIR` published as negated. Narrowed in both deterministic paths, and
+  the two missing negative spellings added so the obligations stop defaulting. 3 records retyped across
+  APB and AHB with nothing added or removed. `.3k` opened for the other half: the KIND's span (18 of 349
+  records match a phrase outside their own clause — the mechanism behind `HSELx`'s mis-conditioning) and
+  the refusal of a negation stacked on an untyped default (7 records) plus 4 relational magnitudes.
 
 - `2026-08-10`: **`.3h` DONE** — the value-position spurious-subject gate ships, closing the last
   named residual of the `.3d`–`.3g` family (NVMe `FFFF` from `set to FFFFh`). Probe: 1 record corpus-wide, 0

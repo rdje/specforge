@@ -87,6 +87,8 @@ mod tests {
     /// ONE narrowed gate condition) — and this one is the sharpest case for `.1`'s chosen design: the
     /// slice removed two fabricated records and added no behaviour, yet still had to edit four
     /// literals in a test that cannot observe them until push.
+    /// SIXTH (`EXTRACTION-QUALITY-GAUGE.3i`, +1 helper edge for a narrowed span and four phrase
+    /// strings) — six for six, and this one moved a single field of a single struct.
     #[test]
     fn current_repository_flow_is_complete_local_and_deterministic() {
         let root = repository_root();
@@ -107,7 +109,7 @@ mod tests {
         assert_eq!(first.non_authoritative_regions, 6);
         assert_eq!(first.protected_types, 15);
         assert_eq!(first.analyzed_functions, 2_409);
-        assert_eq!(first.helper_edges, 14_987);
+        assert_eq!(first.helper_edges, 14_988);
         assert_eq!(first.decision_sites, 12_984);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
