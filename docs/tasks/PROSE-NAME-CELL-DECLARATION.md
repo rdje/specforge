@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PROSE-NAME-CELL-DECLARATION`
-- Status: `active` (`2026-09-12`; `.0` closed by census, `.1`-`.4` opened from its adjudication)
+- Status: `active` (`2026-09-12`; `.0` + `.2` done; `.1`, `.3`, `.4` open)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-11`
 - Last updated: `2026-09-12`
@@ -86,20 +86,16 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
   Verification: corpus-wide refusal count + adjudicated sample; each of the four legitimate shapes shown
   to survive; wire golds re-scored, not assumed.
 
-- ID: `PROSE-NAME-CELL-DECLARATION.2` · Status: `pending` · Goal: **the content-based name-column
-  override cannot fire on a short table, and that is the whole current-stratum phrase population.**
-  AHB `table_0004` is rotated exactly like `table_0033` (`Name | Source | Width | Description` header
-  over a body holding `Clock source | 1 | <description> | HCLK`), but it has **two body rows**, so the
-  real name column scores 2 distinct tokens against the header column's 2 and
-  `NAME_COLUMN_OVERRIDE_MARGIN = 2` blocks the override. Both current-stratum phrase declarations, and
-  both current-stratum prose widths (`.3`), come from this one table.
-  Census first, then a rule: the margin exists because a one-token lead is noise, and a short table is
-  where a margin expressed in absolute tokens is weakest. Measure how many persisted
-  `signal_description` tables have a column that out-scores the header column by a *ratio* rather than
-  a count, and adjudicate the selection before proposing anything.
-  Prerequisite: none. Verification: every rotation the margin was added for (APB `table_0016` 18 vs 5,
-  AHB `table_0033` 19 vs 4) still overrides; no table currently reading its header column starts
-  overriding without adjudication.
+- ID: `PROSE-NAME-CELL-DECLARATION.2` · Status: `done` (`2026-09-12`) · Goal: **the content-based
+  name-column override cannot fire on a short table, and that was the whole current-stratum phrase
+  population.** AHB `table_0004` is rotated exactly like `table_0033` (`Name | Source | Width |
+  Description` header over a body holding `Clock source | 1 | <description> | HCLK`), but it has **two
+  body rows**, so the real name column scored 2 distinct tokens against the header column's 2 and
+  `NAME_COLUMN_OVERRIDE_MARGIN = 2` could never be cleared.
+  The census falsified the leaf's own proposed direction and produced a different rule; both are below.
+  Shipped: `name_cell_is_read_whole` — a cell scores for its column only when the reader consumes it
+  entirely, reusing `.0`'s shape taxonomy. Scoring only; no row's declaration changes by this test.
+  Commit: `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`
 
 - ID: `PROSE-NAME-CELL-DECLARATION.3` · Status: `pending` · Goal: **a width cell that is a sentence is
   not a parametric width.** `infer_signal_table_row_width_hint` accepted
@@ -107,9 +103,14 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
   See Clock on page 7-72.` as `WidthHint::Parametric`, producing
   `Signal Clock is width The bus clock times all bus transfers. …`. Measured: **2 of 601** current
   width-bearing declarations carry a sentence-shaped width, and both are AHB `table_0004`.
-  The mechanism is independent of `.2` even though today's population is not: a parametric width is an
+  The mechanism is independent of `.2` even though today's population was not: a parametric width is an
   integrator-set expression (`ceil(DATA_WIDTH/8)`, `clog2(Num_RP_AR)` — 62 legitimate instances in the
   current stratum), and nothing distinguishes it from prose today.
+  **`.2` took this leaf's current-stratum population to 0**, because both instances were AHB
+  `table_0004` and that table now reads its real name column. The leaf stays open and the honesty about
+  it is the point: a defect with no live instance is still a defect, and the next rotated table the
+  column score cannot reach will produce one again. Re-measure before designing, and be willing to
+  close this as *accepted, unexercised* rather than invent a population for it.
   Prerequisite: none. Verification: all 62 legitimate parametric forms survive; corpus-wide count of
   what is newly refused, with the sample adjudicated.
 
@@ -199,15 +200,105 @@ neither a direction nor a width long before the name cell's shape matters.
   `HS200` are **single-token** name cells. No row-shape rule can refuse them, so the row level is
   provably insufficient for this table — `.4`.
 
+## `.2` — census result and shipped rule (`2026-09-12`)
+
+**The leaf's own proposed direction was falsified by measurement, and the census said so before any
+code was written.** `.2` was written to test a *ratio* margin (`best >= header x 2`) in place of the
+absolute one. Measured over all 602 persisted `signal_description` tables, a ratio rule changes 10
+tables, does **not** fix AHB `table_0004` — both columns score 2, and 2/2 is ratio 1.0 — and its one
+current-stratum change *breaks* AHB `table_0034`, a rotation that works today. It fixes nothing and
+costs one. Recorded rather than quietly replaced, because the next author will otherwise propose it
+again.
+
+What the data supports instead: the two columns are not distinguishable by *how many* leading
+identifiers they carry, but by whether the reader has anything **left over** after reading each cell.
+`Clock source` leaves the word `source`; `HCLK` leaves nothing. That discriminator already existed —
+it is `.0`'s shape taxonomy — so the rule reuses it rather than inventing a heuristic:
+
+> A cell contributes to its column's score only when the reader consumes it whole:
+> a single token, a comma family `signal_names_in_name_cell` already admits, a footnote marker,
+> a bit-range suffix, or a text-layer split. Prose scores nothing.
+
+`NAME_COLUMN_OVERRIDE_MARGIN` is untouched at 2, and a margin of 1 was measured: it changes **nothing**
+in the current stratum and 5 legacy tables, so the conservative value stands and only one variable
+moved.
+
+### What it changes, corpus-wide
+
+7 of 602 current-stratum tables change their name column:
+
+| table | change | adjudication |
+| --- | --- | --- |
+| AHB `table_0004` | col 0 → 3 | **the repair** — `Clock source`/`Reset controller` → `HCLK`/`HRESETn` |
+| USB 3.2 `table_0106`/`0109`/`0110` | col 2 → 0 | `Width (bits) \| Offset \| Description` register tables mis-typed as signal tables; the override currently hands them their Description column. They declare nothing either way |
+| USB 3.2 `table_0208`/`0250`/`0258` | col 1 → 0 | `Key`/`Bit \| Description` state and field tables, same shape, same inertness |
+
+The six USB changes are **proven** inert rather than assumed: the proof seal verifies each persisted
+EvidenceIR against a re-derivation, and all 27 proof-carrying artifacts still load. Only AHB's needed
+rebuilding, so no other current document's EvidenceIR content moved at all.
+
+In the legacy stratum 39 tables change (19 gain or move an override, 20 lose one). The sample adjudicated:
+`MMU-700 table_0202`, `table_0199` and `AXI-H table_0064` currently override a correct `Signal` column in
+favour of their **Description** column and stop doing so — a recall repair that a re-ingest will realise;
+`HBM2 table_0075` newly finds a real `DA13, DA16, …` pin-list column; the rest are tables mis-typed as
+`signal_description`, where both the old and the new column are wrong and neither declares anything.
+
+### What it does to AHB
+
+| | before | after |
+| --- | --- | --- |
+| `table_0004` declarations | `Clock`, `Reset` | `HCLK`, `HRESETn` |
+| their statements | `Signal Clock is width The bus clock times all bus transfers. …` | `Signal HCLK is output width 1.` / `Signal HRESETn is width 1.` |
+| document declarations | 79 | 79 |
+| IntentIR interface signals | 40 | **41** (`HRESETn` added, nothing removed) |
+
+`HRESETn` — the document's own active-LOW spelling — reaches IntentIR for the first time. `table_0033`
+supplies `HRESET`, a text-layer truncation, and supplied it alone until now.
+
+## Acceptance Checklist (enforced)
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_name_cell_shapes.py`: current stratum
+  604 declarations, **2 phrase**, both AHB `table_0004`. `specforge eval-extraction` + the persisted
+  EvidenceIR show that table's two statements carrying a 120-character sentence as their width.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs:10488` (`signal_token_distinct`
+  inside `synthesize_signal_declarations`). Measured, not inferred: for `table_0004` the header column
+  and the real name column both score 2, so `NAME_COLUMN_OVERRIDE_MARGIN = 2` cannot be cleared by any
+  margin value. `bash scripts/check_chain_currency.sh` named the same table as the one stale document.
+- [x] **ADDRESSED (verified)** — AHB `table_0004`: `Clock`/`Reset` → `HCLK`/`HRESETn`; both prose widths
+  gone; declarations 79 → 79; IntentIR interface signals 40 → 41 with nothing removed. Current-stratum
+  phrase declarations **2 → 0**; legacy 15 → 11. Corpus-wide selection: 7 current tables, adjudicated
+  above.
+- [x] **NO REGRESSION** — `cargo test` green (472 / 168 / 1423 / 4 — the last after
+  `PRODUCTION-GRAPH-CENSUS-PIN.0`); `cargo fmt --check` and `cargo clippy --all-targets -D warnings`
+  green; `scripts/check_doctrines.sh` green; `scripts/check_chain_currency.sh` **fully current** —
+  evidence 24/24, semantic 27/27, intent 27/27, isf-adapter 27/27, retention exactly the declared 24
+  bundles. kg-bench 156/156 via `corpus-kb-currentness`. Every rotation the margin exists for still
+  overrides (APB `table_0016` 18 vs 5, AHB `table_0033` 19 vs 4, AHB `table_0034` 5 vs 3).
+  **Stated limit, because a green score would otherwise be read as proof:** `seed_ahb` holds at
+  `signal_constraint` 1.000 and `actor_signal_relation` 0.500, but it **names none of `HCLK`,
+  `HRESETn`, `Clock` or `Reset`** (measured: 0 occurrences in the 17-item gold), so that gold was
+  structurally unable to move either way. The evidence for this change is the artifact diff and the
+  chain oracle, not the gold.
+- [x] **GENERICITY (ADR 0006)** — `name_cell_is_read_whole` tests token shape only: a comma family the
+  reader already admits, a one-character token, a token with no letter, a recurrence with fragments.
+  No document, vendor, protocol or English vocabulary; no list of words.
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/evidenceir.md` updated in the same commit: the section that
+  described `table_0004` as an open choice between silencing and repairing now states what shipped and
+  what it recovered. No production rule was deleted or replaced, so no book text describes a behaviour
+  that is now gone. Knowledge-map card `[[declared-population-is-not-the-candidate-row-population]]`
+  updated with the new numbers, the new `reverify` expectation, and the mirror-drift finding below.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `PROSE-NAME-CELL-DECLARATION.2` — the short-table rotation census. It owns the entire current-stratum
-   phrase population and must be measured before `.1` refuses the evidence.
-2. `PROSE-NAME-CELL-DECLARATION.3` — a sentence is not a parametric width. Independent of `.2`.
-3. `PROSE-NAME-CELL-DECLARATION.1` — the phrase refusal rule, re-measured after `.2`.
-4. `PROSE-NAME-CELL-DECLARATION.4` — the level question for a mode matrix.
+1. `PROSE-NAME-CELL-DECLARATION.1` — the phrase refusal rule, re-measured after `.2`. Its current-stratum
+   population is now **0**; its remaining justification is the guard `SIGNAL-DECLARATION-ROW-DROP.2c`
+   waits on, and the 11 legacy phrase declarations a re-ingest would reproduce. The leaf is allowed to
+   conclude that the column score already covers the case and close without a rule.
+2. `PROSE-NAME-CELL-DECLARATION.4` — the level question for a mode matrix. Unaffected by `.2`: eMMC
+   `table_0020`'s name column is genuinely column 0, so no column score reaches it.
+3. `PROSE-NAME-CELL-DECLARATION.3` — a sentence is not a parametric width. Ordered last because `.2`
+   removed both of its live instances; see the leaf.
 
 ## Decisions
 
@@ -227,6 +318,12 @@ Ordered; PNT selects the first eligible leaf.
   declarations; whichever ships first makes the other's current-stratum evidence disappear. The root
   cause goes first, because correcting the rotation recovers the row and refusing the phrase only
   silences it.
+- `2026-09-12` — **`.2`'s stated direction was dropped after the census contradicted it.** The leaf asked
+  for a *ratio* margin. Measured, it fixes none of the case it was written for and breaks a working
+  rotation. The alternative was found by looking at what actually distinguishes the two columns, which
+  is the same question `.0` had already answered. Written down rather than replaced silently.
+- `2026-09-12` — **the margin stayed at 2.** A margin of 1 under the new score changes nothing in the
+  current stratum. Two variables were available and only one needed to move.
 - `2026-09-12` — **`.1` is kept despite a current-stratum population of 2.** It is not justified by
   those two. It is the guard `SIGNAL-DECLARATION-ROW-DROP.2c` was deferred waiting for, and `.0`
   measured its worth there: 3 of the 4 rows `.2c` would newly mint in eMMC `table_0020`.
@@ -249,6 +346,24 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.2`. Controls, both **observed RED** against the exact defect they guard, not asserted:
+  `a_short_rotated_table_is_scored_by_the_cells_the_reader_reads_whole` fails with
+  `["Clock", "Reset"]` when the `name_cell_is_read_whole` filter is removed from the score; and
+  `a_comma_family_name_column_keeps_its_score` fails with
+  `["PROT_Present", "RME_Support", "INSTPRIV_Present"]` when the comma-family clause is removed from
+  `name_cell_is_read_whole` — which is what earns that clause its place, since a naive single-token
+  score would hand AXI's name column to its Presence column. `a_cell_scores_for_its_column_only_when_the_reader_reads_all_of_it`
+  pins the shape test on each form the census named.
+  Chain repair: AHB's normalized bundle restored from
+  `generated/preserved/WIRE-BASED-100.10/ahb-normalized-bundle-held-out`, the chain rebuilt in the
+  documented interleaved order (`[[retained-chain-rebuild-order]]`) with exactly one `validate` per
+  artifact, and the bundle removed again — the preserved copy is byte-identical before and after
+  (`a32ad8ab…78b90`), retention stays at exactly the declared 24, and the pre-rebuild artifacts are
+  held at `generated/preserved/PROSE-NAME-CELL-DECLARATION.2/pre-rebuild/`.
+  **A pre/post A/B on the gold was attempted and is impossible by design**: the current binary refuses
+  the pre-rebuild EvidenceIR (`registered derivation … output or input topology is stale`), which is
+  the seal doing its job. The comparison recorded above is therefore the artifact diff plus the chain
+  oracle, and the gold's own inability to move is stated rather than used.
 - `2026-09-12` — `.0`. `python3 scripts/measure_declaration_name_cell_shapes.py` over all 78 persisted
   `generated/source_ir` + `generated/evidence_ir` pairs. Read-only: no artifact written, rebuilt, or
   mutated; no network, clock, or randomness. Join control: current stratum 604/604 (100.0%), 0
@@ -270,12 +385,17 @@ None.
 ## Commit Log
 
 - Opened in the commit that deferred `SIGNAL-DECLARATION-ROW-DROP.2c`.
-- `.0` — `PROSE-NAME-CELL-DECLARATION.0`.
+- `.0` — `PROSE-NAME-CELL-DECLARATION.0` (`4bb6c1c8`).
+- `.2` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`.
 
 ## Changelog
 
 - `2026-09-11` — tree created from `SIGNAL-DECLARATION-ROW-DROP.2c`'s adjudication, which found 4 of 7
   enumerated-width cells to be a misclassified bus-mode matrix already minting `HS400` as a signal.
+- `2026-09-12` — `.2` closed. The leaf's own ratio proposal was falsified by census (fixes nothing,
+  breaks AHB `table_0034`); shipped `name_cell_is_read_whole` instead. AHB `table_0004` now declares
+  `HCLK`/`HRESETn`; current-stratum phrase declarations 2 → 0, IntentIR interface signals 40 → 41.
+  `.3`'s live population went to 0 as a side effect and the leaf stays open saying so.
 - `2026-09-12` — `.0` closed. The declared phrase population is 2 of 604 current and 15 of 1,251 joined
   legacy, not the 345 candidate rows the tree opened on; the opening approximation does not re-derive
   and over-states by ~19×. Both Open Questions answered by measurement. `.1`-`.4` opened, with `.2`

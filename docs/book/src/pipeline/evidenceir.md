@@ -442,8 +442,8 @@ that cell by shape, measured on `2026-09-12`:
 
 | stratum | declarations | joined to a name cell | minted from a phrase |
 | --- | ---: | ---: | ---: |
-| current (proof-carrying) | 604 | 604 (100.0%) | 2 |
-| legacy (inspection-only) | 2,085 | 1,251 (60.0%) | 15 |
+| current (proof-carrying) | 604 | 604 (100.0%) | 2, now 0 |
+| legacy (inspection-only) | 2,085 | 1,251 (60.0%) | 15, now 11 |
 
 The two strata are never added, because a persisted artifact is evidence about the producer that
 wrote it. The legacy join rate is itself that principle showing through: an older emitter folded
@@ -457,20 +457,39 @@ its own class, which is why the corpus's largest wire specification contributes 
 phrase count: all 72 of its multi-word name cells are comma families this reader already reads
 correctly.
 
-Both current phantoms come from one AHB table, and the name reader is not their cause. That table is
-rotated — its header reads `Name | Source | Width | Description` while its body carries the signal in
-the last column — and the content-based correction that fixes the other rotated tables declines to
-fire, because the table has two body rows: too few to clear the margin that protects an explicit
-`Name` header from being overruled by noise. Refusing the phrase would silence those rows; correcting
-the column would read them. Neither loses a wire — both signals are declared correctly from a second
-table — but only one of the two is a repair.
+### The two phantoms were a column defect, and refusing them would have hidden it
 
-What no shape can decide is the remaining case. A bus-mode matrix that SourceIR typed as a signal
-table has rows named `HS200` and `HS400`, single tokens indistinguishable from a wire. A row-level
-rule refuses the phrases in that table and stops there, which is the measured reason the question
-moves up to the table or to the classifier rather than being answered here. Tracked as
-`PROSE-NAME-CELL-DECLARATION.0`; the population is re-derivable with
-`python3 scripts/measure_declaration_name_cell_shapes.py`.
+Both current phantoms came from one AHB table, and the name reader was not their cause. That table is
+rotated — its header reads `Name | Source | Width | Description` while its body carries the signal in
+the last column — and the content-based correction that fixes the other rotated tables declined to
+fire, because the table has two body rows: too few to clear the margin that protects an explicit
+`Name` header from being overruled by noise. `Clock source` and `HCLK` each offered one leading
+identifier, so nothing could tell a prose column from a name column.
+
+Refusing the phrase would have silenced those rows. It would also have deleted the only evidence that
+the column was wrong — so the reader was changed where the mistake was. **A cell scores for its column
+only when the reader consumes it whole.** The four multi-token forms above leave nothing over and
+still score; prose leaves a sentence over and scores nothing. The margin is untouched, and so is what
+a row in the chosen column declares: this decides only *which* column holds the names.
+
+That table now declares `Signal HCLK is output width 1.` and `Signal HRESETn is width 1.` — two
+phantoms gone, two prose widths gone, and `HRESETn`, the document's own active-LOW spelling, reaching
+IntentIR for the first time. AHB's interface signal set goes from 40 to 41 with nothing removed.
+
+Corpus-wide the new score moves the name column on 7 of 602 signal tables in the current stratum: that
+one repair, and six USB 3.2 register and field tables mis-typed as signal tables, which declare
+nothing either way. Every rotation the margin was introduced for still overrides — APB `table_0016`
+18 against 5, AHB `table_0033` 19 against 4 — and of the 27 proof-carrying documents, only AHB's
+EvidenceIR changed at all.
+
+### What no shape can decide
+
+A bus-mode matrix that SourceIR typed as a signal table has rows named `HS200` and `HS400`, single
+tokens indistinguishable from a wire. A row-level rule refuses the phrases in that table and stops
+there, which is the measured reason the question moves up to the table or to the classifier rather
+than being answered here. Tracked as `PROSE-NAME-CELL-DECLARATION.0` and `.2`; the population is
+re-derivable with `python3 scripts/measure_declaration_name_cell_shapes.py`.
+
 ## Why provenance is critical here
 
 `EvidenceIR` is where the project first needs to defend itself against "plausible but wrong" extraction.

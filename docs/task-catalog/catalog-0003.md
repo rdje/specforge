@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `R16-MULTIMODAL-CONTRACT-FUSION` | `done` | cross-modal evidence → one contract (point #3) | [open](../tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
 | `R16-WAVEFORM-CONTRACT-MINING` | `done` | timing diagram → contract (point #4 — the crux) | [open](../tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
 | `R6-CONVERGE-HARDENING` | `done` | Converge Module Test Assertion Hardening | [open](../tasks/R6-CONVERGE-HARDENING.md) |
 | `R6-EVIDENCE-HARDENING` | `done` | Evidence + Adapter Module Test Assertion Hardening | [open](../tasks/R6-EVIDENCE-HARDENING.md) |

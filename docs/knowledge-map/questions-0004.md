@@ -223,6 +223,8 @@
   > how do I file an FSMGen bug report or feature request
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how do I know my census script still mirrors the reader
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > how do I let a Continued from previous page table contribute what its first page contributes
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
@@ -296,5 +298,3 @@
   > how do I waive or range-scope the task-acceptance check
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how do Published-claims ids resolve
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how do byte-granular page fragments chain (offset plus size adjacency)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how do byte-granular page fragments chain (offset plus size adjacency)
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > how do canonical register records retain source table provenance
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
@@ -296,5 +298,3 @@
   > how is FigureRegion raw_image_path serialized
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how is IngestTerminatedBySignal different from IngestAbortedForMemory

@@ -1,5 +1,5 @@
 {"expected_current_surfaces": 41, "max_array_items": 8, "max_bytes": 65536, "max_record_bytes": 2048, "max_records": 128, "max_scalar_bytes": 512, "phase": "frozen", "record_type": "registry", "required_views": ["current_status", "roadmap_controller_projections", "maintained_references", "doctrine_baselines", "mdbook_quantitative_claims"], "schema_version": 1}
-{"path":"doctrine/live_document_size/surfaces.jsonl","record_type":"source","schema_version":1,"sha256":"bbc1ca291537f75bd9fa24dd651565164771037dfe52ced3db95e3394ebf955d","source_id":"surface_registry"}
+{"path":"doctrine/live_document_size/surfaces.jsonl","record_type":"source","schema_version":1,"sha256":"e4016cce0916b948cc37c38091e238900f2b50f7110253667b1ae451428dd0f9","source_id":"surface_registry"}
 {"path": "doctrine/live_document_size/derived_state_contracts.jsonl", "record_type": "source", "schema_version": 1, "sha256": "34c52ce552711e32b2595f319ac1663c7e479826c137dda536f28a20d61483c9", "source_id": "derived_state_registry"}
 {"identity": "live_validated", "path": "doctrine/claim_verification/claims.jsonl", "record_type": "source", "schema_version": 1, "source_id": "claim_registry"}
 {"description": "Current completion, validation, readiness, active-state, and measured-status assertions.", "record_type": "view", "schema_version": 1, "view_id": "current_status"}

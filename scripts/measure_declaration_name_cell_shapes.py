@@ -191,12 +191,19 @@ def name_column(table: dict) -> int:
     col_count = max((len(row) for row in rows), default=0)
 
     def distinct_signal_tokens(col: int) -> int:
+        # PROSE-NAME-CELL-DECLARATION.2 — a cell scores for its column only when the reader consumes
+        # it whole, which is `name_cell_is_read_whole` in crates/specforge/src/ir/evidence.rs. This
+        # mirror must move with it: when it does not, the join rate below falls, which is exactly how
+        # this census reports that it has drifted from the producer rather than reporting a defect.
         tokens = set()
         for row in rows:
             if col >= len(row):
                 continue
-            parts = row[col]["text"].split()
+            raw = row[col]["text"].strip()
+            parts = raw.split()
             if not parts:
+                continue
+            if classify_name_cell(raw) == "phrase":
                 continue
             token = trim_to_identifier_characters(parts[0]).upper()
             if is_hardware_signal_token(token):

@@ -49,6 +49,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `MEMORY-BOUNDED-INGEST` | `active` | bounded-memory ingestion of very large PDFs | [open](tasks/MEMORY-BOUNDED-INGEST.md) |
 | `NLP-SHALLOW-PARSE` | `active` | a deterministic in-Rust shallow-parse tier (subject–verb–object understanding) | [open](tasks/NLP-SHALLOW-PARSE.md) |
 | `PDF-VARIANT-DIGESTION` | `active` | make SpecForge digest as many chip-spec PDF variants as possible | [open](tasks/PDF-VARIANT-DIGESTION.md) |
+| `PRODUCTION-GRAPH-CENSUS-PIN` | `active` | four repository-wide census numbers drifted under a fully green gate | [open](tasks/PRODUCTION-GRAPH-CENSUS-PIN.md) |
 | `PROSE-NAME-CELL-DECLARATION` | `active` | a row whose name cell is a phrase declares its first word as a signal | [open](tasks/PROSE-NAME-CELL-DECLARATION.md) |
 | `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](tasks/PURE-NLP-INTENT-EXTRACTION.md) |
@@ -66,13 +67,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 154 trees route through 3 derived part(s); open a range to find an id.
+All 155 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-SUBMODULE-BUMP` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FULL-PAGE-INTENT-CAPTURE` | `R16-MULTIMODAL-CONTRACT-FUSION` |
-| [0003](task-catalog/catalog-0003.md) | 42 | `R16-WAVEFORM-CONTRACT-MINING` | `WIRE-BASED-100` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FULL-PAGE-INTENT-CAPTURE` | `R16-MODULE-HARDENING` |
+| [0003](task-catalog/catalog-0003.md) | 43 | `R16-MULTIMODAL-CONTRACT-FUSION` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

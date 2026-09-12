@@ -10316,6 +10316,61 @@ fn leading_name_token_is_placeholder(raw_name: &str) -> bool {
             })
 }
 
+/// A name cell the reader consumes ENTIRELY — the shape test the content-based name-column override
+/// scores with (`PROSE-NAME-CELL-DECLARATION.2`).
+///
+/// The override picks the column carrying the most distinct hardware-signal tokens, and it reads a
+/// cell exactly as the row loop does: first whitespace token, trimmed, tested as an identifier. That
+/// makes a cell which is a *phrase* score identically to a cell which is a name, because
+/// `Clock source` begins with the perfectly ordinary identifier `Clock`. AHB `table_0004` is the
+/// consequence: a rotated table whose real names (`HCLK`, `HRESETn`) sit in the last column while the
+/// header-designated column holds `Clock source` and `Reset controller`. Both columns score 2, no
+/// margin can separate them, and the table declares two phantoms — with a whole sentence for a width.
+///
+/// A column of names is a column whose cells the name reader has nothing left over from. Four
+/// multi-token forms leave nothing, and each is a shape rather than a vocabulary (ADR 0006):
+/// - a comma-separated family, which `signal_names_in_name_cell` already admits (`AWSIZE, ARSIZE`);
+/// - a footnote marker — every later token one alphanumeric character (`HSELx a`);
+/// - a bit-range or index suffix — every later token carrying no letter (`ARMPAM [10:0]`);
+/// - a text-layer split of one identifier — a token recurs and the rest are fragments
+///   (`waitrequest waitrequest _ n`).
+///
+/// Everything else is prose and contributes nothing to its column's score.
+///
+/// This governs SCORING only — which column the table's names are in. It never changes what a row in
+/// the chosen column declares, so no row gains or loses a declaration by this test alone.
+fn name_cell_is_read_whole(raw_name: &str) -> bool {
+    // The reader's own admission of a family outranks every shape below it.
+    if signal_names_in_name_cell(raw_name).len() >= 2 {
+        return true;
+    }
+    let tokens: Vec<&str> = raw_name.split_whitespace().collect();
+    if tokens.len() <= 1 {
+        return true;
+    }
+    let later = &tokens[1..];
+    if later
+        .iter()
+        .all(|token| token.chars().count() == 1 && token.chars().all(|c| c.is_ascii_alphanumeric()))
+    {
+        return true;
+    }
+    if later
+        .iter()
+        .all(|token| !token.chars().any(|c| c.is_ascii_alphabetic()))
+    {
+        return true;
+    }
+    // A text-layer split is one identifier the PDF broke apart, so the repetition has to account for
+    // the WHOLE cell: every token that does not recur must itself be a fragment. Accepting "some
+    // token recurs" would admit prose, which repeats a word as a matter of course.
+    let lowered: Vec<String> = tokens.iter().map(|t| t.to_ascii_lowercase()).collect();
+    let recurs = |token: &String| lowered.iter().filter(|other| *other == token).count() > 1;
+    let is_fragment =
+        |token: &String| token.chars().filter(|c| c.is_ascii_alphabetic()).count() <= 1;
+    lowered.iter().any(recurs) && lowered.iter().all(|t| recurs(t) || is_fragment(t))
+}
+
 fn signal_names_in_name_cell(raw_name: &str) -> Vec<String> {
     let first_token = |text: &str| -> String {
         text.split_whitespace()
@@ -10430,16 +10485,23 @@ fn synthesize_signal_declarations(
     // HREADY) still gets extracted. Purely positional/structural — no signal name hardcoded
     // (ADR 0006). WIRE-BASED-100.5h (the .3a-deferred extractor fix).
     let col_count = table.body_rows.iter().map(|r| r.len()).max().unwrap_or(0);
-    // Score a column exactly the way the row loop below reads it: first whitespace token,
-    // stripped of leading/trailing non-identifier characters. Scoring without that strip made
-    // the two disagree, and a name cell listing a signal pair (`AWMMUSID, ARMMUSID`) scored
-    // ZERO here while the row loop read it fine — so the override handed the table to whatever
-    // prose column happened to start with capitalised words (WIRE-BASED-100.10a).
+    // Take the token the row loop below would take: first whitespace token, stripped of
+    // leading/trailing non-identifier characters. Scoring without that strip made the two disagree,
+    // and a name cell listing a signal pair (`AWMMUSID, ARMMUSID`) scored ZERO here while the row
+    // loop read it fine — so the override handed the table to whatever prose column happened to
+    // start with capitalised words (WIRE-BASED-100.10a).
+    //
+    // Then admit the cell only if the reader consumes it WHOLE (PROSE-NAME-CELL-DECLARATION.2).
+    // Taking the leading identifier and asking nothing else made a prose column indistinguishable
+    // from a name column, which is how a two-row rotated table (AHB `table_0004`) kept
+    // `Clock source` over `HCLK`: both scored 2, so no margin could tell them apart. Scoring is all
+    // this adds; what a row in the chosen column declares is untouched.
     let signal_token_distinct = |col: usize| -> usize {
         let mut toks: Vec<String> = table
             .body_rows
             .iter()
             .filter_map(|row| row.get(col))
+            .filter(|cell| name_cell_is_read_whole(cell.text.trim()))
             .map(|cell| {
                 cell.text
                     .split_whitespace()
@@ -31350,6 +31412,183 @@ mod wire_based_100_5h {
             names.contains(&"PCLK") && names.contains(&"PADDR"),
             "got {names:?}"
         );
+    }
+
+    /// PROSE-NAME-CELL-DECLARATION.2 — the content-based name-column override could not correct a
+    /// SHORT rotated table, because a prose cell scored for its column exactly like a name cell.
+    ///
+    /// This is AHB `table_0004` reduced to its shape: header `Name | Source | Width | Description`
+    /// over a body whose signal sits in the LAST column, with the header-designated column holding a
+    /// phrase. Under the old score both columns offered two distinct leading identifiers
+    /// (`CLOCK`/`RESET` against `HCLK`/`HRESETN`), so `NAME_COLUMN_OVERRIDE_MARGIN` could never be
+    /// cleared and the table declared `Clock` and `Reset` — with the description cell parsed as a
+    /// parametric width.
+    ///
+    /// Observed RED before the score changed: the assertion below failed with
+    /// `["Clock", "Reset"]`.
+    #[test]
+    fn a_short_rotated_table_is_scored_by_the_cells_the_reader_reads_whole() {
+        let table = StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Name", "Source", "Width", "Description"])],
+            body_rows: vec![
+                row(&[
+                    "Clock source",
+                    "1",
+                    "The bus clock times all bus transfers.",
+                    "HCLK",
+                ]),
+                row(&[
+                    "Reset controller",
+                    "1",
+                    "The bus reset signal is active LOW.",
+                    "HRESETn",
+                ]),
+            ],
+            row_count: 2,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut Vec::new(),
+        );
+        let names: Vec<&str> = stmts
+            .iter()
+            .filter_map(|s| s.text.strip_prefix("Signal "))
+            .filter_map(|s| s.split_whitespace().next())
+            .collect();
+        assert!(
+            names.contains(&"HCLK") && names.contains(&"HRESETn"),
+            "the rotated column holds the names, got {names:?}"
+        );
+        for phantom in ["Clock", "Reset"] {
+            assert!(
+                !names.contains(&phantom),
+                "a phrase cell must not be the table's name column, got {names:?}"
+            );
+        }
+        assert!(
+            stmts.iter().all(|s| s.text.len() < 48),
+            "a description cell must not survive as a width, got {:?}",
+            stmts.iter().map(|s| s.text.as_str()).collect::<Vec<_>>()
+        );
+    }
+
+    /// PROSE-NAME-CELL-DECLARATION.2 — the same score must not cost the legitimate multi-token name
+    /// cells. A comma family is the one that would hurt: AXI declares 72 of its signals from cells
+    /// like `AWSIZE, ARSIZE`, and a column scored only on single-token cells would hand its whole
+    /// name column to whichever neighbour happened to hold bare identifiers — here the `Presence`
+    /// column, which is AXI `table_0059`'s real shape.
+    ///
+    /// Observed RED against exactly that naive score: with the comma-family clause removed from
+    /// `name_cell_is_read_whole`, this table declares `["PROT_Present", "RME_Support",
+    /// "INSTPRIV_Present"]` and none of the six real signals.
+    #[test]
+    fn a_comma_family_name_column_keeps_its_score() {
+        let table = StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Name", "Width", "Presence", "Description"])],
+            body_rows: vec![
+                row(&[
+                    "AWPROT, ARPROT",
+                    "3",
+                    "PROT_Present",
+                    "The protection attributes.",
+                ]),
+                row(&[
+                    "AWNSE, ARNSE",
+                    "1",
+                    "RME_Support",
+                    "Extends AxPROT to include Root.",
+                ]),
+                row(&[
+                    "AWPRIV, ARPRIV",
+                    "1",
+                    "INSTPRIV_Present",
+                    "LOW when unprivileged.",
+                ]),
+            ],
+            row_count: 3,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut Vec::new(),
+        );
+        let names: Vec<&str> = stmts
+            .iter()
+            .filter_map(|s| s.text.strip_prefix("Signal "))
+            .filter_map(|s| s.split_whitespace().next())
+            .collect();
+        for member in ["AWPROT", "ARPROT", "AWNSE", "ARNSE", "AWPRIV", "ARPRIV"] {
+            assert!(
+                names.contains(&member),
+                "every comma-family member must still be declared, got {names:?}"
+            );
+        }
+        for presence in ["PROT_Present", "RME_Support", "INSTPRIV_Present"] {
+            assert!(
+                !names.contains(&presence),
+                "a presence-property column is not the name column, got {names:?}"
+            );
+        }
+    }
+
+    /// PROSE-NAME-CELL-DECLARATION.2 — the shape test itself, on each form the census named. The
+    /// four admitted shapes are the ones a real name column carries; `phrase` is the population
+    /// under adjudication and is the only one refused.
+    #[test]
+    fn a_cell_scores_for_its_column_only_when_the_reader_reads_all_of_it() {
+        for whole in [
+            "HCLK",                        // single token
+            "AWSIZE, ARSIZE",              // comma family
+            "HSELx a",                     // footnote marker
+            "ARMPAM [10:0]",               // bit-range suffix
+            "waitrequest waitrequest _ n", // text-layer split of one identifier
+        ] {
+            assert!(
+                name_cell_is_read_whole(whole),
+                "{whole:?} is a name cell the reader reads whole"
+            );
+        }
+        for prose in [
+            "Clock source",
+            "Reset controller",
+            "Backwards Compatibility with legacy MMCcard",
+            "ARLOCK zeros,",
+            "NOTE 1 Reserved bits should read as 0. NOTE 2 Obsolete values are don't care.",
+        ] {
+            assert!(
+                !name_cell_is_read_whole(prose),
+                "{prose:?} is prose and must not score for its column"
+            );
+        }
     }
 }
 
