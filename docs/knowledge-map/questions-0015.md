@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why did only four documents refuse to load after an EvidenceIR producer change
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
   > why did proof-only SourceIR refresh fail after a table classifier change
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
@@ -296,5 +298,3 @@
   > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > why does cargo test -p specforge not run the trajectory snapshot tests
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3

@@ -324,11 +324,16 @@ own description cell, and a reader that merely looks for a declared signal *some
 attribute the requirement to `HBURST` — publishing "HBURST must be 0", which the document never says and
 which drops the alternative `3` on the way.
 
-> **Currently only half-applied.** The table reader described here refuses such a clause, so it mints no
-> such record. SpecForge's older statement-level readers, which see the row only as one serialized
-> `| … | … |` line, still attribute it — AHB's persisted artifacts carry `HBURST must_be_value 0` and
-> `HPROT must_be_value 0` today. Removing those is tracked as `INVARIANT-SHAPE-ADMISSION.5`; they are
-> named here rather than left for a reader to discover.
+The statement-level readers, which see the row only as one serialized `| … | … |` line, used to do
+exactly that: AHB's artifacts carried `HBURST must_be_value 0` and `HPROT must_be_value 0`, neither of
+which the document states. They now apply the same rule — a row keeps its "subject from the other
+cells" reading only when the obligation clause names no subject of its own.
+
+The `HPROT` record is worth one more sentence, because the pipeline caught it twice by different
+means. AHB also says *"a Manager sets HPROT[0] HIGH, to indicate a data access"*, so the fabricated
+`must be 0` was reported as a **temporal conflict**: `HPROT` taking both `HIGH` and `LOW` at the same
+`HCLK` rising edge. The document was being made to look inconsistent with itself by a requirement it
+never carried. Removing the mis-subjected record removed the contradiction with it.
 
 The pronoun refusal is deliberate and is an honest residual rather than a guess. Both of these are
 signal-description rows, both obligations are headed by `it`, and the referents differ:

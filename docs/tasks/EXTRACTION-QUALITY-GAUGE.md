@@ -646,6 +646,29 @@ honestly-qualified) path to "human-SpecForge in Rust."
   RED; the chain rebuilt for every document whose artifacts move — AHB, APB and the CXS/DTI documents are
   affected, and the AMBA bundles are restored per `[[evidence-rule-field-content-stales-every-proof]]`.
 
+- ID: `EXTRACTION-QUALITY-GAUGE.3j` · Status: `pending` (opened `2026-09-12` by
+  `INVARIANT-SHAPE-ADMISSION.5`) · Goal: **the LLM-primary constraint path applies none of the
+  positional spurious-subject gates this family built.** `.2.50a`, `.3e`, `.3g`, `.3h` and now
+  `INVARIANT-SHAPE-ADMISSION.5` are all wired as `subject_signals.retain(…)` in the two DETERMINISTIC
+  extractors only. `crates/specforge/src/ir/constraint_extract_llm.rs` has its own gates —
+  `ground_constraint` / `ground_constraint_typed`, which check catalog membership, drop invented
+  subjects and drop condition-only subjects — but nothing that reads WHERE in the sentence the subject
+  sits. So a model proposal is grounded on "is this a declared signal?" and never on "is this the
+  thing the sentence constrains?".
+  **Measured instance:** AXI-H `llm_sigcon_0025`/`0027` attribute `WTAGUPDATE must be deasserted` to
+  `WTAG` — the scan lifted a shorter declared name out of a longer identifier — and
+  `INVARIANT-SHAPE-ADMISSION.5`'s narrowing cannot reach them because they are not produced by the path
+  it gates. The census (`python3 scripts/measure_table_row_foreign_subject.py`) names them.
+  **Scope this before implementing.** The question is not "call the five retains from the LLM path
+  too": it is whether a grounded model proposal SHOULD be judged by a gate designed for a pattern
+  path's full-text scan, since the model is not scanning — it names a subject deliberately, and a gate
+  built to catch scanning artefacts may refuse a correct proposal the deterministic path could never
+  have made. Measure how many current `llm_sigcon_*` records each of the five would refuse before
+  wiring any of them.
+  Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
+  population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
+  for every document whose artifacts move.
+
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3h`
 
 - [x] **REPRODUCE / MEASURE** — read-only census over all 248 deterministic constraint records: exactly one

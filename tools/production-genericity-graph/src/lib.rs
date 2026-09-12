@@ -83,6 +83,10 @@ mod tests {
     /// +29 decision sites / +2 semantic macros for one table reader). Four for four: the question
     /// `PRODUCTION-GRAPH-CENSUS-PIN.1` opened is no longer open — an exact pin on a count that moves
     /// with every ordinary production slice measures the commit rate, not the boundary.
+    /// FIFTH (`INVARIANT-SHAPE-ADMISSION.5`, +2 functions / +4 helper edges / +4 decision sites for
+    /// ONE narrowed gate condition) — and this one is the sharpest case for `.1`'s chosen design: the
+    /// slice removed two fabricated records and added no behaviour, yet still had to edit four
+    /// literals in a test that cannot observe them until push.
     #[test]
     fn current_repository_flow_is_complete_local_and_deterministic() {
         let root = repository_root();
@@ -102,9 +106,9 @@ mod tests {
         assert_eq!(first.trusted_regions, 11);
         assert_eq!(first.non_authoritative_regions, 6);
         assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_407);
-        assert_eq!(first.helper_edges, 14_983);
-        assert_eq!(first.decision_sites, 12_980);
+        assert_eq!(first.analyzed_functions, 2_409);
+        assert_eq!(first.helper_edges, 14_987);
+        assert_eq!(first.decision_sites, 12_984);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
         assert_eq!(first.semantic_macros, 1_471);

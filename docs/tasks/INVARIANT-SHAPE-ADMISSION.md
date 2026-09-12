@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `INVARIANT-SHAPE-ADMISSION`
-- Status: `active` (`2026-09-12`; `.0`-`.3` done; `.4` is a program, not a slice; `.5` opened by `.3`)
+- Status: `active` (`2026-09-12`; `.0`-`.3` and `.5` done; `.4` is a program, not a slice)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -141,7 +141,7 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   and consider whether an existing table-semantics tree should own it.
   Prerequisite: `.3`. Verification: scoping is the deliverable.
 
-- ID: `INVARIANT-SHAPE-ADMISSION.5` · Status: `pending` · Goal: **a serialized row's obligation must not be
+- ID: `INVARIANT-SHAPE-ADMISSION.5` · Status: `done` (`2026-09-12`) · Goal: **a serialized row's obligation must not be
   attributed to the row's name-cell signal when the clause binds to a different nominal.** Opened by `.3`'s
   adjudication, which found the statement paths already reading these rows — and getting three of them
   wrong. `is_post_passive_binding_only_subject` is the predicate that would refuse exactly this, and its
@@ -154,11 +154,138 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   writes as `0 or 3`.
   `.3` already ships the predicate this needs (`obligation_subject`), so the leaf is a placement decision,
   not a new rule.
-  All three live in AHB and AXI, whose evidence stage is replayable only with the held-out bundles
-  restored from `generated/preserved/WIRE-BASED-100.10/` — budget for that rebuild
-  (`[[evidence-rule-field-content-stales-every-proof]]`).
-  Prerequisite: `.3`. Verification: all 3 adjudicated; observed RED; each removed record named
+  **Shipped as a one-condition narrowing of gate 2, not a new predicate**, and the population is 4 rather
+  than 3: the census found `WTAG` taking `WTAGUPDATE must be deasserted` twice in AXI-H, where the scan
+  lifted a shorter declared name out of a longer identifier. AHB rebuilt: `signal_constraints` 16 → 14,
+  and a **false temporal conflict went with them**.
+  Producer: `python3 scripts/measure_table_row_foreign_subject.py`.
+  Prerequisite: `.3`. Verification: all 4 adjudicated; observed RED; each removed record named
   individually, per this tree's standing residual rule.
+  Commit: `INVARIANT-SHAPE-ADMISSION.5`
+
+## `.5` — result (`2026-09-12`)
+
+### The exemption was right for the shape it was written for, and wrong for one other
+
+`is_post_passive_binding_only_subject` says in its own doc-comment that English binds a passive
+obligation to a subject that PRECEDES the modal — which is `.3`'s rule, stated a year earlier for
+prose. Its **gate 2** then exempts a table row outright:
+
+```rust
+// (2) a table row supplies subject context from its other cells → out of scope.
+if text.trim_start().starts_with('|') { return false; }
+```
+
+That is true for `| RLAST | … | Must be HIGH |`, where the clause has no subject at all and only the
+row's other cells can supply one. It is false for
+`| HBURST | Subordinate | HBURST_WIDTH | … HBURST_WIDTH must be 0 or 3. |`, where the clause names a
+subject and it is not the row's signal — and there the exemption hands the obligation to `HBURST`.
+
+### Every one of the 351 persisted constraints is accounted for
+
+`python3 scripts/measure_table_row_foreign_subject.py`, over all 78 documents:
+
+| verdict | records | disposition |
+| --- | ---: | --- |
+| `not_a_table_row` | 240 | gate 2 never applied |
+| `subject_precedes_the_lead` | 34 | gate 4 already keeps these |
+| `common_noun_head` | 32 | `the LASECSID signal must be 0`, `This field shall be 0h` — a descriptor, not a subject |
+| `active_obligation` | 19 | `Controller must set PREQ LOW` — gate 3 already keeps these |
+| `not_plain_identifier` | 18 | gate 1 |
+| `subjectless_clause` | **4** | **the exemption's real purpose — preserved** |
+| `foreign_identifier_head` | **4** | **refused** |
+
+The two bold rows are the whole change, and the first of them is why this is a narrowing rather than
+a removal: `| RLAST | … | Must be HIGH |` and Intel VT-d's three `Must be 0` rows keep the exemption
+they were written for.
+
+### The first rule I wrote was wrong, and the census is what said so
+
+The obvious rule — *refuse when the subject heads none of the row's obligation clauses* — refuses
+**45** records. Adjudicating them showed it conflates three grammars the existing gates already
+handle:
+
+```text
+the LASECSID signal must be 0     head `signal`      a descriptor; the identifier is adjacent
+Controller must set PREQ LOW      head `Controller`  an ACTIVE obligation — gate 3 keeps it
+This field shall be 0h            head `field`       the NVMe field-cell class (`.3e`)
+```
+
+Requiring the head to be an **uppercase-run identifier** — the same `[A-Z0-9_]` tokenization
+`collect_subject_signal_tokens` uses, so the gate sees the spelling the extractor actually lifted —
+keeps all three and refuses only the real mis-subjects. 45 → 4.
+
+### Corpus effect, and a falsification the pipeline supplied on its own
+
+AHB rebuilt from the evidence stage with its held-out bundle restored:
+
+| | before | after |
+| --- | ---: | ---: |
+| EvidenceIR `signal_constraints` | 16 | **14** |
+| IntentIR `signal_constraints` / `temporal_rules` | 16 | 14 |
+| IntentIR `temporal_invariants` | 191 | 189 |
+| IntentIR `actor_contracts` | 14 | 13 |
+| lowered `.isf` rules | 37 | 35 |
+| **IntentIR `temporal_conflicts`** | **1** | **0** |
+| records added, any stage | | **0** |
+
+The last two rows were not designed for. `temporal_conflict_0001` reported `HPROT` taking both `HIGH`
+and `LOW` at the same `HCLK` rising edge, from `temporal_signal_constraint_dyn_sigcon_0014` — the
+fabricated `HPROT must_be_value 0` — against `dyn_sigcon_0015`, the document's real
+*"a Manager sets HPROT[0] HIGH, to indicate a data access"*. **The mis-subjected record was making AHB
+look internally inconsistent with itself.** That is a dimensionally different falsification from the
+one this leaf was built on: the census says the subject is wrong by grammar, and the temporal layer
+says it is wrong by contradiction, independently.
+
+### The two AXI-H records are NOT removed, and why
+
+`llm_sigcon_0025`/`0027` sit in a schema-2 (legacy) artifact, which is inspection-only and is not
+rebuilt. They are also `llm_sigcon_*`: `crates/specforge/src/ir/constraint_extract_llm.rs` applies
+**none** of the `.2.50a`/`.3e`/`.3g`/`.3h` positional subject gates — it has its own catalog-grounding
+gates only. So this producer change does not reach them by either route. Tracked as
+`EXTRACTION-QUALITY-GAUGE.3j`; stated here rather than left to look like an unexplained miss.
+
+### The dropped obligation's disposition, stated
+
+`[[ANCHORLESS-INVARIANT-DROP]]` requires it. Nothing else in AHB cited those two rows, so removing the
+records leaves their content carried only by the serialized rows themselves, which stay published as
+invariants. That is correct rather than lossy: `HBURST_WIDTH must be 0 or 3` is a **parameter**
+constraint, and `SignalConstraintKind` has no slot for one — an honest residual, not a lost
+requirement. Reading it properly is `.4`'s matrix programme.
+
+## Acceptance Checklist (enforced) — `.5`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_table_row_foreign_subject.py`: of 351
+  persisted constraints, 4 head a foreign identifier and 4 are subjectless clauses the exemption
+  exists for; every remaining record lands in a named verdict (240 not a table row, 34 subject before
+  the lead, 32 common-noun head, 19 active, 18 non-identifier subject).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`
+  `is_post_passive_binding_only_subject` gate 2: `if text.trim_start().starts_with('|') { return false; }`.
+  The predicate's own doc-comment states `.3`'s rule for prose; gate 2 exempts every table row from it,
+  so `extract_dynamic_signal_constraints`' whole-statement scan attributes
+  `HBURST_WIDTH must be 0 or 3` to `HBURST` (`dyn_sigcon_0013`, persisted).
+- [x] **ADDRESSED (verified)** — `obligation_head_is_a_foreign_identifier`, and gate 3 moved above
+  gate 2 so the lead is computed once. AHB rebuilt: `signal_constraints` 16 → 14, `.isf` rules 37 → 35,
+  `temporal_conflicts` 1 → 0, **0 records added at any stage**. The two removed are exactly the two the
+  census named. **Observed RED**: with gate 2 restored to its blanket form,
+  `a_row_whose_obligation_names_a_width_parameter_does_not_constrain_the_signal` fails — and only that
+  test, so the four protected shapes are held by controls that do not depend on the refusal.
+- [x] **NO REGRESSION** — `cargo test` green including the four new controls;
+  `a_row_keeps_its_subject_context_for_every_shape_the_exemption_was_written_for` pins the subjectless,
+  descriptor-head, field-cell and active-obligation shapes, and
+  `prose_behaviour_is_unchanged_by_the_row_narrowing` pins both prose directions, since gate 2 never
+  applied to prose. `cargo fmt --check` and `cargo clippy --all-targets -D warnings` green;
+  `scripts/check_doctrines.sh` green. Retention stays at the declared 24: the AHB bundle was restored,
+  `diff -r`-verified unchanged by the rebuild, and removed.
+- [x] **GENERICITY (ADR 0006)** — the added condition is a tokenization, not a vocabulary: the head must
+  be a single maximal `[A-Z0-9_]` run spanning the whole token, which is exactly what
+  `collect_subject_signal_tokens` lifts. No document, protocol, vendor, or signal name appears in the
+  rule, and the controls use invented names (`OMEGABURST`, `ZETAPROT`, `SIGMATAG`, `ZETASECSID`).
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/evidenceir.md`'s "Currently only half-applied" callout,
+  added by `.3`, is now false and is replaced by what actually shipped.
+  `[[table-row-obligation-binds-to-the-token-before-its-modal]]` updated: the gate-2 narrowing is no
+  longer "not yet applied", and the false temporal conflict is recorded as the independent
+  confirmation. No production rule was deleted; gate 2 was narrowed, and the book says so.
 
 ## `.3` — result (`2026-09-12`)
 
@@ -424,9 +551,9 @@ is discharged here for the table-row half.
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `INVARIANT-SHAPE-ADMISSION.5` — refuse the mis-subjected serialized-row constraint. 3 clauses, fully
-   adjudicated; the predicate already exists. Read its blocked-on note before starting.
-2. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice.**
+1. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice.** Both bounded leaves are
+   closed; what remains in this tree is the ~380-row matrix programme, and the first thing `.4` owes is
+   a decision about whether an existing table-semantics tree should own it.
 
 ## `.0` — result (`2026-09-12`)
 
@@ -537,6 +664,23 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.5`. All **4** foreign-identifier records adjudicated individually, and the other 347
+  persisted constraints accounted for by named verdict — `python3 scripts/measure_table_row_foreign_subject.py`.
+  The first rule drafted refused **45**; the 41 false positives were read by hand and produced the
+  uppercase-run-identifier condition, so the shipped rule is the adjudicated one rather than the first
+  one that looked right.
+  **Observed RED**: with gate 2 restored to its blanket form,
+  `a_row_whose_obligation_names_a_width_parameter_does_not_constrain_the_signal` fails on all three of
+  its cases while the other three controls stay green.
+  `cargo test` green (+4 controls); `cargo fmt --check` and `cargo clippy --all-targets -D warnings`
+  green; `scripts/check_doctrines.sh` green.
+  Chain: AHB rebuilt `evidence → validate → semantic → validate → intent → validate → adapt`, zero
+  failures, bundle restored from `generated/preserved/WIRE-BASED-100.10/`, `diff -r`-verified unchanged
+  and removed; retention at the declared 24. Pre-rebuild snapshot at
+  `generated/preserved/INVARIANT-SHAPE-ADMISSION.5/pre-rebuild/`. **−2 records, +0 anywhere**, and
+  `temporal_conflicts` 1 → 0 — an independent falsification of `dyn_sigcon_0014` the leaf did not design
+  for and did not need.
+
 - `2026-09-12` — `.3`. All **20** obligation clauses adjudicated individually, not sampled: 1 `absent`,
   11 `self`, 5 `pronoun`, 3 `other`, each printed in full with its table id, name cell and description
   cell by `scripts/measure_signal_row_obligation_subject.py`. `.2`'s 17 rows re-derived from persisted
@@ -585,10 +729,17 @@ None.
 - `.0` — `INVARIANT-SHAPE-ADMISSION.0` (`481c2d39`).
 - `.1` — `INVARIANT-SHAPE-ADMISSION.1` (`e3d22be0`).
 - `.2` — `INVARIANT-SHAPE-ADMISSION.2` (`e30fed04`).
-- `.3` — `INVARIANT-SHAPE-ADMISSION.3`.
+- `.3` — `INVARIANT-SHAPE-ADMISSION.3` (`ecc185c0`).
+- `.5` — `INVARIANT-SHAPE-ADMISSION.5`.
 
 ## Changelog
 
+- `2026-09-12` — `.5` closed. Gate 2 of `is_post_passive_binding_only_subject` exempted every table row
+  from the rule the predicate's own doc-comment states; narrowed to exempt only a row whose obligation
+  clause names no subject of its own. 4 records refused corpus-wide, 4 subjectless clauses preserved.
+  AHB `signal_constraints` 16 → 14 with **nothing added**, and the fabricated `HPROT must_be_value 0`
+  took a false `temporal_conflict` with it — it had been contradicting the document's own
+  `HPROT[0] HIGH` rule.
 - `2026-09-12` — `.3` closed, and it closed differently than it opened. The 17 rows are 20 obligation
   clauses; 12 bind to the row's own signal and are now read from the table, where the header still
   exists. The other 8 are refused with a stated reason. Two premises failed on measurement: 9 of the 17

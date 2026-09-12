@@ -11,6 +11,8 @@ answers:
   - "what is obligation_subject / ObligationSubject"
   - "how does specforge decide whether a description cell constrains the row's signal"
   - "why does a subjectless obligation clause produce no constraint from the statement path"
+  - "why did a temporal conflict disappear when a signal constraint was removed"
+  - "why does gate 2 of is_post_passive_binding_only_subject not exempt every table row"
   - "which documents carry obligation-bearing signal-description rows"
 date: 2026-09-12
 status: current
@@ -65,9 +67,13 @@ must also monitor … |` means the Subordinate, and telling them apart is anapho
 Universal grammar, no name lists (ADR 0006). Measured over the proof-carrying corpus: 20 obligation
 clauses across 567 declared signal-description rows — `absent` 1, `self` 11, `pronoun` 5, `other` 3.
 
-**The refusal half is not yet applied to the two paths that already mis-attribute.** `.3` adds the
-row reader; the `dyn_sigcon_0013`/`0014` records stand until a leaf owns the gate-2 exemption
-(`INVARIANT-SHAPE-ADMISSION.5`).
+**Both halves have shipped.** `.3` added the row reader; `.5` narrowed gate 2 of
+`is_post_passive_binding_only_subject` so a table row keeps its subject-context exemption only when the
+obligation clause names no subject of its own. `dyn_sigcon_0013`/`0014` are gone from AHB, and a false
+`temporal_conflict` went with them — the fabricated `HPROT must_be_value 0` had been contradicting the
+document's own `HPROT[0] HIGH` rule, so the mis-subject was independently detectable as an internal
+inconsistency. The two `llm_sigcon_*` records in AXI-H remain: they sit in a legacy artifact AND on the
+LLM path, which applies none of these positional subject gates (`EXTRACTION-QUALITY-GAUGE.3j`).
 
 The whole population lives in APB, AXI and AHB, whose normalized bundles are held out, so observing
 either half in a rebuilt artifact means restoring them first from

@@ -146,7 +146,10 @@ Ordered; PNT selects the first eligible leaf.
   production predicate, four for four.** `ACTOR-NOUN-RELATION-DECLARATION.1`,
   `INVARIANT-SHAPE-ADMISSION.1`, `PROSE-NAME-CELL-DECLARATION.2` and now
   `INVARIANT-SHAPE-ADMISSION.3` (+6 functions / +32 helper edges / +29 decision sites / +2 semantic
-  macros) each had to edit the pins to land. So an exact pin in a push-cadence test is the worst of
+  macros) each had to edit the pins to land — and then `INVARIANT-SHAPE-ADMISSION.5` made it **five for
+  five**, which is the sharpest case of all: that slice added ONE condition to an existing gate,
+  removed two fabricated records and introduced no new behaviour, and still had to edit four literals
+  in a test that cannot observe them until push. So an exact pin in a push-cadence test is the worst of
   both: it taxes every ordinary commit AND detects nothing until push. `.1` now has its measurement
   and a design to build; see the decision below.
 

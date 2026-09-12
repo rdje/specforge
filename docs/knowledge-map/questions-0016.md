@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > why does check_chain_currency report 24/24 current when 54 documents are legacy
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
@@ -30,6 +32,8 @@
   > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > why does folding a signal name's case matter beyond style
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does gate 2 of is_post_passive_binding_only_subject not exempt every table row
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > why does ingest still generate page images if it does not save them
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
@@ -293,7 +297,3 @@
   > why is a suffix-of-other-declared-names rule not enough to detect a naming template
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why is an ambiguous derived id pairing a fail rather than an invalid alpha transform
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why is an emitted-ISF count from an earlier refresh slice not the current number
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why is an exact archive alone insufficient for the active corpus task

@@ -7350,17 +7350,68 @@ fn is_post_passive_binding_only_subject(text: &str, subject: &str) -> bool {
     if subject.is_empty() || !subject.chars().all(is_ident) {
         return false;
     }
-    // (2) a table row supplies subject context from its other cells → out of scope.
-    if text.trim_start().starts_with('|') {
-        return false;
-    }
-    // (3) the passive binding this record claims, inside the sentence that carries it.
+    // (3) the passive binding this record claims, inside the sentence that carries it. Tested BEFORE
+    // the row exemption because the exemption now depends on what heads that binding.
     let sentence = constraint_bearing_sentence(text);
     let Some(lead) = first_passive_binding_lead(sentence) else {
         return false;
     };
+    // (2) a table row supplies subject context from its other cells → out of scope, UNLESS the
+    // obligation names a subject of its own (`INVARIANT-SHAPE-ADMISSION.5`).
+    if text.trim_start().starts_with('|')
+        && !obligation_head_is_a_foreign_identifier(sentence, lead, subject)
+    {
+        return false;
+    }
     // (4) a subject named before the lead is real; one reachable only after it is not.
     !contains_whole_identifier(&sentence[..lead], subject)
+}
+
+/// `INVARIANT-SHAPE-ADMISSION.5` — whether a serialized table row's obligation is headed by an
+/// IDENTIFIER other than `subject`, the one shape where "subject context from its other cells" is the
+/// wrong context.
+///
+/// Gate 2 above was written for a row whose obligation clause has no subject of its own —
+/// `| RLAST | … | Must be HIGH |`, `| … | Must be 0 |` — where the row's other cells are indeed the
+/// only place a subject can come from. It also exempted
+/// `| HBURST | Subordinate | HBURST_WIDTH | … HBURST_WIDTH must be 0 or 3. |`, handing an obligation
+/// about the width PARAMETER to the signal whose row states it.
+///
+/// The head is the last content token before the passive lead, helper words skipped — the same
+/// reading [`obligation_subject`] takes for the table reader and
+/// [`resolve_pronoun_subject_anaphora`] takes for an actor. It counts only when it is a single
+/// maximal `[A-Z0-9_]` run of at least two characters, the tokenization
+/// [`collect_subject_signal_tokens`] itself uses, so the gate judges the spelling the extractor
+/// actually lifted. That condition is what keeps the three shapes a coarser rule destroys:
+///
+/// * `the LASECSID signal must be 0` — head `signal`, a DESCRIPTOR standing in for an identifier the
+///   cell names right beside it;
+/// * `This field shall be 0h` — head `field`, the register field-cell class `.3e` owns;
+/// * `Controller must set PREQ LOW` — head `Controller`, an ACTIVE obligation gate 3 already excludes.
+///
+/// Measured over the 351 persisted constraints: 240 are not table rows, 34 name the subject before
+/// the lead, 32 head with a common noun, 19 are active, 18 have a non-identifier subject, **4 are
+/// subjectless clauses the exemption exists for**, and **4 head a foreign identifier** — AHB's
+/// `HBURST`/`HPROT` from `…_WIDTH must be …`, and AXI-H's `WTAG` from `WTAGUPDATE must be deasserted`,
+/// where the scan lifted the shorter declared name out of the longer one.
+///
+/// Universal grammar only (ADR 0006 — no document, protocol, vendor, or token list).
+fn obligation_head_is_a_foreign_identifier(sentence: &str, lead: usize, subject: &str) -> bool {
+    let Some(head) = content_head(&sentence[..lead]) else {
+        // The clause opens with its modal: no subject of its own, so the row legitimately supplies
+        // one. This is exactly what gate 2 was written for.
+        return false;
+    };
+    // A single maximal uppercase run spanning the WHOLE head IS the identifier; anything else — a
+    // common noun, a capitalised English word, a mixed-case name — is not.
+    let runs = uppercase_run_tokens(head);
+    let [(offset, run)] = runs.as_slice() else {
+        return false;
+    };
+    if *offset != 0 || run.len() != head.len() || run.len() < 2 {
+        return false;
+    }
+    !run.eq_ignore_ascii_case(subject)
 }
 
 /// EXTRACTION-QUALITY-GAUGE.3g — recognize a SPURIOUS constraint subject lifted from a `Reg.Field`
@@ -9795,20 +9846,26 @@ fn obligation_subject(clause: &str) -> ObligationSubject<'_> {
         return ObligationSubject::NotAnObligation;
     };
     // Byte layout is preserved by ASCII lowercasing, so the offset indexes `clause` directly.
-    for token in clause[..modal_start].split_whitespace().rev() {
+    match content_head(&clause[..modal_start]) {
+        Some(head) => ObligationSubject::Head(head),
+        None => ObligationSubject::Absent,
+    }
+}
+
+/// The last content token of `text` — the nominal an obligation binds to when `text` is everything
+/// preceding its modal. Helper words are skipped so the head is the one closest to the verb, which is
+/// the same walk `resolve_pronoun_subject_anaphora` makes. `None` when nothing but helpers precede
+/// the modal, i.e. the clause carries no subject of its own.
+fn content_head(text: &str) -> Option<&str> {
+    text.split_whitespace().rev().find_map(|token| {
         let word = token.trim_matches(|character: char| {
             !(character.is_ascii_alphanumeric() || character == '_')
         });
-        if word.is_empty()
-            || OBLIGATION_SUBJECT_HELPERS
-                .iter()
-                .any(|helper| word.eq_ignore_ascii_case(helper))
-        {
-            continue;
-        }
-        return ObligationSubject::Head(word);
-    }
-    ObligationSubject::Absent
+        let is_helper = OBLIGATION_SUBJECT_HELPERS
+            .iter()
+            .any(|helper| word.eq_ignore_ascii_case(helper));
+        (!word.is_empty() && !is_helper).then_some(word)
+    })
 }
 
 /// Byte offset of `needle` in `haystack` at identifier boundaries, if present. Both are ASCII-lower.
@@ -34914,5 +34971,116 @@ mod invariant_shape_admission_3 {
         )])?;
         assert!(records.is_empty(), "undeclared subject: {records:?}");
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod invariant_shape_admission_5 {
+    //! `INVARIANT-SHAPE-ADMISSION.5` — `is_post_passive_binding_only_subject` exempts a table row
+    //! because "a table row supplies subject context from its other cells". True when the obligation
+    //! clause has no subject of its own; false when it has a DIFFERENT one, and there the exemption
+    //! hands `HBURST_WIDTH must be 0 or 3` to `HBURST`. The narrowing is one condition: the clause is
+    //! headed by an uppercase-run identifier that is not the subject.
+    use super::*;
+
+    /// The refusal. Both are real persisted records (`dyn_sigcon_0013`, `dyn_sigcon_0014`), reproduced
+    /// here on invented names so a control cannot become a name list.
+    #[test]
+    fn a_row_whose_obligation_names_a_width_parameter_does_not_constrain_the_signal() {
+        for (row, subject) in [
+            (
+                "| OMEGABURST | Subordinate | OMEGABURST_WIDTH | Indicates how many transfers are in \
+                 the burst. OMEGABURST_WIDTH must be 0 or 3. |",
+                "OMEGABURST",
+            ),
+            (
+                "| ZETAPROT | Subordinate | ZETAPROT_WIDTH | Protection control signal. \
+                 ZETAPROT_WIDTH must be 0, 4, or 7. |",
+                "ZETAPROT",
+            ),
+            // The same shape without an underscore: the scan lifts a SHORTER declared name out of a
+            // longer identifier (`WTAG` from `WTAGUPDATE`), which the head test catches identically.
+            (
+                "| Update | 0b10 | Tag values have been updated. SIGMATAGUPDATE must be deasserted. |",
+                "SIGMATAG",
+            ),
+        ] {
+            assert!(
+                is_post_passive_binding_only_subject(row, subject),
+                "{subject} does not head this row's obligation: {row:?}"
+            );
+        }
+    }
+
+    /// The four shapes the exemption exists for, each of which a coarser rule destroys. Every one is
+    /// taken from the persisted corpus census.
+    #[test]
+    fn a_row_keeps_its_subject_context_for_every_shape_the_exemption_was_written_for() {
+        for (row, subject, why) in [
+            // SUBJECTLESS — the clause opens with the modal, so only the row's header can supply a
+            // subject. This is gate 2's whole purpose (AXI-H `RLAST`, Intel VT-d `HAW`).
+            (
+                "| ZETALAST | Manager | 1 | Indicates the last transfer in a burst. Must be HIGH. |",
+                "ZETALAST",
+                "subjectless clause",
+            ),
+            // COMMON-NOUN HEAD — a descriptor standing in for the identifier beside it (SMMU
+            // `LASECSID`). `signal` is not an identifier, so the head test declines.
+            (
+                "| ZETASECSID | Context | StreamID security level. When ZETAFLOW is ATST, the \
+                 ZETASECSID signal must be 0. |",
+                "ZETASECSID",
+                "descriptor head",
+            ),
+            // FIELD-CELL HEAD — the `.3e` register class (NVMe `ELEN`).
+            (
+                "| 31:16 | Element Length (ZETALEN): This field shall be 0h when deleting an entry. |",
+                "ZETALEN",
+                "field-cell head",
+            ),
+            // ACTIVE OBLIGATION — the head is the AGENT and the signal is the object; gate 3 already
+            // declines because there is no passive binding lead (LPI `PREQ`).
+            (
+                "| P_ACCEPT | Device has accepted the request. Controller must set ZETAREQ LOW. |",
+                "ZETAREQ",
+                "active obligation",
+            ),
+        ] {
+            assert!(
+                !is_post_passive_binding_only_subject(row, subject),
+                "{why}: {subject} must keep its row context: {row:?}"
+            );
+        }
+    }
+
+    /// The narrowing must not reach PROSE, which gate 2 never exempted: a prose obligation headed by a
+    /// foreign identifier was already refused, and one naming its subject was already kept.
+    #[test]
+    fn prose_behaviour_is_unchanged_by_the_row_narrowing() {
+        assert!(
+            !is_post_passive_binding_only_subject("ZETASEL must be HIGH.", "ZETASEL"),
+            "a prose subject named before the lead is real"
+        );
+        assert!(
+            is_post_passive_binding_only_subject(
+                "Lane reversal shall be compatible with all supported lane widths. Link devices \
+                 (ZETAPORT) negotiate it.",
+                "ZETAPORT"
+            ),
+            "a prose subject reachable only after the lead was already refused"
+        );
+    }
+
+    /// The head reading itself, over the shapes the census found — one definition shared with the
+    /// table reader's `obligation_subject`.
+    #[test]
+    fn the_obligation_head_is_the_last_content_token_before_the_modal() {
+        assert_eq!(content_head(" OMEGABURST_WIDTH "), Some("OMEGABURST_WIDTH"));
+        assert_eq!(content_head(" the ZETASECSID signal "), Some("signal"));
+        assert_eq!(content_head(" This field "), Some("field"));
+        // helper words are skipped so the head is the one closest to the verb
+        assert_eq!(content_head(" ZETAREADY is "), Some("ZETAREADY"));
+        assert_eq!(content_head("   "), None);
+        assert_eq!(content_head(" and to be "), None);
     }
 }
