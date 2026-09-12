@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > what ISF form does SpecForge use for a bounded-eventually contract
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > what ISF idiom describes states and input-driven transitions
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what architecture contains an oversized active task tree
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what architecture contains the active CORPUS-COVERAGE task tree
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -179,6 +191,8 @@
   > what do I do with a published count no claim outcome fits
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > what do leading_section_number and is_descendant_section_number do
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what document class is a chip-spec PDF (protocol / register / interface / guide)
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -284,17 +298,3 @@
   > what does record-00000102 mean in a SourceIR proof verification failure
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > what does refusing a phrase name cell cost
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > what does resolve_indexed_signal_family do
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what does scripts/check_chain_currency.sh check
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > what does self-test 15/15 passed actually prove
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does signal_table_covered_by_inventory do
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > what does source_literal mean in the active task evidence contract
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what does synthesize_signal_declarations do when the body is rotated

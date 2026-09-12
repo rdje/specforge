@@ -170,7 +170,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Task Tree
 
-- ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3h`)
+- ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3k`, and
+  `.3k.1`–`.3k.4`)
 - ID: `EXTRACTION-QUALITY-GAUGE.gauge` · Status: `done` · Goal: establish the NLI-oracle not-entailed
   rate as a per-doc extraction-quality gauge; measure CHI (~83%) + APB (~29%), hand-validate (18/18).
 - ID: `EXTRACTION-QUALITY-GAUGE.1` · Status: `done` (prototype) · Goal: **entity discrimination** —
@@ -648,27 +649,110 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: all 20 adjudicated; observed RED; APB + AHB rebuilt.
   Commit: `EXTRACTION-QUALITY-GAUGE.3i`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3k` · Status: `pending` (opened `2026-09-12` by `.3i`) · Goal: **the
-  KIND must come from the obligation clause too, and a kind the classifier never read cannot carry a
-  negation.** `.3i` fixed the flag's span; the kind's span is the other half and is a larger question.
-  **Measured: 18 of 349 persisted constraints have a kind whose phrase match lies OUTSIDE their own
-  obligation clause.** The clearest is AHB `sigcon_0002`: its clause is
-  *"When the Subordinate is initially selected, it must also monitor the status of HREADY…"*, which
-  contains no kind phrase at all — the published `must_be_asserted` comes from the NEXT sentence,
-  *"HSELx must be asserted in the same cycle…"*. **That is the mechanism behind the mis-conditioned
-  `HSELx` record `INVARIANT-SHAPE-ADMISSION.3` reported without explaining**: the kind is taken from one
-  clause and the condition from another.
-  The second half: after `.3i`, every remaining negated record still sits on the untyped
-  `MustBeStable` default, and a negation stacked on a default asserts something the document does not —
-  *"must not be stable"*. Refuse it. **Population after `.3i`: 7 such records**, plus **4 relational
-  magnitudes** (`must not be greater than the size indicated by the OAS field`) which have no typed slot
-  and extend `.3d`'s equality refusal to a comparative whose right operand is a REFERENCE rather than a
-  literal — `must be greater than 0` must stay untouched.
-  **Scope the kind-span change before shipping it**: the dynamic path narrows subjects with
-  `text_before_condition_marker`, not `constraint_bearing_sentence`, and its value binder reads the whole
-  statement, so the two paths do not currently agree on what a clause is. Decide that first.
-  Prerequisite: `.3i`. Verification: all 18 + 11 adjudicated individually; observed RED; the chain
-  rebuilt for every document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k` · Status: `active` (opened `2026-09-12` by `.3i`; **scoped +
+  split** `2026-09-12`) · Children: `.3k.1`, `.3k.2`, `.3k.3`, `.3k.4` · Goal: **every part of a
+  published constraint must be read from the span that produced the record.** `.3i` established that
+  for the negation; this container owns the rest. Its first result is that **both numbers `.3i`
+  handed it were measured over the wrong population**, so the leaf is split around the populations
+  that actually exist rather than around the two it inherited.
+  **The scoping `.3k` demanded, done** — `scripts/measure_constraint_part_span.py`, read-only over
+  all 78 persisted artifacts / 349 signal-constraint records, stratified by PRODUCER:
+  `classify_signal_constraint_kind` has exactly **two** callers.
+  `extract_signal_description_row_constraints` (`row_sigcon_*`, 12 records) already hands it ONE
+  clause and is the reference implementation for this whole container — its census rows are 0/0/0.
+  `extract_signal_constraints` (`sigcon_*`, 111 records) is the only caller that reads the whole
+  statement. The other two producers of the same record type **never reach the classifier**: the
+  dynamic path types a record from its VALUE BINDER
+  (`extract_discovered_state_value_from_text` / `logic_level_binding_kind_from_text`) and the LLM
+  path parses the kind the model NAMED (`parse_kind`).
+  **Correction 1 — the kind-span population is 4, not 18.** Running the clause-vs-whole comparison
+  over all 349 records gives **19** (not 18), of which **12 are `llm_sigcon_*` and 3 are
+  `dyn_sigcon_*` — strata whose kind never passes through the function the change would edit**. The
+  classifier's own population is **4 `sigcon_*` records**: AHB `sigcon_0002` and NVMe
+  `sigcon_0005`/`0006`/`0007`.
+  **Correction 2 — the "7 negated records on an untyped default" do not exist.** All 7 are
+  `dyn_sigcon_*`, and that path **never publishes the untyped default**: every one of its 77 records
+  carries a kind its own binder typed (`must_be_high` 15 / `must_be_low` 23 / `must_be_value` 39).
+  The 7 was read off a classifier that does not run on them. The real population of "a negation
+  stacked on a kind the document never typed" is **4 records — DTI `sigcon_0002`–`0005` — and they
+  are the SAME 4 records as the relational magnitudes**, not a separate 7 plus 4. DTI publishes
+  `OAS must_be_stable, negated` and `DTI must_be_stable, negated` — *"OAS must not be stable"* — from
+  *"The range given by this field must not be greater than the size indicated by the OAS field …"*,
+  a sentence that names no stability, whose subject is *"this field"*, and in which `OAS` is the
+  right operand and `DTI` a message-name prefix. One refusal removes all three defects at once.
+  **The decision the leaf asked for — what a clause is, per producer.** A record's parts must come
+  from the span that PRODUCED the record, and that span is not the same construct for every producer:
+  the pattern path is minted by a MODAL OBLIGATION, so its clause is `constraint_bearing_sentence`
+  (already its subject's, condition's and negation's span — the kind is the only part still outside);
+  the row path is minted by ONE clause of a description cell and already uses it throughout; the
+  dynamic path is minted by a VALUE BINDING that **need not be modal at all** (*"X is tied HIGH"*),
+  so `constraint_bearing_sentence` is the WRONG narrowing for it — it locates a modal the record may
+  not have, and would silently move the record's span to an unrelated sentence. The dynamic path
+  needs a BINDING-bearing clause, which no helper computes today; that is why `.3k.4` is separate
+  rather than "call the same helper in both paths". The LLM path is out of scope here: a model names
+  a subject and a kind deliberately rather than scanning a span, so the span question is a different
+  question (`.3j`).
+  **Ordering rationale.** `.3k.1` is strictly subtractive and lands first. `.3k.2` must land before
+  `.3k.3`, because narrowing the kind's span moves 3 of its 4 records onto the ungated `generic_value`
+  arm (NVMe would publish `ANAGRPID must_be_value UNIQUE`, a value lifted off the adjective following
+  `shall be`); fixing the span before the arm would trade one fabricated fact for another.
+  Verification: `python3 scripts/measure_constraint_part_span.py --self-test` (9/9) and `--check`
+  (`kind-classifier call sites unchanged (2 callers, 1 reading the whole statement)`) both green; the
+  census above re-derived from the persisted corpus, every listed record adjudicated against its own
+  source text in this node. **Two observed-RED controls, because this census exists to stop a number
+  being published from something nothing exercised:** (a) a third caller injected into `evidence.rs`
+  (`zeta_probe_caller`) makes `--check` exit 1 naming the found set against the expected one, and the
+  file was restored byte-identical (`git status --short crates/` clean); (b) deleting one self-test
+  case makes `--self-test` exit 1 with `ran 8 cases, expected 9` — the total is a literal declared
+  independently of the case list, the `PRODUCTION-GRAPH-CENSUS-PIN.3` property.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.1` · Status: `pending` · Goal: **refuse a comparative MAGNITUDE
+  whose right operand is a REFERENCE.** `.3d` already refuses an inter-operand EQUALITY (*"X must be
+  equal to the value of Y"*) because the constraint vocabulary has no slot for it; *"must not be
+  greater than the size indicated by the OAS field"* is the same shape one relation along, and the
+  vocabulary has no slot for it either. A magnitude against a LITERAL (*"must be greater than 0"*)
+  must stay untouched — it is a value binding, and `.3d`'s own line between "the value of <other>"
+  and a literal is the line to reuse.
+  **Population: 4 records, all `sigcon_*`, all DTI** (`sigcon_0002`–`0005`), and it is simultaneously
+  the entire negation-on-untyped-default population and 4 spurious subjects (`OAS` is the right
+  operand; `DTI` is a message-name prefix). Strictly subtractive: nothing is retyped, 4 fabricated
+  records are removed. Zero records in any other document, zero in the dynamic/row/LLM strata.
+  Prerequisite: none. Verification: the census re-run to 0; a control pair (reference operand refused,
+  literal operand kept); observed RED; DTI rebuilt and diffed.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `pending` · Goal: **what a clause that types nothing
+  may publish.** Two arms of `classify_signal_constraint_kind` emit a fact the document did not
+  state: the terminal `untyped_default` publishes `MustBeStable` for any obligation no phrase matched
+  (**26 `sigcon_*` records** when classified over their own clause, 25 over the whole statement), and
+  the `generic_value` arm lifts whatever word follows `must be `/`shall be ` as a typed value with no
+  gate at all (**11 over the clause, 4 over the whole statement**). This leaf decides what each may
+  publish — refuse, or admit with an explicit untyped marker — and is the precision leaf of the
+  family. Prerequisite: none (but `.3k.3` depends on it). Verification: all 37 adjudicated
+  individually; observed RED; the chain rebuilt for every document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.3` · Status: `pending` · Goal: **the kind reads its own obligation
+  clause** — the original `.3k` goal, at its true size.
+  `classify_signal_constraint_kind(&text.to_ascii_lowercase())` becomes
+  `classify_signal_constraint_kind(&constraint_bearing_sentence(text).to_ascii_lowercase())` in
+  `extract_signal_constraints`, joining the subject, the condition and (since `.3i`) the negation,
+  which all already come from that span. **Population: 4 `sigcon_*` records.** AHB `sigcon_0002` is
+  the mechanism `INVARIANT-SHAPE-ADMISSION.3` reported without explaining: its clause is *"When the
+  Subordinate is initially selected, it must also monitor the status of HREADY…"*, which contains no
+  kind phrase at all, and the published `must_be_asserted` comes from the NEXT sentence, *"HSELx must
+  be asserted in the same cycle…"* — kind from one clause, condition from another. NVMe
+  `sigcon_0005`/`0006`/`0007` take `must_not_change` from a sentence two clauses later whose own
+  obligation is conditional on a capability bit. Prerequisite: `.3k.2` (see the container's ordering
+  rationale). Verification: all 4 adjudicated; observed RED; AHB + NVMe rebuilt and diffed.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.4` · Status: `pending` · Goal: **the dynamic path's span
+  discipline.** After `.3i` it reads its negation from `constraint_bearing_sentence` while its
+  subject (`text_before_condition_marker(&statement.text)`), its value binder
+  (`extract_discovered_state_value_from_text` over the whole lowered statement) and its condition
+  (`extract_condition_clause(&statement.text)`) all read the WHOLE statement — so it is now the one
+  producer whose parts are provably drawn from two different spans. The fix is not to call
+  `constraint_bearing_sentence`: this path's records are minted by a value binding that need not be
+  modal, so the clause it needs is the BINDING-bearing clause. Define it, then apply it to all four
+  parts at once. Prerequisite: none. Verification: the population measured in-leaf against the real
+  binder (it cannot be mirrored — `discovered_values` is derived per document); observed RED; the
+  chain rebuilt for every document whose artifacts move.
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j` · Status: `pending` (opened `2026-09-12` by
   `INVARIANT-SHAPE-ADMISSION.5`) · Goal: **the LLM-primary constraint path applies none of the
@@ -700,7 +784,15 @@ honestly-qualified) path to "human-SpecForge in Rust."
   `dyn_sigcon_0008`/`0009` from `The DV operand must be 1 for IODIR`, NVMe `dyn_sigcon_0018`, I2C
   `dyn_sigcon_0008`); **20 of 20** sit on a kind no phrase matched, because every phrase in the table is
   affirmative and a negated obligation never contains one. The second census — phrase match over the
-  clause vs over the whole text — differs on **18 of 349** and is the population `.3k` inherits.
+  clause vs over the whole text — differs on **18 of 349**.
+  **CORRECTED by `.3k`'s scoping (`2026-09-12`): both of this leaf's censuses were run over the whole
+  349-record table, and `classify_signal_constraint_kind` has only 111 of them in its reach.** The
+  second census re-derives to **19** over 349 — of which 12 are `llm_sigcon_*` and 3 `dyn_sigcon_*`,
+  strata whose kind never passes through that function — and to **4** over the classifier's own
+  `sigcon_*` population, which is what `.3k.3` inherits. "20 of 20 sit on a kind no phrase matched" is
+  true of the `sigcon_*` stratum and vacuous for the `dyn_sigcon_*` one, whose kind comes from its
+  value binder. The fix this leaf shipped is unaffected — a negation read from another sentence is a
+  defect at any population size — but the numbers it published are not the ones it measured.
 - [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`. `extract_signal_constraints`
   computed `let lowered = text.to_ascii_lowercase()` over the WHOLE statement and used it for both kind
   and negation, while the subject used `constraint_bearing_sentence(text)` and the condition said so in
@@ -826,6 +918,20 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-09-12` — **`.3k` SCOPED + SPLIT** into `.3k.1`–`.3k.4`, and the scoping falsified both numbers
+  it inherited. `scripts/measure_constraint_part_span.py` (new, read-only, 78 artifacts / 349 records)
+  stratifies the constraint table by PRODUCER, because `classify_signal_constraint_kind` has exactly
+  two callers and only one of them reads the whole statement. The kind-span population is **4
+  `sigcon_*` records**, not 18 — 15 of the 19 the whole-table comparison finds belong to the dynamic
+  and LLM paths, whose kind never passes through that function. The "7 negated records on an untyped
+  default" **do not exist**: all 7 are `dyn_sigcon_*`, and that path types every one of its 77 records
+  from its own value binder. The real population is the **same 4 DTI records** as the relational
+  magnitudes, which publish *"OAS must not be stable"* from a sentence about a range comparison. The
+  decision the leaf asked for is recorded in its node: a record's parts come from the span that
+  produced the record, and that span is a modal clause for the pattern path, one description-cell
+  clause for the row path, and a BINDING-bearing clause — which no helper computes yet — for the
+  dynamic path, whose records need not contain a modal at all.
+
 - `2026-09-12` — `.3i` closed, and it closed over a larger defect than it opened on. `negated` was read
   from the whole statement while the subject and condition came from the obligation clause, so a
   `must not` in one sentence flipped a constraint minted from another — 4 records corpus-wide, including
@@ -834,6 +940,11 @@ honestly-qualified) path to "human-SpecForge in Rust."
   APB and AHB with nothing added or removed. `.3k` opened for the other half: the KIND's span (18 of 349
   records match a phrase outside their own clause — the mechanism behind `HSELx`'s mis-conditioning) and
   the refusal of a negation stacked on an untyped default (7 records) plus 4 relational magnitudes.
+  **Both counts corrected by `.3k` (`2026-09-12`) — see that node.** They were measured over all four
+  producers of a `SignalConstraintRecord`; only two reach the kind classifier. The kind-span population
+  is **4**, and the "7 negated records on an untyped default" do not exist: all 7 are `dyn_sigcon_*`,
+  and that path never publishes the untyped default. The real population is the SAME 4 DTI records as
+  the relational magnitudes.
 
 - `2026-08-10`: **`.3h` DONE** — the value-position spurious-subject gate ships, closing the last
   named residual of the `.3d`–`.3g` family (NVMe `FFFF` from `set to FFFFh`). Probe: 1 record corpus-wide, 0

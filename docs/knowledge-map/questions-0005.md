@@ -2,6 +2,17 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how do I roll ROADMAP.md when it approaches its ceiling
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > how do I run a Docling ingest or re-ingest on this machine
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how do I see which ingested PDFs form structural families (the corpus-cluster command)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how do I tell a comma family from a footnote marker from a phrase without a word list
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different
+  > location than the one recorded in its artifact_layout)
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > how do I tell whether a doctrine check guards its own self-test coverage
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -286,15 +297,3 @@
   > how does the tiling gate keep register-bit recovery honest (no fabrication)
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate classify a document / what is document_class
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate know an intent_ir is stale relative to its semantic_ir
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how expensive is reading the proof seal from the whole persisted corpus

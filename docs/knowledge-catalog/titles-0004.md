@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md) | 2026-08-10 | `current` | OpenCAPI 32G PHY Signaling is timing-rich but has no grounded digital interface topology |
 | [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md) | 2026-08-09 | `current` | OpenCAPI AFU Address Space Usage refresh rejects prose acronyms and legal behavior |
 | [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md) | 2026-08-10 | `current` | OpenCAPI Certified Definition refresh removes diagram labels and administrative intent |
 | [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md) | 2026-08-10 | `current` | The OpenCAPI Data Link Layer v2.0 refresh declares no interface signals, so ISF lowering blocks honestly |
@@ -60,4 +61,3 @@
 | [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md) | 2026-06-24 | `current` | A register mnemonic reused across blocks (ARM-Debug/CoreSight AUTHSTATUS/IDR/CSW) is resolved by FIELD-SET CO… |
 | [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md) | 2026-09-12 | `current` | A self-test coverage guard lives in the exit code, not the printed ratio — reading the print line got the c… |
 | [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
-| [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |

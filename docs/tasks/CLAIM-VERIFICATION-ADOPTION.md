@@ -917,6 +917,16 @@ the workflow through the mdBook and repository review path.
   the two together. Candidate directions, none yet chosen: extend the discovered population from
   tag-bearing files to whole governed surfaces; or accept the bound explicitly and say so wherever `.7` is
   described as closed, which `.7.2.1a` has done as an interim. Do not close this by widening a glob
+  **Twelfth instance (`2026-09-12`, from `EXTRACTION-QUALITY-GAUGE.3k`, a second surface CLASS):**
+  `docs/tasks/*.md` carries no `[claim: <id>]` tag anywhere, and a task leaf is where this project states
+  the population a rule was measured over — the number that decides whether the rule is worth shipping.
+  `EXTRACTION-QUALITY-GAUGE.3i` published *"differs on 18 of 349"* as the population its successor
+  inherited; `.3k`'s scoping re-derived it to 19 over that table and to **4** over the population the
+  change could actually move, because three of the four producers of that record type never reach the
+  function being edited. Nothing watched it, and the wrong number then steered the successor leaf's design
+  for a day. This is the same mechanism as the `CHANGES.md:56` instance on a surface whose published values
+  are *more* actionable, which argues for the "whole governed surfaces" direction over the "author
+  remembers a tag" one — but the decision stays open here rather than being taken in a leaf of another tree
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.2.1a`
   Verification: `pending`
   Commit: `pending`

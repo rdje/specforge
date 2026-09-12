@@ -128,6 +128,8 @@
   > can before after once or while authorize SemanticIR phases
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > can certification administration become a SemanticIR phase or gate
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > can constraint_bearing_sentence be used to narrow the dynamic constraint path
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > can identical values in separate timing cells remain valid
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
@@ -258,6 +260,8 @@
   > do any chip-spec PDFs need a real password (no)
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > do convergence fact counts include serial frame fields
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > do dyn_sigcon records ever carry the untyped MustBeStable default
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > do equal SourceIR counts prove an identical artifact (no — 320/333/286/3652/527 all held while table_kind moved on 67 of 286 tables, section_kind on 56 of 527 and diagram_kind on 20 of 333)
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -294,7 +298,3 @@
   > do unfiltered SemanticIR conditional rules reach an emitted .isf
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > does .2m change the emitted .isf or the WIRE-BASED-100 surfaces (no — provably orthogonal)

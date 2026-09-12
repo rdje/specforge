@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > does .2m change the emitted .isf or the WIRE-BASED-100 surfaces (no — provably orthogonal)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -258,6 +262,8 @@
   > does the ISF adapter lower actor-relative direction
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > does the ISF adapter lower generic gate behaviors
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > does the LLM constraint path use classify_signal_constraint_kind
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
   > does the Layer D grounding filter need to be weakened
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -286,15 +292,9 @@
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > does the drop model agree with docling iterate_items
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > does the dynamic constraint path use classify_signal_constraint_kind
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does the emitted .isf signal direction affect FSMGen downstream correctness
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > does the extractor cut identifiers at the underscore character
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > does the figure carrier change artifacts already on disk
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > does the legal statement classifier use a vendor or document denylist

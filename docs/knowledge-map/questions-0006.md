@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate classify a document / what is document_class
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate know an intent_ir is stale relative to its semantic_ir
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how expensive is reading the proof seal from the whole persisted corpus
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -285,15 +297,3 @@
   > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > how many page objects does a /Type/Page regex report vs pdfinfo
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > how many pages elements and normalized files does the OpenCAPI data link ingest produce
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > how many persisted SourceIR artifacts are stale
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many persisted artifacts have an ambiguous source_ref
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > how many persisted signal_description tables would the current classifier reject
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how many phrase name cells does the current reader accept
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > how many placeholder tokens exist corpus-wide

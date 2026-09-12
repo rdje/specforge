@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is relation-completeness the right bar dimension for register / command / coherency protocols
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > is signal direction faithful to the document now or still defaulted to output
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > is source_ir.json bounded in size for very large PDFs
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the .5.ii enum member-quality gate landed (yes, LANDED 2026-06-24: is_prose_fragment_member_name + PROSE_SENTENCE_SPINE_WORDS in ir/evidence.rs gate the member loop in synthesize_encoding_declarations_for_enum, one seam for both call paths; AXI manager.isf now emits (BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7)) recovering
   > codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)
@@ -286,15 +298,3 @@
   > what CoreSight Base System evidence still needs VLM or targeted extraction
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > what ISF form does SpecForge use for a bounded-eventually contract
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > what ISF idiom describes states and input-driven transitions
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what architecture contains an oversized active task tree
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what architecture contains the active CORPUS-COVERAGE task tree

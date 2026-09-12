@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why did a signal named `any` appear in an EvidenceIR artifact
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why did a signal named `name` appear in the Avalon interface specification
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why did a temporal conflict disappear when a signal constraint was removed
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > why did an OpenCAPI functional test become an IntentIR behavior
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > why did an OpenCAPI permissions paragraph become an IntentIR behavior
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > why did check_doctrines.sh pass while the build did not lint
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why did check_proof_seal_currency.sh pass while four artifacts would not load
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why did eight Introducing CoreSight ports and four connectivity edges disappear
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -276,25 +298,3 @@
   > why does a subjectless obligation clause produce no constraint from the statement path
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why does a symbolic bit cell reject the whole table
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why does a table-region residual carry two supporting evidence ids
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > why does a task-evidence index only list open leaves
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why does a temporal antecedent use PSELX not PSEL
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does adding an extractor change every doc's extraction manifest
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > why does aggregate_composition support different health and ceiling counts
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why does an .isf enum get dropped / held out of the emitted .isf
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does an alphabetic constraint value require a word boundary but a numeric value does not

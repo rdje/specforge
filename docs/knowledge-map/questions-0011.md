@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is figure_region_provenance_id for
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > what is in seed_swd_derivation.json (29 spec-verified facts: 11 frame fields, 4 operations, 13 FSM states, 1 target/SWDIO/SWCLK rising-edge fact — still faithful, still the target)
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > what is index-family signal canonicalization
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what is interior_texts in SourceIR
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > what is is_condition_only_subject / conditional_clause_spans
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
@@ -243,6 +257,8 @@
   > what is the per-record byte budget for a status record
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is the permission-vs-obligation gate / frame error class
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > what is the population of a kind-classifier change in evidence.rs
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is the presence-matrix structural gate and how many tables fire it
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
@@ -281,19 +297,3 @@
   > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > what key does the captured-region residual carrier project
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > what kind of content does the ingest drift add
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > what kind of extractor actually needs the cross-document cluster mechanism
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what limits govern the corpus task root index parts and capsule
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > what made 14 corpus documents stop emitting an .isf
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > what makes a SpecForge published claim verified

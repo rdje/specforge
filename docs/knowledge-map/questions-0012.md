@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what key does the captured-region residual carrier project
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > what kind of content does the ingest drift add
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > what kind of extractor actually needs the cross-document cluster mechanism
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what limits govern the corpus task root index parts and capsule
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > what made 14 corpus documents stop emitting an .isf
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > what makes a SpecForge published claim verified
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > what makes a behavioral genericity run invalid unmeasurable or failed
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -281,19 +297,3 @@
   > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > where does the first reviewed source-to-IntentIR population fail
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > where does the flow-arrow reading sit in the direction priority chain
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > where does the specforge chipdoc host library symlink currently resolve
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > where does the uppercase spelling in a declaration come from
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > where is FigureRegion stored in EvidenceIR
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > where is actor-signal relation drive/read direction decided in evidence.rs

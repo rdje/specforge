@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > where does the flow-arrow reading sit in the direction priority chain
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > where does the specforge chipdoc host library symlink currently resolve
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > where does the uppercase spelling in a declaration come from
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > where is FigureRegion stored in EvidenceIR
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > where is actor-signal relation drive/read direction decided in evidence.rs
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > where is adaptive_batch_pages / BatchSizePolicy in the code
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -248,6 +264,8 @@
   > which formal signal declaration predicates does the dense prose authority gate accept
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > which frozen fabrication defects still reproduce in current SpecForge
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which functions call classify_signal_constraint_kind
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -280,21 +298,3 @@
   > which of the 482 dropped rows does the arrow form actually recover
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > which outcomes may a published value have
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > which persisted evidence docs carry message_field_records
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which persisted paths must exist and which may be historical references
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which production carrier already emits typed actionable residuals
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > which project rescan string fields are treated as filesystem paths
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > which register-table family stays residual (byte location size tables)
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > which research record is closest to its line ceiling
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)

@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > which persisted evidence docs carry message_field_records
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which persisted paths must exist and which may be historical references
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which production carrier already emits typed actionable residuals
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > which project rescan string fields are treated as filesystem paths
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > which register-table family stays residual (byte location size tables)
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > which research record is closest to its line ceiling
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > which reviewed categories are currently supported
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -22,6 +40,10 @@
   > which source modalities are represented in the first vertical population
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > which source-to-IntentIR categories are supported incomplete or unmeasurable
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which span does a dyn_sigcon record read its parts from
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which span does a sigcon record read its subject condition negation and kind from
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > which specforge documents carry an eval gold and which of them are measurable
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -275,25 +297,3 @@
   > why did a junk polarity record appear after WIRE-BASED-100.10b
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why did a paragraph gain words after re-ingest
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why did a signal named `any` appear in an EvidenceIR artifact
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why did a signal named `name` appear in the Avalon interface specification
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why did a temporal conflict disappear when a signal constraint was removed
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > why did an OpenCAPI functional test become an IntentIR behavior
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why did an OpenCAPI permissions paragraph become an IntentIR behavior
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > why did check_doctrines.sh pass while the build did not lint
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why did check_proof_seal_currency.sh pass while four artifacts would not load

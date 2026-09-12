@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > what does resolve_indexed_signal_family do
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does scripts/check_chain_currency.sh check
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what does self-test 15/15 passed actually prove
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does signal_table_covered_by_inventory do
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > what does source_literal mean in the active task evidence contract
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what does synthesize_signal_declarations do when the body is rotated
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > what does the PUBLISHED-ASSERTIONS doctrine prove
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -284,17 +298,3 @@
   > what is document_type_declared / front_matter_doc_type_hint
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > what is excludes_self and why does a classifier need it
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is figure_region_provenance_id for
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > what is in seed_swd_derivation.json (29 spec-verified facts: 11 frame fields, 4 operations, 13 FSM states, 1 target/SWDIO/SWCLK rising-edge fact — still faithful, still the target)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > what is index-family signal canonicalization
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what is interior_texts in SourceIR

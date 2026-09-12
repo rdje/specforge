@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md) | 2026-08-09 | `current` | CoreSight Base System refresh is portable, authority-empty, and honestly under-extracted |
 | [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md) | 2026-09-01 | `current` | Only 24 of 78 persisted documents (30.8%) pass the scorer's schema gate and just 2 carry a gold, and the two… |
 | [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md) | 2026-06-09 | `current` | Vendor/layout clustering via a derived structural+behavioral fingerprint (corpus_cluster) — emergent famili… |
 | [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md) | 2026-06-17 | `current` | The whole local corpus builds to IntentIR — semantic->intent needs only the persisted evidence_ir.json (not… |
@@ -60,4 +61,3 @@
 | [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md) | 2026-08-15 | `current` | SpecForge's five portable architectures compose ownership, continuity, retrieval, enforcement, and claim evid… |
 | [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md) | 2026-09-11 | `current` | A direction column may state the signal's flow rather than its port sense, and only a mirror test makes that… |
 | [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md) | 2026-06-04 | `current` | FSMGen feedback uses a bounded current channel and exact correspondence history |
-| [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md) | 2026-06-17 | `current` | FSMGen --strict --check does NOT validate or use a signal's declared direction (input/output) — driving a d… |

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > does the extractor cut identifiers at the underscore character
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > does the figure carrier change artifacts already on disk
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > does the legal statement classifier use a vendor or document denylist
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -207,6 +215,8 @@
   > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I address exactly one converter item
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > how do I census which span a published constraint read its parts from
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I change the reviewed source-to-intent fixture projection
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
@@ -287,14 +297,3 @@
   > how do I reverify the frozen mdBook quantitative census
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how do I reverify the published-assertion gate
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > how do I roll ROADMAP.md when it approaches its ceiling
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > how do I run a Docling ingest or re-ingest on this machine
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how do I see which ingested PDFs form structural families (the corpus-cluster command)
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how do I tell a comma family from a footnote marker from a phrase without a word list
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different
-  > location than the one recorded in its artifact_layout)

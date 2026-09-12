@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > how many pages elements and normalized files does the OpenCAPI data link ingest produce
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > how many persisted SourceIR artifacts are stale
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how many persisted artifacts have an ambiguous source_ref
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > how many persisted signal_description tables would the current classifier reject
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how many phrase name cells does the current reader accept
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > how many placeholder tokens exist corpus-wide
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > how many producers mint a SignalConstraintRecord
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many production rules does the registry declare
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
@@ -284,15 +298,3 @@
   > is proof currency the same thing as normalized bundle retention
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > is qwen2.5:14b-instruct good enough for NLI
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is relation-completeness the right bar dimension for register / command / coherency protocols
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > is signal direction faithful to the document now or still defaulted to output
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > is source_ir.json bounded in size for very large PDFs
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
