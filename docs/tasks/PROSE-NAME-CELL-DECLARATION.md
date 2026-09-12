@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PROSE-NAME-CELL-DECLARATION`
-- Status: `active` (`2026-09-12`; `.0`, `.1`, `.2` done; `.3`, `.4` open)
+- Status: `active` (`2026-09-12`; `.0`, `.1`, `.2`, `.4` done; `.3` open)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-11`
 - Last updated: `2026-09-12`
@@ -111,16 +111,18 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
   Prerequisite: none. Verification: all 62 legitimate parametric forms survive; corpus-wide count of
   what is newly refused, with the sample adjudicated.
 
-- ID: `PROSE-NAME-CELL-DECLARATION.4` · Status: `pending` · Goal: **decide the level for a mode matrix,
-  because `.0` proved the row is not it.** eMMC `table_0020`'s five rows are
-  `Backwards Compatibility with legacy MMCcard`, `High Speed SDR`, `High Speed DDR`, `HS200`, `HS400`.
-  A phrase rule refuses the first three. `HS200` and `HS400` are **single-token** cells indistinguishable
-  in shape from a wire, so the table mints phantoms under any row-level rule — one today, two if
-  `SIGNAL-DECLARATION-ROW-DROP.2c` ships with `.1` in place.
-  Candidates: the SourceIR classifier that typed a bus-mode matrix `signal_description`; a
-  header-shape refusal at the table level (`WIRE-BASED-100.10e`'s mechanism sees a caption, and this
-  table has none — its evidence is its header row); or an accepted residual.
-  Prerequisite: `.1`. Verification: whichever level is chosen, corpus-wide selection adjudicated.
+- ID: `PROSE-NAME-CELL-DECLARATION.4` · Status: `done` (`2026-09-12`) · **The premise was a legacy fact:
+  the current classifier already refuses the matrix.** The leaf was to decide whether a bus-mode matrix
+  should be refused at the table or at the classifier. Neither: `classified_table_kind` does not type
+  eMMC `table_0020` as `signal_description` at all, because every closed role must match a header's
+  WHOLE normalized label and the matrix qualifies each with its own subject — `Mode Name`, not `Name`;
+  `Bus Width`, not `Width` — while no header or caption word names a signal. The persisted
+  `table_kind` is the third premise in this tree to turn out to be evidence about a producer that no
+  longer exists.
+  Shipped: a control over the real classifier, plus the corpus-wide drift census. No production change.
+  Verification: `cargo test -p specforge-core --lib a_matrix_that_qualifies_every_role_…`;
+  `python3 scripts/measure_signal_table_classification_drift.py`.
+  Commit: `PROSE-NAME-CELL-DECLARATION.4`
 
 ## `.0` — census result (`2026-09-12`)
 
@@ -303,7 +305,53 @@ is not a guard.
 `.1` therefore ships no rule. The `phrase` class stays what `.0` built it to be — a measurement
 instrument and the shape test `.2`'s column score is built on — rather than becoming a refusal.
 
-## Acceptance Checklist (enforced)
+## `.4` — the persisted `table_kind` is evidence about the classifier that wrote it (`2026-09-12`)
+
+Producer: `python3 scripts/measure_signal_table_classification_drift.py`. Read-only.
+
+The tree opened on a plain reading of a persisted artifact: eMMC `table_0020` carries
+`table_kind: signal_description` and mints `HS400`. The conclusion drawn was that the SourceIR
+classifier types a characteristics matrix as a signal table. **It does not.** Applying the current
+`classified_table_kind`'s two `SignalDescription` paths to every persisted table already carrying that
+kind:
+
+| stratum | still typed `signal_description` | would NOT be | declarations minted by the latter |
+| --- | ---: | ---: | ---: |
+| current (proof-carrying) | 118 (107 caption / 11 header) | **0** | 0 |
+| legacy (inspection-only) | 360 (242 caption / 118 header) | **124** | **598** of that stratum's 2,085 |
+
+eMMC `table_0020` is in the legacy 124. It is refused because every closed role must match a header's
+**whole** normalized label, and a matrix qualifies each of its roles with its own subject —
+`Mode Name` rather than `Name`, `Bus Width` rather than `Width` — while neither a header nor the caption
+(`Table 4 - Bus Speed Modes`) names a signal. Two independent conditions refuse it, which is measured
+rather than asserted: relaxing `header_has_role` to word containment leaves it refused; forcing
+`header_names_signals` to `true` leaves it refused; **only both together admit it**, and that is the
+observed RED for the control.
+
+### What this does to the rest of the tree
+
+- **The mode-matrix question needs no new mechanism.** `.4` ships a guard over the real classifier and
+  the drift census, and no production change.
+- **`SIGNAL-DECLARATION-ROW-DROP.2c`'s deferral reason is dissolved.** The 4 phantom rows it would have
+  newly admitted were all eMMC `table_0020`, which the current producer never hands to the declaration
+  reader. Its remaining population is the three Avalon rows — `readdata`, `writedata`, `byteenable` —
+  all real. `.2c` can be reconsidered on its own merits rather than on a guard.
+- **`.1`'s decision is reinforced from a second direction.** Of the 11 legacy `phrase` declarations,
+  **8** come from tables the current classifier refuses outright and would simply not exist. The
+  **3** that survive are all AXI-H `table_0036` — `ARSIZE bus`, `ARBURST , INCR`, `ARLOCK zeros,` — a
+  badly scrambled table whose cells have drifted across columns. Every one of those three names a
+  **real signal** with a fragment of its neighbour fused on. So the entire phrase population that
+  survives the current producer is real wires, and a phrase-refusal rule would refuse all of it.
+
+### The general form, which outlives the case
+
+`table_kind` is a persisted field, and a persisted field records the producer that wrote it. This tree
+has now been wrong about the current producer three times from the same class of evidence: `.3` of the
+sibling tree on a folded *spelling*, `.2` here on a *column* choice, and `.4` on a *classification*.
+Each time the artifact was read as a statement about behaviour. **Ask which producer wrote the field
+before treating it as a defect** — `[[persisted-table-kind-is-a-classifier-generation-artefact]]`.
+
+## Acceptance Checklist (enforced) — `.2`, the tree's only production change
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_name_cell_shapes.py`: current stratum
   604 declarations, **2 phrase**, both AHB `table_0004`. `specforge eval-extraction` + the persisted
   EvidenceIR show that table's two statements carrying a 120-character sentence as their width.
@@ -335,16 +383,38 @@ instrument and the shape test `.2`'s column score is built on — rather than be
   that is now gone. Knowledge-map card `[[declared-population-is-not-the-candidate-row-population]]`
   updated with the new numbers, the new `reverify` expectation, and the mirror-drift finding below.
 
+## Acceptance Checklist — `.4` (test-only Rust change)
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_signal_table_classification_drift.py`: eMMC
+  `table_0020` carries `table_kind: signal_description` in the persisted artifact and mints `HS400`;
+  124 legacy tables minting 598 declarations carry that kind, 0 in the current stratum.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs` `classified_table_kind` /
+  `header_has_role`: a closed role must match a header's whole normalized label, so `Mode Name` offers
+  no `name` role; and `header_names_signals` finds no signal noun, so
+  `has_direction || (has_explicit_signal && has_width)` fails. Verified by running the real function:
+  `cargo test -p specforge-core --lib a_matrix_that_qualifies_every_role_…` passes on the unmodified
+  tree. The persisted kind is therefore a *legacy* classifier's output, not current behaviour.
+- [x] **ADDRESSED (verified)** — no production change is warranted and none was made; the leaf ships a
+  control plus the census. The control is observed RED only when BOTH conditions are relaxed
+  (`header_has_role` → word containment, and `header_names_signals` → `true`); either alone leaves the
+  matrix refused. It carries a GREEN control so it cannot pass by refusing everything.
+- [x] **NO REGRESSION** — `cargo test` 472 / 168 / **1419** / 4 green; `cargo fmt --check` and
+  `cargo clippy --all-targets -D warnings` green; `scripts/check_doctrines.sh` green. Test-only change:
+  no artifact rebuilt, no persisted content touched, so chain currency is unaffected.
+- [x] **GENERICITY (ADR 0006)** — the control asserts the same refusal over the matrix's own words and
+  over an alpha-renamed copy with every document word replaced, so the property is structural. No rule
+  was added, so no vocabulary was added.
+- [x] **LOCKSTEP** — book paragraph added to `docs/book/src/pipeline/evidenceir.md` (a legacy count is a
+  fact about files); fact card `[[persisted-table-kind-is-a-classifier-generation-artefact]]` created.
+  No production rule deleted or replaced, so no book text describes a behaviour that is now gone.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `PROSE-NAME-CELL-DECLARATION.4` — the level question for a mode matrix. Promoted by `.1`: **all four
-   phantoms in the population `.2c` would newly admit are one table**, and refusing that table takes
-   `.2c` from 43% precision to 100% without costing a wire. Unaffected by `.2`, whose column score
-   leaves eMMC `table_0020` reading column 0 exactly as before.
-2. `PROSE-NAME-CELL-DECLARATION.3` — a sentence is not a parametric width. Ordered last because `.2`
-   removed both of its live instances; see the leaf.
+1. `PROSE-NAME-CELL-DECLARATION.3` — a sentence is not a parametric width. The last leaf, and `.2`
+   removed both of its live instances, so it is expected to close as *accepted, unexercised* rather
+   than to acquire a rule. Re-measure first; do not invent a population for it.
 
 ## Decisions
 
@@ -396,6 +466,15 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.4`. Control: `a_matrix_that_qualifies_every_role_with_its_subject_is_not_a_signal_table`
+  runs the real `classified_table_kind` over the matrix's exact shape, over the same shape alpha-renamed
+  (ADR 0006), and over a GREEN control with unqualified roles that must still be a signal table. It
+  passes on the unmodified tree — a guard, not a fix, and the difference is stated rather than blurred.
+  **Observed RED with two probes applied together**: `header_has_role` relaxed from whole-label equality
+  to word containment, plus `header_names_signals` forced to `true`. Either probe alone leaves the
+  matrix refused, which is the measurement behind "two independent conditions".
+  Census mirror cross-check: 100% agreement with the persisted `table_kind` across the whole
+  proof-carrying stratum (118/118), so a divergence there would indict the mirror rather than the code.
 - `2026-09-12` — `.1`. Read-only decision leaf; no code change, no artifact written or mutated.
   `python3 scripts/measure_declaration_name_cell_shapes.py --guard-population` — 7 enumerated-width
   rows with their name-cell shapes, and the 9 whitespace-family candidates, both printed verbatim for
@@ -441,12 +520,17 @@ None.
 - Opened in the commit that deferred `SIGNAL-DECLARATION-ROW-DROP.2c`.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.0` (`4bb6c1c8`).
 - `.2` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0` (`ba9e9a74`).
-- `.1` — `PROSE-NAME-CELL-DECLARATION.1`.
+- `.1` — `PROSE-NAME-CELL-DECLARATION.1` (`8199be47`).
+- `.4` — `PROSE-NAME-CELL-DECLARATION.4`.
 
 ## Changelog
 
 - `2026-09-11` — tree created from `SIGNAL-DECLARATION-ROW-DROP.2c`'s adjudication, which found 4 of 7
   enumerated-width cells to be a misclassified bus-mode matrix already minting `HS400` as a signal.
+- `2026-09-12` — `.4` closed. The premise was a legacy fact: the current classifier already refuses the
+  bus-mode matrix, and 124 legacy tables minting 598 declarations carry a `table_kind` it would not
+  assign, against 0 in the current stratum. `SIGNAL-DECLARATION-ROW-DROP.2c`'s deferral reason is
+  dissolved; `.1`'s decision is reinforced (the 3 surviving legacy phrases are all real signals).
 - `2026-09-12` — `.1` closed with **no rule**. Measured against the 7 rows it exists to guard, a phrase
   refusal loses Avalon's `byteenable byteenable_n` and still admits eMMC `HS200`; the whitespace-family
   escape hatch selects 3 false positives in 9. `.4` dominates it and is promoted to the frontier.

@@ -450,6 +450,13 @@ wrote it. The legacy join rate is itself that principle showing through: an olde
 names to upper case, and a folded name is no longer the cell's own spelling, so it cannot be matched
 back to the row it came from.
 
+The same caution applies to the legacy count itself, and more strongly than it first appears. A
+persisted table also records the *kind* an older classifier gave it, and 124 legacy tables carry
+`signal_description` where the current classifier assigns nothing of the sort — register summaries,
+Extended-CSD field tables, a bus-speed-mode matrix. Those tables mint 598 of the legacy stratum's
+2,085 declarations. In the proof-carrying stratum the disagreement is zero. A legacy number is a fact
+about files.
+
 Five shapes separate the population with no vocabulary at all — a comma-separated family
 (`AWSIZE, ARSIZE`), a footnote marker (`HSELx a`), a bit-range suffix (`ARMPAM [10:0]`), a text-layer
 split of one identifier (`waitrequest waitrequest _ n`), and a phrase. Every legitimate form lands in

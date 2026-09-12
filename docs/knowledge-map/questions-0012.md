@@ -2,6 +2,15 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what must I update after adding a Knowledge Map fact card (regenerate the projection with knowledge-map/scripts/gen_knowledge_map.sh, refresh fact_card_catalog.json planned_outputs from check_fact_card_catalog.pl --print-plan then --write, and bump the fact-card-catalog-count published assertion in published_assertions.jsonl together with its docs/knowledge/INDEX.md line-3
+  > region sha)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what must I update after editing an mdBook chapter (re-anchor doctrine/claim_verification/book_quantitative_claims.jsonl regions by content; any NEW candidate line needs its own region record plus a bumped expected_candidate_lines; and the book's line/byte totals stale the shipped_behavior aggregate_change authority in doctrine/live_document_size/surfaces.jsonl)
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what must SpecForge derive to fully capture SWD; what are the gaps (as of 2026-09-01 generic extraction reaches 5 of the 29 verified facts: the four packet operations and the one interface-edge record; the frame fields and machine-bound states need a generic phase-scope grammar)
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > what must a slice that deletes a production rule say about the book
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > what must be rebuilt after moving the SpecForge repository
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -38,6 +47,8 @@
   > what proved that analysis commands can violate project data locality
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > what real PDF proves the FigureRegion vertical path
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > what refuses a table whose headers are Mode Name and Bus Width
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what remains before the repaired reviewed population can be published
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -287,13 +298,3 @@
   > where is parenthetical single-wire authority enforced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > where is register level access stored in RegisterRecord
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > where is the .6d.ii.f behavioral signoff recorded
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > where is the 12 document current replay manifest

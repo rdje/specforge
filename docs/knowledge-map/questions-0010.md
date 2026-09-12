@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > what does the declared_signal_names.is_empty() branch in semantic.rs do
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > what does the drop reason name_is_a_placeholder mean
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does the ingest traversal oracle check
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what does the name-column override score, and what does it refuse
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > what does the pre-commit hook NOT check
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > what does the residual actionability denominator actually count
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -288,13 +298,3 @@
   > what is recovered_trapped_data_rows and who shares it
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > what is replay_bytes and what depends on it
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > what is residual_gold_law
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what is route_catalog_state
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is scripts/check_doctrines.sh / the doctrine driver
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is select_initiator_actor / initiator_perspective_directions

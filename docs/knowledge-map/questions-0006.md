@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > how is AXI per-signal phase membership recoverable without a VLM
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > how is FigureRegion raw_image_path serialized
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -279,6 +283,8 @@
   > how many persisted SourceIR artifacts are stale
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many persisted artifacts have an ambiguous source_ref
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > how many persisted signal_description tables would the current classifier reject
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how many phrase name cells does the current reader accept
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
@@ -291,9 +297,3 @@
   > how many protocol states carry a machine name corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many public fields do SemanticIR and IntentIR declare
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > how many quantitative prose candidates are in the SpecForge book
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > how many records does LIVE_ACHIEVEMENT_STATUS.md hold
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)

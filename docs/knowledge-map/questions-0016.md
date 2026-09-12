@@ -2,6 +2,25 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does eMMC table_0020 declare HS400 as a signal
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > why does folding a signal name's case matter beyond style
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why does ingest still generate page images if it does not save them
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > why does mdbook test interpret ISF and console examples as Rust
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > why does moving an evidence_ir.json make it fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because the proof's registered replay is taken over public_field_values, that map includes the artifact's own artifact_layout, and every evidence.claim.<surface>.<key> derivation takes the replay
+  > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why does my visual asset have no interior_texts key
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > why does one appositive never establish a signal alias
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -278,23 +297,3 @@
   > why is exact source region capture 13 of 14
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why is my rebuilt chain stale even though the content matches
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why is nRESET not treated as a metavariable
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why is page_image_path null / None for a large document
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is plural-rejection unsafe for phase names (access ends in ss)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > why is repeating the same check not independent verification
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why is residual actionability 8 of 16 in the current reviewed result
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why is scope binding not used for protocol states
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why is section-title boilerplate filtering insufficient
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why is signal direction hard to lower faithfully to a single .isf module

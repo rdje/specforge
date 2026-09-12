@@ -260,6 +260,8 @@
   > does the Layer D grounding filter need to be weakened
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > does the NLI verifier actually catch real extraction errors
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > does the SourceIR classifier type a bus-mode matrix as a signal table
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -296,5 +298,3 @@
   > does the legal statement classifier use a vendor or document denylist
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > does the move portability repair change PathBuf JSON fields

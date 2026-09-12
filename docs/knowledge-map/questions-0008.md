@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > is the APB signal catalog extracted
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture current-binary refresh complete
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture fully extracted
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > is the DTI ATST 0B01 constraint a real obligation (no — mis-attribution: the source text 'ATTR_OVR.SHCFG must be 0b01' binds SHCFG's value to ATST, which is a value of the FLOW field; an upstream extraction bug spun out of ISF-VALUE-WIDTH-EMIT)
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
@@ -287,13 +297,3 @@
   > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what are the 3 gaps G1 G2 G3 in specforge transaction capture
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what are the 6 chip-spec document intent categories / purpose taxonomy
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what are the AXI B1.x channel-signal tables and how do channels map to phases
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what are the SWD packet phases and per-phase SWDIO direction
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)

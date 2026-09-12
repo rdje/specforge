@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > what is replay_bytes and what depends on it
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what is residual_gold_law
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what is route_catalog_state
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is scripts/check_doctrines.sh / the doctrine driver
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is select_initiator_actor / initiator_perspective_directions
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is signal_presence_records and what does a SignalPresenceRecord hold
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -288,12 +298,3 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what must .5.iv.a exclude before header-sourced naming can land (the four classes .5.iv named are the WRONG list — see the .5.iv.a corrections below. What shipped: a POSITIONAL header word (bit/bits/byte/bytes/offset/index/address/range/position) vetoes outright because the column holds a position, so the table is a field LAYOUT; a positional RANGE value cell (03:02, [2:0])
   > vetoes for the same reason; and at least one value cell must PARSE as an encoding literal. RESERVED-only did NOT ship as an exclusion)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what must I update after adding a Knowledge Map fact card (regenerate the projection with knowledge-map/scripts/gen_knowledge_map.sh, refresh fact_card_catalog.json planned_outputs from check_fact_card_catalog.pl --print-plan then --write, and bump the fact-card-catalog-count published assertion in published_assertions.jsonl together with its docs/knowledge/INDEX.md line-3
-  > region sha)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what must I update after editing an mdBook chapter (re-anchor doctrine/claim_verification/book_quantitative_claims.jsonl regions by content; any NEW candidate line needs its own region record plus a bumped expected_candidate_lines; and the book's line/byte totals stale the shipped_behavior aggregate_change authority in doctrine/live_document_size/surfaces.jsonl)
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what must SpecForge derive to fully capture SWD; what are the gaps (as of 2026-09-01 generic extraction reaches 5 of the 29 verified facts: the four packet operations and the one interface-edge record; the frame fields and machine-bound states need a generic phase-scope grammar)
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > what must a slice that deletes a production rule say about the book

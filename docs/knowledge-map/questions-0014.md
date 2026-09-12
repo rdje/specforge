@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > which strategy is message_fields.byte_location_table
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > which surface bounds the number of task trees now
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > which table minted Clock and Reset as AHB signals
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > which task does the trajectory controller recommend first
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > which task owns deterministic Rust tests under repository-local TMPDIR
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > which task owns fact-card catalog containment
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > which task owns mdBook fence classification and doctest enforcement
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -285,15 +297,3 @@
   > why did six Introducing CoreSight interfaces disappear
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > why did the 345-row phrase approximation not re-derive
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > why did the AIA table of contents have 19 timing false positives
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why did the AMD IOMMU packed layout false register disappear

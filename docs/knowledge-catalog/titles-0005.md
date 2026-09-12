@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
 | [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md) | 2026-08-27 | `current` | SourceIR ingest is not reproducible across time, and no gate can see it |
 | [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md) | 2026-08-28 | `current` | Re-ingesting the corpus is a trade, not a refresh — it loses caption bindings to gain figure-interior text |

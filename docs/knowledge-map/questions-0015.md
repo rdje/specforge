@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why did the 345-row phrase approximation not re-derive
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why did the AIA table of contents have 19 timing false positives
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why did the AMD IOMMU packed layout false register disappear
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -138,6 +150,8 @@
   > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > why does AXI score 1.000 while losing 103 declaration rows
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does Bus Width not count as a width role
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -158,6 +172,8 @@
   > why does I2S SD remain a signal
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > why does Instruction group not count as an ns unit and why does SMIN not count as min
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does Mode Name not count as a name role
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > why does OpenCAPI Discovery Configuration no longer emit ISF
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -202,6 +218,8 @@
   > why does a new SemanticIR have an empty gates array
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > why does a new SemanticIR have an empty phases array
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does a persisted SourceIR table say signal_description when it is a characteristics matrix
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > why does a rebuild drop the extraction-quality gauge
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -280,20 +298,3 @@
   > why does docs/tasks have no file count cap
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > why does folding a signal name's case matter beyond style
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why does ingest still generate page images if it does not save them
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > why does mdbook test interpret ISF and console examples as Rust
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > why does moving an evidence_ir.json make it fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because the proof's registered replay is taken over public_field_values, that map includes the artifact's own artifact_layout, and every evidence.claim.<surface>.<key> derivation takes the replay
-  > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why does my visual asset have no interior_texts key

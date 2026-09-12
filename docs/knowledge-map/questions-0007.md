@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > how many quantitative prose candidates are in the SpecForge book
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how many records does LIVE_ACHIEVEMENT_STATUS.md hold
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -172,6 +178,8 @@
   > is PDF to SourceIR conservation measured
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > is SIGNAL-DECLARATION-ROW-DROP.2c still blocked on a guard
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -209,6 +217,8 @@
   > added, while line_bytes_each maximizes a per-LINE quantity that does not, so it has no growth driver and is freely reducible at any time)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > is a persisted table_kind evidence about the current classifier
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -287,13 +297,3 @@
   > is the AArch64 External Debug Guide current-binary refresh complete
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > is the APB PSTRB must be LOW constraint extracted
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > is the APB signal catalog extracted
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > is the CoreSight Base System Architecture current-binary refresh complete
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > is the CoreSight Base System Architecture fully extracted
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)

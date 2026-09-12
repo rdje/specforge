@@ -17,6 +17,7 @@
 | [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md) | 2026-08-10 | `current` | A passive obligation's constraint subject must be named before its must/shall be\|remain lead |
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
+| [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md) | 2026-09-12 | `current` | 124 legacy tables carry a table_kind the current classifier would not assign, minting 598 declarations — an… |
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
 | [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-15 | `current` | Production genericity is structural and behaviorally invariant |
 | [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md) | 2026-08-08 | `current` | Project-owned temp, cache, dependency, and subprocess data resolves from the current repository |
@@ -60,4 +61,3 @@
 | [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
 | [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
-| [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |

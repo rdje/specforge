@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the move portability repair change PathBuf JSON fields
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the path portability contract cover FigureRegion raw images
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does the persisted path gate cover dormant schemas
@@ -209,6 +211,8 @@
   > how do I check the mdBook for stale behavioural claims
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how do I check whether a named frontier has an owning task-tree leaf
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > how do I check whether a persisted artifact field describes current behaviour
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how do I check whether the persisted corpus seal is stale
 - [project-scratch-location](../knowledge/project-scratch-location.md)
@@ -294,7 +298,3 @@
   > location than the one recorded in its artifact_layout)
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I tell whether a persisted SourceIR was produced before or after the classification narrowing
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how do I verify every task tree is linked exactly once
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how do I waive or range-scope the task-acceptance check

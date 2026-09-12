@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what are the 6 chip-spec document intent categories / purpose taxonomy
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what are the AXI B1.x channel-signal tables and how do channels map to phases
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what are the SWD packet phases and per-phase SWDIO direction
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what are the blocked clean replay source to IntentIR counts
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -288,13 +298,3 @@
   > what does the corpus frontier refreshed list mean
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > what does the corpus refresh frontier's 52 refreshed / 5 remaining actually mean
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > what does the declared_signal_names.is_empty() branch in semantic.rs do
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > what does the drop reason name_is_a_placeholder mean
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what does the ingest traversal oracle check
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > what does the name-column override score, and what does it refuse
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > what does the pre-commit hook NOT check

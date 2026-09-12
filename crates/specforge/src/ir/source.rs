@@ -4093,6 +4093,88 @@ mod tests {
         );
     }
 
+    /// PROSE-NAME-CELL-DECLARATION.4 — a characteristics matrix is NOT a signal table, and the
+    /// current classifier already refuses it.
+    ///
+    /// `PROSE-NAME-CELL-DECLARATION` opened on a persisted eMMC artifact whose bus-speed-mode matrix
+    /// carries `table_kind: signal_description` and mints a mode name as a signal. That artifact is
+    /// evidence about the producer that wrote it, not the one running now
+    /// (`[[declared-spelling-is-the-document-spelling]]`): every closed role here must match a
+    /// header's WHOLE normalized label, and a matrix qualifies each of its roles with its own
+    /// subject — `Mode Name`, not `Name`; `Bus Width`, not `Width`. Neither the caption path (no
+    /// signal noun) nor the header path (no name role) fires.
+    ///
+    /// The shape is the rule, so the second table is the first under alpha-renaming with every
+    /// document word replaced: both must be refused for the same reason (ADR 0006).
+    ///
+    /// **Two independent conditions refuse it, and that was measured rather than assumed.** Relaxing
+    /// `header_has_role` from whole-label equality to word containment — which makes `Mode Name`
+    /// offer a `name` role and `Bus Width` a `width` role — leaves the matrix refused, because no
+    /// header and no caption word names a signal. Making `header_names_signals` return `true`
+    /// unconditionally also leaves it refused, because the name role is still qualified. Only
+    /// **both** relaxations together admit it, and that is the observed RED for this control. The
+    /// third table below is the GREEN control: the same fixture with unqualified roles must still be
+    /// a signal table, so the assertion cannot pass by refusing everything.
+    #[test]
+    fn a_matrix_that_qualifies_every_role_with_its_subject_is_not_a_signal_table() {
+        let mut matrix = classification_test_table(
+            &[
+                "Mode Name",
+                "Data Rate",
+                "IO Voltage",
+                "Bus Width",
+                "Frequency",
+                "Max Data Transfer (implies x8 bus width)",
+            ],
+            &[
+                &["HS400", "Dual", "1.8/1.2V", "8", "0-200MHz", "400MB/s"],
+                &["HS200", "Single", "1.8/1.2V", "4, 8", "0-200MHz", "200MB/s"],
+            ],
+        );
+        matrix.caption_text = Some("Table 4 - Bus Speed Modes".to_string());
+        assert_ne!(
+            classified_table_kind(&matrix),
+            TableKind::SignalDescription,
+            "a matrix whose every role is qualified by its own subject states no signal inventory"
+        );
+
+        let mut renamed = classification_test_table(
+            &[
+                "Zeta Name",
+                "Omega Rate",
+                "Alpha Level",
+                "Zeta Width",
+                "Kappa",
+                "Peak Omega Transfer (implies x8 zeta width)",
+            ],
+            &[
+                &["ZETA400", "Dual", "1.8/1.2V", "8", "0-200MHz", "400MB/s"],
+                &[
+                    "ZETA200", "Single", "1.8/1.2V", "4, 8", "0-200MHz", "200MB/s",
+                ],
+            ],
+        );
+        renamed.caption_text = Some("Table 4 - Zeta Speed Modes".to_string());
+        assert_ne!(
+            classified_table_kind(&renamed),
+            TableKind::SignalDescription,
+            "the refusal is structural, not a document's vocabulary"
+        );
+
+        // The control: the SAME matrix with its roles UNqualified is a signal table, so the test
+        // above cannot pass by refusing everything.
+        let mut unqualified = classification_test_table(
+            &["Name", "Direction", "Width", "Description"],
+            &[&["ZETA_ALPHA", "Input", "8", "The zeta alpha wire."]],
+        );
+        unqualified.caption_text = Some("Table 4 - Zeta Speed Modes".to_string());
+        assert_eq!(
+            classified_table_kind(&unqualified),
+            TableKind::SignalDescription,
+            "an unqualified name role with a direction is still a signal table"
+        );
+    }
+
     #[test]
     fn signal_noun_alone_does_not_fabricate_a_signal_table() {
         // No-faking guards: naming signals is necessary, never sufficient. The ambiguous

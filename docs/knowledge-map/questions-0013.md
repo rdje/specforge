@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > where is register level access stored in RegisterRecord
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where is the .6d.ii.f behavioral signoff recorded
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > where is the 12 document current replay manifest
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > where is the APB normalized bundle after WIRE-BASED-100.9b
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -218,6 +228,8 @@
   > which header signatures are unrecovered register tables
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > which held-out document has an eligible opaque alpha catalog
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > which legacy declarations come from tables that are not signal tables
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > which limit binds first when adding a fact card
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
@@ -286,15 +298,3 @@
   > which stage has no read-only canonical probe
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > which stale roadmap statuses were found before migration
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > which strategy is message_fields.byte_location_table
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > which surface bounds the number of task trees now
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > which table minted Clock and Reset as AHB signals
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > which task does the trajectory controller recommend first
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > which task owns deterministic Rust tests under repository-local TMPDIR
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > which task owns fact-card catalog containment

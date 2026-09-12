@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > how do I verify every task tree is linked exactly once
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how do I waive or range-scope the task-acceptance check
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how do Published-claims ids resolve
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -294,7 +298,3 @@
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how is AXI per-signal channel membership recovered without a VLM
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > how is AXI per-signal phase membership recoverable without a VLM
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > how is FigureRegion raw_image_path serialized
