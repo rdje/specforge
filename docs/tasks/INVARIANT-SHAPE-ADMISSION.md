@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `INVARIANT-SHAPE-ADMISSION`
-- Status: `active` (`2026-09-12`; `.0` done — it split the population in two; `.1` and `.2` open)
+- Status: `active` (`2026-09-12`; `.0` and `.1` done; `.2` open — the extraction half)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -92,7 +92,7 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   Producer: `python3 scripts/measure_invariant_admission_shape.py`.
   Commit: `INVARIANT-SHAPE-ADMISSION.0`
 
-- ID: `INVARIANT-SHAPE-ADMISSION.1` · Status: `pending` · Goal: **a figure or table caption is not
+- ID: `INVARIANT-SHAPE-ADMISSION.1` · Status: `done` (`2026-09-12`) · Goal: **a figure or table caption is not
   admitted by `r2` or `r3`.** The level is `is_invariant_like`, matching the idiom three other passes
   already use for a table row. The rule needs no second condition, because `r1` is tested first: the
   **20** captions that carry a modal verb are admitted by `r1` and are untouched, and the **739** that
@@ -101,6 +101,8 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   Prerequisite: `.0`. Verification: observed RED on a bare caption and GREEN on a modal-bearing one;
   the removed set sampled and adjudicated; no prose statement affected; golds re-scored; the chain
   rebuilt for every document whose artifacts move — which will be most of them, so budget for it.
+  Shipped as `statement_is_a_caption`, refused between the modal route and the two weaker ones.
+  Commit: `INVARIANT-SHAPE-ADMISSION.1`
 
 - ID: `INVARIANT-SHAPE-ADMISSION.2` · Status: `pending` · Goal: **read a table row instead of publishing
   it.** 699 of the 769 table-row constraints carry content found nowhere else, and the sample is
@@ -114,13 +116,42 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   Prerequisite: `.1` (it removes the caption noise this census would otherwise have to filter).
   Verification: the census is the deliverable; a count with no adjudication is not.
 
+## Acceptance Checklist (enforced) — `.1`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_invariant_admission_shape.py`: 759 of 5,927
+  published IntentIR constraints are figure or table captions, 422 of them bare labels.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs` `is_invariant_like`: route 2
+  admits a caption for carrying a weak phrase such as `state` beside a declared signal, and route 3
+  admits it because a caption sits beside the normative figure it names.
+  `cargo test -p specforge-core --lib a_caption_is_not_an_invariant_unless_it_states_an_obligation`
+  reproduces route 2 exactly on `"Figure 3-1: HCLK debug state entry and exit"`.
+- [x] **ADDRESSED (verified)** — all 27 proof-carrying documents rebuilt from `semantic` down, zero
+  failures. SemanticIR invariants 5,856 → 5,117; IntentIR constraints 5,927 → 5,188; **every removed
+  record is a caption**, prose unchanged at 4,399, table rows unchanged at 769, nothing added. The 20
+  modal-bearing captions survive via route 1, as designed before the rebuild.
+- [x] **NO REGRESSION** — `cargo test` 472 / 168 / **1423** / 4 green (the last after re-pinning the
+  production-graph census, `PRODUCTION-GRAPH-CENSUS-PIN` — third consecutive slice to move it by one
+  predicate, which answers that tree's open question); `cargo fmt --check` and
+  `cargo clippy --all-targets -D warnings` green; `scripts/check_doctrines.sh` green;
+  `scripts/check_chain_currency.sh` current across all four stages, retention at the declared 24. All
+  eight wire golds re-scored byte-identically — **stated as corroboration, not proof**: they score
+  EvidenceIR facts and this change is at the semantic stage.
+- [x] **GENERICITY (ADR 0006)** — `Figure`/`Table` plus a label number is document-structure grammar,
+  the same class as the `property` word `WIRE-BASED-100.10e` reads. The control pins seven near-misses
+  (`Table`, `Figure `, `Tables are used…`, `TableOfContents`, a markdown row) so the test cannot widen
+  into vocabulary.
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/semanticir.md` gains "A figure caption is evidence, not a
+  requirement", matching that chapter's standing pattern of naming what the stage refuses to promote;
+  it states the rule, why placement after the modal route is the design, and the rebuilt numbers. No
+  production rule was deleted or replaced, so no book text became false.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `INVARIANT-SHAPE-ADMISSION.1` — refuse a caption in `r2`/`r3`. Bounded, measured, and the larger of
-   the two precision wins.
-2. `INVARIANT-SHAPE-ADMISSION.2` — the table-row census. After `.1`, so its population is clean.
+1. `INVARIANT-SHAPE-ADMISSION.2` — the table-row census, now on a clean population: 769 rows and no
+   caption noise. Remember what `.1` measured about them — only 70 duplicate a declaration, so this is
+   an extraction gap and subtraction is not the answer.
 
 ## `.0` — result (`2026-09-12`)
 
@@ -168,6 +199,40 @@ work is to **read the row**, which is `.2` and is a different and larger piece o
 rows" is arithmetically right and analytically wrong: it adds a 739-record precision defect to a
 699-record extraction opportunity and calls the sum one number.
 
+## `.1` — result (`2026-09-12`)
+
+`statement_is_a_caption` in `is_invariant_like`, placed **between the modal route and the two weaker
+routes**. That placement is the rule: a caption stating an obligation is already admitted by `r1` and
+never reaches the test, so no second condition is needed to protect it.
+
+### Corpus effect, measured on rebuilt artifacts
+
+All 27 proof-carrying documents were rebuilt from the semantic stage down — `semantic`, `validate`,
+`intent`, `validate`, `adapt` per document, in the interleaved order, zero failures.
+
+| | before | after | delta |
+| --- | ---: | ---: | ---: |
+| SemanticIR invariants | 5,856 | 5,117 | **−739** |
+| IntentIR constraints | 5,927 | 5,188 | −739 |
+| … of which **prose** | 4,399 | **4,399** | **0** |
+| … of which **table rows** | 769 | **769** | **0** |
+| … of which captions | 759 | **20** | −739 |
+
+**Every removed record is a caption. No prose statement and no table row moved, and nothing was
+added.** The 20 surviving captions are exactly the modal-bearing ones, as the design predicted — that
+prediction was made before the rebuild and the rebuild confirmed it rather than being used to find it.
+
+### The limits, stated
+
+- **The wire golds could not have moved.** All eight re-score byte-identically to the pre-change run,
+  but they score EvidenceIR-level facts and this change is at the semantic stage. That is corroboration
+  that nothing upstream shifted, not evidence about the change itself. The evidence is the artifact
+  diff and the chain oracle.
+- **The 739 are gone with no residual.** `[[ANCHORLESS-INVARIANT-DROP]]` established that a record
+  leaving the artifact unrecorded is its own defect, and this tree's acceptance criteria carry that
+  forward. It is not discharged here: a caption states nothing, so there is nothing to residualise —
+  but the general requirement stands for `.2`, where real content is at stake.
+
 ## Decisions
 
 - `2026-09-12` — **opened rather than folded into `ANCHORLESS-INVARIANT-DROP`.** That tree asked how a
@@ -197,6 +262,17 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.1`. Controls, **observed RED**: with the refusal removed,
+  `a_caption_is_not_an_invariant_unless_it_states_an_obligation` fails on
+  `"Figure 3-1: HCLK debug state entry and exit"`, which route 2 admits for carrying `state` beside a
+  declared signal. The same test asserts GREEN on `"Table A8.2: Opcodes which must be cache line sized
+  and Regular"` (modal route) and on `"Tables are used throughout this chapter…"` (a label noun that is
+  not a label). `a_caption_is_recognised_by_its_label_and_number_alone` pins the shape over the census's
+  own forms and over seven near-misses including `Table`, `Figure ` and `TableOfContents`.
+  `cargo test` 472 / 168 / **1423** / 4 green; fmt and clippy `-D warnings` green.
+  Chain: all 27 proof-carrying documents rebuilt from `semantic` down, zero failures;
+  `scripts/check_chain_currency.sh` current; retention untouched at the declared 24 (this change needs
+  no bundle — `semantic` reads the persisted EvidenceIR).
 - `2026-09-12` — `.0`. Read-only; no artifact written, rebuilt or mutated.
   `python3 scripts/measure_invariant_admission_shape.py`, plus two adjudications the script's samples
   support: every caption checked for a modal verb (20 of 759) and every table-row constraint's first
@@ -206,10 +282,13 @@ None.
 ## Commit Log
 
 - Opened in the commit that closed `ANCHORLESS-INVARIANT-DROP.0` (`ec2b5a31`).
-- `.0` — `INVARIANT-SHAPE-ADMISSION.0`.
+- `.0` — `INVARIANT-SHAPE-ADMISSION.0` (`481c2d39`).
+- `.1` — `INVARIANT-SHAPE-ADMISSION.1`.
 
 ## Changelog
 
+- `2026-09-12` — `.1` closed. `statement_is_a_caption` removes 739 captions across the rebuilt
+  proof-carrying corpus; published constraints 5,927 → 5,188 with **prose and table rows unchanged**.
 - `2026-09-12` — `.0` closed and split the tree. Captions (739 admitted by `r2`/`r3`, 20 by `r1`) are a
   precision defect and go to `.1`; table rows are an extraction gap — only 70 of 769 duplicate a
   declaration, 699 carry unique and often normative content — and go to `.2`.

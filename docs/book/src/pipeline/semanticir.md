@@ -266,6 +266,41 @@ while five administrative phases, six gates, and 11 of 15 behaviors disappear. T
 device/host product-compliance contracts, not application or listing procedure. The rule contains no vendor,
 consortium, document-key, organization-name, exact-sentence, or single-token exception.
 
+### A figure caption is evidence, not a requirement
+
+An invariant is a normative constraint, and it reaches IntentIR as a published `constraint` — the thing
+a downstream consumer is asked to enforce. A figure or table caption states no obligation, but it kept
+being admitted as one, and for two structural reasons rather than one oversight.
+
+`is_invariant_like` admits a statement by three routes: a modal phrase (`must`, `shall`, `always`,
+`until`, …); a weak phrase (`handshake`, `asserted`, `state`, `timing`, …) alongside a mention of a
+declared signal; or related visual evidence marked normative. A caption trips the second route by
+containing a word such as `state`, and it trips the third **by construction** — a caption sits beside
+the figure it names, so if that figure is normative evidence, so is its caption.
+
+The measured result was that 759 published constraints across the proof-carrying corpus were captions,
+including one whose entire text is `Figure 1.` and many that are plain cross-references, such as
+`Figure 3-4 shows a write transfer with one wait state.`
+
+The rule is shape-only: the text opens with `Figure` or `Table` followed by a label number. `Figure`
+and `Table` are document-structure grammar in the same class as the `property` word the property-table
+gate reads, not a vendor or protocol name.
+
+**Where the rule sits is the whole design.** It runs *after* the modal route, so a caption that really
+does state an obligation — `Table A8.2: Opcodes which must be cache line sized and Regular` — is
+already admitted and never reaches it. Refusing captions in the two weaker routes therefore removes
+exactly the ones that state nothing, and needs no second condition to protect the ones that do.
+
+Rebuilt across every proof-carrying document, published constraints fall from 5,927 to 5,188. The
+entire difference is captions, 759 down to the 20 that carry an obligation. **Prose statements are
+unchanged at 4,399 and table rows unchanged at 769** — this is precision, bought at no recall.
+
+A serialized table row is deliberately *not* refused alongside the caption, and that is measured too:
+only 70 of the 769 duplicate a signal declaration the reader already made, while the rest carry
+obligations found nowhere else, such as `| Secure | Must be zero |`. Those are requirements in the
+wrong serialization rather than markup masquerading as requirements, so they need a reader, not a
+filter.
+
 ### Negative-knowledge cautions
 
 If a carried conflict or residual packet shape matches learned negative knowledge, `SemanticIR` validation may report `negative_knowledge_prior_matches`.

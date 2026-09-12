@@ -76,6 +76,9 @@ mod tests {
     /// +4 helper edges, +5 decision sites for one predicate at three call sites) — the second slice
     /// in a row to add a single predicate and have to edit this contract to land, which is the
     /// evidence `.1` of that tree needs before choosing between an exact pin and a declared band.
+    /// Third consecutive slice to move it by one predicate (`INVARIANT-SHAPE-ADMISSION.1`): three for
+    /// three, which is the answer to `.1`'s open question about how often these numbers legitimately
+    /// move. An exact pin makes every predicate-adding commit a contract-editing commit.
     #[test]
     fn current_repository_flow_is_complete_local_and_deterministic() {
         let root = repository_root();
@@ -95,9 +98,9 @@ mod tests {
         assert_eq!(first.trusted_regions, 11);
         assert_eq!(first.non_authoritative_regions, 6);
         assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_400);
-        assert_eq!(first.helper_edges, 14_950);
-        assert_eq!(first.decision_sites, 12_948);
+        assert_eq!(first.analyzed_functions, 2_401);
+        assert_eq!(first.helper_edges, 14_951);
+        assert_eq!(first.decision_sites, 12_951);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
         assert_eq!(first.semantic_macros, 1_469);

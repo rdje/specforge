@@ -8386,6 +8386,53 @@ fn decomposition_like_title(title: &str, declared_signals: &BTreeSet<String>) ->
     )
 }
 
+/// INVARIANT-SHAPE-ADMISSION.1 — a figure or table caption states no requirement.
+///
+/// An `InvariantRecord` is a normative constraint and reaches IntentIR `constraints`, the product
+/// boundary. Measured over the proof-carrying stratum, **759 published constraints are figure or
+/// table captions** — 422 of them bare labels, one reading `Figure 1.` in full — and 317 more are
+/// cross-reference sentences (`Figure 3-4 shows a write transfer with one wait state.`). They are
+/// admitted because a caption sits beside the normative visual evidence that route 3 trusts, and
+/// because it carries words like `state` that route 2 accepts.
+///
+/// Shape only: the text opens with the document-structure noun `Figure` or `Table` followed by a
+/// label number. That noun is universal document grammar in the same class as the `property` word
+/// `WIRE-BASED-100.10e` reads and the `signal`/`port`/`pin` roles the SourceIR classifier reads — not
+/// a document, vendor, protocol, or symbol identity (ADR 0006).
+///
+/// **Placed after the modal route on purpose, and that placement is the whole rule.** `is_invariant_like`
+/// tests `must`/`shall`/… first, so a caption that genuinely states an obligation — measured at
+/// **20** of the 759, such as `Table A8.2: Opcodes which must be cache line sized and Regular` — is
+/// already admitted and never reaches this test. Refusing captions in the two weaker routes therefore
+/// removes exactly the 739 that state nothing, and needs no second condition.
+///
+/// The sibling shape, a serialized markdown table row, is deliberately NOT refused here: only 70 of
+/// its 769 duplicate a declaration the reader already made, and the other 699 carry requirements
+/// found nowhere else (`| Secure | Must be zero |`). That is an extraction gap, not admission noise,
+/// and it is `INVARIANT-SHAPE-ADMISSION.2`.
+fn statement_is_a_caption(text: &str) -> bool {
+    let trimmed = text.trim_start();
+    let Some(rest) = trimmed
+        .strip_prefix("Figure")
+        .or_else(|| trimmed.strip_prefix("Table"))
+    else {
+        return false;
+    };
+    // The label noun must be a whole word: `Tables are used …` is prose, not a caption.
+    let Some(rest) = rest.strip_prefix(|c: char| c.is_ascii_whitespace()) else {
+        return false;
+    };
+    let mut characters = rest.trim_start().chars();
+    let Some(first) = characters.next() else {
+        return false;
+    };
+    // `Figure 3-1`, `Table A4.7`, `Figure B5-11` — an optional single letter, then a digit.
+    if first.is_ascii_digit() {
+        return true;
+    }
+    first.is_ascii_alphabetic() && characters.next().is_some_and(|next| next.is_ascii_digit())
+}
+
 fn is_invariant_like(
     statement: &StatementContext,
     context: &SemanticContext,
@@ -8414,6 +8461,14 @@ fn is_invariant_like(
         ],
     ) {
         return true;
+    }
+
+    // INVARIANT-SHAPE-ADMISSION.1 — the modal route above has already had its say, so a caption that
+    // states an obligation is admitted. What remains here is a caption that states nothing, and
+    // neither of the two weaker routes below is evidence that it does: route 2 accepts it for
+    // carrying a word like `state`, and route 3 for sitting beside the figure it names.
+    if statement_is_a_caption(&statement.text) {
+        return false;
     }
 
     let mentions_declared_signal = statement
@@ -24296,6 +24351,86 @@ mod tests {
             visual_roles_by_id: HashMap::new(),
             actor_signal_relations: vec![],
             signal_semantic_hints: vec![],
+        }
+    }
+
+    /// INVARIANT-SHAPE-ADMISSION.1 — a caption is not a requirement, and the modal route decides
+    /// which captions still are.
+    ///
+    /// Observed RED without the refusal: the bare caption below is admitted through route 2,
+    /// because `state` is one of its weak phrases and the statement names a declared signal.
+    #[test]
+    fn a_caption_is_not_an_invariant_unless_it_states_an_obligation() {
+        let ctx = make_semantic_context();
+        let mut interfaces = HashMap::new();
+        interfaces.insert(
+            "HCLK".to_string(),
+            BTreeSet::from(["interface_hclk".to_string()]),
+        );
+
+        // Route 2 would admit this: it names a declared signal and carries `state`.
+        let bare = make_statement_context(
+            super::StatementClass::NormativeStatement,
+            "Figure 3-1: HCLK debug state entry and exit",
+            vec!["HCLK".to_string()],
+        );
+        assert!(
+            !super::is_invariant_like(&bare, &ctx, &interfaces),
+            "a caption that states nothing is not an invariant"
+        );
+
+        // The same shape with an obligation is admitted by the MODAL route, which runs first.
+        let obliging = make_statement_context(
+            super::StatementClass::NormativeStatement,
+            "Table A8.2: Opcodes which must be cache line sized and Regular",
+            vec![],
+        );
+        assert!(
+            super::is_invariant_like(&obliging, &ctx, &interfaces),
+            "a caption that states an obligation keeps its modal-route admission"
+        );
+
+        // Prose that merely mentions a table is not a caption.
+        let prose = make_statement_context(
+            super::StatementClass::NormativeStatement,
+            "Tables are used throughout this chapter to describe the HCLK state machine",
+            vec!["HCLK".to_string()],
+        );
+        assert!(
+            super::is_invariant_like(&prose, &ctx, &interfaces),
+            "the label noun must be followed by a label number, not merely appear"
+        );
+    }
+
+    /// INVARIANT-SHAPE-ADMISSION.1 — the shape test itself, over the forms the census listed and the
+    /// forms it must not reach.
+    #[test]
+    fn a_caption_is_recognised_by_its_label_and_number_alone() {
+        for caption in [
+            "Figure 1.",
+            "Figure 2-1: External debugger",
+            "Table A4.7 shows the physical address spaces",
+            "Figure B5-11 on page B5-141 shows a state diagram",
+            "  Table 10-2 shows the allowed state of VBUS",
+        ] {
+            assert!(
+                super::statement_is_a_caption(caption),
+                "{caption:?} is a caption"
+            );
+        }
+        for statement in [
+            "Tables are used throughout this chapter",
+            "Figures in this section are informative",
+            "Table",
+            "Figure ",
+            "The table below lists the signals",
+            "| AWVALID | 1 | - | Asserted high to indicate the signals are valid. |",
+            "TableOfContents is not a caption",
+        ] {
+            assert!(
+                !super::statement_is_a_caption(statement),
+                "{statement:?} is not a caption"
+            );
         }
     }
 
