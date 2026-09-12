@@ -220,18 +220,29 @@ phantom-bearing entries from `related_interface_ids`, keeping their real ones. `
 declared; it loses its only grouping, which was a pairing with the phantom and therefore never an
 interface.
 
-### The cost, stated rather than buried
+### The cost, stated rather than buried — and later adjudicated as no cost at all
 
 **13 invariants vanish**, and nothing records it. Their ids show why they were exposed —
 `constraint_invariant_in_the_capture_dr_state_…`, `…in_the_update_dr_state_…` — these are real JTAG
 requirements whose sentences *begin with the word "In"*, which is what minted the phantom from them.
 They were anchored to nothing else, so they left with it.
 
-Shipped anyway, and the reasoning is on the record: an invariant anchored to a wire that does not exist
-was never correctly anchored, and asking a downstream consumer to synthesise a port called `In` is worse
-than a recorded gap. The gap is now recorded as `[[ANCHORLESS-INVARIANT-DROP]]`, which also notes that
-this contradicts `SPEC-TO-INTENT-ALIGNMENT`'s "zero unexplained drops" — that claim is scoped to a
-reviewed population, and the mechanism has no accounting at all.
+Shipped anyway, and the reasoning was on the record. **`[[ANCHORLESS-INVARIANT-DROP]]`.0 then
+adjudicated the 13 and the ledger above is too generous to the old behaviour**: none of the 13 contains
+a modal verb. They are descriptive — *"a logic 0 is loaded into this register"*, *"nothing happens"* —
+and one is a mangled table row. An `InvariantRecord` is meant to be a normative constraint, so their
+removal is a **precision gain, not a cost**.
+
+The mechanism was also not what this section assumed. They were not anchored to the phantom; anchors do
+not gate publication (560 of ADIv6's 593 invariants have none). `is_invariant_like` admits a statement
+that *mentions a declared signal* and carries a weak phrase such as `state` — so the phantom was
+widening an **admission gate**, not holding an anchor. That general form is the durable finding: a
+phantom spelled like an ordinary word makes "mentions a declared signal" true for every sentence
+containing that word.
+
+What survives from this section is the accounting point: 13 records left the artifact with nothing
+recording it, which `SPEC-TO-INTENT-ALIGNMENT`'s "zero unexplained drops" does not cover. That
+requirement is carried forward by `[[INVARIANT-SHAPE-ADMISSION]]`.
 
 ## Decisions
 

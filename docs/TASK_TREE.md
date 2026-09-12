@@ -36,7 +36,6 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
 | `ACTOR-NOUN-RELATION-DECLARATION` | `active` | an inferred declaration mints an ordinary word as a wire | [open](tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
-| `ANCHORLESS-INVARIANT-DROP` | `active` | an invariant that loses its last interface anchor is deleted, not residualised | [open](tasks/ANCHORLESS-INVARIANT-DROP.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](tasks/CLAIM-VERIFICATION-ADOPTION.md) |
 | `CORPUS-COVERAGE` | `active` | build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale | [open](tasks/CORPUS-COVERAGE.md) |
@@ -45,6 +44,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `DOC-INTENT-TAXONOMY` | `active` | chip-spec document intent taxonomy → per-category complete ISF synthesis | [open](tasks/DOC-INTENT-TAXONOMY.md) |
 | `EXTRACTION-GAP-FIX` | `active` | close the extraction gaps PDF-VARIANT-DIGESTION.4 quantified | [open](tasks/EXTRACTION-GAP-FIX.md) |
 | `EXTRACTION-QUALITY-GAUGE` | `active` | measure the extraction-quality gap — and CHI's is large | [open](tasks/EXTRACTION-QUALITY-GAUGE.md) |
+| `INVARIANT-SHAPE-ADMISSION` | `active` | a quarter of published constraints are figure captions and table rows | [open](tasks/INVARIANT-SHAPE-ADMISSION.md) |
 | `KG-ISF-COMPLETENESS` | `active` | the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF | [open](tasks/KG-ISF-COMPLETENESS.md) |
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](tasks/KG-ISF-TRANSACTIONS.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM` | `active` | keep current-facing canonical surfaces writable | [open](tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md) |
@@ -69,13 +69,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 157 trees route through 3 derived part(s); open a range to find an id.
+All 158 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-8` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE` | `R16-INTENT-CAPTURE` |
-| [0003](task-catalog/catalog-0003.md) | 45 | `R16-KG-PROTOCOL-ONTOLOGY` | `WIRE-BASED-100` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE` | `R16-CONTRACT-IR` |
+| [0003](task-catalog/catalog-0003.md) | 46 | `R16-INTENT-CAPTURE` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

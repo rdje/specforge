@@ -1,9 +1,9 @@
-# ANCHORLESS-INVARIANT-DROP: an invariant that loses its last interface anchor is deleted, not residualised
+# ANCHORLESS-INVARIANT-DROP: the premise was wrong — a phantom was not an anchor, it was an admission gate
 
 ## Metadata
 
 - Tree ID: `ANCHORLESS-INVARIANT-DROP`
-- Status: `active` (`2026-09-12`; opened by `ACTOR-NOUN-RELATION-DECLARATION.1`, `.0` open)
+- Status: `done` (`2026-09-12`; `.0` disproved the tree's own premise and handed the real defect to `[[INVARIANT-SHAPE-ADMISSION]]`)
 - Roadmap lane: `R2` (extraction fidelity / residual accounting)
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -11,13 +11,18 @@
 
 ## Goal
 
-A SemanticIR invariant carries `related_interface_ids`. When every one of those references disappears,
-the invariant **disappears with them** — it is not emitted, and nothing records that it was dropped.
-`residual_decisions` does not grow; `fidelity_findings` does not grow. The requirement simply is not in
-the artifact.
+*(as opened)* A SemanticIR invariant carries `related_interface_ids`. When every one of those
+references disappears, the invariant was believed to disappear with them, unrecorded. Make an
+anchorless invariant accountable.
 
-Make an invariant that loses its last anchor **accountable**: either it keeps a usable form, or its
-removal is a typed residual a reader can act on. Silence is the defect, not the removal.
+**`.0` disproved this.** `related_interface_ids` is not an admission condition:
+**560 of ADIv6's 593 invariants carry no anchor at all** and are published normally. The 13 that
+vanished were not losing an anchor; they were losing an **admission gate** — `is_invariant_like`'s
+second route requires the statement to *mention a declared signal*, and the phantom `In` was
+satisfying it for every sentence containing that word.
+
+The tree closes with no code change. What it found on the way is a larger and correctly-premised
+defect, tracked as `[[INVARIANT-SHAPE-ADMISSION]]`.
 
 ## How it was found
 
@@ -41,54 +46,99 @@ constraint_invariant_in_the_shift_dr_state_this_data_is_shifted_out_least_signif
 …
 ```
 
-These are real JTAG requirements whose sentences **begin with the word "In"** — which is precisely why
-the phantom was minted from them in the first place. They were anchored to nothing but that phantom, so
-when it went, they went.
+Their sentences **begin with the word "In"** — which is precisely why the phantom was minted from them
+in the first place. The reading at the time was that they had been anchored to nothing but that phantom,
+so when it went, they went.
 
-**This contradicts a published claim.** `SPEC-TO-INTENT-ALIGNMENT`'s signoff states "zero fabrication and
-zero unexplained drops". Thirteen unexplained drops is what a single upstream correction produced, so the
-claim is scoped to a reviewed population rather than to the mechanism, and the mechanism has no accounting
-at all. `ACTOR-NOUN-RELATION-DECLARATION.1` shipped anyway and said so: an invariant anchored to a wire
-that does not exist was never correctly anchored, and publishing it is not better than not publishing it.
-But it should not leave silently.
+**That reading was wrong on both halves, and `.0` says so below.** They were not anchored to the
+phantom — anchors do not gate publication — and they are not requirements: none of the 13 contains a
+modal verb. What the phantom supplied was an admission gate, and what left with it was descriptive
+prose that should never have been published as a normative constraint.
 
-## Non-Goals
+One thing from the opening reading survives intact. `SPEC-TO-INTENT-ALIGNMENT`'s signoff states "zero
+fabrication and zero unexplained drops"; a single upstream correction moved 13 records out of the
+artifact with nothing recording it. Whether those 13 deserved to be there is a separate question from
+whether their departure should be visible, and `[[INVARIANT-SHAPE-ADMISSION]]`'s acceptance criteria
+carry that requirement forward.
+
+## Non-Goals *(as opened)*
 
 - Do not keep an invariant by re-attaching it to a phantom. The upstream correction is right.
-- Do not widen `related_interface_ids` to admit an anchor that is not a declared signal. The anchor
-  contract is what makes an invariant actionable downstream.
-- Do not treat this as an ADIv6 defect. ADIv6 is where it was observed; the mechanism is general and the
-  census must say how general.
+- Do not widen `related_interface_ids` to admit an anchor that is not a declared signal.
+- Do not treat this as an ADIv6 defect; the mechanism is general and the census must say how general.
 
-## Acceptance Criteria
+The third held and is what found the real defect. The first two were answered by the premise being
+false: there is no anchor mechanism to re-attach to or widen.
 
-- The population is measured: across the proof-carrying stratum, how many invariants would be dropped if
-  their anchors were removed, and how many are today anchored **solely** to a single interface — the
-  fragile set.
-- Whatever is shipped makes the drop **visible** in the artifact, and the form is chosen against the
-  existing residual/fidelity carriers rather than by inventing a new one.
-- No invariant that has a real anchor changes.
-- `scripts/check_doctrines.sh` green; no ceiling, milestone, or contract widened.
+## Acceptance Criteria *(as opened, and how they resolved)*
+
+- ~~measure the fragile set — invariants anchored solely to one interface~~ → **not the fragile set.**
+  560 of ADIv6's 593 invariants have no anchor at all and publish normally. The fragile set is the
+  one gated on *mentioning a declared signal*: **304 of 5,856** current invariants, of which 14 rest
+  on an inferred declaration and all 14 of those name real wires.
+- ~~make the drop visible~~ → carried forward to `[[INVARIANT-SHAPE-ADMISSION]]`, which owns a
+  population that genuinely should not be published.
+- ~~no invariant with a real anchor changes~~ → vacuous; anchors do not gate publication.
+- `scripts/check_doctrines.sh` green; no ceiling, milestone, or contract widened. **Met** — this tree
+  ships a read-only census and no code change.
 
 ## Task Tree
 
-- ID: `ANCHORLESS-INVARIANT-DROP` · Status: `active` (`2026-09-12`) · Children: `.0`
+- ID: `ANCHORLESS-INVARIANT-DROP` · Status: `done` (`2026-09-12`) · Children: `.0`
 
-- ID: `ANCHORLESS-INVARIANT-DROP.0` · Status: `pending` · Goal: **measure the fragile set, and find where
-  the drop happens.** Two parts, both read-only:
-  1. census — per document and per stratum, how many SemanticIR invariants carry exactly one
-     `related_interface_id`, and how many carry only ids that would vanish with one signal;
-  2. locate the code path that discards an invariant with no surviving anchor, and say whether it
-     discards silently by construction or by omission. The difference decides whether `.1` is a carrier
-     change or a one-line accounting fix.
-  Non-goal: any code change.
-  Prerequisite: none. Verification: read-only; no artifact written or mutated.
+- ID: `ANCHORLESS-INVARIANT-DROP.0` · Status: `done` (`2026-09-12`) · Goal: **measure the fragile set,
+  and find where the drop happens.** Both parts delivered, and the second disproved the tree.
+  Producer: `python3 scripts/measure_invariant_admission_shape.py`.
+  Commit: `ANCHORLESS-INVARIANT-DROP.0`
 
 ## Current Frontier
 
-Ordered; PNT selects the first eligible leaf.
+None. The tree is closed: its premise was false and the defect it was opened for does not exist. The
+real one is `[[INVARIANT-SHAPE-ADMISSION]]`.
 
-1. `ANCHORLESS-INVARIANT-DROP.0` — the census. Nothing else in this tree may start before it.
+## `.0` — result (`2026-09-12`)
+
+### The premise was false
+
+`related_interface_ids` is not a condition of publication. ADIv6 publishes 593 invariants and **560 of
+them carry an empty anchor list**. Nothing is dropped for want of an anchor.
+
+### What actually admitted the 13
+
+`is_invariant_like` (`crates/specforge/src/ir/semantic.rs`) has three routes, and the second is
+`mentions a declared signal AND carries a weak phrase` from `handshake` / `asserted` / `deasserted` /
+`transition` / **`state`** / `timing` / `observed`. All 13 contain `state`, and the declared signal
+they mentioned was the phantom `In`.
+
+**The general form, which is the durable part: a phantom declaration does not only add phantom
+records — it widens an admission gate.** Any pass that asks "does this statement mention a declared
+signal?" becomes true for every sentence containing that word, and a phantom spelled like an ordinary
+word appears everywhere. Thirteen ADIv6 entries existed because `In` was a signal.
+
+### The 13 adjudicated, which corrects the ledger of the slice that removed them
+
+Every one was checked for a modal verb. **None has one.** They are descriptive, not normative:
+
+```text
+- In the Capture-DR state, a logic 0 is loaded into this register.
+- In the Update-DR state, nothing happens. The shifted-in data is ignored.
+- In the Shift-DR state, this data is shifted out, least significant bit first.
+| PORTENABLED In | Port | Enabled | Can be deasserted by the JTAG subsystem, … |
+```
+
+An `InvariantRecord` is meant to be a normative constraint. These state what happens in a TAP state;
+the last is a mangled table row whose `In` is a column fragment. **Their removal is a precision gain,
+not a cost**, and `ACTOR-NOUN-RELATION-DECLARATION.1`'s commit message — which recorded them as "13
+real JTAG requirements" lost — was too generous to the old behaviour. The substance of that slice
+stands; this is the adjudication it did not yet have.
+
+### The real defect, measured
+
+Looking at admission routes exposed the shape of what they admit. Current stratum, at the product
+boundary: **1,528 of 5,927 IntentIR constraints (25.8%) are not statements** — 769 serialized markdown
+table rows and 759 figure captions, one of which reads `Figure 1.` in full. The `r3` visual-evidence
+route is the worst: 910 non-statements against 245 prose. Handed to
+`[[INVARIANT-SHAPE-ADMISSION]]` with the census.
 
 ## Decisions
 
@@ -100,14 +150,19 @@ Ordered; PNT selects the first eligible leaf.
   frontier is its own product programme and its parts are sharded; this is one mechanism with one
   measurement, and folding it in would bury it.
 
-## Open Questions
+## Open Questions *(resolved or routed)*
 
-- Is the right carrier a residual, a fidelity finding, or an invariant that keeps its text with an empty
-  anchor set and a stated reason? `.0` must answer this against what the carriers already express, not
-  by preference.
-- How many of the fragile set are fragile because their only anchor is itself weak? If most single-anchor
-  invariants are anchored to an inference rather than a table declaration, the accounting question is
-  larger than one phantom.
+- ~~Which carrier should an anchorless invariant use?~~ **Moot** — an invariant with no anchor is
+  published normally, so there is nothing to carry. The carrier question moves to
+  `[[INVARIANT-SHAPE-ADMISSION]]`, where records genuinely will be removed.
+- ~~How many of the fragile set are fragile because their only anchor is weak?~~ **Answered, once the
+  question is restated against the real gate.** Of the 304 current invariants admitted by
+  `mentions a declared signal + a weak phrase`, **14** qualify only through an *inferred* declaration
+  — 9 in I2C, 5 in ADIv6 — and every one of those 14 names a real wire (`SCL`, `SDA`, `nSRST`, `TDO`,
+  `CSYSPWRUPACK`). After `ACTOR-NOUN-RELATION-DECLARATION.1` no current invariant rests on a phantom.
+- **Still open, and routed rather than answered**: is `r3` defensible? A statement admitted purely for
+  sitting near a normative figure yields 245 prose invariants against 910 non-statements. Owned by
+  `[[INVARIANT-SHAPE-ADMISSION]]`.
 
 ## Blockers
 
@@ -115,14 +170,28 @@ None.
 
 ## Verification Log
 
-Pending: `.0` is a read-only census.
+- `2026-09-12` — `.0`. Read-only; no artifact written, rebuilt or mutated.
+  `python3 scripts/measure_invariant_admission_shape.py` over the persisted SemanticIR and IntentIR
+  corpus. The phrase lists mirror `is_invariant_like` verbatim, including `contains_phrase`'s
+  whole-word boundary semantics. Route attribution is by elimination from statement text — a statement
+  with no modal and no weak phrase must have been admitted by visual evidence — which is stated in the
+  script because it is the census's one inference rather than a reading.
+  The 13 dropped ADIv6 invariants were recovered from
+  `generated/preserved/ACTOR-NOUN-RELATION-DECLARATION.1/pre-rebuild/` and each checked individually
+  for a modal verb; none has one.
 
 ## Commit Log
 
-Opened in the commit that shipped `ACTOR-NOUN-RELATION-DECLARATION.1`.
+- Opened in the commit that shipped `ACTOR-NOUN-RELATION-DECLARATION.1` (`bea8437d`).
+- `.0` — `ANCHORLESS-INVARIANT-DROP.0`. Tree CLOSED.
 
 ## Changelog
 
+- `2026-09-12` — `.0` closed and the tree with it. The premise was false: 560 of 593 ADIv6 invariants
+  carry no anchor and publish fine. The phantom was supplying an admission gate, not an anchor, and the
+  13 it admitted are descriptive rather than normative — their removal is a precision gain. The census
+  exposed the real defect: 1,528 of 5,927 published constraints are captions or table rows
+  (`[[INVARIANT-SHAPE-ADMISSION]]`).
 - `2026-09-12` — tree created. Removing one phantom signal from ADIv6 deleted 13 real JTAG invariants
   with no record of the deletion, while 44 sibling constraints correctly kept their id and shed only the
   phantom anchor.

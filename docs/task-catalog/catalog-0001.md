@@ -11,7 +11,7 @@ Complete membership for this range. The bounded landing is
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `done` | keep active task history bounded and resumable | [open](../tasks/ACTIVE-TASK-EVIDENCE-CONTAINMENT.md) |
 | `ACTOR-NOUN-RELATION-DECLARATION` | `active` | an inferred declaration mints an ordinary word as a wire | [open](../tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
 | `AMBIGUITY-PHRASE-DETECTOR` | `done` | flag vague / under-specified spec prose for review | [open](../tasks/AMBIGUITY-PHRASE-DETECTOR.md) |
-| `ANCHORLESS-INVARIANT-DROP` | `active` | an invariant that loses its last interface anchor is deleted, not residualised | [open](../tasks/ANCHORLESS-INVARIANT-DROP.md) |
+| `ANCHORLESS-INVARIANT-DROP` | `done` | the premise was wrong — a phantom was not an anchor, it was an admission gate | [open](../tasks/ANCHORLESS-INVARIANT-DROP.md) |
 | `ARTIFACT-PATH-PORTABILITY` | `done` | repository-relative IR provenance and move-safe generated artifacts | [open](../tasks/ARTIFACT-PATH-PORTABILITY.md) |
 | `AUDIT-DOC-RECONCILE` | `done` | fix doc drift found by the post-ISF-ONLY audit | [open](../tasks/AUDIT-DOC-RECONCILE.md) |
 | `AUDIT-PROVIDER-FRAMING-RECONCILE` | `done` | reconcile live-doc framing that the LLM/VLM provider "doesn't exist" / R16 CVE crux is "upstream-blocked" | [open](../tasks/AUDIT-PROVIDER-FRAMING-RECONCILE.md) |

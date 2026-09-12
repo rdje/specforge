@@ -13,6 +13,7 @@ Complete membership for this range. The bounded landing is
 | `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](../tasks/FULL-PAGE-INTENT-CAPTURE.md) |
 | `GRITS-CROSS-TOOL` | `done` | a table-structure gold from independent-witness agreement | [open](../tasks/GRITS-CROSS-TOOL.md) |
 | `INTENT-COMPLETENESS-RESEARCH` | `done` | theory + design for detecting & bounding intent-capture misses | [open](../tasks/INTENT-COMPLETENESS-RESEARCH.md) |
+| `INVARIANT-SHAPE-ADMISSION` | `active` | a quarter of published constraints are figure captions and table rows | [open](../tasks/INVARIANT-SHAPE-ADMISSION.md) |
 | `ISF-HANDSHAKE-STAGE-LOWERING` | `superseded` | lower HandshakeComplete temporal_rules to `(stage …)` | [open](../tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
 | `ISF-ONLY-CONSOLIDATION` | `done` | Drop HDL + `.fsm` adapters; SpecForge emits only `.isf` | [open](../tasks/ISF-ONLY-CONSOLIDATION.md) |
 | `ISF-ONLY-IR-PRUNE` | `done` | remove genuinely `.fsm`-era orphaned IR surfaces | [open](../tasks/ISF-ONLY-IR-PRUNE.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `R16-CAPTURE-FIDELITY-GATES` | `done` | objective capture-fidelity metric (point #5) | [open](../tasks/R16-CAPTURE-FIDELITY-GATES.md) |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | schema-constrained + verified extraction (point #6 — the crux, continuous) | [open](../tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
 | `R16-CONTRACT-IR` | `done` | typed timed-contract IR layer (point #1) | [open](../tasks/R16-CONTRACT-IR.md) |
-| `R16-INTENT-CAPTURE` | `done` | SOTA design-intent capture (program umbrella) | [open](../tasks/R16-INTENT-CAPTURE.md) |
 
