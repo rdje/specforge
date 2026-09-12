@@ -9,7 +9,7 @@ Complete membership for this range. The bounded landing is
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `done` | keep active task history bounded and resumable | [open](../tasks/ACTIVE-TASK-EVIDENCE-CONTAINMENT.md) |
-| `ACTOR-NOUN-RELATION-DECLARATION` | `active` | the relation path declares an actor role as a wire | [open](../tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
+| `ACTOR-NOUN-RELATION-DECLARATION` | `active` | an inferred declaration mints an ordinary word as a wire | [open](../tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
 | `AMBIGUITY-PHRASE-DETECTOR` | `done` | flag vague / under-specified spec prose for review | [open](../tasks/AMBIGUITY-PHRASE-DETECTOR.md) |
 | `ARTIFACT-PATH-PORTABILITY` | `done` | repository-relative IR provenance and move-safe generated artifacts | [open](../tasks/ARTIFACT-PATH-PORTABILITY.md) |
 | `AUDIT-DOC-RECONCILE` | `done` | fix doc drift found by the post-ISF-ONLY audit | [open](../tasks/AUDIT-DOC-RECONCILE.md) |
