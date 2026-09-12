@@ -797,15 +797,66 @@ honestly-qualified) path to "human-SpecForge in Rust."
   control written before the number was published.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.6`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `pending` · Goal: **what a clause that types nothing
-  may publish.** Two arms of `classify_signal_constraint_kind` emit a fact the document did not
-  state: the terminal `untyped_default` publishes `MustBeStable` for any obligation no phrase matched
-  (**26 `sigcon_*` records** when classified over their own clause, 25 over the whole statement), and
-  the `generic_value` arm lifts whatever word follows `must be `/`shall be ` as a typed value with no
-  gate at all (**11 over the clause, 4 over the whole statement**). This leaf decides what each may
-  publish — refuse, or admit with an explicit untyped marker — and is the precision leaf of the
-  family. Prerequisite: none (but `.3k.3` depends on it). Verification: all 37 adjudicated
-  individually; observed RED; the chain rebuilt for every document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `active` (split `2026-09-12` after `.3k.6` re-sized it)
+  · Children: `.3k.2a`, `.3k.2b`, `.3k.2c` · Goal: **what a clause that types nothing may publish.**
+  Two arms of `classify_signal_constraint_kind` emit a fact the document did not state: the terminal
+  `untyped_default` publishes `MustBeStable` for any obligation no phrase matched, and the
+  `generic_value` arm lifts whatever word follows `must be `/`shall be ` as a typed value with no gate
+  at all. Re-sized with `replay-constraints` before splitting, exactly as the container's amendment
+  requires: the published counts were 26 and 11; the REPRODUCED counts — the population a change can
+  move — are **17 and 4**. Reading all 21 separates them cleanly, and the split follows the reading
+  rather than the arm: **17 of 17 untyped-default records are wrong** and the arm must be refused,
+  while **2 of 4 `generic_value` records are right** (`AWTAGOP must be Invalid`, `CKE must be held
+  LOW`) so that arm needs a GATE, not a refusal. A third finding came out of the same reading: the
+  ROW path's 4 untyped-default records are *correct* and merely under-typed, which is why the refusal
+  is asymmetric.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2a` · Status: `done` (`2026-09-12`, CODE) · Goal: **the terminal
+  `MustBeStable` is not a default, it is a fabrication — refuse it in the statement path.**
+  **All 17 reproduced records adjudicated, 17 of 17 wrong:** two CoreSight `APB must_be_stable` from a
+  barrier-transaction description; four AXI records from `| Manager: False | ARCHUNKEN is not present.
+  …` (a presence cell); one from `Manager RCHUNKV input is tied low` (a level, not stability); two APB
+  `PSLVERR` from *"It is recommended, but not required…"* and *"Completers are not required to
+  support PSLVERR"*; one AHB `HRESP` from a two-cycle response description; six waveform narrations
+  (`- T1 FREADY signal remains HIGH`, `At T3 … QDENY remains LOW`, `AERR is driven HIGH for 1 tCK`).
+  Not one of them says anything about stability.
+  **The asymmetry is the design.** The refusal is in the STATEMENT path only. The row path
+  (`extract_signal_description_row_constraints`) keeps the fallback because it has already proved,
+  via `obligation_subject`, that its clause binds to its row's own signal — so an untyped obligation
+  there is a real obligation with a spelling the table lacks. Its 4 records are
+  `PAUSER`/`PWUSER must have the same value in the Setup and Access phase`, which IS a stability
+  obligation; typing it properly is `.3k.2c`.
+  Shipped: `classify_signal_constraint_kind_typed`, which returns `None` exactly when the terminal arm
+  is reached with no stability/validity phrase anywhere in the clause; `extract_signal_constraints`
+  refuses on `None`. `classify_signal_constraint_kind` is unchanged, so the row path is untouched.
+  **Chain rebuilt for all three documents whose artifacts move — APB, AHB and AXI-L — because the
+  change stales their proofs and all three have a held-out bundle.** `evidence → validate → semantic →
+  validate → intent → validate → adapt` each: **8 records removed, 0 added, 0 retyped** (AXI 45→40,
+  APB 25→23, AHB 14→13); every removal is one of the 17. The other 9 stay in documents with no bundle
+  to rebuild from, and `replay-constraints` now reports them as not-reproduced rather than hiding them.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2a`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2b` · Status: `pending` (opened `2026-09-12` by `.3k.2a`) · Goal:
+  **gate the ungated `generic_value` arm.** `extract_protocol_state_value` lifts the first non-filler
+  word after `must be `/`shall be `/`must remain `/`shall remain ` and publishes it as a typed value,
+  with no check that the word IS a value. **Population: 4 reproduced `sigcon_*`, and it is 2-2** —
+  right: AXI `AWTAGOP must_be_value INVALID` from *"AWTAGOP must be Invalid"* (a real TagOp enum
+  member) and HBM2 `CKE must_be_value LOW` from *"CKE must be held LOW"*; wrong: RISC-V IOMMU
+  `GSCID must_be_value INVALIDATED` and DTI `DO_NOT_CACHE must_be_value INVALIDATED`, both of which
+  lift a past participle out of *"must be invalidated"* — a VERB, not a value. So this arm must be
+  GATED, never refused: the document's own discovered enum values and the logic levels are the
+  admissible set, and `extract_discovered_state_value_from_text` already knows how to ask.
+  Prerequisite: none. Verification: all 4 adjudicated; observed RED; the chain rebuilt for every
+  document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2c` · Status: `pending` (opened `2026-09-12` by `.3k.2a`) · Goal:
+  **the affirmative spelling this corpus uses for a stability obligation.** APB writes it as
+  *"PAUSER must have the same value in the Setup and Access phase of a transfer"* and *"… in every
+  cycle during the Access phase"*; the phrase table knows `must be stable`, `must remain stable`,
+  `must hold` and nothing of this form, so 4 `row_sigcon_*` records reach the untyped fallback and are
+  published as `must_be_stable` by accident rather than by reading. They are the only reason `.3k.2a`
+  had to leave the row path's fallback in place. Decide between `MustNotChange` (the value does not
+  change) and `MustBeStable`, and note that `.3d`'s equality refusal must keep NOT firing on it —
+  *"the same value in …"* is not *"the same value as …"*. Prerequisite: none. Verification: all 4
+  adjudicated; observed RED; APB rebuilt and diffed.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.3` · Status: `pending` · Goal: **the kind reads its own obligation
   clause** — the original `.3k` goal, at its true size.
   `classify_signal_constraint_kind(&text.to_ascii_lowercase())` becomes
@@ -853,6 +904,52 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2a`
+
+- [x] **REPRODUCE / MEASURE** — sized with `replay-constraints` FIRST, per the container's amendment.
+  The published untyped-default population is 26 `sigcon_*`; the REPRODUCED population is **17**, and
+  all 17 were read against their own source text. 17 of 17 are wrong: a barrier-transaction
+  description (CoreSight ×2), a presence table cell (AXI ×4), a tied-low level statement (AXI ×1),
+  two explicitly non-required recommendations (APB ×2), a response-duration description (AHB ×1), and
+  six waveform narrations (LPI ×2, GFB ×3, HBM2 ×2 — `- T1 FREADY signal remains HIGH`,
+  `At T3 … QDENY remains LOW`, `AERR is driven HIGH for 1 tCK`). The same census over the ROW stratum
+  is the control that shaped the fix: its 4 untyped-default records are `PAUSER`/`PWUSER must have the
+  same value in the Setup and Access phase`, which are CORRECT and merely under-typed.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `classify_signal_constraint_kind`'s terminal `else` arm: when no phrase matches and no value binds,
+  it returned `SignalConstraintKind::MustBeStable`. In the statement path that arm fires on any
+  sentence the classifier happened to class `SignalValueConstraint`, so a presence cell or a waveform
+  step became an assertion that a signal must be stable. The row path reaches the same arm only after
+  `obligation_subject` has proved the clause binds to its row's signal, which is why the same default
+  is honest there and a fabrication here.
+- [x] **ADDRESSED (verified)** — `classify_signal_constraint_kind_typed` returns `None` exactly for
+  that arm (no stability or validity phrase anywhere in the clause) and `extract_signal_constraints`
+  refuses on `None`; `classify_signal_constraint_kind` is byte-unchanged, so the row path is untouched.
+  **Observed RED** with the call reverted: `a_statement_that_names_no_kind_yields_no_constraint` emits
+  two `MustBeStable` records from `| Manager: False | ZETACHUNKEN is not present. …`, and
+  `a_recommendation_that_names_no_kind_yields_no_constraint` emits one from
+  `It is recommended, but not required, that ZETASLVERR is driven LOW …`; both pass restored.
+  Controls hold: `must be stable`, `must be asserted` and `must not change` still type, and
+  `classify_signal_constraint_kind` still answers `MustBeStable` for the row path's `must have the
+  same value …` while the typed variant answers `None`.
+- [x] **NO REGRESSION** — **chain rebuilt for all three documents whose proofs the change stales**
+  (APB, AHB, AXI-L; each has a held-out bundle):
+  `evidence → validate → semantic → validate → intent → validate → adapt --target isf`, zero failures,
+  **8 records removed, 0 added, 0 retyped** — AXI 45→40, APB 25→23, AHB 14→13 — and every removal is
+  one of the 17 adjudicated records. `kg-bench` **156/156**. WIRE-BASED-100 golds unchanged at
+  `signal_constraint P=R=F1=1.000` for APB, AHB, AXI and SWD, and `actor_signal_relation` 1.000 on all
+  four filtered. `cargo fmt --all --check`, `cargo clippy --all-targets -D warnings`, `cargo test`
+  green; `specforge-core` lib 1,445 → 1,449. Retention back at the declared **24** bundles, each
+  `diff -r`-verified byte-identical against its held-out copy before removal; corpus frontier
+  `57 = 52 + 5` unchanged. Pre-rebuild snapshot at
+  `generated/preserved/EXTRACTION-QUALITY-GAUGE.3k.2a/pre-rebuild/`.
+- [x] **GENERICITY (ADR 0006)** — one negative predicate over the existing phrase table. No document,
+  protocol, vendor or signal name; controls use invented names (`ZETACHUNKEN`, `ZETACHUNKV`,
+  `ZETASLVERR`, `ZETASEL`, `ZETAADDR`, `ZETASTRB`, `ZETAUSER`).
+- [x] **LOCKSTEP** — code, this leaf, the book's EvidenceIR chapter, and the resume pointer agree
+  before commit. The two findings the reading produced are not absorbed: the `generic_value` arm is
+  2-2 and owned by `.3k.2b`, the row path's missing spelling by `.3k.2c`.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.6`
 

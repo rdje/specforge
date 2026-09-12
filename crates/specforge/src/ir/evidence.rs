@@ -9967,6 +9967,35 @@ fn obligation_is_negated(lowered: &str) -> bool {
 /// `lowered` is already ASCII-lower-cased. Extracted verbatim from `extract_signal_constraints`
 /// so the table-row reader (`INVARIANT-SHAPE-ADMISSION.3`) classifies an obligation exactly as
 /// the statement paths do: one classifier, not two that can drift apart.
+/// The kind an obligation clause states, or `None` when the clause names no kind at all.
+///
+/// EXTRACTION-QUALITY-GAUGE.3k.2a — the terminal `MustBeStable` this used to return in that case is
+/// not a default, it is a fabrication: it asserts stability about a sentence that never mentions it.
+/// Callers that can prove the clause is an obligation about a known signal may still fall back to it
+/// ([`classify_signal_constraint_kind`]); the statement path, which cannot, refuses instead.
+fn classify_signal_constraint_kind_typed(lowered: &str) -> Option<SignalConstraintKind> {
+    let kind = classify_signal_constraint_kind(lowered);
+    // The one shape that means "nothing matched": the fall-through arm returns the stable default
+    // with no stability phrase anywhere in the clause. `must be stable` / `must remain stable` /
+    // `must hold` all reach `MustBeStable` or `MustNotChange` through an arm the document wrote.
+    if kind == SignalConstraintKind::MustBeStable
+        && !contains_any(
+            lowered,
+            &[
+                "must be stable",
+                "shall be stable",
+                "must hold",
+                "shall hold",
+                "must be valid",
+                "shall be valid",
+            ],
+        )
+    {
+        return None;
+    }
+    Some(kind)
+}
+
 fn classify_signal_constraint_kind(lowered: &str) -> SignalConstraintKind {
     if contains_any(
         lowered,
@@ -10397,7 +10426,19 @@ fn extract_signal_constraints(
         // the same cell says `must not`.
         let negated =
             obligation_is_negated(&constraint_bearing_sentence(text).to_ascii_lowercase());
-        let constraint_kind = classify_signal_constraint_kind(&lowered);
+        // EXTRACTION-QUALITY-GAUGE.3k.2a — a statement whose obligation names NO kind states no typed
+        // constraint, and inventing one is not a default but a fabrication. Every one of the 17
+        // live records this arm produced asserted stability about a sentence that says nothing about
+        // stability: a barrier-transaction description, four `… is not present` table cells, a
+        // recommendation explicitly "not required", and six waveform narrations (`- T1 FREADY signal
+        // remains HIGH`). An honest residual is correct where a fabricated fact is not — the
+        // statement stays counted as an uncaptured normative statement, which is the accounting that
+        // keeps the gap visible. The ROW path keeps the fallback deliberately: it has already proved
+        // its clause binds to its row's signal, so an untyped obligation there is a real obligation
+        // with a spelling the table lacks (`.3k.2c`), not a sentence about something else.
+        let Some(constraint_kind) = classify_signal_constraint_kind_typed(&lowered) else {
+            continue;
+        };
 
         // Keep only subjects that are DECLARED signals — a property/config name or doc-meta token
         // is not in the catalog and is dropped. An empty catalog grants no authority.
@@ -35832,5 +35873,102 @@ mod extraction_quality_gauge_3k_6 {
         assert_eq!(report.persisted_total, 1);
         assert_eq!(report.verdicts.len(), 1);
         assert_eq!(report.verdicts[0].constraint_id, "sigcon_0001");
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_2a {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.2a` — the terminal `MustBeStable` was not a default, it was a
+    //! fabrication. Every one of the 17 live statement-path records that reached it asserted
+    //! stability about a sentence that never mentions stability: a barrier-transaction description,
+    //! four `… is not present` table cells, a recommendation explicitly "not required", and six
+    //! waveform narrations. The ROW path keeps the fallback on purpose — its four records are
+    //! *correct* and merely under-typed (`must have the same value …`), because that path has already
+    //! proved its clause binds to its row's signal.
+    use super::*;
+
+    fn pattern_records(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        statements.push(ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_signal_constraints(&statements, &mut counter)
+    }
+
+    /// The defect: a sentence that states no kind at all published one. Reproduces the live AXI
+    /// `sigcon_0008`–`0011` shape (a presence table cell) on invented names.
+    #[test]
+    fn a_statement_that_names_no_kind_yields_no_constraint() {
+        let records = pattern_records(
+            "| Manager: False | ZETACHUNKEN is not present. ZETACHUNKV is not present. |",
+            &["ZETACHUNKEN", "ZETACHUNKV"],
+        );
+        assert!(
+            records.is_empty(),
+            "a statement naming no kind states no typed constraint: {records:?}"
+        );
+    }
+
+    /// The same refusal on the other live shape — a recommendation the document explicitly marks as
+    /// NOT required (APB `sigcon_0007`).
+    #[test]
+    fn a_recommendation_that_names_no_kind_yields_no_constraint() {
+        let records = pattern_records(
+            "It is recommended, but not required, that ZETASLVERR is driven LOW when ZETASEL is LOW.",
+            &["ZETASLVERR", "ZETASEL"],
+        );
+        assert!(records.is_empty(), "{records:?}");
+    }
+
+    /// The control that keeps the refusal from swallowing the vocabulary: an obligation that DOES
+    /// name its kind is untouched, including the stability kind the default was impersonating.
+    #[test]
+    fn an_obligation_that_names_its_kind_still_extracts() {
+        for (text, expected) in [
+            ("ZETAADDR must be stable.", "must_be_stable"),
+            ("ZETASEL must be asserted.", "must_be_asserted"),
+            ("ZETASTRB must not change.", "must_not_change"),
+        ] {
+            let records = pattern_records(text, &["ZETAADDR", "ZETASEL", "ZETASTRB"]);
+            assert_eq!(
+                records
+                    .first()
+                    .unwrap_or_else(|| panic!("a record for {text}"))
+                    .constraint_kind
+                    .as_str(),
+                expected
+            );
+        }
+    }
+
+    /// The asymmetry itself, pinned where it lives: the row path's classifier still answers
+    /// `MustBeStable` for an obligation the phrase table cannot type, while the statement path's
+    /// asks a question the row path does not and gets `None`. `must have the same value …` is the
+    /// live APB shape — a real stability obligation with a spelling the table lacks (`.3k.2c`).
+    #[test]
+    fn the_row_path_fallback_is_unchanged_where_the_statement_path_refuses() {
+        let lowered =
+            "zetauser must have the same value in the setup and access phase of a transfer";
+        assert_eq!(
+            classify_signal_constraint_kind(lowered),
+            SignalConstraintKind::MustBeStable
+        );
+        assert_eq!(classify_signal_constraint_kind_typed(lowered), None);
     }
 }

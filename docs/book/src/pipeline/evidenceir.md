@@ -391,6 +391,42 @@ obligation twice: once in the `PSTRB` signal-description row above, and once in 
 those two places independently, and they now produce the same typed constraint. Before this change
 they disagreed, and the disagreement was the defect rather than a real ambiguity in the specification.
 
+## An obligation that names no kind states no constraint
+
+The constraint vocabulary has a fixed set of kinds — stable, high, low, asserted, deasserted, must
+not change, a named value. When a sentence matches none of them, SpecForge used to publish the first
+one anyway: `must_be_stable`, the terminal fallback.
+
+That is not a default. It is an assertion about a signal, and the sentences it fired on say nothing
+of the sort:
+
+```text
+| Manager: False | ARCHUNKEN is not present. RCHUNKV is not present. |
+It is recommended, but not required, that PSLVERR is driven LOW when PSEL, PENABLE, or PREADY are LOW.
+- T1 FREADY signal remains HIGH.
+```
+
+A presence table cell, a recommendation the document explicitly marks as *not required*, and a
+waveform step. Every one of them published a signal that "must be stable". Read against source, every
+live record on that fallback was wrong.
+
+The statement path now refuses instead. The sentence stays counted as a normative statement no typed
+record cites — an honest residual, which is what keeps the gap visible rather than filling it with a
+fact the document does not contain.
+
+**The table-row reader keeps the fallback, and the difference is the point.** Before it classifies
+anything, that reader has already proved the clause binds to its own row's signal — English binds an
+obligation to the nominal immediately before its modal, and a clause that fails that test is dropped.
+So when its classifier finds no phrase, what it is holding is a real obligation about a known signal
+written in a spelling the table lacks:
+
+```text
+| PAUSER | ... | PAUSER must have the same value in the Setup and Access phase of a transfer. |
+```
+
+That IS a stability requirement. The statement path has no such proof and cannot tell that case from
+a waveform caption, so the two paths answer differently on purpose.
+
 ## A bound stated against another operand is not a value
 
 The constraint vocabulary can say *"this signal must be `HIGH`"*, *"must be stable"*, *"must not
