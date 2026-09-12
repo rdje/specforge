@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](../tasks/FSMGEN-SUBMODULE-BUMP.md) |
 | `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](../tasks/FULL-PAGE-INTENT-CAPTURE.md) |
 | `GRITS-CROSS-TOOL` | `done` | a table-structure gold from independent-witness agreement | [open](../tasks/GRITS-CROSS-TOOL.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | schema-constrained + verified extraction (point #6 — the crux, continuous) | [open](../tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
 | `R16-CONTRACT-IR` | `done` | typed timed-contract IR layer (point #1) | [open](../tasks/R16-CONTRACT-IR.md) |
 | `R16-INTENT-CAPTURE` | `done` | SOTA design-intent capture (program umbrella) | [open](../tasks/R16-INTENT-CAPTURE.md) |
-| `R16-KG-PROTOCOL-ONTOLOGY` | `done` | protocol-structured knowledge graph (point #2) | [open](../tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
 

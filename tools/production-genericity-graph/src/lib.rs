@@ -72,7 +72,10 @@ mod tests {
     /// runs the full suite before a push, not per commit), the pins drifted by +18 functions,
     /// +179 helper edges, +226 decision sites and +3 semantic macros before anything noticed.
     /// Re-pinned at that measured truth; the gap between the printing gate and the comparing test
-    /// is the tree's own frontier.
+    /// is the tree's own frontier. Moved again by `ACTOR-NOUN-RELATION-DECLARATION.1` (+1 function,
+    /// +4 helper edges, +5 decision sites for one predicate at three call sites) — the second slice
+    /// in a row to add a single predicate and have to edit this contract to land, which is the
+    /// evidence `.1` of that tree needs before choosing between an exact pin and a declared band.
     #[test]
     fn current_repository_flow_is_complete_local_and_deterministic() {
         let root = repository_root();
@@ -92,9 +95,9 @@ mod tests {
         assert_eq!(first.trusted_regions, 11);
         assert_eq!(first.non_authoritative_regions, 6);
         assert_eq!(first.protected_types, 15);
-        assert_eq!(first.analyzed_functions, 2_399);
-        assert_eq!(first.helper_edges, 14_946);
-        assert_eq!(first.decision_sites, 12_943);
+        assert_eq!(first.analyzed_functions, 2_400);
+        assert_eq!(first.helper_edges, 14_950);
+        assert_eq!(first.decision_sites, 12_948);
         assert_eq!(first.protected_constructions, 19);
         assert_eq!(first.protected_calls, 28);
         assert_eq!(first.semantic_macros, 1_469);

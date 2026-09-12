@@ -4785,6 +4785,45 @@ fn parse_table_width_hint_text(text: &str) -> Option<WidthHint> {
     None
 }
 
+/// ACTOR-NOUN-RELATION-DECLARATION.1 — an INFERRED declaration must not mint an ordinary word.
+///
+/// Two passes declare a signal the document never listed in a table: the relation→declaration path
+/// (`synthesize_declarations_from_relations`) and the two prose appositive forms. They are
+/// load-bearing rather than incidental — they are the ONLY source of every signal I2C and I2S
+/// declare, and of twelve SWD/JTAG wires in ADIv6 — so the question is not whether to trust them but
+/// what they must never mint.
+///
+/// Measured over the whole corpus (`scripts/measure_untabled_signal_declarations.py`): of the 53
+/// current declarations with no table provenance, 3 are phantoms — `Manager`, `Reset`, `In`. The
+/// obvious rule, refusing a name the actor taxonomy resolves, catches only `Manager`: `Reset` is a
+/// signal *function* (this document's real reset is `HRESETn`) and `In` is a preposition. What the
+/// three share is orthography — an initial capital over an all lower-case remainder — which selects
+/// **3 of 3** and **0 of the 1,605** distinct table-declared names in either stratum.
+///
+/// **Spelling, not vocabulary** (ADR 0006): this cannot tell what `Manager` means, only that it is
+/// spelled the way English spells a word rather than the way a document spells a wire. A single
+/// letter is not a word and is left alone.
+///
+/// **The limit, stated rather than hidden**: nothing forbids a document from naming a wire `Clk`.
+/// Nothing in this corpus does, but that is a fact about the corpus and not a law. What makes the
+/// test safe to act on is where it is NOT applied — never to a table declaration, where the
+/// document's own spelling is authoritative and this reader has no business overruling it. Every
+/// call site below is an inference; `synthesize_signal_declarations` deliberately has none.
+fn inferred_name_is_an_ordinary_word(name: &str) -> bool {
+    let mut characters = name.chars();
+    let Some(first) = characters.next() else {
+        return false;
+    };
+    if !first.is_ascii_uppercase() {
+        return false;
+    }
+    let mut rest = characters.peekable();
+    if rest.peek().is_none() {
+        return false;
+    }
+    rest.all(|character| character.is_ascii_lowercase())
+}
+
 /// Tier 2: Extract actor–signal relation triples from prose sentences using
 /// verb-pattern matching.  Only sentences that mention a known signal name are
 /// processed, keeping precision high.
@@ -5150,6 +5189,12 @@ fn synthesize_directions_from_relations(
         // declaration, so it is the one path that can mint a name the document never declared.
         // A placeholder standing for a family of declared signals is not a wire.
         if is_alpha_variant_placeholder(&rel.signal_name, declared_from_tables) {
+            continue;
+        }
+        // ACTOR-NOUN-RELATION-DECLARATION.1 — the relation extractor can mistake the sentence's
+        // ACTOR for its signal (`Manager`), or capture an ordinary word (`Reset`, `In`). An inferred
+        // name spelled like a word is not a wire.
+        if inferred_name_is_an_ordinary_word(&rel.signal_name) {
             continue;
         }
         // One declaration per unique signal name — direction = output (from the driving actor).
@@ -10969,7 +11014,12 @@ fn synthesize_signal_declarations_from_prose(
             let token: String = cand
                 .trim_matches(|c: char| !c.is_ascii_alphanumeric() && c != '_')
                 .to_string();
-            if !is_hardware_signal_token(&token) || !seen.insert(token.clone()) {
+            // ACTOR-NOUN-RELATION-DECLARATION.1 — an appositive is inferred, so an ordinary word
+            // in the signal position is not a declaration.
+            if !is_hardware_signal_token(&token)
+                || inferred_name_is_an_ordinary_word(&token)
+                || !seen.insert(token.clone())
+            {
                 continue;
             }
             *statement_counter += 1;
@@ -11031,6 +11081,7 @@ fn synthesize_signal_declarations_from_prose(
             // real lines ("serial data line (SDA)", "serial clock (USCL)", "high-speed data (SDAH)") and
             // drops those over-captures. General grammar, universal vocabulary (ADR 0006).
             if !parenthetical_head_has_single_wire_authority(&words, i, open)
+                || inferred_name_is_an_ordinary_word(&token)
                 || !seen.insert(token.clone())
             {
                 continue;
@@ -31556,6 +31607,92 @@ mod wire_based_100_5h {
             assert!(
                 !names.contains(&presence),
                 "a presence-property column is not the name column, got {names:?}"
+            );
+        }
+    }
+
+    /// ACTOR-NOUN-RELATION-DECLARATION.1 — the relation path itself, which is where the phantom
+    /// entered. `Manager` is AHB's real case: a sentence whose ACTOR was captured as its signal.
+    ///
+    /// Observed RED without the guard: the same relations yield
+    /// `["Signal Manager is output.", "Signal Reset is output.", "Signal SWCLK is output."]`.
+    #[test]
+    fn a_relation_naming_an_ordinary_word_declares_nothing() {
+        use crate::ir::source::{
+            ActorSignalRelation, AutomationConfidence, RelationKind, WidthHint,
+        };
+
+        let relation = |name: &str| ActorSignalRelation {
+            relation_id: format!("asr_{name}"),
+            actor_name: "subordinate".to_string(),
+            signal_name: name.to_string(),
+            relation: RelationKind::Drives,
+            source_statement_ids: vec!["s1".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        // `Manager` and `Reset` are the phantoms; `SWCLK` is a wire this path is the ONLY source of.
+        let relations = vec![relation("Manager"), relation("Reset"), relation("SWCLK")];
+        let mut counter = 0usize;
+        let stmts = synthesize_directions_from_relations(
+            &relations,
+            &std::collections::HashSet::new(),
+            &std::collections::HashSet::new(),
+            &std::collections::HashMap::<String, WidthHint>::new(),
+            &mut counter,
+        );
+        let texts: Vec<&str> = stmts.iter().map(|s| s.text.as_str()).collect();
+        assert_eq!(
+            texts,
+            vec!["Signal SWCLK is output."],
+            "only the wire may be declared"
+        );
+    }
+
+    /// ACTOR-NOUN-RELATION-DECLARATION.1 — the orthographic test, on every name the census listed.
+    ///
+    /// The refused three are the corpus's whole phantom population among inferred declarations. The
+    /// kept list is not a sample: it is every distinct name from the 24 declarations for which an
+    /// inference is the SOLE source of the signal (ADIv6, I2C, I2S), plus the two shapes a table
+    /// declaration uses, because those must be unreachable by this test even in principle.
+    #[test]
+    fn an_inferred_name_spelled_like_a_word_is_not_a_wire() {
+        for word in ["Manager", "Reset", "In"] {
+            assert!(
+                inferred_name_is_an_ordinary_word(word),
+                "{word:?} is spelled like an ordinary word"
+            );
+        }
+        for wire in [
+            // Every distinct sole-source name the census found.
+            "SWCLK",
+            "SWDIO",
+            "TDI",
+            "TDO",
+            "DBGTDO",
+            "nSRST",
+            "nSRSTOUT",
+            "PORTCONNECTED",
+            "CSYSPWRUPACK",
+            "SCL",
+            "SCLH",
+            "SDA",
+            "SDAH",
+            "USCL",
+            "USDA",
+            "SCK",
+            "SD",
+            // Shapes a table declares: a checked pair, a lower-case family, an indexed name.
+            "PADDRCHK",
+            "HRESETn",
+            "qactive_cg",
+            "AMEVCNTRn_EL0",
+            "PSELx",
+            "A",
+            "a",
+        ] {
+            assert!(
+                !inferred_name_is_an_ordinary_word(wire),
+                "{wire:?} is a signal name and must survive"
             );
         }
     }

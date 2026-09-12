@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PROSE-NAME-CELL-DECLARATION`
-- Status: `active` (`2026-09-12`; `.0`, `.1`, `.2`, `.4` done; `.3` deferred on a measured blocker)
+- Status: `active` (`2026-09-12`; `.0`, `.1`, `.2`, `.4` done; `.3` pending — its blocker cleared)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-11`
 - Last updated: `2026-09-12`
@@ -94,8 +94,10 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
   entirely, reusing `.0`'s shape taxonomy. Scoring only; no row's declaration changes by this test.
   Commit: `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`
 
-- ID: `PROSE-NAME-CELL-DECLARATION.3` · Status: `deferred` (`2026-09-12`, by its own adjudication;
-  blocked on `[[ACTOR-NOUN-RELATION-DECLARATION]]`) · Goal: **a width cell that is a sentence is
+- ID: `PROSE-NAME-CELL-DECLARATION.3` · Status: `pending` (`2026-09-12`; deferred by its own
+  adjudication and **unblocked the same day** — `[[ACTOR-NOUN-RELATION-DECLARATION]]`.1 removed the
+  phantom `Manager`/`Reset` declarations whose widths were this leaf's only live population, so
+  re-measure before re-applying: the rule text, margin and controls are recorded below) · Goal: **a width cell that is a sentence is
   not a parametric width.** `infer_signal_table_row_width_hint` accepted
   `The bus clock times all bus transfers. All signal timings are related to the rising edge of HCLK .
   See Clock on page 7-72.` as `WidthHint::Parametric`, producing
@@ -466,10 +468,11 @@ changes how the defect looks.**
 
 ## Current Frontier
 
-No eligible leaf. `.3` is the only one left and it is **deferred on a measured blocker**: its rule is
-written, measured and observed RED, and its only live effect in the corpus is to make an existing
-phantom declaration well-formed, which takes AHB's IntentIR interface count from 42 to 62. The blocker
-is `[[ACTOR-NOUN-RELATION-DECLARATION]]`; when that closes, re-measure and ship `.3`.
+1. `PROSE-NAME-CELL-DECLARATION.3` — **unblocked.** It was deferred because applying it made the phantom
+   `Manager` declaration well-formed and took AHB's interface count from 42 to 62;
+   `[[ACTOR-NOUN-RELATION-DECLARATION]]`.1 has since removed that declaration entirely, so the effect it
+   was blocked on cannot occur. **Re-measure before re-applying** — the six prose width cells were
+   measured against the old artifacts, and two of them belonged to statements that no longer exist.
 
 ## Decisions
 

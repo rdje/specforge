@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `ACTOR-NOUN-RELATION-DECLARATION`
-- Status: `active` (`2026-09-12`; `.0` done — and it reframed the tree; `.1` open)
+- Status: `active` (`2026-09-12`; `.0` and `.1` done; the tree's own goal is met, one downstream finding is tracked elsewhere)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-12`
 - Last updated: `2026-09-12`
@@ -96,7 +96,7 @@ phantom. Fix the cause, then `.3` becomes free.
   Verification: read-only; no artifact written or mutated.
   Commit: `ACTOR-NOUN-RELATION-DECLARATION.0`
 
-- ID: `ACTOR-NOUN-RELATION-DECLARATION.1` · Status: `pending` · Goal: **refuse a relation- or
+- ID: `ACTOR-NOUN-RELATION-DECLARATION.1` · Status: `done` (`2026-09-12`) · Goal: **refuse a relation- or
   prose-derived declaration whose name is spelled like an ordinary word**, not one that resolves to an
   actor role. `.0` measured that the role test catches 1 of the 3 phantoms and the orthographic test
   catches 3 of 3 at zero measured cost.
@@ -108,13 +108,46 @@ phantom. Fix the cause, then `.3` becomes free.
   adjudicated; AHB's chain rebuilt and its interface/constraint counts compared before and after,
   because `PROSE-NAME-CELL-DECLARATION.3` measured that this document's downstream is sensitive to
   exactly these statements. Then re-measure and unblock `PROSE-NAME-CELL-DECLARATION.3`.
+  Shipped as `inferred_name_is_an_ordinary_word`, applied at all three inference sites and at none of
+  the table sites. Result below.
+  Commit: `ACTOR-NOUN-RELATION-DECLARATION.1`
+
+## Acceptance Checklist (enforced)
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_untabled_signal_declarations.py`: 53 current
+  declarations with no table provenance; 26 duplicate, 24 sole-source, **3 spelled like an ordinary
+  word** (`Manager`, `Reset`, `In`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`
+  `synthesize_directions_from_relations` and the two prose appositive emitters: each mints a
+  declaration from an INFERRED name and guards only `is_alpha_variant_placeholder`.
+  `cargo test -p specforge-core --lib a_relation_naming_an_ordinary_word_declares_nothing` reproduces
+  it exactly — `["Signal Manager is output.", "Signal Reset is output.", "Signal SWCLK is output."]`.
+- [x] **ADDRESSED (verified)** — measured on rebuilt artifacts, not assumed. AHB: 2 phantoms gone,
+  declarations 79 → 79, **interfaces unchanged at 42**, conditional rules **29 → 37** with all 29
+  pre-existing rules byte-identical and every new rule resolving to a real signal. ADIv6: `In` gone,
+  interfaces 21 → 14 (all 7 lost are phantom groupings), 44 constraints keep their id and shed only
+  phantom anchors, `PORTCONNECTED` still declared. Corpus-wide there is now no inferred declaration
+  spelled like an ordinary word.
+- [x] **NO REGRESSION** — `cargo test` 472 / 168 / **1421** / 4 green (the last after re-pinning the
+  production-graph census, `PRODUCTION-GRAPH-CENSUS-PIN`); `cargo fmt --check` and
+  `cargo clippy --all-targets -D warnings` green; `scripts/check_doctrines.sh` green;
+  `scripts/check_chain_currency.sh` current across all four stages with retention at the declared 24.
+  **The one cost is stated, not hidden**: 13 ADIv6 invariants anchored solely to the phantom vanish
+  with no record — shipped deliberately, tracked as `[[ANCHORLESS-INVARIANT-DROP]]`.
+- [x] **GENERICITY (ADR 0006)** — the test reads orthography (an initial capital over an all
+  lower-case remainder), never meaning. It is applied only where a name was inferred and at no table
+  site, and the control pins both the refused and the kept shapes under that rule.
+- [x] **LOCKSTEP** — the mdBook's EvidenceIR chapter describes the table declaration reader and the
+  relation path's `is_alpha_variant_placeholder` guard; it makes no claim about what an inferred name
+  may be, so no book text became false. No production rule was deleted or replaced. Task trees and
+  `MEMORY.md` updated; the new finding has its own tree.
 
 ## Current Frontier
 
-Ordered; PNT selects the first eligible leaf.
-
-1. `ACTOR-NOUN-RELATION-DECLARATION.1` — the orthographic refusal, on the two untabled paths only.
-   Closing it also unblocks `PROSE-NAME-CELL-DECLARATION.3`.
+No eligible leaf: `.0` and `.1` are done and the tree's goal is met — no inferred declaration in the
+corpus now mints an ordinary word. Two things it uncovered are tracked elsewhere and neither belongs
+here: `[[ANCHORLESS-INVARIANT-DROP]]` (13 ADIv6 invariants lost their only anchor and vanished with no
+record) and `PROSE-NAME-CELL-DECLARATION.3`, which this leaf **unblocks**.
 
 ## `.0` — census result (`2026-09-12`)
 
@@ -163,6 +196,43 @@ makes it safe to act on is containment: the rule applies only where a name was *
 table declaration, where the document's own spelling is authoritative and this reader has no business
 overruling it.
 
+## `.1` — result (`2026-09-12`)
+
+`inferred_name_is_an_ordinary_word` at three sites: the relation→declaration path and both prose
+appositive forms. **Not** at `synthesize_signal_declarations`, and that omission is the safety argument
+rather than an oversight — a table declaration is the document's own spelling.
+
+### Corpus effect, measured on rebuilt artifacts
+
+Two documents were affected, and both were rebuilt rather than left stale.
+
+**AHB** — `Manager` and `Reset` removed; table declarations unchanged at 79; **interfaces unchanged at
+42**, so neither phantom was holding a real grouping together. And a recovery nobody predicted:
+**conditional rules 29 → 37**, with all 29 pre-existing rules byte-identical. All 8 new rules carry
+`Manager` in their `source_text` — sentences such as *"During a waited transfer, the Manager is
+permitted to change the transfer type…"* — and their `consequent_signal` now resolves to the real
+`HTRANS` and `HRDATA`. While `Manager` was a declared signal those sentences resolved to the phantom
+and the rule was lost. **Removing a phantom recovered eight real requirements.**
+
+**ADIv6** — `In` removed; interfaces **21 → 14**, and every one of the 7 lost is an `…in…` grouping
+built on the phantom. Of the 57 constraints that moved, **44 keep their id** and shed only the
+phantom-bearing entries from `related_interface_ids`, keeping their real ones. `PORTCONNECTED` stays
+declared; it loses its only grouping, which was a pairing with the phantom and therefore never an
+interface.
+
+### The cost, stated rather than buried
+
+**13 invariants vanish**, and nothing records it. Their ids show why they were exposed —
+`constraint_invariant_in_the_capture_dr_state_…`, `…in_the_update_dr_state_…` — these are real JTAG
+requirements whose sentences *begin with the word "In"*, which is what minted the phantom from them.
+They were anchored to nothing else, so they left with it.
+
+Shipped anyway, and the reasoning is on the record: an invariant anchored to a wire that does not exist
+was never correctly anchored, and asking a downstream consumer to synthesise a port called `In` is worse
+than a recorded gap. The gap is now recorded as `[[ANCHORLESS-INVARIANT-DROP]]`, which also notes that
+this contradicts `SPEC-TO-INTENT-ALIGNMENT`'s "zero unexplained drops" — that claim is scoped to a
+reviewed population, and the mechanism has no accounting at all.
+
 ## Decisions
 
 - `2026-09-12` — **opened as its own tree rather than a leaf of `PROSE-NAME-CELL-DECLARATION`.** That
@@ -190,6 +260,16 @@ None.
 
 ## Verification Log
 
+- `2026-09-12` — `.1`. Controls, **observed RED**: `a_relation_naming_an_ordinary_word_declares_nothing`
+  yields `["Signal Manager is output.", "Signal Reset is output.", "Signal SWCLK is output."]` without
+  the guard and `["Signal SWCLK is output."]` with it — the wire this path is the only source of
+  survives while both phantoms go. `an_inferred_name_spelled_like_a_word_is_not_a_wire` pins the shape
+  over **every** distinct sole-source name the census found, not a sample, plus the table shapes the
+  test must never reach (`HRESETn`, `qactive_cg`, `AMEVCNTRn_EL0`, `PSELx`, a single letter).
+  `cargo test` 472 / 168 / **1421** / 4 green; fmt and clippy `-D warnings` green.
+  Chain: AHB rebuilt via the preserved bundle (byte-identical before and after, retention still the
+  declared 24) and ADIv6 rebuilt directly from its retained bundle, both in the interleaved order with
+  exactly one validate per artifact; `scripts/check_chain_currency.sh` current afterwards.
 - `2026-09-12` — `.0`. `python3 scripts/measure_untabled_signal_declarations.py` over all 78 persisted
   EvidenceIR artifacts. Read-only: nothing written, rebuilt or mutated. The taxonomy mirror is
   `builtin_actor_taxonomy_role_in_text` transcribed with its `normalize_actor_term` /
@@ -199,10 +279,15 @@ None.
 ## Commit Log
 
 - Opened in the commit that deferred `PROSE-NAME-CELL-DECLARATION.3` (`3df80f4e`).
-- `.0` — `ACTOR-NOUN-RELATION-DECLARATION.0`.
+- `.0` — `ACTOR-NOUN-RELATION-DECLARATION.0` (`792ad79b`).
+- `.1` — `ACTOR-NOUN-RELATION-DECLARATION.1`.
 
 ## Changelog
 
+- `2026-09-12` — `.1` closed. `inferred_name_is_an_ordinary_word` at three inference sites removes all
+  three phantoms. AHB: interfaces unchanged, **+8 real conditional rules** recovered. ADIv6: 7 phantom
+  interfaces gone, 44 constraints keep their id and shed only phantom anchors, **13 invariants vanish
+  unrecorded** — tracked as `[[ANCHORLESS-INVARIANT-DROP]]`. Unblocks `PROSE-NAME-CELL-DECLARATION.3`.
 - `2026-09-12` — `.0` closed. The path is the sole source of 24 current signals (all of I2C's and
   I2S's), so a careless rule is worse than the defect. The proposed actor-role test catches 1 of 3
   phantoms; an orthographic test catches 3 of 3 at zero measured cost. `.1` opened on the latter.

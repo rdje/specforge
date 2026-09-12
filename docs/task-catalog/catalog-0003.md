@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `R16-KG-PROTOCOL-ONTOLOGY` | `done` | protocol-structured knowledge graph (point #2) | [open](../tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
 | `R16-MODULE-HARDENING` | `done` | unit-test signoff hardening for the R16 IR modules | [open](../tasks/R16-MODULE-HARDENING.md) |
 | `R16-MULTIMODAL-CONTRACT-FUSION` | `done` | cross-modal evidence → one contract (point #3) | [open](../tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
 | `R16-WAVEFORM-CONTRACT-MINING` | `done` | timing diagram → contract (point #4 — the crux) | [open](../tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
