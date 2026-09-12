@@ -331,6 +331,52 @@ The boundary is strict:
 - corpus KB pages can inform humans, future LLM sessions, benchmark design, and prior-candidate design
 - corpus KB pages cannot directly mutate canonical IR or become typed priors without a separate validation-gated promotion path
 
+## `replay-constraints`
+
+```bash
+cargo run -- replay-constraints generated/evidence_ir/<doc>/evidence_ir.json
+cargo run -- replay-constraints generated/evidence_ir/<doc>/evidence_ir.json --json
+```
+
+Answers one question about a persisted artifact: **does today's extractor still produce the
+constraints this artifact publishes?**
+
+That is not the same question as "what does the artifact contain", and the difference is easy to
+miss. A persisted artifact is frozen at the code generation that wrote it, and most of them cannot be
+rewritten: the evidence stage reads a document's normalized bundle, and only 24 of the 78 corpus
+documents keep one. So a count taken over `generated/` measures what SpecForge **published**, which
+drifts away from what its current code **does** every time an extraction rule changes.
+
+The command closes that gap without rebuilding anything, because the deterministic constraint surface
+is a function of the artifact's own statements rather than of the source document. It re-runs the
+real producer over `extracted_statements` and compares by the producer's own record identity —
+subject, kind, value, condition, negation and source text, never the ids.
+
+```text
+command: replay-constraints
+persisted_deterministic_records: 16
+reproduced: 4
+not_reproduced: 12
+not_reproduced: sigcon_0002 OAS must_be_stable — EXTRACTION-QUALITY-GAUGE.3k.1 reference-magnitude, CORPUS-COVERAGE.2.50a post-passive-binding-only
+```
+
+Each record that no longer comes out is listed with the gate that stands in its way, so a published
+record can be attributed to the rule that retired it rather than guessed at.
+
+Two properties make the output usable:
+
+- **A published subject the artifact no longer declares is still granted its trial.** The replay adds
+  a declaration for it first, so "not reproduced" can never quietly mean "the catalog shrank" — and
+  the granted names are printed, because a shrinking catalog is itself worth seeing.
+- **The verdict is asymmetric, and the command says so.** "Not reproduced" is sound: a widened
+  catalog can only admit more subjects. The opposite direction is not, because the build applies
+  convergence stages this replay does not, so `unpersisted_replay_records` is evidence to read rather
+  than a number to quote.
+
+Calibration: artifacts the current binary itself wrote reproduce completely — APB 15/15 and AHB
+13/13. Across the corpus the figure is **144 of 179**, so roughly one published deterministic
+constraint in five is no longer what this code would produce.
+
 ## `corpus-cluster`
 
 Specifications from the same source tend to be *organised* the same way — the

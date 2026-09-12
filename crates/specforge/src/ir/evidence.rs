@@ -9753,6 +9753,199 @@ fn extract_normative_signal_constraints(
     records
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3k.6 — the verdict for ONE persisted constraint record: does the current
+/// producer still mint it from the statements the artifact itself carries?
+///
+/// The question exists because the persisted corpus is not one code generation. Only 24 of the 78
+/// documents keep a normalized bundle, so the rest cannot have their evidence stage re-run and their
+/// artifacts are frozen at whatever generation wrote them. A census over `generated/` therefore
+/// measures what SpecForge PUBLISHED, which is a different number from what today's extractor does —
+/// `EXTRACTION-QUALITY-GAUGE.3k.1` sized itself on four published records and found that the current
+/// extractor reproduces none of them.
+#[derive(Debug, Clone, Serialize)]
+pub struct ConstraintReplayVerdict {
+    pub constraint_id: String,
+    pub subject_signal: String,
+    pub constraint_kind: String,
+    /// Whether the replay produced a record with this record's exact merge identity (subject, kind,
+    /// value, condition, negation and source text — everything but the ids).
+    pub reproduced: bool,
+    /// Which of the positional subject gates refuses this record's `(source text, subject)` pair
+    /// today. Only meaningful when `reproduced` is false, and only ever a hint: a record can also
+    /// fail to reproduce because its kind, condition or negation moved.
+    pub refused_by: Vec<&'static str>,
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3k.6 — what a whole artifact's deterministic constraint surface looks
+/// like when the current producer is re-run over the statements that artifact carries.
+#[derive(Debug, Clone, Serialize)]
+pub struct ConstraintReplayReport {
+    pub verdicts: Vec<ConstraintReplayVerdict>,
+    /// Deterministic records the artifact carries (`sigcon_*` + `dyn_sigcon_*`).
+    pub persisted_total: usize,
+    /// Records the replay produced.
+    pub replayed_total: usize,
+    /// Published subjects the artifact's own statements no longer declare, which this replay granted
+    /// a synthetic declaration so their records could still be judged. A non-empty list means the
+    /// document's catalog has moved, and is itself a finding.
+    pub granted_declarations: Vec<String>,
+    /// Records this replay mints that the artifact does not carry. **This is not a drift measure and
+    /// must never be read as one.** The build applies convergence stages after this producer —
+    /// alias resolution, the table-row pass, cross-pass dedup — and this replay deliberately runs a
+    /// WIDENED catalog, so both effects add records here that the real build never published. The
+    /// count is reported rather than hidden, with its meaning stated, because silently dropping the
+    /// other direction would be the same "clean-looking silence" this instrument exists to end.
+    pub unpersisted_replay_records: Vec<ConstraintReplayVerdict>,
+}
+
+/// The positional subject gates, by the name of the leaf that installed each one. Every entry calls
+/// the REAL predicate: a mirror of the rule would answer a question about itself
+/// (`CLAIM_VERIFICATION.md` §2), which is exactly the failure this instrument exists to prevent.
+fn refusing_subject_gates(text: &str, subject: &str) -> Vec<&'static str> {
+    let mut refused = Vec::new();
+    if is_relational_equality_constraint(text) {
+        refused.push("EXTRACTION-QUALITY-GAUGE.3d relational-equality");
+    }
+    if is_reference_magnitude_constraint(text) {
+        refused.push("EXTRACTION-QUALITY-GAUGE.3k.1 reference-magnitude");
+    }
+    if is_descriptive_field_cell_spurious_subject(text, subject) {
+        refused.push("EXTRACTION-QUALITY-GAUGE.3e descriptive-field-cell");
+    }
+    if is_dotted_cross_reference_subject(text, subject) {
+        refused.push("EXTRACTION-QUALITY-GAUGE.3g dotted-cross-reference");
+    }
+    if is_post_passive_binding_only_subject(text, subject) {
+        refused.push("CORPUS-COVERAGE.2.50a post-passive-binding-only");
+    }
+    if is_value_position_subject(text, subject) {
+        refused.push("EXTRACTION-QUALITY-GAUGE.3h value-position");
+    }
+    if is_descriptive_narration_binding(text) {
+        refused.push("EXTRACTION-QUALITY-GAUGE.3c descriptive-narration");
+    }
+    refused
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3k.6 — re-run the deterministic constraint producer over an artifact's
+/// own persisted statements and say, per published record, whether it still comes out.
+///
+/// Read-only and offline: no provider, no document, no write. The three inputs are exactly the three
+/// the producer needs and all three are persisted, which is why this works for the 54 documents that
+/// cannot be rebuilt — the constraint surface is a function of the STATEMENTS, not of the PDF.
+///
+/// **The catalog is deliberately a SUPERSET, and that makes the verdict ASYMMETRIC.** Every published
+/// subject the artifact's statements no longer declare is granted a synthetic `Signal <name> is …`
+/// declaration statement — the same form the build's own table seed emits — so a NOT-REPRODUCED
+/// verdict can never be an artifact of a catalog that has since shrunk: the record failed to reappear
+/// even when its subject was granted, and a wider catalog can only admit more subjects, never
+/// withdraw one. That direction is therefore sound and is the one to act on. The
+/// opposite direction is not: a record the replay mints and the artifact lacks may simply be one the
+/// build's later convergence stages removed, so [`ConstraintReplayReport::unpersisted_replay_records`]
+/// is evidence to read, not a number to quote.
+///
+/// Calibrated against artifacts the current binary did write: APB reproduces 15/15 and AHB 13/13,
+/// both rebuilt by `EXTRACTION-QUALITY-GAUGE.3i`. Corpus-wide the figure is 120 of 179 — a third of
+/// the published deterministic constraint surface is not what this code would produce today.
+pub fn replay_persisted_signal_constraints(
+    statements: &[ExtractedStatement],
+    persisted: &[SignalConstraintRecord],
+    signal_polarities: &[SignalPolarityRecord],
+) -> ConstraintReplayReport {
+    // Widen the catalog the way the BUILD widens it — with declaration STATEMENTS, not with a set
+    // the extractors never read. Both deterministic paths derive their own catalog from the
+    // statements they are handed (`collect_known_signal_names` inside each), so seeding a name into
+    // a `HashSet` here would reach only the inference-antecedent sibling and quietly leave the two
+    // paths that matter judging a record whose subject their catalog no longer holds. The synthetic
+    // declarations use the same `Signal <name> is …` form the build's own table seed emits, and
+    // carry no binding verb, so the dynamic path mints nothing from them.
+    let mut statements = statements.to_vec();
+    let already_declared = collect_known_signal_names(&statements);
+    let mut granted: BTreeSet<String> = BTreeSet::new();
+    for record in persisted {
+        if !already_declared.contains(&record.subject_signal) {
+            granted.insert(record.subject_signal.clone());
+        }
+    }
+    for (index, name) in granted.iter().enumerate() {
+        statements.push(ExtractedStatement {
+            statement_id: format!("replay_declaration_{index:04}"),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: format!("Signal {name} is input width 1."),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+    }
+    let statements = statements.as_slice();
+    let declared = collect_known_signal_names(statements);
+    let discovered = collect_discovered_enum_values(&[statements]);
+    let polarity: HashMap<String, SignalPolarity> = signal_polarities
+        .iter()
+        .map(|record| (record.signal_name.clone(), record.polarity))
+        .collect();
+
+    let mut counter = 1usize;
+    let replayed = extract_normative_signal_constraints(
+        statements,
+        &declared,
+        &discovered,
+        &polarity,
+        &mut counter,
+    );
+    let replayed_keys: HashSet<String> = replayed.iter().map(signal_constraint_merge_key).collect();
+
+    let deterministic: Vec<&SignalConstraintRecord> = persisted
+        .iter()
+        .filter(|record| {
+            record.constraint_id.starts_with("sigcon_")
+                || record.constraint_id.starts_with("dyn_sigcon_")
+        })
+        .collect();
+    let persisted_keys: HashSet<String> = deterministic
+        .iter()
+        .map(|record| signal_constraint_merge_key(record))
+        .collect();
+
+    let verdicts = deterministic
+        .iter()
+        .map(|record| {
+            let reproduced = replayed_keys.contains(&signal_constraint_merge_key(record));
+            ConstraintReplayVerdict {
+                constraint_id: record.constraint_id.clone(),
+                subject_signal: record.subject_signal.clone(),
+                constraint_kind: record.constraint_kind.as_str().to_string(),
+                reproduced,
+                refused_by: if reproduced {
+                    Vec::new()
+                } else {
+                    refusing_subject_gates(&record.source_text, &record.subject_signal)
+                },
+            }
+        })
+        .collect();
+
+    let unpersisted_replay_records = replayed
+        .iter()
+        .filter(|record| !persisted_keys.contains(&signal_constraint_merge_key(record)))
+        .map(|record| ConstraintReplayVerdict {
+            constraint_id: record.constraint_id.clone(),
+            subject_signal: record.subject_signal.clone(),
+            constraint_kind: record.constraint_kind.as_str().to_string(),
+            reproduced: true,
+            refused_by: Vec::new(),
+        })
+        .collect();
+
+    ConstraintReplayReport {
+        persisted_total: deterministic.len(),
+        replayed_total: replayed.len(),
+        verdicts,
+        granted_declarations: granted.into_iter().collect(),
+        unpersisted_replay_records,
+    }
+}
+
 /// Whether an obligation's modal is explicitly negated (`must not`, `shall never`, `cannot`).
 /// `lowered` is already ASCII-lower-cased. Shared by every path that mints a
 /// `SignalConstraintRecord`, so one obligation reads the same however the record was reached.
@@ -35467,5 +35660,177 @@ mod extraction_quality_gauge_3k_1 {
         assert!(!is_reference_magnitude_constraint(
             "speeds greater than 1 MHz drive the controller"
         ));
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_6 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.6` — the replay that separates what SpecForge PUBLISHED from what
+    //! its current producer would mint. `.3k.1` sized itself on four published records and found the
+    //! current extractor reproduces none of them; only 24 of 78 documents can be rebuilt, so that is
+    //! a standing property of the corpus rather than one document's accident.
+    use super::*;
+
+    fn statement(id: &str, class: StatementClass, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn published(
+        id: &str,
+        subject: &str,
+        kind: SignalConstraintKind,
+        text: &str,
+    ) -> SignalConstraintRecord {
+        SignalConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_signal: subject.to_string(),
+            constraint_kind: kind,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: text.to_string(),
+            supporting_statement_ids: vec!["obligation".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    /// A record the current producer still mints comes back `reproduced`, and the identity compared
+    /// is the merge key — the published id never has to match the replay's.
+    #[test]
+    fn a_record_the_current_producer_still_mints_is_reproduced() {
+        let text = "ZETASTRB must be stable.";
+        let statements = vec![
+            statement(
+                "declare",
+                StatementClass::SourceFact,
+                "Signal ZETASTRB is input width 1.",
+            ),
+            statement("obligation", StatementClass::SignalValueConstraint, text),
+        ];
+        let persisted = vec![published(
+            "sigcon_0001",
+            "ZETASTRB",
+            SignalConstraintKind::MustBeStable,
+            text,
+        )];
+        let report = replay_persisted_signal_constraints(&statements, &persisted, &[]);
+        assert_eq!(report.persisted_total, 1);
+        assert!(report.verdicts[0].reproduced, "{:?}", report.verdicts);
+        assert!(report.verdicts[0].refused_by.is_empty());
+    }
+
+    /// The published-but-frozen shape, and the whole point of the instrument: AMBA DTI's record
+    /// survives in its artifact and no longer comes out, and the report names BOTH gates that stand
+    /// between that sentence and the record — the one this family added and the one that was already
+    /// there, which is what `.3k.1` had to discover by hand.
+    #[test]
+    fn a_published_record_the_current_producer_refuses_is_named_with_its_gates() {
+        let text = "The range given by this field must not be greater than the size indicated by \
+                    the ZETAOAS field of the ZETADTI\\_TBU\\_CONDIS\\_ACK message.";
+        let statements = vec![
+            statement(
+                "declare",
+                StatementClass::SourceFact,
+                "Signal ZETAOAS is input width 1.",
+            ),
+            statement("obligation", StatementClass::SignalValueConstraint, text),
+        ];
+        let persisted = vec![published(
+            "sigcon_0002",
+            "ZETAOAS",
+            SignalConstraintKind::MustBeStable,
+            text,
+        )];
+        let report = replay_persisted_signal_constraints(&statements, &persisted, &[]);
+        let verdict = &report.verdicts[0];
+        assert!(!verdict.reproduced);
+        assert!(
+            verdict
+                .refused_by
+                .contains(&"EXTRACTION-QUALITY-GAUGE.3k.1 reference-magnitude"),
+            "{:?}",
+            verdict.refused_by
+        );
+        assert!(
+            verdict
+                .refused_by
+                .contains(&"CORPUS-COVERAGE.2.50a post-passive-binding-only"),
+            "{:?}",
+            verdict.refused_by
+        );
+    }
+
+    /// The property that makes a NOT-REPRODUCED verdict worth acting on: the replay runs a catalog
+    /// WIDENED by every published subject, so a record whose subject no statement declares any more
+    /// still gets a fair trial. Without that, "not reproduced" would frequently mean "the catalog
+    /// shrank", which is a different finding entirely.
+    #[test]
+    fn a_subject_no_statement_declares_is_still_granted_its_trial() {
+        let text = "ZETAKEEP must be stable.";
+        // No `Signal ZETAKEEP is ...` statement: the document's catalog no longer declares it.
+        let statements = vec![statement(
+            "obligation",
+            StatementClass::SignalValueConstraint,
+            text,
+        )];
+        let persisted = vec![published(
+            "sigcon_0003",
+            "ZETAKEEP",
+            SignalConstraintKind::MustBeStable,
+            text,
+        )];
+        let report = replay_persisted_signal_constraints(&statements, &persisted, &[]);
+        assert!(
+            report.verdicts[0].reproduced,
+            "the published subject is admitted to the replay catalog: {:?}",
+            report.verdicts
+        );
+    }
+
+    /// Only the two deterministic strata are in scope. `row_sigcon_*` and `llm_sigcon_*` come from
+    /// producers this replay does not run, and reporting them as "not reproduced" would be the
+    /// producer-stratum error `[[constraint-record-producer-strata]]` records.
+    #[test]
+    fn only_the_deterministic_strata_are_judged() {
+        let text = "ZETASTRB must be stable.";
+        let statements = vec![
+            statement(
+                "declare",
+                StatementClass::SourceFact,
+                "Signal ZETASTRB is input width 1.",
+            ),
+            statement("obligation", StatementClass::SignalValueConstraint, text),
+        ];
+        let persisted = vec![
+            published(
+                "sigcon_0001",
+                "ZETASTRB",
+                SignalConstraintKind::MustBeStable,
+                text,
+            ),
+            published(
+                "row_sigcon_0001",
+                "ZETASTRB",
+                SignalConstraintKind::MustBeStable,
+                text,
+            ),
+            published(
+                "llm_sigcon_0001",
+                "ZETASTRB",
+                SignalConstraintKind::MustBeStable,
+                text,
+            ),
+        ];
+        let report = replay_persisted_signal_constraints(&statements, &persisted, &[]);
+        assert_eq!(report.persisted_total, 1);
+        assert_eq!(report.verdicts.len(), 1);
+        assert_eq!(report.verdicts[0].constraint_id, "sigcon_0001");
     }
 }

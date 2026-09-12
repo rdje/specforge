@@ -140,3 +140,5 @@ protected.evidence_ir	protected_type	canonical_authority	crates/specforge/src/ir
 protected.semantic_ir	protected_type	canonical_authority	crates/specforge/src/ir/semantic.rs#SemanticIr	registered_rule_construct
 protected.intent_ir	protected_type	canonical_authority	crates/specforge/src/ir/intent.rs#IntentIr	registered_rule_construct
 protected.adapter	protected_type	canonical_authority	crates/specforge/src/ir/adapters.rs#AdapterArtifact	registered_rule_construct
+diagnostic.constraint_replay	non_authoritative_root	raw_evidence	crates/specforge/src/ir/evidence.rs#replay_persisted_signal_constraints	diagnostics_only
+diagnostic.constraint_replay_gates	non_authoritative_root	raw_evidence	crates/specforge/src/ir/evidence.rs#refusing_subject_gates	diagnostics_only

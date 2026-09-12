@@ -51,7 +51,10 @@ mod tests {
         let root = repository_root();
         let first = analyze_repository(&root).expect("current production graph");
         let second = analyze_repository(&root).expect("repeat current production graph");
-        assert_eq!(first.inventory_files.len(), 79);
+        // 79 -> 80: EXTRACTION-QUALITY-GAUGE.3k.6 added crates/specforge/src/commands/replay_constraints.rs
+        // to doctrine/production_genericity/module_inventory.tsv. The literal is the guard — it fails
+        // closed on an unregistered module, which is exactly how that file's absence was caught.
+        assert_eq!(first.inventory_files.len(), 80);
         assert_eq!(first.targets.len(), 4);
         assert!(!first.modules.is_empty());
         assert!(!first.items.is_empty());

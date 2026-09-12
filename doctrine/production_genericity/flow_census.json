@@ -4,12 +4,12 @@
   "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
   "authority": "ADR 0025 decision 2 / DOCTRINE_ENFORCEMENT.md §3 — a census that reports is not a check. `check_production_genericity_flow.sh` already derives all eighteen counts on every commit; this is the declaration it compares them against, so a drift is caught at commit cadence instead of at push cadence by a cargo test.",
   "boundary": {
-    "rationale": "These describe the genericity boundary itself — which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed.",
+    "rationale": "These describe the genericity boundary itself — which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point — it has no authority over any artifact, and the boundary should say so.",
     "pinned": {
-      "boundary_rows": 141,
+      "boundary_rows": 143,
       "canonical_seams": 12,
       "grammar_declassifiers": 64,
-      "non_authoritative_regions": 6,
+      "non_authoritative_regions": 8,
       "proof_gates": 25,
       "protected_calls": 28,
       "protected_constructions": 19,
@@ -25,20 +25,20 @@
   "volume": {
     "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
     "aggregate_change": {
-      "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.1-REFERENCE-MAGNITUDE-REFUSAL",
-      "owner": "EXTRACTION-QUALITY-GAUGE.3k.1",
-      "rationale": "One pure predicate, is_reference_magnitude_constraint, plus the disjunct that calls it in each of the two deterministic constraint extractors. It refuses a comparative magnitude whose right operand is a reference, the class AMBA DTI published as \"OAS must not be stable\". The counts move by exactly what a new phrase-matching predicate and two call sites cost.",
+      "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.6-CONSTRAINT-REPLAY",
+      "owner": "EXTRACTION-QUALITY-GAUGE.3k.6",
+      "rationale": "The read-only constraint replay: replay_persisted_signal_constraints plus its gate-attribution helper in ir/evidence.rs, and the replay-constraints command that prints them for one artifact or a whole evidence root. It answers whether the current producer still mints a persisted record, which is a different question from what the artifact contains.",
       "baseline": {
-        "analyzed_functions": 2409,
-        "decision_sites": 12984,
-        "helper_edges": 14988,
+        "analyzed_functions": 2410,
+        "decision_sites": 12989,
+        "helper_edges": 14990,
         "semantic_macros": 1471
       },
       "delta": {
-        "analyzed_functions": 1,
-        "decision_sites": 5,
-        "helper_edges": 2,
-        "semantic_macros": 0
+        "analyzed_functions": 7,
+        "decision_sites": 28,
+        "helper_edges": 80,
+        "semantic_macros": 11
       }
     }
   }

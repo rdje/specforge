@@ -703,7 +703,9 @@ honestly-qualified) path to "human-SpecForge in Rust."
   extractor would not mint. `.3k.1`'s four DTI records turned out to be exactly that: published, and
   reproducible by nothing. Every remaining child must re-derive its population by running the real
   producer on each record's own `source_text` before sizing its change
-  (`[[persisted-census-measures-published-not-current]]`); `.3k.6` exists to make that mechanical.
+  (`[[persisted-census-measures-published-not-current]]`); `.3k.6` shipped the instrument that makes
+  that mechanical, and its corpus answer is **144 of 179 reproduce, 35 do not** — so roughly one
+  published deterministic constraint in five is not what this code would produce today.
   Verification: `python3 scripts/measure_constraint_part_span.py --self-test` (9/9) and `--check`
   (`kind-classifier call sites unchanged (2 callers, 1 reading the whole statement)`) both green; the
   census above re-derived from the persisted corpus, every listed record adjudicated against its own
@@ -763,19 +765,38 @@ honestly-qualified) path to "human-SpecForge in Rust."
   `dyn_sigcon_0008`/`0009` for a relation in a later sentence. Prerequisite: `.3k.2` (so the
   admitted-set is not a fabrication set). Verification: all 4 plus the new leads adjudicated
   individually; observed RED; the chain rebuilt for every document whose artifacts move.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.6` · Status: `pending` (opened `2026-09-12` by `.3k.1`) · Goal:
-  **an instrument that answers "does today's extractor still produce this persisted record".** `.3k`
-  sized its children from the persisted corpus and `.3k.1` then discovered that the corpus is not one
-  code generation: only 24 of 78 documents keep a normalized bundle (plus APB/AHB/AXI held out under
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.6` · Status: `done` (`2026-09-12`, CODE) · Goal: **an instrument
+  that answers "does today's extractor still produce this persisted record".** `.3k` sized its
+  children from the persisted corpus and `.3k.1` then discovered the corpus is not one code
+  generation: only 24 of 78 documents keep a normalized bundle (plus APB/AHB/AXI held out under
   `generated/preserved/WIRE-BASED-100.10/`), so the other 54 artifacts are frozen at whatever
-  generation wrote them. The published population and the actionable population are different
-  numbers, and today the only way to tell them apart is to hand-write a unit test per record
-  (`[[persisted-census-measures-published-not-current]]`). That does not scale to
-  `.3k.2`'s 37 records. Deliver a replay that runs the REAL producer over each persisted record's own
-  `source_text` and reports reproduced / not-reproduced with the gate that intercepted it — never a
-  Python mirror of the rule, which would answer a question about itself (`CLAIM_VERIFICATION.md` §2).
-  Prerequisite: none; `.3k.2` should not be sized without it. Verification: the instrument's own RED
-  matrix, plus agreement with the four records `.3k.1` adjudicated by hand.
+  generation wrote them. Hand-writing a unit test per record does not scale to `.3k.2`'s population.
+  **Shipped: `specforge replay-constraints <evidence-ir>` / `--evidence-root <root>`.** It re-runs the
+  REAL producer (`extract_normative_signal_constraints`) over an artifact's own `extracted_statements`
+  and compares by the producer's own merge identity — subject, kind, value, condition, negation and
+  source text, never the ids. It works for the frozen 54 because the deterministic constraint surface
+  is a function of the STATEMENTS, not of the PDF, and it reads the legacy/proofless stratum through
+  `load_for_inspection` rather than the canonical loader that refuses it.
+  **The corpus answer: 144 of 179 published deterministic records still reproduce; 35 do not.** By
+  cause: 17 have no positional gate against them (their kind, condition or negation moved), 12 are
+  refused by `CORPUS-COVERAGE.2.50a`, 4 by `.3k.1`+`.2.50a` together (the DTI class), 1 by `.3h`, 1 by
+  `.3g`. Ten documents are partial and one — AMBA CXS, 0/2 — is fully frozen. **One artifact is a
+  named skip**, not a silent omission: I2C is current-schema with a stale proof, which
+  `load_for_inspection` still verifies.
+  **Two properties make the verdict usable.** (a) A published subject the artifact's statements no
+  longer declare is GRANTED a synthetic `Signal <name> is …` declaration, so "not reproduced" can
+  never quietly mean "the catalog shrank" — 67 subjects corpus-wide needed one, which is itself a
+  finding. (b) The verdict is ASYMMETRIC and the command says so: "not reproduced" is sound because a
+  widened catalog can only admit more subjects, while `unpersisted_replay_records` is not a drift
+  measure, because the build applies convergence stages the replay does not.
+  **The first version of the catalog widening was wrong and a control caught it**: it inserted names
+  into the `HashSet` passed to `extract_normative_signal_constraints`, which only the
+  inference-antecedent sibling reads — both deterministic paths derive their own catalog from the
+  statements. The corpus figure moved 120/179 → 144/179 once the widening was done with declaration
+  STATEMENTS instead. That is the same failure shape as the rest of this family, caught this time by a
+  control written before the number was published.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.6`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `pending` · Goal: **what a clause that types nothing
   may publish.** Two arms of `classify_signal_constraint_kind` emit a fact the document did not
   state: the terminal `untyped_default` publishes `MustBeStable` for any obligation no phrase matched
@@ -832,6 +853,40 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.6`
+
+- [x] **REPRODUCE / MEASURE** — `cargo run -- replay-constraints --evidence-root generated/evidence_ir`:
+  `documents_scanned: 78`, `documents_skipped: 1`, `persisted_deterministic_records: 179`,
+  `reproduced: 144`, `not_reproduced: 35`, `granted_declarations: 67`. Ten partial documents and one
+  fully frozen (`ihi0079_b … amba_cxs 0/2`). By refusing gate: 17 none, 12 `CORPUS-COVERAGE.2.50a`,
+  4 `.3k.1`+`.2.50a`, 1 `.3h` value-position, 1 `.3g` dotted-cross-reference.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the question had no instrument. `crates/specforge/src/ir/evidence.rs`
+  exposed no way to ask a persisted record whether it still comes out, and `generated/` cannot answer
+  it: 54 of 78 documents have no normalized bundle, so their artifacts cannot be rebuilt and freeze at
+  the generation that wrote them. `.3k.1` had to establish that by hand, one probe per record.
+- [x] **ADDRESSED (verified)** — `replay_persisted_signal_constraints` in `ir/evidence.rs` plus the
+  `replay-constraints` command. **Calibrated in both directions against artifacts whose generation is
+  known:** APB 15/15 and AHB 13/13 — both rebuilt by `.3i`, so a current artifact reproduces
+  completely — and AMBA CXS 0/2, whose two records are exactly the `must not be asserted` shape `.3i`
+  retyped, so a known-stale artifact reproduces nothing. Two independent confirmations that the
+  instrument measures generation drift rather than noise. Fidelity control run separately: every
+  persisted record's `source_text` and `supporting_statement_ids` resolve inside its own artifact
+  (0 orphans corpus-wide), so a NOT-REPRODUCED verdict is never a missing-statement artifact.
+  **Observed RED, and it changed the published number:** the first widening seeded the catalog
+  `HashSet` the producer takes, which only the inference-antecedent sibling reads;
+  `a_subject_no_statement_declares_is_still_granted_its_trial` failed, and fixing it to insert
+  declaration STATEMENTS moved the corpus figure 120/179 → 144/179.
+- [x] **NO REGRESSION** — `cargo fmt --all --check`, `cargo clippy --all-targets -D warnings`, and
+  `cargo test` green; `specforge-core` lib 1,441 → 1,445, no existing expectation changed.
+  `scripts/check_doctrines.sh` green. Read-only by construction: the command never writes, and it
+  loads through `load_for_inspection`, so no artifact's proof context moves.
+- [x] **GENERICITY (ADR 0006)** — no document, protocol, vendor or signal name in the producer or the
+  command; the strata are selected by `constraint_id` prefix and the controls use invented names
+  (`ZETASTRB`, `ZETAOAS`, `ZETADTI`, `ZETAKEEP`).
+- [x] **LOCKSTEP** — code, this leaf, `[[persisted-census-measures-published-not-current]]` (whose
+  `reverify` is now this command), the book's command pages, `TOOLBOX.md` §5.5 and the chooser row,
+  and the resume pointer agree before commit.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.1`
 

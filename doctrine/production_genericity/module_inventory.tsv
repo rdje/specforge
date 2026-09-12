@@ -31,6 +31,7 @@ crates/specforge/src/commands/nli_verify.rs	application	application	e.iv	verdict
 crates/specforge/src/commands/nlp_enrich.rs	application	application	e.iv	provider orchestration must submit grounded proposals to kernel
 crates/specforge/src/commands/project_validation.rs	conformance	conformance	e.ii	quality characterization and rescan advice
 crates/specforge/src/commands/recover_register_bits.rs	application	application	e.iv	visual proposal must satisfy typed tiling proof
+crates/specforge/src/commands/replay_constraints.rs	conformance	conformance	e.ii	read-only replay of the deterministic constraint producer over persisted statements; measures what the current code still mints, never writes or promotes
 crates/specforge/src/commands/rescan_plan.rs	conformance	conformance	e.ii	reviewable improvement plan, not extraction authority
 crates/specforge/src/commands/semantic.rs	application	application	e.ii	thin SemanticIR build command
 crates/specforge/src/commands/signal_resolve.rs	application	application	e.iv	provider proposal must resolve through symbol table
@@ -64,10 +65,10 @@ crates/specforge/src/ir/prior_memory.rs	core_learning	core	e.iii	prior records a
 crates/specforge/src/ir/protocol_graph.rs	core_inference	core_rule	e.iv	register graph projection derivations
 crates/specforge/src/ir/register_bits.rs	core_verifier	core_rule	e.iv	register tiling proof and visual proposal admission
 crates/specforge/src/ir/semantic.rs	core	core	e.iv	migrate every SemanticIR inference family to registered proof terms
-crates/specforge/src/ir/source_to_intent_eval.rs	conformance	conformance	e.ii	generic evaluation engine lives downstream of core
-crates/specforge/src/ir/source_to_intent_replay.rs	conformance	conformance	e.ii	replay harness lives downstream of core
 crates/specforge/src/ir/source.rs	core	core	e.iv	capture axioms plus registered structural classifications
 crates/specforge/src/ir/source/docling_backend.rs	core_capture	core_rule	e.iv	backend attestation and registered structural classifiers
+crates/specforge/src/ir/source_to_intent_eval.rs	conformance	conformance	e.ii	generic evaluation engine lives downstream of core
+crates/specforge/src/ir/source_to_intent_replay.rs	conformance	conformance	e.ii	replay harness lives downstream of core
 crates/specforge/src/ir/temporal_ltl.rs	core_lowering	core_rule	e.iv	registered temporal rendering from typed predicates
 crates/specforge/src/ir/trajectory.rs	conformance	conformance	e.ii	measurement controller cannot feed extraction authority
 crates/specforge/src/ir/waveform.rs	core_grammar	core_rule	e.iv	register waveform generalization and verification

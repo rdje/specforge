@@ -199,6 +199,7 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 | "Is a wire-protocol gold still 1.000?" | [4.2 WIRE-BASED-100 golds](#42-wire-based-100--the-gold-eval) |
 | "Is my change byte-identical on untouched docs (orthogonality proof)?" | [4.3 `--dry-run` old-vs-new diff](#43---dry-run--byte-identical-orthogonality-proof) |
 | "How trustworthy is the extracted constraint set?" | [5.1 `nli-verify`](#51-nli-verify-evidence-ir) |
+| "Does today's code still PRODUCE the records this artifact publishes?" | [5.5 `replay-constraints`](#55-replay-constraints-evidence-ir----evidence-root-root) |
 | "How faithfully did docling read the tables?" | [5.4 `grits-consensus`](#54-grits-consensus-witnesses-json) |
 | "What fraction of each document's intent reaches `.isf`?" | [6.1 `measure_isf_completeness.py`](#61-scriptsmeasure_isf_completenesspy) |
 | "Which documents form an extraction family / share a shape?" | [6.2 `corpus-cluster`](#62-corpus-cluster) |
@@ -321,6 +322,24 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **WHAT:** samples extracted items for a reproducible spot audit (seeded).
 - **WHEN:** a quick honesty spot-check of a document's extracted surface.
 - **HOW:** `cargo run --manifest-path Cargo.toml -- audit-extraction generated/source_ir/<key>/source_ir.json --sample 20 --seed 0`
+
+### 5.5 `replay-constraints <evidence-ir>` / `--evidence-root <root>`
+- **WHAT:** re-runs the REAL deterministic constraint producer over a persisted artifact's own
+  `extracted_statements` and reports, per published record, whether today's code still mints it — and
+  when it does not, which gate stands in the way.
+- **WHEN:** **before sizing any extractor change.** A count over `generated/` measures what SpecForge
+  PUBLISHED; only 24 of 78 documents keep a normalized bundle, so the rest are frozen at the generation
+  that wrote them and can carry records the current code would never produce. `EXTRACTION-QUALITY-GAUGE.3k.1`
+  sized itself on four published records and found the current extractor reproduces none of them.
+- **HOW:** `cargo run --manifest-path Cargo.toml -- replay-constraints generated/evidence_ir/<key>/evidence_ir.json`
+  or `-- replay-constraints --evidence-root generated/evidence_ir` for the corpus totals. Read-only: no
+  provider, no write, and it reads the legacy/proofless stratum the canonical loader refuses.
+- **OUTPUT:** `reproduced` / `not_reproduced` with the refusing gate per record; `granted_declarations`
+  (published subjects the artifact no longer declares, granted one so their records still get a trial);
+  a named skip for every artifact that would not load.
+- **READ THE VERDICT ASYMMETRICALLY:** "not reproduced" is sound, because the replay runs a widened
+  catalog and a wider catalog can only admit more subjects. `unpersisted_replay_records` is not a drift
+  measure — the build applies convergence stages this replay does not.
 
 ### 5.4 `grits-consensus <witnesses-json>`
 - **WHAT:** scores how faithfully Docling read a document's TABLES against a CROSS-TOOL consensus gold

@@ -1528,6 +1528,10 @@ mod tests {
         ("extract-constraints-llm", CliSurfaceRole::Production),
         ("audit-extraction", CliSurfaceRole::QualityOrReview),
         ("recover-register-bits", CliSurfaceRole::Production),
+        // EXTRACTION-QUALITY-GAUGE.3k.6 — read-only: it re-runs the deterministic constraint
+        // producer over a persisted artifact's own statements and reports what no longer comes out.
+        // It writes nothing and promotes nothing, so it is a diagnostic, not a producer.
+        ("replay-constraints", CliSurfaceRole::Diagnostic),
     ];
 
     #[test]

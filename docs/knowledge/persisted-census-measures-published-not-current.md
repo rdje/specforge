@@ -15,7 +15,7 @@ date: 2026-09-12
 status: current
 tags: [evidence-ir, census, claim-verification, corpus, chain-currency, extraction-quality-gauge]
 evidence: generated/source_ir/*/normalized (24 of 78); generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out; crates/specforge/src/ir/evidence.rs (is_post_passive_binding_only_subject, CORPUS-COVERAGE.2.50a); docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.3k, .3k.1); docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md
-reverify: "find generated/source_ir -maxdepth 2 -type d -name normalized | wc -l — expect 24 against `ls generated/evidence_ir | wc -l` = 78; then run the extractor on a frozen document's own source_text in a unit test and compare with the record the artifact carries"
+reverify: "cargo run -- replay-constraints --evidence-root generated/evidence_ir — expect 144 of 179 persisted deterministic records reproduced, 67 granted declarations, and one named skip"
 ---
 
 The persisted corpus is **not one code generation**. Only 24 of the 78 documents keep a
@@ -47,12 +47,30 @@ The class was still real — the same grammar with the constrained signal named 
 `MustBeStable` + `negated` — so the leaf shipped, with the correct population statement. Had the
 class not been reachable, the right outcome would have been to close the leaf as already-covered.
 
-**The instrument.** A persisted artifact cannot answer "is this still reproducible". Neither can a
-Python mirror of the rule (`CLAIM_VERIFICATION.md` §2 — mirror and original agreeing carries no
-information). The only thing that answers it is **running the real producer on the record's own
-`source_text`**, which in this repository means a unit test in `crates/specforge/src/ir/evidence.rs`
-using the record's text verbatim with its subjects declared. Do that before sizing any extractor
-change; the artifact census tells you where to look, not what will move.
+**The instrument** is `specforge replay-constraints` (`EXTRACTION-QUALITY-GAUGE.3k.6`). It re-runs the
+REAL deterministic producer over an artifact's own `extracted_statements` — the constraint surface is
+a function of the statements, not of the PDF, which is why it works for the frozen 54 — and reports
+per published record whether today's code still mints it, naming the gate that stands in the way when
+it does not. A Python mirror of the rule could not answer this: mirror and original agreeing carries
+no information (`CLAIM_VERIFICATION.md` §2).
+
+```bash
+cargo run -- replay-constraints --evidence-root generated/evidence_ir
+# persisted_deterministic_records: 179   reproduced: 144   granted_declarations: 67   skipped: 1
+```
+
+Read the verdict **asymmetrically**. "Not reproduced" is sound: the replay grants a declaration to any
+published subject the artifact no longer declares, and a wider catalog can only admit more subjects,
+never withdraw one. The opposite direction is not sound — the build applies convergence stages the
+replay does not — so `unpersisted_replay_records` is evidence to read, never a number to quote.
+
+Calibration: artifacts the current binary itself wrote reproduce completely (APB 15/15, AHB 13/13,
+both rebuilt by `EXTRACTION-QUALITY-GAUGE.3i`), and AMBA CXS reproduces 0/2 because `.3i` retyped
+exactly its `must not be asserted` shape — two independent confirmations that the instrument is
+measuring generation drift rather than noise.
+
+Do this before sizing any extractor change; the artifact census tells you where to look, not what will
+move.
 
 Related: [[constraint-record-producer-strata]] (the other half — count the population of the
 FUNCTION being changed, not of the table the records land in),

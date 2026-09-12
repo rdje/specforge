@@ -74,12 +74,26 @@ pub enum Commands {
     AuditExtraction(AuditExtractionArgs),
     /// Recover register-field bit positions from a register-layout diagram (VLM reads names+widths MSB→LSB; bit ranges reconstructed by gated cumulative tiling, else honest residual)
     RecoverRegisterBits(RecoverRegisterBitsArgs),
+    /// Re-run the deterministic constraint producer over a persisted EvidenceIR's own statements and report which published records the current code still mints
+    ReplayConstraints(ReplayConstraintsArgs),
 }
 
 #[derive(Debug, Args)]
 pub struct InspectArgs {
     /// Path to inspect
     pub path: PathBuf,
+}
+
+#[derive(Debug, Args)]
+pub struct ReplayConstraintsArgs {
+    /// Persisted EvidenceIR JSON file to replay (read-only; never written back)
+    pub evidence_ir: Option<PathBuf>,
+    /// Replay every `<root>/<document>/evidence_ir.json` and report the corpus totals
+    #[arg(long)]
+    pub evidence_root: Option<PathBuf>,
+    /// Emit the full report as JSON instead of the human-readable summary
+    #[arg(long)]
+    pub json: bool,
 }
 
 #[derive(Debug, Args)]

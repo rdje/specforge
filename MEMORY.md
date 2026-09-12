@@ -7,39 +7,40 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.1` CLOSED `2026-09-12` (CODE)** — a comparative MAGNITUDE whose right operand is a REFERENCE is
-  refused, `.3d`'s equality refusal one relation along. `is_reference_magnitude_constraint` in both deterministic paths; +6 tests, core lib
-  1,435 -> 1,441. **Its own population statement was falsified, and that is the leaf's main result.** It opened on "4 records, all DTI" —
-  published, but **today's extractor reproduces none of them**: every candidate subject in DTI's sentence is named only AFTER the obligation's
-  lead, so `CORPUS-COVERAGE.2.50a` refuses it first (probe: `records=[]`, `post_passive OAS=true DTI=true`). The CLASS is live anyway, which is
-  why it shipped: the same grammar with the subject named BEFORE the lead still mints `MustBeStable`+`negated` = *"must not be stable"*, and the
-  dynamic path mints the right operand as a second subject. Open: `.3k.2`-`.3k.6`; **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`;
-  `PROSE-NAME-CELL-DECLARATION.3`; `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`; `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS`
-  beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
-  `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`; `WIRE-BASED-100`
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.6` CLOSED `2026-09-12` (CODE)** — `specforge replay-constraints <evidence-ir>` /
+  `--evidence-root <root>`: re-runs the REAL deterministic producer over a persisted artifact's own `extracted_statements` and says, per
+  published record, whether today's code still mints it and which gate stands in the way. It reaches the frozen 54 because the constraint
+  surface is a function of the STATEMENTS, not the PDF, and it reads the legacy stratum via `load_for_inspection`.
+  **Corpus answer: 144 of 179 published deterministic records reproduce; 35 do not** (17 no gate — kind/condition/negation moved; 12
+  `CORPUS-COVERAGE.2.50a`; 4 `.3k.1`+`.2.50a`; 1 `.3h`; 1 `.3g`), 67 subjects needed a granted declaration, 1 artifact a NAMED skip (I2C,
+  current-schema with a stale proof). Calibrated both ways: APB 15/15 and AHB 13/13 (rebuilt by `.3i`), CXS 0/2 (the exact shape `.3i`
+  retyped). Open: `.3k.2`-`.3k.5`; **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`; `SIGNAL-DECLARATION-ROW-DROP`
+  `.2c`/`.2d`; `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`; `LIVE-DOCUMENT-PRESSURE-HEADROOM`
+  `.1`/`.3`/`.4d.ii`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`; `SOURCE-IR-REPRODUCIBILITY` `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`;
+  `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`; `STATUS-LEDGER-ROLLOVER.2`;
+  `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`; `WIRE-BASED-100`
   `.10d`/`.10f`/`.2`/`.3`/`.5` (SWD `13/29`).
-- Current state: the standing lesson now has three forms, and this session hit all three. A textual proxy fails silently
-  (`PRODUCTION-GRAPH-CENSUS-PIN`); a census must be stratified by the PRODUCER the rule edits (`[[constraint-record-producer-strata]]`, `.3k`); and
-  **a census over `generated/` measures what SpecForge PUBLISHED, not what today's extractor does** — only 24 of 78 documents keep a normalized
-  bundle, so 54 artifacts are frozen at the generation that wrote them (`[[persisted-census-measures-published-not-current]]`, `.3k.1`). The only
-  instrument that answers "is this record still reproducible" is running the REAL producer on its own `source_text`. 281 fact cards (6 title parts,
-  at the declared `max_parts`); 15 registered doctrines, 13 at gate tier.
-- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.6`** — build that instrument BEFORE `.3k.2` is sized, because `.3k.2`'s population is 37 records and
-  hand-probing each one does not scale. It must run the real producer over each persisted record's own `source_text` and report reproduced /
-  not-reproduced with the gate that intercepted it; a Python mirror of the rule answers a question about itself (`CLAIM_VERIFICATION.md` section 2).
-  Then `.3k.2` (the untyped `MustBeStable` default, 26 published `sigcon_*`, and the ungated `generic_value` arm, 11 — re-size both with the
-  instrument first), then `.3k.3` (the kind's span, 4 published), `.3k.5` (the refusal gates are statement-scoped while the records they suppress are
-  clause-scoped — 4 of 181 equality statements differ), `.3k.4` (the dynamic path's clause; it needs a BINDING-bearing clause since its records need
-  not contain a modal).
+- Current state: three commits this session, each one correcting a number the previous leaf published. `.3k` — stratify a census by the
+  PRODUCER the rule edits (`[[constraint-record-producer-strata]]`). `.3k.1` — a persisted census measures what was PUBLISHED, not what the
+  code does (`[[persisted-census-measures-published-not-current]]`). `.3k.6` — the instrument for that, and **its own first number was wrong
+  too**: the catalog widening seeded the `HashSet` the producer takes, which only the inference-antecedent sibling reads, so 120/179 became
+  144/179 once the widening used declaration STATEMENTS. A control written before publishing caught it. 281 fact cards (6 title parts, at the
+  declared `max_parts`); 15 registered doctrines, 13 at gate tier; core lib 1,445.
+- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.2`** — re-size it with `replay-constraints` FIRST; its published population (26 untyped
+  `MustBeStable` defaults + 11 ungated `generic_value` records, all `sigcon_*`) is a published count and the actionable one will be smaller.
+  It decides what a clause that types nothing may publish, and it must land before `.3k.3` (the kind's span, 4 published) or narrowing the
+  span moves NVMe onto a fabricated `must_be_value UNIQUE`. Then `.3k.5` (the refusal gates are statement-scoped while the records they
+  suppress are clause-scoped — 4 of 181 equality statements differ), then `.3k.4` (the dynamic path's clause; it needs a BINDING-bearing
+  clause since its records need not contain a modal).
 - In-flight uncommitted: none after this commit.
-- Blockers: none. Standing hazards: **a persisted record is not evidence that current code produces it** — 54 of 78 documents cannot be rebuilt
-  (`[[persisted-census-measures-published-not-current]]`). **A census counts the population of the FUNCTION being changed, not of the table the
-  records land in** (`[[constraint-record-producer-strata]]`). **A new Markdown file must be `git add`ed before `check_live_document_size.pl` can see
-  it** — it enumerates tracked paths, so an untracked generated part reads as a missing index member. **An obligation binds to the token immediately
-  before its modal.** **A subjectless clause defeats a subject scan by having no subject to find.** **`specforge evidence` says only `path does not
-  exist: …/normalized/<key>.md`** (`[[evidence-rule-field-content-stales-every-proof]]`). **Grep `KNOWLEDGE_MAP.md` for the wall, not just the
-  feature** — `[[live-surface-edit-bookkeeping-chain]]` turns a fact-card addition from five failed gate runs into one. **A Rust change moves
-  `doctrine/production_genericity/flow_census.json`** — re-derive baseline+delta and name the owning leaf. **A check that prints a number is not a
-  check.** **The doctrine driver runs no cargo gate** (`[[doctrine-driver-runs-no-cargo-gate]]`). Never run the fixture suite with the locality gate
-  (`SCRATCH-RESIDUE-CONTAINMENT.4`). This file's cap is 50 lines.
+- Blockers: none. Standing hazards: **run `replay-constraints` before sizing any extractor change** — 54 of 78 documents cannot be rebuilt,
+  so a third of the published constraint surface is not what this code would produce. **A census counts the population of the FUNCTION being
+  changed** (`[[constraint-record-producer-strata]]`). **Both deterministic paths derive their own catalog from the statements** — the
+  `declared_signals` parameter of `extract_normative_signal_constraints` reaches only the inference-antecedent sibling. **A new Rust module
+  must be added to `doctrine/production_genericity/module_inventory.tsv`, a new CLI command to the `CLI_SURFACE_REGISTRY` in
+  `commands/converge.rs`, and any new raw-evidence reader to `information_flow_boundary.tsv`** — all three fail closed, and the flow census
+  baseline+delta must then be re-derived and attributed. **A new Markdown file must be `git add`ed before `check_live_document_size.pl` sees
+  it.** **An obligation binds to the token immediately before its modal.** **`specforge evidence` says only `path does not exist:
+  …/normalized/<key>.md`** (`[[evidence-rule-field-content-stales-every-proof]]`). **Grep `KNOWLEDGE_MAP.md` for the wall** —
+  `[[live-surface-edit-bookkeeping-chain]]`. **The doctrine driver runs no cargo gate** (`[[doctrine-driver-runs-no-cargo-gate]]`). Never run
+  the fixture suite with the locality gate (`SCRATCH-RESIDUE-CONTAINMENT.4`). This file's cap is 50 lines.

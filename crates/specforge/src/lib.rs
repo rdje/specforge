@@ -48,5 +48,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::ExtractConstraintsLlm(args) => commands::extract_constraints_llm::run(args),
         Commands::AuditExtraction(args) => commands::audit_extraction::run(args),
         Commands::RecoverRegisterBits(args) => commands::recover_register_bits::run(args),
+        Commands::ReplayConstraints(args) => commands::replay_constraints::run(args),
     }
 }
