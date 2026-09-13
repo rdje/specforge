@@ -12087,6 +12087,19 @@ fn signal_names_in_name_cell(raw_name: &str) -> Vec<String> {
     names
 }
 
+/// Whether a lowercased header names the column holding a signal's NAME.
+///
+/// `SIGNAL-DECLARATION-ROW-DROP.2e` — one definition, used twice in the same reader: once to pick
+/// the name column, and once to ask whether the column the CONTENT override picked is the one the
+/// header already named. Two spellings of the same test could disagree, and the second use exists
+/// precisely to decide whether the first one matched a decoy.
+fn is_signal_name_column_header(header: &str) -> bool {
+    header.contains("signal")
+        || header.contains("name")
+        || header.contains("port")
+        || header.contains("pin")
+}
+
 fn synthesize_signal_declarations(
     table: &crate::ir::source::StructuredTableRecord,
     section_kind: SectionKind,
@@ -12118,9 +12131,7 @@ fn synthesize_signal_declarations(
     // Name column: keyword match on headers; fall back to col 0 (leftmost).
     let name_col: usize = header_texts
         .iter()
-        .position(|h| {
-            h.contains("signal") || h.contains("name") || h.contains("port") || h.contains("pin")
-        })
+        .position(|header| is_signal_name_column_header(header))
         .unwrap_or(0);
 
     // Width column: "width" or "size" are the standard header names (case-insensitive);
@@ -12202,11 +12213,35 @@ fn synthesize_signal_declarations(
     // became the signal catalogue. Every rotation this override exists for wins by far more
     // (APB `table_0016` 18 vs 5, AHB `table_0033` 19 vs 4), so the margin costs none of them.
     const NAME_COLUMN_OVERRIDE_MARGIN: usize = 2;
+    // SIGNAL-DECLARATION-ROW-DROP.2e — the override applies its result as a whole-table OFFSET,
+    // because it was written for a header row SHIFTED relative to the body: AHB `table_0009` writes
+    // `Name | Destination | Width | Description` over a body whose name is last, so every other
+    // column is displaced by the same amount and rotating them is exactly right.
+    //
+    // It is NOT right when the header is aligned and the first scan merely matched a DECOY. MMU-700
+    // `Table B-6` heads `SIGNALGRP<n> | Bits | Signal name | SIGQUAL<n> 4'b{MSB..LSB} | …`: the scan
+    // takes `SIGNALGRP<n>` at column 0 because it contains `signal`, the content override correctly
+    // finds the real names in column 2, and the rotation then carries the width column off `Bits`
+    // and onto `SIGQUAL<n>` — so every row declared `width 3'b000 , lavalid`, a width the document
+    // never states about anything. Seventeen rows, and it is the whole of that document's
+    // contribution to the signals that never reach the SemanticIR catalog.
+    //
+    // The two cases are told apart by the data that is already here: a shifted header has no name
+    // keyword AT the winning column (AHB's is `Description`), and an aligned one does. So the name
+    // column moves and nothing else does.
+    let header_names_the_winning_column = header_texts
+        .get(best_col)
+        .is_some_and(|header| is_signal_name_column_header(header));
     let (name_col, offset) = if best_col != name_col
         && best_distinct >= 2
         && best_distinct >= header_name_distinct + NAME_COLUMN_OVERRIDE_MARGIN
     {
-        (best_col, best_col as isize - name_col as isize)
+        let offset = if header_names_the_winning_column {
+            0isize
+        } else {
+            best_col as isize - name_col as isize
+        };
+        (best_col, offset)
     } else {
         (name_col, 0isize)
     };
@@ -31759,6 +31794,155 @@ mod wire_based_100_5g {
         // Guard: a normal noun subject still extracts as before (no regression).
         let rels = run("The Subordinate drives HRESP during the response phase.");
         assert!(drives(&rels, "HRESP").contains(&"Subordinate".to_string()));
+    }
+}
+
+#[cfg(test)]
+mod signal_declaration_row_drop_2e {
+    //! `SIGNAL-DECLARATION-ROW-DROP.2e` — the content-based name-column override applies its result
+    //! as a whole-table OFFSET. That is right for a header row shifted relative to the body, and
+    //! wrong when the header is ALIGNED and the header scan merely matched a decoy: the rotation
+    //! then carries the width column onto a neighbour and every row declares a width the document
+    //! never states.
+    //!
+    //! The table below is MMU-700 `Table B-6` with its identities alpha-renamed (ADR 0006). Its
+    //! header is aligned; `SIGNALGRP<n>` is the decoy.
+    use super::*;
+    use crate::ir::source::{StructuredTableCellRecord, StructuredTableRecord};
+
+    fn cell(text: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        }
+    }
+    fn row(cells: &[&str]) -> Vec<StructuredTableCellRecord> {
+        cells.iter().map(|text| cell(text)).collect()
+    }
+
+    fn observation_table() -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "table_0259".to_string(),
+            asset_id: "asset_0259".to_string(),
+            page_id: None,
+            caption_text: Some("observation interface signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&[
+                "SIGNALGRP<n>",
+                "Bits",
+                "Signal name",
+                "SIGQUAL<n> 4'b{MSB..LSB}",
+                "Number of cycles of delay",
+            ])],
+            body_rows: vec![
+                row(&["0", "[127:126]", "Unused", "-", "-"]),
+                row(&["0", "[125:110]", "zetatlbloc", "3'b000 , zetavalid", "1"]),
+                row(&["0", "[109:78]", "zetaid", "3'b000 , zetavalid", "1"]),
+                row(&["0", "[64:1]", "zetaaddr", "3'b000 , zetavalid", "1"]),
+            ],
+            row_count: 4,
+            col_count: 5,
+        }
+    }
+
+    /// The refusal. Observed RED on the file at `HEAD`: this table declared
+    /// `Signal zetatlbloc is width 3'b000 , zetavalid.` three times over — the width read out of the
+    /// column the rotation moved it onto.
+    #[test]
+    fn an_aligned_header_matched_by_a_decoy_does_not_rotate_the_other_columns() {
+        let mut counter = 0usize;
+        let mut provenance = Vec::new();
+        let mut accounting = Vec::new();
+        let statements = synthesize_signal_declarations(
+            &observation_table(),
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut provenance,
+            &mut accounting,
+        );
+        assert!(
+            statements.is_empty(),
+            "no column of this table states a width this reader can read, so nothing may be \
+             declared: {:?}",
+            statements
+                .iter()
+                .map(|statement| statement.text.as_str())
+                .collect::<Vec<_>>()
+        );
+        // and the loss is COUNTED rather than silent, which is `.1`'s accounting doing its job
+        let account = &accounting[0];
+        assert_eq!(account.rows_considered, 4);
+        assert_eq!(account.declarations_emitted, 0);
+        assert_eq!(
+            account.rows_considered,
+            account.declarations_emitted + account.dropped_rows.len(),
+            "the denominator must close: {account:?}"
+        );
+        assert!(
+            account
+                .dropped_rows
+                .iter()
+                .all(|dropped| dropped.reason == DeclarationRowDropReason::NoDirectionAndNoWidth),
+            "each row is dropped for the honest reason — its `Bits` cell is a range this reader \
+             does not yet read: {:?}",
+            account.dropped_rows
+        );
+    }
+
+    /// The name column still moves; it is only the OTHER columns that stay. Without this the
+    /// override would be off entirely for aligned tables and the decoy would win.
+    #[test]
+    fn the_name_column_still_moves_to_the_column_that_holds_the_names() {
+        let mut table = observation_table();
+        // give the `Bits` column a width this reader reads, so the rows can declare
+        table.body_rows = vec![
+            row(&["0", "16", "zetatlbloc", "3'b000 , zetavalid", "1"]),
+            row(&["0", "32", "zetaid", "3'b000 , zetavalid", "1"]),
+            row(&["0", "64", "zetaaddr", "3'b000 , zetavalid", "1"]),
+        ];
+        table.row_count = 3;
+        let mut counter = 0usize;
+        let mut provenance = Vec::new();
+        let statements = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut provenance,
+            &mut Vec::new(),
+        );
+        let declared: Vec<&str> = statements
+            .iter()
+            .map(|statement| statement.text.as_str())
+            .collect();
+        assert_eq!(
+            declared,
+            vec![
+                "Signal zetatlbloc is width 16.",
+                "Signal zetaid is width 32.",
+                "Signal zetaaddr is width 64.",
+            ],
+            "the names come from column 2 and the widths from column 1"
+        );
+    }
+
+    /// The header test is one definition, and the second use is what decides whether the first
+    /// matched a decoy.
+    #[test]
+    fn a_name_column_header_is_recognised_the_same_way_in_both_places() {
+        for header in ["signal name", "name", "port", "pin", "signalgrp<n>"] {
+            assert!(is_signal_name_column_header(header), "{header}");
+        }
+        for header in ["bits", "description", "destination", "width", "source"] {
+            assert!(!is_signal_name_column_header(header), "{header}");
+        }
     }
 }
 

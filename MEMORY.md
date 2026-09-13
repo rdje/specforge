@@ -7,26 +7,29 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.4a` SHIPPED `2026-09-13`** (4th leaf today, after
-  `EXTRACTION-QUALITY-GAUGE.3k.7`/`.3k.10`/`.3k.8`). `parse_optional_width_hint` consumed exactly ONE whitespace token,
-  so `Signal WSTRB is output width DATA_WIDTH / 8.` left `/` and `8` over and `index != tokens.len()` discarded the
-  WHOLE declaration — identity and direction with it — while `DATA_WIDTH/8` without spaces parsed. A width is now read
-  as an EXPRESSION (numbers, parameters, `+ - * /`, balanced parens, `ceil(…)`), ending at a whitespace-token boundary,
-  with trailing prose tolerated only after a STRUCTURED expression. **14 of the 17 arithmetic-width declarations read.**
-- **AXI-L: catalog 288 → 296 (with `WSTRB`), `signal_constraints` 55 → 56, `residual_decisions` 1 → 0, `.isf` 288 → 296
-  signals / 135 → 138 rules.** The un-demoted record is *"An attached Subordinate must have its WSTRB input tied HIGH"*
-  — the REAL obligation `.3k.7` found was being demoted beside the fabrication it removed, so the loop is closed.
-  **Only 26 of 78 documents carry a current-schema EvidenceIR the semantic stage accepts**, so AXI-H/CHI/ATB/LTI
-  recoveries are real in the reader and latent until re-ingest; the census falls 83 → 75, not 83 → 69.
-- **Four leaves, four re-derived populations, four corrections.** `.3k.7`: 12 records, not 8. `.3k.10`: three
-  prototypes, the corpus refuting the first two. `.3k.8`: 82 same-fact records corpus-wide of which only 9 are the
-  cross-producer class. `.4a`: the leaf it came from had the ordering backwards and said the accounting was a
-  precondition; the census script already answered it, so the recall half went first.
-  **Build the rejected version and measure it; re-derive a predecessor's population before it sizes your change.**
-- Next action: `SIGNAL-DECLARATION-ROW-DROP.4b` — 69 declarations the reader still refuses in SILENCE (MMU-700's 47
-  among them), and the question with the blast radius: should a parsed DIRECTION survive an unreadable width? Measure
-  as an ADDITION per document first. Or the remaining `.3k` leaves — `.3k.12` (a predicate between a signal and its
-  level; do NOT widen a skip list to fit one sentence) and the unsized `.3j`. `.3k.9` stays `DO NOT SHIP YET`.
+- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.2e` SHIPPED `2026-09-13`** (5th leaf today). `.2a`'s content-based
+  name-column override applies its result as a whole-table OFFSET — right for a header row SHIFTED against its body
+  (AHB `table_0009`), wrong when the header is ALIGNED and the scan merely matched a DECOY. MMU-700 `Table B-6` heads
+  `SIGNALGRP<n> | Bits | Signal name | SIGQUAL<n> …`: the scan takes `SIGNALGRP<n>`, the override finds the names in
+  column 2, and the rotation carries the width off `Bits` onto `SIGQUAL<n>` — **17 rows declaring a fabricated width**.
+  One shared `is_signal_name_column_header` now asks, at the override's winner, whether the header was aligned.
+- **Measured `evidence --dry-run` over ALL 27 documents that have a normalized bundle: 0 of 27 move.** The whole
+  population is in frozen legacy artifacts. Shipped anyway: the class is demonstrable through the real reader
+  (`.3k.1`'s footing) and the risk is MEASURED at zero — which is exactly what separates it from `.3k.9`, where a
+  zero-effect fix would have moved the identity layer of 67 documents. **Measured zero risk is not the same as
+  unmeasured zero effect.**
+- **The recall half was built, measured, and taken back out — that is the result, not a gap.** Reading `[hi:lo]` as a
+  width does recover MMU-700's 15 real signals, and it also declares `Signal Unused is width 2.` from the table's
+  spacer rows. `inferred_name_is_an_ordinary_word` would refuse `Unused` but its contract bars it from the table path;
+  inventing a second rule for one table is the mirror this tree keeps refusing. Split to `.2f`, blocked on
+  `PROSE-NAME-CELL-DECLARATION` deciding the non-name row cell. **15 recoveries for 2 phantoms is not a win.**
+- **`.4b`'s recall question is CLOSED at zero and the node says so.** Of the 75 declarations missing from the
+  SemanticIR catalog, only 8 carry a DIRECTION to preserve, and all 8 are already handled (`.4a` reads 4 of them;
+  3 are table misreads whose refusal is correct; 1 is a `<n> bit` spaced unit worth one latent record). The other 67
+  state neither direction nor width, which an existing correct rule refuses. Nothing is owed there but the accounting.
+- Next action: `.3k.12` (a predicate between a signal and its level; do NOT widen a skip list to fit one sentence),
+  the unsized `.3j`, or `PROSE-NAME-CELL-DECLARATION` — which now blocks `.2f` as well as `.2c`. `.3k.9` stays
+  `DO NOT SHIP YET`.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Push cadence is **400** per director directive `2026-09-13`, FIXED there, so no push is due at 239; directive 16 still gates it on
   full CI. `check_doctrines.sh --all` did not finish in 50 minutes (`CHAIN-CURRENCY` re-executes the real pipeline for every persisted artifact) — budget

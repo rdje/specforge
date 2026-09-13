@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.3`/`.4a` closed; `.2c` deferred; `.2d`/`.4b` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.2d`/`.2f`/`.4b` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-13`
@@ -100,9 +100,9 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2`, `.3`, `.4` (`.4a`–`.4b`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4b`)
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
   after the corpus population was measured: the two notations are independent changes with different
   payoffs (the arrow recovers rows; the enumerated width only sharpens rows the arrow already
@@ -666,6 +666,67 @@ a long tail.
   every document whose artifacts move.
   Commit: pending
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2e` · Status: `done` (`2026-09-13`, CODE; opened the same day by
+  `.4b`'s re-derivation) · Children: `.2f` · Goal: **a decoy header substring turns an ALIGNED header into a whole-table column
+  rotation, and every other column moves with it.**
+  `.2a` gave this reader a content-based name-column override: when a different column holds decisively
+  more distinct signal tokens than the header-named one, that column wins. It was written for a header
+  row SHIFTED relative to the body, so it applies the difference as an OFFSET and rotates the width,
+  direction, source and destination columns by the same amount.
+  **MMU-700 `Table B-6: LTI TBU observation interface signals` is aligned, and it still rotates.** Its
+  header is `SIGNALGRP<n> | Bits | Signal name | SIGQUAL<n> 4'b{MSB..LSB} | Number of cycles of delay`.
+  The name-column scan takes the FIRST header containing `signal`, which is the DECOY `SIGNALGRP<n>` at
+  column 0; the content override then correctly finds the real names in column 2 and rotates everything
+  by +2 — so the width column moves off `Bits` (`[64:1]`) and onto `SIGQUAL<n>`, and all 17 rows
+  declare `width 3'b000 , lavalid`. That is a FABRICATED width, and it is the whole of MMU-700's
+  contribution to the 75 signals that never reach the SemanticIR catalog: 47 of the 75.
+  **The discriminator is already in the data:** when the header cell AT the winning column is itself a
+  name header, the header row is aligned and the first scan simply matched a decoy — so the name column
+  moves and nothing rotates. A genuinely shifted header has no name keyword at the winning column,
+  which is the case `.2a` measured (APB `table_0016` 18 against 5, AHB `table_0033` 19 against 4).
+  **The second half was BUILT, MEASURED, and taken back out — which is the result.** With the width
+  column back on `Bits`, the cell is a BIT RANGE (`[64:1]`), and reading `[hi:lo]` as `hi - lo + 1`
+  does recover the rows: the real reader then declares `zetatlbloc` 16, `zetaid` 32, `zetaaddr` 64.
+  It also declares **`Signal Unused is width 2.`** — the table's two `Unused` spacer rows become
+  wires. They are dropped TODAY only by accident, because the rotated width cell was `-`. Trading 15
+  recoveries for 2 phantoms is not a quality win in a document nothing can rebuild, and
+  `inferred_name_is_an_ordinary_word` — the orthography rule that would refuse `Unused` — states in
+  its own contract that it is **never** applied to a table declaration, *"where the document's own
+  spelling is authoritative and this reader has no business overruling it"*. Inventing a second rule
+  for one table is the mirror this tree keeps refusing. The bit-range width is therefore split out as
+  `.2f` behind that prerequisite.
+  **Shipped: the rotation narrowing alone, and it is a strict precision win.** MMU-700 goes from 17
+  declarations carrying a FABRICATED width to 0 declarations and 17 rows counted as
+  `NoDirectionAndNoWidth` — the loss made visible, which is `.1`'s whole thesis, instead of a width
+  invented for it. Observed RED on the file at `HEAD`: the alpha-renamed table declared
+  `Signal zetatlbloc is width 3'b000 , zetavalid.` three times over.
+  **Measured over every rebuildable document: nothing moves.** `evidence --dry-run` over all
+  **27** documents that have a normalized bundle (the 24 retained plus AHB/AXI-L/APB-E restored from
+  the held-out set for the measurement, `diff -rq` verified and removed again, retention back to 24)
+  — **0 of 27 change a single declaration**. The entire population of this defect is in frozen
+  legacy artifacts, so the published effect is zero today and lands the moment MMU-700 is re-ingested.
+  The class is demonstrable through the real reader, which is the footing `EXTRACTION-QUALITY-GAUGE.3k.1`
+  established and `.3k.2e`/`.3k.2f`/`.3k.2k` shipped on; the risk is measured at zero, which is what
+  separates it from `EXTRACTION-QUALITY-GAUGE.3k.9`, where a zero-effect fix would have moved the
+  identity layer of 67 documents.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.2e`
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2f` · Status: `pending` (opened `2026-09-13` by `.2e`) · Goal:
+  **a bit range is a width, once a spacer row is not a signal.** `parse_table_width_hint_text` reads a
+  number and a parametric string; `[125:110]` is neither, so a `Bits` column states a width this
+  reader cannot use. `[hi:lo]` is `hi - lo + 1` — universal notation, no vocabulary — and it recovers
+  MMU-700's 15 real observation-interface signals (`.2e` proved this through the real reader).
+  **It cannot ship until a row whose name cell is `Unused` stops being a declaration**, or it trades
+  15 recoveries for 2 phantoms. That question is not this leaf's to answer: the orthography rule that
+  would settle it is contractually barred from the table path, and the row-shape question belongs to
+  `PROSE-NAME-CELL-DECLARATION`. Measure the corpus population of bit-range width cells before
+  implementing — a `Bits` column is common, and the blast radius is not this one table.
+  Prerequisite: `PROSE-NAME-CELL-DECLARATION` deciding the non-name row cell, or an equivalent
+  structural refusal with its own measured population.
+  Verification: the corpus population of bit-range width cells measured with the real reader and
+  adjudicated; observed RED; the chain rebuilt for every document whose artifacts move.
+  Commit: pending
+
 - ID: `SIGNAL-DECLARATION-ROW-DROP.3` · Status: `done` (`2026-09-11`) · Goal: **the declared spelling
   must be the document's spelling.** Under ADR 0037 case carries no alias authority, so emitting a
   case-variant the source never wrote mints an identifier rather than grounding one.
@@ -821,11 +882,50 @@ a long tail.
   earlier, is updated in place: its census, its `reverify` expectation and the residue owned by `.4b`.
   No production rule was deleted.
 
+## Acceptance Checklist — `.2e` (enforced)
+
+- [x] **REPRODUCE / MEASURE** — the 75 signals that never reach the SemanticIR catalog were split by
+  document: **47 of them are one MMU-700 table**, and every one of those 47 is declared with the width
+  `3'b000 , lavalid`, a string the document states about no signal. Read against source:
+  `Table B-6` heads `SIGNALGRP<n> | Bits | Signal name | SIGQUAL<n> 4'b{MSB..LSB} | …` and its `Bits`
+  column holds `[64:1]`, `[125:110]` — the real widths, one column away from the one the reader used.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `synthesize_signal_declarations`: the header scan takes the FIRST header containing `signal`, which
+  is the decoy `SIGNALGRP<n>` at column 0; `.2a`'s content override then finds the real names in
+  column 2 and applies the difference as an OFFSET, rotating width, direction, source and destination
+  by +2. Observed RED on the file at `HEAD` with the table alpha-renamed: three declarations, each
+  carrying the SIGQUAL cell as its width.
+- [x] **ADDRESSED (verified)** — one shared `is_signal_name_column_header` decides both the header
+  scan and, at the override's winning column, whether the header was aligned all along; an aligned
+  header moves the name column and rotates nothing. The table now yields **0 declarations and 4 rows
+  counted `NoDirectionAndNoWidth`** — the fabrication removed and the loss made visible, which is
+  `.1`'s accounting doing exactly what it was built for. A second control proves the override still
+  moves the NAME column: with a readable width in `Bits`, the same table declares
+  `zetatlbloc` 16, `zetaid` 32, `zetaaddr` 64.
+- [x] **NO REGRESSION** — `evidence --dry-run` over **all 27 documents that have a normalized bundle**
+  (the 24 retained plus AHB, AXI-L and APB-E restored from the held-out set for the measurement,
+  `diff -rq` byte-identical, removed again, retention back to **24**): **0 of 27 change a single
+  declaration**. `wire_based_100_5h::rotated_signal_table_extracts_name_from_last_column` — the
+  genuinely shifted AHB `table_0009` the override exists for — still passes, and its winning column's
+  header is `Description`, which is what makes the two cases distinguishable. Wire golds
+  `signal_constraint P=R=F1=1.000` with **fp=0** on APB, AHB and AXI; `kg-bench` **156/156**;
+  `cargo fmt --all --check` and `cargo clippy --offline --all-targets -D warnings` clean; workspace
+  suite green (`specforge-core` lib 1,526 → **1,529** passing); corpus replay unchanged at 192/119;
+  `flow_census.json` re-derived and attributed.
+- [x] **GENERICITY (ADR 0006)** — a header-keyword test this reader already had, asked a second time
+  at a column the content scan chose. No document, protocol, vendor or signal vocabulary.
+- [x] **LOCKSTEP** — no user-visible behaviour changes in any document the corpus can rebuild, so the
+  book is unchanged; the durable finding is this leaf and `.2f`, which carries the measured reason the
+  recall half is blocked. No production rule was deleted. No KM card: the fact is a defect that is now
+  fixed, and the rule it establishes lives in the code's own contract.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
 1. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
    whether a parsed direction should survive an unreadable width.
-2. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+2. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a
+   signal.
+3. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.

@@ -25,21 +25,21 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-     "authority_id": "SIGNAL-DECLARATION-ROW-DROP.4a-A-WIDTH-EXPRESSION-MAY-SPAN-WHITESPACE",
+     "authority_id": "SIGNAL-DECLARATION-ROW-DROP.2e-AN-ALIGNED-HEADER-IS-NOT-A-SHIFTED-ONE",
      "baseline": {
-        "analyzed_functions": 2438,
-        "decision_sites": 13108,
-        "helper_edges": 15338,
+        "analyzed_functions": 2440,
+        "decision_sites": 13119,
+        "helper_edges": 15343,
         "semantic_macros": 1486
      },
      "delta": {
-        "analyzed_functions": 2,
-        "decision_sites": 11,
-        "helper_edges": 5,
+        "analyzed_functions": 1,
+        "decision_sites": 5,
+        "helper_edges": 2,
         "semantic_macros": 0
      },
-     "owner": "SIGNAL-DECLARATION-ROW-DROP.4a",
-     "rationale": "`parse_optional_width_hint` consumed exactly one whitespace token, so `width DATA_WIDTH / 8` left tokens unread and `index != tokens.len()` discarded the WHOLE declaration - identity, direction and all. Two functions read a width stated as an arithmetic EXPRESSION: `width_expression_length` (recursive descent over numbers, parametric identifiers, + - * / and balanced parentheses including a call form) and `parse_width_expression`, which admits one only when it ends at a whitespace-token boundary and is structured if anything follows it."
+     "owner": "SIGNAL-DECLARATION-ROW-DROP.2e",
+     "rationale": "The content-based name-column override applies its result as a whole-table OFFSET, which is right for a header row shifted relative to the body and wrong when the header is aligned and the header scan matched a decoy - the rotation then carries the width column onto a neighbour. One function, `is_signal_name_column_header`, is the single definition of the name-column test, used to pick the column and again to ask whether the override's winner is the one the header already named."
   }
  }
 }
