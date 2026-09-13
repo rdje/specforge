@@ -1457,16 +1457,35 @@ honestly-qualified) path to "human-SpecForge in Rust."
   changing the walk**, the way `.3k.11` was sized. Prerequisite: none. Verification: the corpus
   population of a predicate between a signal and its level, adjudicated individually; observed RED;
   the chain rebuilt for every document whose artifacts move.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.13` · Status: `pending` (opened `2026-09-13` by `.3k.11`) · Goal:
-  **the dynamic path has no MODALITY gate.** AHB `dyn_sigcon_0012` publishes `HPROT must_be_high` from
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.13` · Status: `done` (`2026-09-13`, CODE; opened the same day by
+  `.3k.11`) · Goal: **the dynamic path has no MODALITY gate.** AHB `dyn_sigcon_0012` publishes `HPROT must_be_high` from
   *"It is **recommended** that a Manager sets HPROT[0] HIGH"*. The pairing is right and the level is
   right; what is wrong is that a RECOMMENDATION is published as a hard constraint.
   `EXTRACTION-QUALITY-GAUGE.3k.2a` refused exactly this shape in the statement path — *"It is
   recommended, but not required, that PSLVERR is driven LOW"* was one of its seventeen — but that
   refusal rides the kind classifier, which this path never reaches: it types a record from its VALUE
-  BINDER. So the class is live here and nowhere gated. Prerequisite: none. Verification: the corpus
-  population of non-mandatory modality in the dynamic path measured with the real producer and
-  adjudicated individually; observed RED; the chain rebuilt for every document whose artifacts move.
+  BINDER. So the class is live here and nowhere gated.
+  **SHIPPED `2026-09-13`. Actionable population: 2, both adjudicated, and the leaf is as small as its
+  population.** AHB `dyn_sigcon_0012` (*"It is **recommended** that a Manager sets HPROT[0] HIGH"*) and
+  AMBA LPI `dyn_sigcon_0009` (*"Figure 2-16 shows how a device **can** be interfaced directly to a
+  controller with an absent or tied LOW QDENY signal"* — a permitted configuration, in a figure
+  caption). Corpus replayed **292 → 291 over the 76 comparable documents**, and the AHB rebuild takes
+  it 12 → 11; nothing else in the corpus moves. LPI's real requirement survives untouched, because the
+  document states it in its own mandatory clauses (`dyn_sigcon_0007`/`0008`, *"QDENY must be tied
+  LOW"*) — which is the shape of evidence that makes the refusal safe rather than merely defensible.
+  **The control that defines the gate's limit is the one that keeps this producer alive.** A
+  specification binds a signal FLATLY all the time — *"the FULL output is pulled HIGH"*, *"AERR, DERR
+  are driven LOW"* — and those are real invariants with no modal anywhere. So the refusal needs an
+  EXPLICIT non-mandatory marker, and a mandatory modal in the same clause outranks it; a permission
+  granted in one sentence does not suppress the requirement stated in the next
+  (*"A Manager … can set the width to 0. An attached Subordinate must have its AWSNOOP input tied
+  LOW."*). A modality gate written any wider on a path that reads BINDINGS rather than OBLIGATIONS
+  would refuse almost everything it exists to capture.
+  **Two `.3k.11` controls were retargeted, not weakened.** Both were written from corpus sentences
+  that this leaf now refuses, so each now asserts its property on `logic_level_bindings` directly —
+  one rule, one control. Their reasoning is unchanged and is recorded in place.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.13`
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j` · Status: `pending` (opened `2026-09-12` by
   `INVARIANT-SHAPE-ADMISSION.5`) · Goal: **the LLM-primary constraint path applies none of the
@@ -1490,6 +1509,38 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.13`
+
+- [x] **REPRODUCE / MEASURE** — the population is **2 records**, surfaced by `.3k.11`'s own
+  adjudication of all 22 reproduced logic-level records and confirmed with `replay-constraints`:
+  corpus replayed **292 → 291** over the 76 comparable documents, and AHB 12 → 11 on rebuild. AHB
+  `dyn_sigcon_0012` is a RECOMMENDATION; AMBA LPI `dyn_sigcon_0009` is a PERMISSION in a figure
+  caption. Nothing else in the corpus moves.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `extract_dynamic_signal_constraints`. This producer types a record from its VALUE BINDER and never
+  from a modal — correctly, because a flat binding is a real invariant — so it had no modality gate at
+  all. `EXTRACTION-QUALITY-GAUGE.3k.2a` refuses the same shape in the statement path, but that refusal
+  rides the kind classifier, which this producer never reaches.
+- [x] **ADDRESSED (verified)** — `binding_is_non_mandatory`, applied to the clause each binder bound
+  in, for both binders. **Five controls in `mod extraction_quality_gauge_3k_13`, two observed RED with
+  the predicate stubbed to `false`** and the file restored byte-identically. The other three are the
+  gate's limit: a flat binding with no modal at all still mints, a mandatory modal outranks a
+  permission in its own clause, and a permission in another clause does not suppress the requirement.
+  AHB rebuilt (`evidence → validate → semantic → validate → intent → validate → adapt`, each validated
+  exactly once, upstream-first; bundle restored, `diff -rq` clean, removed, retention back to **24**).
+- [x] **NO REGRESSION** — the wire golds hold: `signal_constraint P=R=F1=1.000` with **fp=0** on APB,
+  AHB and AXI, document-level fact recall **1.000**. `kg-bench` **156/156**; `cargo fmt --all --check`,
+  `cargo clippy --offline --all-targets -D warnings` and the whole workspace suite green
+  (`specforge-core` lib 1,495 → **1,500**). `flow_census.json` re-derived and attributed. Only AHB's
+  artifacts move, and only by the one record.
+- [x] **GENERICITY (ADR 0006)** — universal English deontic modality, the RFC-2119 distinction every
+  specification in this corpus is written against. No document, protocol or vendor vocabulary; every
+  test identifier alpha-renamed.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` gains the distinction beside the dynamic
+  path's own section, since that section is what explains why this producer reads bindings rather than
+  obligations. KM card: `[[a-level-belongs-to-a-signal]]` is amended rather than duplicated — it
+  already carries this residual as the one the adjudication surfaced, and it is the same reader.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.11`
 

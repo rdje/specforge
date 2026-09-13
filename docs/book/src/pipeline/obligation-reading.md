@@ -386,6 +386,35 @@ signal and its level — *"the QDENY output **absent or** tied low"* — the sea
 predicate. The same fact stated in the other order is captured, so the document's own redundancy
 usually covers it.
 
+## A binding the specification calls optional is not a requirement
+
+Because this reader looks for a bound value rather than for a modal, it used to publish a
+recommendation with the same force as a rule:
+
+```text
+It is recommended that a Manager sets HPROT[0] HIGH, to indicate a data access ...
+Figure 2-16 shows how a device can be interfaced directly to a controller with an absent or
+tied LOW QDENY signal.
+```
+
+The first is advice; the second describes a permitted arrangement. Both were published as hard
+constraints, and the same shape is refused on the obligation side.
+
+The line is drawn narrowly, because drawing it any wider would empty this reader out. A flat binding
+with no modal anywhere — *"the FULL output is pulled HIGH"*, *"AERR, DERR are driven LOW"* — is
+exactly what it exists to capture, so only an **explicit** marker of optionality refuses a binding, a
+requirement in the same clause outranks a permission in it, and a permission granted in one sentence
+does not suppress the requirement stated in the next:
+
+```text
+A Manager that only uses Opcodes where AWSNOOP is LOW can set AWSNOOP_WIDTH to 0 ...
+An attached Subordinate must have its AWSNOOP input tied LOW.
+```
+
+The second sentence still yields its constraint. In the one corpus document where a figure caption
+was refused, the specification states the same requirement in its own mandatory sentences a paragraph
+away, and those are untouched.
+
 ## A bound stated against another operand is not a value
 
 The constraint vocabulary can say *"this signal must be `HIGH`"*, *"must be stable"*, *"must not

@@ -66,9 +66,22 @@ adjective rather than scaffolding. The same fact stated one figure earlier, with
 level, still binds. Widening the skip list to fit that one sentence would be fitting the rule to an
 instance.
 
-A separate residual the adjudication surfaced: the dynamic path has **no modality gate**, so AHB's
-*"It is **recommended** that a Manager sets HPROT[0] HIGH"* is published as a hard constraint. The
-pairing is right and the level is right (`EXTRACTION-QUALITY-GAUGE.3k.13`).
+## The modality gate this adjudication surfaced (`.3k.13`, shipped the same day)
+
+The pairing is right and the level is right in AHB's *"It is **recommended** that a Manager sets
+HPROT[0] HIGH"* — what was wrong is that a RECOMMENDATION was published as a hard constraint. This
+producer types a record from its VALUE BINDER and never from a modal, correctly, so it had **no
+modality gate at all**; `EXTRACTION-QUALITY-GAUGE.3k.2a` refuses the same shape in the statement path
+but that refusal rides the kind classifier, which this producer never reaches.
+
+`binding_is_non_mandatory` is deliberately narrow, and the reason is the thing to carry forward: **a
+flat binding with no modal anywhere is exactly what this reader exists to capture** (*"the FULL output
+is pulled HIGH"*, *"AERR, DERR are driven LOW"*). So only an EXPLICIT marker refuses, a mandatory
+modal in the same clause outranks a permission in it, and a permission granted in one sentence does
+not suppress the requirement stated in the next. Measured population: **2 records** — AHB's
+recommendation and one AMBA LPI figure caption (*"shows how a device **can** be interfaced … with an
+absent or tied LOW QDENY signal"*), whose real requirement the document states separately in its own
+mandatory clauses and which are untouched.
 
 Related: [[the-binding-bearing-clause]], [[one-record-per-obligation-clause]],
 [[constraint-record-producer-strata]].

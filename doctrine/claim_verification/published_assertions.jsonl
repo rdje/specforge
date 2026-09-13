@@ -1,5 +1,5 @@
 {"max_array_items": 16, "max_bytes": 65536, "max_record_bytes": 4096, "max_records": 128, "max_scalar_bytes": 1024, "phase": "frozen", "record_type": "registry", "schema_version": 1}
-{"path":"doctrine/live_document_size/surfaces.jsonl","record_type":"source","schema_version":1,"sha256":"955f1e01e7fc42bdb316291d37a9d059c2d3a20657bf9b0aa5c14c8fc41fc423","source_id":"surface_registry"}
+{"path":"doctrine/live_document_size/surfaces.jsonl","record_type":"source","schema_version":1,"sha256":"430a0691bd4b895ed0483009b322c9bba9c60104d2e24bf676e5fe12610f5cf6","source_id":"surface_registry"}
 {"disposition": "governed", "record_type": "surface_disposition", "schema_version": 1, "surface_id": "workflow_standards"}
 {"disposition": "governed", "record_type": "surface_disposition", "schema_version": 1, "surface_id": "shipped_behavior"}
 {"disposition": "exempt", "reason": "Dated engineering evidence. Every claim-annotated region on this surface is a verification-log row whose first column is the date it was measured, which CLAIM_VERIFICATION.md section 1 exempts as an observation scoped to its original boundary and not reused as current.", "record_type": "surface_disposition", "schema_version": 1, "surface_id": "task_evidence"}

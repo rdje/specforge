@@ -7551,6 +7551,53 @@ fn binding_bearing_clause<'a>(
     ))
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3k.13 — does this binding's clause state a REQUIREMENT, or a
+/// recommendation the specification explicitly marks as optional?
+///
+/// The dynamic path types a record from its VALUE BINDER, never from a modal, which is correct: a
+/// specification binds a signal flatly all the time (*"the FULL output is pulled HIGH"*, *"AERR,
+/// DERR are driven LOW"*) and those are real invariants. The consequence is that this path had no
+/// modality gate at all, so AHB's *"It is **recommended** that a Manager sets HPROT[0] HIGH"* was
+/// published as a hard constraint. `EXTRACTION-QUALITY-GAUGE.3k.2a` refuses exactly that shape in
+/// the statement path — *"It is recommended, but not required, that PSLVERR is driven LOW"* was one
+/// of its seventeen — but that refusal rides the kind classifier, which this producer never reaches.
+///
+/// A flat binding is untouched: the refusal needs an EXPLICIT non-mandatory marker, and a mandatory
+/// modal in the same clause outranks it, because a specification routinely grants a permission and
+/// then states the requirement that follows from it (*"A Manager … can set AWSNOOP_WIDTH to 0 …
+/// An attached Subordinate must have its AWSNOOP input tied LOW"* — two clauses, one obligation).
+///
+/// Universal English deontic modality, the RFC-2119 distinction every specification in this corpus
+/// is written against; no document, protocol or vendor vocabulary (ADR 0006).
+fn binding_is_non_mandatory(clause: &str) -> bool {
+    /// Whole words that grant permission or state a preference rather than a requirement.
+    const NON_MANDATORY_WORDS: &[&str] = &[
+        "may",
+        "can",
+        "could",
+        "might",
+        "should",
+        "optional",
+        "optionally",
+        "recommended",
+        "recommendation",
+        "preferably",
+    ];
+    /// Whole words that state a requirement. `required` counts only in the modal phrase
+    /// `required to`, the same reading [`is_descriptive_narration_binding`] already takes.
+    const MANDATORY_WORDS: &[&str] = &["must", "shall"];
+
+    let lowered = clause.to_ascii_lowercase();
+    let words: Vec<&str> = lowered
+        .split(|character: char| !character.is_ascii_alphanumeric())
+        .filter(|word| !word.is_empty())
+        .collect();
+    if words.iter().any(|word| MANDATORY_WORDS.contains(word)) || lowered.contains("required to") {
+        return false;
+    }
+    words.iter().any(|word| NON_MANDATORY_WORDS.contains(word))
+}
+
 /// EXTRACTION-QUALITY-GAUGE.3k.11 — which SIGNAL each logic level in a clause binds to.
 ///
 /// [`logic_level_binding_kind_from_text`] answers a narrower question: is there a level within six
@@ -7781,7 +7828,11 @@ fn extract_dynamic_signal_constraints(
         // row names its subject in the cell mnemonic and binds in the body). The logic-level binder
         // now says which SIGNAL each level belongs to, so its subjects come from the binding itself
         // — and because the pairing is per level, one clause can state several.
-        let value_binding = binding_bearing_clause(&statement.text, discovered_values);
+        let value_binding = binding_bearing_clause(&statement.text, discovered_values)
+            // EXTRACTION-QUALITY-GAUGE.3k.13 — a binding the specification itself marks optional is
+            // not an invariant. Judged on the clause that BOUND, so a permission granted in one
+            // sentence does not suppress the requirement stated in the next.
+            .filter(|(binding, _, _)| !binding_is_non_mandatory(binding));
         let level_bindings: Vec<(&str, Vec<String>, SignalConstraintKind)> = if value_binding
             .is_some()
         {
@@ -7800,6 +7851,7 @@ fn extract_dynamic_signal_constraints(
             statement
                 .text
                 .split(['.', ';', '\u{2022}', '\n'])
+                .filter(|clause| !binding_is_non_mandatory(clause))
                 .flat_map(|clause| {
                     logic_level_bindings(text_before_condition_marker(clause), &declared_signals)
                         .into_iter()
@@ -37289,6 +37341,121 @@ mod extraction_quality_gauge_3k_2b {
 }
 
 #[cfg(test)]
+mod extraction_quality_gauge_3k_13 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.13` — the dynamic path types a record from its VALUE BINDER and
+    //! never from a modal, which is correct and is why it had no modality gate at all. AHB's
+    //! *"It is recommended that a Manager sets HPROT[0] HIGH"* was published as a hard constraint.
+    //! Every sentence below is a real corpus shape with its identity alpha-renamed (ADR 0006).
+    use super::*;
+
+    fn records(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        statements.push(ExtractedStatement {
+            statement_id: "narration".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_dynamic_signal_constraints(&statements, &mut counter, &HashSet::new())
+    }
+
+    fn shape(records: &[SignalConstraintRecord]) -> Vec<String> {
+        let mut rows: Vec<String> = records
+            .iter()
+            .map(|record| {
+                format!(
+                    "{} {}",
+                    record.subject_signal,
+                    record.constraint_kind.as_str()
+                )
+            })
+            .collect();
+        rows.sort();
+        rows
+    }
+
+    /// The defect, on AHB's own sentence.
+    #[test]
+    fn a_recommendation_is_not_a_requirement() {
+        assert!(
+            records(
+                "It is recommended that a Manager sets ZETAPROT[0] HIGH, to indicate a data access.",
+                &["ZETAPROT"]
+            )
+            .is_empty()
+        );
+    }
+
+    /// The other half of the same distinction: a PERMITTED configuration. AMBA LPI's figure caption
+    /// describes how a device *can* be interfaced, not how one must be.
+    #[test]
+    fn a_permission_is_not_a_requirement() {
+        assert!(
+            records(
+                "Figure 2-16 shows how a device can be interfaced directly to a controller with an \
+                 absent or tied LOW ZETADENY signal.",
+                &["ZETADENY"]
+            )
+            .is_empty()
+        );
+    }
+
+    /// The control that keeps the gate from swallowing this producer's whole purpose: a specification
+    /// binds a signal FLATLY all the time, and those are real invariants. Without this, a modality
+    /// gate on a path that reads bindings rather than obligations would refuse almost everything.
+    #[test]
+    fn a_flat_binding_with_no_modal_at_all_is_still_a_requirement() {
+        assert_eq!(
+            shape(&records(
+                "The ZETAFULL output is pulled HIGH.",
+                &["ZETAFULL"]
+            )),
+            vec!["ZETAFULL must_be_high"]
+        );
+    }
+
+    /// A mandatory modal in the same clause outranks a permission in it. (The binding still has to
+    /// NAME its signal — an anaphoric *"that input"* is not resolved by this walk and never was.)
+    #[test]
+    fn a_mandatory_modal_outranks_a_permission_in_its_own_clause() {
+        assert_eq!(
+            shape(&records(
+                "A device that can omit ZETADENY must drive ZETADENY LOW.",
+                &["ZETADENY"]
+            )),
+            vec!["ZETADENY must_be_low"]
+        );
+    }
+
+    /// And a permission in ANOTHER clause does not suppress the requirement that follows from it —
+    /// the AXI-L shape, where a Manager may narrow a port and a Subordinate must then tie it off.
+    #[test]
+    fn a_permission_in_another_clause_does_not_suppress_the_requirement() {
+        assert_eq!(
+            shape(&records(
+                "A Manager that only uses Opcodes where ZETASNOOP is LOW can set the width to 0. \
+                 An attached Subordinate must have its ZETASNOOP input tied LOW.",
+                &["ZETASNOOP"]
+            )),
+            vec!["ZETASNOOP must_be_low"]
+        );
+    }
+}
+
+#[cfg(test)]
 mod extraction_quality_gauge_3k_11 {
     //! `EXTRACTION-QUALITY-GAUGE.3k.11` — a logic level belongs to a SIGNAL, not to the verb that
     //! binds it. The retired `logic_level_binding_kind_from_text` returned the LAST level within six
@@ -37367,15 +37534,22 @@ mod extraction_quality_gauge_3k_11 {
 
     /// The direction is not fixed: a specification puts the signal after its level as readily as
     /// before it, so the walk goes forward when backward finds nothing.
+    ///
+    /// Asserted on the walk itself rather than through the whole producer, because the corpus
+    /// sentence this shape comes from is a PERMISSION (*"can be connected to a controller with …"*)
+    /// and `EXTRACTION-QUALITY-GAUGE.3k.13` refuses those — a different rule, with its own control.
     #[test]
     fn a_level_may_precede_its_signal() {
+        let declared: HashSet<String> = std::iter::once("ZETADENY".to_string()).collect();
         assert_eq!(
-            shape(&records(
-                "The device can be connected to a controller with an absent or tied LOW ZETADENY \
-                 signal.",
-                &["ZETADENY"]
-            )),
-            vec!["ZETADENY must_be_low"]
+            logic_level_bindings(
+                "connected to a controller with an absent or tied LOW ZETADENY signal",
+                &declared
+            ),
+            vec![(
+                vec!["ZETADENY".to_string()],
+                SignalConstraintKind::MustBeLow
+            )]
         );
     }
 
@@ -37424,14 +37598,18 @@ mod extraction_quality_gauge_3k_11 {
     /// A SUBSCRIPT is part of the reference beside it, not a boundary. AHB writes
     /// *"a Manager sets HPROT[0] HIGH"*, which tokenizes as `HPROT`, `0`, `HIGH`; stopping at the
     /// `0` loses the signal the level plainly belongs to.
+    ///
+    /// Asserted on the walk itself, for the same reason as the sentence above: AHB states this one as
+    /// a RECOMMENDATION, which `EXTRACTION-QUALITY-GAUGE.3k.13` refuses on its own grounds.
     #[test]
     fn a_subscript_does_not_separate_a_signal_from_its_level() {
+        let declared: HashSet<String> = std::iter::once("ZETAPROT".to_string()).collect();
         assert_eq!(
-            shape(&records(
-                "It is recommended that a Manager sets ZETAPROT[0] HIGH.",
-                &["ZETAPROT"]
-            )),
-            vec!["ZETAPROT must_be_high"]
+            logic_level_bindings("a Manager sets ZETAPROT[0] HIGH", &declared),
+            vec![(
+                vec!["ZETAPROT".to_string()],
+                SignalConstraintKind::MustBeHigh
+            )]
         );
     }
 
