@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > should SpecForge use one weighted progress score
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > should a co-referenced antecedent be marked alias_dependent
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -296,5 +298,3 @@
   > what does DOCLING_DEVICE do
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > what does KG-ISF-TRANSACTIONS.2k add
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement

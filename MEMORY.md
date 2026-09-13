@@ -7,34 +7,31 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`PROSE-NAME-CELL-DECLARATION.3` SHIPPED `2026-09-14`** — a width cell that is a SENTENCE is not a
-  parametric width. `parse_table_width_hint_text` admitted any cell holding one ASCII letter, so a table whose width
-  column holds a DESCRIPTION declared the description as the wire's width. `width_expression_reads_as_prose` refuses
-  a cell with **more than six tokens AND a sentence terminator before whitespace**.
-- **The re-measurement the deferral demanded moved every number in the node, and that is the result.** Tracked census
-  `scripts/measure_parametric_width_cell_shapes.py`: current stratum **195 parametric width cells, 0 prose, 0
-  declarations**; legacy **47**, of which **43 are one cause**. The node's own margin ("widest legitimate 5 tokens, narrowest
-  prose 7") does NOT re-derive: real expressions reach **8** and prose starts at **7**, so the classes OVERLAP on length and the
-  rule is a CONJUNCTION whose halves were each measured — >6 tokens alone refuses
-  `ceil((ID_R_WIDTH+1)/8) if ARIDUNQ is not present: …`, terminator alone refuses `LTI_GPC == True ? 2:1`.
-- **The census's own join control caught its boundary before any number was published**: scoped to persisted
-  `table_kind == signal_description` it joined at 92.8%, every miss AXI `table_0251` — a `table_kind: unknown`
-  promoted by corpus memory through `effective_table_kind`. Boundary is now that set UNION the tables in
-  `table_signal_declaration_provenance`; join **601/601**.
-- **Corpus measured, not argued: `evidence --dry-run` over ALL 27 rebuildable documents reproduces every persisted artifact**
-  (24 retained + AHB/APB/AXI restored from `generated/preserved/WIRE-BASED-100.10/` and removed again; preserved bundles
-  byte-identical, retention back at 24; all four table-declaring documents still LOAD through `semantic`). No proof staled.
-- **Opened `PROSE-NAME-CELL-DECLARATION.5`**: 43 of the 47 are TileLink, where `name_cell_is_read_whole` scores a REAL name
-  column at ZERO because its names contain a space (`c opcode`) — the override then hands the table its `Type` column and
-  every real TileLink signal name is unreachable. `.2`'s rule has a recall side and this is it.
-- **Opened `CORPUS-CHAIN-CURRENCY.4` — separately, because it is not this leaf's**: the same sweep found I2C does NOT reproduce
-  (persisted 9 `signal_constraints` / 21 `fact_provenance` vs 3 / 15 today, 13 `conditional_rules` renumbered). **Proven
-  independent** — byte-identical delta with the guard and with HEAD's `evidence.rs` — and it already fails at `1ada364a`. The
-  real subject: `CHAIN-CURRENCY` is too expensive to run (`--all` did not finish in 50 min), so nothing caught it.
-- Next action: `PROSE-NAME-CELL-DECLARATION.5` (census the two-token name-column population first), `CORPUS-CHAIN-CURRENCY.4`,
-  `EXTRACTION-QUALITY-GAUGE.3k.12`, the unsized `.3j`, or `SIGNAL-DECLARATION-ROW-DROP.2d`. `.3k.9` stays `DO NOT SHIP YET`.
+- Active unit: **`PROSE-NAME-CELL-DECLARATION.5` CLOSED `2026-09-14` (PROBE/DOC, no rule)** — and its own premise was
+  FALSIFIED by the census it was required to run first. The tree now has **no eligible frontier**: all six leaves closed.
+- **The falsification is the result.** `.3` read TileLink's lost name column as `.2`'s whole-cell score zeroing a column
+  of two-token names. Measured, TileLink column 0 scores **1** under the score `.2` REPLACED and 0 under the one it
+  shipped, while the `Type` column scores **4 under both** — so the rotation predates `.2` and deleting `.2` would not
+  undo it. Fourth premise in that tree to come from reading an artifact instead of running the producer.
+- **What `.5` did establish, which is what it was for**: `name_cell_is_read_whole`'s recall cost is **zero**. Of 573
+  boundary tables it zeroes **11** name columns (1 current, 10 legacy), every one genuinely prose; 6 are then overridden
+  and 4 of those are repairs the corpus wanted (AHB `HCLK`/`HRESETn`, eMMC `VOH`/`VOL`/`VIH`/`VIL` ×2, HBM2's pin list).
+- **Opened `TEXT-LAYER-IDENTIFIER-SPLIT` (`.0` pending) for the real cause.** `c opcode` is `c_opcode` with the
+  underscore missing, so every row's leading token is the same letter and the column offers ONE name however scored.
+  eMMC `table_0221` carries it too (`t PERIOD`, `t TLH , t THL`) and **declares**, so it is not one publisher's
+  typesetting. **The evidence to rejoin exists in the document and dies at ingest**: the TileLink PDF text layer holds
+  36 underscores on 5 pages (10 distinct names, all in code listings) and the persisted SourceIR holds **zero**
+  anywhere. Distinct from `[[evidence-statement-markdown-escape-truncates-identifiers]]`, where the underscore is
+  PRESENT and escaped — here there is nothing to unescape.
+- **`scripts/measure_name_column_whole_cell_score.py` IMPORTS its reader mirror from
+  `measure_parametric_width_cell_shapes.py` rather than copying it.** Two copies of one producer's logic is the drift
+  this repository keeps finding in its own instruments.
+- Next action: `TEXT-LAYER-IDENTIFIER-SPLIT.0` (run the ingest leg first — if the underscore survives for documents that
+  have one, the whole tree is about cells that never had one), `CORPUS-CHAIN-CURRENCY.4`,
+  `EXTRACTION-QUALITY-GAUGE.3k.12`, the unsized `.3j`, or `SIGNAL-DECLARATION-ROW-DROP.2d`/`.4b`.
+  `.3k.9` stays `DO NOT SHIP YET`.
 - In-flight uncommitted: none after this commit.
-- Blockers: none. Push cadence is **400** per director directive `2026-09-13`, FIXED there, so no push is due at 244; directive 16 still gates it on
+- Blockers: none. Push cadence is **400** per director directive `2026-09-13`, FIXED there, so no push is due at 245; directive 16 still gates it on
   full CI. Standing hazards, each with its procedure in a fact card: **an evidence-stage change that MOVES a current-schema artifact's content stales
   its proof and it then refuses to LOAD** — use that refusal as the signal for WHICH documents move; rebuild `evidence → validate → semantic →
   validate → intent → validate → adapt`, each validated once, upstream-first, restoring the bundle from

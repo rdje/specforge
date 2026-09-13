@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PROSE-NAME-CELL-DECLARATION`
-- Status: `active` (`2026-09-14`; `.0`-`.4` done; `.5` open — opened by `.3`'s census)
+- Status: `active` (`2026-09-14`; `.0`-`.5` done; no eligible frontier — see below)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-11`
 - Last updated: `2026-09-14`
@@ -122,33 +122,33 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
   `[[ACTOR-NOUN-RELATION-DECLARATION]]`.1 removed that declaration, and AHB's EvidenceIR is byte-unchanged
   under the guard.
   **What it refuses, adjudicated**: 43 of the 47 are TileLink rows whose declared NAME is a single
-  letter — the defect `.5` now owns; 2 are MMU-700 field rows carrying a paragraph; 2 are real
+  letter — the cause `.5` measured and `[[TEXT-LAYER-IDENTIFIER-SPLIT]]` owns; 2 are MMU-700 field rows
+  carrying a paragraph; 2 are real
   identities (GIC `ARCHREV`, CXS `CXSCNTL`) declared width-only with a fabricated width, which become
   rows the `.1` accounting counts as unread. That is `SIGNAL-DECLARATION-ROW-DROP.2e`'s trade exactly:
   a visible refusal over a width the document never states.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `PROSE-NAME-CELL-DECLARATION.3`
 
-- ID: `PROSE-NAME-CELL-DECLARATION.5` · Status: `pending` (opened `2026-09-14` by `.3`) · Goal: **a real
-  name column whose cells are two-token names scores ZERO, and the override hands the table its
-  neighbour.** `.2` made a cell score for its column only when the reader consumes it whole, which
-  stopped a prose column from scoring like a name column. It also stops a genuine name column whose
-  names contain a space. TileLink writes every signal that way — `c opcode`, `d param`, `c valid` —
-  so its `Signal | Type | Width | Description` channel tables score 0 on column 0, the content-based
-  override wins with the `Type` column's `{C, D, V, R}`, and the whole table rotates: the names become
-  single letters and the width column lands on `Description`. Four tables, 43 of the 47 prose width
-  cells `.3` refuses, and **every real TileLink signal name is unreachable**.
-  This is not `.1`'s question. `.1` asked whether to REFUSE a phrase name cell and answered no; this
-  asks whether a two-token cell can be READ, which `signal_names_in_name_cell` already does for the
-  comma form and refuses for the space form — measured, and for a stated reason: a comma is an author
-  enumerating (`[[declared-population-is-not-the-candidate-row-population]]`). A column-wide regularity
-  is a different instrument from a cell-local affix test and is the first thing to measure here.
-  **Census the corpus population of such columns before designing**, and expect the same discipline the
-  rest of this tree has needed: TileLink is legacy, so the recall claim must be made through the real
-  reader rather than through the persisted artifact.
-  Prerequisite: none. Verification: the population measured with the real reader and adjudicated;
-  observed RED; every current-stratum name column shown to keep its column.
-  Commit: pending
+- ID: `PROSE-NAME-CELL-DECLARATION.5` · Status: `done` (`2026-09-14`, PROBE/DOC) · **The leaf's premise was
+  false and the census said so before anything was designed.** It opened on `.3`'s reading that
+  TileLink loses its name column *because* `.2`'s whole-cell score zeroes a column of two-token names.
+  Measured, TileLink's name column scores **1** under the score `.2` replaced and **0** under the one it
+  shipped — and the `Type` column scores 4 either way, so `4 >= 1 + NAME_COLUMN_OVERRIDE_MARGIN` fires
+  under both. **`.2` did not cause that rotation and removing `.2` would not undo it.**
+  What the census does establish is the question `.2` left open: **the whole-cell score's recall cost is
+  measured, and it is zero.** Of 573 tables, **11** have a header-named column the rule takes to zero
+  while it still leads with two or more identifiers — 1 current, 10 legacy — and every one of the 11 is
+  genuinely prose. Six are then overridden and four of those are repairs the corpus wanted (AHB
+  `table_0004` → `HCLK`/`HRESETn`, eMMC `table_0213`/`table_0214` → `VOH`/`VOL`/`VIH`/`VIL`, HBM2
+  `table_0075` → its `DA…` pin list); the other two are inert tables. **No real signal is lost to it.**
+  TileLink's actual cause is a different class and is tracked as `[[TEXT-LAYER-IDENTIFIER-SPLIT]]`: the
+  name cell `c opcode` is the single identifier `c_opcode` with its underscore missing, so every row's
+  leading token is the same letter and the column can offer only ONE distinct name however it is scored.
+  Prerequisite: none. Verification: `python3 scripts/measure_name_column_whole_cell_score.py`, read-only;
+  the mirror is imported from `measure_parametric_width_cell_shapes.py` rather than copied, so the two
+  cannot drift apart.
+  Commit: `PROSE-NAME-CELL-DECLARATION.5`
 
 - ID: `PROSE-NAME-CELL-DECLARATION.4` · Status: `done` (`2026-09-12`) · **The premise was a legacy fact:
   the current classifier already refuses the matrix.** The leaf was to decide whether a bus-mode matrix
@@ -475,6 +475,57 @@ the delta is byte-identical with the guard and with `git stash`'d HEAD — and i
 `EXTRACTION-QUALITY-GAUGE.3k.1`, which also fails to reproduce it. Tracked as
 `CORPUS-CHAIN-CURRENCY.4`; it is a chain-currency finding, not a width one.
 
+## `.5` — the whole-cell score's recall cost, measured (`2026-09-14`)
+
+Producer: `python3 scripts/measure_name_column_whole_cell_score.py`. Read-only. It imports its reader
+mirror from `measure_parametric_width_cell_shapes.py` instead of copying it, because two copies of one
+producer's logic is the drift this tree has now found in its own instruments twice.
+
+The leaf existed to answer a recall worry `.2` created: if a cell scores for its column only when the
+reader consumes it whole, what happens to a column of real names the reader does **not** consume whole?
+The population is every table whose header-designated column scores **0** under the whole-cell rule
+while still leading with two or more identifiers — exactly the columns the rule zeroes rather than
+merely lowers.
+
+| stratum | tables | name column zeroed | then overridden | of those, declaring |
+| --- | ---: | ---: | ---: | ---: |
+| current (proof-carrying) | 116 | **1** | 1 | 1 |
+| legacy (inspection-only) | 457 | **10** | 6 | 1 |
+
+**All eleven are genuinely prose, and the overrides are repairs.** The one current case is AHB
+`table_0004` — `Clock source` / `Reset controller` zeroed, the column moved to `HCLK` / `HRESETn`, which
+is `.2` working exactly as it was written. In the legacy ten: eMMC `table_0213` and `table_0214` move
+`Output HIGH voltage` to the `Symbol` column's `VOH`/`VOL`/`VIH`/`VIL`, HBM2 `table_0075` moves
+`Point to Point` to its `DA13, DA16, …` pin list, and DTI `table_0052` moves a direction sentence to a
+`*_DTI_DN` suffix column. The remaining four keep their column and declare nothing. **No real signal is
+lost to the rule anywhere in the corpus.**
+
+### The premise this leaf was opened on is false, and the correction is the point
+
+`.3` read TileLink's rotation as this rule's doing: a name column of two-token names scoring zero. The
+profile says otherwise.
+
+| TileLink `table_0012` column | whole-cell score (`.2`) | leading-token score (before `.2`) |
+| --- | ---: | ---: |
+| 0 `Signal` — `c opcode`, `c param`, … | 0 | **1** |
+| 1 `Type` — `C`, `D`, `V`, `R` | **4** | **4** |
+
+Under *both* scores the `Type` column clears `NAME_COLUMN_OVERRIDE_MARGIN` against column 0, so the
+rotation predates `.2` and deleting `.2` would not undo it. The real cause is that every row's leading
+token is the same letter: `c opcode` is the single identifier `c_opcode` with its underscore absent, so
+the column can offer only **one** distinct name however it is scored.
+
+Corroboration from a second document: eMMC `table_0221` is in the same list with `t PERIOD` and
+`t TLH , t THL` — `tPERIOD` and `tTLH`/`tTHL` split the same way — and it **declares**. The class is not
+one specification's typesetting.
+
+**Where the underscore goes.** The TileLink PDF's own text layer carries `a_opcode`, `d_valid` and eight
+other underscored names — 36 occurrences on 5 pages, all in code listings — while the surrounding prose
+and every table cell spell them with a space. SpecForge's SourceIR for that document carries **zero**
+underscores anywhere: not in `content_elements`, not in a table cell. So the evidence that would rejoin
+the two tokens exists in the document and does not survive ingest, which is why the repair cannot be
+designed at this reader and is tracked as its own tree.
+
 ## Acceptance Checklist (enforced) — `.2`, the tree's only production change
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_name_cell_shapes.py`: current stratum
   604 declarations, **2 phrase**, both AHB `table_0004`. `specforge eval-extraction` + the persisted
@@ -567,11 +618,12 @@ the delta is byte-identical with the guard and with `git stash`'d HEAD — and i
 
 ## Current Frontier
 
-1. `PROSE-NAME-CELL-DECLARATION.5` — a real name column whose cells are two-token names scores zero
-   under `name_cell_is_read_whole`, so the override hands TileLink's four channel tables their `Type`
-   column and every real signal name in that specification is unreachable. Census the corpus population
-   of such columns before designing; the recall claim has to be made through the real reader, because
-   TileLink is legacy.
+No eligible frontier. All six leaves are closed and the tree's question is answered in both directions:
+a phrase name cell must not be refused (`.1`), a prose column must not score (`.2`), a prose width must
+not be read (`.3`), the matrix is already refused upstream (`.4`), and the whole-cell score costs no
+recall (`.5`). The one live defect this tree found and does not own is the split identifier, which is
+`[[TEXT-LAYER-IDENTIFIER-SPLIT]]`; reopen here only if a NAME-CELL question comes back with a measured
+population.
 
 ## Decisions
 
@@ -623,6 +675,15 @@ the delta is byte-identical with the guard and with `git stash`'d HEAD — and i
   as one change; this tree's characteristic finding is that the repair of a cause goes first and
   separately from the rule that changes how the defect looks.
 
+- `2026-09-14` — **`.5` closed as a measurement, with no rule, because the rule it was opened to justify
+  had no defect to repair.** The leaf inherited its premise from `.3`'s adjudication rather than from a
+  measurement, and the first thing the census did was falsify it. That is the fourth premise in this tree
+  to come from reading an artifact instead of running the producer; the pattern is now general enough to
+  be the tree's closing note.
+- `2026-09-14` — **the second census imports the first's mirror rather than copying it.** `.0`'s card
+  already records that a mirror which does not move with its producer reports a defect that is its own.
+  Two copies guarantee that eventually.
+
 ## Open Questions
 
 - ~~Is there a shape-only discriminator at all?~~ **Answered by `.0`, for the forms that occur.** Five
@@ -640,6 +701,17 @@ the delta is byte-identical with the guard and with `git stash`'d HEAD — and i
 None.
 
 ## Verification Log
+
+- `2026-09-14` — `.5`. `python3 scripts/measure_name_column_whole_cell_score.py` over all 573 boundary
+  tables: 11 zeroed name columns, each printed verbatim with its headers, its sample cells, and the
+  winning column's injectivity, and each adjudicated above. Read-only: no artifact written, rebuilt or
+  mutated; no network, clock or randomness. The falsifying profile was computed by running the census's
+  own `column_profile` over TileLink `table_0012`/`table_0013` — column 0 scores 1 under the pre-`.2`
+  leading-token rule and 0 under the shipped whole-cell rule, while `Type` scores 4 under both. The PDF
+  text-layer counts come from `pypdf` over
+  `.cache/local-references/chipdoc/risc-v/interfaces/tilelink/current/TileLink-1.8.0_Specification.pdf`
+  (repository-volume, read-only): 36 underscores on 5 pages, 10 distinct underscored names, against 0 in
+  the persisted SourceIR.
 
 - `2026-09-14` — `.3`. Controls, both **observed RED** against the exact defect they guard:
   `a_description_sentence_is_not_a_parametric_width` runs the real `synthesize_signal_declarations`
@@ -727,8 +799,16 @@ None.
 - `.1` — `PROSE-NAME-CELL-DECLARATION.1` (`8199be47`).
 - `.4` — `PROSE-NAME-CELL-DECLARATION.4` (`c6d61393`).
 - `.3` — `PROSE-NAME-CELL-DECLARATION.3` (deferred `2026-09-12`; shipped `2026-09-14`).
+- `.5` — `PROSE-NAME-CELL-DECLARATION.5`.
 
 ## Changelog
+
+- `2026-09-14` — `.5` closed with **no rule**, and its own premise falsified. The whole-cell score zeroes
+  11 name columns corpus-wide, all of them prose, 6 then correctly overridden, and **no real signal is
+  lost to it**. TileLink's rotation is not its doing: that column scores 1 under the pre-`.2` rule and the
+  `Type` column scores 4 under both, so the rotation predates `.2`. The cause is a split identifier whose
+  underscore is present in the PDF text layer and absent from SourceIR; opened as
+  `[[TEXT-LAYER-IDENTIFIER-SPLIT]]`. The tree now has no eligible frontier.
 
 - `2026-09-14` — `.3` closed, and its own recorded numbers were corrected by the re-measurement it was
   deferred pending. Current stratum: 195 parametric width cells, **0 prose**, 0 declarations, and all

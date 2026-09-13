@@ -221,6 +221,8 @@
   > does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > does must_be_value GREATER exist in the corpus
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > does name_cell_is_read_whole cost any recall
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > does parse_explicit_signal_declaration keep the direction when it cannot read the width
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -296,5 +298,3 @@
   > does the Layer D grounding filter need to be weakened
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > does the NLI verifier actually catch real extraction errors
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > does the SourceIR classifier type a bus-mode matrix as a signal table

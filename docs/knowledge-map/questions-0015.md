@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why are the AHB gold negatives for statements 0561 and 0678 there
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > why are the APB AHB AXI wire golds not in the corpus refresh frontier
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -296,5 +298,3 @@
   > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why do I2C SDA USDA and SDAH remain signals
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered

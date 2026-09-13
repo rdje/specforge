@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > does the SourceIR classifier type a bus-mode matrix as a signal table
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -295,5 +297,3 @@
   > how do I populate the fsmgen gitlink in a detached measurement worktree
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > how do I prove a live-document partition is lossless

@@ -234,17 +234,27 @@ the conjunction doing the work.
 The population is the other half of the result, and it is worth stating plainly: in the
 proof-carrying stratum this refuses **nothing at all** — 195 parametric width cells, none of them
 prose, and no artifact moves. All 47 are in documents frozen at an older generation, and 43 of those
-are one shape: a four-column `Signal | Type | Width | Description` table whose real signal names are
-two-token phrases (`c opcode`, `d param`). Such a column scores zero under the whole-cell rule above,
-so the content-based correction hands the table its one-letter `Type` column and rotates the width
-onto the description. Refusing the sentence there removes a declaration named `C`, not a wire. The
-two rows where a real identity does go with it — one GIC and one CXS signal, both declared with a
-fabricated width and nothing else — become rows the accounting counts as unread, which is the whole
-point of counting them.
+are one shape: a four-column `Signal | Type | Width | Description` table whose signal names arrive as
+two tokens (`c opcode`, `d param`) because the identifier's underscore is not in the document's text
+layer. Every row's leading token is then the same letter, so that column can offer only one distinct
+name, the one-letter `Type` column wins it, and the width rotates onto the description. Refusing the
+sentence there removes a declaration named `C`, not a wire. The two rows where a real identity does go
+with it — one GIC and one CXS signal, both declared with a fabricated width and nothing else — become
+rows the accounting counts as unread, which is the whole point of counting them.
 
-The census is re-derivable with `python3 scripts/measure_parametric_width_cell_shapes.py`; its join
-control replays the reader's own column selection and must reproduce every declared width in the
-proof-carrying stratum.
+Two readings of that rotation are worth separating, because the wrong one is the tempting one. It is
+**not** the whole-cell column score refusing a name column whose cells carry a space: that column scores
+one under the rule the score replaced and zero under the rule it is, while the `Type` column scores four
+under both, so the rotation predates the score entirely. Measured over the whole corpus the whole-cell
+rule zeroes eleven name columns, every one of them genuinely prose, and six of those are then moved onto
+the real name column — `VOH`/`VOL`/`VIH`/`VIL` in place of `Output HIGH voltage`, a pin list in place of
+`Point to Point`. It costs no recall anywhere. The split identifier is a separate class, and the eMMC
+timing table that writes `t PERIOD` for `tPERIOD` carries it too.
+
+Both censuses are re-derivable: `python3 scripts/measure_parametric_width_cell_shapes.py` for the width
+cells, whose join control replays the reader's own column selection and must reproduce every declared
+width in the proof-carrying stratum, and `python3 scripts/measure_name_column_whole_cell_score.py` for
+the column score, which imports that same mirror rather than keeping a second copy of it.
 
 ### The same loss one stage later: a width the reader cannot finish reading
 

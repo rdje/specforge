@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > how do I prove a live-document partition is lossless
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I re-derive a published count per revision instead of at two endpoints
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -295,5 +297,3 @@
   > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors

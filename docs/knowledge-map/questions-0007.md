@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many corpus refreshes remain after the OpenCAPI Certified note
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how many corpus refreshes remain after the OpenCAPI Ready note
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
@@ -296,5 +298,3 @@
   > is SpecForge still allowed to read chipdoc from the boot volume
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > is SpecForge's constraint extraction over-generating

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > how does the VLM understand tables / can a VLM read PDF tables
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
@@ -295,5 +297,3 @@
   > how many corpus refreshes remain after USB4 Inter-Domain
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after the GIC Overview Guide
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many corpus refreshes remain after the OpenCAPI Certified note

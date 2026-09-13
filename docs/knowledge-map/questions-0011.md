@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -295,5 +297,3 @@
   > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is the exact active PDF task evidence baseline
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the exact pre-containment FSMGEN_FEEDBACK source identity

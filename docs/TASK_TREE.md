@@ -68,17 +68,18 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `STATUS-LEDGER-ROLLOVER` | `active` | roll the status ledger before its next product record is refused | [open](tasks/STATUS-LEDGER-ROLLOVER.md) |
 | `TASK-NODE-RETENTION` | `active` | every other memory layer is guarded; the contents of a task tree were not | [open](tasks/TASK-NODE-RETENTION.md) |
 | `TASK-PART-SEAL-REACHABILITY` | `active` | give a completed task-evidence part a reachable closed state | [open](tasks/TASK-PART-SEAL-REACHABILITY.md) |
+| `TEXT-LAYER-IDENTIFIER-SPLIT` | `active` | a name cell holds one identifier and the reader sees two words | [open](tasks/TEXT-LAYER-IDENTIFIER-SPLIT.md) |
 | `WIRE-BASED-100` | `active` | max every score (100%) on wire-based interface specs (APB/AHB/AXI/SWD/…) | [open](tasks/WIRE-BASED-100.md) |
 
 ### Complete catalog
 
-All 160 trees route through 3 derived part(s); open a range to find an id.
+All 161 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-8` |
 | [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` |
-| [0003](task-catalog/catalog-0003.md) | 48 | `R16-CONTRACT-IR` | `WIRE-BASED-100` |
+| [0003](task-catalog/catalog-0003.md) | 49 | `R16-CONTRACT-IR` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

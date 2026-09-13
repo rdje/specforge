@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > which arrow spellings does the declaration reader accept
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > which behavioral genericity transforms cover rich PDF capture
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -295,5 +297,3 @@
   > why are table-row sources exempt from the pre-bind constraint subject rule
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why are the AHB gold negatives for statements 0561 and 0678 there

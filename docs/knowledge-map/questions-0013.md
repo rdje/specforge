@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > where are cross-document prior contradictions surfaced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -295,5 +297,3 @@
   > which admissibility routes run before the relational test
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > which architecture owns work and which one verifies published claims
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > which arrow spellings does the declaration reader accept

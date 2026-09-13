@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why does table_kind read Unknown when the persisted JSON says signal_description
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why does the AArch64 External Debug Guide emit no ISF
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
@@ -294,7 +298,3 @@
   > why is section-title boilerplate filtering insufficient
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > why is signal direction hard to lower faithfully to a single .isf module
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why is source_ref ambiguous
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > why is standalone wins circular for an escaped identifier fragment

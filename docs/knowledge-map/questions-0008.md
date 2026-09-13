@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -296,5 +298,3 @@
   > should SpecForge file an FSMGen FR for cat-3 topology (NOT YET — premature: capture is sparse/noisy AND ISF may deliberately be a per-actor format with topology owned by the integrator above per-module synthesis; resolve with FSMGen after .4c.i, never a speculative FR — feedback_verify_fsmgen_before_fr)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > should SpecForge refuse a name cell that is a phrase
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > should SpecForge use one weighted progress score

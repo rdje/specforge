@@ -53,6 +53,7 @@ Complete membership for this range. The bounded landing is
 | `TEMPORAL-RULE-EVAL` | `done` | supervised precision/recall/F1 for mined temporal rules | [open](../tasks/TEMPORAL-RULE-EVAL.md) |
 | `TEMPORAL-RULE-LTL-RENDER` | `done` | render mined temporal rules in standard LTL/MTL notation | [open](../tasks/TEMPORAL-RULE-LTL-RENDER.md) |
 | `TEMPORAL-RULE-SVA-RENDER` | `superseded` | render mined temporal rules as SystemVerilog Assertions (SVA) | [open](../tasks/TEMPORAL-RULE-SVA-RENDER.md) |
+| `TEXT-LAYER-IDENTIFIER-SPLIT` | `active` | a name cell holds one identifier and the reader sees two words | [open](../tasks/TEXT-LAYER-IDENTIFIER-SPLIT.md) |
 | `TRACE-SEVERITY-GATING-AUDIT` | `done` | warnings/errors/fatals must never be masked by a trace/verbosity level | [open](../tasks/TRACE-SEVERITY-GATING-AUDIT.md) |
 | `VERB-COVERAGE-CORPUS` | `done` | mine a comprehensive normative-verb vocabulary from a real chip-spec corpus | [open](../tasks/VERB-COVERAGE-CORPUS.md) |
 | `WIRE-BASED-100` | `active` | max every score (100%) on wire-based interface specs (APB/AHB/AXI/SWD/…) | [open](../tasks/WIRE-BASED-100.md) |

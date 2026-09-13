@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > what does MessageFieldRecord.bit_range mean and when is it set
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -296,5 +298,3 @@
   > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)

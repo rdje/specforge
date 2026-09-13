@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -116,6 +118,8 @@
   > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > why does TileLink declare signals named C, D, V and R
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > why does TileLink lose its Signal column to its Type column
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -293,7 +297,3 @@
   > why does source_batch not appear on my artifact
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why does table_kind read Unknown when the persisted JSON says signal_description
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum

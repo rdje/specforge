@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > what is the exact pre-containment ROADMAP source identity
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
@@ -296,5 +298,3 @@
   > where are administrative workflows filtered
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > where are behavioral paraphrase and harmless layout recipes registered
-- [contested-priors](../knowledge/contested-priors.md)
-  > where are cross-document prior contradictions surfaced

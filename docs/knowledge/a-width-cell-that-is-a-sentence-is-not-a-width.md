@@ -11,6 +11,8 @@ answers:
   - "does refusing a prose width lose a signal"
   - "why does TileLink declare signals named C, D, V and R"
   - "which tables have a name column that scores zero under name_cell_is_read_whole"
+  - "does name_cell_is_read_whole cost any recall"
+  - "why does TileLink lose its Signal column to its Type column"
   - "how do I measure the parametric width cell population"
   - "what boundary does a signal-declaration census need beyond table_kind signal_description"
   - "why did my declaration census join at 92.8 percent"
@@ -22,7 +24,7 @@ answers:
 date: 2026-09-14
 status: current
 tags: [evidence-ir, declarations, widths, census-method, adr-0006, legacy-artifacts, prose-name-cell-declaration]
-evidence: scripts/measure_parametric_width_cell_shapes.py; crates/specforge/src/ir/evidence.rs (width_expression_reads_as_prose; parse_table_width_hint_text; infer_signal_table_row_width_hint; name_cell_is_read_whole; effective_table_kind); docs/tasks/PROSE-NAME-CELL-DECLARATION.md (.3, .5)
+evidence: scripts/measure_parametric_width_cell_shapes.py; scripts/measure_name_column_whole_cell_score.py; crates/specforge/src/ir/evidence.rs (width_expression_reads_as_prose; parse_table_width_hint_text; infer_signal_table_row_width_hint; name_cell_is_read_whole; effective_table_kind); docs/tasks/PROSE-NAME-CELL-DECLARATION.md (.3, .5)
 reverify: "python3 scripts/measure_parametric_width_cell_shapes.py — expect CURRENT stratum 116 tables, 685 declaring rows, 195 parametric width cells, 0 refused as prose, join control 601/601 (100.0%); LEGACY 271 parametric and 47 refused as prose, of which 43 are TileLink. A join rate below 100.0% on the CURRENT stratum means this census has drifted from the reader, not that the reader is wrong."
 ---
 
@@ -71,15 +73,27 @@ and this leaf takes again: a **counted** refusal is worth more than a declaratio
 document never states, because the first is visible to `SIGNAL-DECLARATION-ROW-DROP.1`'s accounting and
 the second propagates.
 
-## The 43 are one cause, and it is a recall defect in the whole-cell score
+## The 43 are one cause, and it is a SPLIT IDENTIFIER — not the whole-cell score
 
-`name_cell_is_read_whole` was built so a prose column stops scoring like a name column. It also stops a
-genuine name column whose names contain a **space**. TileLink writes every signal that way — `c opcode`,
-`d param`, `c valid` — so its `Signal | Type | Width | Description` channel tables score **0** on
-column 0, the content-based override wins with the `Type` column's `{C, D, V, R}`, and the whole table
-rotates: names become single letters and the width column lands on `Description`. Every real TileLink
-signal name is unreachable. Tracked as `PROSE-NAME-CELL-DECLARATION.5`; refusing the prose width is
-right whatever that leaf decides, but it does not repair the cause.
+TileLink's `Signal | Type | Width | Description` channel tables hand their column to the one-letter
+`Type` column, so the width column rotates onto `Description` and every declaration is named `C`, `D`,
+`V` or `R`. The obvious suspect is `name_cell_is_read_whole` — a genuine name column whose cells carry a
+space scores zero under it — and **the measurement refutes that**:
+
+| TileLink `table_0012` column | whole-cell score | leading-token score (before that rule) |
+| --- | ---: | ---: |
+| 0 `Signal` — `c opcode`, `c param`, … | 0 | **1** |
+| 1 `Type` — `C`, `D`, `V`, `R` | **4** | **4** |
+
+`Type` clears `NAME_COLUMN_OVERRIDE_MARGIN` under **both** scores, so the rotation predates the rule and
+removing the rule would not undo it. The cause is that `c opcode` is the single identifier `c_opcode`
+with its underscore missing, so every row's leading token is the same letter and the column can offer
+only ONE distinct name however it is scored. eMMC `table_0221` carries the same split (`t PERIOD`,
+`t TLH , t THL`) and declares. Tracked as `[[TEXT-LAYER-IDENTIFIER-SPLIT]]`.
+
+Measured separately (`scripts/measure_name_column_whole_cell_score.py`), the whole-cell rule's own recall
+cost is **zero**: it zeroes 11 name columns across 573 tables, all eleven genuinely prose, six of which
+are then correctly overridden onto the real name column.
 
 ## A declaration census needs more than `table_kind`
 
