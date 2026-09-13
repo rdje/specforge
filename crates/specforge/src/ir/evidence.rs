@@ -7415,6 +7415,24 @@ fn is_value_position_subject(text: &str, subject: &str) -> bool {
 /// (`BCOMP`, `HRESP`, `SCL`, `CKE`), a protocol/device name (`WISHBONE`, `PCI`, `DTI`), a modal word
 /// (`MUST`), or a non-subject field (`OAS`, `DID`, `IODIR`) — and keeps every pre-lead subject.
 fn is_post_passive_binding_only_subject(text: &str, subject: &str) -> bool {
+    is_post_passive_binding_only_subject_in(text, constraint_bearing_sentence(text), subject)
+}
+
+/// The same gate, told WHICH obligation the record it is judging was minted from.
+///
+/// EXTRACTION-QUALITY-GAUGE.3k.3 — the two-argument form above re-derives that obligation as
+/// [`constraint_bearing_sentence`], the FIRST clause carrying a modal, which was the only clause any
+/// caller could mint from. Once `extract_signal_constraints` reads every obligation in a statement,
+/// judging the Nth record's subject against the FIRST clause is the same span defect this container
+/// is about, one level down — and it is not theoretical: AXI
+/// `| Match | 0b11 | The tags in the write must be checked … WTAG bits must be valid for byte lanes
+/// that are enabled by WSTRB. |` mints `WSTRB must_be_value VALID`, because the gate looks at the
+/// `must be checked` clause, finds its head is the lowercase `write`, applies the table-row exemption
+/// and never examines the clause the record actually came from.
+///
+/// `text` is still the whole statement, and deliberately: gate (2) asks whether the SOURCE is a
+/// serialized table row, which is a property of the statement and not of one of its clauses.
+fn is_post_passive_binding_only_subject_in(text: &str, sentence: &str, subject: &str) -> bool {
     let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
     // (1) only a plain-identifier subject is ever in scope.
     if subject.is_empty() || !subject.chars().all(is_ident) {
@@ -7422,7 +7440,6 @@ fn is_post_passive_binding_only_subject(text: &str, subject: &str) -> bool {
     }
     // (3) the passive binding this record claims, inside the sentence that carries it. Tested BEFORE
     // the row exemption because the exemption now depends on what heads that binding.
-    let sentence = constraint_bearing_sentence(text);
     let Some(lead) = first_passive_binding_lead(sentence) else {
         return false;
     };
@@ -10635,7 +10652,6 @@ fn extract_signal_constraints(
             continue;
         }
         let text = &statement.text;
-        let lowered = text.to_ascii_lowercase();
 
         // EXTRACTION-QUALITY-GAUGE.3d: an inter-signal/field EQUALITY ("X must be (less than or)
         // equal to the value of Y") has no typed slot — refuse it here too (this pattern path mints
@@ -10643,120 +10659,160 @@ fn extract_signal_constraints(
         // EXTRACTION-QUALITY-GAUGE.3k.1: and a comparative MAGNITUDE against a REFERENCE operand
         // ("must not be greater than the size indicated by the OAS field") has no typed slot for the
         // same reason — the whole measured population of that gate is this path's, 4 DTI records.
+        // Both stay STATEMENT-scoped while the records below became clause-scoped: moving them onto
+        // the clause is `EXTRACTION-QUALITY-GAUGE.3k.5`, which owns the admitted set that widening
+        // creates and has its own measured population.
         if is_relational_equality_constraint(text) || is_reference_magnitude_constraint(text) {
             continue;
         }
 
-        // Narrow to the sentence carrying the constraint verb (so unrelated earlier
-        // sentences/clauses don't contribute false subjects), drop any leading antecedent
-        // ("<cond>, which means <obligation>"), THEN strip the trailing condition clause
-        // ("when X" / "until X" / "if X" / …).
-        let subject_part = text_before_condition_marker(consequent_after_inference_marker(
-            constraint_bearing_sentence(text),
-        ));
+        // EXTRACTION-QUALITY-GAUGE.3k.3 — one record per OBLIGATION, not one per statement.
+        //
+        // This loop used to run once, over `constraint_bearing_sentence(text)`: the FIRST clause
+        // carrying a modal. Obligations 2..n of the same statement were dropped, and the kind was
+        // then classified over the WHOLE statement, so a record could take its subject and condition
+        // from one clause and its kind from another. AHB `| HSELx a | … |` is the shape — condition
+        // from the second sentence, `must_be_asserted` from the third — and so is AXI
+        // `WTAGUPDATE must_be_value UPDATED`, whose arm matched a `must be valid` late in the cell
+        // while its value bound from the first `must be ` in the text (`.3k.2b`'s named residual).
+        //
+        // Narrowing the kind onto the first clause alone would have refused both records rather than
+        // corrected them. Reading each obligation as its own record is what the document supports,
+        // and it is the shape `extract_signal_description_row_constraints` already has.
+        let mut minted: HashSet<String> = HashSet::new();
+        for obligation in constraint_bearing_sentences(text) {
+            // Every part of the record is read from this one obligation — the kind and the value
+            // included, which were the last two parts still reading the whole statement.
+            let lowered = obligation.to_ascii_lowercase();
 
-        // Collect ALL valid signal tokens from the subject part, creating one record each.
-        // Fall back to scanning the full text if no signals found in the subject part.
-        let mut subject_signals = collect_subject_signal_tokens(subject_part);
-        if subject_signals.is_empty() {
-            // The full-text fallback can otherwise grab a signal that appears ONLY in
-            // the stripped condition clause ("The following signals must be valid when
-            // PSEL is asserted") and mis-attribute the constraint to it. Exclude any
-            // token from the condition clause so the condition signal never becomes the
-            // subject (CONSTRAINT-CONDITION-SUBJECT; real-APB NLI finding).
-            let sentence = constraint_bearing_sentence(text);
-            let condition_clause = &sentence[text_before_condition_marker(sentence).len()..];
-            let condition_signals: std::collections::HashSet<String> =
-                collect_subject_signal_tokens(condition_clause)
+            // Drop any leading antecedent ("<cond>, which means <obligation>"), THEN strip the
+            // condition clause ("when X" / "until X" / "if X" / …), fronted or trailing.
+            let consequent = consequent_after_inference_marker(obligation);
+            let subject_part = obligation_subject_part(consequent);
+
+            // Collect ALL valid signal tokens from the subject part, creating one record each.
+            // Fall back to scanning the rest of THIS OBLIGATION if no signals are found there.
+            let mut subject_signals = collect_subject_signal_tokens(subject_part);
+            if subject_signals.is_empty() {
+                // The fallback can otherwise grab a signal that appears ONLY in the stripped
+                // condition clause ("The following signals must be valid when PSEL is asserted")
+                // and mis-attribute the constraint to it. Exclude any token outside the subject
+                // part so a condition signal never becomes the subject
+                // (CONSTRAINT-CONDITION-SUBJECT; real-APB NLI finding).
+                //
+                // EXTRACTION-QUALITY-GAUGE.3k.3 — and the scan is bounded by the OBLIGATION, not by
+                // the statement. Widened to the statement it hands the SAME subject set to every
+                // clause's kind, which is how AXI `When the ACVALID signal is asserted the snoop
+                // address and control signals on ACADDR, ACPROT, and ACSNOOP must not change… When
+                // ACVALID is asserted, it must remain asserted until ACREADY is asserted` mints
+                // `ACADDR must_be_asserted`: the second clause's obligation is about ACVALID, its
+                // own subject is the pronoun `it`, and the statement-wide scan supplied the first
+                // clause's three signals. Refusing is honest where borrowing is not.
+                let condition_signals: std::collections::HashSet<String> =
+                    collect_subject_signal_tokens(consequent)
+                        .into_iter()
+                        .filter(|tok| !subject_part.contains(tok.as_str()))
+                        .collect();
+                subject_signals = collect_subject_signal_tokens(obligation)
                     .into_iter()
+                    .filter(|tok| !condition_signals.contains(tok))
                     .collect();
-            subject_signals = collect_subject_signal_tokens(text)
-                .into_iter()
-                .filter(|tok| !condition_signals.contains(tok))
-                .collect();
-        }
+            }
 
-        if subject_signals.is_empty() {
-            continue;
-        }
-        // Determine constraint kind and negation from the value-binding phrase.
-        // EXTRACTION-QUALITY-GAUGE.3i — the negation is read from the OBLIGATION CLAUSE, the same
-        // bounded span the subject and the condition already come from. Read from the whole
-        // statement it can belong to a different sentence entirely: RISC-V IOMMU published
-        // `The DV operand must be 1 for IODIR` as a NEGATED constraint because a later sentence in
-        // the same cell says `must not`.
-        let negated =
-            obligation_is_negated(&constraint_bearing_sentence(text).to_ascii_lowercase());
-        // EXTRACTION-QUALITY-GAUGE.3k.2a — a statement whose obligation names NO kind states no typed
-        // constraint, and inventing one is not a default but a fabrication. Every one of the 17
-        // live records this arm produced asserted stability about a sentence that says nothing about
-        // stability: a barrier-transaction description, four `… is not present` table cells, a
-        // recommendation explicitly "not required", and six waveform narrations (`- T1 FREADY signal
-        // remains HIGH`). An honest residual is correct where a fabricated fact is not — the
-        // statement stays counted as an uncaptured normative statement, which is the accounting that
-        // keeps the gap visible. The ROW path keeps the fallback deliberately: it has already proved
-        // its clause binds to its row's signal, so an untyped obligation there is a real obligation
-        // with a spelling the table lacks (`.3k.2c`), not a sentence about something else.
-        let Some(constraint_kind) =
-            classify_signal_constraint_kind_typed(&lowered, &discovered_values)
-        else {
-            continue;
-        };
+            if subject_signals.is_empty() {
+                continue;
+            }
+            // Determine constraint kind and negation from the value-binding phrase.
+            // EXTRACTION-QUALITY-GAUGE.3i — the negation is read from the OBLIGATION CLAUSE, the same
+            // bounded span the subject and the condition already come from. Read from the whole
+            // statement it can belong to a different sentence entirely: RISC-V IOMMU published
+            // `The DV operand must be 1 for IODIR` as a NEGATED constraint because a later sentence in
+            // the same cell says `must not`.
+            let negated = obligation_is_negated(&lowered);
+            // EXTRACTION-QUALITY-GAUGE.3k.2a — a statement whose obligation names NO kind states no typed
+            // constraint, and inventing one is not a default but a fabrication. Every one of the 17
+            // live records this arm produced asserted stability about a sentence that says nothing about
+            // stability: a barrier-transaction description, four `… is not present` table cells, a
+            // recommendation explicitly "not required", and six waveform narrations (`- T1 FREADY signal
+            // remains HIGH`). An honest residual is correct where a fabricated fact is not — the
+            // statement stays counted as an uncaptured normative statement, which is the accounting that
+            // keeps the gap visible.
+            //
+            // EXTRACTION-QUALITY-GAUGE.3k.3 — and it is now this CLAUSE's kind, so a clause that states
+            // no obligation of its own no longer borrows one from a sibling clause.
+            let Some(constraint_kind) =
+                classify_signal_constraint_kind_typed(&lowered, &discovered_values)
+            else {
+                continue;
+            };
 
-        // Keep only subjects that are DECLARED signals — a property/config name or doc-meta token
-        // is not in the catalog and is dropped. An empty catalog grants no authority.
-        subject_signals.retain(|signal| declared_signals.contains(signal));
-        // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the descriptive body of a
-        // field-definition cell (CCIX `SRAM`/`DDR` enum-value names, NVMe `FFFF` hex literal); the
-        // field's own leading mnemonic precedes the "This field <verb>" marker and is kept.
-        subject_signals.retain(|s| !is_descriptive_field_cell_spurious_subject(text, s));
-        // EXTRACTION-QUALITY-GAUGE.3g: drop a subject lifted from a `Reg.Field` dotted cross-reference
-        // in the cell body ("… (CC.MPS) …" → `MPS`); a standalone occurrence is always kept.
-        subject_signals.retain(|s| !is_dotted_cross_reference_subject(text, s));
-        // CORPUS-COVERAGE.2.50a: the same universal pre-lead subject authority as the dynamic path —
-        // a passive obligation's subject must be named before its `must/shall be|remain` lead.
-        subject_signals.retain(|s| !is_post_passive_binding_only_subject(text, s));
-        // EXTRACTION-QUALITY-GAUGE.3h: the same universal value-position authority as the dynamic path.
-        subject_signals.retain(|s| !is_value_position_subject(text, s));
-        if subject_signals.is_empty() {
-            continue;
-        }
+            // Keep only subjects that are DECLARED signals — a property/config name or doc-meta token
+            // is not in the catalog and is dropped. An empty catalog grants no authority.
+            subject_signals.retain(|signal| declared_signals.contains(signal));
+            // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the descriptive body of a
+            // field-definition cell (CCIX `SRAM`/`DDR` enum-value names, NVMe `FFFF` hex literal); the
+            // field's own leading mnemonic precedes the "This field <verb>" marker and is kept.
+            subject_signals.retain(|s| !is_descriptive_field_cell_spurious_subject(text, s));
+            // EXTRACTION-QUALITY-GAUGE.3g: drop a subject lifted from a `Reg.Field` dotted cross-reference
+            // in the cell body ("… (CC.MPS) …" → `MPS`); a standalone occurrence is always kept.
+            subject_signals.retain(|s| !is_dotted_cross_reference_subject(text, s));
+            // CORPUS-COVERAGE.2.50a: the same universal pre-lead subject authority as the dynamic path —
+            // a passive obligation's subject must be named before its `must/shall be|remain` lead.
+            // EXTRACTION-QUALITY-GAUGE.3k.3 — judged against THIS obligation, not against the
+            // statement's first one, or the Nth record is gated by the 1st record's clause.
+            subject_signals
+                .retain(|s| !is_post_passive_binding_only_subject_in(text, obligation, s));
+            // EXTRACTION-QUALITY-GAUGE.3h: the same universal value-position authority as the dynamic path.
+            subject_signals.retain(|s| !is_value_position_subject(text, s));
+            if subject_signals.is_empty() {
+                continue;
+            }
 
-        // A kind that already encodes its own negation (`MustNotChange`, `MustBeDeasserted`)
-        // must NOT also carry `negated = true`: the "not"/"de-" is part of the obligation, so a
-        // `negated` flag on top would read as a double negative ("must not change" → "may
-        // change"). `negated` is reserved for kinds whose plain form is affirmative
-        // (`MustBeAsserted`/`MustBeHigh`/…) inverted by an explicit "not" (WIRE-BASED-100.5b).
-        let negated = negated
-            && !matches!(
-                constraint_kind,
-                SignalConstraintKind::MustNotChange | SignalConstraintKind::MustBeDeasserted
-            );
+            // A kind that already encodes its own negation (`MustNotChange`, `MustBeDeasserted`)
+            // must NOT also carry `negated = true`: the "not"/"de-" is part of the obligation, so a
+            // `negated` flag on top would read as a double negative ("must not change" → "may
+            // change"). `negated` is reserved for kinds whose plain form is affirmative
+            // (`MustBeAsserted`/`MustBeHigh`/…) inverted by an explicit "not" (WIRE-BASED-100.5b).
+            let negated = negated
+                && !matches!(
+                    constraint_kind,
+                    SignalConstraintKind::MustNotChange | SignalConstraintKind::MustBeDeasserted
+                );
 
-        // Extract condition clause: text after "when", "while", "during", "unless" — from the
-        // SAME bounded obligation the subject came from, so a later table-cell bullet does not
-        // bleed into the condition (CONSTRAINT-EXTRACTION-V2.2).
-        let condition_text = extract_condition_clause(consequent_after_inference_marker(
-            constraint_bearing_sentence(text),
-        ));
+            // Extract condition clause: text after "when", "while", "during", "unless" — from the
+            // SAME bounded obligation the subject came from, so a later table-cell bullet does not
+            // bleed into the condition (CONSTRAINT-EXTRACTION-V2.2).
+            let condition_text = extract_condition_clause(consequent);
 
-        // Create one record per subject signal (multi-signal sentences).
-        for subject_signal in subject_signals {
-            *counter += 1;
-            records.push(SignalConstraintRecord {
-                constraint_id: format!("sigcon_{counter:04}"),
-                subject_signal,
-                constraint_kind: constraint_kind.clone(),
-                target_value: None,
-                condition_text: condition_text.clone(),
-                negated,
-                source_text: text.clone(),
-                supporting_statement_ids: vec![statement.statement_id.clone()],
-                automation_confidence: AutomationConfidence::Medium,
-            });
+            // Create one record per subject signal (multi-signal sentences).
+            for subject_signal in subject_signals {
+                let mut record = SignalConstraintRecord {
+                    constraint_id: String::new(),
+                    subject_signal,
+                    constraint_kind: constraint_kind.clone(),
+                    target_value: None,
+                    condition_text: condition_text.clone(),
+                    negated,
+                    // The record's PROVENANCE stays the statement, not the clause: the statement is
+                    // what `supporting_statement_ids` cites and what every downstream consumer and
+                    // the replay's merge identity already key on. The clause is the span the record
+                    // is READ from, which is this leaf's whole subject.
+                    source_text: text.clone(),
+                    supporting_statement_ids: vec![statement.statement_id.clone()],
+                    automation_confidence: AutomationConfidence::Medium,
+                };
+                // Two clauses of one statement can restate the same obligation ("PADDR must be
+                // stable … PADDR must remain stable until …"). The second is the same fact, not a
+                // second one, and a duplicate would inflate every count keyed on this surface.
+                if !minted.insert(signal_constraint_merge_key(&record)) {
+                    continue;
+                }
+                *counter += 1;
+                record.constraint_id = format!("sigcon_{counter:04}");
+                records.push(record);
+            }
         }
     }
-
     records
 }
 
@@ -10772,11 +10828,29 @@ fn extract_signal_constraints(
 /// must be stable …" only the second sentence (the one with `must`) is the subject
 /// source, so PREADY/PCLK are not minted as `must_be_stable` subjects.
 fn constraint_bearing_sentence(text: &str) -> &str {
-    // Split on bullets (`•`) and newlines as well as `.`/`;`, so a multi-obligation table
-    // cell ("… • PAUSER must be valid when … • PAUSER must have the same value …") yields one
-    // obligation per clause rather than one constraint carrying the whole cell
-    // (CONSTRAINT-EXTRACTION-V2.2).
-    for sentence in text.split(['.', ';', '•', '\n']) {
+    constraint_bearing_sentences(text)[0]
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3k.3 — **every** obligation the statement states, in document order.
+///
+/// [`constraint_bearing_sentence`] returns the FIRST one, which is the whole of the span defect this
+/// leaf owns: a statement stating three obligations produced one record, read the first clause for
+/// its subject/condition/negation, and read the WHOLE statement for its kind — so AHB
+/// `| HSELx a | … |` published its kind from the third sentence and its condition from the second.
+/// Narrowing the kind onto the first clause alone would have refused the record entirely, losing a
+/// fact the document states; reading each obligation as its own record keeps it, with the condition
+/// its own clause states.
+///
+/// This is the shape `extract_signal_description_row_constraints` already has — one record per
+/// clause of a description cell — and the same split, so a serialized row read as a statement and
+/// the same row read as a table now decompose identically.
+///
+/// Split on bullets (`•`) and newlines as well as `.`/`;` (CONSTRAINT-EXTRACTION-V2.2). The
+/// fall-back to the whole text when no clause carries a modal is preserved exactly: it is what makes
+/// the narrowing fail OPEN rather than drop a statement whose obligation this split cannot locate.
+fn constraint_bearing_sentences(text: &str) -> Vec<&str> {
+    let obligations: Vec<&str> = text
+        .split(['.', ';', '•', '\n'])
         // EXTRACTION-QUALITY-GAUGE.3k.2d — the same modal vocabulary the record's other parts use.
         // Spelled `must`/`shall` only, this scan cannot FIND an obligation a document states with
         // `cannot` or `will not`, so the narrowing silently fails open and the record's span becomes
@@ -10784,11 +10858,12 @@ fn constraint_bearing_sentence(text: &str) -> &str {
         // flags the record negated. eMMC `| NOTE 1 | … A Device … will not change its state to the
         // rcv state… |` is the shape: the obligation has a sentence of its own, and only a scan that
         // recognises its modal can return it.
-        if sentence_states_an_obligation(&sentence.to_ascii_lowercase()) {
-            return sentence;
-        }
+        .filter(|sentence| sentence_states_an_obligation(&sentence.to_ascii_lowercase()))
+        .collect();
+    if obligations.is_empty() {
+        return vec![text];
     }
-    text
+    obligations
 }
 
 /// Whether a lowered sentence carries an obligation modal at all — the one vocabulary every part of
@@ -10846,6 +10921,29 @@ fn text_before_condition_marker(text: &str) -> &str {
         }
     }
     &text[..cut]
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3k.3 — the subject part of an obligation whose condition is FRONTED.
+///
+/// English fronts a condition as readily as it trails one: *"When <cond>, <subject> must <kind>"*.
+/// [`text_before_condition_marker`] cuts at the EARLIEST marker, so a fronted condition cuts at
+/// offset 0 and leaves an EMPTY subject part — and the reader then fell through to a scan of the
+/// whole statement. That is how AHB `| HSELx a | … |` came to publish a subject read from the
+/// third sentence of a serialized row, a kind read from the same third sentence, and a condition
+/// read from the second: the fronted `When a Subordinate is selected…, HSELx must be asserted`
+/// clause could not yield its own subject, so the scan widened to the whole cell.
+///
+/// The main clause of a fronted conditional begins after its comma, which is where the obligation's
+/// subject is. Universal English clause order, no document vocabulary (ADR 0006).
+fn obligation_subject_part(clause: &str) -> &str {
+    let leading = text_before_condition_marker(clause);
+    if !leading.trim().is_empty() {
+        return leading;
+    }
+    match clause.find(',') {
+        Some(comma) => text_before_condition_marker(&clause[comma + 1..]),
+        None => leading,
+    }
 }
 
 /// Collect syntactically plausible identifier tokens from a prospective subject fragment.
@@ -36939,6 +37037,222 @@ mod extraction_quality_gauge_3k_2b {
                 &[]
             )),
             Some("must_be_value:VALID".to_string())
+        );
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_3 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.3` — one record per OBLIGATION, every part read from that
+    //! obligation. The statement path used to mint one record per STATEMENT, read its subject,
+    //! condition and negation from the FIRST clause carrying a modal, and read its KIND from the
+    //! whole statement — so obligations 2..n were dropped and the one record that survived could be
+    //! a composite of clauses the document never joined. Every sentence below is a real corpus shape
+    //! with its identity alpha-renamed (ADR 0006).
+    use super::*;
+
+    fn records(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        statements.push(ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_signal_constraints(&statements, &mut counter)
+    }
+
+    fn shape(records: &[SignalConstraintRecord]) -> Vec<String> {
+        records
+            .iter()
+            .map(|record| {
+                format!(
+                    "{} {}",
+                    record.subject_signal,
+                    match &record.constraint_kind {
+                        SignalConstraintKind::MustBeValue { value } => {
+                            format!("must_be_value:{value}")
+                        }
+                        other => other.as_str().to_string(),
+                    }
+                )
+            })
+            .collect()
+    }
+
+    /// The recall half. AXI states the write-address handshake invariant in the SECOND sentence of a
+    /// statement whose first sentence carries no modal at all, and the reader stopped at the first
+    /// clause it could type. The obligation is recovered, with the condition its own clause states.
+    #[test]
+    fn an_obligation_after_the_first_one_is_its_own_record() {
+        let found = records(
+            "The Manager can assert the ZETAAWVALID signal only when it drives valid address and \
+             control information. When asserted, ZETAAWVALID must remain asserted until the rising \
+             clock edge after the Subordinate asserts ZETAAWREADY.",
+            &["ZETAAWVALID", "ZETAAWREADY"],
+        );
+        assert_eq!(shape(&found), vec!["ZETAAWVALID must_be_asserted"]);
+    }
+
+    /// A fronted condition leaves `text_before_condition_marker` with an EMPTY subject part, because
+    /// it cuts at the earliest marker and the marker opens the clause. The main clause of a fronted
+    /// conditional begins after its comma, and that is where the subject is.
+    #[test]
+    fn a_fronted_condition_still_yields_the_obligations_own_subject() {
+        let found = records(
+            "If present, ZETASTASHNID, ZETASTASHNIDEN, and ZETASTASHLPID must be driven LOW.",
+            &["ZETASTASHNID", "ZETASTASHNIDEN", "ZETASTASHLPID"],
+        );
+        assert_eq!(
+            shape(&found),
+            vec![
+                "ZETASTASHNID must_be_low",
+                "ZETASTASHNIDEN must_be_low",
+                "ZETASTASHLPID must_be_low",
+            ]
+        );
+    }
+
+    /// The fabrication the addition measurement caught before any of this shipped. The second
+    /// obligation's subject is the pronoun `it`, and a subject scan bounded by the STATEMENT handed
+    /// it the first obligation's three signals — publishing `ZETAADDR must_be_asserted` about a
+    /// sentence that constrains `ZETAVALID`. Bounded by the obligation, the clause states no subject
+    /// this reader can resolve and mints nothing, which is the honest answer.
+    ///
+    /// The first clause's own four records are UNCHANGED by this leaf and are asserted as they are,
+    /// including `ZETAVALID must_not_change`, which is wrong: a fronted condition that opens the
+    /// STATEMENT carries no leading space, so `text_before_condition_marker` does not see its marker
+    /// and the condition's own signal stays in the subject part. That residual is named in this
+    /// leaf's node — narrowing it here would also drop `ZETAADDR`, because the first comma in this
+    /// sentence is a list separator rather than the condition's boundary.
+    #[test]
+    fn a_pronoun_subject_does_not_borrow_a_sibling_clauses_signals() {
+        let found = records(
+            "When the ZETAVALID signal is asserted the snoop address and control signals on \
+             ZETAADDR, ZETAPROT, and ZETASNOOP must not change, until ZETAREADY is asserted by the \
+             Manager. When ZETAVALID is asserted, it must remain asserted until ZETAREADY is \
+             asserted.",
+            &[
+                "ZETAVALID",
+                "ZETAADDR",
+                "ZETAPROT",
+                "ZETASNOOP",
+                "ZETAREADY",
+            ],
+        );
+        assert_eq!(
+            shape(&found),
+            vec![
+                "ZETAVALID must_not_change",
+                "ZETAADDR must_not_change",
+                "ZETAPROT must_not_change",
+                "ZETASNOOP must_not_change",
+            ]
+        );
+        assert!(
+            !shape(&found)
+                .iter()
+                .any(|row| row.contains("must_be_asserted")),
+            "the pronoun clause must mint nothing, got {:?}",
+            shape(&found)
+        );
+    }
+
+    /// The trap this leaf's node recorded, and why narrowing the span ALONE would have been wrong.
+    /// AHB's serialized row states its kind in the THIRD sentence while the first modal sentence
+    /// states none; narrowing to that first sentence would type it as nothing and `.3k.2a` would
+    /// refuse it, losing a record the document supports. Reading every clause keeps it — and gives it
+    /// the condition its own clause states rather than the previous clause's.
+    #[test]
+    fn a_kind_stated_in_a_later_clause_is_kept_with_that_clauses_condition() {
+        let found = records(
+            "| ZETASELx a | Subordinate | 1 | Each Subordinate has its own select signal ZETASELx \
+             and this signal indicates that the current transfer is intended for the selected \
+             Subordinate. When the Subordinate is initially selected, it must also monitor the \
+             status of ZETAREADY to ensure that the previous bus transfer has completed, before it \
+             responds to the current transfer. When a Subordinate is selected for a non-IDLE \
+             transfer, ZETASELx must be asserted in the same cycle as the address and other control \
+             signals. ZETASELx can be asserted or deasserted for IDLE transfers. |",
+            &["ZETASELx", "ZETAREADY"],
+        );
+        assert_eq!(shape(&found), vec!["ZETASELx must_be_asserted"]);
+        let condition = found[0].condition_text.as_deref().unwrap_or_default();
+        assert!(
+            condition.contains("non-IDLE"),
+            "the condition must come from the clause that states the kind, got {condition:?}"
+        );
+        assert!(
+            !condition.contains("ZETAREADY"),
+            "the previous clause's condition must not be attached, got {condition:?}"
+        );
+    }
+
+    /// A clause that states no kind of its own no longer borrows one from a sibling clause: the
+    /// typed gateway (`.3k.2a`) is applied per obligation, so the monitoring clause above mints
+    /// nothing rather than taking `must be asserted` from three sentences later.
+    #[test]
+    fn a_clause_that_states_no_kind_borrows_none() {
+        let found = records(
+            "When the Subordinate is initially selected, it must also monitor the status of \
+             ZETAREADY to ensure that the previous bus transfer has completed.",
+            &["ZETAREADY"],
+        );
+        assert!(found.is_empty(), "got {:?}", shape(&found));
+    }
+
+    /// The subject FALLBACK is bounded by the obligation too. It is reached when a clause has no
+    /// subject part at all — a FRONTED condition with no comma to end it, which is the one shape
+    /// [`obligation_subject_part`] cannot recover — and widened to the statement it then hands one
+    /// clause's signals to ANOTHER clause's kind.
+    ///
+    /// The clause below reaches it with nothing else in the way: `CORPUS-COVERAGE.2.50a` requires a
+    /// PASSIVE `must/shall be|remain` lead by design, and `must hold` is not one. Statement-scoped,
+    /// the second clause publishes `ZETASEL must_be_stable` — a second and contradictory kind for
+    /// the signal the FIRST clause constrains, about a sentence that does not name it.
+    #[test]
+    fn the_subject_fallback_is_bounded_by_the_obligation() {
+        let found = records(
+            "ZETASEL must be HIGH. When ZETAREADY is asserted the bus must hold.",
+            &["ZETASEL", "ZETAREADY"],
+        );
+        assert_eq!(shape(&found), vec!["ZETASEL must_be_high"]);
+    }
+
+    /// Two clauses restating one obligation are one fact, not two. Without the guard the record
+    /// would be duplicated and every count keyed on this surface would inflate.
+    #[test]
+    fn one_obligation_restated_in_two_clauses_is_one_record() {
+        let found = records(
+            "ZETAADDR must be stable. ZETAADDR must be stable.",
+            &["ZETAADDR"],
+        );
+        assert_eq!(shape(&found), vec!["ZETAADDR must_be_stable"]);
+    }
+
+    /// The narrowing still fails OPEN: a statement no clause of which carries a modal the scan
+    /// recognises keeps the whole text as its span, exactly as before.
+    #[test]
+    fn a_statement_with_no_modal_clause_keeps_the_whole_text_as_its_span() {
+        assert_eq!(
+            constraint_bearing_sentences("ZETASEL is asserted for one cycle"),
+            vec!["ZETASEL is asserted for one cycle"]
+        );
+        assert_eq!(
+            constraint_bearing_sentences("A. ZETASEL must be HIGH. ZETAADDR must be stable."),
+            vec![" ZETASEL must be HIGH", " ZETAADDR must be stable"]
         );
     }
 }

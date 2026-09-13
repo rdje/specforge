@@ -288,6 +288,8 @@
   > does the authority empty repair preserve formal and system contract interfaces
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > does the co-reference rule resurrect resolve_indexed_signal_family
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > does the constraint record source_text become the clause
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does the converge NLI pass measure quality or demote unsupported intent
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
@@ -296,5 +298,3 @@
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does the current SWD chain come from the tracked ADI PDF
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > does the current SpecForge binary still fabricate AIA TOC timing constraints

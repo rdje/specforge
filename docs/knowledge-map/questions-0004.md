@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > does the current SpecForge binary still fabricate AIA TOC timing constraints
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > does the drop model agree with docling iterate_items
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)

@@ -11,6 +11,55 @@ They belong together because they answer one question — *what does this senten
 this signal?* — and because every one of them was written after a real document was read the wrong
 way. The [EvidenceIR](evidenceir.md) chapter covers the stage as a whole.
 
+## A statement that states three obligations yields three records
+
+A sentence is the unit a reader thinks in; a *statement* in SpecForge is often bigger — a paragraph,
+or a whole serialized table row. When such a statement carries several requirements, each one is its
+own fact:
+
+```text
+The Manager can assert the AWVALID signal only when it drives valid address and control
+information. When asserted, AWVALID must remain asserted until the rising clock edge after the
+Subordinate asserts AWREADY.
+```
+
+The first sentence carries no requirement at all. The second carries the write-address handshake
+invariant, and SpecForge used to publish nothing from this statement: it stopped at the first clause
+carrying a modal and never looked further. Reading every obligation recovers that invariant, and with
+it four more handshake rules of the same shape in one specification.
+
+The same change fixes a subtler failure, because the kind used to be read from the WHOLE statement
+while the subject and condition came from one clause:
+
+```text
+| HSELx a | Subordinate | 1 | Each Subordinate has its own select signal HSELx ... When the
+Subordinate is initially selected, it must also monitor the status of HREADY ... When a Subordinate
+is selected for a non-IDLE transfer, HSELx must be asserted in the same cycle as the address and
+other control signals. |
+```
+
+The published record said `HSELx must be asserted` **when the Subordinate is initially selected and
+must monitor HREADY** — a kind from the third sentence wearing a condition from the second. Narrowing
+the kind to the first clause alone would have been worse: that clause states no kind, so the record
+would have been refused entirely and a fact the document plainly states would have been lost. Read
+per obligation, the third sentence mints the record with its own condition, and the second mints
+nothing, because monitoring a signal is not one of the kinds the vocabulary has.
+
+Two readings make this work on real sentences:
+
+* **A condition may come first.** English fronts a condition as readily as it trails one — *"When
+  asserted, AWVALID must remain asserted"*, *"If present, AWSTASHNID ... must be driven LOW"* — and
+  the subject of such a clause sits after the comma. Without that, the clause has no subject at all
+  and the reader used to widen its search to the whole statement to find one.
+* **A clause may not borrow another clause's signals.** *"When ACVALID is asserted, it must remain
+  asserted"* names its subject with a pronoun. A search widened to the statement supplies the
+  previous sentence's `ACADDR`, `ACPROT` and `ACSNOOP` and publishes a requirement about signals the
+  sentence does not mention. Bounded to its own obligation, the clause states no subject this reader
+  can resolve, and an explicit residual is the honest answer.
+
+Two clauses restating one requirement stay one record. A clause that states nothing typed still
+states nothing typed — it does not borrow a kind from its neighbour.
+
 ## An obligation in a table cell belongs to whatever precedes its modal
 
 A signal-description table row declares a signal in its name cell and describes it in its description

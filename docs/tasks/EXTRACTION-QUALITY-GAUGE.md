@@ -1183,8 +1183,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
   which is how this one survived a leaf written to remove fabrications.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.2k`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.3` · Status: `pending` · Goal: **the kind reads its own obligation
-  clause** — the original `.3k` goal, at its true size.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.3` · Status: `done` (`2026-09-13`, CODE) · Goal: **the kind reads its own obligation
+  clause** — the original `.3k` goal, at its true size, which turned out to be **one record per OBLIGATION**.
   `classify_signal_constraint_kind(&text.to_ascii_lowercase())` becomes
   `classify_signal_constraint_kind(&constraint_bearing_sentence(text).to_ascii_lowercase())` in
   `extract_signal_constraints`, joining the subject, the condition and (since `.3i`) the negation,
@@ -1261,9 +1261,95 @@ honestly-qualified) path to "human-SpecForge in Rust."
   cross-producer question of its own; (b) eMMC mints `PARTITION must_not_change` from
   `PARTITION\_ACCESS`, a fragment produced by the normalizer's escaped underscore, which is a
   tokenization defect rather than a span defect.
+  **SHIPPED `2026-09-13`.** `constraint_bearing_sentences` yields every obligation clause in document
+  order (the singular helper is now its first element, so the two cannot drift); the per-statement body
+  became a per-obligation loop reading kind, value, negation, subject and condition from the ONE clause
+  that mints the record; `obligation_subject_part` reads the main clause of a fronted conditional;
+  the subject fallback is bounded by the obligation; and `is_post_passive_binding_only_subject_in`
+  judges the obligation the record came from rather than the statement's FIRST one. Records restating
+  one obligation dedupe on the producer's own merge identity. `source_text` deliberately stays the
+  STATEMENT: it is what `supporting_statement_ids` cites and what the replay's merge identity keys on.
+  **Measured on the three rebuilt documents, and the container's two inherited residuals both closed.**
+  AHB 13 → 13 with `HSELx must_be_asserted`'s condition CORRECTED from the previous clause's to its
+  own (*"a Subordinate is selected for a non-IDLE transfer"*) — the trap avoided rather than walked
+  into. AXI-L 40 → 53: five `*VALID must remain asserted` handshake invariants, four
+  `AWSTASH* must be driven LOW`, `WTAGUPDATE must_be_deasserted`, four `WTAG` value records — and
+  `WTAGUPDATE must_be_value UPDATED` REMOVED, which is `.3k.2b`'s named residual closed exactly as it
+  predicted ("narrowing the classifier's span fixes the value binder at the same time"). APB-E 23 → 27.
+  Corpus-wide over the 74 replayable documents: **187 → 211 replayed, and the only persisted records
+  that stop reproducing are NVMe `sigcon_0005`/`0006`, this leaf's own population.**
+  **A new temporal conflict is a RESULT, not a regression.** AXI-L gains `WTAG post_tick VALID vs
+  ZERO`: the document states both, conditional on `WTAGOP`'s enum row, and the condition lives in the
+  row's value cell rather than in a `when` clause. The pipeline surfaces the ambiguity instead of
+  silently keeping one — which is the roadmap's own contract for undecided evidence.
+  **Four residuals found by the measurement, each given its own leaf rather than absorbed:** `.3k.7`
+  (AXI `WSTRB must_be_value VALID`, a subject inside `enabled by WSTRB` that the table-row exemption
+  admits), `.3k.8` (the statement path and the row path now publish APB's six `PAUSER`/`PWUSER`
+  obligations twice, differing only in `source_text`), `.3k.9` (eMMC `PARTITION` from
+  `PARTITION\_ACCESS`, an escaped-underscore tokenization fragment), `.3k.10` (a fronted condition
+  that opens the STATEMENT carries no leading space, so its marker is never seen).
   Prerequisite: `.3k.2` (see the container's ordering rationale) — **satisfied `2026-09-13` by
-  `.3k.2k`**. Verification: the re-derived population adjudicated individually; observed RED; the chain
-  rebuilt for every document whose artifacts move.
+  `.3k.2k`**. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.3`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.7` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
+  **a table row's subject exemption survives a clause that has its own subject.**
+  `is_post_passive_binding_only_subject` exempts a serialized table row from its pre-lead subject
+  authority, because a row's other cells legitimately name the subject an obligation cell constrains.
+  `INVARIANT-SHAPE-ADMISSION.5` withdraws that exemption when the clause HEADS with a different
+  identifier. It does not withdraw it when the identifier sits one descriptor back, and AXI
+  `| Match | 0b11 | … WTAG bits must be valid for byte lanes that are enabled by WSTRB. |` is exactly
+  that: head `bits`, a common noun, so the exemption stands and `WSTRB` — reachable only inside the
+  trailing `enabled by` phrase — is published as a co-subject of an obligation about `WTAG`.
+  **The obvious rule was tried in `.3k.3` and MEASURED, and it is too wide:** withdrawing the
+  exemption whenever the clause names any identifier before its lead costs three reproduced persisted
+  records (MMU-700 `dyn_sigcon_0008`, RISC-V IOMMU `dyn_sigcon_0007`, NVMe `dyn_sigcon_0015`) and
+  removes AXI `AWSIZE`/`AWLEN`/`AWCMO` and LTI `LASSID`/`LRMECID` value records — and it reaches the
+  DYNAMIC path, which `.3k.4` owns, through the two-argument wrapper. Each of those eight must be
+  adjudicated individually before any version of this ships. Prerequisite: none. Verification: all
+  eight adjudicated; observed RED; the chain rebuilt for every document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.8` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
+  **one obligation, two producers, two records.** APB-E publishes `PAUSER must_be_value VALID`,
+  `PAUSER must_not_change` ×2 and the three `PWUSER` equivalents **twice** — once as `sigcon_*` from
+  the statement path reading the serialized row, once as `row_sigcon_*` from the table reader reading
+  the same cell. They differ only in `source_text`: the statement path cites the whole row, the row
+  path cites the clause. `dedup_appended_signal_constraints` keys on
+  `signal_constraint_merge_key`, which INCLUDES `source_text`, so it cannot see them as the same fact.
+  **Pre-existing but amplified: it was 2 records before `.3k.3` and is 6 after**, because the
+  statement path now reads every clause of the row the row reader already reads.
+  **The decision is which provenance survives, and it is not obvious**: the row path's `source_text`
+  is strictly better (the obligation's own words), but the dedup is deliberately one-directional so
+  the established pattern/dynamic surface stays byte-for-byte. Changing the merge key also moves
+  `replay-constraints`' reproduction identity for the whole corpus, so the population must be measured
+  before and after with that in mind. Prerequisite: none. Verification: the corpus-wide duplicate pair
+  count re-derived with the producer; observed RED; the chain rebuilt for every document whose
+  artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.9` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
+  **an escaped underscore splits an identifier the document never split.** The Markdown normalizer
+  emits `PARTITION\_ACCESS`, and `collect_subject_signal_tokens` splits on characters that are not
+  alphanumeric-or-underscore — so the backslash ends the token and `PARTITION` is lifted as a subject
+  the specification does not have. eMMC `statement_1214` mints `PARTITION must_not_change` from
+  *"… and will not change the PARTITION\_ACCESS bits"* this way; `EXTRACTION-QUALITY-GAUGE.3k.1`'s
+  own test comment records the same mechanism producing `ZETADTI` out of
+  `ZETADTI\_TBU\_CONDIS\_ACK`. This is a TOKENIZATION defect, not a span defect, which is why it is
+  not `.3k.3`'s. It must be sized against the whole persisted corpus before anything is changed: the
+  escape is emitted by the normalizer, so the fix may belong upstream of every extractor.
+  Prerequisite: none. Verification: the corpus population of backslash-split subjects measured with
+  the real tokenizer and adjudicated; observed RED; the chain rebuilt for every document whose
+  artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.10` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
+  **a fronted condition that opens the STATEMENT carries no leading space.**
+  `text_before_condition_marker` matches `" when "`, `" if "`, … with a leading space, so a condition
+  fronting the first clause of a statement is invisible to it and the condition's own signals stay in
+  the subject part. AXI `When the ACVALID signal is asserted the snoop address and control signals on
+  ACADDR, ACPROT, and ACSNOOP must not change, …` therefore publishes `ACVALID must_not_change`
+  alongside the three real subjects. `.3k.3` pinned the shape in
+  `a_pronoun_subject_does_not_borrow_a_sibling_clauses_signals` rather than fixing it, because the
+  cheap repair is wrong here: this sentence's first comma is a LIST separator, not the condition's
+  boundary, so taking the text after it would also drop `ACADDR`. The clause boundary has to be found,
+  not guessed. `split_conditional_sentence` already carries a leading-marker list for the same
+  question and is the place to start. Prerequisite: none. Verification: the corpus population of
+  statement-initial fronted conditions measured with the real reader and adjudicated; observed RED;
+  the chain rebuilt for every document whose artifacts move.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.4` · Status: `pending` · Goal: **the dynamic path's span
   discipline.** After `.3i` it reads its negation from `constraint_bearing_sentence` while its
   subject (`text_before_condition_marker(&statement.text)`), its value binder
@@ -1298,6 +1384,64 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.3`
+
+- [x] **REPRODUCE / MEASURE** — the change was built as a PROTOTYPE and measured with the real
+  producer before any of it shipped, which the node required and which changed the design twice.
+  `replay-constraints --json` captured per document before and after, diffed over the 74 documents
+  comparable in both (AHB/AXI-L/APB-E drop out — the change moves their content, which stales their
+  proofs so they refuse to LOAD, and that is itself the signal that they need rebuilding). Final:
+  **187 → 211 replayed; 61 → 59 reproduced, and the only two lost are NVMe `sigcon_0005`/`0006`, this
+  leaf's own population**. The first prototype measured **+19 with three fabrications**
+  (`ACADDR/ACPROT/ACSNOOP must_be_asserted` from a clause whose subject is the pronoun `it`;
+  LTI `signal`/`LAFLOW must_be_low`), and the second confirmed the container's ordering rationale by
+  publishing NVMe `must_be_value UNIQUE` — which is why `.3k.2k` was opened and landed first.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `extract_signal_constraints`. The loop ran ONCE per statement over
+  `constraint_bearing_sentence(text)`, the FIRST clause carrying a modal, and classified the kind over
+  the WHOLE statement. So obligations 2..n were dropped, and the one record that survived could take
+  its kind from one clause and its condition from another — AHB `| HSELx a | … |` did exactly that.
+  Three readings underneath it were wrong for the same reason: a FRONTED condition cuts
+  `text_before_condition_marker` at offset 0 and leaves no subject part; the subject fallback then
+  scanned the whole STATEMENT; and `is_post_passive_binding_only_subject` re-derived the obligation as
+  the statement's FIRST clause, so it judged the Nth record against the 1st record's clause.
+- [x] **ADDRESSED (verified)** — `constraint_bearing_sentences` (all obligation clauses in document
+  order, with the singular helper as its first element so the two cannot drift), a per-obligation
+  loop, `obligation_subject_part` (the main clause of a fronted conditional), an obligation-bounded
+  subject fallback, `is_post_passive_binding_only_subject_in` (told which obligation it judges), and
+  an in-statement dedup on the producer's own merge identity. **Eight controls in
+  `mod extraction_quality_gauge_3k_3`, each part observed RED by disabling exactly that part and the
+  file restored byte-identically each time:** all-clauses (2 RED), the fronted-condition subject
+  (2 RED), the obligation-bounded fallback (1 RED — `ZETASEL must_be_stable`, a second contradictory
+  kind for the signal the first clause constrains), the dedup (1 RED). **Three documents rebuilt**
+  (`evidence → validate → semantic → validate → intent → validate → adapt`, each validated exactly
+  once, upstream-first, bundles restored from `generated/preserved/WIRE-BASED-100.10/` and removed
+  again with `diff -rq` clean, retention back to **24**): AHB 13 → 13 with its condition corrected,
+  APB-E 23 → 27, AXI-L 40 → 53 — and `WTAGUPDATE must_be_value UPDATED` removed, closing `.3k.2b`'s
+  named residual. `.3i`'s inherited claim is closed too: every part of a `sigcon_*` record now comes
+  from one span.
+- [x] **NO REGRESSION** — the wire golds hold at the bar: `signal_constraint P=R=F1=1.000` with
+  **fp=0** on APB, AHB and AXI, `temporal_rule 1.000` on all three, and document-level fact recall
+  **1.000** for constraints and relations. Section-by-section the rebuilt EvidenceIRs move ONLY
+  `signal_constraints`, their derived `fact_provenance`, and `conditional_rules` **by id alone**
+  (content byte-identical, ids shifted by the shared counter) — `actor_signal_relations` is untouched,
+  which is why the golds' `drives` attribution numbers are unchanged and pre-existing. AHB's IntentIR
+  and `.isf` are unchanged entirely. `kg-bench` **156/156**; `cargo fmt --all --check`, `cargo clippy
+  --offline --all-targets -D warnings` and the whole workspace suite green (`specforge-core` lib
+  1,474 → **1,482**). `flow_census.json` re-derived and attributed: `analyzed_functions` +3,
+  `decision_sites` +6, `helper_edges` +37, `semantic_macros` +1. AXI-L gains one temporal conflict
+  (`WTAG` VALID vs ZERO) — a correct surfacing of an ambiguity the document states across two enum
+  rows, not a regression.
+- [x] **GENERICITY (ADR 0006)** — universal English clause structure only: a statement decomposes into
+  clauses at the punctuation the row reader already uses, an obligation is a clause carrying one of
+  the modals `.3k.2d` fixed, and a fronted conditional's main clause follows its comma. No document,
+  protocol, vendor or token list; every test identifier is alpha-renamed.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` gains *"A statement that states three
+  obligations yields three records"* as the chapter's first rule, since every other rule in it now
+  operates per obligation. No book text described the old one-record-per-statement behaviour, so
+  nothing is deleted. KM card `[[one-record-per-obligation-clause]]`. Four residuals routed to
+  `.3k.7`–`.3k.10` rather than left in prose.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2k`
 

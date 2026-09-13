@@ -2,9 +2,9 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical facts live in front-mattered source files.
 
-- Facts: **307**
-- Unique question keys: **2536**
-- Canonical input SHA-256: `3ea150ed2cd3f7223ddf823446258f6be3b9bf32428dc7da8c6fad89123294ed`
+- Facts: **308**
+- Unique question keys: **2548**
+- Canonical input SHA-256: `491d39b89cb8f1c62e7975ade7e9306e0bb16290b2e3b6920ce3a41ca0e811ff`
 - Browse by id/title: [`docs/knowledge/INDEX.md`](docs/knowledge/INDEX.md)
 - Search all question shards: `rg -i --glob 'questions-*.md' 'terms' docs/knowledge-map`
 
@@ -13,12 +13,12 @@
 - [Shard 0001](docs/knowledge-map/questions-0001.md) — 148 keys
 - [Shard 0002](docs/knowledge-map/questions-0002.md) — 146 keys
 - [Shard 0003](docs/knowledge-map/questions-0003.md) — 147 keys
-- [Shard 0004](docs/knowledge-map/questions-0004.md) — 146 keys
+- [Shard 0004](docs/knowledge-map/questions-0004.md) — 147 keys
 - [Shard 0005](docs/knowledge-map/questions-0005.md) — 147 keys
 - [Shard 0006](docs/knowledge-map/questions-0006.md) — 147 keys
 - [Shard 0007](docs/knowledge-map/questions-0007.md) — 147 keys
 - [Shard 0008](docs/knowledge-map/questions-0008.md) — 145 keys
-- [Shard 0009](docs/knowledge-map/questions-0009.md) — 147 keys
+- [Shard 0009](docs/knowledge-map/questions-0009.md) — 146 keys
 - [Shard 0010](docs/knowledge-map/questions-0010.md) — 148 keys
 - [Shard 0011](docs/knowledge-map/questions-0011.md) — 146 keys
 - [Shard 0012](docs/knowledge-map/questions-0012.md) — 146 keys
@@ -27,4 +27,4 @@
 - [Shard 0015](docs/knowledge-map/questions-0015.md) — 147 keys
 - [Shard 0016](docs/knowledge-map/questions-0016.md) — 147 keys
 - [Shard 0017](docs/knowledge-map/questions-0017.md) — 147 keys
-- [Shard 0018](docs/knowledge-map/questions-0018.md) — 40 keys
+- [Shard 0018](docs/knowledge-map/questions-0018.md) — 52 keys

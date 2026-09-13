@@ -118,6 +118,8 @@
   > how does SpecForge prove a reviewed paraphrase is parser equivalent
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > how does SpecForge read a fronted condition like When asserted, X must remain asserted
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > how does SpecForge recover a subject the model misspelled
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -296,5 +298,3 @@
   > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how does the measurable corpus population grow

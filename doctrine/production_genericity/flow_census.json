@@ -25,20 +25,20 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2k-A-RELATION-IS-NOT-A-VALUE",
-   "owner": "EXTRACTION-QUALITY-GAUGE.3k.2k",
-   "rationale": "The generic value arm now refuses a predicate that states a RELATION rather than a state (`shall be unique within <scope>`, `must be compatible with <other>`), the shape `.3k.2b`'s participle rule cannot reach. Two functions: the positional test itself, and one scan that returns the bound value together with the word immediately after it, so the value and its complement can never be read from two different binder occurrences.",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.3-ONE-RECORD-PER-OBLIGATION",
+   "owner": "EXTRACTION-QUALITY-GAUGE.3k.3",
+   "rationale": "The statement constraint path reads every obligation clause of a statement rather than only the first, and every part of a record — kind and bound value included — is read from the clause that minted it. Three functions: all obligation clauses in document order, the subject part of a clause whose condition is FRONTED, and the pre-lead subject gate told which obligation it is judging.",
    "baseline": {
-    "analyzed_functions": 2423,
+    "analyzed_functions": 2425,
     "decision_sites": 13038,
-    "helper_edges": 15117,
+    "helper_edges": 15151,
     "semantic_macros": 1483
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 0,
-    "helper_edges": 34,
-    "semantic_macros": 0
+    "analyzed_functions": 3,
+    "decision_sites": 6,
+    "helper_edges": 37,
+    "semantic_macros": 1
    }
   }
  }
