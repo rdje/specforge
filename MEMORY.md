@@ -13,14 +13,11 @@
   `ae064329`. Shipped `scripts/check_task_node_retention.py`, registered `TASK-NODE-RETENTION|gate` (driver now runs **15**). The rule admits the
   one legitimate operation, derived from history not invented: over 200 revisions a node id vanished twice — once a real split (`.7.2` →
   `.7.2.0`/`.7.2.1`) and once my accident — and the descendant-or-declared discriminator replays GREEN on the first and RED on the second.
-- Prior unit: **`EXTRACTION-QUALITY-GAUGE.3k.2j`** — registered `CONSTRAINT-PART-SPAN|gate`; `.3k`'s own declared verification was in no
-  driver and had been RED since `.3k.2a`. Sibling census: 28 of 86 script-shaped files unreachable, exactly 2 claiming `--check`.
-  Open: `.3k.2h`/`.3k.2i`, `.3k.3`/`.3k.4`/`.3k.5`; **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`;
-  `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`; `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`;
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`; `SOURCE-IR-REPRODUCIBILITY`
-  `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
-  `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
-  `WIRE-BASED-100` `.10d`/`.10f`/`.2`/`.3`/`.5`.
+- Director directive `2026-09-13`, owned: the table-row producer must see ALL documents. `LEGACY-SOURCE-RECLASSIFICATION.0` opened with the
+  measurement that makes it possible — `classified_table_kind` is a pure function of the PERSISTED table record, so running it over the 51 legacy
+  artifacts' own preserved structure recovers **363 signal-description tables across 23 documents** (AXI 89, LTI 24, CHI/HBM2 8 each), with no PDF
+  and no model. The neutralization gate itself is CORRECT and stays: those labels came from a retired identity-keyed classifier, measured 3,484
+  table-label changes different from what this code says. What was wrong was the inference that the 51 were unrecoverable.
 - Current state: thirteen commits. **The statement path and the row path now apply the same rules**: same modal vocabulary (`.3k.2d`), same
   vocabulary-slot refusals (`.3k.2f`), same typed gateway (`.3k.2e`) — and `replay-constraints` judges all three deterministic producers
   (`.3k.2g`), publishing **26 documents row-judged / 51 not**. **Three leaves in a row corrected a population the one before published**, and the
@@ -32,9 +29,9 @@
   supports. The defect underneath is that `extract_signal_constraints` takes only the FIRST modal sentence and drops obligations 2..n; one record
   per clause (the row reader's shape) is what to size, and it is RECALL, so measure it as an addition before shipping it as a narrowing.
 - In-flight uncommitted: none after this commit.
-- Blockers: none, but a PUSH is DUE and gated: 229 commits ahead of `origin/main` (COMMIT.md: push around 200) and directive 16 requires full CI
-  first. `scripts/check_doctrines.sh --all` did not finish in 50 minutes — `CHAIN-CURRENCY` re-executes the real pipeline for every persisted
-  artifact across four stages. Budget hours, not minutes, and run it detached. Standing hazards: **an evidence-stage change stales the proof of every
+- Blockers: none. Push cadence is **400** commits per director directive `2026-09-13` and is FIXED there, so no push is due at 231; directive 16
+  still gates it on full CI. `scripts/check_doctrines.sh --all` did not finish in 50 minutes — `CHAIN-CURRENCY` re-executes the real pipeline for every
+  persisted artifact across four stages. Budget hours, not minutes, and run it detached. Standing hazards: **an evidence-stage change stales the proof of every
   current-schema artifact whose content moves and they
   then refuse to LOAD** — rebuild (`evidence → validate → semantic → validate → intent → validate → adapt`, each validated exactly once,
   upstream-first). Only APB/AHB/AXI-L have held-out bundles (`generated/preserved/WIRE-BASED-100.10/`): restore, rebuild, `diff -r`, remove,

@@ -27,6 +27,7 @@ Complete membership for this range. The bounded landing is
 | `KG-ISF-COMPLETENESS` | `active` | the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF | [open](../tasks/KG-ISF-COMPLETENESS.md) |
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](../tasks/KG-ISF-TRANSACTIONS.md) |
 | `KNOWLEDGE-MAP-ADOPTION` | `done` | adopt the portable Knowledge Map retrieval layer | [open](../tasks/KNOWLEDGE-MAP-ADOPTION.md) |
+| `LEGACY-SOURCE-RECLASSIFICATION` | `active` | 51 documents are invisible to every classification-keyed reader, and the labels are re-derivable without a PDF | [open](../tasks/LEGACY-SOURCE-RECLASSIFICATION.md) |
 | `LITERATURE-GROUNDING` | `done` | ground every SpecForge aspect in published research | [open](../tasks/LITERATURE-GROUNDING.md) |
 | `LIVE-DOC-STOP-RISK` | `done` | find the live-document stops that no current signal makes actionable | [open](../tasks/LIVE-DOC-STOP-RISK.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM` | `active` | keep current-facing canonical surfaces writable | [open](../tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `R15C-R15G-LEARNING-PLANE-BACKFILL` | `active` | own + audit the learning / eval / corpus lanes (in-progress) | [open](../tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 | `R16-CAPTURE-FIDELITY-GATES` | `done` | objective capture-fidelity metric (point #5) | [open](../tasks/R16-CAPTURE-FIDELITY-GATES.md) |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | schema-constrained + verified extraction (point #6 — the crux, continuous) | [open](../tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
-| `R16-CONTRACT-IR` | `done` | typed timed-contract IR layer (point #1) | [open](../tasks/R16-CONTRACT-IR.md) |
 

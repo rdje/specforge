@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `R16-CONTRACT-IR` | `done` | typed timed-contract IR layer (point #1) | [open](../tasks/R16-CONTRACT-IR.md) |
 | `R16-INTENT-CAPTURE` | `done` | SOTA design-intent capture (program umbrella) | [open](../tasks/R16-INTENT-CAPTURE.md) |
 | `R16-KG-PROTOCOL-ONTOLOGY` | `done` | protocol-structured knowledge graph (point #2) | [open](../tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
 | `R16-MODULE-HARDENING` | `done` | unit-test signoff hardening for the R16 IR modules | [open](../tasks/R16-MODULE-HARDENING.md) |

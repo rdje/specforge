@@ -47,6 +47,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `INVARIANT-SHAPE-ADMISSION` | `active` | 739 captions are a precision defect; the table rows are an extraction gap, and they are not the same problem | [open](tasks/INVARIANT-SHAPE-ADMISSION.md) |
 | `KG-ISF-COMPLETENESS` | `active` | the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF | [open](tasks/KG-ISF-COMPLETENESS.md) |
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](tasks/KG-ISF-TRANSACTIONS.md) |
+| `LEGACY-SOURCE-RECLASSIFICATION` | `active` | 51 documents are invisible to every classification-keyed reader, and the labels are re-derivable without a PDF | [open](tasks/LEGACY-SOURCE-RECLASSIFICATION.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM` | `active` | keep current-facing canonical surfaces writable | [open](tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md) |
 | `MEMORY-BOUNDED-INGEST` | `active` | bounded-memory ingestion of very large PDFs | [open](tasks/MEMORY-BOUNDED-INGEST.md) |
 | `NLP-SHALLOW-PARSE` | `active` | a deterministic in-Rust shallow-parse tier (subject–verb–object understanding) | [open](tasks/NLP-SHALLOW-PARSE.md) |
@@ -70,13 +71,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 159 trees route through 3 derived part(s); open a range to find an id.
+All 160 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-8` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE` | `R16-CONTRACT-IR` |
-| [0003](task-catalog/catalog-0003.md) | 47 | `R16-INTENT-CAPTURE` | `WIRE-BASED-100` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` |
+| [0003](task-catalog/catalog-0003.md) | 48 | `R16-CONTRACT-IR` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

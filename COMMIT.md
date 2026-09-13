@@ -34,7 +34,7 @@ Run this workflow after each completed task/activity.
 When the user explicitly authorizes an automatic batch of `N` tasks, slices, or lanes:
 - still run this full commit workflow after every completed task, slice, or lane in the batch
 - do not defer task-scoped commits until the end of the batch
-- push only after the full defined `N`-item batch is complete, unless the user explicitly gives a different push instruction or the branch is around `200` local commits ahead and the current active-run policy allows checkpoint pushes
+- push only after the full defined `N`-item batch is complete, unless the user explicitly gives a different push instruction or the branch is around `400` local commits ahead and the current active-run policy allows checkpoint pushes
 - if the user-defined batch ends early because of a blocker, do not push automatically unless the user explicitly approves that early-batch push
 - record batch progress in `MEMORY.md` when it changes the concrete resume action or leaves work in flight;
   do not edit the pointer merely to acknowledge a commit
@@ -44,7 +44,7 @@ When the user authorizes PNT (`Pick the Next Task`) mode:
 - still run the full commit workflow after every completed slice
 - continue selecting bounded roadmap-aligned slices until no task, slice, or lane remains to pick from or the user explicitly pauses/stops
 - treat the post-commit report as a continuity checkpoint, not a pause; after reporting, immediately pick the next slice and roll with it
-- push around every `200` local commits since the last push, unless the user gives a different push instruction (raised from 30 → 200 per user directive `2026-06-04`)
+- push around every `400` local commits since the last push, unless the user gives a different push instruction (30 → 200 per user directive `2026-06-04`; 200 → 400 per user directive `2026-09-13`, and it is fixed there)
 - keep the active leaf and next concrete action in `MEMORY.md`; obtain ahead/behind and HEAD from Git
   when needed instead of copying them into a hand-maintained shadow field
 
