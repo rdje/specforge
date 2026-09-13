@@ -7,20 +7,21 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.2j` CLOSED `2026-09-13` (DOCTRINE)** — **a fail-closed check that no driver runs is not a check.**
-  `scripts/measure_constraint_part_span.py --check` was built by `.3k` to fail closed when the kind classifier's call-site topology moves, is
-  named in `.3k`'s verification, and was in NO driver. Re-derived per revision with each revision's own scanner: green at `.3k.1`, RED from
-  `.3k.2a` (the typed gateway), still RED at `.3k.2c` — three leaves reported a green gate over a failing check. Registered as
-  `CONSTRAINT-PART-SPAN|gate`; the driver now executes **14** doctrines and was observed RED on both drifts. Sibling census, classified: 28 of 86
-  script-shaped files are unreachable from any driver or doctrine registry, and exactly **2** claim `--check` semantics — this one and
-  `validate_canonical_recovery_contract.py`, already an open question in `RETAINED-BUNDLE-POPULATION-FROZEN`.
+- Active unit: **`TASK-NODE-RETENTION.0` CLOSED `2026-09-13` (DOCTRINE)** — **every other memory layer was guarded; the CONTENTS of a task tree
+  were not.** My own `.3k.2j` commit (`ab2c6ee0`) spliced a node replacement from its `- ID:` line to the next section header and **deleted 8
+  nodes** — four closed leaves' full records — while all 14 doctrines passed; it surfaced only because a later edit lost its anchor. Restored at
+  `ae064329`. Shipped `scripts/check_task_node_retention.py`, registered `TASK-NODE-RETENTION|gate` (driver now runs **15**). The rule admits the
+  one legitimate operation, derived from history not invented: over 200 revisions a node id vanished twice — once a real split (`.7.2` →
+  `.7.2.0`/`.7.2.1`) and once my accident — and the descendant-or-declared discriminator replays GREEN on the first and RED on the second.
+- Prior unit: **`EXTRACTION-QUALITY-GAUGE.3k.2j`** — registered `CONSTRAINT-PART-SPAN|gate`; `.3k`'s own declared verification was in no
+  driver and had been RED since `.3k.2a`. Sibling census: 28 of 86 script-shaped files unreachable, exactly 2 claiming `--check`.
   Open: `.3k.2h`/`.3k.2i`, `.3k.3`/`.3k.4`/`.3k.5`; **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`;
   `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`; `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`; `SOURCE-IR-REPRODUCIBILITY`
   `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
   `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `WIRE-BASED-100` `.10d`/`.10f`/`.2`/`.3`/`.5`.
-- Current state: twelve commits. **The statement path and the row path now apply the same rules**: same modal vocabulary (`.3k.2d`), same
+- Current state: thirteen commits. **The statement path and the row path now apply the same rules**: same modal vocabulary (`.3k.2d`), same
   vocabulary-slot refusals (`.3k.2f`), same typed gateway (`.3k.2e`) — and `replay-constraints` judges all three deterministic producers
   (`.3k.2g`), publishing **26 documents row-judged / 51 not**. **Three leaves in a row corrected a population the one before published**, and the
   lesson is sharper than "measure first": measure with the PRODUCER. `.3k.2d` refuted a mechanism taken from a test string; `.3k.2g` refuted two

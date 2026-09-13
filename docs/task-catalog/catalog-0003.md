@@ -46,6 +46,7 @@ Complete membership for this range. The bounded landing is
 | `SWD-SERIAL-EXTRACTION` | `done` | serial-protocol/architecture extraction for SWD/ADI → WIRE-BASED-100 100% | [open](../tasks/SWD-SERIAL-EXTRACTION.md) |
 | `SYMBOL-CLOSURE-CORPUS-VALIDATION` | `done` | corpus-validate (and settle) the descoped symbol-closure detector | [open](../tasks/SYMBOL-CLOSURE-CORPUS-VALIDATION.md) |
 | `TABLE-GRITS-CONFORMAL` | `done` | GriTS table-structure metric + split-conformal calibration | [open](../tasks/TABLE-GRITS-CONFORMAL.md) |
+| `TASK-NODE-RETENTION` | `active` | every other memory layer is guarded; the contents of a task tree were not | [open](../tasks/TASK-NODE-RETENTION.md) |
 | `TASK-PART-SEAL-REACHABILITY` | `active` | give a completed task-evidence part a reachable closed state | [open](../tasks/TASK-PART-SEAL-REACHABILITY.md) |
 | `TEMPORAL-ANTECEDENT-RECALL` | `done` | distribute a shared assertion-value across coordinated condition signals | [open](../tasks/TEMPORAL-ANTECEDENT-RECALL.md) |
 | `TEMPORAL-RULE-EVAL` | `done` | supervised precision/recall/F1 for mined temporal rules | [open](../tasks/TEMPORAL-RULE-EVAL.md) |
