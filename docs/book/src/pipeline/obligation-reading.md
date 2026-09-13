@@ -180,18 +180,36 @@ The statement path now refuses instead. The sentence stays counted as a normativ
 record cites — an honest residual, which is what keeps the gap visible rather than filling it with a
 fact the document does not contain.
 
-**The table-row reader keeps the fallback, and the difference is the point.** Before it classifies
-anything, that reader has already proved the clause binds to its own row's signal — English binds an
-obligation to the nominal immediately before its modal, and a clause that fails that test is dropped.
-So when its classifier finds no phrase, what it is holding is a real obligation about a known signal
-written in a spelling the table lacks:
+**The table-row reader kept the fallback for a while, and losing it is the more interesting half.**
+That reader proves something the statement path cannot: before it classifies anything it has checked
+that the clause binds to its own row's signal — English binds an obligation to the nominal immediately
+before its modal, and a clause that fails that test is dropped. So when its classifier found no
+phrase, the argument went, what it was holding must be a real obligation about a known signal written
+in a spelling the table lacks:
 
 ```text
 | PAUSER | ... | PAUSER must have the same value in the Setup and Access phase of a transfer. |
 ```
 
-That IS a stability requirement. The statement path has no such proof and cannot tell that case from
-a waveform caption, so the two paths answer differently on purpose.
+That IS a stability requirement, and it was the whole population the argument was made about. Once the
+table learned that spelling, those clauses stopped reaching the fallback — and what was left reaching
+it was a different kind of sentence entirely:
+
+```text
+LRADDR bits within the range indicated by LRSIZE must match LAADDR.
+Must be aligned to a burst size.
+Must not be present.
+```
+
+A match against another operand, an alignment, a presence claim. Each one binds to its row's signal
+perfectly well; none of them states anything the constraint vocabulary can hold. **Proving the subject
+does not make the kind readable**, and the fallback answered `must_be_stable` for all three — for the
+last one, negated, so a cell saying a signal must not be *present* published that it must not be
+*stable*.
+
+Both readers refuse now, and the terminal arm is unreachable as a published kind. The sentence stays
+counted as a normative statement no typed record cites, which is the accounting that keeps the gap
+visible rather than filling it.
 
 ## One clause, one modal vocabulary
 

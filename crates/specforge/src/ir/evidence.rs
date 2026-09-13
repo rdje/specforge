@@ -10018,8 +10018,13 @@ fn obligation_is_negated(lowered: &str) -> bool {
 ///
 /// EXTRACTION-QUALITY-GAUGE.3k.2a — the terminal `MustBeStable` this used to return in that case is
 /// not a default, it is a fabrication: it asserts stability about a sentence that never mentions it.
-/// Callers that can prove the clause is an obligation about a known signal may still fall back to it
-/// ([`classify_signal_constraint_kind`]); the statement path, which cannot, refuses instead.
+///
+/// `.3k.2a` refused it in the statement path and left the table-row reader falling back to
+/// [`classify_signal_constraint_kind`], because that reader has already proved its clause binds to its
+/// row's own signal. `EXTRACTION-QUALITY-GAUGE.3k.2e` closed that asymmetry: proving the SUBJECT does
+/// not make the KIND readable, and what reached the fallback there was a clause stating a relation the
+/// vocabulary has no slot for. **Every producer now goes through this function**, so the terminal arm
+/// below is unreachable as a published kind and survives only as this function's own input.
 fn classify_signal_constraint_kind_typed(
     lowered: &str,
     discovered_values: &HashSet<String>,
@@ -10484,7 +10489,27 @@ fn extract_signal_description_row_constraints(
                     continue;
                 }
                 let lowered = clause_text.to_ascii_lowercase();
-                let constraint_kind = classify_signal_constraint_kind(&lowered, &discovered_values);
+                // EXTRACTION-QUALITY-GAUGE.3k.2e — the untyped fallback is refused here too, so no
+                // producer publishes a kind no document stated.
+                //
+                // `.3k.2a` refused it in the statement path and KEPT it here, on the reasoning that
+                // this reader has already proved via `obligation_subject` that its clause binds to
+                // its row's own signal — so an untyped obligation must be a real obligation with a
+                // spelling the table lacks. That reasoning was sound for the population it was made
+                // about: four APB `must have the same value` clauses. `.3k.2c` gave the table that
+                // spelling, and they stopped reaching the fallback at all.
+                //
+                // What reaches it now is a different thing entirely: a clause whose obligation the
+                // vocabulary cannot express — a MATCH against another operand, an ALIGNMENT, a
+                // PRESENCE claim. Binding the SUBJECT correctly does not make the KIND readable, and
+                // the fallback answers `must_be_stable` for every one of them. An honest residual
+                // keeps the statement counted as an uncaptured normative statement, which is the
+                // accounting that keeps the gap visible; a fabricated stability claim does not.
+                let Some(constraint_kind) =
+                    classify_signal_constraint_kind_typed(&lowered, &discovered_values)
+                else {
+                    continue;
+                };
                 // The same guard the statement path applies: a kind that already encodes its own
                 // negation must not also carry `negated`, or the pair reads as a double negative.
                 let negated = obligation_is_negated(&lowered)
@@ -36086,6 +36111,166 @@ mod extraction_quality_gauge_3k_6 {
         assert_eq!(report.persisted_total, 1);
         assert_eq!(report.verdicts.len(), 1);
         assert_eq!(report.verdicts[0].constraint_id, "sigcon_0001");
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_2e {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.2e` — the table-row reader's untyped fallback.
+    //!
+    //! `.3k.2a` refused the terminal `MustBeStable` in the statement path and kept it here, because
+    //! this reader has already proved via `obligation_subject` that its clause binds to its row's own
+    //! signal — so an untyped obligation looked like a real obligation with a spelling the table
+    //! lacks. That was true of the population it was reasoning about: four APB `must have the same
+    //! value` clauses, which `.3k.2c` then typed. What reaches the fallback now is a clause whose
+    //! obligation the vocabulary cannot express at all. Proving the SUBJECT does not make the KIND
+    //! readable.
+    use super::*;
+    use tempfile::tempdir;
+
+    fn header(text: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: true,
+        }
+    }
+
+    fn cell(text: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        }
+    }
+
+    fn read_rows(rows: Vec<Vec<StructuredTableCellRecord>>) -> Result<Vec<SignalConstraintRecord>> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Signal descriptions\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let row_count = rows.len() as u32 + 1;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "asset_0001".to_string(),
+            page_id: None,
+            caption_text: Some("Signal descriptions".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                header("Signal"),
+                header("Width"),
+                header("Source"),
+                header("Description"),
+            ]],
+            body_rows: rows,
+            row_count,
+            col_count: 4,
+        });
+        let known: HashSet<String> = ["ZETAREADY", "OMEGABURST", "ALPHACHUNK", "SIGMASTRB"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let mut counter = 0usize;
+        Ok(extract_signal_description_row_constraints(
+            &source_ir,
+            &[],
+            &known,
+            &mut counter,
+            None,
+        ))
+    }
+
+    /// The population the fallback actually holds, read from the corpus and reproduced here on
+    /// invented names: a MATCH against another operand, an ALIGNMENT, and a PRESENCE claim. Each
+    /// clause binds to its own row's signal, so the reader admits it — and then the vocabulary has no
+    /// kind for it, and the fallback answers `must_be_stable` for all three.
+    #[test]
+    fn a_clause_the_vocabulary_cannot_type_publishes_nothing() -> Result<()> {
+        let records = read_rows(vec![
+            vec![
+                cell("ZETAREADY"),
+                cell("1"),
+                cell("Requester"),
+                cell("ZETAREADY must match OMEGABURST."),
+            ],
+            vec![
+                cell("OMEGABURST"),
+                cell("2"),
+                cell("Completer"),
+                cell("Must be aligned to a burst size."),
+            ],
+            vec![
+                cell("SIGMASTRB"),
+                cell("8"),
+                cell("Requester"),
+                cell("Must not be present."),
+            ],
+        ])?;
+        assert!(
+            records.is_empty(),
+            "none of these states a kind the vocabulary has; an honest residual keeps the statement \
+             counted as uncaptured, a fabricated stability claim does not: {records:?}"
+        );
+        Ok(())
+    }
+
+    /// The over-kill guard, and it is the half that decides whether this refusal is safe: every arm
+    /// the DOCUMENT states still publishes from a row. These are the four shapes the 12 live
+    /// `row_sigcon_*` records are made of — validity with the subject in the header, `.3k.2c`'s
+    /// no-change spelling, a negative polarity form, and a plain value binding.
+    #[test]
+    fn every_obligation_the_document_types_still_publishes() -> Result<()> {
+        let records = read_rows(vec![
+            vec![
+                cell("ZETAREADY"),
+                cell("1"),
+                cell("Requester"),
+                cell("Response for the read channels. Must be valid when ALPHACHUNK is asserted."),
+            ],
+            vec![
+                cell("ALPHACHUNK"),
+                cell("4"),
+                cell("Requester"),
+                cell("ALPHACHUNK must have the same value in the Setup and Access phase."),
+            ],
+            vec![
+                cell("SIGMASTRB"),
+                cell("8"),
+                cell("Requester"),
+                cell("SIGMASTRB must not be active during a read transfer."),
+            ],
+            vec![
+                cell("OMEGABURST"),
+                cell("2"),
+                cell("Completer"),
+                cell("OMEGABURST must be 0 for a fixed burst."),
+            ],
+        ])?;
+        let kinds: Vec<(&str, &str)> = records
+            .iter()
+            .map(|record| {
+                (
+                    record.subject_signal.as_str(),
+                    record.constraint_kind.as_str(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            kinds,
+            vec![
+                ("ZETAREADY", "must_be_value"),
+                ("ALPHACHUNK", "must_not_change"),
+                ("SIGMASTRB", "must_be_deasserted"),
+                ("OMEGABURST", "must_be_value"),
+            ],
+            "the refusal must cost nothing the document states: {records:?}"
+        );
+        Ok(())
     }
 }
 

@@ -61,15 +61,30 @@ import sys
 
 EVIDENCE_SOURCE = "crates/specforge/src/ir/evidence.rs"
 CLASSIFIER = "classify_signal_constraint_kind"
+# The gateway every PRODUCER now goes through (`EXTRACTION-QUALITY-GAUGE.3k.2a` for the statement
+# path, `.3k.2e` for the table-row path). The bare classifier below is its implementation.
+CLASSIFIER_ENTRY = "classify_signal_constraint_kind_typed"
 
-# The call-site topology this census's stratification depends on: which enclosing function calls
+# The call-site topology this census's stratification depends on: which enclosing function reaches
 # the kind classifier, and whether that call is already narrowed to one obligation clause. A
 # literal, declared independently of what the source scan finds, so a new caller fails the check
 # instead of being silently folded into an existing stratum.
+#
+# Re-derived by `EXTRACTION-QUALITY-GAUGE.3k.2e`, and the re-derivation is the point rather than the
+# edit. Read from each revision's own source with that revision's own scanner, this check has been
+# RED since `.3k.2a` — which introduced the typed gateway, so the bare classifier's only production
+# caller became the wrapper and the declared pair stopped matching. `.3k.2a`, `.3k.2b` and `.3k.2c`
+# each shipped over it because nothing runs this script: it is named in `.3k`'s verification and is
+# in no driver. A fail-closed check nothing executes is not a check
+# (`EXTRACTION-QUALITY-GAUGE.3k.2j`).
+#
+# Two facts are pinned, because the stratification needs both: which producers reach the classifier
+# and with what span, and that the untyped arm has exactly one way in.
 EXPECTED_CLASSIFIER_CALLERS = {
     "extract_signal_description_row_constraints": "clause",
     "extract_signal_constraints": "whole",
 }
+EXPECTED_UNTYPED_CALLERS = {CLASSIFIER_ENTRY}
 
 # Constraint-id prefix -> (stratum label, does this producer reach the kind classifier?).
 PRODUCERS = {
@@ -140,7 +155,7 @@ UNTYPED_DEFAULT_ARMS = ("untyped_default", "valid_no_value")
 # Deleting a self-test case must make this script fail. The expected total is a literal declared
 # here, independently of `SELF_TEST_CASES`, so dropping a case drops the executed count below it
 # (`PRODUCTION-GRAPH-CENSUS-PIN.3`).
-EXPECTED_SELF_TEST_CASES = 9
+EXPECTED_SELF_TEST_CASES = 10
 
 
 def repo_root() -> str:
@@ -197,8 +212,40 @@ def is_reference_magnitude(lowered: str) -> bool:
 # --- call-site topology --------------------------------------------------------------------------
 
 
-def classifier_call_sites(root: str) -> dict[str, str]:
-    """Map each enclosing function that calls the kind classifier to the span it passes.
+def _test_module_lines(lines: list[str]) -> set[int]:
+    """Line numbers (0-based) that belong to a `#[cfg(test)] mod … { … }` block.
+
+    A test caller must not fail this check — a new control is added on almost every slice, and a
+    gate that fires on its own tests is a gate people stop running, which is exactly what happened
+    here. Production callers still fail closed. The block is bounded by the closing brace at the
+    `mod` line's own indentation, which rustfmt guarantees for this source.
+    """
+    inside: set[int] = set()
+    index = 0
+    while index < len(lines):
+        if lines[index].strip() == "#[cfg(test)]":
+            item = index + 1
+            while item < len(lines) and not lines[item].strip():
+                item += 1
+            # The attribute guards exactly the item that follows it — a `mod`, or a single helper
+            # `fn`. Scanning ahead for the next `mod` instead would swallow every line between a
+            # `#[cfg(test)] fn` and the next module, which is most of this file.
+            head = lines[item].lstrip() if item < len(lines) else ""
+            if head.startswith(("mod ", "fn ", "pub fn ", "pub(super) fn ", "pub(crate) fn ")):
+                indent = len(lines[item]) - len(lines[item].lstrip())
+                closing = " " * indent + "}"
+                end = item + 1
+                while end < len(lines) and lines[end].rstrip("\n") != closing:
+                    end += 1
+                inside.update(range(index, min(end + 1, len(lines))))
+                index = end + 1
+                continue
+        index += 1
+    return inside
+
+
+def classifier_call_sites(root: str, symbol: str = CLASSIFIER_ENTRY) -> dict[str, str]:
+    """Map each enclosing PRODUCTION function that calls `symbol` to the span it passes.
 
     The span is read from the call's own argument: a call whose argument is derived from
     `constraint_bearing_sentence` (or from an already-narrowed `clause`) is clause-scoped; anything
@@ -207,14 +254,12 @@ def classifier_call_sites(root: str) -> dict[str, str]:
     path = os.path.join(root, EVIDENCE_SOURCE)
     with open(path, "r", encoding="utf-8") as handle:
         lines = handle.readlines()
-    # Leading whitespace is allowed so a call added inside `mod tests` is reported as its own
-    # caller rather than folded into the last top-level function — `--check` should fail closed on
-    # a new caller wherever it lives, not quietly attribute it to a neighbour.
+    test_lines = _test_module_lines(lines)
     definition = re.compile(r"^\s*(?:pub(?:\([^)]*\))?\s+)?fn\s+([A-Za-z0-9_]+)")
     sites: dict[str, str] = {}
     enclosing = "<file scope>"
     pending_binding = ""
-    for line in lines:
+    for number, line in enumerate(lines):
         function = definition.match(line)
         if function:
             enclosing = function.group(1)
@@ -222,13 +267,22 @@ def classifier_call_sites(root: str) -> dict[str, str]:
         stripped = line.strip()
         if stripped.startswith("let lowered"):
             pending_binding = stripped
-        if f"{CLASSIFIER}(" not in line or function:
+        if f"{symbol}(" not in line or function or number in test_lines:
             continue
-        argument = line.split(f"{CLASSIFIER}(", 1)[1]
+        argument = line.split(f"{symbol}(", 1)[1]
         source = argument + " " + pending_binding
         scope = "clause" if ("constraint_bearing_sentence" in source or "clause" in source) else "whole"
         sites[enclosing] = scope
     return sites
+
+
+def untyped_classifier_callers(root: str) -> set[str]:
+    """Production functions that reach the UNTYPED classifier directly, bypassing the gateway."""
+    callers = set(classifier_call_sites(root, CLASSIFIER))
+    # The bare name is a prefix of the typed one, so a `…_typed(` call matches `…kind(` only when
+    # the paren follows immediately; `classifier_call_sites` splits on `f"{symbol}("`, which already
+    # enforces that. The wrapper itself is the one legitimate caller.
+    return callers
 
 
 # --- census ---------------------------------------------------------------------------------------
@@ -393,6 +447,30 @@ SELF_TEST_CASES = (
         lambda: is_reference_magnitude("this field must be greater than 0"),
         False,
     ),
+    # `EXTRACTION-QUALITY-GAUGE.3k.2e` — the attribute guards the ITEM that follows it. Scanning
+    # ahead for the next `mod` swallowed every line between a `#[cfg(test)] fn` and the next test
+    # module, which silently emptied the topology instead of failing closed.
+    (
+        "cfg-test-marks-the-item-it-guards-not-everything-until-the-next-mod",
+        lambda: sorted(
+            _test_module_lines(
+                [
+                    "#[cfg(test)]\n",
+                    "pub(super) fn helper() -> u8 {\n",
+                    "    0\n",
+                    "}\n",
+                    "fn production() -> u8 {\n",
+                    "    1\n",
+                    "}\n",
+                    "#[cfg(test)]\n",
+                    "mod tests {\n",
+                    "    fn control() {}\n",
+                    "}\n",
+                ]
+            )
+        ),
+        [0, 1, 2, 3, 7, 8, 9, 10],
+    ),
 )
 
 
@@ -432,6 +510,7 @@ def main() -> int:
     sites = classifier_call_sites(root)
 
     if args.check:
+        untyped = untyped_classifier_callers(root)
         if sites != EXPECTED_CLASSIFIER_CALLERS:
             print(
                 "constraint-part-span: the kind classifier's call sites moved.\n"
@@ -440,9 +519,19 @@ def main() -> int:
                 "This census stratifies by which producer reaches the classifier; re-derive it."
             )
             return 1
+        if untyped != EXPECTED_UNTYPED_CALLERS:
+            print(
+                "constraint-part-span: a producer reaches the UNTYPED classifier directly.\n"
+                f"  expected {EXPECTED_UNTYPED_CALLERS}\n"
+                f"  found    {untyped}\n"
+                "The terminal arm publishes a kind no document stated; every producer must go "
+                "through the typed gateway (EXTRACTION-QUALITY-GAUGE.3k.2a/.3k.2e)."
+            )
+            return 1
         print(
             "constraint-part-span: kind-classifier call sites unchanged "
-            f"({len(sites)} callers, {sum(1 for s in sites.values() if s == 'whole')} reading the whole statement)."
+            f"({len(sites)} producers, {sum(1 for s in sites.values() if s == 'whole')} reading the "
+            f"whole statement; the untyped arm is reached only by {sorted(untyped)[0]})."
         )
         return 0
 

@@ -171,7 +171,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
 ## Task Tree
 
 - ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3k`, and
-  `.3k.1`–`.3k.6` with `.3k.2a`–`.3k.2i`)
+  `.3k.1`–`.3k.6` with `.3k.2a`–`.3k.2j`)
 - ID: `EXTRACTION-QUALITY-GAUGE.gauge` · Status: `done` · Goal: establish the NLI-oracle not-entailed
   rate as a per-doc extraction-quality gauge; measure CHI (~83%) + APB (~29%), hand-validate (18/18).
 - ID: `EXTRACTION-QUALITY-GAUGE.1` · Status: `done` (prototype) · Goal: **entity discrimination** —
@@ -650,7 +650,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Commit: `EXTRACTION-QUALITY-GAUGE.3i`
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3k` · Status: `active` (opened `2026-09-12` by `.3i`; **scoped +
-  split** `2026-09-12`) · Children: `.3k.1`–`.3k.6` (`.3k.2` carries `.3k.2a`–`.3k.2i`) · Goal: **every part of a
+  split** `2026-09-12`) · Children: `.3k.1`–`.3k.6` (`.3k.2` carries `.3k.2a`–`.3k.2j`) · Goal: **every part of a
   published constraint must be read from the span that produced the record.** `.3i` established that
   for the negation; this container owns the rest. Its first result is that **both numbers `.3i`
   handed it were measured over the wrong population**, so the leaf is split around the populations
@@ -798,7 +798,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.6`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2` · Status: `active` (split `2026-09-12` after `.3k.6` re-sized it;
-  re-split `2026-09-12` by `.3k.2d`'s census) · Children: `.3k.2a`-`.3k.2i` · Goal: **what a clause that types nothing may
+  re-split `2026-09-12` by `.3k.2d`'s census) · Children: `.3k.2a`-`.3k.2j` · Goal: **what a clause that types nothing may
   publish.**
   Two arms of `classify_signal_constraint_kind` emit a fact the document did not state: the terminal
   `untyped_default` publishes `MustBeStable` for any obligation no phrase matched, and the
@@ -829,6 +829,10 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Shipped: `classify_signal_constraint_kind_typed`, which returns `None` exactly when the terminal arm
   is reached with no stability/validity phrase anywhere in the clause; `extract_signal_constraints`
   refuses on `None`. `classify_signal_constraint_kind` is unchanged, so the row path is untouched.
+  **Superseded in part (`2026-09-13`, by `.3k.2e`): the asymmetry is gone.** It rested on the four APB
+  `must have the same value` clauses, which `.3k.2c` then typed, so nothing correct reaches the row
+  path's fallback any more and every producer goes through the typed gateway. The reasoning stands for
+  its own population; the population is what changed.
   **Chain rebuilt for all three documents whose artifacts move — APB, AHB and AXI-L — because the
   change stales their proofs and all three have a held-out bundle.** `evidence → validate → semantic →
   validate → intent → validate → adapt` each: **8 records removed, 0 added, 0 retyped** (AXI 45→40,
@@ -918,35 +922,54 @@ honestly-qualified) path to "human-SpecForge in Rust."
   re-derivation; the readings stand as estimates for the 51 legacy documents, never as counts.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.2d`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2e` · Status: `pending` (opened `2026-09-12` by `.3k.2d`; **population
-  falsified and re-sized `2026-09-13` by `.3k.2g`**) · Goal: **the row path's untyped fallback is not an
-  under-typed obligation, it is an unexpressible one.** `.3k.2a` refused the terminal `MustBeStable` in
-  the statement path and kept it in the row path, reasoning that the row path has already proved via
-  `obligation_subject` that its clause binds to its row's own signal, so an untyped obligation there is
-  a real obligation with a spelling the table lacks. The population it reasoned from was 4 APB
-  `must have the same value` clauses, and `.3k.2c` supplied that spelling, so they no longer reach the
-  fallback.
-  **`.3k.2d` published "17 of 17 wrong" for what reaches it now. That number is withdrawn.** It came
-  from a Python census that selected tables on the PERSISTED `table_kind` field. The producer selects
-  on the LOADED one, and a legacy artifact has every classification neutralized to `Unknown`
-  (`.3k.2g`). Re-derived with the real producer over the 26 documents whose classifications the current
-  loader accepts: the row path mints **12 records, all of them the ones already published, none on the
-  untyped fallback, and zero unpersisted**. The actionable population is **0**, not 17.
-  **The class is nevertheless live and demonstrable, which is why this stays open rather than closing
-  as covered** — the same footing `.3k.1` shipped on. Fed a current-schema signal-description table
-  through the real reader, the fallback still fires and still fabricates: *"The value of ZETAREADY must
-  not be greater than (OMEGABURST_WIDTH-12)"* publishes `ZETAREADY must_be_stable, negated`, i.e.
-  *"ZETAREADY must not be stable"*, and *"Must not be present"* publishes the same kind from a presence
-  cell — both classes the statement path already refuses.
-  **The 17 clauses are not fiction; they are unmeasurable.** They are what the row path would produce
-  over the 51 legacy documents if those were re-ingested, read off classifications this build has not
-  re-derived — the persisted-vs-current distinction of
-  `[[persisted-census-measures-published-not-current]]`, one layer deeper, since `table_kind` is itself
-  frozen at the generation that wrote it. Their reading stands as an estimate and must be re-derived
-  per document as re-ingest reaches it, never quoted as a current count.
-  Prerequisite: none. Verification: the refusal's effect re-derived with `replay-constraints` (row
-  stratum judged) rather than with a mirror; the demonstrable class pinned by an observed-RED control on
-  the real reader; APB/AHB/AXI-L proven unmoved.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2e` · Status: `done` (`2026-09-13`, CODE) · Goal: **proving the
+  SUBJECT does not make the KIND readable — the row path's untyped fallback is refused too.**
+  `.3k.2a` refused the terminal `MustBeStable` in the statement path and kept it in the table-row
+  reader, on the reasoning that this reader has already proved via `obligation_subject` that its clause
+  binds to its row's own signal, so an untyped obligation there must be a real obligation with a
+  spelling the table lacks. **That reasoning was sound for the population it was made about and is no
+  longer about any population.** It rested on four APB `must have the same value` clauses; `.3k.2c`
+  gave the table that spelling and they stopped reaching the fallback at all.
+  What reaches it now is a different thing: a clause whose obligation the constraint vocabulary cannot
+  express. Both callers of the kind classifier now go through
+  `classify_signal_constraint_kind_typed`, so **the terminal arm is unreachable as a published kind by
+  any producer**, and `scripts/measure_constraint_part_span.py --check` pins that as its own invariant
+  alongside the two producers' spans.
+  **Measured effect: zero, and it is stated as a class rather than a count.** `replay-constraints` with
+  the row stratum judged is unchanged at 183 persisted / 137 reproduced / 46 not-reproduced; all 12
+  published `row_sigcon_*` records are typed by an arm the document wrote, so the refusal costs nothing
+  measurable. The class is demonstrated through the REAL row reader: a MATCH (*"ZETAREADY must match
+  OMEGABURST"*), an ALIGNMENT (*"Must be aligned to a burst size"*) and a PRESENCE claim (*"Must not be
+  present"*) each publish `must_be_stable` without the refusal — the last one negated, i.e. *"SIGMASTRB
+  must not be stable"* — and all three vanish with it. The over-kill guard is the half that decides
+  whether the refusal is safe, and it is asserted as the four shapes the live records are made of:
+  header-supplied validity, `.3k.2c`'s no-change spelling, a negative polarity form, and a plain value
+  binding all still publish.
+  **`.3k.2d`'s "17 of 17 wrong" stays withdrawn** (`.3k.2g`): that census selected tables on the
+  persisted `table_kind` and the producer selects on the loaded one. The reading stands as an estimate
+  for the 51 documents whose classifications are neutralized on load
+  (`[[legacy-source-classifications-are-neutralized-on-load]]`), never as a current count.
+  **Found in passing, and owned rather than noted:** `scripts/measure_constraint_part_span.py --check`
+  — `.3k`'s own declared verification — has been RED since `.3k.2a`, and `.3k.2a`/`.3k.2b`/`.3k.2c`
+  each shipped over it because nothing runs it. Re-derived per revision with each revision's own
+  scanner, not by reading. `.3k.2j` owns wiring it into a driver.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2e`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2j` · Status: `pending` (opened `2026-09-13` by `.3k.2e`) · Goal:
+  **a fail-closed check that no driver runs is not a check.** `scripts/measure_constraint_part_span.py`
+  was built by `.3k` precisely so that a change to the kind classifier's call-site topology would fail
+  closed rather than silently restratify its census, and `.3k` names `--check` and `--self-test` in its
+  verification. It is in no driver: not `scripts/check_doctrines.sh`, not `scripts/run_ci.sh`, not
+  `.githooks/`. Re-derived from each revision's own source with that revision's own scanner, it went RED
+  at `.3k.2a` — which introduced the typed gateway — and stayed RED through `.3k.2b` and `.3k.2c`, three
+  leaves that each reported green gates. `.3k.2e` repaired it and added the untyped-caller invariant, so
+  the content is current; what is missing is execution. Two questions the leaf must answer rather than
+  assume: which tier it belongs in (it is read-only, sub-second, and corpus-reading, so gate-tier is
+  plausible but the corpus dependency has to be checked against the tier contract), and whether the
+  same audit finds OTHER task-local scripts named in a leaf's verification and run by nothing — a set
+  claim, so it carries its enumerating command. Prerequisite: none. Verification: the check observed
+  RED from the driver on a deliberately moved call site; the script census re-derived; the enumeration
+  of unwired verification scripts published with the command that produced it.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.2f` · Status: `done` (`2026-09-13`, CODE) · Goal: **a refusal that
   says the constraint VOCABULARY has no slot for what a clause states belongs to the rule, not to one
   caller.** `.3d`'s `is_relational_equality_constraint` and `.3k.1`'s `is_reference_magnitude_constraint`
@@ -1119,6 +1142,51 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2e`
+
+- [x] **REPRODUCE / MEASURE** — derived with the producer, after `.3k.2g` made that possible. Over the
+  26 documents whose table classifications the current loader accepts, the row reader mints **12
+  records and not one more**, and every one is typed by an arm the document wrote — so the untyped
+  fallback's actionable population is **0**, not the 17 `.3k.2d` published from a mirror over the
+  persisted `table_kind`. Baseline `replay-constraints --evidence-root generated/evidence_ir`: 183
+  persisted / 137 reproduced / 46 not-reproduced.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `extract_signal_description_row_constraints`: it called `classify_signal_constraint_kind`, whose
+  terminal arm returns `MustBeStable` for a clause no phrase matched. `.3k.2a` left that deliberately,
+  and its justification is what expired: the four APB clauses it reasoned from were typed by `.3k.2c`.
+  Demonstrated on the real reader — a MATCH, an ALIGNMENT and a PRESENCE claim each publish
+  `must_be_stable`, the last negated.
+- [x] **ADDRESSED (verified)** — the row reader goes through `classify_signal_constraint_kind_typed`
+  and refuses on `None`, so no producer can publish the terminal arm. **Observed RED:** restoring the
+  untyped call republishes exactly those three records (`ZETAREADY`/`OMEGABURST` `must_be_stable`,
+  `SIGMASTRB must_be_stable, negated: true`) while the over-kill guard stays green — the pair is the
+  property, because a refusal that also dropped a stated obligation would be a worse trade than the
+  fabrication. Corpus re-measured: **183 / 137 / 46, unchanged** — 0 added, 0 removed, 0 retyped, no
+  persisted artifact moves.
+- [x] **NO REGRESSION** — `cargo fmt --all --check`, `cargo clippy --offline --all-targets -D warnings`
+  and the whole workspace suite green; `specforge-core` lib **1,466 → 1,468**. `kg-bench` **156/156**.
+  WIRE-BASED-100 golds `signal_constraint P=R=F1=1.000` on APB/AHB/AXI/SWD. All 13 gate-tier doctrines
+  PASS; `flow_census.json` unmoved by this slice (the refusal replaces an assignment rather than adding
+  a branch the census counts). The over-kill guard asserts all four arms the live records use still
+  publish from a row: header-supplied validity, `.3k.2c`'s no-change spelling, a negative polarity
+  form, and a plain value binding.
+- [x] **GENERICITY (ADR 0006)** — no new rule and no vocabulary: one caller now uses the typed
+  gateway the other already used. Controls use invented names (`ZETAREADY`, `OMEGABURST`,
+  `ALPHACHUNK`, `SIGMASTRB`).
+- [x] **LOCKSTEP** — code, this leaf, `.3k.2a` (whose asymmetry is superseded in place, with the
+  reasoning kept and its population named as what changed), the book's EvidenceIR chapter, and the
+  resume pointer agree before commit. **A production rule IS replaced here** — the row path's fallback
+  — and the book text that described it is repaired rather than left standing: the "An obligation that
+  names no kind states no constraint" section ended with a subsection asserting the table-row reader
+  keeps the fallback and why, which is no longer true. That section now lives in
+  `docs/book/src/pipeline/obligation-reading.md`: this leaf's own book edit pushed the EvidenceIR
+  chapter 299 bytes past its ceiling and `shipped_behavior` blocked the commit, which
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.19` resolved by splitting the chapter rather than by trimming the
+  paragraph — the remedy `.3` had already adjudicated for this exact surface. `scripts/measure_constraint_part_span.py` is
+  re-derived, not re-pinned: its topology now tracks the typed gateway and adds the untyped-caller
+  invariant, and its self-test gains a case for the `#[cfg(test)]` scope bug the re-derivation exposed
+  (9 → 10 declared cases).
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2f`
 
@@ -1592,6 +1660,19 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-09-13` — **`.3k.2e` CLOSED (CODE) — proving the subject does not make the kind readable.** The
+  table-row reader now goes through `classify_signal_constraint_kind_typed` too, so the terminal
+  `MustBeStable` is unreachable as a published kind by any producer. `.3k.2a`'s asymmetry is superseded
+  by its own successor: it rested on four APB `must have the same value` clauses, and `.3k.2c` typed
+  them. Corpus effect **zero** (183/137/46 unchanged; all 12 live row records are typed by an arm the
+  document wrote), so the class is demonstrated through the real reader rather than counted — a MATCH,
+  an ALIGNMENT and a PRESENCE claim each publish `must_be_stable` without the refusal, the last one
+  negated. **Found in passing and owned as `.3k.2j`:** `scripts/measure_constraint_part_span.py --check`
+  is `.3k`'s own declared verification and is in NO driver — re-derived per revision with each
+  revision's own scanner, it has been RED since `.3k.2a`, and three leaves shipped over it. Repaired
+  here (it now tracks the typed gateway and pins that the untyped arm has exactly one caller) plus a
+  self-test case for the `#[cfg(test)]` scope bug that re-derivation exposed; wiring it into a driver is
+  `.3k.2j`.
 - `2026-09-13` — **`.3k.2f` CLOSED (CODE) — the two vocabulary-slot refusals reach the row path.**
   `.3d`'s inter-operand equality and `.3k.1`'s comparative magnitude both argue that the vocabulary has
   no slot for the sentence, and both were wired into `extract_signal_constraints` alone — so one
