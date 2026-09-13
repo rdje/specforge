@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > does the ISF adapter lower generic gate behaviors
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > does the LLM constraint path use classify_signal_constraint_kind
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
   > does the Layer D grounding filter need to be weakened
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -293,7 +297,3 @@
   > how do I measure a classifier change's blast radius before shipping it
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I measure a declaration population through the reader rather than through a filter
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > how do I measure a doctrine checker across many revisions
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > how do I measure the extraction-quality gauge before and after a canonical promotion

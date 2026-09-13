@@ -1599,19 +1599,41 @@ honestly-qualified) path to "human-SpecForge in Rust."
   stands for the DISCOVERED-VALUE binder, which is what it now asserts.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.11`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.12` · Status: `pending` (opened `2026-09-13` by `.3k.11`) · Goal:
-  **a predicate between a signal and its level stops the level finding it.** AMBA LPI states the same
-  fact two ways one figure apart: *"a controller with an absent or tied LOW QDENY signal"* binds,
-  because the signal FOLLOWS the level; *"with the QDENY output absent or tied low"* does not, because
-  walking back from the level reaches `absent` — an adjective predicated of the signal, not the
-  scaffolding (`the`, `its`, `input`, `signal`) the walk skips. One measured record, and `.3k.11`
-  deliberately did not widen its skip list to fit it: a list tuned to one sentence is a mirror of that
-  sentence. The question to answer first is whether PREDICATE ADJECTIVES are a class the walk should
-  cross at all — *"absent"*, *"present"*, *"unused"*, *"reserved"* all sit in that position in this
-  corpus — and what crossing them costs elsewhere. **Size it against every logic-level record before
-  changing the walk**, the way `.3k.11` was sized. Prerequisite: none. Verification: the corpus
-  population of a predicate between a signal and its level, adjudicated individually; observed RED;
-  the chain rebuilt for every document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.12` · Status: `done` (`2026-09-14`, PROBE/DOC) · **Sized, and the
+  class it named has a population of ONE. No rule.** The leaf asked whether PREDICATE ADJECTIVES are a
+  class the level walk should cross, after AMBA LPI's *"with the QDENY output absent or tied low"*
+  failed to bind while its twin one figure away bound.
+  Measured over all 261,858 persisted statements and constraint source texts
+  (`scripts/measure_logic_level_walk_blockers.py`), the population of "a word that stops the backward
+  walk while a declared signal sits within three words beyond it" is **14 distinct cases across 11
+  different blocking words**, and they are not one class:
+
+  | blocker | n | what it is | crossing it |
+  | --- | ---: | --- | --- |
+  | `always`, `again`, `therefore` | 5 | adverb | right — `AERR is always driven LOW` |
+  | `remain`, `remains` | 2 | verb | right — `HRESP remains driven HIGH` |
+  | `can` | 2 | modal | **wrong** — `TVALID can be driven HIGH` is a PERMISSION, which `.3k.13` just gated |
+  | `cannot` | 1 | negation | **wrong** — `TLAST cannot be tied LOW` would publish its opposite |
+  | `this` | 1 | determiner opening a new sentence | crosses a clause boundary |
+  | `absent` | **1** | **predicate adjective** | the leaf's whole named class |
+  | `PDENY` | 1 | an UNDECLARED SIGNAL | not the walk's defect at all |
+  | `write` | 1 | a garbage eMMC row | — |
+
+  **The named class is one sentence in one document**, which is exactly the mirror `.3k.11` refused to
+  build, and no wider rule is available: any list long enough to admit the adverbs also admits `cannot`
+  (which inverts the fact) or `can` (which states a permission as a requirement). The walk's stop is
+  correct; what it stops at is thirteen unrelated things.
+  **One real finding came out of it and it belongs elsewhere**: `PDENY` blocks only because AMBA LPI's
+  catalog does not contain it — that document declares 5 signals (`PACCEPT`, `PREQ`, `QACCEPTN`,
+  `QDENY`, `QREQN`) and the P-Channel's `PDENY`, `PACTIVE` and `PSTATE` are missing. Routed to
+  `SIGNAL-CATALOG-CAPTURE-GAP.6`.
+  Verification: `python3 scripts/measure_logic_level_walk_blockers.py` — read-only over every persisted
+  EvidenceIR's `extracted_statements` and `signal_constraints[].source_text`, mirroring
+  `logic_level_bindings`' `BIND_VERBS`, `MAX_GAP`, `DESCRIPTORS` and `token_logic_level`; every one of
+  the 14 windows printed verbatim and adjudicated above. It ships as a tracked reproducer rather than as
+  numbers in this file, per this repository's standing finding that an untracked probe's figure cannot
+  be re-derived one session later. No artifact written or mutated.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.12`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.13` · Status: `done` (`2026-09-13`, CODE; opened the same day by
   `.3k.11`) · Goal: **the dynamic path has no MODALITY gate.** AHB `dyn_sigcon_0012` publishes `HPROT must_be_high` from
   *"It is **recommended** that a Manager sets HPROT[0] HIGH"*. The pairing is right and the level is
@@ -2592,6 +2614,13 @@ honestly-qualified) path to "human-SpecForge in Rust."
   EvidenceIR pages) + README + KM card.
 
 ## Changelog
+
+- `2026-09-14` — `.3k.12` closed with **no rule**. The predicate-adjective class it named has a corpus
+  population of **one**; the 14 cases where crossing the walk's stop would reach a declared signal are
+  11 unrelated words, and any list wide enough to admit the adverbs also admits `cannot` (which would
+  publish the opposite of the sentence) or `can` (a permission `.3k.13` gated one day earlier). The walk
+  stops correctly. One finding was routed out: `PDENY` blocks only because AMBA LPI's catalog omits it —
+  `SIGNAL-CATALOG-CAPTURE-GAP.6`.
 
 - `2026-09-13` — **`.3k.2j` CLOSED (DOCTRINE) — the check `.3k` wrote is now a check anything runs.**
   `scripts/measure_constraint_part_span.py --check` exists to fail closed when the kind classifier's

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Certified Definition
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Discovery
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how many corpus refreshes remain after OpenCAPI Ready Definition
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -72,6 +78,8 @@
   > how many identifier co-references exist corpus-wide
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > how many logic-level bindings are lost to the backward walk stopping early
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > how many name columns share a leading token across their rows
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -290,11 +298,3 @@
   > is SIGNAL-DECLARATION-ROW-DROP.2c still blocked on a guard
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > is SWD at 100% / does the SWD derivation gold still score 29/29 (NO. Re-derived 2026-09-01 with the restored oracle: serial_frame_field 0/11 and protocol_state 0/13, protocol_operation 4/4 and interface_edge_timing 1/1 — document-level 5/29. The 29/29 is retired, not current)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > is SWD at 100% and on what metric (NO, NOT ANY MORE — this card records the 2026-06-07 result and is SUPERSEDED. Re-derived 2026-09-01 it is 5/29: operations 4/4 and edge timing 1/1 hold, frame fields 0/11 and states 0/13 do not. See swd-serial-frame-score-retired-by-genericity)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > is SourceIR covered by the chain currency doctrine

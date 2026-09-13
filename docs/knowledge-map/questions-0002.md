@@ -60,6 +60,8 @@
   > are transaction phase names allowlisted by protocol
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > are ungrounded SemanticIR records dropped silently or demoted
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > can DESCRIPTORS be widened to catch more logic-level bindings
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > can EvidenceIR represent protocol structure without hardcoding a specification
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -296,5 +298,3 @@
   > do the Pattern and Nlp extraction tiers find the same constraints
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > do the emergent clusters actually track real vendor/layout families
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > do the register-classed empty-catalog documents deserve the same bar as protocol-classed ones

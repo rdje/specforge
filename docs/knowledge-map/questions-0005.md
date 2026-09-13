@@ -2,8 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > how do I measure a doctrine checker across many revisions
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > how do I measure the extraction-quality gauge before and after a canonical promotion
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > how do I measure the parametric width cell population
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > how do I measure what a skip-list widening would newly admit
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I populate the fsmgen gitlink in a detached measurement worktree
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -291,9 +297,3 @@
   > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > how does specforge split a coordinated X and Y relation subject into both agents

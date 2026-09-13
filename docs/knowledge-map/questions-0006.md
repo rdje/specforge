@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > how does specforge split a coordinated X and Y relation subject into both agents
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -291,9 +297,3 @@
   > how many corpus refreshes remain after CoreSight Base System
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after Introducing CoreSight
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Certified Definition
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Discovery

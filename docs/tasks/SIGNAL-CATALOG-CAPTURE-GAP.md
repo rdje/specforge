@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R9`/`R15` extraction breadth — signal-declaration capture
 - Created: `2026-08-11`
-- Last updated: `2026-08-11`
+- Last updated: `2026-09-14`
 - Owner: repo-local workflow
 - Parent finding: `SEMANTIC-EMPTY-CATALOG-FILTER.1` (`2026-08-11`), which made the gap visible per document
 
@@ -127,6 +127,41 @@ the durable conclusion is
 | `SIGNAL-CATALOG-CAPTURE-GAP.3` | `pending` | land the rule; re-measure precision and recall on the same documents that quantified the gap |
 | `SIGNAL-CATALOG-CAPTURE-GAP.4` | `pending` | stop the normalized-markdown escape from truncating underscore-bearing identifiers; measure the corpus-wide fixed-point move before landing |
 | `SIGNAL-CATALOG-CAPTURE-GAP.5` | `pending` | 14 of 78 `EvidenceIR` artifacts carry no validation report, so they have no `document_class`; decide whether that is a currency gap or a contract gap |
+| `SIGNAL-CATALOG-CAPTURE-GAP.6` | `pending` | a PARTIAL catalog: a check-signal relationship table names both sides and declares neither, so AMBA LPI holds 5 signals while its own tables name at least 11 |
+
+## `.6` — a partial catalog, found from the other end (`2026-09-14`)
+
+This tree's census counted documents whose catalog is **empty**. AMBA LPI's is not empty and is still
+wrong: it holds **5** signals — `PACCEPT`, `PREQ`, `QACCEPTN`, `QDENY`, `QREQN` — while the document's
+own tables name at least eleven.
+
+Found by `EXTRACTION-QUALITY-GAUGE.3k.12`, from a direction that had nothing to do with catalogs: a
+logic-level walk stopped at the token `PDENY` in *"a device must set both PACCEPT and PDENY LOW"*,
+because a word only continues that walk when it is a **declared** signal. The blocked walk was the
+symptom; the missing declaration was the fact.
+
+`Table 3-2 Parity extended P-Channel check signal relationships` is typed `signal_description` and reads
+
+```text
+Standard P-Channel signal | Associated check signal
+PACTIVE[N-1:0]           | PACTIVECHK[N-1:0]
+PSTATE[M-1:0]            | PSTATECHK
+PREQ                     | PREQCHK
+PACCEPT                  | PACCEPTCHK
+PDENY                    | PDENYCHK
+```
+
+Ten signals in five rows, and **none of them declares**: the table states no direction and no width, so
+every row leaves by `synthesize_signal_declarations`' `NoDirectionAndNoWidth` arm — the loss
+`SIGNAL-DECLARATION-ROW-DROP.1` made countable. The Q-Channel has an identical table (`Table 2-2`), and
+the five names the catalog does hold come from elsewhere in the document.
+
+**The shape is a general one and that is why it is worth a leaf**: a *relationship* table names a signal
+in every cell of both its columns, and the relationship itself — `X is checked by XCHK` — is the fact the
+document is stating. A reader that requires a direction or a width cannot see it, and a reader that
+admits any two-column table would admit every glossary in the corpus. Size that population before
+proposing anything, and check it against `SIGNAL-DECLARATION-ROW-DROP`'s own frontier before opening a
+second reader for the same rows.
 
 ## Current Frontier
 
@@ -136,6 +171,12 @@ title shape may license a declaration, and measure what that shape would admit a
 any code is written. The calibration already collected is the starting point — the next-highest compound-heading
 count after Wishbone's 32 is 13, and those 13 are software feature selectors, so the naive shape predicate
 alone is not safe.
+
+`SIGNAL-CATALOG-CAPTURE-GAP.6` is newly opened (`2026-09-14`) and is a *measurement* rather than a design:
+a check-signal relationship table names ten signals in five rows and declares none, which is why AMBA LPI's
+catalog holds 5 signals against at least 11 its own tables name. Size the corpus population of two-column
+relationship tables before proposing a reader, and settle with `SIGNAL-DECLARATION-ROW-DROP` which tree owns
+the rows.
 
 `SIGNAL-CATALOG-CAPTURE-GAP.4` may be taken first if a smaller, independently valuable slice is preferred: it
 is a defect with a known cause and a known blast radius (67 of 78 documents), and it is orthogonal to the
