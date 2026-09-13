@@ -26,13 +26,16 @@
   (`.3k.2g`), publishing **26 documents row-judged / 51 not**. **Three leaves in a row corrected a population the one before published**, and the
   lesson is sharper than "measure first": measure with the PRODUCER. `.3k.2d` refuted a mechanism taken from a test string; `.3k.2g` refuted two
   counts taken from a persisted FIELD the producer no longer trusts. 306 fact cards; 15 doctrines, 13 at gate tier; core lib 1,468.
-- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.3`** — the kind reads its own obligation clause, the container's original goal, on the STATEMENT
-  path (all 78 documents, so a real population). Re-derive its 4 published `sigcon_*` with `replay-constraints` first: they predate `.3k.2a`/`.3k.2b`
-  moving three of those documents. It also inherits `.3k.2b`'s AXI `WTAGUPDATE` value-span residual — narrowing the classifier's span fixes the
-  value binder at the same time, so re-measure the VALUE slot here, not only the kind. **The ROW path is done for now**: `.3k.2h`/`.3k.2i` are
-  measured at 0 actionable and blocked on re-ingest, not on a decision (`.3k` container amendment).
+- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.3`**, whose population is **already re-derived in its node**: 3 records, not the published 4
+  (NVMe `sigcon_0007` no longer reproduces). **Read the trap recorded there before touching the span**: AHB `sigcon_0002` is correct today by
+  accident, and narrowing the classifier's span as the node originally described would make `.3k.2a` refuse it — losing a record the document
+  supports. The defect underneath is that `extract_signal_constraints` takes only the FIRST modal sentence and drops obligations 2..n; one record
+  per clause (the row reader's shape) is what to size, and it is RECALL, so measure it as an addition before shipping it as a narrowing.
 - In-flight uncommitted: none after this commit.
-- Blockers: none. Standing hazards: **an evidence-stage change stales the proof of every current-schema artifact whose content moves and they
+- Blockers: none, but a PUSH is DUE and gated: 229 commits ahead of `origin/main` (COMMIT.md: push around 200) and directive 16 requires full CI
+  first. `scripts/check_doctrines.sh --all` did not finish in 50 minutes — `CHAIN-CURRENCY` re-executes the real pipeline for every persisted
+  artifact across four stages. Budget hours, not minutes, and run it detached. Standing hazards: **an evidence-stage change stales the proof of every
+  current-schema artifact whose content moves and they
   then refuse to LOAD** — rebuild (`evidence → validate → semantic → validate → intent → validate → adapt`, each validated exactly once,
   upstream-first). Only APB/AHB/AXI-L have held-out bundles (`generated/preserved/WIRE-BASED-100.10/`): restore, rebuild, `diff -r`, remove,
   retention back to 24. **Run `replay-constraints` before sizing any extractor change** (`[[persisted-census-measures-published-not-current]]`)

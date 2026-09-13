@@ -1147,8 +1147,26 @@ honestly-qualified) path to "human-SpecForge in Rust."
   binds from the FIRST `must be ` in the text, which is *"the tags in memory must be updated"*. The
   arm matched on one span and its value came from another, so narrowing the classifier's span fixes
   the value binder at the same time — re-measure the value slot here, not only the kind.
-  **The population must be re-derived with `replay-constraints` before this ships**: the 4 above are
-  a PUBLISHED count taken before `.3k.2a` and `.3k.2b` moved three of those documents.
+  **RE-DERIVED `2026-09-13` with `replay-constraints` (row stratum judged): the population is 3, not 4.**
+  AHB `sigcon_0002` and NVMe `sigcon_0005`/`0006` still reproduce; NVMe `sigcon_0007` (`NVM
+  must_not_change`) does not — `CORPUS-COVERAGE.2.50a` refuses its subject, which is a message-name
+  fragment rather than a signal. Read against source, the other three are exactly this leaf's defect:
+  NVMe's statement's first modal sentence is *"The ANA Group Identifier (ANAGRPID) … shall be unique
+  within the NVM subsystem"* — uniqueness, not no-change — while the published `must_not_change` comes
+  from the NEXT sentence, whose own obligation is conditional on a capability bit that the record drops;
+  and two of its three subjects (`ANA`, `NVM`) are fragments.
+  **A trap this leaf must not walk into, found while re-deriving.** AHB `sigcon_0002` is CORRECT today,
+  by accident: its clause is the first modal sentence (*"When the Subordinate is initially selected, it
+  must also monitor the status of HREADY…"*), which states no kind, and the published
+  `HSELx must_be_asserted` is lifted from the THIRD sentence of the same serialized row, where the
+  document does say it. Narrowing the classifier's span as this node describes would type that clause as
+  nothing and `.3k.2a` would then refuse it — **losing a record the document supports**. So the span
+  narrowing alone is not the fix. The real defect underneath is that `extract_signal_constraints` takes
+  only the FIRST modal sentence of a statement and drops obligations 2..n, which is the collapse
+  `INVARIANT-SHAPE-ADMISSION.3` named for the row path (*"a cell stating three obligations yields
+  three — the serialized statement collapses them into one and keeps only the first"*). One record per
+  clause, the way the row reader already works, is the shape to size — and that is recall, so it must be
+  measured as an ADDITION before it is shipped as a narrowing.
   Prerequisite: `.3k.2` (see the container's ordering rationale). Verification: the re-derived
   population adjudicated individually; observed RED; the chain rebuilt for every document whose
   artifacts move.
