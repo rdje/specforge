@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > which command does CI use for clippy
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > which command produces the document_class metric
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -295,5 +297,3 @@
   > why can a base-name template rule not live in the SourceIR table classifier
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why can a canonical cell never satisfy its residual actionability observations
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > why can a per-table classifier not inherit a kind from a parent table

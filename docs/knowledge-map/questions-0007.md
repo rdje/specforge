@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current governed Markdown surfaces are in the claim census
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
@@ -295,5 +297,3 @@
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > is a line_bytes_each warning the same kind of pressure as a lines_each or bytes_each warning (NO, but not because one is a maximum and the others are not — check_live_document_size.pl computes ALL THREE _each dimensions as per-surface maxima. What differs is the quantity being maximized: lines_each and bytes_each maximize a per-FILE quantity that accumulates as content is
   > added, while line_bytes_each maximizes a per-LINE quantity that does not, so it has no growth driver and is freely reducible at any time)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)

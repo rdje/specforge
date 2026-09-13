@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how does the claim gate reject ignored or untracked scratch producers
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does the controller prove a proposed task is task-tree owned
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -295,5 +297,3 @@
   > how many current claim evidence units are derived registered incomplete or excluded
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > how many current documents are behaviorally measurable
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)

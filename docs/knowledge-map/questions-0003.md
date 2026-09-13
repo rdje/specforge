@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > do transactions lower to .isf (only those with composed steps; signal-set/channel/phase membership is recognised-but-unlowered)
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > do unfiltered SemanticIR conditional rules reach an emitted .isf
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -296,5 +298,3 @@
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > does the alpha harness expose transform recipes to production core
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > does the authority empty repair preserve formal and system contract interfaces

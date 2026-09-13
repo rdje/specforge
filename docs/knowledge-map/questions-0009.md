@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > should specforge record a residual for every typed rule that does not lower to .isf
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -296,5 +298,3 @@
   > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do

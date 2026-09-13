@@ -111,6 +111,8 @@
   > can a task leaf tick NO REGRESSION with a clippy claim that never re-derived
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > can a timing description or comment cell span columns without losing the timing record
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > can a width be written as an arithmetic expression with spaces in it
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > can ambient validation reports define the tracked corpus KB validation page
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -296,5 +298,3 @@
   > do the wire docs (APB/AHB/AXI/SWD) change when register reset is lowered to ISF (no — ZERO composable resets, .isf byte-identical, WIRE-BASED-100 holds trivially)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > do the wire-gold .isf carry over-width value literals (only AXI ihi0022_l has one — AWCMO; and AXI already fails strict on the orthogonal (port expr) error; APB/AHB/SWD have none; WIRE-BASED-100 measures extraction F1 not .isf bytes so it is orthogonal)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > do transactions lower to .isf (only those with composed steps; signal-set/channel/phase membership is recognised-but-unlowered)

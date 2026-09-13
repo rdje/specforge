@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where did the .6d.ii.e.v.iii information-flow result move to
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -296,5 +298,3 @@
   > which collection order changes may the behavioral comparator normalize
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > which column does synthesize_signal_declarations read names from, and when does content overrule the header (a distinct-hardware-token score per column, overruling the header only on a lead of at least two tokens)
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > which command does CI use for clippy

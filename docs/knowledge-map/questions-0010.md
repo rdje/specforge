@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -296,5 +298,3 @@
   > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is PDF-VARIANT-DIGESTION.12a
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is PDF-VARIANT-DIGESTION.12b

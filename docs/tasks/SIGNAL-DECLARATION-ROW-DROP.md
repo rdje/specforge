@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.3` closed; `.2c` deferred; `.2d`/`.4` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.3`/`.4a` closed; `.2c` deferred; `.2d`/`.4b` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-13`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2`, `.3`, `.4`
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2`, `.3`, `.4` (`.4a`–`.4b`)
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -576,8 +576,8 @@ a long tail.
   Verification: pending
   Commit: pending
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `pending` (opened `2026-09-13` by
-  `EXTRACTION-QUALITY-GAUGE.3k.7`) · Goal: **the same silent drop one stage later — a declaration the
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
+  `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` · Goal: **the same silent drop one stage later — a declaration the
   SemanticIR reader cannot finish parsing is discarded whole, direction included.**
   This tree's `.0`–`.3` are about `synthesize_signal_declarations_from_table`, the EVIDENCE-stage
   reader. `parse_explicit_signal_declaration` in `crates/specforge/src/ir/semantic.rs` is the reader
@@ -604,14 +604,66 @@ a long tail.
     `Signal LAADDR is width 3'b000 , lavalid`, an upstream waveform/table misread. Refusing these may
     well be CORRECT; refusing them **silently** is the defect either way, and their real fix is
     upstream of this function.
-  **Do not widen the width grammar first.** The two questions are separable and the accounting one is
-  both cheaper and a precondition: make the refusal VISIBLE (a counted residual naming the signal and
-  the width text it could not read), which immediately tells the corpus which stratum each of the 83
-  is in. Only then decide whether a parsed DIRECTION should survive an unreadable width — that is a
-  behaviour change with its own population — and whether an arithmetic width expression should be
-  carried as opaque text rather than parsed.
-  Prerequisite: none. Verification: the 83 re-derived with the real reader and split by stratum;
-  observed RED; the chain rebuilt for every document whose artifacts move.
+  **Ordering AMENDED `2026-09-13`, before either child was implemented.** This node said to do the
+  accounting first, because it was *"a precondition: it immediately tells the corpus which stratum
+  each of the 83 is in"*. That is no longer true: `scripts/measure_declared_signals_missing_from_
+  semantic.py` already splits the strata from persisted artifacts, offline, so the precondition is
+  satisfied without changing any producer. The recall half is therefore first, and the accounting
+  half keeps the population the recall half deliberately does not take.
+  **And the recall half is much narrower than "arithmetic widths are unsupported."**
+  `parse_width_token` ALREADY reads `DATA_WIDTH/8` as a parametric width. What it cannot do is span
+  whitespace: `parse_optional_width_hint` consumes exactly ONE whitespace token, so
+  `width DATA_WIDTH / 8` leaves `/` and `8` unconsumed and the whole declaration is discarded by the
+  `index != tokens.len()` guard. The defect is a tokenization boundary, not a missing grammar.
+  Prerequisite: none. Verification: per child.
+  Commit: n/a (split)
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4a` · Status: `done` (`2026-09-13`, CODE; opened the same day by
+  `.4`) · Goal:
+  **a width expression may span whitespace, and trailing prose is not a reason to discard the
+  declaration in front of it.** The width branch reads a well-formed arithmetic expression — numbers,
+  parametric identifiers, `+ - * /` and balanced parentheses, including a call form such as
+  `ceil(…)` — over the tokens after `width`, and the declaration is admitted when one is found.
+  **Two conditions keep it honest, and each is there because a real corpus declaration needs it:**
+  the expression must end at a whitespace-token BOUNDARY, so MMU-700's
+  `Signal LAADDR is width 3'b000 , lavalid` cannot be read as the number `3`; and trailing material is
+  tolerated only when the expression is STRUCTURED (it contains an operator or a parenthesis), so ATB's
+  ingest-mangled `width log 2 (DATA_WIDTH) -` is not read as a width of `log`.
+  **Expected population, to be re-derived with the real reader: 14 of the 17 arithmetic-width
+  declarations** — AXI-L 8 of 9, AXI-H 4 of 4, CHI 2 of 2 — leaving three whose expression is
+  MALFORMED in the source (`ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)` has no operator,
+  `ceil((LTI_SSID_WIDTH +` is truncated, `log 2 (DATA_WIDTH) -` is mangled) to `.4b`.
+  Non-goal: admitting a declaration whose width cannot be read at all — that is `.4b`, it has a
+  different population (the 66 plus these three), and it is a different question.
+  **MEASURED with the real reader `2026-09-13`, and the prediction held: 14 of the 17 read.** AXI-L 8
+  of 9, AXI-H 4 of 4, CHI 2 of 2; the three refused are exactly the malformed ones. **Only ONE
+  document's artifact can move**, and that is a separate fact worth its own sentence: of the 78
+  documents, only 26 carry a current-schema EvidenceIR the semantic stage will accept, and AXI-H, CHI,
+  ATB and LTI are not among them — their recovery is real in the reader and latent in the corpus until
+  re-ingest. The corpus census therefore falls **83 → 75**, not 83 → 69.
+  **AXI-L rebuilt from the semantic stage (this is not an evidence-stage change, so no normalized
+  bundle is involved): catalog 288 → 296**, gaining `ARIDCHK`, `AWIDCHK`, `BIDCHK`, `RIDCHK`,
+  `RPOISON`, `RUSER`, `WPOISON` and **`WSTRB`**. SemanticIR and IntentIR `signal_constraints`
+  **55 → 56** and `residual_decisions` **1 → 0** — the one record un-demoted is
+  *"An attached Subordinate must have its WSTRB input tied HIGH"*, the REAL obligation that
+  `EXTRACTION-QUALITY-GAUGE.3k.7` found was being demoted beside the fabrication it removed. The
+  emitted `.isf` goes **288 → 296 signals and 135 → 138 rules**. Nothing is removed anywhere.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.4a`
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4b` · Status: `pending` (opened `2026-09-13` by `.4`) · Goal:
+  **a declaration whose width cannot be read at all is counted and named, not dropped in silence —
+  and then: should its DIRECTION survive?** After `.4a` the residue is **69**: MMU-700's 47 and the
+  other strata's unstated widths (GICv3 7, Avalon 5, CXS/eMMC 1 each), plus the three malformed
+  arithmetic expressions `.4a` refuses. Their declaration text is itself corrupt
+  (`Signal LAADDR is width 3'b000 , lavalid` comes from a table that is not a signal description), so
+  refusing them may well be CORRECT — the defect is that the refusal is invisible, exactly as `.0`
+  measured for the evidence-stage reader.
+  **The second question is the one with the blast radius and must be measured before it is answered:**
+  `parse_explicit_signal_declaration` discards the DIRECTION it has already parsed along with the
+  width it cannot read, and admitting those 69 identities would move MMU-700's catalog by 47 and
+  un-demote every constraint about them. Measure that as an ADDITION, adjudicated per document,
+  before shipping any of it. Prerequisite: `.4a`.
+  Verification: the residue counted and named by the real reader; observed RED; the chain rebuilt for
+  every document whose artifacts move.
   Commit: pending
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.3` · Status: `done` (`2026-09-11`) · Goal: **the declared spelling
@@ -731,12 +783,49 @@ a long tail.
   which records the 716/0 split so the legacy artifacts are not mistaken for current evidence.
 
 
+## Acceptance Checklist — `.4a` (enforced)
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declared_signals_missing_from_semantic.py`
+  (self-test 7/7): **83 declared signals across 10 documents never reach the SemanticIR catalog**, 17
+  of them with an arithmetic width. Each of the 17 was then run through the REAL parser and read
+  against its source declaration: 14 are well-formed expressions, 3 are malformed in the document
+  (`ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)` has no operator, `ceil((LTI_SSID_WIDTH +` is truncated,
+  `log 2 (DATA_WIDTH) -` is ingest-mangled).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs`:
+  `parse_optional_width_hint` consumes exactly ONE whitespace token, and
+  `parse_explicit_signal_declaration` then refuses the sentence with `index != tokens.len()`. So
+  `Signal WSTRB is output width DATA_WIDTH / 8.` is discarded whole — identity and direction with it —
+  while `DATA_WIDTH/8` written without spaces parses. Observed RED against the file at `HEAD`: that
+  exact declaration returns `None`.
+- [x] **ADDRESSED (verified)** — `width_expression_length` (recursive descent over numbers,
+  parametric identifiers, `+ - * /`, balanced parentheses and the call form) and
+  `parse_width_expression` (admits one only when it ends at a whitespace-token boundary, and is
+  STRUCTURED if anything follows it). **14 of 17 read.** AXI-L rebuilt `semantic → validate → intent
+  → validate → adapt`: catalog **288 → 296**, `signal_constraints` **55 → 56**,
+  `residual_decisions` **1 → 0**, `.isf` **288 → 296 signals / 135 → 138 rules**. Corpus census
+  **83 → 75**; the other recoveries are latent because AXI-H, CHI, ATB and LTI carry legacy/proofless
+  EvidenceIR the semantic stage refuses. A dry run over all 78 documents confirms **AXI-L is the only
+  artifact that moves**.
+- [x] **NO REGRESSION** — wire golds `signal_constraint P=R=F1=1.000` with **fp=0** on APB, AHB, AXI
+  and SWD, `temporal_rule 1.000` on AXI; `kg-bench` **156/156**; `cargo fmt --all --check` and
+  `cargo clippy --offline --all-targets -D warnings` clean; the whole workspace suite green
+  (`specforge-core` lib 1,521 → **1,526** passing, `specforge` 472, conformance 168,
+  production-graph 8/8); `flow_census.json` re-derived and attributed (+2 functions, +11 decision
+  sites, +5 helper edges). Nothing is removed from any artifact anywhere in the corpus.
+- [x] **GENERICITY (ADR 0006)** — arithmetic-expression grammar only. A function call is recognised by
+  its SHAPE, never by its name; no document, protocol, vendor or parameter vocabulary appears.
+- [x] **LOCKSTEP** — the book's `evidence-failure-modes` chapter, which owns *"rows that are simply
+  dropped"*, gains *"The same loss one stage later"* — the same failure at the SemanticIR reader, with
+  the `WSTRB`/`WSTRBCHK` tell and the two conditions. The fact card
+  `[[arithmetic-width-drops-the-declaration]]`, written by `EXTRACTION-QUALITY-GAUGE.3k.7` one commit
+  earlier, is updated in place: its census, its `reverify` expectation and the residue owned by `.4b`.
+  No production rule was deleted.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `SIGNAL-DECLARATION-ROW-DROP.4` — 83 declared signals never reach the SemanticIR interface catalog,
-   and every obligation about them is demoted with them. Make the refusal visible before widening any
-   width grammar.
+1. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
+   whether a parsed direction should survive an unreadable width.
 2. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.

@@ -6455,20 +6455,30 @@ fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignal
         .and_then(|token| parse_interface_signal_direction(token))
         .inspect(|_| index += 1);
 
-    let width_hint = if direction_hint.is_some()
-        || tokens
-            .get(index)
-            .is_some_and(|token| token.eq_ignore_ascii_case("width"))
-    {
-        parse_optional_width_hint(tokens.as_slice(), &mut index)
-    } else {
-        None
-    };
+    // SIGNAL-DECLARATION-ROW-DROP.4a — an explicit `width` keyword introduces an EXPRESSION, which
+    // may span whitespace and may be followed by prose that is not part of it. That branch is the
+    // ONLY one allowed to leave tokens unread, so it is tried first and recorded.
+    let width_keyword = tokens
+        .get(index)
+        .is_some_and(|token| token.eq_ignore_ascii_case("width"));
+    let mut width_expression_was_read = false;
+    let mut width_hint = None;
+    if width_keyword && let Some(parsed) = parse_width_expression(&tokens[index + 1..]) {
+        index += 1 + parsed.tokens;
+        width_hint = Some(parsed.width);
+        width_expression_was_read = true;
+    } else if direction_hint.is_some() || width_keyword {
+        width_hint = parse_optional_width_hint(tokens.as_slice(), &mut index);
+    }
 
     if direction_hint.is_none() && width_hint.is_none() {
         return None;
     }
-    if index != tokens.len() {
+    // SIGNAL-DECLARATION-ROW-DROP.4a — the sentence must BE a declaration, so unread tokens normally
+    // refuse it. A width EXPRESSION is the one exception: the tokens it leaves behind are the
+    // qualifying prose a specification writes after a width (`… if ARIDUNQ is not present: …`), and
+    // discarding the declaration for them throws away the identity and the direction as well.
+    if index != tokens.len() && !width_expression_was_read {
         return None;
     }
 
@@ -7703,6 +7713,123 @@ fn parse_optional_width_hint(tokens: &[&str], index: &mut usize) -> Option<Width
     let width = parse_width_token(token)?;
     *index += 1;
     Some(width)
+}
+
+/// A width expression read across whitespace, and how many tokens it consumed.
+struct ParsedWidthExpression {
+    width: WidthHint,
+    tokens: usize,
+}
+
+/// `SIGNAL-DECLARATION-ROW-DROP.4a` — read a width stated as an arithmetic EXPRESSION.
+///
+/// [`parse_width_token`] already accepts a parametric width, but only as ONE whitespace token, and
+/// [`parse_explicit_signal_declaration`] then requires the tokens to run out exactly
+/// (`index != tokens.len()`). So `Signal WSTRB is output width DATA_WIDTH / 8.` left `/` and `8`
+/// unconsumed and the WHOLE declaration was discarded — identity, direction and all — while
+/// `DATA_WIDTH/8` written without spaces would have been read. The defect was a tokenization
+/// boundary, not a missing grammar. Measured: it costs AXI its own `WSTRB`, whose parity companion
+/// `WSTRBCHK` (a plain width) is in the catalog, and with it every obligation the document states
+/// about `WSTRB`, because the SemanticIR grounding filter promotes only a declared subject.
+///
+/// The grammar is the arithmetic a specification writes a width in: numbers, parametric identifiers,
+/// `+ - * /`, balanced parentheses, and the call form `ceil(…)` / `int(…)`. Two conditions keep it
+/// from reading a width out of text that is not one, and each is here because a real corpus
+/// declaration needs it:
+///
+/// * the expression must end at a whitespace-token BOUNDARY, so MMU-700's
+///   `Signal LAADDR is width 3'b000 , lavalid` — a synthesis from a table that is not a signal
+///   description — cannot be read as the number `3`;
+/// * trailing material is tolerated only when the expression is STRUCTURED, that is when it carries
+///   an operator or a parenthesis. AXI writes
+///   `width ceil((ID_R_WIDTH+1)/8) if ARIDUNQ is not present: …`, where the width is complete and a
+///   qualifying sentence follows it; ATB's ingest-mangled `width log 2 (DATA_WIDTH) -` would
+///   otherwise yield a width of `log`.
+///
+/// Universal expression grammar only (ADR 0006): no document, protocol, vendor or parameter name
+/// appears here, and a function call is recognised by its shape rather than by its name.
+fn parse_width_expression(tokens: &[&str]) -> Option<ParsedWidthExpression> {
+    let joined = tokens.join(" ");
+    let consumed = width_expression_length(&joined)?;
+    let text = joined[..consumed].trim_end();
+    if text.is_empty() {
+        return None;
+    }
+    // The expression has to end where a token ends, or it has cut one in half: `3'b000` begins with
+    // the number `3`, and reading a width out of it would be reading a width out of a Verilog
+    // literal the document never stated as one.
+    let rest = &joined[text.len()..];
+    if !rest.is_empty() && !rest.starts_with(' ') {
+        return None;
+    }
+    let structured = text
+        .chars()
+        .any(|character| matches!(character, '(' | ')' | '+' | '-' | '*' | '/'));
+    let token_count = text.split_whitespace().count();
+    if token_count < tokens.len() && !structured {
+        // A bare identifier followed by more material is a word, not a width expression.
+        return None;
+    }
+    let width = text
+        .parse::<u32>()
+        .ok()
+        .filter(|bits| *bits > 0)
+        .map_or_else(
+            || WidthHint::Parametric(text.to_string()),
+            WidthHint::Numeric,
+        );
+    Some(ParsedWidthExpression {
+        width,
+        tokens: token_count,
+    })
+}
+
+/// Byte length of the longest well-formed width expression at the head of `text`, or `None` when
+/// `text` does not begin with one. Recursive descent over `expr := term (op term)*`,
+/// `term := number | name | name? '(' expr ')'`.
+fn width_expression_length(text: &str) -> Option<usize> {
+    fn skip_spaces(bytes: &[u8], mut at: usize) -> usize {
+        while at < bytes.len() && bytes[at] == b' ' {
+            at += 1;
+        }
+        at
+    }
+    fn name_or_number(bytes: &[u8], at: usize) -> usize {
+        let mut end = at;
+        while end < bytes.len() && (bytes[end].is_ascii_alphanumeric() || bytes[end] == b'_') {
+            end += 1;
+        }
+        end
+    }
+    fn term(bytes: &[u8], at: usize) -> Option<usize> {
+        let start = skip_spaces(bytes, at);
+        let after_name = name_or_number(bytes, start);
+        let open = skip_spaces(bytes, after_name);
+        if open < bytes.len() && bytes[open] == b'(' {
+            let inner = expression(bytes, open + 1)?;
+            let close = skip_spaces(bytes, inner);
+            if close < bytes.len() && bytes[close] == b')' {
+                return Some(close + 1);
+            }
+            return None;
+        }
+        (after_name > start).then_some(after_name)
+    }
+    fn expression(bytes: &[u8], at: usize) -> Option<usize> {
+        let mut end = term(bytes, at)?;
+        loop {
+            let operator = skip_spaces(bytes, end);
+            if operator >= bytes.len() || !matches!(bytes[operator], b'+' | b'-' | b'*' | b'/') {
+                return Some(end);
+            }
+            match term(bytes, operator + 1) {
+                Some(next) => end = next,
+                None => return Some(end),
+            }
+        }
+    }
+    let bytes = text.as_bytes();
+    expression(bytes, 0).filter(|end| *end > 0)
 }
 
 /// Parse a single width token into a `WidthHint`.
@@ -26546,5 +26673,162 @@ mod fidelity_gate_routing_tests {
             }
             other => panic!("expected Residual unchanged, got {other:?}"),
         }
+    }
+}
+
+#[cfg(test)]
+mod signal_declaration_row_drop_4a {
+    //! `SIGNAL-DECLARATION-ROW-DROP.4a` — a width stated as an arithmetic EXPRESSION spans
+    //! whitespace, and `parse_optional_width_hint` consumed exactly one token. The leftover tokens
+    //! then hit `index != tokens.len()` and the WHOLE declaration was discarded — identity,
+    //! direction and all. AXI's own `WSTRB` is absent from AXI's catalog for that reason, while its
+    //! parity companion `WSTRBCHK`, whose width is a plain parameter, is in it.
+    //!
+    //! Every declaration below is a real corpus statement; the widths are the documents' own
+    //! parameter expressions, which are not identities (ADR 0006 governs signal names, and none of
+    //! these tests turns on one).
+    use super::*;
+
+    fn parse(text: &str) -> Option<(String, Option<InterfaceSignalDirection>, Option<WidthHint>)> {
+        parse_explicit_signal_declaration(text)
+            .map(|parsed| (parsed.signal_name, parsed.direction_hint, parsed.width_hint))
+    }
+
+    /// The recovery. Nine AXI declarations, of which eight are well-formed expressions.
+    #[test]
+    fn a_width_expression_spanning_whitespace_is_read() {
+        for (text, width) in [
+            (
+                "Signal ZETASTRB is output width DATA_WIDTH / 8.",
+                "DATA_WIDTH / 8",
+            ),
+            (
+                "Signal ZETAPOISON is width ceil(DATA_WIDTH / 64).",
+                "ceil(DATA_WIDTH / 64)",
+            ),
+            (
+                "Signal ZETAUSER is width USER_DATA_WIDTH + USER_RESP_WIDTH.",
+                "USER_DATA_WIDTH + USER_RESP_WIDTH",
+            ),
+            (
+                "Signal ZETAIDCHK is width ceil((ID_R_WIDTH + int(Unique_ID_Support))/8).",
+                "ceil((ID_R_WIDTH + int(Unique_ID_Support))/8)",
+            ),
+        ] {
+            assert_eq!(
+                parse(text).and_then(|parsed| parsed.2),
+                Some(WidthHint::Parametric(width.to_string())),
+                "{text}"
+            );
+        }
+        // the direction the old code threw away with the width
+        assert_eq!(
+            parse("Signal ZETASTRB is output width DATA_WIDTH / 8."),
+            Some((
+                "ZETASTRB".to_string(),
+                Some(InterfaceSignalDirection::Output),
+                Some(WidthHint::Parametric("DATA_WIDTH / 8".to_string()))
+            ))
+        );
+    }
+
+    /// A complete width followed by the qualifying prose a specification writes after it. The
+    /// declaration is kept and the prose is not read as part of the width.
+    #[test]
+    fn prose_after_a_structured_width_does_not_discard_the_declaration() {
+        for (text, width) in [
+            (
+                "Signal ZETAIDCHK is width ceil((ID_R_WIDTH+1)/8) if ZETAIDUNQ is not present: \
+                 ceil(ID_R_WIDTH/8)",
+                "ceil((ID_R_WIDTH+1)/8)",
+            ),
+            (
+                "Signal ZETATAGCHK is width ceil(DATA_WIDTH/128) ZETATAGCHK[n] is the parity of { \
+                 ZETATAGUPDATE[n] , ZETATAG[4n+3:4n] }",
+                "ceil(DATA_WIDTH/128)",
+            ),
+            ("Signal ZETAFLITCHK is width ceil(R/8) a", "ceil(R/8)"),
+        ] {
+            assert_eq!(
+                parse(text).and_then(|parsed| parsed.2),
+                Some(WidthHint::Parametric(width.to_string())),
+                "{text}"
+            );
+        }
+    }
+
+    /// The refusals, each one a real corpus declaration the grammar must NOT read a width out of.
+    /// These are `.4b`'s population, and every one of them is why the two conditions exist.
+    #[test]
+    fn text_that_is_not_a_width_expression_is_still_refused() {
+        for (text, why) in [
+            // a token boundary inside a Verilog literal: `3` is a number, `3'b000` is not a width
+            (
+                "Signal ZETAADDR is width 3'b000 , lavalid",
+                "literal cut in half",
+            ),
+            (
+                "Signal ZETAUSER_LOC is width 1'b0 , (awready_m AND awvalid_m), awready_m",
+                "literal cut in half",
+            ),
+            // an unstructured head followed by more material is a word, not a width
+            (
+                "Signal ZETABYTES is width log 2 (DATA_WIDTH) -",
+                "mangled call",
+            ),
+            // truncated at ingest: the parentheses never close
+            (
+                "Signal ZETASSIDCHK is width ceil((LTI_SSID_WIDTH +",
+                "truncated",
+            ),
+            // two operands with no operator between them
+            (
+                "Signal ZETAUSERCHK is width ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8).",
+                "missing operator",
+            ),
+            // the guard this leaf did not weaken: a declaration must still BE a declaration
+            (
+                "Signal ZETAFOO is width 4 and it is great",
+                "prose after a bare width",
+            ),
+        ] {
+            assert_eq!(parse(text), None, "{why}: {text}");
+        }
+    }
+
+    /// The shapes that already worked are byte-for-byte unchanged.
+    #[test]
+    fn a_plain_width_is_unchanged() {
+        assert_eq!(
+            parse("Signal ZETASEL is input width 1."),
+            Some((
+                "ZETASEL".to_string(),
+                Some(InterfaceSignalDirection::Input),
+                Some(WidthHint::Numeric(1))
+            ))
+        );
+        assert_eq!(
+            parse("Signal ZETAADDR is width 32.").and_then(|parsed| parsed.2),
+            Some(WidthHint::Numeric(32))
+        );
+        assert_eq!(
+            parse("Signal ZETADATA is output width DATA_WIDTH.").and_then(|parsed| parsed.2),
+            Some(WidthHint::Parametric("DATA_WIDTH".to_string()))
+        );
+    }
+
+    /// The expression grammar itself.
+    #[test]
+    fn the_expression_grammar_reads_arithmetic_and_calls() {
+        assert_eq!(width_expression_length("DATA_WIDTH / 8"), Some(14));
+        assert_eq!(width_expression_length("ceil(DATA_WIDTH / 64)"), Some(21));
+        assert_eq!(width_expression_length("ceil(R/8) a"), Some(9));
+        // an unclosed call is not an expression at all, not a bare `ceil`
+        assert_eq!(width_expression_length("ceil((LTI_SSID_WIDTH +"), None);
+        assert_eq!(width_expression_length("ceil((A B)/8)"), None);
+        // an unstructured head stops where the word does
+        assert_eq!(width_expression_length("log 2 (DATA_WIDTH) -"), Some(3));
+        assert_eq!(width_expression_length("(8)"), Some(3));
+        assert_eq!(width_expression_length("/ 8"), None);
     }
 }

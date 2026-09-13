@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > why do plain English words like Address or Vector become field names under the bracket frame
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -48,6 +50,8 @@
   > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why does DATA_WIDTH/8 work as a width but DATA_WIDTH / 8 not
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > why does DTI (ihi0088) have zero message_field_records
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -293,7 +297,3 @@
   > why does the OpenCAPI AFU Address Space Usage note emit no ISF
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > why does the OpenCAPI Certified Definition emit no ISF
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why does the OpenCAPI Certified engineering note emit no ISF
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > why does the OpenCAPI Data Link Layer specification emit no isf target

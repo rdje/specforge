@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is PDF-VARIANT-DIGESTION.12b
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what is PDF-VARIANT-DIGESTION.3 prose entity capture
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
@@ -295,5 +297,3 @@
   > what is the flow-arrow direction grammar
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints

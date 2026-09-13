@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > why can a per-table classifier not inherit a kind from a parent table
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > why can a shipped standalone extractor fail to improve the default end-to-end result
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
@@ -296,5 +298,3 @@
   > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > why do only 36 of 79 ingested docs reach IntentIR / .isf
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > why do plain English words like Address or Vector become field names under the bracket frame

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I recover the source row behind a table_signal_declaration_provenance entry
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -295,5 +297,3 @@
   > how does the behavioral genericity gate prove negative-control sensitivity
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how does the claim gate find ignored or untracked scratch producers
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how does the claim gate reject ignored or untracked scratch producers

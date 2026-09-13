@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > does the authority empty repair preserve formal and system contract interfaces
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > does the co-reference rule resurrect resolve_indexed_signal_family
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -295,5 +297,3 @@
   > how do I read the labels inside a diagram
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > how do I rebuild every retained chain after a production change
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out

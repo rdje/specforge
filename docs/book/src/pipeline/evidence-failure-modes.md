@@ -203,6 +203,45 @@ nothing either way. Every rotation the margin was introduced for still overrides
 18 against 5, AHB `table_0033` 19 against 4 — and of the 27 proof-carrying documents, only AHB's
 EvidenceIR changed at all.
 
+### The same loss one stage later: a width the reader cannot finish reading
+
+Everything above is about the EVIDENCE stage, where a table row becomes a declaration. A second,
+independent reader runs one stage later: SemanticIR turns each `Signal X is <direction> width <W>.`
+statement into the interface record that becomes the document's signal catalog. It ends with the same
+kind of all-or-nothing refusal — the sentence must parse to its last token, or nothing is kept — and
+the consequence is larger than a missing width, because the catalog is what decides which obligations
+are promoted at all. A signal that is not in it has every requirement the document states about it
+demoted to a residual.
+
+AXI is the case that shows the size of it. The specification declares
+
+```text
+Signal WSTRB is output width DATA_WIDTH / 8.
+```
+
+and the width reader consumed exactly one whitespace token, so `/` and `8` were left over and the
+whole declaration — identity, direction and all — was thrown away. Written `DATA_WIDTH/8`, with no
+spaces, the very same width would have been read. The tell was in the catalog all along: `WSTRBCHK`,
+the parity signal that checks `WSTRB`, has a plain parametric width and is present; the wire it checks
+is not.
+
+A width is now read as an *expression* — numbers, parameters, `+ - * /`, balanced parentheses, and the
+call form specifications write as `ceil(…)` — and the prose a document writes after it
+(`… if ARIDUNQ is not present: …`) no longer discards the declaration in front of it. Two conditions
+keep it from reading a width out of text that is not one: the expression must end where a token ends,
+so a Verilog literal such as `3'b000` cannot be read as the number `3`; and trailing material is
+tolerated only after a structured expression, so an ingest-mangled `log 2 (DATA_WIDTH) -` is not read
+as a width of `log`.
+
+Measured over the corpus on `2026-09-13`: **83 declared signals across ten documents never reached
+the catalog**, of which 17 state an arithmetic width. Fourteen of those seventeen now read, and AXI's
+own catalog grows from 288 signals to 296 — `WSTRB` among them, which immediately restores the
+requirement *"An attached Subordinate must have its WSTRB input tied HIGH"* from a residual to a
+published constraint, and carries it into the emitted `.isf`. The remaining 69 are tracked as
+`SIGNAL-DECLARATION-ROW-DROP.4b`: most of them have a declaration whose width text the source row
+never stated as a width at all, which is a defect upstream of this reader — but the refusal is still
+silent, which is not.
+
 ### What no shape can decide
 
 A bus-mode matrix that SourceIR typed as a signal table has rows named `HS200` and `HS400`, single

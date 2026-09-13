@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is the ingest disk pre-flight check
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -295,5 +297,3 @@
   > where did SpecForge suggest LTL/MTL support in ISF
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > where did my signal constraint go between EvidenceIR and SemanticIR
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > where did the .6d.ii.e.v.iii information-flow result move to
