@@ -25,11 +25,11 @@
   (`.3k.2g`), publishing **26 documents row-judged / 51 not**. **Three leaves in a row corrected a population the one before published**, and the
   lesson is sharper than "measure first": measure with the PRODUCER. `.3k.2d` refuted a mechanism taken from a test string; `.3k.2g` refuted two
   counts taken from a persisted FIELD the producer no longer trusts. 306 fact cards; 15 doctrines, 13 at gate tier; core lib 1,468.
-- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.2h`** — the row reader's last two narrower readers. (a) `obligation_subject` decides whether a
-  description clause states an obligation by looking for `must`/`shall` only, so `.3k.2d`'s modal gap is still open one function along. (b) A
-  signal-description table split across pages emits continuation rows whose NAME cell is empty, so `resolve_declared_signal_identifier("")` fails
-  and every obligation in the continuation is dropped — AMBA LTI `table_0014` loses two, including the corpus's only genuine negated VALUE
-  binding. Size each half separately with `replay-constraints` (row stratum judged). Then `.3k.2i`, `.3k.3`.
+- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.3`** — the kind reads its own obligation clause, the container's original goal, on the STATEMENT
+  path (all 78 documents, so a real population). Re-derive its 4 published `sigcon_*` with `replay-constraints` first: they predate `.3k.2a`/`.3k.2b`
+  moving three of those documents. It also inherits `.3k.2b`'s AXI `WTAGUPDATE` value-span residual — narrowing the classifier's span fixes the
+  value binder at the same time, so re-measure the VALUE slot here, not only the kind. **The ROW path is done for now**: `.3k.2h`/`.3k.2i` are
+  measured at 0 actionable and blocked on re-ingest, not on a decision (`.3k` container amendment).
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **an evidence-stage change stales the proof of every current-schema artifact whose content moves and they
   then refuse to LOAD** — rebuild (`evidence → validate → semantic → validate → intent → validate → adapt`, each validated exactly once,
