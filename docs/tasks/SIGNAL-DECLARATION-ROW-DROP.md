@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.2d`/`.2f`/`.4b` open)
+- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.2d`/`.2f`/`.4b`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-13`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4b`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4c`)
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -666,6 +666,41 @@ a long tail.
   every document whose artifacts move.
   Commit: pending
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4c` · Status: `pending` (opened `2026-09-14` by the chain-currency
+  sweep) · Goal: **`.4a` turned one signal's width into a CONFLICT between two spellings of itself, and
+  the only reason it has not shipped is that its document was never rebuilt.**
+  APB-e states `PADDRCHK`'s width three times:
+
+  ```text
+  statement_0543  Signal PADDRCHK is width ceil(ADDR_WIDTH/8) a.
+  statement_0575  Signal PADDRCHK is width ADDR_WIDTH/8.
+  statement_0586  Signal PADDRCHK is output width ceil(ADDR_WIDTH/8) a.
+  ```
+
+  Before `.4a` the reader could not finish `ceil(ADDR_WIDTH/8) a` — the footnote marker left tokens
+  over — so only `ADDR_WIDTH/8` was seen and `PADDRCHK` carried it. `.4a` made that expression readable,
+  which is right, and the interface reader now sees two DIFFERENT strings for one signal, calls it a
+  `width_mismatch`, and **drops the width entirely**: `interface_signal_conflicts` 0 → 1, and
+  `PADDRCHK`'s `width_hint` disappears from every `actor_ports`, `interfaces` and `signal_connectivity`
+  record it had.
+  **The two spellings denote the same width**, and the same document writes both about the same signal.
+  A conflict between `X/8` and `ceil(X/8)` is a conflict between a value and a safer form of itself.
+  **This is measured on the artifact, not predicted**: `specforge semantic --dry-run` over APB-e's
+  persisted (and current) EvidenceIR reproduces it exactly, and it reproduces identically at `956fbcce`,
+  so it is `.4a`'s effect and not a later leaf's. It has not reached any published artifact only because
+  `.4a` rebuilt AXI and not APB-e — which is why `CORPUS-CHAIN-CURRENCY.4` found it and no gate did.
+  **Do not rebuild APB-e until this is decided.** A rebuild today publishes the regression into a
+  wire-gold document's chain; the persisted SemanticIR is currently the BETTER artifact, and the
+  intent stage already refuses to replay from it (`SemanticIR proof verification failed … stale`), so
+  APB-e's chain is stopped either way until this leaf lands.
+  The question to answer first is whether the conflict detector should compare width *expressions* at
+  all, or whether a footnote-marked and an unmarked spelling of one expression are one observation. Size
+  it against every `interface_signal_conflicts` record in the corpus before touching the comparison —
+  the same discipline `.4a` itself was held to.
+  Prerequisite: none. Verification: the corpus population of `width_mismatch` conflicts adjudicated
+  individually; observed RED; the chain rebuilt for every document whose artifacts move, APB-e first.
+  Commit: pending
+
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2e` · Status: `done` (`2026-09-13`, CODE; opened the same day by
   `.4b`'s re-derivation) · Children: `.2f` · Goal: **a decoy header substring turns an ALIGNED header into a whole-table column
   rotation, and every other column moves with it.**
@@ -923,6 +958,9 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
+0. `SIGNAL-DECLARATION-ROW-DROP.4c` — **first, because it blocks a rebuild.** `.4a` turned `PADDRCHK`'s
+   width into a `width_mismatch` between `ADDR_WIDTH/8` and `ceil(ADDR_WIDTH/8)` and dropped it; APB-e's
+   chain is stopped until the conflict comparison is decided.
 1. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
    whether a parsed direction should survive an unreadable width.
 2. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a
