@@ -357,11 +357,18 @@ command: replay-constraints
 persisted_deterministic_records: 16
 reproduced: 4
 not_reproduced: 12
-not_reproduced: sigcon_0002 OAS must_be_stable — EXTRACTION-QUALITY-GAUGE.3k.1 reference-magnitude, CORPUS-COVERAGE.2.50a post-passive-binding-only
+not_reproduced: sigcon_0002 OAS must_be_stable cond="" — EXTRACTION-QUALITY-GAUGE.3k.1 reference-magnitude, CORPUS-COVERAGE.2.50a post-passive-binding-only
+not_reproduced: dyn_sigcon_0011 DERR must_be_low cond="parity check is suspended during power-down. Signals are shown with tPARAC=0 …" — no positional gate refuses this subject — the kind, condition or negation moved
+unpersisted_replay_record: dyn_sigcon_0013 DERR must_be_low cond="parity check is suspended during power-down" src="5. AERR, DERR are driven LOW when parity check is suspended during power-down. Signals are …"
 ```
 
 Each record that no longer comes out is listed with the gate that stands in its way, so a published
-record can be attributed to the rule that retired it rather than guessed at.
+record can be attributed to the rule that retired it rather than guessed at. When no gate does, the
+record's own **condition, negation and a bounded source excerpt** are printed beside it — the second
+and third lines above are the same fact, and reading them together shows that what changed is a
+condition that used to run past its own sentence. Without those fields the report can only say that
+something moved, and finding out what would mean re-deriving exactly what the command exists to spare
+you.
 
 Two properties make the output usable:
 

@@ -190,6 +190,18 @@ counted here)"
     Ok(())
 }
 
+/// A bounded provenance excerpt: enough to find the sentence, short enough that a corpus report
+/// stays readable. Character-bounded, not byte-bounded, so a multi-byte source never splits.
+fn excerpt(text: &str) -> String {
+    const LIMIT: usize = 140;
+    let trimmed = text.trim();
+    if trimmed.chars().count() <= LIMIT {
+        return trimmed.to_string();
+    }
+    let head: String = trimmed.chars().take(LIMIT).collect();
+    format!("{head}…")
+}
+
 fn print_report(input: &str, report: &ConstraintReplayReport) {
     let reproduced = report
         .verdicts
@@ -235,8 +247,13 @@ stages this replay does not, and this replay runs a widened catalog)",
             verdict.refused_by.join(", ")
         };
         println!(
-            "not_reproduced: {} {} {} — {}",
-            verdict.constraint_id, verdict.subject_signal, verdict.constraint_kind, gates
+            "not_reproduced: {} {} {}{} cond={:?} — {}",
+            verdict.constraint_id,
+            verdict.subject_signal,
+            verdict.constraint_kind,
+            if verdict.negated { " negated" } else { "" },
+            verdict.condition_text.as_deref().unwrap_or(""),
+            gates
         );
     }
     for name in &report.granted_declarations {
@@ -244,8 +261,13 @@ stages this replay does not, and this replay runs a widened catalog)",
     }
     for verdict in &report.unpersisted_replay_records {
         println!(
-            "unpersisted_replay_record: {} {} {}",
-            verdict.constraint_id, verdict.subject_signal, verdict.constraint_kind
+            "unpersisted_replay_record: {} {} {}{} cond={:?} src={:?}",
+            verdict.constraint_id,
+            verdict.subject_signal,
+            verdict.constraint_kind,
+            if verdict.negated { " negated" } else { "" },
+            verdict.condition_text.as_deref().unwrap_or(""),
+            excerpt(&verdict.source_text)
         );
     }
 }

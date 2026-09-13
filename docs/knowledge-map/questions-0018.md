@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why must PSEL not inherit VALID from the which means consequence
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > why must a check and the thing it checks not share a parent
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why must a co-reference key be rejected as a clause value
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why must a collection aggregate be at least files times per-file
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why must a current claim census candidate key include the semantic view
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > why must a gate never probe persisted artifacts with specforge validate
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why must a measurement window name the revision that closes it
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > why must both sides of a direction arrow resolve to a role
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why must opaque identifiers remain one grammar token
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
@@ -47,6 +65,8 @@
   > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why was PREQ must_be_high published as negated
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what is a route catalog part
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is aggregate_composition in surfaces.jsonl
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > what is an alpha-variant placeholder
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -10,6 +14,8 @@
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > what is bind_protocol_state_machines
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > what is binding_bearing_clause and why does it find before it locates
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is capture_signal_presence_rows and who shares it
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -291,9 +297,3 @@
   > what is the must_be_value + VALID typed convention
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > what is the next big PDF-variant digestion lever after the serial class
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)

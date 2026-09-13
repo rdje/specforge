@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > how many enumerated width cells exist corpus-wide
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > how many evidence artifacts have no validation report
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > how many fact cards can SpecForge hold
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -293,7 +297,3 @@
   > is canonical recovery complete in the current reviewed population
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > is captured_region_residuals an exact IntentIR carry
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > is collect_known_signal_names UTF-8 safe
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > is converge the complete production capability path

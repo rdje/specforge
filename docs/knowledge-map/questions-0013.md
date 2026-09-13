@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > where do the APB signal declarations come from (which table)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -292,9 +298,3 @@
   > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > which doctrine checks the persisted proof seal on every commit
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered in the SpecForge doctrine driver
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)

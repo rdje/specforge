@@ -227,6 +227,8 @@
   > does removing sentence fallback remove address phase recognition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > does renaming a signal change semantic extraction
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > does replay-constraints show what moved when a record is not reproduced
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > does retiring gates remove conditional rules or temporal rules
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -296,5 +298,3 @@
   > does the corpus contain a negated value binding the extractor cannot read
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > does the current SWD chain come from the tracked ADI PDF

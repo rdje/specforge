@@ -7547,6 +7547,76 @@ fn is_dotted_cross_reference_subject(text: &str, subject: &str) -> bool {
     saw_occurrence
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3k.4 — the clause a DYNAMIC constraint record is minted from, together
+/// with the kind and value its binder read there.
+///
+/// This producer's record is created by a VALUE BINDING, which need not be modal at all (*"X is tied
+/// HIGH"*), so [`constraint_bearing_sentence`] is the wrong narrowing for it: that helper locates an
+/// obligation MODAL the record may not have, and where the statement happens to contain one
+/// elsewhere it moves the record's span to an unrelated sentence. `.3i` wired exactly that for the
+/// negation, which is why AMBA LPI published `PREQ must_be_high` **negated** from a sentence whose
+/// only `cannot` is two clauses away, and why MMU-700 attached *"When LRRESP is FaultAbort … this
+/// signal is not valid"* as the CONDITION of a `must be 0` record.
+///
+/// **The binding is FOUND exactly as the statement-wide reader found it, and then LOCATED.** That
+/// order is the whole design and it is measured, not stylistic. Running the binders per clause
+/// instead finds bindings the statement-wide reader never had — measured at +6 records in AMBA LPI
+/// alone — and three of those six are `PREQ`/`PACCEPT must_be_high` off rows that set those signals
+/// LOW, because [`logic_level_binding_kind_from_text`] pairs a level with the BIND VERB rather than
+/// with a signal and the subject scan is statement-wide. That is a live defect of its own
+/// (`EXTRACTION-QUALITY-GAUGE.3k.11`), and a span leaf must not ship recall through a pairing that is
+/// still wrong — the same ordering `.3k` imposed on `.3k.2` before `.3k.3`. So this leaf changes
+/// WHICH SPAN the record's condition and negation are read from and nothing else: the kind and value
+/// are bit-for-bit what they were.
+///
+/// The clause split is [`constraint_bearing_sentences`]', so a serialized row decomposes the same way
+/// for every producer, and the location fails OPEN to the whole statement when no single clause
+/// reproduces the binding — a binding that straddles a clause boundary keeps the span it had.
+fn binding_bearing_clause<'a>(
+    text: &'a str,
+    discovered_values: &HashSet<String>,
+) -> Option<(&'a str, SignalConstraintKind, Option<String>)> {
+    let lowered = text.to_ascii_lowercase();
+    let subject_part = text_before_condition_marker(text);
+    let (kind, value) = if let Some(value) =
+        extract_discovered_state_value_from_text(&lowered, discovered_values)
+    {
+        (
+            SignalConstraintKind::MustBeValue {
+                value: value.clone(),
+            },
+            Some(value),
+        )
+    } else if let Some(kind) =
+        logic_level_binding_kind_from_text(&subject_part.to_ascii_lowercase())
+    {
+        (kind, None)
+    } else {
+        return None;
+    };
+    let binding = text
+        .split(['.', ';', '\u{2022}', '\n'])
+        .find(|clause| match &value {
+            Some(value) => {
+                extract_discovered_state_value_from_text(
+                    &clause.to_ascii_lowercase(),
+                    discovered_values,
+                )
+                .as_ref()
+                    == Some(value)
+            }
+            None => {
+                logic_level_binding_kind_from_text(
+                    &text_before_condition_marker(clause).to_ascii_lowercase(),
+                )
+                .as_ref()
+                    == Some(&kind)
+            }
+        })
+        .unwrap_or(text);
+    Some((binding, kind, value))
+}
+
 fn extract_dynamic_signal_constraints(
     statements: &[ExtractedStatement],
     counter: &mut usize,
@@ -7565,9 +7635,6 @@ fn extract_dynamic_signal_constraints(
         if matches!(statement.class, StatementClass::SignalValueConstraint) {
             continue;
         }
-
-        let lowered = statement.text.to_ascii_lowercase();
-        let subject_part = text_before_condition_marker(&statement.text);
 
         // EXTRACTION-QUALITY-GAUGE.3d: an inter-signal/field EQUALITY ("ALLOW_UW must be equal to
         // the value of ALLOW_PW") has no typed slot in the constraint vocabulary, so the
@@ -7588,30 +7655,38 @@ fn extract_dynamic_signal_constraints(
         // LOGIC-LEVEL-BOUNDARY). The logic-level path is gated to binding verbs + the subject
         // clause so a bare mention of HIGH/LOW does not over-generate
         // (CONSTRAINT-EXTRACTION-V2 / drive-level recall).
-        let (constraint_kind, target_value) = if let Some(value) =
-            extract_discovered_state_value_from_text(&lowered, discovered_values)
-        {
-            (
-                SignalConstraintKind::MustBeValue {
-                    value: value.clone(),
-                },
-                Some(value),
-            )
-        } else if let Some(kind) =
-            logic_level_binding_kind_from_text(&subject_part.to_ascii_lowercase())
-        {
-            // EXTRACTION-QUALITY-GAUGE.3c: a logic-level binding read off an actor's ACTION in
-            // narration ("the transmitter sets this signal HIGH to indicate …", "At T2 the
-            // controller sets PREQ HIGH") describes mechanism/example, not a global invariant —
-            // drop it (the temporal layer owns timed facts). Static invariants ("X is tied HIGH")
-            // and mandatory bindings ("must drive X LOW") are kept by construction.
-            if is_descriptive_narration_binding(&statement.text) {
-                continue;
-            }
-            (kind, None)
-        } else {
+        //
+        // EXTRACTION-QUALITY-GAUGE.3k.4 — and the clause that BINDS is the record's span. Every part
+        // below reads it, so a record can no longer take its value from one sentence and its
+        // condition or negation from another.
+        let Some((binding, constraint_kind, target_value)) =
+            binding_bearing_clause(&statement.text, discovered_values)
+        else {
             continue;
         };
+        // EXTRACTION-QUALITY-GAUGE.3c: a logic-level binding read off an actor's ACTION in
+        // narration ("the transmitter sets this signal HIGH to indicate …", "At T2 the
+        // controller sets PREQ HIGH") describes mechanism/example, not a global invariant —
+        // drop it (the temporal layer owns timed facts). Static invariants ("X is tied HIGH")
+        // and mandatory bindings ("must drive X LOW") are kept by construction. Evaluated over the
+        // whole statement, which is the narration this gate reads (`.3k.5`'s scope question).
+        if matches!(
+            constraint_kind,
+            SignalConstraintKind::MustBeHigh | SignalConstraintKind::MustBeLow
+        ) && is_descriptive_narration_binding(&statement.text)
+        {
+            continue;
+        }
+        // EXTRACTION-QUALITY-GAUGE.3k.4 — the SUBJECT search deliberately stays STATEMENT-scoped,
+        // and that asymmetry is measured rather than assumed. This path's dominant shape is a
+        // serialized register/field row whose subject is the cell's leading MNEMONIC and whose
+        // binding is in the descriptive body — NVMe `| 17:16 | Record Format (RECFMT): … The format
+        // of the record specified in this definition shall be 0h. |`. Narrowing the subject to the
+        // binding clause loses `RECFMT` and nine more NVMe records like it, because the row's other
+        // parts legitimately name the subject its obligation constrains — the same asymmetry
+        // `is_post_passive_binding_only_subject` gate (2) already encodes for table rows. What the
+        // clause owns is the OBLIGATION's own content: its value, its condition and its negation.
+        let subject_part = text_before_condition_marker(&statement.text);
 
         let mut subject_signals =
             collect_subject_signal_tokens_with_discovered_values(subject_part, discovered_values);
@@ -7641,12 +7716,13 @@ fn extract_dynamic_signal_constraints(
             continue;
         }
 
-        let condition_text = extract_condition_clause(&statement.text);
-        // EXTRACTION-QUALITY-GAUGE.3i — read from the obligation clause, not the whole statement,
-        // and through the one shared predicate rather than a second copy of its phrase list.
-        let negated = obligation_is_negated(
-            &constraint_bearing_sentence(&statement.text).to_ascii_lowercase(),
-        );
+        let condition_text = extract_condition_clause(binding);
+        // EXTRACTION-QUALITY-GAUGE.3i — read from the clause that produced the record, not the whole
+        // statement, and through the one shared predicate rather than a second copy of its phrase
+        // list. EXTRACTION-QUALITY-GAUGE.3k.4 — and that clause is the BINDING-bearing one, not
+        // `constraint_bearing_sentence`'s modal one: this path's record need not be modal at all, so
+        // the modal scan located a clause the record does not come from.
+        let negated = obligation_is_negated(&binding.to_ascii_lowercase());
 
         for subject_signal in subject_signals {
             *counter += 1;
@@ -9784,6 +9860,16 @@ pub struct ConstraintReplayVerdict {
     pub constraint_id: String,
     pub subject_signal: String,
     pub constraint_kind: String,
+    /// EXTRACTION-QUALITY-GAUGE.3k.4 — the two parts of the merge identity that are neither the
+    /// subject nor the kind, so a NOT-REPRODUCED verdict can be adjudicated from the report instead
+    /// of from a re-run. Its own diagnostic line says the kind, condition or negation MOVED; without
+    /// printing them, the reader is told a record moved and not what moved, and the only way to find
+    /// out is to re-derive the thing the instrument exists to avoid re-deriving.
+    pub condition_text: Option<String>,
+    pub negated: bool,
+    /// The record's own provenance text. An unpersisted replay record has no id the artifact knows,
+    /// so without it the reader cannot find the sentence a newly-minted record came from at all.
+    pub source_text: String,
     /// Whether the replay produced a record with this record's exact merge identity (subject, kind,
     /// value, condition, negation and source text — everything but the ids).
     pub reproduced: bool,
@@ -9978,6 +10064,9 @@ pub fn replay_persisted_signal_constraints(
                 constraint_id: record.constraint_id.clone(),
                 subject_signal: record.subject_signal.clone(),
                 constraint_kind: record.constraint_kind.as_str().to_string(),
+                condition_text: record.condition_text.clone(),
+                negated: record.negated,
+                source_text: record.source_text.clone(),
                 reproduced,
                 refused_by: if reproduced {
                     Vec::new()
@@ -9995,6 +10084,9 @@ pub fn replay_persisted_signal_constraints(
             constraint_id: record.constraint_id.clone(),
             subject_signal: record.subject_signal.clone(),
             constraint_kind: record.constraint_kind.as_str().to_string(),
+            condition_text: record.condition_text.clone(),
+            negated: record.negated,
+            source_text: record.source_text.clone(),
             reproduced: true,
             refused_by: Vec::new(),
         })
@@ -37038,6 +37130,161 @@ mod extraction_quality_gauge_3k_2b {
             )),
             Some("must_be_value:VALID".to_string())
         );
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_4 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.4` — the DYNAMIC path's span discipline. Its record is minted by
+    //! a VALUE BINDING that need not be modal at all, so `constraint_bearing_sentence` — which
+    //! locates a MODAL — is the wrong narrowing: `.3i` wired it for the negation and the record's
+    //! condition still came from the whole statement. Every sentence below is a real corpus shape
+    //! with its identity alpha-renamed (ADR 0006).
+    use super::*;
+
+    fn records(
+        text: &str,
+        declared: &[&str],
+        enum_members: &[&str],
+    ) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        for (index, member) in enum_members.iter().enumerate() {
+            statements.push(ExtractedStatement {
+                statement_id: format!("enum_{index}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Enum ZETASTATES {member} = {index}."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        }
+        statements.push(ExtractedStatement {
+            statement_id: "narration".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let discovered = collect_discovered_enum_values(&[statements.as_slice()]);
+        let mut counter = 0usize;
+        extract_dynamic_signal_constraints(&statements, &mut counter, &discovered)
+    }
+
+    /// The defect `.3i` left behind: the negation was read from the first MODAL clause, which is not
+    /// where a value binding lives. AMBA LPI published `PREQ must_be_high` **negated** because a
+    /// clause two sentences later says the device `cannot` assume something entirely different.
+    #[test]
+    fn the_negation_comes_from_the_clause_that_binds() {
+        let found = records(
+            "The device has sampled ZETAREQ LOW and sets ZETAACCEPT HIGH. Once the controller \
+             samples ZETAACCEPT HIGH, the device cannot assume the availability of any properties \
+             of the previous higher-power state.",
+            &["ZETAREQ", "ZETAACCEPT"],
+            &[],
+        );
+        assert!(!found.is_empty(), "the binding still mints its record");
+        assert!(
+            found.iter().all(|record| !record.negated),
+            "a `cannot` in a non-binding clause must not negate this record: {:?}",
+            found
+                .iter()
+                .map(|r| (r.subject_signal.clone(), r.negated))
+                .collect::<Vec<_>>()
+        );
+    }
+
+    /// The condition too. MMU-700 attached *"When LRRESP is FaultAbort … this signal is not valid"* —
+    /// a clause three sentences past the binding, and one that CONTRADICTS the record — as the
+    /// condition of a `must be 0`.
+    #[test]
+    fn the_condition_comes_from_the_clause_that_binds() {
+        let found = records(
+            "| ZETAPROT | Translation | Translated protection information. If ZETATRANS is SPEC, \
+             ZETAPROT must be ZERO. When ZETARESP is FaultAbort, this signal is not valid. Width \
+             is 3-bit. |",
+            &["ZETAPROT", "ZETATRANS", "ZETARESP"],
+            &["ZERO"],
+        );
+        assert!(!found.is_empty(), "the binding still mints its record");
+        for record in &found {
+            let condition = record.condition_text.as_deref().unwrap_or("");
+            assert!(
+                !condition.contains("FaultAbort") && !condition.contains("Width is"),
+                "the condition must not come from a later clause, got {condition:?}"
+            );
+        }
+    }
+
+    /// The reason `constraint_bearing_sentence` is the WRONG helper here: this path's record needs no
+    /// modal at all, so a modal scan would either find nothing or find an unrelated sentence.
+    #[test]
+    fn a_binding_that_carries_no_modal_still_finds_its_own_clause() {
+        let found = records(
+            "The interface is described in the section above. ZETADENY is tied LOW when denial is \
+             not implemented.",
+            &["ZETADENY"],
+            &[],
+        );
+        assert_eq!(
+            found
+                .iter()
+                .map(|r| r.constraint_kind.as_str().to_string())
+                .collect::<Vec<_>>(),
+            vec!["must_be_low".to_string()]
+        );
+    }
+
+    /// The location changes WHICH SPAN the condition and negation are read from and nothing else.
+    /// Running the binders per clause instead finds bindings the statement-wide reader never had —
+    /// +6 records in AMBA LPI alone, three of them `must_be_high` off rows that set the signal LOW —
+    /// so the kind and value must stay bit-for-bit what the statement-wide reader produced
+    /// (`EXTRACTION-QUALITY-GAUGE.3k.11` owns that pairing defect).
+    #[test]
+    fn the_kind_and_value_are_exactly_what_the_statement_wide_reader_bound() {
+        let text = "Controller has set ZETAREQ LOW after acceptance. The device must set \
+                    ZETAACCEPT LOW.";
+        let found = records(text, &["ZETAREQ", "ZETAACCEPT"], &[]);
+        let lowered = text.to_ascii_lowercase();
+        let statement_wide = logic_level_binding_kind_from_text(
+            &text_before_condition_marker(&lowered).to_ascii_lowercase(),
+        );
+        assert!(statement_wide.is_some());
+        assert!(
+            found
+                .iter()
+                .all(|record| Some(&record.constraint_kind) == statement_wide.as_ref()),
+            "every record must carry the statement-wide binding, got {:?}",
+            found
+                .iter()
+                .map(|r| r.constraint_kind.as_str())
+                .collect::<Vec<_>>()
+        );
+    }
+
+    /// The location fails OPEN. A binding no single clause reproduces keeps the span it had, so the
+    /// narrowing can never silently drop a record it cannot locate.
+    #[test]
+    fn a_binding_no_clause_reproduces_keeps_the_whole_statement() {
+        let discovered = HashSet::new();
+        let text = "ZETASEL is asserted for one cycle";
+        assert!(binding_bearing_clause(text, &discovered).is_none());
+        let bound = "The controller drives ZETASEL LOW";
+        let (clause, kind, value) =
+            binding_bearing_clause(bound, &discovered).expect("a binding is found");
+        assert_eq!(clause, bound);
+        assert_eq!(kind.as_str(), "must_be_low");
+        assert_eq!(value, None);
     }
 }
 

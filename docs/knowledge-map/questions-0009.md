@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > was the (contract ... eventually ...) ISF clause removed
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > was the .5.iv prediction that header naming is byte-changing on the AXI wire gold correct (NO, twice over: ihi0022_l already carries an AWATOP enum with 13 members so the lever could only add members, and ihi0022_l cannot be rebuilt at all — its persisted SourceIR is legacy schema 1, refused as inspection-only, and its normalized bundle is not retained. It is one of 54 legacy
   > chains against 24 current ones)
@@ -295,5 +297,3 @@
   > what does a re-ingest do to the behavioral genericity population
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what does a review label in a gold key cost
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > what does byte_offset mean on a message field record when bit_range is None

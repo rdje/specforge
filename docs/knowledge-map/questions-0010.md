@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > what does byte_offset mean on a message field record when bit_range is None
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
@@ -148,6 +150,8 @@
   > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > what happens if someone runs clean --scope source-normalized on a declared document
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > what happens if the dynamic binder is run per clause
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > what happens to a constraint whose subject is a withheld template base name
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -294,7 +298,3 @@
   > what is a cardinality exemption
 - [contested-priors](../knowledge/contested-priors.md)
   > what is a contested prior
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what is a route catalog part
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > what is aggregate_composition in surfaces.jsonl

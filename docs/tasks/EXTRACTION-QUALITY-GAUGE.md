@@ -1350,7 +1350,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
   question and is the place to start. Prerequisite: none. Verification: the corpus population of
   statement-initial fronted conditions measured with the real reader and adjudicated; observed RED;
   the chain rebuilt for every document whose artifacts move.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.4` · Status: `pending` · Goal: **the dynamic path's span
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.4` · Status: `done` (`2026-09-13`, CODE) · Goal: **the dynamic path's span
   discipline.** After `.3i` it reads its negation from `constraint_bearing_sentence` while its
   subject (`text_before_condition_marker(&statement.text)`), its value binder
   (`extract_discovered_state_value_from_text` over the whole lowered statement) and its condition
@@ -1358,9 +1358,54 @@ honestly-qualified) path to "human-SpecForge in Rust."
   producer whose parts are provably drawn from two different spans. The fix is not to call
   `constraint_bearing_sentence`: this path's records are minted by a value binding that need not be
   modal, so the clause it needs is the BINDING-bearing clause. Define it, then apply it to all four
-  parts at once. Prerequisite: none. Verification: the population measured in-leaf against the real
-  binder (it cannot be mirrored — `discovered_values` is derived per document); observed RED; the
-  chain rebuilt for every document whose artifacts move.
+  parts at once. **SHIPPED `2026-09-13`, and the shape that shipped is narrower than the node
+  described, because the wider one was built and measured first.** `binding_bearing_clause` FINDS the
+  binding exactly as the statement-wide reader found it — same value, same kind, bit for bit — and
+  then LOCATES the first clause that reproduces it; the condition and the negation are read there.
+  **Running the binders per clause instead was measured and rejected twice.** Narrowing the SUBJECT
+  to that clause costs ten NVMe records whose subject is the cell's leading MNEMONIC while the binding
+  is in the descriptive body (`| 17:16 | Record Format (RECFMT): … shall be 0h. |`) — the same
+  row asymmetry `is_post_passive_binding_only_subject` gate (2) already encodes, and 30 reproduced
+  records corpus-wide. Searching per clause then ADDS six records in AMBA LPI alone, and three of the
+  six are `PREQ`/`PACCEPT must_be_high` off state-table rows that set those signals LOW, because
+  `logic_level_binding_kind_from_text` pairs a level with the BIND VERB rather than with a signal
+  (`.3k.11`). A span leaf must not ship recall through a pairing that is still wrong — the ordering
+  `.3k` imposed on `.3k.2` before `.3k.3`, applied again.
+  **Measured, corpus-wide over all 77 loadable documents: `replayed_total` is UNCHANGED in every
+  single document (304 → 304). Zero records added, zero removed, 19 corrected**, and all three
+  current-schema documents still load, so nothing is rebuilt. All 19 adjudicated individually with
+  the instrument this leaf extended: **8 had a condition taken from a clause the record does not come
+  from** (MMU-700 ×6, where `LRPROT`/`LAPROT must be 0` carried *"When LRRESP is FaultAbort … this
+  signal is not valid"* — a clause that CONTRADICTS the record; CoreSight ×1; GIC-600 ×1, a trailing
+  cell delimiter), **5 had a condition that ran past its clause into the next sentence** (HBM2, where
+  `AERR/DERR must_be_low when parity check is suspended during power-down` swallowed *"Signals are
+  shown with tPARAC=0 …"*, and `DBI must_be_high` swallowed its own `otherwise` branch), **5 carried a
+  negation from a clause two sentences away** (GIC-600 ×2, AMBA LPI ×3 — `PREQ`/`PACCEPT
+  must_be_high` **negated** by a `cannot` about assuming properties of a previous power state), and
+  **1 had a run-on condition spanning a duplicated cell** (NVMe `ELEN`).
+  **The instrument was extended because the verdict could not be adjudicated.**
+  `replay-constraints` reported *"the kind, condition or negation moved"* and printed none of them;
+  `ConstraintReplayVerdict` now carries `condition_text`, `negated` and a bounded `source_text`
+  excerpt, which is what made all 19 readable from the report rather than from a re-derivation. That
+  is an amendment to `.3k.6`'s surface, owned here because this leaf is what needed it.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.4`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.11` · Status: `pending` (opened `2026-09-13` by `.3k.4`) · Goal:
+  **the logic-level binder pairs a level with a VERB, not with a SIGNAL.**
+  `logic_level_binding_kind_from_text` finds the first bind verb (`drive`/`set`/`tied`/…) and then
+  takes the LAST logic value within six words of it, and the caller pairs that kind with every
+  declared signal the statement names. So `| P_ACCEPT | … | Controller must set PREQ LOWand PREQCHK
+  HIGH. |` publishes **`PREQ must_be_high`** — the level belongs to `PREQCHK`, one token later, and
+  the record says the opposite of what the row states. Two such records are already published in AMBA
+  LPI, and `.3k.4` measured that searching the binder per clause would add three more.
+  **Size it against the real binder before changing it**, and note the normalizer artifact in the
+  same population: the same rows read `LOWand`/`HIGHafter` with the space lost, so a fix that assumes
+  clean word boundaries will behave differently on the corpus than on a test string
+  (`[[one-modal-vocabulary-per-constraint-record]]`'s lesson, one layer down). The obvious rule — pair
+  the level with the nearest preceding identifier — must be measured against every `must_be_high`/
+  `must_be_low` record the dynamic path currently publishes, because that path is 77 of the corpus's
+  deterministic records. Prerequisite: none. Verification: the whole dynamic logic-level population
+  adjudicated individually; observed RED; the chain rebuilt for every document whose artifacts move.
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j` · Status: `pending` (opened `2026-09-12` by
   `INVARIANT-SHAPE-ADMISSION.5`) · Goal: **the LLM-primary constraint path applies none of the
@@ -1384,6 +1429,47 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.4`
+
+- [x] **REPRODUCE / MEASURE** — built as a prototype and measured with `replay-constraints` before the
+  design was settled, which rejected TWO wider shapes. (a) Narrowing the SUBJECT to the binding clause:
+  **99 → 69 reproduced**, ten NVMe records lost because a register row names its subject in the cell
+  mnemonic and binds in the body. (b) Searching the binders per clause: **+6 records in AMBA LPI**,
+  three of them `must_be_high` off rows that set the signal LOW. The shipped shape measures
+  **304 → 304 replayed in every one of the 77 loadable documents — zero added, zero removed — and 19
+  corrected**, each adjudicated individually below.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `extract_dynamic_signal_constraints`. `.3i` gave this path `constraint_bearing_sentence` for its
+  negation, which locates an obligation MODAL — and this producer's record is minted by a VALUE
+  BINDING that need not be modal at all. So the negation came from whichever clause happened to carry
+  a `must`/`cannot` while the condition came from the whole statement, and neither had to be the
+  clause that bound the value. Evidence: AMBA LPI `dyn_sigcon_0014`/`0015` published `must_be_high`
+  **negated** from a `cannot` two sentences away; MMU-700 `dyn_sigcon_0007`/`0008` carried a condition
+  that says the signal is not valid.
+- [x] **ADDRESSED (verified)** — `binding_bearing_clause` finds the binding statement-wide exactly as
+  before and then locates the first clause that reproduces it, failing OPEN to the whole statement
+  when none does; `condition_text` and `negated` read that clause. The kind and value are unchanged by
+  construction and a control asserts it. **Five controls in `mod extraction_quality_gauge_3k_4`, two
+  observed RED with the two reads reverted** — the condition control reporting the exact corpus
+  string `"ZETARESP is FaultAbort, this signal is not valid. Width is 3-bit. |"` — and the file
+  restored byte-identically. All 19 corrections adjudicated: 8 conditions from a foreign clause, 5
+  conditions running past their clause, 5 negations from a clause two sentences away, 1 run-on
+  condition across a duplicated cell.
+- [x] **NO REGRESSION** — `replay-constraints --evidence-root generated/evidence_ir`:
+  **304 replayed before and after, in every document**, so no persisted artifact moves, all three
+  current-schema documents still load, and no chain rebuild is owed. `kg-bench` **156/156**;
+  `cargo fmt --all --check`, `cargo clippy --offline --all-targets -D warnings` and the whole
+  workspace suite green (`specforge-core` lib 1,482 → **1,487**). `flow_census.json` re-derived and
+  attributed: `analyzed_functions` +2, `decision_sites` +5, `helper_edges` +3, `semantic_macros` +1.
+- [x] **GENERICITY (ADR 0006)** — the clause split is the repository's existing punctuation split and
+  the binding is located by asking the PRODUCER's own binder, so no second rule, no vocabulary, no
+  document, protocol or vendor name. Every test identifier is alpha-renamed.
+- [x] **LOCKSTEP** — book `commands/quality-and-learning.md` documents the three fields
+  `replay-constraints` verdicts gained, because a reader is told a record moved and must be able to
+  see what moved; `pipeline/obligation-reading.md` gains the dynamic path's own span rule beside the
+  statement path's. KM card `[[the-binding-bearing-clause]]`. The LPI pairing defect is routed to
+  `.3k.11` rather than left in prose.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.3`
 

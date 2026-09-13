@@ -3,6 +3,14 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did APB unexplained_intent_bearing_tables go to zero
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did AXI have 134 actors when APB has 8 and AHB has 25
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why did Arm Debug lose twelve reviewed register facts
@@ -30,6 +38,8 @@
   > why did IntentIR proof verification fail after I validated SemanticIR
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > why did LIVE-DOCUMENT-PRESSURE-HEADROOM.4d reflow one bullet instead of rewrapping README.md
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why did LRPROT must be 0 carry the condition When LRRESP is FaultAbort
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did LTI unexplained tables go UP from 5 to 6
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -288,13 +298,3 @@
   > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why does DTI (ihi0088) have zero message_field_records
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > why does Docling re-ingest fail on Apple Silicon
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > why does EvidenceIR schema 2 clear old protocol records
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate

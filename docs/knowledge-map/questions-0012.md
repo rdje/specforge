@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -291,9 +297,3 @@
   > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > where do the APB signal declarations come from (which table)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged

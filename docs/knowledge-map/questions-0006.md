@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does the measurable corpus population grow
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -78,6 +80,8 @@
   > how is a guide reported so it is not a silent 0-yield extraction miss
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > how is a leaf route lifecycle verified
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > how is a logic level paired with a signal in the dynamic path
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how is a message field's width kept honest (per-variant widths stay None)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -293,7 +297,3 @@
   > how many documents lost promoted records when the empty-catalog special case was deleted
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > how many enumerated width cells exist corpus-wide
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > how many evidence artifacts have no validation report

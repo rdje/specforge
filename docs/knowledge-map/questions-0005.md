@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > how do I reproduce the artifact-relocation proof failure read-only (copy an evidence_ir.json, rewrite only its artifact_layout artifact_root and evidence_ir_path to the new directory, and run specforge entity-type on it: it fails. Run the same command on a byte-identical copy that keeps the original layout: it succeeds. Keeping the <base>/<document_key> convention does not help
   > — relocation as such is what fails)
@@ -296,5 +298,3 @@
   > how does the extractor avoid minting a constraint about a cross-referenced register field
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how does the held-out evaluator detect omission fabrication provenance loss and silent drops

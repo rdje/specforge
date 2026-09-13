@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > does the current SWD chain come from the tracked ADI PDF
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -296,5 +298,3 @@
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > how do I relocate a verified EvidenceIR without breaking its proof (EvidenceIr::load_relocated_to_artifact_base_root — it verifies the artifact where it is, moves it to <base>/<document_key>/evidence_ir.json, and re-derives the proof for the new location from the same verified SourceIR prefix and the same sealed proof context; an unsealed artifact_layout rewrite is still
   > refused)
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts

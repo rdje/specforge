@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered in the SpecForge doctrine driver
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > which documents are in the first source-to-IntentIR vertical evaluation population
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -18,6 +24,8 @@
   > which exact current state copies are not yet independently verified in SpecForge
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > which extraction commands does converge run directly
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > which fields does ConstraintReplayVerdict carry
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > which fields may reviewed text normalization change
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -289,11 +297,3 @@
   > why did 88 CoreSight Base System interfaces disappear
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did APB unexplained_intent_bearing_tables go to zero
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did AXI have 134 actors when APB has 8 and AHB has 25
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4

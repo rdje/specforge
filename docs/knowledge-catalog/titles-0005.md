@@ -46,6 +46,7 @@
 | [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md) | 2026-06-02 | `current` | The temporal-rule eval's residual false positives are a stale artifact, not a live bug |
 | [temporal-logic-choice](../knowledge/temporal-logic-choice.md) | 2026-06-04 | `current` | SpecForge captures temporal behavior in LTL/MTL, not CTL or TLA+ |
 | [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md) | 2026-06-04 | `current` | Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs |
+| [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md) | 2026-09-13 | `current` | The dynamic constraint path's span is the clause its BINDER bound in, not the clause carrying a modal — and… |
 | [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md) | 2026-08-12 | `current` | Timing constraints preserve explicit caption units and direct structured-table provenance |
 | [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md) | 2026-08-11 | `current` | Production timing observations now reach verified figure contracts through an optional typed EvidenceIR Figur… |
 | [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md) | 2026-08-10 | `current` | Scalar timing rows require independent source-cell geometry for parameter and populated value roles |
@@ -60,4 +61,3 @@
 | [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md) | 2026-08-10 | `current` | Typed transaction-phase names require positive phrase authority |
 | [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md) | 2026-06-09 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
 | [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md) | 2026-08-09 | `current` | USB4 Connection Manager refresh is portable and honestly non-emitting |
-| [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md) | 2026-08-09 | `current` | USB4 Inter-Domain refresh is path-portable and authority-empty |

@@ -326,6 +326,36 @@ fields and packet bits rather than about declared wires, so they are refused a s
 different and correct reason; the classifier is now right about them regardless, and the next document
 that states one about a wire will be read rather than dropped.
 
+## A value binding does not have to be an obligation
+
+Most of this chapter is about sentences with a modal. A specification also states a binding flatly:
+
+```text
+QDENY is tied LOW when denial is not implemented.
+AERR, DERR are driven LOW when parity check is suspended during power-down.
+```
+
+There is no *must* in either, and both state something a downstream consumer needs. SpecForge reads
+them with a separate pass that looks for a bound **value** rather than for an obligation, and the
+distinction matters for the same reason every other rule in this chapter does: a record's parts have
+to come from the span that produced it, and for these sentences that span is the clause that carries
+the **binding**, not the clause that carries a modal.
+
+Looking for a modal in a sentence that has none finds whatever modal the rest of the paragraph
+happens to contain. That produced two shapes of wrong record:
+
+| the document writes | the published record | what went wrong |
+| --- | --- | --- |
+| `... sets PACCEPT HIGH. Once the controller samples PACCEPT HIGH, the device cannot assume ...` | `PACCEPT must be HIGH`, **negated** | the `cannot` is two sentences away and is about something else |
+| `If LATRANS is SPEC, LRPROT must be 0. When LRRESP is FaultAbort, this signal is not valid.` | `LRPROT must be 0` **when LRRESP is FaultAbort** | the condition contradicts the record it was attached to |
+
+The binding clause is found by asking the binder itself where it bound, rather than by a second rule
+that could disagree with it, and the condition and the negation are then read there. The bound value
+is deliberately left exactly as it was: searching for bindings clause by clause finds more of them,
+and some of those are wrong for an unrelated reason — a level is currently paired with the verb that
+sets it rather than with the signal it belongs to, so `Controller must set PREQ LOW and PREQCHK HIGH`
+can attach `HIGH` to `PREQ`. Recall waits for that to be fixed.
+
 ## A bound stated against another operand is not a value
 
 The constraint vocabulary can say *"this signal must be `HIGH`"*, *"must be stable"*, *"must not

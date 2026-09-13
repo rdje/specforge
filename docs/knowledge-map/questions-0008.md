@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > is collect_known_signal_names UTF-8 safe
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > is converge the complete production capability path
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
@@ -294,5 +298,3 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > was anything in the .5.iv.a findings wrong (YES, two statements, corrected 2026-08-31 after the director audited: the RESERVED split shipped as five/seven and is SIX/SIX, and the worked example CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding is BACKWARDS — DataSource accumulates DEFAULT_NO_USEFUL_INFORMATION=0 plus RESERVED at 2 AND 3,
   > the reserved rows disagree, so the conflicting-value rule drops RESERVED and the surviving enum is (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). Both were read off a dump instead of computed; the NO-GO decision is unchanged and rests on the other two legs)
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > was the (contract ... eventually ...) ISF clause removed

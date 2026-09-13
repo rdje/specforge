@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > why does the roadmap archive hold more than one capsule
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why does the same token AXI interface merge in one doc but not another
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why does the status ledger keep hitting rollover
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > why does the tracked validation snapshot differ from current generated IntentIR reports
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > why does the trajectory snapshot reject my fixture builder change
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > why does trimming a name token hide a placeholder
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
@@ -156,6 +170,8 @@
   > why is conformal calibration still blocked at CHI scale
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why is constraint_bearing_sentence the wrong narrowing for the dynamic constraint path
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > why is corpus coverage refresh 34 blocked before ingest
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
@@ -243,6 +259,8 @@
   > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > why is the default ingest threshold 131 pages on a 24 GiB host
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why is the dynamic path's subject search still statement-scoped
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > why is the extraction-profile prior family not scoped by ProtocolFamily
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -279,21 +297,3 @@
   > why is the total proof-seal probe CI-tier rather than gate-tier
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > why is there no fields-without-positions completeness gap
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why must PSEL not inherit VALID from the which means consequence
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > why must a check and the thing it checks not share a parent
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why must a co-reference key be rejected as a clause value
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why must a collection aggregate be at least files times per-file
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > why must a current claim census candidate key include the semantic view
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > why must a gate never probe persisted artifacts with specforge validate
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why must a measurement window name the revision that closes it
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > why must both sides of a direction arrow resolve to a role

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why does DTI (ihi0088) have zero message_field_records
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > why does Docling re-ingest fail on Apple Silicon
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > why does EvidenceIR schema 2 clear old protocol records
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why does GIC 400 emit fifteen registers with missing access
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -52,6 +62,8 @@
   > why does a cell with two arrows fail closed
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why does a document with no declared signals carry more ungrounded rules than one with signals
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why does a dynamic constraint record need no modal
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why does a magnitude against a literal still yield no record
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -173,6 +185,8 @@
   > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why does my visual asset have no interior_texts key
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why does narrowing the dynamic subject lose NVMe register-row constraints
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does obligation_subject_part look after the comma
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -283,17 +297,3 @@
   > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > why does the reviewed prose sit at elem_00230 instead of elem_00219
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > why does the roadmap archive hold more than one capsule
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why does the same token AXI interface merge in one doc but not another
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why does the status ledger keep hitting rollover
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > why does the tracked validation snapshot differ from current generated IntentIR reports
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > why does the trajectory snapshot reject my fixture builder change
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
