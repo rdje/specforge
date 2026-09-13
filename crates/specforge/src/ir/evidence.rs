@@ -2510,13 +2510,31 @@ fn dedup_conditional_rules_in_place(records: &mut Vec<ConditionalRuleRecord>) ->
 
 fn signal_constraint_merge_key(record: &SignalConstraintRecord) -> String {
     format!(
-        "{}|{:?}|{:?}|{:?}|{}|{}",
+        "{}|{}",
+        signal_constraint_assertion_key(record),
+        record.source_text
+    )
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3k.8 — every identity field of a constraint record EXCEPT its
+/// PROVENANCE: what the record asserts, with no reference to the text it was read from.
+///
+/// [`signal_constraint_merge_key`] is this key plus `source_text`, and is built from it so the two
+/// cannot drift. The split exists because two producers can read the SAME obligation out of the same
+/// text at different spans — the statement path cites the serialized row, the row reader cites the
+/// clause — and the full merge key, which ends in the provenance, cannot see that they are one fact.
+///
+/// Not to be confused with [`signal_constraint_fact_key`], which is the CROSS-EXTRACTOR overlap key
+/// behind `fact_provenance`: that one is deliberately coarser (subject, kind and target only), so
+/// two records differing in their condition or negation share it. Nothing may dedup on it.
+fn signal_constraint_assertion_key(record: &SignalConstraintRecord) -> String {
+    format!(
+        "{}|{:?}|{:?}|{:?}|{}",
         record.subject_signal,
         record.constraint_kind,
         record.target_value,
         record.condition_text,
-        record.negated,
-        record.source_text
+        record.negated
     )
 }
 
@@ -10057,22 +10075,63 @@ impl SourceLocalInferenceConstraintGrounding {
 }
 
 /// Preserve the established pattern/dynamic surface byte-for-byte and deduplicate only records
-/// appended by the inference-antecedent sibling. Polarity runs first because the semantic identity
-/// is the refined kind, not the temporary asserted/deasserted form.
+/// appended by the inference-antecedent sibling and the signal-description row reader. Polarity runs
+/// first because the semantic identity is the refined kind, not the temporary asserted/deasserted
+/// form.
+///
+/// EXTRACTION-QUALITY-GAUGE.3k.8 — an appended record is also a duplicate when it asserts the same
+/// fact as an established one and was read from a SPAN OF THE SAME TEXT. APB-E's
+/// `| PAUSER | … | • PAUSER must be valid when PSELx is asserted. • PAUSER must have the same value
+/// … |` is read twice: the statement path reads the serialized row and cites it, the row reader
+/// reads one bullet of the description cell and cites that bullet. Same subject, same kind, same
+/// condition, same `supporting_statement_ids` — and different `source_text`, which is the last field
+/// of the merge key, so the key cannot see them as one fact. Measured over the corpus, nine records
+/// in one document; the same census finds **no other cross-producer pair**, and every same-producer
+/// repetition it does find comes from a genuinely different sentence.
+///
+/// Containment, not equality, is the test, and it is what makes the rule safe: the appended record's
+/// provenance has to be literally inside the established record's, so the two are the same words. It
+/// is applied only to appended records, so the established surface — where a signal legitimately
+/// carries the same obligation from several different sentences — is untouched.
+///
+/// The record that survives is the ESTABLISHED one, which also settles which provenance survives.
+/// That is not the narrower text: it is the text `supporting_statement_ids` cites, which is the
+/// invariant `.3k.3` fixed for the statement path (*"`source_text` deliberately stays the STATEMENT
+/// … what `supporting_statement_ids` cites"*). Rewriting the row reader's `source_text` to the
+/// serialized row would collapse these pairs through the existing key instead — and was rejected
+/// because it moves the provenance of EVERY `row_sigcon_*` record, including the ones no other
+/// producer reaches, to serve nine.
 fn dedup_appended_signal_constraints(
     records: &mut Vec<SignalConstraintRecord>,
     established_count: usize,
 ) {
     let mut seen = HashSet::new();
+    let mut established_spans: HashMap<String, Vec<String>> = HashMap::new();
     let mut retained = Vec::with_capacity(records.len());
     for (index, record) in std::mem::take(records).into_iter().enumerate() {
         let key = signal_constraint_merge_key(&record);
         if index < established_count {
             seen.insert(key);
+            established_spans
+                .entry(signal_constraint_assertion_key(&record))
+                .or_default()
+                .push(record.source_text.clone());
             retained.push(record);
-        } else if seen.insert(key) {
-            retained.push(record);
+            continue;
         }
+        if !seen.insert(key) {
+            continue;
+        }
+        let read_from_the_same_text = established_spans
+            .get(&signal_constraint_assertion_key(&record))
+            .is_some_and(|spans| {
+                let span = record.source_text.trim();
+                !span.is_empty() && spans.iter().any(|established| established.contains(span))
+            });
+        if read_from_the_same_text {
+            continue;
+        }
+        retained.push(record);
     }
     *records = retained;
 }
@@ -36328,6 +36387,97 @@ mod invariant_shape_admission_5 {
         assert_eq!(content_head(" ZETAREADY is "), Some("ZETAREADY"));
         assert_eq!(content_head("   "), None);
         assert_eq!(content_head(" and to be "), None);
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_8 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.8` — one obligation, two producers, two records. The statement
+    //! path reads a serialized signal-description row and cites the row; the row reader reads one
+    //! bullet of the same description cell and cites the bullet. Same subject, kind, condition,
+    //! negation and `supporting_statement_ids`; different `source_text`, which is the last field of
+    //! the merge key, so the key cannot see them as one fact. APB-E published nine such pairs.
+    use super::*;
+
+    fn record(subject: &str, source: &str) -> SignalConstraintRecord {
+        SignalConstraintRecord {
+            constraint_id: String::new(),
+            subject_signal: subject.to_string(),
+            constraint_kind: SignalConstraintKind::MustBeValue {
+                value: "VALID".to_string(),
+            },
+            target_value: None,
+            condition_text: Some("ZETASEL is asserted".to_string()),
+            negated: false,
+            source_text: source.to_string(),
+            supporting_statement_ids: vec!["statement_0001".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    const ROW: &str = "| ZETAUSER | USER_REQ_WIDTH | Requester | User-defined request attribute. \
+                       \u{2022} ZETAUSER must be valid when ZETASEL is asserted. |";
+    const CLAUSE: &str = "ZETAUSER must be valid when ZETASEL is asserted";
+
+    /// The refusal: an appended record read from a SPAN of the established record's own text is the
+    /// same fact, and the established record — the one whose `source_text` is what
+    /// `supporting_statement_ids` cites — is the one that survives.
+    #[test]
+    fn an_appended_record_read_from_the_same_text_is_one_fact() {
+        let mut records = vec![record("ZETAUSER", ROW), record("ZETAUSER", CLAUSE)];
+        dedup_appended_signal_constraints(&mut records, 1);
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].source_text, ROW);
+    }
+
+    /// Containment is the test, not "any record asserting the same thing". A row reader clause the
+    /// established record's text does NOT contain is a second sentence of the document and stays.
+    #[test]
+    fn an_appended_record_read_from_other_text_is_a_second_fact() {
+        let mut records = vec![
+            record("ZETAUSER", ROW),
+            record("ZETAUSER", "ZETAUSER is valid in every Setup phase"),
+        ];
+        dedup_appended_signal_constraints(&mut records, 1);
+        assert_eq!(records.len(), 2);
+    }
+
+    /// The established surface is untouched, which is what keeps a signal's genuinely repeated
+    /// obligation from collapsing: the corpus census found 82 same-producer repetitions, every one
+    /// from a different sentence, and none of them is in scope here.
+    #[test]
+    fn two_established_records_are_never_merged_by_containment() {
+        let mut records = vec![record("ZETAUSER", ROW), record("ZETAUSER", CLAUSE)];
+        dedup_appended_signal_constraints(&mut records, 2);
+        assert_eq!(records.len(), 2);
+    }
+
+    /// The two keys are one definition: the merge key is the assertion key plus the provenance, so a
+    /// field added to either cannot be forgotten in the other.
+    #[test]
+    fn the_merge_key_is_the_assertion_key_plus_the_provenance() {
+        let record = record("ZETAUSER", ROW);
+        assert_eq!(
+            signal_constraint_merge_key(&record),
+            format!("{}|{}", signal_constraint_assertion_key(&record), ROW)
+        );
+    }
+
+    /// The assertion key is NOT the coarse cross-extractor overlap key: two records differing only
+    /// in negation are one `signal_constraint_fact_key` and two assertions.
+    #[test]
+    fn the_assertion_key_separates_what_the_overlap_key_merges() {
+        let affirmative = record("ZETAUSER", ROW);
+        let mut negated = affirmative.clone();
+        negated.negated = true;
+        assert_eq!(
+            signal_constraint_fact_key(&affirmative),
+            signal_constraint_fact_key(&negated)
+        );
+        assert_ne!(
+            signal_constraint_assertion_key(&affirmative),
+            signal_constraint_assertion_key(&negated)
+        );
     }
 }
 

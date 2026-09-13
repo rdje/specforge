@@ -1364,8 +1364,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
   `SIGNAL-DECLARATION-ROW-DROP.4`; fact card `[[arithmetic-width-drops-the-declaration]]`.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.7`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.8` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
-  **one obligation, two producers, two records.** APB-E publishes `PAUSER must_be_value VALID`,
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.8` · Status: `done` (`2026-09-13`, CODE; opened the same day by
+  `.3k.3`) · Goal: **one obligation, two producers, two records.** APB-E publishes `PAUSER must_be_value VALID`,
   `PAUSER must_not_change` ×2 and the three `PWUSER` equivalents **twice** — once as `sigcon_*` from
   the statement path reading the serialized row, once as `row_sigcon_*` from the table reader reading
   the same cell. They differ only in `source_text`: the statement path cites the whole row, the row
@@ -1377,9 +1377,32 @@ honestly-qualified) path to "human-SpecForge in Rust."
   is strictly better (the obligation's own words), but the dedup is deliberately one-directional so
   the established pattern/dynamic surface stays byte-for-byte. Changing the merge key also moves
   `replay-constraints`' reproduction identity for the whole corpus, so the population must be measured
-  before and after with that in mind. Prerequisite: none. Verification: the corpus-wide duplicate pair
-  count re-derived with the producer; observed RED; the chain rebuilt for every document whose
-  artifacts move.
+  before and after with that in mind.
+  **RE-DERIVED `2026-09-13` over all 77 loadable documents with `replay-constraints`, and the census
+  is bigger and narrower than the node's framing.** The corpus carries **82 extra records in 12
+  documents** that assert the same subject/kind/condition as another — and all but nine come from a
+  genuinely DIFFERENT sentence, so they are not duplicates at all. The cross-producer class this leaf
+  is about is **nine records in one document** (APB-E; the node said six, which predated `.3k.3`
+  reading every clause of the row), and in every one the row reader's clause is literally CONTAINED in
+  the statement reader's serialized row.
+  **That containment is the shipped test, and it makes the merge-key question go away.** The merge key
+  is split: `signal_constraint_assertion_key` is every identity field EXCEPT the provenance, and
+  `signal_constraint_merge_key` is now built from it plus `source_text`, so the two cannot drift and
+  the replay's reproduction identity is byte-for-byte unchanged — the blast radius the node worried
+  about is not incurred. `dedup_appended_signal_constraints` drops an APPENDED record when an
+  established record asserts the same thing AND contains its provenance.
+  **Which provenance survives is answered by an invariant rather than by preference.** The established
+  record survives, and its `source_text` is the serialized row — which is what its own
+  `supporting_statement_ids` cites, the invariant `.3k.3` fixed for the statement path. The
+  alternative (rewrite the row reader's `source_text` to the serialized row, letting the existing key
+  collapse the pairs) was rejected: it moves the provenance of EVERY `row_sigcon_*` record, including
+  the ones no other producer reaches, to serve nine.
+  **Measured: corpus replay 201/128 → 192/119, and APB-E is the only document that moves.** Its chain
+  rebuilt: EvidenceIR **27 → 18**, SemanticIR and IntentIR **27 → 18**, and the emitted `.isf`
+  **56 → 38 rules** — with the count of DISTINCT rule bodies unchanged at 12 and not one body lost.
+  FSMGen was being handed eighteen identical rules where the specification states nine obligations.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.8`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.9` · Status: `pending` — **re-derived and re-owned `2026-09-13`;
   the premise it was opened on is wrong and the disposition is DO NOT SHIP YET, on evidence** (opened
   `2026-09-13` by `.3k.3`) · Goal: **a Markdown escape fragments an identifier, and the fragment is
@@ -1641,6 +1664,42 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.8`
+
+- [x] **REPRODUCE / MEASURE** — `replay-constraints --json` over all 77 loadable documents, grouped by
+  the producer's own identity minus provenance: **82 extra records across 12 documents**, of which
+  **9, in one document, are the cross-producer class** — every one a `sigcon_*`/`row_sigcon_*` pair
+  citing the same `supporting_statement_ids`, with the row reader's clause contained in the statement
+  reader's row. Every other group was read and comes from a different sentence.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`:
+  `dedup_appended_signal_constraints` keys on `signal_constraint_merge_key`, whose last field is
+  `source_text`. The statement path cites the serialized row (`.3k.3`'s deliberate invariant — it is
+  what `supporting_statement_ids` cites) and `extract_signal_description_row_constraints` cites the
+  clause, so the key sees two facts. Observed RED against the file at `HEAD`: the dedup keeps both
+  records of a pair whose provenances differ only by containment.
+- [x] **ADDRESSED (verified)** — `signal_constraint_assertion_key` (the merge key without the
+  provenance; the merge key is built FROM it, pinned by a test) plus a containment test applied only
+  to APPENDED records. **Corpus replay 201/128 → 192/119, and APB-E is the only document that moves.**
+  Its chain rebuilt from the restored held-out bundle — `evidence → validate → semantic → validate
+  → intent → validate → adapt` — EvidenceIR **27 → 18**, SemanticIR/IntentIR **27 → 18**,
+  `fact_provenance` 91 → 82, emitted `.isf` **56 → 38 rules with 12 distinct rule bodies before and
+  after and not one body lost**. Bundle `diff -rq` byte-identical before removal; retention back to
+  **24**.
+- [x] **NO REGRESSION** — wire golds `signal_constraint P=R=F1=1.000` with **fp=0** on APB, AHB and
+  AXI and `temporal_rule 1.000` on AXI; `kg-bench` **156/156**; `cargo fmt --all --check` and
+  `cargo clippy --offline --all-targets -D warnings` clean; the whole workspace suite green
+  (`specforge-core` lib 1,516 → **1,521** passing, `specforge` 472, conformance 168,
+  production-graph 8/8); `flow_census.json` re-derived and attributed (+1 function, +4 decision sites,
+  +4 helper edges, +1 semantic macro). The replay identity is byte-for-byte unchanged — no persisted
+  record stops reproducing for a provenance reason.
+- [x] **GENERICITY (ADR 0006)** — string containment between two records' own provenance fields. No
+  document, protocol, vendor or signal vocabulary, and no producer is named.
+- [x] **LOCKSTEP** — the book's obligation-reading chapter gains *"One obligation, read by two
+  readers, is still one obligation"* under the table-cell section that owns the row reader; the
+  existing `PSTRB` paragraph — two paths reaching two DIFFERENT places and agreeing — is exactly the
+  case containment keeps, and is referenced rather than rewritten. No production rule was deleted. No
+  KM card: the durable fact is the book's.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.10`
 

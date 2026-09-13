@@ -156,6 +156,31 @@ declared-signal catalog before any obligation is attributed to it, so a table na
 document never declares produces nothing. Production code contains no protocol, vendor, or signal-name
 list — only the modal, a closed list of helper words, and a closed list of pronouns.
 
+### One obligation, read by two readers, is still one obligation
+
+Reading a description cell from the structured table is an ADDITION: it reaches obligations the
+serialized statement cannot, and it re-states the ones it can. Where both readers reach the same
+bullet, they agree about the subject, the kind, the condition and the sentence it came from — and
+disagree about one thing, which text to quote as provenance. The statement reader quotes the row it
+was given; the row reader quotes the bullet:
+
+```text
+| PAUSER | USER_REQ_WIDTH | Requester | User-defined request attribute.
+          • PAUSER must be valid when PSELx is asserted. … |     ← what the statement reader quotes
+  PAUSER must be valid when PSELx is asserted                     ← what the row reader quotes
+```
+
+Two records that differ only in their quotation are not two requirements, and APB published nine of
+these pairs — which FSMGen then received as eighteen identical rules rather than nine. A record the
+row reader adds is now recognised as one the statement reader already has whenever its quotation is
+*contained in* the other's: same fact, same words, one record. The one that survives quotes the whole
+row, because that is the statement the record's own `supporting_statement_ids` cites.
+
+Containment rather than mere agreement is the test, and it is what keeps a genuinely repeated
+obligation. A specification often states the same requirement in two places — the `PSTRB` case above
+is exactly that — and those two records quote two different sentences, so neither contains the other
+and both stay.
+
 ## A condition can come first, and then the sentence has two subjects
 
 A specification writes a condition after its obligation as readily as before it:

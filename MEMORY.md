@@ -7,27 +7,27 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.10` SHIPPED `2026-09-13`.** A condition FRONTED onto the first sentence of a
-  statement was invisible (`text_before_condition_marker` matches `" when "` WITH a leading space, and the splitter leaves
-  that space on every sentence but the first), so the condition's own signals were published as subjects.
-  `main_clause_of_fronted_conditional` reads where the clause ends — a comma that is not part of a coordinated list, else
-  the condition's own finite verb — and `fronted_condition_subject` resolves the pronoun that heads the main clause to the
-  condition's subject. Corpus **200/127 → 201/128**; AXI-L rebuilt **54 → 56** with nothing removed, SemanticIR/IntentIR
-  53 → 55, `.isf` 130 → 135 rules; wire golds still `fp=0`, `F1=1.000`.
-- **THREE prototypes, and only the third is right — the method is the result again.** Cutting at the condition's finite
-  verb traded 4 fabrications for 4 (an adjunct phrase's signals). The boundary comma alone removed 4 and COST one true
-  record. Only boundary + pronoun antecedent gives −4/+6, and the two legs are inseparable: knowing where the condition
-  ends is what makes the main clause's pronoun recognisable. **Build the rejected version and measure it** — each design
-  was refuted by the corpus, not by argument.
-- **`SIGNAL-DECLARATION-ROW-DROP.4` (opened `2026-09-13` by `.3k.7`) is the other live frontier and the larger gap.**
-  `parse_explicit_signal_declaration`'s `index != tokens.len()` discards a WHOLE declaration, direction included, when it
-  cannot finish the width: **83 declared signals across 10 documents never reach the SemanticIR catalog** (17 arithmetic
-  widths, 66 unstated) and the grounding filter demotes every obligation about them.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.8` SHIPPED `2026-09-13`** (after `.3k.7` and `.3k.10` the same day).
+  The statement path and the row reader publish one obligation twice, differing only in `source_text` — the LAST field
+  of the merge key, so the key cannot see one fact. The key is split: `signal_constraint_assertion_key` is every
+  identity field except the provenance and the merge key is built from it, so the replay's reproduction identity is
+  byte-for-byte unchanged; the dedup then drops an APPENDED record whose provenance is CONTAINED in an established
+  record asserting the same thing. Corpus **201/128 → 192/119**, APB-E the only document that moves: **27 → 18**
+  through evidence/semantic/intent and `.isf` **56 → 38 rules with 12 distinct bodies before and after**.
+- **Each of the three leaves re-derived its own node's population and each was wrong.** `.3k.7`: 12 records, not 8.
+  `.3k.10`: three prototypes, and the corpus refuted the first two (the second cost a true record, which only AXI-L's
+  REBUILD revealed — the replay could not see it, because AXI-L drops out of the comparison the moment its content
+  moves). `.3k.8`: 82 same-fact records corpus-wide, of which only 9 are the cross-producer class, in one document.
+  **Build the rejected version and measure it; re-derive a predecessor's population before it sizes your change.**
+- **`SIGNAL-DECLARATION-ROW-DROP.4` (opened by `.3k.7`) is the largest open gap.**
+  `parse_explicit_signal_declaration`'s `index != tokens.len()` discards a WHOLE declaration, direction included, when
+  it cannot finish the width: **83 declared signals across 10 documents never reach the SemanticIR catalog** (17
+  arithmetic widths, 66 unstated) and the grounding filter demotes every obligation about them.
   `scripts/measure_declared_signals_missing_from_semantic.py`, `[[arithmetic-width-drops-the-declaration]]`.
   **Measure a constraint change at EVIDENCE, not at SemanticIR.**
-- Next action: pick from the open `.3k` leaves, each with its own measured sizing — `.3k.8` (statement/row duplication;
-  changing the merge key moves reproduction identity corpus-wide), `.3k.12` (a predicate between a signal and its level);
-  `.3j` open and unsized; `.3k.9` deliberately not next (`DO NOT SHIP YET`). Or `SIGNAL-DECLARATION-ROW-DROP.4`.
+- Next action: `SIGNAL-DECLARATION-ROW-DROP.4`, or the remaining `.3k` leaves — `.3k.12` (a predicate between a signal
+  and its level; size it against every logic-level record, and do NOT widen a skip list to fit one sentence) and the
+  unsized `.3j`. `.3k.9` stays `DO NOT SHIP YET`.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Push cadence is **400** per director directive `2026-09-13`, FIXED there, so no push is due at 239; directive 16 still gates it on
   full CI. `check_doctrines.sh --all` did not finish in 50 minutes (`CHAIN-CURRENCY` re-executes the real pipeline for every persisted artifact) — budget

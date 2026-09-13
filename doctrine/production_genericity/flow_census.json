@@ -25,21 +25,21 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-     "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.10-A-FRONTED-CONDITION-ENDS-WHERE-ITS-CLAUSE-ENDS",
+     "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.8-ONE-OBLIGATION-READ-TWICE-IS-ONE-FACT",
      "baseline": {
-        "analyzed_functions": 2435,
-        "decision_sites": 13079,
-        "helper_edges": 15323,
+        "analyzed_functions": 2437,
+        "decision_sites": 13104,
+        "helper_edges": 15334,
         "semantic_macros": 1485
      },
      "delta": {
-        "analyzed_functions": 2,
-        "decision_sites": 25,
-        "helper_edges": 11,
-        "semantic_macros": 0
+        "analyzed_functions": 1,
+        "decision_sites": 4,
+        "helper_edges": 4,
+        "semantic_macros": 1
      },
-     "owner": "EXTRACTION-QUALITY-GAUGE.3k.10",
-     "rationale": "A condition fronted onto the FIRST sentence of a statement carries no leading space, so the infix marker reader never saw it and the condition's own signals stayed in the subject part. Two functions: `main_clause_of_fronted_conditional` (where the fronted clause ends - a comma that is not part of a coordinated list, else the condition's own finite verb) and `fronted_condition_subject` (the antecedent of a pronoun that heads the main clause). Two closed lists: the fronted spelling of the markers the infix reader already uses, and the finite copulas the head walk already skips."
+     "owner": "EXTRACTION-QUALITY-GAUGE.3k.8",
+     "rationale": "The statement path and the signal-description row reader publish the same obligation twice, differing only in `source_text` - the last field of the merge key, so the key cannot see them as one fact. `signal_constraint_assertion_key` is the merge key without the provenance (the merge key is now built from it, so the two cannot drift), and `dedup_appended_signal_constraints` drops an APPENDED record whose provenance is contained in an established record asserting the same thing."
   }
  }
 }
