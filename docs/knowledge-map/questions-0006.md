@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -289,11 +297,3 @@
   > how many corpus refreshes remain after OpenCAPI Certified Definition
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > how many corpus refreshes remain after OpenCAPI Discovery
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Ready Definition
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Connection Manager
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Inter-Domain
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after the GIC Overview Guide

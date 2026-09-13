@@ -9,7 +9,6 @@ answers:
   - "why is LTI_GPC == True ? 2:1 not refused as prose"
   - "how many width cells read as prose corpus-wide"
   - "does refusing a prose width lose a signal"
-  - "why does TileLink declare signals named C, D, V and R"
   - "which tables have a name column that scores zero under name_cell_is_read_whole"
   - "does name_cell_is_read_whole cost any recall"
   - "why does TileLink lose its Signal column to its Type column"

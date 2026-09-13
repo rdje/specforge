@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > do the register_bits.rs tiling gates validate field order (NO — only width-sum + name-multiset; a row-jumbled flattened table could pass both gates with WRONG bits, so a deterministic-table reader is strictly more dangerous than the VLM front-end)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > do the wire docs (APB/AHB/AXI/SWD) change when register reset is lowered to ISF (no — ZERO composable resets, .isf byte-identical, WIRE-BASED-100 holds trivially)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -110,6 +112,8 @@
   > does a count over generated/evidence_ir measure current extractor behaviour
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > does a document ever spell the joined form of a split name cell
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > does a figure label appear in content_elements
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -294,7 +298,3 @@
   > does the ISF adapter lower generic gate behaviors
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > does the LLM constraint path use classify_signal_constraint_kind
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > does the Layer D grounding filter need to be weakened
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > does the NLI verifier actually catch real extraction errors

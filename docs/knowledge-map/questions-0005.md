@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > how do I measure the parametric width cell population
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > how do I populate the fsmgen gitlink in a detached measurement worktree
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how do I prove a live-document partition is lossless
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
@@ -48,6 +54,8 @@
   > how do I see which ingested PDFs form structural families (the corpus-cluster command)
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > how do I size the population of an extractor change
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > how do I tell Clock source from c opcode
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I tell a comma family from a footnote marker from a phrase without a word list
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
@@ -289,11 +297,3 @@
   > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > how does specforge split a coordinated X and Y relation subject into both agents
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames

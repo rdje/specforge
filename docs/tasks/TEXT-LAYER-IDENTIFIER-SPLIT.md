@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `TEXT-LAYER-IDENTIFIER-SPLIT`
-- Status: `active` (`2026-09-14`; `.0` open)
+- Status: `active` (`2026-09-14`; `.0` done — no rule; `.1`/`.2` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall), with an ingest leg in `R15`
 - Created: `2026-09-14`
 - Last updated: `2026-09-14`
@@ -80,27 +80,67 @@ truncate and nothing to unescape.
 
 - ID: `TEXT-LAYER-IDENTIFIER-SPLIT` · Status: `active` (`2026-09-14`) · Children: `.0`
 
-- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.0` · Status: `pending` (opened `2026-09-14`) · Goal: **measure the
-  class before proposing anything.** Two independent measurements, neither of which changes code:
-  (a) over the persisted corpus, every `signal_description` name cell whose shape is `<identifier>
-  <continuation>`, classified by whether the whole column shares the leading token — the signature that
-  separates a split identifier from a phrase, since `c opcode`/`c param`/`c valid` all lead with `c`
-  while `Clock source`/`Reset controller` do not; and (b) over the source PDFs SpecForge can still reach
-  on the repository volume, whether the text layer carries underscores the persisted SourceIR does not.
-  Two documents are already known to carry the class — TileLink (both revisions) and eMMC `table_0221`
-  (`t PERIOD`, `t TLH , t THL`) — and eMMC's **declares**, so the class is not one publisher's
-  typesetting.
-  Non-goal: any code change; any rejoin rule. The leaf is allowed to conclude that the evidence needed
-  to rejoin is not reachable and that the honest outcome is an accounted refusal rather than a repair.
-  Prerequisite: none. Verification: read-only over persisted artifacts and repository-volume PDFs; no
-  artifact written or mutated.
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.0` · Status: `done` (`2026-09-14`, PROBE/DOC) · **Measured; no rule,
+  and the measurement is why.** Both legs ran.
+  **The column signature is not a discriminator.** "A leading token repeated down the column with
+  distinct continuations" selects **120 columns** corpus-wide (10 current, 110 legacy), and in the
+  current stratum **not one of them is a name column**: all ten are *description* columns whose
+  sentences happen to open with the same word — `Transaction identifier` / `Transaction address`,
+  `Global clock` / `Global reset`, `User request` / `User write`. Nine legacy columns are chosen as a
+  name column and five of those are not split identifiers either (`Write address` names an AXI
+  *channel*; `Redundant Data` is a function). The signature is the shape; it is not the fact.
+  **The in-document join is precise and repairs nothing.** Asking whether the document's own text
+  anywhere spells `<lead>_<continuation>` selects **3 of the 120**, all AMD IOMMU field tables that
+  also write `iommu_info` and `iommu_attributes` — 3 correct, 0 wrong. But all three are in tables
+  that declare nothing, so a rule keyed on it would change no declaration in the corpus.
+  **The case that opened the tree has no such evidence to join against.** TileLink's 36 underscored
+  spellings are vector text inside three timing-diagram figures (`Figure 4.1 Ready-Valid Signaling`,
+  4.3, 4.4). The ingest captures those as images — SpecForge holds `picture-0007/0009/0010.png` — and
+  the only observations recorded on them are the source document's own captions. So the joining is
+  stated in the document, is not in any text SpecForge reads, and **is** in a surface SpecForge already
+  carries. That is `.1`.
+  **A second notation was found and it is not an underscore.** eMMC `table_0221` writes `t PERIOD` and
+  `t TLH , t THL` for `tPERIOD` and `tTLH`/`tTHL` — a *subscript* split with no separator — and it
+  **declares**. A join rule keyed on `_` would not find it. That is `.2`.
+  Verification: `python3 scripts/measure_split_identifier_name_cells.py`, read-only; the reader mirror
+  is imported from `measure_parametric_width_cell_shapes.py`. PDF text-layer counts by `pypdf` over the
+  repository-volume copy; figure-asset observations read from the persisted EvidenceIR.
+  Commit: `TEXT-LAYER-IDENTIFIER-SPLIT.0`
+
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.1` · Status: `pending` (opened `2026-09-14` by `.0`) · Goal: **the
+  only reachable spelling of TileLink's names is inside a figure SpecForge already stores.** Three
+  timing diagrams carry `a_opcode`, `a_valid`, `a_ready`, `a_size`, `a_source`, `d_opcode`, `d_valid`,
+  `d_ready`, `d_size`, `d_source` as vector text; the assets are persisted and their only observations
+  are captions. Establish whether a VLM read of those three images recovers the ten names, and — this
+  is the load-bearing half — whether a name recovered from a **figure** may ground a table row's
+  identity at all, or whether it can only corroborate one. The doctrine that table declarations are
+  authoritative was written when the alternative was prose, not an image.
+  **Cost is stated because it decides the sequencing**: this needs a live VLM provider over three
+  images, and TileLink cannot be rebuilt (no retained normalized bundle), so the recovery must be
+  demonstrated on the assets directly rather than through a chain rebuild.
+  Prerequisite: none. Verification: the three figures read with the provider named and pinned; the ten
+  names compared against the PDF text layer as ground truth; a stated decision on figure-grounded
+  identity before any rule.
+  Commit: pending
+
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.2` · Status: `pending` (opened `2026-09-14` by `.0`) · Goal: **a
+  subscript split has no separator, so nothing can be joined on.** eMMC `table_0221` declares from
+  `t PERIOD`, `t TLH , t THL`; the document writes `tPERIOD`, `tTLH`, `tTHL`. The join is
+  concatenation, not `<a>_<b>`, and the same cell also carries a comma family — so the one cell needs
+  two readings at once. Census the corpus population of a single-letter lead followed by an
+  upper-case continuation before proposing anything; a rule that concatenates two words is strictly
+  more dangerous than one that inserts an underscore, because it leaves no mark of having guessed.
+  Prerequisite: none. Verification: the population measured with the real reader and adjudicated;
+  observed RED; every legitimate multi-token name shape shown to survive.
   Commit: pending
 
 ## Current Frontier
 
-1. `TEXT-LAYER-IDENTIFIER-SPLIT.0` — the two censuses above. Run (b) first if it is cheaper: if the
-   underscore survives ingest for documents that have it, the ingest leg is closed and the whole tree is
-   about the cells that never had one.
+1. `TEXT-LAYER-IDENTIFIER-SPLIT.1` — read the three TileLink timing diagrams and decide whether a name
+   recovered from a figure may ground a table row's identity. The identity question is the leaf, not the
+   VLM call.
+2. `TEXT-LAYER-IDENTIFIER-SPLIT.2` — the subscript notation (`t PERIOD` for `tPERIOD`), which declares
+   and which no underscore-keyed rule can reach. Census first.
 
 ## Decisions
 
@@ -111,17 +151,29 @@ truncate and nothing to unescape.
 - `2026-09-14` — **the first leaf is a census with no code change.** Every rule this reader has been given
   over-fired until its selection was inspected, and this one would join two words into an identifier,
   which is the most expensive kind of mistake available here.
+- `2026-09-14` — **`.0` shipped no rule even though one of its two tests is precise.** The in-document
+  join selects 3 of 120 and is right about all three, which is the best selectivity any rule in this
+  area has shown. It still does not ship, because all three are in tables that declare nothing: a rule
+  whose entire measured effect is zero declarations is a rule with no evidence behind it, and the next
+  document to exercise it would be its first test rather than its hundredth.
+- `2026-09-14` — **the ingest is not at fault and the tree says so.** The underscore was never in the
+  text stream: it is vector text inside figures, which the ingest correctly captures as images. Blaming
+  the ingest would have sent the repair to the wrong stage.
 
 ## Open Questions
 
-- Does the underscore survive ingest for a document whose text layer has it? The TileLink evidence says
-  no for that document, but 36 underscores on 5 code-listing pages may simply be pages the ingest did not
-  capture at all — which is a different finding and a different fix.
-- Is "every cell in the column leads with the same token" a sufficient signature, or does a real catalog
-  ever share a leading token across a whole column? An AXI channel table's names share a *prefix*
-  (`AWADDR`, `AWLEN`) but not a whitespace-delimited leading token, which is the distinction to measure.
+- ~~Does the underscore survive ingest for a document whose text layer has it?~~ **Answered by `.0`, and
+  the premise was wrong.** The underscore is not on code-listing pages and is not lost by the ingest: it
+  is vector text inside three timing-diagram figures, which the ingest captures as images by design. The
+  text stream never had it.
+- ~~Is "every cell in the column leads with the same token" a sufficient signature?~~ **No, measured.**
+  It selects 120 columns corpus-wide and the current stratum's ten are all description columns. A real
+  catalog shares a *prefix* (`AWADDR`, `AWLEN`) and not a whitespace-delimited leading token — but so
+  does a column of sentences that open with the same word, and the second population is far larger.
+- May a name read from a FIGURE ground a table row's identity, or only corroborate one? `.1`. The
+  authority doctrine was written when the alternative to a table was prose.
 - Can the continuation token ever be trusted alone? `t TLH , t THL` is two split identifiers and a comma
-  in one cell, and no rule proposed so far reads it.
+  family in one cell, and no rule proposed so far reads it (`.2`).
 
 ## Blockers
 
@@ -129,6 +181,15 @@ None.
 
 ## Verification Log
 
+- `2026-09-14` — `.0`. `python3 scripts/measure_split_identifier_name_cells.py` over all 573 boundary
+  tables: 120 columns carry the signature (10 current, 110 legacy), each printed verbatim with its
+  header, its cells, its role (header-designated / chosen / declaring) and any in-document join. Of the
+  9 legacy columns the reader CHOOSES, 3 carry a join and all 3 are AMD IOMMU field tables; the current
+  stratum's 10 are all description columns and none is chosen. Read-only: no artifact written, rebuilt
+  or mutated. Figure evidence: `generated/evidence_ir/tilelink_1_8_0_specification/evidence_ir.json`
+  visual evidence `visual_0021`/`visual_0023`/`visual_0024` (assets `picture_0007`/`0009`/`0010`, pages
+  27/33/34) exist with caption-only observations and no VLM read; `pypdf` over the repository-volume PDF
+  puts all 36 underscores on exactly those pages.
 - `2026-09-14` — opened. Evidence carried over from `PROSE-NAME-CELL-DECLARATION.5`:
   `python3 scripts/measure_name_column_whole_cell_score.py` (11 zeroed name columns corpus-wide, all
   prose, TileLink not among them), the column profile computed with that script's own `column_profile`
@@ -140,9 +201,15 @@ None.
 ## Commit Log
 
 - Opened in the commit that closed `PROSE-NAME-CELL-DECLARATION.5`.
+- `.0` — `TEXT-LAYER-IDENTIFIER-SPLIT.0`.
 
 ## Changelog
 
+- `2026-09-14` — `.0` closed with **no rule**. The column signature selects 120 columns and the current
+  stratum's ten are all description columns; the in-document join selects 3 of 120 and is right about
+  all three, but all three are inert. TileLink's joining spelling is vector text inside three figures
+  the ingest correctly stores as images — so the ingest is not at fault and the evidence is reachable
+  only through the VLM path (`.1`). eMMC's `t PERIOD` is a subscript split with no separator (`.2`).
 - `2026-09-14` — created from `PROSE-NAME-CELL-DECLARATION.5`'s census, which falsified that leaf's own
   premise: TileLink's rotation is not the whole-cell column score's doing under either score, and the
   cause is a name cell holding one identifier the text layer split in two.
