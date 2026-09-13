@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > how do I regenerate controller_input.json and trajectory_report.json
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > how do I relocate a verified EvidenceIR without breaking its proof (EvidenceIr::load_relocated_to_artifact_base_root — it verifies the artifact where it is, moves it to <base>/<document_key>/evidence_ir.json, and re-derives the proof for the new location from the same verified SourceIR prefix and the same sealed proof context; an unsealed artifact_layout rewrite is still
+  > refused)
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
@@ -84,6 +89,8 @@
   > how does SpecForge combine confidence across modalities or sources
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how does SpecForge decide signal direction (input/output) in the emitted .isf
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > how does SpecForge decide which signal a logic level belongs to
 - [contested-priors](../knowledge/contested-priors.md)
   > how does SpecForge detect contradicting or conflicting priors
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -154,6 +161,8 @@
   > how does a future SpecForge session retrieve and re-run a current claim
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > how does a heterogeneous collection declare its legal maximum
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > how does a list of signals share one logic level
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -288,13 +297,3 @@
   > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > how does the corpus task preserve all evidence after containment
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how does the current claim census prove no produced candidate is silent
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does the extract-constraints-llm prompt express a validity requirement
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how does the extractor avoid minting a constraint about a cross-referenced register field
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split

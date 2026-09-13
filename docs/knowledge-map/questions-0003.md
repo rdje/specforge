@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -110,6 +112,8 @@
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does a research record with a live writer need a rollover instead of a partition
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > does a subscript separate a signal from its level
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > does a valid claim registry record prove the assertion true
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -294,7 +298,3 @@
   > does the constraint record source_text become the clause
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does the converge NLI pass measure quality or demote unsupported intent
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > does the corpus contain a negated value binding the extractor cannot read
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)

@@ -6965,52 +6965,6 @@ pub fn apply_persisted_polarity_to_constraints(
     apply_signal_polarity_to_constraints(constraints, &resolved);
 }
 
-/// Recognize a logic-level VALUE BINDING in an active construction the discovered-value /
-/// "must be `<value>`" path misses — e.g. "the Requester must drive PSTRB LOW", "X is tied
-/// HIGH". Returns the kind (`MustBeHigh`/`MustBeLow`) when a logic-level **word** (the
-/// universal "how", LOGIC-LEVEL-BOUNDARY) is the object of a value-binding verb. Gated two
-/// ways against over-generation: (1) a binding verb must be present, and (2) only alphabetic
-/// word forms (`high`/`low`/`hi`/`lo`/`true`/`false`) count — never the numeric `1`/`0`, which
-/// are ambiguous with bit indices. The last such word wins (the object position). `lowered`
-/// is the lowercased subject clause (the condition clause is already stripped by the caller).
-fn logic_level_binding_kind_from_text(lowered: &str) -> Option<SignalConstraintKind> {
-    const BIND_VERBS: &[&str] = &[
-        "drive", "driven", "drives", "set", "sets", "tied", "held", "pulled", "forced",
-    ];
-    // The bound level is the verb's OBJECT — it must sit within a few words *after* the bind
-    // verb, not a distant condition clause ("… driven correctly every cycle in which X is True").
-    const MAX_GAP: usize = 6;
-    let words: Vec<&str> = lowered
-        // Keep an opaque identifier as one grammar unit. Splitting on `_` makes the bounded
-        // verb→value window depend on a source-owned symbol's spelling (and can also expose a
-        // `high`/`low` component inside an identifier as if it were the bound logic value).
-        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
-        .filter(|w| !w.is_empty())
-        .collect();
-    // Whole-word bind verb (so "set" does NOT match the substring in "reset").
-    let bind_pos = words.iter().position(|w| BIND_VERBS.contains(w))?;
-    let mut kind = None;
-    for (i, word) in words.iter().enumerate().skip(bind_pos + 1) {
-        if i - bind_pos > MAX_GAP {
-            break;
-        }
-        // Alphabetic word forms only (exclude numeric 1/0 — bit indices).
-        if word.len() < 2 || !word.chars().all(|c| c.is_ascii_alphabetic()) {
-            continue;
-        }
-        // "active low" / "active high" describes polarity, not a must-be constraint.
-        if i >= 1 && words[i - 1] == "active" {
-            continue;
-        }
-        if crate::ir::normative_vocab::LOGIC_HIGH_VALUES.contains(word) {
-            kind = Some(SignalConstraintKind::MustBeHigh);
-        } else if crate::ir::normative_vocab::LOGIC_LOW_VALUES.contains(word) {
-            kind = Some(SignalConstraintKind::MustBeLow);
-        }
-    }
-    kind
-}
-
 /// EXTRACTION-QUALITY-GAUGE.3c — recognize a logic-level binding that is DESCRIPTIVE NARRATION of
 /// an actor's action (mechanism / waveform example), not a global invariant. The deterministic
 /// binding path ([`logic_level_binding_kind_from_text`]) mints `MustBeHigh`/`MustBeLow` from
@@ -7559,15 +7513,14 @@ fn is_dotted_cross_reference_subject(text: &str, subject: &str) -> bool {
 /// signal is not valid"* as the CONDITION of a `must be 0` record.
 ///
 /// **The binding is FOUND exactly as the statement-wide reader found it, and then LOCATED.** That
-/// order is the whole design and it is measured, not stylistic. Running the binders per clause
-/// instead finds bindings the statement-wide reader never had — measured at +6 records in AMBA LPI
-/// alone — and three of those six are `PREQ`/`PACCEPT must_be_high` off rows that set those signals
-/// LOW, because [`logic_level_binding_kind_from_text`] pairs a level with the BIND VERB rather than
-/// with a signal and the subject scan is statement-wide. That is a live defect of its own
-/// (`EXTRACTION-QUALITY-GAUGE.3k.11`), and a span leaf must not ship recall through a pairing that is
-/// still wrong — the same ordering `.3k` imposed on `.3k.2` before `.3k.3`. So this leaf changes
-/// WHICH SPAN the record's condition and negation are read from and nothing else: the kind and value
-/// are bit-for-bit what they were.
+/// order is `.3k.4`'s whole design and it is measured, not stylistic: searching per clause instead
+/// finds bindings the statement-wide reader never had, and a span leaf shipping that recall would
+/// also have multiplied a pairing defect it did not own. The value and kind are bit-for-bit what
+/// they were and only the span moves.
+///
+/// EXTRACTION-QUALITY-GAUGE.3k.11 — this is now the DISCOVERED-VALUE binder's clause only. Once each
+/// logic level is paired with its OWN signal ([`logic_level_bindings`]) that binder answers a
+/// different question, locates its own clauses, and can state several bindings in one statement.
 ///
 /// The clause split is [`constraint_bearing_sentences`]', so a serialized row decomposes the same way
 /// for every producer, and the location fails OPEN to the whole statement when no single clause
@@ -7577,44 +7530,206 @@ fn binding_bearing_clause<'a>(
     discovered_values: &HashSet<String>,
 ) -> Option<(&'a str, SignalConstraintKind, Option<String>)> {
     let lowered = text.to_ascii_lowercase();
-    let subject_part = text_before_condition_marker(text);
-    let (kind, value) = if let Some(value) =
-        extract_discovered_state_value_from_text(&lowered, discovered_values)
-    {
-        (
-            SignalConstraintKind::MustBeValue {
-                value: value.clone(),
-            },
-            Some(value),
-        )
-    } else if let Some(kind) =
-        logic_level_binding_kind_from_text(&subject_part.to_ascii_lowercase())
-    {
-        (kind, None)
-    } else {
-        return None;
-    };
+    let value = extract_discovered_state_value_from_text(&lowered, discovered_values)?;
     let binding = text
         .split(['.', ';', '\u{2022}', '\n'])
-        .find(|clause| match &value {
-            Some(value) => {
-                extract_discovered_state_value_from_text(
-                    &clause.to_ascii_lowercase(),
-                    discovered_values,
-                )
-                .as_ref()
-                    == Some(value)
-            }
-            None => {
-                logic_level_binding_kind_from_text(
-                    &text_before_condition_marker(clause).to_ascii_lowercase(),
-                )
-                .as_ref()
-                    == Some(&kind)
-            }
+        .find(|clause| {
+            extract_discovered_state_value_from_text(
+                &clause.to_ascii_lowercase(),
+                discovered_values,
+            )
+            .as_ref()
+                == Some(&value)
         })
         .unwrap_or(text);
-    Some((binding, kind, value))
+    Some((
+        binding,
+        SignalConstraintKind::MustBeValue {
+            value: value.clone(),
+        },
+        Some(value),
+    ))
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3k.11 — which SIGNAL each logic level in a clause binds to.
+///
+/// [`logic_level_binding_kind_from_text`] answers a narrower question: is there a level within six
+/// words after a binding verb? It returns the LAST such level and says nothing about what it belongs
+/// to, and the caller then attaches that one kind to every declared signal the statement names. So a
+/// row stating `Controller must set PREQ LOWand PREQCHK HIGH` published **`PREQ must_be_high`** —
+/// the level one token further on, attached to the signal before it — and
+/// `An alternative implementation would be for HSEL to be tied HIGH … to override HTRANS to IDLE`
+/// published `HTRANS must_be_high`, a level that belongs to `HSEL`.
+///
+/// English binds a level to the identifier ADJACENT to it, and the direction is not fixed: *"tied
+/// LOW QDENY signal"* puts the signal after, *"its WSTRB input tied HIGH"* puts it before. So the
+/// walk goes backward first — skipping the binding verb and the descriptor nouns English puts
+/// between a signal and its level — and forward only when backward finds nothing.
+///
+/// **Two levels in one clause delimit each other.** The walk stops at another level token, which is
+/// what keeps `PREQCHK HIGH` from reaching back past `LOWand` to `PREQ`. A level is recognised on a
+/// token's leading uppercase RUN as well as on the whole token, because the normalizer loses spaces
+/// (`LOWand`, `HIGHafter`) and a rule written against clean word boundaries would behave differently
+/// on the corpus than on a test string.
+///
+/// Universal English adjacency plus the logic-level vocabulary the repository already carries
+/// (ADR 0006 — no signal names, no document vocabulary).
+fn logic_level_bindings(
+    text: &str,
+    declared_signals: &HashSet<String>,
+) -> Vec<(Vec<String>, SignalConstraintKind)> {
+    const BIND_VERBS: &[&str] = &[
+        "drive", "driven", "drives", "set", "sets", "tied", "held", "pulled", "forced",
+    ];
+    /// The bound level must sit within a few words *after* a binding verb, not in a distant clause.
+    const MAX_GAP: usize = 6;
+    /// Words English puts between a signal and its level, skipped while walking to the identifier.
+    const DESCRIPTORS: &[&str] = &[
+        "a", "an", "the", "its", "their", "all", "both", "of", "to", "be", "is", "are", "was",
+        "were", "must", "shall", "input", "inputs", "output", "outputs", "signal", "signals",
+        "bit", "bits", "pin", "pins", "value", "and", "or",
+    ];
+
+    let words: Vec<&str> = text
+        // Keep an opaque identifier as one grammar unit, exactly as the kind reader does.
+        .split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+        .filter(|word| !word.is_empty())
+        .collect();
+    let bind_positions: Vec<usize> = words
+        .iter()
+        .enumerate()
+        .filter(|(_, word)| BIND_VERBS.contains(&word.to_ascii_lowercase().as_str()))
+        .map(|(index, _)| index)
+        .collect();
+    if bind_positions.is_empty() {
+        return Vec::new();
+    }
+
+    let mut bindings: Vec<(Vec<String>, SignalConstraintKind)> = Vec::new();
+    for (index, word) in words.iter().enumerate() {
+        let Some(kind) = token_logic_level(word) else {
+            continue;
+        };
+        // "active low" / "active high" describes polarity, not a must-be constraint.
+        if index >= 1 && words[index - 1].eq_ignore_ascii_case("active") {
+            continue;
+        }
+        if !bind_positions
+            .iter()
+            .any(|bind| index > *bind && index - bind <= MAX_GAP)
+        {
+            continue;
+        }
+        let mut subjects = walk_for_level_subjects(
+            &words,
+            index,
+            DESCRIPTORS,
+            BIND_VERBS,
+            declared_signals,
+            true,
+        );
+        if subjects.is_empty() {
+            subjects = walk_for_level_subjects(
+                &words,
+                index,
+                DESCRIPTORS,
+                BIND_VERBS,
+                declared_signals,
+                false,
+            );
+        }
+        if !subjects.is_empty() {
+            bindings.push((subjects, kind));
+        }
+    }
+    bindings
+}
+
+/// The identifiers a level token binds to, walking away from it in one direction.
+///
+/// Descriptor nouns and the binding verb are skipped before the first identifier is found; once a
+/// run of identifiers starts, the walk keeps consecutive ones (a list — `AERR, DERR driven LOW`)
+/// and stops at anything else. Another LEVEL always stops the walk, in either direction.
+fn walk_for_level_subjects(
+    words: &[&str],
+    level: usize,
+    descriptors: &[&str],
+    bind_verbs: &[&str],
+    declared_signals: &HashSet<String>,
+    backward: bool,
+) -> Vec<String> {
+    let mut subjects: Vec<String> = Vec::new();
+    let mut index = level;
+    loop {
+        index = if backward {
+            match index.checked_sub(1) {
+                Some(next) => next,
+                None => break,
+            }
+        } else {
+            match index + 1 {
+                next if next < words.len() => next,
+                _ => break,
+            }
+        };
+        let word = words[index];
+        if token_logic_level(word).is_some() {
+            break;
+        }
+        if declared_signals.contains(word) {
+            if !subjects.iter().any(|existing| existing == word) {
+                subjects.push(word.to_string());
+            }
+            continue;
+        }
+        let lowered = word.to_ascii_lowercase();
+        // A purely numeric token is a SUBSCRIPT or bit index, part of the reference beside it rather
+        // than a boundary: `sets HPROT[0] HIGH` tokenizes as `HPROT`, `0`, `HIGH`, and stopping at
+        // the `0` loses the signal the level plainly belongs to. Numerals are never levels here —
+        // `token_logic_level` admits alphabetic forms only — so this cannot swallow a binding.
+        let is_subscript = !lowered.is_empty() && lowered.chars().all(|c| c.is_ascii_digit());
+        let skippable = is_subscript
+            || descriptors.contains(&lowered.as_str())
+            || bind_verbs.contains(&lowered.as_str());
+        // Scaffolding before the first identifier is skipped; after one has been found, only a list
+        // connective may continue the run.
+        if skippable && (subjects.is_empty() || is_subscript || lowered == "and" || lowered == "or")
+        {
+            continue;
+        }
+        break;
+    }
+    subjects
+}
+
+/// The logic level a token states, read from the whole token OR from its leading uppercase run.
+///
+/// The run form is load-bearing on this corpus: the Markdown normalizer loses the space in
+/// `LOW and` / `HIGH after`, so `LOWand` and `HIGHafter` are single tokens that still state a level
+/// and still delimit their neighbour's binding. A signal whose name merely STARTS with those letters
+/// (`LOWPWR`) is untouched, because the run must be exactly the level.
+fn token_logic_level(word: &str) -> Option<SignalConstraintKind> {
+    let run: String = word
+        .chars()
+        .take_while(|character| character.is_ascii_uppercase())
+        .collect();
+    for candidate in [word.to_ascii_lowercase(), run.to_ascii_lowercase()] {
+        // Alphabetic forms only: a numeric 1/0 in this position is a bit index, not a level.
+        if candidate.len() < 2
+            || !candidate
+                .chars()
+                .all(|character| character.is_ascii_alphabetic())
+        {
+            continue;
+        }
+        if crate::ir::normative_vocab::LOGIC_HIGH_VALUES.contains(&candidate.as_str()) {
+            return Some(SignalConstraintKind::MustBeHigh);
+        }
+        if crate::ir::normative_vocab::LOGIC_LOW_VALUES.contains(&candidate.as_str()) {
+            return Some(SignalConstraintKind::MustBeLow);
+        }
+    }
+    None
 }
 
 fn extract_dynamic_signal_constraints(
@@ -7659,87 +7774,127 @@ fn extract_dynamic_signal_constraints(
         // EXTRACTION-QUALITY-GAUGE.3k.4 — and the clause that BINDS is the record's span. Every part
         // below reads it, so a record can no longer take its value from one sentence and its
         // condition or negation from another.
-        let Some((binding, constraint_kind, target_value)) =
-            binding_bearing_clause(&statement.text, discovered_values)
-        else {
-            continue;
-        };
-        // EXTRACTION-QUALITY-GAUGE.3c: a logic-level binding read off an actor's ACTION in
-        // narration ("the transmitter sets this signal HIGH to indicate …", "At T2 the
-        // controller sets PREQ HIGH") describes mechanism/example, not a global invariant —
-        // drop it (the temporal layer owns timed facts). Static invariants ("X is tied HIGH")
-        // and mandatory bindings ("must drive X LOW") are kept by construction. Evaluated over the
-        // whole statement, which is the narration this gate reads (`.3k.5`'s scope question).
-        if matches!(
-            constraint_kind,
-            SignalConstraintKind::MustBeHigh | SignalConstraintKind::MustBeLow
-        ) && is_descriptive_narration_binding(&statement.text)
+        //
+        // EXTRACTION-QUALITY-GAUGE.3k.11 — the two binders are no longer symmetric, because they
+        // answer different questions. The discovered-value binder says WHICH VALUE the statement
+        // binds and nothing about to what, so its subjects still come from the statement (a register
+        // row names its subject in the cell mnemonic and binds in the body). The logic-level binder
+        // now says which SIGNAL each level belongs to, so its subjects come from the binding itself
+        // — and because the pairing is per level, one clause can state several.
+        let value_binding = binding_bearing_clause(&statement.text, discovered_values);
+        let level_bindings: Vec<(&str, Vec<String>, SignalConstraintKind)> = if value_binding
+            .is_some()
         {
+            Vec::new()
+        } else {
+            // EXTRACTION-QUALITY-GAUGE.3c: a logic-level binding read off an actor's ACTION in
+            // narration ("the transmitter sets this signal HIGH to indicate …", "At T2 the
+            // controller sets PREQ HIGH") describes mechanism/example, not a global invariant —
+            // drop it (the temporal layer owns timed facts). Static invariants ("X is tied HIGH")
+            // and mandatory bindings ("must drive X LOW") are kept by construction. Evaluated over
+            // the whole statement, which is the narration this gate reads (`.3k.5`'s scope
+            // question).
+            if is_descriptive_narration_binding(&statement.text) {
+                continue;
+            }
+            statement
+                .text
+                .split(['.', ';', '\u{2022}', '\n'])
+                .flat_map(|clause| {
+                    logic_level_bindings(text_before_condition_marker(clause), &declared_signals)
+                        .into_iter()
+                        .map(move |(subjects, kind)| (clause, subjects, kind))
+                })
+                .collect()
+        };
+        if value_binding.is_none() && level_bindings.is_empty() {
             continue;
         }
-        // EXTRACTION-QUALITY-GAUGE.3k.4 — the SUBJECT search deliberately stays STATEMENT-scoped,
-        // and that asymmetry is measured rather than assumed. This path's dominant shape is a
-        // serialized register/field row whose subject is the cell's leading MNEMONIC and whose
-        // binding is in the descriptive body — NVMe `| 17:16 | Record Format (RECFMT): … The format
-        // of the record specified in this definition shall be 0h. |`. Narrowing the subject to the
-        // binding clause loses `RECFMT` and nine more NVMe records like it, because the row's other
-        // parts legitimately name the subject its obligation constrains — the same asymmetry
-        // `is_post_passive_binding_only_subject` gate (2) already encodes for table rows. What the
-        // clause owns is the OBLIGATION's own content: its value, its condition and its negation.
-        let subject_part = text_before_condition_marker(&statement.text);
+        // EXTRACTION-QUALITY-GAUGE.3k.4 — the DISCOVERED-VALUE path's SUBJECT search deliberately
+        // stays STATEMENT-scoped, and that asymmetry is measured rather than assumed. Its dominant
+        // shape is a serialized register/field row whose subject is the cell's leading MNEMONIC and
+        // whose binding is in the descriptive body — NVMe `| 17:16 | Record Format (RECFMT): … The
+        // format of the record specified in this definition shall be 0h. |`. Narrowing the subject
+        // to the binding clause loses `RECFMT` and nine more NVMe records like it, because the row's
+        // other parts legitimately name the subject its obligation constrains — the same asymmetry
+        // `is_post_passive_binding_only_subject` gate (2) already encodes for table rows.
+        let mut minted: HashSet<String> = HashSet::new();
+        let bindings: Vec<(&str, Vec<String>, SignalConstraintKind, Option<String>)> =
+            match value_binding {
+                Some((binding, kind, value)) => {
+                    let subject_part = text_before_condition_marker(&statement.text);
+                    let mut subject_signals = collect_subject_signal_tokens_with_discovered_values(
+                        subject_part,
+                        discovered_values,
+                    );
+                    if subject_signals.is_empty() {
+                        subject_signals = collect_subject_signal_tokens_with_discovered_values(
+                            &statement.text,
+                            discovered_values,
+                        );
+                    }
+                    vec![(binding, subject_signals, kind, value)]
+                }
+                None => level_bindings
+                    .into_iter()
+                    .map(|(binding, subjects, kind)| (binding, subjects, kind, None))
+                    .collect(),
+            };
 
-        let mut subject_signals =
-            collect_subject_signal_tokens_with_discovered_values(subject_part, discovered_values);
-        if subject_signals.is_empty() {
-            subject_signals = collect_subject_signal_tokens_with_discovered_values(
-                &statement.text,
-                discovered_values,
-            );
-        }
-        subject_signals.retain(|s| declared_signals.contains(s));
-        // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the DESCRIPTIVE BODY of a
-        // field-definition cell ("… This field indicates … A value of FFFFh …" → `FFFF`); the
-        // field's own mnemonic (which precedes the "This field <verb>" marker) is kept.
-        subject_signals.retain(|s| !is_descriptive_field_cell_spurious_subject(&statement.text, s));
-        // EXTRACTION-QUALITY-GAUGE.3g: drop a subject lifted from a `Reg.Field` dotted cross-reference
-        // in the cell body ("… aligned to the memory page size (CC.MPS) …" → `MPS`); a subject that
-        // ever appears standalone (its own declaration) is kept.
-        subject_signals.retain(|s| !is_dotted_cross_reference_subject(&statement.text, s));
-        // CORPUS-COVERAGE.2.50a: drop a subject the document never names BEFORE the passive binding
-        // this record attributes to it (a device/signal identifier after "shall be held in reset"); the same
-        // obligation's real pre-lead subject, and every active `must drive …` binding, are kept.
-        subject_signals.retain(|s| !is_post_passive_binding_only_subject(&statement.text, s));
-        // EXTRACTION-QUALITY-GAUGE.3h: drop a subject reachable only from a VALUE position
-        // ("… set to FFFFh" → `FFFF`); a standalone occurrence is always kept.
-        subject_signals.retain(|s| !is_value_position_subject(&statement.text, s));
-        if subject_signals.is_empty() {
-            continue;
-        }
+        for (binding, mut subject_signals, constraint_kind, target_value) in bindings {
+            subject_signals.retain(|s| declared_signals.contains(s));
+            // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the DESCRIPTIVE BODY of a
+            // field-definition cell ("… This field indicates … A value of FFFFh …" → `FFFF`); the
+            // field's own mnemonic (which precedes the "This field <verb>" marker) is kept.
+            subject_signals
+                .retain(|s| !is_descriptive_field_cell_spurious_subject(&statement.text, s));
+            // EXTRACTION-QUALITY-GAUGE.3g: drop a subject lifted from a `Reg.Field` dotted
+            // cross-reference in the cell body ("… aligned to the memory page size (CC.MPS) …" →
+            // `MPS`); a subject that ever appears standalone (its own declaration) is kept.
+            subject_signals.retain(|s| !is_dotted_cross_reference_subject(&statement.text, s));
+            // CORPUS-COVERAGE.2.50a: drop a subject the document never names BEFORE the passive
+            // binding this record attributes to it (a device/signal identifier after "shall be held
+            // in reset"); the same obligation's real pre-lead subject, and every active
+            // `must drive …` binding, are kept.
+            subject_signals.retain(|s| !is_post_passive_binding_only_subject(&statement.text, s));
+            // EXTRACTION-QUALITY-GAUGE.3h: drop a subject reachable only from a VALUE position
+            // ("… set to FFFFh" → `FFFF`); a standalone occurrence is always kept.
+            subject_signals.retain(|s| !is_value_position_subject(&statement.text, s));
+            if subject_signals.is_empty() {
+                continue;
+            }
 
-        let condition_text = extract_condition_clause(binding);
-        // EXTRACTION-QUALITY-GAUGE.3i — read from the clause that produced the record, not the whole
-        // statement, and through the one shared predicate rather than a second copy of its phrase
-        // list. EXTRACTION-QUALITY-GAUGE.3k.4 — and that clause is the BINDING-bearing one, not
-        // `constraint_bearing_sentence`'s modal one: this path's record need not be modal at all, so
-        // the modal scan located a clause the record does not come from.
-        let negated = obligation_is_negated(&binding.to_ascii_lowercase());
+            let condition_text = extract_condition_clause(binding);
+            // EXTRACTION-QUALITY-GAUGE.3i — read from the clause that produced the record, not the
+            // whole statement, and through the one shared predicate rather than a second copy of its
+            // phrase list. EXTRACTION-QUALITY-GAUGE.3k.4 — and that clause is the BINDING-bearing
+            // one, not `constraint_bearing_sentence`'s modal one: this path's record need not be
+            // modal at all, so the modal scan located a clause the record does not come from.
+            let negated = obligation_is_negated(&binding.to_ascii_lowercase());
 
-        for subject_signal in subject_signals {
-            *counter += 1;
-            records.push(SignalConstraintRecord {
-                constraint_id: format!("dyn_sigcon_{counter:04}"),
-                subject_signal,
-                constraint_kind: constraint_kind.clone(),
-                target_value: target_value.clone(),
-                condition_text: condition_text.clone(),
-                negated,
-                source_text: statement.text.clone(),
-                supporting_statement_ids: vec![statement.statement_id.clone()],
-                automation_confidence: AutomationConfidence::Medium,
-            });
+            for subject_signal in subject_signals {
+                let mut record = SignalConstraintRecord {
+                    constraint_id: String::new(),
+                    subject_signal,
+                    constraint_kind: constraint_kind.clone(),
+                    target_value: target_value.clone(),
+                    condition_text: condition_text.clone(),
+                    negated,
+                    source_text: statement.text.clone(),
+                    supporting_statement_ids: vec![statement.statement_id.clone()],
+                    automation_confidence: AutomationConfidence::Medium,
+                };
+                // One statement can now state the same binding in two clauses; the second is the
+                // same fact, not a second one.
+                if !minted.insert(signal_constraint_merge_key(&record)) {
+                    continue;
+                }
+                *counter += 1;
+                record.constraint_id = format!("dyn_sigcon_{counter:04}");
+                records.push(record);
+            }
         }
     }
-
     records
 }
 
@@ -37134,6 +37289,179 @@ mod extraction_quality_gauge_3k_2b {
 }
 
 #[cfg(test)]
+mod extraction_quality_gauge_3k_11 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.11` — a logic level belongs to a SIGNAL, not to the verb that
+    //! binds it. The retired `logic_level_binding_kind_from_text` returned the LAST level within six
+    //! words of a binding verb and said nothing about what it belonged to, and the caller attached
+    //! that one kind to every declared signal the statement named. Every sentence below is a real
+    //! corpus shape with its identity alpha-renamed (ADR 0006).
+    use super::*;
+
+    fn records(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        statements.push(ExtractedStatement {
+            statement_id: "narration".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_dynamic_signal_constraints(&statements, &mut counter, &HashSet::new())
+    }
+
+    fn shape(records: &[SignalConstraintRecord]) -> Vec<String> {
+        let mut rows: Vec<String> = records
+            .iter()
+            .map(|record| {
+                format!(
+                    "{} {}",
+                    record.subject_signal,
+                    record.constraint_kind.as_str()
+                )
+            })
+            .collect();
+        rows.sort();
+        rows
+    }
+
+    /// The defect, on AMBA LPI's own state-table row — and on the spelling the normalizer actually
+    /// produces, with the space lost between the level and the next word. Each level binds to the
+    /// signal beside it, and the two levels stop each other from reaching further.
+    #[test]
+    fn each_level_binds_to_the_signal_beside_it() {
+        assert_eq!(
+            shape(&records(
+                "Controller must set ZETAREQ LOWand ZETAREQCHK HIGH.",
+                &["ZETAREQ", "ZETAREQCHK"]
+            )),
+            vec!["ZETAREQ must_be_low", "ZETAREQCHK must_be_high"]
+        );
+    }
+
+    /// A level attached to a signal the sentence never constrains. AHB states an ALTERNATIVE
+    /// implementation in which `HSEL` is tied HIGH and `HTRANS` is overridden to IDLE; the published
+    /// record was `HTRANS must_be_high`.
+    #[test]
+    fn a_level_does_not_reach_a_signal_in_another_phrase() {
+        assert_eq!(
+            shape(&records(
+                "An alternative implementation would be for ZETASEL to be tied HIGH on the \
+                 Subordinates and the interconnect to override ZETATRANS to IDLE.",
+                &["ZETASEL", "ZETATRANS"]
+            )),
+            vec!["ZETASEL must_be_high"]
+        );
+    }
+
+    /// The direction is not fixed: a specification puts the signal after its level as readily as
+    /// before it, so the walk goes forward when backward finds nothing.
+    #[test]
+    fn a_level_may_precede_its_signal() {
+        assert_eq!(
+            shape(&records(
+                "The device can be connected to a controller with an absent or tied LOW ZETADENY \
+                 signal.",
+                &["ZETADENY"]
+            )),
+            vec!["ZETADENY must_be_low"]
+        );
+    }
+
+    /// A list shares one level — the shape a reset clause uses constantly.
+    #[test]
+    fn a_list_of_signals_shares_one_level() {
+        assert_eq!(
+            shape(&records(
+                "At reset assertion, a device must drive both ZETAACCEPT and ZETADENY LOW.",
+                &["ZETAACCEPT", "ZETADENY"]
+            )),
+            vec!["ZETAACCEPT must_be_low", "ZETADENY must_be_low"]
+        );
+    }
+
+    /// English uses `low` as an ordinary adjective, and the catalog cannot tell the reader that on
+    /// its own: NVMe's *"used to low level format the NVM media"* published `NVM must_be_low`
+    /// because `NVM` was the nearest declared name anywhere in the statement. Nothing is adjacent to
+    /// this `low` that the document declares, so nothing binds.
+    #[test]
+    fn an_adjective_that_spells_a_level_binds_nothing() {
+        assert!(
+            records(
+                "The Format ZETANVM command is used to low level format the ZETANVM media and is \
+                 set by the host.",
+                &["ZETANVM"]
+            )
+            .is_empty()
+        );
+    }
+
+    /// A signal whose NAME merely opens with a level's spelling is a signal. The level is recognised
+    /// on a token's leading uppercase run — which is what makes `LOWand` work — so the run has to be
+    /// exactly the level, not a prefix of a longer name.
+    #[test]
+    fn a_name_that_opens_with_a_level_spelling_is_still_a_name() {
+        assert_eq!(
+            shape(&records(
+                "The controller drives ZETALOWPWR HIGH.",
+                &["ZETALOWPWR"]
+            )),
+            vec!["ZETALOWPWR must_be_high"]
+        );
+    }
+
+    /// A SUBSCRIPT is part of the reference beside it, not a boundary. AHB writes
+    /// *"a Manager sets HPROT[0] HIGH"*, which tokenizes as `HPROT`, `0`, `HIGH`; stopping at the
+    /// `0` loses the signal the level plainly belongs to.
+    #[test]
+    fn a_subscript_does_not_separate_a_signal_from_its_level() {
+        assert_eq!(
+            shape(&records(
+                "It is recommended that a Manager sets ZETAPROT[0] HIGH.",
+                &["ZETAPROT"]
+            )),
+            vec!["ZETAPROT must_be_high"]
+        );
+    }
+
+    /// The document's own catalog decides what an identifier is, so the pairing carries no
+    /// assumption about SPELLING — the property `WIRE-BASED-100.5i` pins for the whole path, asserted
+    /// here for the walk itself (ADR 0006).
+    #[test]
+    fn the_pairing_reads_identity_only_through_the_catalog() {
+        const OPAQUE: &str = "signal_alias_000001_ready_000000006d11fd13";
+        let declared: HashSet<String> = std::iter::once(OPAQUE.to_string()).collect();
+        assert_eq!(
+            logic_level_bindings(
+                &format!("The controller drives the {OPAQUE} HIGH after each byte"),
+                &declared
+            ),
+            vec![(vec![OPAQUE.to_string()], SignalConstraintKind::MustBeHigh)]
+        );
+        // ... and an identical sentence whose signal the document does NOT declare binds nothing,
+        // which is what makes the catalog the authority rather than the shape.
+        assert!(
+            logic_level_bindings(
+                "The controller drives the ZETAREADY HIGH after each byte",
+                &HashSet::new()
+            )
+            .is_empty()
+        );
+    }
+}
+
+#[cfg(test)]
 mod extraction_quality_gauge_3k_4 {
     //! `EXTRACTION-QUALITY-GAUGE.3k.4` — the DYNAMIC path's span discipline. Its record is minted by
     //! a VALUE BINDING that need not be modal at all, so `constraint_bearing_sentence` — which
@@ -37245,46 +37573,74 @@ mod extraction_quality_gauge_3k_4 {
         );
     }
 
-    /// The location changes WHICH SPAN the condition and negation are read from and nothing else.
-    /// Running the binders per clause instead finds bindings the statement-wide reader never had —
-    /// +6 records in AMBA LPI alone, three of them `must_be_high` off rows that set the signal LOW —
-    /// so the kind and value must stay bit-for-bit what the statement-wide reader produced
-    /// (`EXTRACTION-QUALITY-GAUGE.3k.11` owns that pairing defect).
+    /// The location changes WHICH SPAN the condition and negation are read from and nothing else:
+    /// the DISCOVERED-VALUE binder still searches the whole statement and the located clause is only
+    /// where the condition and negation are then read.
+    ///
+    /// **Superseded in part (`2026-09-13`) by `EXTRACTION-QUALITY-GAUGE.3k.11`.** This control used
+    /// to assert the same property for the LOGIC-LEVEL binder by comparing against
+    /// `logic_level_binding_kind_from_text`. That function is retired: it answered "is there a level
+    /// after a binding verb" and said nothing about what the level belonged to, which is the defect
+    /// `.3k.11` fixes. The reasoning stands for the binder it was made about, and that binder is the
+    /// one asserted here.
     #[test]
-    fn the_kind_and_value_are_exactly_what_the_statement_wide_reader_bound() {
-        let text = "Controller has set ZETAREQ LOW after acceptance. The device must set \
-                    ZETAACCEPT LOW.";
-        let found = records(text, &["ZETAREQ", "ZETAACCEPT"], &[]);
-        let lowered = text.to_ascii_lowercase();
-        let statement_wide = logic_level_binding_kind_from_text(
-            &text_before_condition_marker(&lowered).to_ascii_lowercase(),
-        );
-        assert!(statement_wide.is_some());
-        assert!(
-            found
-                .iter()
-                .all(|record| Some(&record.constraint_kind) == statement_wide.as_ref()),
-            "every record must carry the statement-wide binding, got {:?}",
-            found
-                .iter()
-                .map(|r| r.constraint_kind.as_str())
-                .collect::<Vec<_>>()
-        );
+    fn the_located_clause_does_not_move_the_bound_value() {
+        let text = "The ZETAOP field is described above. ZETAOP must be ZETAREADY when the \
+                    transfer completes.";
+        let mut statements: Vec<ExtractedStatement> = ["ZETAOP"]
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        statements.push(ExtractedStatement {
+            statement_id: "enum_0".into(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: "Enum ZETASTATES ZETAREADY = 0.".into(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        statements.push(ExtractedStatement {
+            statement_id: "narration".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let discovered = collect_discovered_enum_values(&[statements.as_slice()]);
+        let statement_wide =
+            extract_discovered_state_value_from_text(&text.to_ascii_lowercase(), &discovered)
+                .expect("the statement-wide binder binds a value");
+        let (_, kind, value) =
+            binding_bearing_clause(text, &discovered).expect("the binding is located");
+        assert_eq!(value.as_deref(), Some(statement_wide.as_str()));
+        assert_eq!(kind.as_str(), "must_be_value");
     }
 
     /// The location fails OPEN. A binding no single clause reproduces keeps the span it had, so the
     /// narrowing can never silently drop a record it cannot locate.
     #[test]
     fn a_binding_no_clause_reproduces_keeps_the_whole_statement() {
-        let discovered = HashSet::new();
-        let text = "ZETASEL is asserted for one cycle";
-        assert!(binding_bearing_clause(text, &discovered).is_none());
-        let bound = "The controller drives ZETASEL LOW";
+        let mut discovered = HashSet::new();
+        discovered.insert("ZETAREADY".to_string());
+        assert!(binding_bearing_clause("ZETASEL is asserted for one cycle", &discovered).is_none());
+        // The binding straddles the clause split, so no single clause reproduces it and the span
+        // stays the whole statement rather than the record being dropped.
+        let straddling = "ZETASEL must be ZETA";
+        assert!(binding_bearing_clause(straddling, &discovered).is_none());
+        let bound = "ZETASEL must be ZETAREADY";
         let (clause, kind, value) =
             binding_bearing_clause(bound, &discovered).expect("a binding is found");
         assert_eq!(clause, bound);
-        assert_eq!(kind.as_str(), "must_be_low");
-        assert_eq!(value, None);
+        assert_eq!(kind.as_str(), "must_be_value");
+        assert_eq!(value.as_deref(), Some("ZETAREADY"));
     }
 }
 

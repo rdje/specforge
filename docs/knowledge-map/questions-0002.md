@@ -103,6 +103,8 @@
   > can a row-level rule refuse the eMMC bus-mode matrix
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > can a section-title shape alone license a signal declaration
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > can a signal follow its logic level
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > can a signal name imply handshake clock reset polarity or direction
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
@@ -296,5 +298,3 @@
   > do transactions lower to .isf (only those with composed steps; signal-set/channel/phase membership is recognised-but-unlowered)
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > do unfiltered SemanticIR conditional rules reach an emitted .isf
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)

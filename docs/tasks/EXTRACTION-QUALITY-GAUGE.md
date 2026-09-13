@@ -1390,8 +1390,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
   is an amendment to `.3k.6`'s surface, owned here because this leaf is what needed it.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.4`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.11` · Status: `pending` (opened `2026-09-13` by `.3k.4`) · Goal:
-  **the logic-level binder pairs a level with a VERB, not with a SIGNAL.**
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.11` · Status: `done` (`2026-09-13`, CODE; opened the same day by
+  `.3k.4`) · Goal: **the logic-level binder pairs a level with a VERB, not with a SIGNAL.**
   `logic_level_binding_kind_from_text` finds the first bind verb (`drive`/`set`/`tied`/…) and then
   takes the LAST logic value within six words of it, and the caller pairs that kind with every
   declared signal the statement names. So `| P_ACCEPT | … | Controller must set PREQ LOWand PREQCHK
@@ -1404,7 +1404,68 @@ honestly-qualified) path to "human-SpecForge in Rust."
   (`[[one-modal-vocabulary-per-constraint-record]]`'s lesson, one layer down). The obvious rule — pair
   the level with the nearest preceding identifier — must be measured against every `must_be_high`/
   `must_be_low` record the dynamic path currently publishes, because that path is 77 of the corpus's
-  deterministic records. Prerequisite: none. Verification: the whole dynamic logic-level population
+  deterministic records.
+  **SHIPPED `2026-09-13`, and the obvious rule was wrong in three separate ways the corpus showed.**
+  (a) *Nearest PRECEDING* is wrong: AMBA LPI writes *"a controller with an absent or tied LOW QDENY
+  signal"*, so the walk goes backward first and forward only when backward finds nothing. (b) *Shape*
+  is wrong: an identifier cannot be recognised by its CASE, because
+  `WIRE-BASED-100.5i`'s alpha-invariance control feeds this path
+  `signal_alias_000001_ready_000000006d11fd13` and requires identical behaviour — so the DOCUMENT'S OWN
+  CATALOG decides what an identifier is, which is the repository's idiom everywhere else and the only
+  ADR-0006-safe answer. That control went RED on the first implementation and is the reason this leaf
+  has a catalog parameter at all. (c) *Clean word boundaries* are wrong: the normalizer loses the space
+  in `LOW and` / `HIGH after`, so `token_logic_level` reads a token's leading uppercase RUN as well as
+  the whole token — and that run is also what stops `PREQCHK HIGH` reaching back past `LOWand` to
+  `PREQ`. A SUBSCRIPT is skipped rather than treated as a boundary (`sets HPROT[0] HIGH`), which the
+  AHB rebuild proved necessary: without it a correct record is lost alongside the fabricated one.
+  `logic_level_binding_kind_from_text` is RETIRED — it answered "is there a level after a binding
+  verb" and nothing about what the level belonged to.
+  **Measured, all 22 reproduced logic-level records adjudicated individually, plus every record the
+  change adds or removes. Corpus replayed is 304 before and 304 after**, and the composition is the
+  result: **11 fabrications removed** — GIC-600 `PMU`/`GIC must_be_high` (the HIGH belongs to the
+  lowercase tie-off `gicp_allow_ns`) and `MBIST must_be_high` (it belongs to the row's own
+  `nmbistreset`); CoreSight `ATB must_be_low` (it belongs to `araddr_m`/`awaddr_m`, while `ATB` comes
+  from `ATB_DATA_WIDTH` a sentence later); AXI-ACE `WVALID must_be_low` from *"When WVALID is LOW, the
+  write strobes can take any value"*, a CONDITION; AHB `HTRANS must_be_high` (it belongs to `HSEL`);
+  LPI `PREQ`/`PACCEPT must_be_high` (they belong to `PREQCHK`/`PACCEPTCHK`); NVMe `NVM`/`LBA
+  must_be_low` from *"used to low level format the NVM media"*; HBM2 `DM must_be_high` (*"DM output is
+  not affected by the DBIac function"*). **15 correct records added** — ten AMBA LPI P-Channel
+  state-table rows (`Controller has set PREQ LOW…`, `Device must set PACCEPT LOW`), AXI-L
+  `AWSNOOP`/`ARSNOOP must_be_low` from *"An attached Subordinate must have its AWSNOOP input tied
+  LOW"*, HBM2 `DBI must_be_low` from the `otherwise` branch it used to swallow and `CKE must_be_low`,
+  and CoreSight TMC `FULL must_be_high` from *"the FULL output is pulled HIGH"*.
+  **One correct record is LOST and is named rather than absorbed:** LPI `QDENY must_be_low` from
+  *"…with the QDENY output absent or tied low"*. The walk stops at `absent`, which is a predicate
+  adjective rather than scaffolding, and the sibling sentence one figure earlier (*"an absent or tied
+  LOW QDENY signal"*, signal AFTER the level) still binds. Widening the skip list to fit this one
+  sentence would be fitting the rule to an instance; the residual is `.3k.12`.
+  **`.3k.4`'s control is superseded in part** and says so in place: it compared the located clause's
+  kind against `logic_level_binding_kind_from_text`, and that function no longer exists. Its reasoning
+  stands for the DISCOVERED-VALUE binder, which is what it now asserts.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.11`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.12` · Status: `pending` (opened `2026-09-13` by `.3k.11`) · Goal:
+  **a predicate between a signal and its level stops the level finding it.** AMBA LPI states the same
+  fact two ways one figure apart: *"a controller with an absent or tied LOW QDENY signal"* binds,
+  because the signal FOLLOWS the level; *"with the QDENY output absent or tied low"* does not, because
+  walking back from the level reaches `absent` — an adjective predicated of the signal, not the
+  scaffolding (`the`, `its`, `input`, `signal`) the walk skips. One measured record, and `.3k.11`
+  deliberately did not widen its skip list to fit it: a list tuned to one sentence is a mirror of that
+  sentence. The question to answer first is whether PREDICATE ADJECTIVES are a class the walk should
+  cross at all — *"absent"*, *"present"*, *"unused"*, *"reserved"* all sit in that position in this
+  corpus — and what crossing them costs elsewhere. **Size it against every logic-level record before
+  changing the walk**, the way `.3k.11` was sized. Prerequisite: none. Verification: the corpus
+  population of a predicate between a signal and its level, adjudicated individually; observed RED;
+  the chain rebuilt for every document whose artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.13` · Status: `pending` (opened `2026-09-13` by `.3k.11`) · Goal:
+  **the dynamic path has no MODALITY gate.** AHB `dyn_sigcon_0012` publishes `HPROT must_be_high` from
+  *"It is **recommended** that a Manager sets HPROT[0] HIGH"*. The pairing is right and the level is
+  right; what is wrong is that a RECOMMENDATION is published as a hard constraint.
+  `EXTRACTION-QUALITY-GAUGE.3k.2a` refused exactly this shape in the statement path — *"It is
+  recommended, but not required, that PSLVERR is driven LOW"* was one of its seventeen — but that
+  refusal rides the kind classifier, which this path never reaches: it types a record from its VALUE
+  BINDER. So the class is live here and nowhere gated. Prerequisite: none. Verification: the corpus
+  population of non-mandatory modality in the dynamic path measured with the real producer and
   adjudicated individually; observed RED; the chain rebuilt for every document whose artifacts move.
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j` · Status: `pending` (opened `2026-09-12` by
@@ -1429,6 +1490,47 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.11`
+
+- [x] **REPRODUCE / MEASURE** — the actionable population derived with `replay-constraints`: of the
+  dynamic path's judged records, **22 reproduce with a logic-level kind**, and all 22 were adjudicated
+  individually against their own source before anything was written. Six were wrong — AHB `HTRANS`
+  (the level belongs to `HSEL`), LPI `PREQ must_be_high` ×2 (it belongs to `PREQCHK`), NVMe
+  `NVM`/`LBA must_be_low` (*"low level format"*), and AHB `HPROT` (right pairing, wrong MODALITY —
+  routed to `.3k.13`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `logic_level_binding_kind_from_text` (now retired). It returned the LAST logic level within six
+  words of a binding verb and said nothing about what that level belonged to; the caller then attached
+  that one kind to EVERY declared signal the statement named. Two independent errors in one reader, and
+  both are visible in one row: `| P_ACCEPT | … | Controller must set PREQ LOWand PREQCHK HIGH. |`
+  publishes `PREQ must_be_high`.
+- [x] **ADDRESSED (verified)** — `logic_level_bindings` pairs each level with the signals ADJACENT to
+  it, walking backward first and forward when backward finds nothing, stopping at another level, and
+  reading identity through the DOCUMENT'S OWN CATALOG. **Eight controls in
+  `mod extraction_quality_gauge_3k_11`, three observed RED by removing exactly one rule each** — the
+  level delimiter (`ZETAREQ must_be_high` reappears), the per-level subjects (`ZETATRANS must_be_high`
+  reappears), and the forward walk — with the file restored byte-identically each time.
+  **Corpus replayed is 304 before and 304 after, and the composition is the result: 11 fabrications
+  removed, 15 correct records added, 1 correct record lost and named** (`.3k.12`). Every one of the 27
+  is listed with its sentence in the node. **Two documents rebuilt** (AHB 13 → 12, AXI-L 53 → 55), the
+  bundles restored from `generated/preserved/WIRE-BASED-100.10/`, `diff -rq` clean, removed again,
+  retention back to **24**.
+- [x] **NO REGRESSION** — the wire golds hold: `signal_constraint P=R=F1=1.000` with **fp=0** on APB,
+  AHB and AXI, `temporal_rule 1.000`, document-level fact recall **1.000** for constraints and
+  relations. `WIRE-BASED-100.5i`'s alpha-invariance control passes and is the control that shaped the
+  design. `kg-bench` **156/156**; `cargo fmt --all --check`, `cargo clippy --offline --all-targets -D
+  warnings` and the whole workspace suite green (`specforge-core` lib 1,487 → **1,495**).
+  `flow_census.json` re-derived and attributed.
+- [x] **GENERICITY (ADR 0006)** — universal English adjacency plus the logic-level vocabulary the
+  repository already carries, with identity read only through the document's own declaration catalog.
+  The alpha-invariance control is the proof rather than the claim: an opaque signal alias binds exactly
+  as a conventional name does, and the same sentence with an undeclared name binds nothing.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md`: `.3k.4`'s section said a level *"is
+  currently paired with the verb that sets it"* and that *"recall waits for that to be fixed"* — that
+  is now false and is rewritten in the same edit, which is the `BOOK-BEHAVIOUR-CURRENCY` case of a
+  changed rule leaving standing book text. KM card `[[a-level-belongs-to-a-signal]]`. Two residuals
+  routed to `.3k.12` and `.3k.13` rather than left in prose.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.4`
 

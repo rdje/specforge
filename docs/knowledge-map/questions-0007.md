@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > how many docs reach evidence vs semantic vs intent vs isf
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > how many documents carry unfiltered conditional rules and signal constraints
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > how many documents lost promoted records when the empty-catalog special case was deleted
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many enumerated width cells exist corpus-wide
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -287,13 +297,3 @@
   > is an empty result from a table-kind-keyed pass an answer or a blind spot
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > is any corpus document ingested at fewer pages than its source PDF
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > is avoiding a new EVIDENCE_RULE_FIELDS entry enough to keep persisted proofs valid
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is canonical recovery complete in the current reviewed population
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > is captured_region_residuals an exact IntentIR carry

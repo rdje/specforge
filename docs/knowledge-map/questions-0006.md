@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how does the current claim census prove no produced candidate is silent
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > how does the extract-constraints-llm prompt express a validity requirement
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > how does the extractor avoid minting a constraint about a cross-referenced register field
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -287,13 +297,3 @@
   > how many digests move when the reviewed projection changes
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > how many docs reach evidence vs semantic vs intent vs isf
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > how many documents carry unfiltered conditional rules and signal constraints
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > how many documents lost promoted records when the empty-catalog special case was deleted
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > how many emitted .isf files does the corpus have and are they FSMGen-strict clean

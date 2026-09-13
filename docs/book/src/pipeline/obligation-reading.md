@@ -350,11 +350,41 @@ happens to contain. That produced two shapes of wrong record:
 | `If LATRANS is SPEC, LRPROT must be 0. When LRRESP is FaultAbort, this signal is not valid.` | `LRPROT must be 0` **when LRRESP is FaultAbort** | the condition contradicts the record it was attached to |
 
 The binding clause is found by asking the binder itself where it bound, rather than by a second rule
-that could disagree with it, and the condition and the negation are then read there. The bound value
-is deliberately left exactly as it was: searching for bindings clause by clause finds more of them,
-and some of those are wrong for an unrelated reason — a level is currently paired with the verb that
-sets it rather than with the signal it belongs to, so `Controller must set PREQ LOW and PREQCHK HIGH`
-can attach `HIGH` to `PREQ`. Recall waits for that to be fixed.
+that could disagree with it, and the condition and the negation are then read there.
+
+## A logic level belongs to a signal, not to the verb that sets it
+
+A sentence can bind two signals at once, and it usually binds them to different values:
+
+```text
+| P_ACCEPT | ... | Device has accepted the request. Controller must set PREQ LOW and PREQCHK HIGH. |
+```
+
+SpecForge used to look for a level within a few words after a binding verb, take the last one it
+found, and attach it to every signal the sentence named. This row published **`PREQ must be HIGH`** —
+a requirement that says the opposite of what the row states. The same reading published
+`HTRANS must be HIGH` from a sentence in which `HSEL` is the signal tied high, and `NVM must be LOW`
+from *"used to low level format the NVM media"*, where `low` is an ordinary English adjective.
+
+Each level is now paired with the signals beside it, and three things about real specification text
+shape that pairing:
+
+- **The signal may come after the level.** *"a controller with an absent or tied LOW QDENY signal"*
+  reads in the opposite order from *"its WSTRB input tied HIGH"*. The search runs backward first and
+  forward only when backward finds nothing.
+- **A second level ends the first one's reach.** That is what keeps `PREQCHK HIGH` from walking back
+  past `LOW` to `PREQ`.
+- **What counts as a signal is the document's own declaration list**, never the spelling. A
+  specification that names its signals in lower case, or a document whose names have been replaced
+  wholesale, is read identically — the property the extraction core is tested against directly.
+
+A list shares one level (*"a device must drive both QACCEPTn and QDENY LOW"*), and a subscript stays
+attached to its signal (*"sets HPROT[0] HIGH"*) rather than separating it from its level.
+
+One sentence shape is still missed, and it is worth knowing about: when a predicate sits between the
+signal and its level — *"the QDENY output **absent or** tied low"* — the search stops at the
+predicate. The same fact stated in the other order is captured, so the document's own redundancy
+usually covers it.
 
 ## A bound stated against another operand is not a value
 

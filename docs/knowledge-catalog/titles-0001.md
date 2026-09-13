@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md) | 2026-09-13 | `current` | A logic level binds to the SIGNAL beside it, read through the document's own catalog — not to the verb that… |
 | [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md) | 2026-09-13 | `current` | The value slot admits a state, never a relation — a predicate followed by a preposition naming an operand o… |
 | [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | AArch64 External Debug Guide refresh is portable and authority-empty |
 | [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md) | 2026-08-09 | `current` | Active task legacy routes bind canonical IDs to exact source spellings |
@@ -60,4 +61,3 @@
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
 | [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
 | [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md) | 2026-06-06 | `current` | Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate |
-| [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md) | 2026-09-12 | `current` | Four producers mint a SignalConstraintRecord and only two reach the kind classifier, so a census of the const… |
