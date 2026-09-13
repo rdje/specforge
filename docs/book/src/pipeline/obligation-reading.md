@@ -138,8 +138,14 @@ signal-description rows, both obligations are headed by `it`, and the referents 
             monitor the status of HREADY … |                             → it = the Subordinate
 ```
 
-Resolving that is anaphora, not a rule, so SpecForge promotes neither. The serialized rows stay in the
-artifact — a residual you can read is better than a requirement invented from a coin toss.
+Neither is promoted from the shape above. Nothing in the first sentence says whether `it` is the row's
+signal or the timing it was just compared to, and guessing would be a coin toss; the serialized rows
+stay in the artifact instead — a residual you can read is better than a requirement invented. The
+second sentence is a different shape and **is** read, for a reason the next section gives: its pronoun
+sits in the main clause of a *fronted conditional*, where the sentence has put exactly one nominal
+before it. That reading resolves `it` here to *the Subordinate*, which is not a declared signal, so
+this row still publishes nothing — which is the point. The rule is determinate; it is not a rule for
+finding a signal.
 
 One more property follows from working per clause rather than per cell: a cell stating three obligations
 yields three records. The serialized statement keeps only the first, which is why a bulleted
@@ -149,6 +155,64 @@ The name cell is never authority on its own. A row's signal must resolve through
 declared-signal catalog before any obligation is attributed to it, so a table naming something the
 document never declares produces nothing. Production code contains no protocol, vendor, or signal-name
 list — only the modal, a closed list of helper words, and a closed list of pronouns.
+
+## A condition can come first, and then the sentence has two subjects
+
+A specification writes a condition after its obligation as readily as before it:
+
+```text
+ACADDR must not change when ACVALID is asserted.
+When the ACVALID signal is asserted the snoop address and control signals on
+ACADDR, ACPROT, and ACSNOOP must not change, until ACREADY is asserted.
+```
+
+Both sentences constrain the address and control signals; `ACVALID` states *when*. SpecForge finds the
+trailing form by looking for ` when `, ` if `, ` until ` — with a space in front, because the marker
+has to be a word rather than a fragment of one. That space is also why the second sentence was read
+wrongly for a long time: it is the FIRST sentence of its statement, so there is nothing in front of
+its `When`, the marker was never found, and the condition's own signal was published as a fourth
+subject of a requirement about the other three.
+
+Reading it correctly means finding where the fronted condition ENDS, and the cheap answer — the first
+comma — is wrong on this very sentence, where the first comma separates `ACADDR` from `ACPROT` and the
+condition's real boundary carries no comma at all. Two structural readings, in order:
+
+| the sentence | where the condition ends |
+| --- | --- |
+| `When CDVALID is asserted, all byte lanes of CDDATA must be valid.` | the comma — nothing later closes a list |
+| `When … ACVALID is asserted the … signals on ACADDR, ACPROT, and ACSNOOP must not change` | no comma qualifies (a later one is followed by `and`, so they are list commas) — the condition's own verb `is asserted` ends it |
+
+A comma inside a list is followed, somewhere before the modal, by the coordinator that closes the list;
+the boundary is the first comma that is not one of those. When every comma belongs to a list, the
+condition is still a finite clause and ends at its verb.
+
+### The pronoun that follows a fronted condition
+
+Having found the boundary, one shape appears constantly:
+
+```text
+If BCOMP is present, it must be asserted for one response transfer of every write transaction.
+When ACVALID is asserted, it must remain asserted until ACREADY is asserted.
+```
+
+The main clause is a bare `it`. Its antecedent is not a guess here — it is the condition's own subject,
+which is the single nominal the sentence has put before the pronoun. So the obligation belongs to
+`BCOMP` and to `ACVALID`, which is what both documents mean, and what the earlier reading only ever got
+right by accident, by scanning the condition it was supposed to strip.
+
+The condition's *subject* is not the whole condition: in
+
+```text
+When AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK deasserted, it must remain asserted.
+```
+
+`SYSCOREQ` and `SYSCOACK` sit in a phrase attached to the condition's verb, and the subject is
+`AWAKEUP` alone. A version of this reading that stopped at the verb rather than at the boundary comma
+published requirements about the other two; it was measured against the corpus and is not what ships.
+
+Measured across the corpus, reading the boundary and the pronoun together removes four requirements no
+document states and recovers six that they do — among them the `*VALID must remain asserted` handshake
+invariants that are the backbone of every AMBA channel.
 
 ## A negation belongs to the obligation it modifies
 

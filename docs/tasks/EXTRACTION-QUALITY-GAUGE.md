@@ -1438,7 +1438,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the three populations re-derived with the shipped census; all 18
   names adjudicated individually; observed RED; the chain rebuilt for every document whose artifacts
   move; `--all` doctrines green.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.10` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.10` · Status: `done` (`2026-09-13`, CODE; opened the same day by
+  `.3k.3`) · Goal:
   **a fronted condition that opens the STATEMENT carries no leading space.**
   `text_before_condition_marker` matches `" when "`, `" if "`, … with a leading space, so a condition
   fronting the first clause of a statement is invisible to it and the condition's own signals stay in
@@ -1449,9 +1450,38 @@ honestly-qualified) path to "human-SpecForge in Rust."
   cheap repair is wrong here: this sentence's first comma is a LIST separator, not the condition's
   boundary, so taking the text after it would also drop `ACADDR`. The clause boundary has to be found,
   not guessed. `split_conditional_sentence` already carries a leading-marker list for the same
-  question and is the place to start. Prerequisite: none. Verification: the corpus population of
-  statement-initial fronted conditions measured with the real reader and adjudicated; observed RED;
-  the chain rebuilt for every document whose artifacts move.
+  question and is the place to start.
+  **The asymmetry is narrower than "statement-initial", and finding that decided the design.** The
+  sentence splitter leaves a leading space in front of every sentence of a statement EXCEPT the
+  first, so `text_before_condition_marker` sees a fronted marker everywhere but there — and where it
+  does see one, `obligation_subject_part` already handled it, by taking the text after the FIRST
+  comma. So the defect is two defects: the first sentence is not read at all, and the comma rule is
+  wrong wherever that comma opens a list.
+  **The boundary is read, in two structural steps, and the corpus chose both.** (1) A comma inside a
+  coordinated list is followed — at some later segment before the modal — by the coordinator that
+  closes the list; the boundary is the first comma that is NOT such a comma. (2) When every comma
+  belongs to a list, or there is none, the condition is a FINITE clause and ends at its verb: the cut
+  is after the last finite copula before the modal. Step (2) is what recovers the sentence this leaf
+  opened on, whose main clause begins with no punctuation at all.
+  **A second leg was forced by the measurement, and it is the better half of the result.** The
+  boundary reading ALONE removes four fabrications and costs one true record — AXI
+  `If BCOMP is present, it must be asserted …`, which the old code got right only by accident, by
+  scanning the condition it was meant to strip. The main clause of a fronted conditional very often
+  opens with a PRONOUN, and there the antecedent is not a guess: it is the condition's own subject,
+  the single nominal the sentence puts before it. With that leg the same four fabrications go and
+  **six** true records arrive, including that one and AXI's `*VALID must remain asserted` handshake
+  invariants. **The two ship together because the first makes the second decidable** — only once the
+  condition's extent is known can the main clause's subject be recognised as a pronoun at all.
+  **The book's standing pronoun refusal is refined, not weakened, and a control proves it**: AHB's
+  `When the Subordinate is initially selected, it must also monitor the status of HREADY` resolves
+  `it` to *the Subordinate*, which is not a declared signal, so that row still mints nothing.
+  **An intermediate design was built and measured and is recorded because it failed**: cutting at the
+  condition's finite verb INSTEAD of at its boundary comma leaves an adjunct phrase's signals
+  (`When AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK deasserted, it must …`) in the
+  subject part and publishes two requirements the sentence does not state. That is why the comma leg
+  is tried first and the verb leg is the fallback rather than the rule.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.10`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.4` · Status: `done` (`2026-09-13`, CODE) · Goal: **the dynamic path's span
   discipline.** After `.3i` it reads its negation from `constraint_bearing_sentence` while its
   subject (`text_before_condition_marker(&statement.text)`), its value binder
@@ -1611,6 +1641,49 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.10`
+
+- [x] **REPRODUCE / MEASURE** — `replay-constraints --json` captured per document for all 77 loadable
+  artifacts, then re-captured against **three** prototypes and diffed on the producer's own record
+  identity. Baseline **200 persisted / 127 reproduced**. Prototype A (cut at the condition's finite
+  verb): −4 fabrications, **+4 fabrications** — rejected on the spot, each of the four read against
+  source. Prototype B (boundary comma, verb as fallback): −4, +0, but AXI-L's rebuild showed it costs
+  the one true `BCOMP` record. Shipped (B + the pronoun antecedent): **−4 fabrications, +6 true
+  records**, every one of the ten adjudicated against its own sentence.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `text_before_condition_marker` matches `" when "`/`" if "`/… **with a leading space**. The sentence
+  splitter leaves that space in front of every sentence of a statement except the FIRST, so a
+  statement that opens with its condition is read as though the condition were part of the subject.
+  Observed RED against the restored pre-change file: the AXI sentence yields
+  `["ZETAVALID", "ZETAADDR", "ZETAPROT", "ZETASNOOP"]` where the document constrains the last three.
+  The committed `.3k.3` control `a_pronoun_subject_does_not_borrow_a_sibling_clauses_signals` asserted
+  that same wrong record as expected output and is updated here, which is the second RED.
+- [x] **ADDRESSED (verified)** — `main_clause_of_fronted_conditional` reads where the fronted clause
+  ends (a comma that is not part of a coordinated list, else the condition's own finite verb) and
+  `fronted_condition_subject` reads the antecedent of a pronoun that heads the main clause.
+  **Corpus: 200/127 → 201/128.** AXI-L's chain rebuilt from its restored held-out bundle —
+  `evidence → validate → semantic → validate → intent → validate → adapt` — **54 → 56** signal
+  constraints with **nothing removed**: two recovered `AWAKEUP` requirements the document states and
+  the `BCOMP` record kept. SemanticIR and IntentIR **53 → 55**, and the emitted `.isf` **130 → 135**
+  rules. Bundle `diff -rq` byte-identical before removal; retained population back to **24**.
+- [x] **NO REGRESSION** — wire golds `signal_constraint P=R=F1=1.000` with **fp=0** on AXI, APB and
+  AHB, `temporal_rule 1.000` on AXI, document-level recall 1.000; `kg-bench` **156/156**;
+  `cargo fmt --all --check` and `cargo clippy --offline --all-targets -D warnings` clean; the whole
+  workspace suite green (`specforge-core` lib 1,508 → **1,516** passing, `specforge` 472, conformance
+  168, production-graph 8/8); `flow_census.json` re-derived and attributed (+2 functions,
+  +25 decision sites, +11 helper edges). AHB and APB-E do not move — they still LOAD, which is the
+  standing proof-staling signal used as the per-document currency check.
+- [x] **GENERICITY (ADR 0006)** — English clause structure only: the condition markers the infix
+  reader already uses (held to one set by a test), the two coordinators, the finite forms of the
+  copulas the head walk already skips, and the two subject pronouns. No document, protocol, vendor or
+  signal vocabulary.
+- [x] **LOCKSTEP** — the book's *"An obligation in a table cell belongs to whatever precedes its
+  modal"* section states the pronoun refusal as unconditional (*"Resolving that is anaphora, not a
+  rule, so SpecForge promotes neither"*); that is now true of only one of its two examples and is
+  rewritten in the same edit, with the fronted-conditional reading given its own section in the
+  chapter that owns this concern. No production rule was deleted. No KM card: the durable fact is the
+  book's, in the same shape `.3k.5` recorded.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.7`
 

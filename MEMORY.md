@@ -7,28 +7,27 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.7` SHIPPED `2026-09-13`.** A table row's subject exemption no longer
-  survives a clause that has its own subject one token back: `obligation_head_is_a_foreign_identifier` reads the
-  PREMODIFIER when the head carries no identifier, and it counts only when the preceding token is the identifier
-  **raw** — punctuation ends a phrase rather than opening one. That one condition separates AXI's
-  `WTAG bits must be valid … enabled by WSTRB` from LTI's `When LASSIDV is LOW, this signal must be 0`.
-  Corpus **200/127 → 199/126**; AXI-L rebuilt **55 → 54**; wire golds still `fp=0`, `F1=1.000`.
-- **The node's own sizing was wrong in BOTH directions, and only building the rejected rule found it.** Prototyped
-  and diffed per document, the widest rule removes **12** records, not the 8 listed; MMU-700 `dyn_sigcon_0008` was
-  already not reproducing (cost in *reproduced persisted* records: 2, not 3); and one it never named, AXI-H
-  `sigcon_0043 WSTRB`, is the same defect in the older AXI spec. **Re-derive a predecessor's population before
-  trusting it to size your change** (`[[verify-before-publishing]]`).
-- **A finding the rebuild produced, now owned: `SIGNAL-DECLARATION-ROW-DROP.4`.** Removing the fabrication moved
-  SemanticIR by nothing, because `WSTRB` is not in AXI's declared catalog at all —
-  `parse_explicit_signal_declaration`'s `index != tokens.len()` discards a WHOLE declaration, direction included,
-  when it cannot finish the width. **83 declared signals across 10 documents never reach the SemanticIR catalog**
-  (17 arithmetic widths, 66 unstated) and every obligation about them is demoted:
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.10` SHIPPED `2026-09-13`.** A condition FRONTED onto the first sentence of a
+  statement was invisible (`text_before_condition_marker` matches `" when "` WITH a leading space, and the splitter leaves
+  that space on every sentence but the first), so the condition's own signals were published as subjects.
+  `main_clause_of_fronted_conditional` reads where the clause ends — a comma that is not part of a coordinated list, else
+  the condition's own finite verb — and `fronted_condition_subject` resolves the pronoun that heads the main clause to the
+  condition's subject. Corpus **200/127 → 201/128**; AXI-L rebuilt **54 → 56** with nothing removed, SemanticIR/IntentIR
+  53 → 55, `.isf` 130 → 135 rules; wire golds still `fp=0`, `F1=1.000`.
+- **THREE prototypes, and only the third is right — the method is the result again.** Cutting at the condition's finite
+  verb traded 4 fabrications for 4 (an adjunct phrase's signals). The boundary comma alone removed 4 and COST one true
+  record. Only boundary + pronoun antecedent gives −4/+6, and the two legs are inseparable: knowing where the condition
+  ends is what makes the main clause's pronoun recognisable. **Build the rejected version and measure it** — each design
+  was refuted by the corpus, not by argument.
+- **`SIGNAL-DECLARATION-ROW-DROP.4` (opened `2026-09-13` by `.3k.7`) is the other live frontier and the larger gap.**
+  `parse_explicit_signal_declaration`'s `index != tokens.len()` discards a WHOLE declaration, direction included, when it
+  cannot finish the width: **83 declared signals across 10 documents never reach the SemanticIR catalog** (17 arithmetic
+  widths, 66 unstated) and the grounding filter demotes every obligation about them.
   `scripts/measure_declared_signals_missing_from_semantic.py`, `[[arithmetic-width-drops-the-declaration]]`.
   **Measure a constraint change at EVIDENCE, not at SemanticIR.**
 - Next action: pick from the open `.3k` leaves, each with its own measured sizing — `.3k.8` (statement/row duplication;
-  changing the merge key moves reproduction identity corpus-wide), `.3k.10` (statement-initial fronted condition),
-  `.3k.12` (a predicate between a signal and its level); `.3j` open and unsized; `.3k.9` deliberately not next (`DO NOT
-  SHIP YET`). `SIGNAL-DECLARATION-ROW-DROP.4` is the other live frontier and the larger recall gap.
+  changing the merge key moves reproduction identity corpus-wide), `.3k.12` (a predicate between a signal and its level);
+  `.3j` open and unsized; `.3k.9` deliberately not next (`DO NOT SHIP YET`). Or `SIGNAL-DECLARATION-ROW-DROP.4`.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Push cadence is **400** per director directive `2026-09-13`, FIXED there, so no push is due at 239; directive 16 still gates it on
   full CI. `check_doctrines.sh --all` did not finish in 50 minutes (`CHAIN-CURRENCY` re-executes the real pipeline for every persisted artifact) — budget

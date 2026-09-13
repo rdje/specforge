@@ -11309,6 +11309,26 @@ fn text_before_condition_marker(text: &str) -> &str {
 /// The main clause of a fronted conditional begins after its comma, which is where the obligation's
 /// subject is. Universal English clause order, no document vocabulary (ADR 0006).
 fn obligation_subject_part(clause: &str) -> &str {
+    // EXTRACTION-QUALITY-GAUGE.3k.10 — a FRONTED condition is stripped by reading where its clause
+    // ends, for every sentence of a statement rather than only for the ones the split left a leading
+    // space in front of. The old `leading.trim().is_empty()` path below reached the same shape
+    // through the FIRST comma, which is a list separator as often as a clause boundary; it stays as
+    // the fallback for a clause this reading declines.
+    if let Some(main) = main_clause_of_fronted_conditional(clause) {
+        let part = text_before_condition_marker(main);
+        // The main clause of a fronted conditional often opens with a PRONOUN, and there its
+        // antecedent is not a guess: it is the condition's own subject, the only nominal the
+        // sentence has put before it.
+        let pronoun = matches!(
+            obligation_subject(part),
+            ObligationSubject::Head(head)
+                if head.eq_ignore_ascii_case("it") || head.eq_ignore_ascii_case("they")
+        );
+        if pronoun && let Some(subject) = fronted_condition_subject(clause) {
+            return subject;
+        }
+        return part;
+    }
     let leading = text_before_condition_marker(clause);
     if !leading.trim().is_empty() {
         return leading;
@@ -11317,6 +11337,132 @@ fn obligation_subject_part(clause: &str) -> &str {
         Some(comma) => text_before_condition_marker(&clause[comma + 1..]),
         None => leading,
     }
+}
+
+/// The same condition markers [`text_before_condition_marker`] cuts at, spelled as a clause OPENER
+/// rather than as an infix. The two lists are one set and a unit test holds them to it: a marker in
+/// only one of them would be read as a condition in the middle of a clause and as a subject at its
+/// head, which is exactly the asymmetry `.3k.10` exists to remove.
+const FRONTED_CONDITION_MARKERS: &[&str] = &[
+    "when ",
+    "while ",
+    "during ",
+    "unless ",
+    "provided ",
+    "after ",
+    "before ",
+    "until ",
+    "if ",
+];
+
+/// The FINITE forms of the copulas and auxiliaries [`OBLIGATION_SUBJECT_HELPERS`] already skips.
+/// A subordinate clause needs one; `be`/`been` do not carry tense and cannot close a condition.
+const FINITE_COPULAS: &[&str] = &["is", "are", "was", "were", "has", "have", "had"];
+
+/// EXTRACTION-QUALITY-GAUGE.3k.10 — the MAIN clause of an obligation whose condition is FRONTED.
+///
+/// [`text_before_condition_marker`] matches `" when "`, `" if "`, … **with a leading space**, so it
+/// sees a fronted condition only when the sentence split left a space in front of it — which it does
+/// for every sentence of a statement except the FIRST. A statement that opens with its condition is
+/// therefore read as if the condition were part of the subject, and AXI
+/// `When the ACVALID signal is asserted the snoop address and control signals on ACADDR, ACPROT, and
+/// ACSNOOP must not change, …` published `ACVALID must_not_change` beside its three real subjects.
+///
+/// The main clause begins where the fronted condition ends, and finding that boundary is the whole
+/// problem: **the cheap answer — the first comma — is wrong on this very sentence**, where the first
+/// comma separates two items of the list `ACADDR, ACPROT, and ACSNOOP` and the condition's own
+/// boundary carries no comma at all. Two structural readings, in order:
+///
+/// 1. **A clause-boundary comma.** A comma inside a coordinated list is followed, at some later
+///    segment before the modal, by the coordinator that closes the list (`and`/`or`). The boundary is
+///    the first comma AFTER the last such list comma — the first one that is not part of a list. On
+///    `When AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK deasserted, it must remain
+///    asserted` no comma is coordinated, so the first comma is the boundary and the main clause is
+///    the pronoun `it` — a subject this reader cannot resolve, which is the honest residual `.3k.3`
+///    established for exactly that sentence.
+/// 2. **The condition's own predicate**, when every comma belongs to a list or there is none. A
+///    subordinate clause is finite, so it ends at its verb: the cut is after the LAST finite copula
+///    before the modal. That is what recovers the ACVALID sentence, whose main clause begins at
+///    `the snoop address …` with no punctuation to mark it.
+///
+/// `None` when the clause does not open with a condition marker, or when neither reading finds a
+/// boundary — the caller then keeps its existing reading rather than guessing. When the main clause
+/// this returns is headed by a PRONOUN, the caller reads [`fronted_condition_subject`] instead.
+///
+/// **Measured over the 76 documents comparable before and after: the boundary reading alone removes
+/// four fabrications and costs one true record** — AXI's `If BCOMP is present, it must be asserted
+/// …`, where the old accident of scanning the condition happened to land on the right signal. With
+/// the pronoun leg it removes the same four and ADDS six, including that one and AXI's five
+/// `*VALID must remain asserted` handshake invariants. The two legs ship together because the first
+/// is what makes the second decidable: only once the condition's extent is known can the main
+/// clause's subject be recognised as a pronoun at all.
+///
+/// Universal English clause structure only (ADR 0006): the condition markers the sibling reader
+/// already uses, the two coordinators, and the finite forms of the copulas the head walk already
+/// skips. No document, protocol, vendor or signal vocabulary.
+/// EXTRACTION-QUALITY-GAUGE.3k.10 — the SUBJECT of a fronted condition: the marker to the condition's
+/// own finite verb, so an adjunct phrase INSIDE the condition is never mistaken for it
+/// (`When AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK deasserted, …` → `AWAKEUP`).
+///
+/// This is the antecedent of a pronoun that heads the main clause, and it is determinate rather than
+/// guessed: the sentence has put exactly one nominal before that pronoun. The book's standing refusal
+/// to resolve `it` is about the OTHER shape — two clauses of a serialized row whose referents differ
+/// — and this reading does not weaken it: AHB's
+/// `When the Subordinate is initially selected, it must also monitor the status of HREADY` resolves
+/// `it` to *the Subordinate*, which is not a declared signal, so the row still mints nothing.
+fn fronted_condition_subject(clause: &str) -> Option<&str> {
+    let trimmed = clause.trim_start();
+    let lowered = trimmed.to_ascii_lowercase();
+    let marker = FRONTED_CONDITION_MARKERS
+        .iter()
+        .find(|marker| lowered.starts_with(**marker))?;
+    let modal = ["must", "shall"]
+        .iter()
+        .filter_map(|modal| find_whole_identifier(&lowered, modal))
+        .min()?;
+    let verb = identifier_words(&lowered[..modal])
+        .into_iter()
+        .find(|(offset, word)| *offset >= marker.len() && FINITE_COPULAS.contains(word))?;
+    Some(&trimmed[marker.len()..verb.0])
+}
+
+fn main_clause_of_fronted_conditional(clause: &str) -> Option<&str> {
+    let trimmed = clause.trim_start();
+    let lowered = trimmed.to_ascii_lowercase();
+    if !FRONTED_CONDITION_MARKERS
+        .iter()
+        .any(|marker| lowered.starts_with(marker))
+    {
+        return None;
+    }
+    let modal = ["must", "shall"]
+        .iter()
+        .filter_map(|modal| find_whole_identifier(&lowered, modal))
+        .min()?;
+    let commas: Vec<usize> = trimmed[..modal]
+        .match_indices(',')
+        .map(|(index, _)| index)
+        .collect();
+    let coordinated = |comma: usize| {
+        trimmed[comma + 1..modal]
+            .split_whitespace()
+            .next()
+            .is_some_and(|word| word.eq_ignore_ascii_case("and") || word.eq_ignore_ascii_case("or"))
+    };
+    let boundary = match commas.iter().rposition(|comma| coordinated(*comma)) {
+        Some(last_list) => commas.get(last_list + 1).copied(),
+        None => commas.first().copied(),
+    };
+    if let Some(boundary) = boundary {
+        return Some(&trimmed[boundary + 1..]);
+    }
+    let mut predicate_end = None;
+    for (offset, word) in identifier_words(&lowered[..modal]) {
+        if FINITE_COPULAS.contains(&word) {
+            predicate_end = Some(offset + word.len());
+        }
+    }
+    predicate_end.map(|end| &trimmed[end..])
 }
 
 /// Collect syntactically plausible identifier tokens from a prospective subject fragment.
@@ -36186,6 +36332,201 @@ mod invariant_shape_admission_5 {
 }
 
 #[cfg(test)]
+mod extraction_quality_gauge_3k_10 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.10` — a condition FRONTED onto the first sentence of a statement
+    //! carries no leading space, so `text_before_condition_marker` never saw its marker and the
+    //! condition's own signals stayed in the subject part. The repair is the boundary, not the first
+    //! comma: on the sentence that opened this leaf the first comma separates two items of a list.
+    //!
+    //! Every sentence below is a real corpus shape with its identity alpha-renamed (ADR 0006).
+    use super::*;
+
+    fn records(text: &str, declared: &[&str]) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        statements.push(ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_signal_constraints(&statements, &mut counter)
+    }
+
+    fn subjects(records: &[SignalConstraintRecord]) -> Vec<&str> {
+        records
+            .iter()
+            .map(|record| record.subject_signal.as_str())
+            .collect()
+    }
+
+    /// The refusal, and the recovery that has to survive it. AXI-H `sigcon_0012` / AXI-L, where the
+    /// condition's signal was published beside the three the sentence really constrains.
+    #[test]
+    fn a_statement_initial_condition_is_not_part_of_the_subject() {
+        let found = records(
+            "When the ZETAVALID signal is asserted the snoop address and control signals on \
+             ZETAADDR, ZETAPROT, and ZETASNOOP must not change, until ZETAREADY is asserted by the \
+             Manager.",
+            &[
+                "ZETAVALID",
+                "ZETAADDR",
+                "ZETAPROT",
+                "ZETASNOOP",
+                "ZETAREADY",
+            ],
+        );
+        assert_eq!(
+            subjects(&found),
+            vec!["ZETAADDR", "ZETAPROT", "ZETASNOOP"],
+            "the condition's own signal is not a subject, and the list it precedes is kept whole"
+        );
+    }
+
+    /// The boundary comma, when there IS one. AXI-H `sigcon_0020`: the main clause states the
+    /// subject the obligation binds, and the condition's signal is dropped.
+    #[test]
+    fn a_boundary_comma_ends_the_fronted_condition() {
+        let found = records(
+            "When ZETADVALID is asserted, all byte lanes of ZETADDATA must be valid, as the snoop \
+             data bus does not support byte strobes.",
+            &["ZETADVALID", "ZETADDATA"],
+        );
+        assert_eq!(subjects(&found), vec!["ZETADDATA"]);
+    }
+
+    /// The control that decided the design. A repair that cut at the condition's finite verb instead
+    /// of at its boundary comma leaves `ZETACOREQ`/`ZETACOACK` — which sit in an ADJUNCT phrase
+    /// inside the condition — in the subject part, and publishes two requirements the sentence does
+    /// not state. That version was built and measured on the corpus, and this is where it failed.
+    /// The obligation belongs to the condition's subject, which the pronoun refers back to.
+    #[test]
+    fn a_condition_carrying_an_adjunct_phrase_still_ends_at_its_boundary_comma() {
+        let found = records(
+            "When ZETAWAKEUP is asserted with ZETACOREQ asserted and ZETACOACK deasserted, it must \
+             remain asserted until ZETACOACK is asserted.",
+            &["ZETAWAKEUP", "ZETACOREQ", "ZETACOACK"],
+        );
+        assert_eq!(
+            subjects(&found),
+            vec!["ZETAWAKEUP"],
+            "the adjunct phrase's signals are not subjects"
+        );
+    }
+
+    /// The pronoun leg, and the record the boundary reading alone would have cost. AXI
+    /// `If BCOMP is present, it must be asserted …` states a real requirement about `BCOMP`, and the
+    /// old reading found it only by accident — by scanning the condition it was supposed to strip.
+    #[test]
+    fn a_pronoun_main_clause_resolves_to_the_conditions_subject() {
+        let found = records(
+            "If ZETACOMP is present, it must be asserted for one response transfer of every \
+             transaction on the write channels.",
+            &["ZETACOMP"],
+        );
+        assert_eq!(subjects(&found), vec!["ZETACOMP"]);
+    }
+
+    /// And the refusal that keeps it honest. AHB's serialized `HSELx` row fronts a condition whose
+    /// subject is an ACTOR, so the pronoun resolves to something that is not a declared signal and
+    /// the row still mints nothing — the shape the book's standing pronoun refusal is about.
+    #[test]
+    fn a_pronoun_resolving_to_an_actor_still_mints_nothing() {
+        let found = records(
+            "When the Subordinate is initially selected, it must also monitor the status of \
+             ZETAREADY.",
+            &["ZETAREADY"],
+        );
+        assert!(
+            found.is_empty(),
+            "the antecedent is an actor, not a signal: {:?}",
+            subjects(&found)
+        );
+    }
+
+    /// The condition's subject is its own, not an adjunct phrase inside it.
+    #[test]
+    fn the_conditions_subject_stops_at_its_finite_verb() {
+        assert_eq!(
+            fronted_condition_subject(
+                "When ZETAWAKEUP is asserted with ZETACOREQ asserted and ZETACOACK deasserted, it \
+                 must remain asserted until ZETACOACK is asserted"
+            ),
+            Some("ZETAWAKEUP ")
+        );
+        assert_eq!(
+            fronted_condition_subject("ZETADATA must be stable when ZETAREQ is HIGH"),
+            None
+        );
+    }
+
+    /// The boundary reading itself, over the three shapes the corpus offers.
+    #[test]
+    fn the_boundary_is_a_comma_that_is_not_part_of_a_list() {
+        // a list closed by `and` — no comma is a boundary, so the condition's own verb ends it
+        assert_eq!(
+            main_clause_of_fronted_conditional(
+                "When the ZETAVALID signal is asserted the signals on ZETAADDR, ZETAPROT, and \
+                 ZETASNOOP must not change"
+            ),
+            Some(" asserted the signals on ZETAADDR, ZETAPROT, and ZETASNOOP must not change")
+        );
+        // a plain boundary comma
+        assert_eq!(
+            main_clause_of_fronted_conditional(
+                "When ZETADVALID is asserted, ZETADDATA must be valid"
+            ),
+            Some(" ZETADDATA must be valid")
+        );
+        // a coordinated CONDITION: the first comma closes a list, the second is the boundary
+        assert_eq!(
+            main_clause_of_fronted_conditional(
+                "When ZETAREQ is HIGH, and ZETAACK is LOW, ZETADATA must be stable"
+            ),
+            Some(" ZETADATA must be stable")
+        );
+        // not a fronted conditional at all — the caller keeps its own reading
+        assert_eq!(
+            main_clause_of_fronted_conditional("ZETADATA must be stable when ZETAREQ is HIGH"),
+            None
+        );
+        // fronted, but no modal: nothing to bound the search with
+        assert_eq!(
+            main_clause_of_fronted_conditional("When ZETAREQ is HIGH, ZETAACK follows"),
+            None
+        );
+    }
+
+    /// The two marker lists are one set. A marker in only one of them would be read as a condition
+    /// in the middle of a clause and as a subject at its head, which is the asymmetry this leaf
+    /// removes; nothing else holds them together.
+    #[test]
+    fn the_fronted_and_infix_condition_markers_are_the_same_set() {
+        for marker in FRONTED_CONDITION_MARKERS {
+            let word = marker.trim_end();
+            let infix = format!("SIGNAL must be HIGH {word} SIGNALB is LOW");
+            assert_eq!(
+                text_before_condition_marker(&infix),
+                "SIGNAL must be HIGH",
+                "{word} is a fronted marker but not an infix one"
+            );
+        }
+    }
+}
+
+#[cfg(test)]
 mod extraction_quality_gauge_3k_7 {
     //! `EXTRACTION-QUALITY-GAUGE.3k.7` — a table row's subject exemption must not survive a clause
     //! that has a subject of its own, and a DESCRIPTOR head hides one. `INVARIANT-SHAPE-ADMISSION.5`
@@ -38262,12 +38603,18 @@ mod extraction_quality_gauge_3k_3 {
     /// sentence that constrains `ZETAVALID`. Bounded by the obligation, the clause states no subject
     /// this reader can resolve and mints nothing, which is the honest answer.
     ///
-    /// The first clause's own four records are UNCHANGED by this leaf and are asserted as they are,
-    /// including `ZETAVALID must_not_change`, which is wrong: a fronted condition that opens the
-    /// STATEMENT carries no leading space, so `text_before_condition_marker` does not see its marker
-    /// and the condition's own signal stays in the subject part. That residual is named in this
-    /// leaf's node — narrowing it here would also drop `ZETAADDR`, because the first comma in this
-    /// sentence is a list separator rather than the condition's boundary.
+    /// The first clause's three records are unchanged by this leaf. Its fourth,
+    /// `ZETAVALID must_not_change`, was recorded here as a KNOWN-WRONG residual — a fronted condition
+    /// that opens the STATEMENT carries no leading space, so `text_before_condition_marker` never saw
+    /// its marker and the condition's own signal stayed in the subject part — with the note that
+    /// narrowing it at the first comma would also drop `ZETAADDR`, that comma being a list separator.
+    /// **`EXTRACTION-QUALITY-GAUGE.3k.10` closed it by reading the boundary instead of guessing it**,
+    /// so the expectation below no longer carries that record, and `ZETAADDR` is still here.
+    ///
+    /// The second clause no longer mints NOTHING either, and that is the same leaf: its pronoun's
+    /// antecedent is the condition's own subject, the only nominal the sentence puts before it. What
+    /// this control still proves is that the pronoun does not borrow the SIBLING clause's three
+    /// signals — the fabrication it was written for.
     #[test]
     fn a_pronoun_subject_does_not_borrow_a_sibling_clauses_signals() {
         let found = records(
@@ -38286,19 +38633,23 @@ mod extraction_quality_gauge_3k_3 {
         assert_eq!(
             shape(&found),
             vec![
-                "ZETAVALID must_not_change",
                 "ZETAADDR must_not_change",
                 "ZETAPROT must_not_change",
                 "ZETASNOOP must_not_change",
+                "ZETAVALID must_be_asserted",
             ]
         );
-        assert!(
-            !shape(&found)
-                .iter()
-                .any(|row| row.contains("must_be_asserted")),
-            "the pronoun clause must mint nothing, got {:?}",
-            shape(&found)
-        );
+        for borrowed in [
+            "ZETAADDR must_be_asserted",
+            "ZETAPROT must_be_asserted",
+            "ZETASNOOP must_be_asserted",
+        ] {
+            assert!(
+                !shape(&found).iter().any(|row| row == borrowed),
+                "the pronoun clause must not borrow the sibling clause's signals, got {:?}",
+                shape(&found)
+            );
+        }
     }
 
     /// The trap this leaf's node recorded, and why narrowing the span ALONE would have been wrong.
