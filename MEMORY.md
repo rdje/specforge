@@ -7,26 +7,29 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.2e` CLOSED `2026-09-13` (CODE)** — **proving the SUBJECT does not make the KIND readable.** The
-  table-row reader now goes through `classify_signal_constraint_kind_typed` too, so the terminal `MustBeStable` is unreachable as a published
-  kind by any producer. `.3k.2a`'s asymmetry is superseded by its own successor: it rested on four APB `must have the same value` clauses and
-  `.3k.2c` typed them. **Corpus effect zero** (183/137/46 unchanged; all 12 live row records are typed by an arm the document wrote), so the
-  class is demonstrated through the real reader — a MATCH, an ALIGNMENT and a PRESENCE claim each publish `must_be_stable` without it.
-  Open: `.3k.2h`/`.3k.2i`/`.3k.2j`, `.3k.3`/`.3k.4`/`.3k.5`; **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`;
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.2j` CLOSED `2026-09-13` (DOCTRINE)** — **a fail-closed check that no driver runs is not a check.**
+  `scripts/measure_constraint_part_span.py --check` was built by `.3k` to fail closed when the kind classifier's call-site topology moves, is
+  named in `.3k`'s verification, and was in NO driver. Re-derived per revision with each revision's own scanner: green at `.3k.1`, RED from
+  `.3k.2a` (the typed gateway), still RED at `.3k.2c` — three leaves reported a green gate over a failing check. Registered as
+  `CONSTRAINT-PART-SPAN|gate`; the driver now executes **14** doctrines and was observed RED on both drifts. Sibling census, classified: 28 of 86
+  script-shaped files are unreachable from any driver or doctrine registry, and exactly **2** claim `--check` semantics — this one and
+  `validate_canonical_recovery_contract.py`, already an open question in `RETAINED-BUNDLE-POPULATION-FROZEN`.
+  Open: `.3k.2h`/`.3k.2i`, `.3k.3`/`.3k.4`/`.3k.5`; **`.3j`**; `INVARIANT-SHAPE-ADMISSION.4`; `PROSE-NAME-CELL-DECLARATION.3`;
   `SIGNAL-DECLARATION-ROW-DROP` `.2c`/`.2d`; `RETAINED-BUNDLE-POPULATION-FROZEN` `.1`-`.3`; `KG-ISF-COMPLETENESS` beyond `.5`;
   `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`; `SOURCE-IR-REPRODUCIBILITY`
   `.3`/`.4`/`.6`/`.7`/`.9a`/`.10`/`.13`; `CLAIM-VERIFICATION-ADOPTION` `.8`/`.9`/`.12`/`.13`; `SCRATCH-RESIDUE-CONTAINMENT.1`/`.4`;
   `STATUS-LEDGER-ROLLOVER.2`; `PROVIDER-MODEL-STORE-LOCALITY.1`; `TASK-PART-SEAL-REACHABILITY.0`; `CHANGES-LEDGER-ROLLOVER.4`;
   `WIRE-BASED-100` `.10d`/`.10f`/`.2`/`.3`/`.5`.
-- Current state: eleven commits. **The statement path and the row path now apply the same rules**: same modal vocabulary (`.3k.2d`), same
+- Current state: twelve commits. **The statement path and the row path now apply the same rules**: same modal vocabulary (`.3k.2d`), same
   vocabulary-slot refusals (`.3k.2f`), same typed gateway (`.3k.2e`) — and `replay-constraints` judges all three deterministic producers
   (`.3k.2g`), publishing **26 documents row-judged / 51 not**. **Three leaves in a row corrected a population the one before published**, and the
   lesson is sharper than "measure first": measure with the PRODUCER. `.3k.2d` refuted a mechanism taken from a test string; `.3k.2g` refuted two
   counts taken from a persisted FIELD the producer no longer trusts. 306 fact cards; 15 doctrines, 13 at gate tier; core lib 1,468.
-- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.2j`** — `scripts/measure_constraint_part_span.py --check` is `.3k`'s own declared verification and
-  is in NO driver; re-derived per revision it was RED from `.3k.2a` through `.3k.2c` while those leaves reported green gates. `.3k.2e` repaired
-  its content; wiring it into a driver is open, and the leaf must also enumerate whether OTHER task-local verification scripts are unrun —
-  a set claim, so it carries its enumerating command. Then `.3k.2h` (the row reader's last two narrower readers), `.3k.2i`, `.3k.3`.
+- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.2h`** — the row reader's last two narrower readers. (a) `obligation_subject` decides whether a
+  description clause states an obligation by looking for `must`/`shall` only, so `.3k.2d`'s modal gap is still open one function along. (b) A
+  signal-description table split across pages emits continuation rows whose NAME cell is empty, so `resolve_declared_signal_identifier("")` fails
+  and every obligation in the continuation is dropped — AMBA LTI `table_0014` loses two, including the corpus's only genuine negated VALUE
+  binding. Size each half separately with `replay-constraints` (row stratum judged). Then `.3k.2i`, `.3k.3`.
 - In-flight uncommitted: none after this commit.
 - Blockers: none. Standing hazards: **an evidence-stage change stales the proof of every current-schema artifact whose content moves and they
   then refuse to LOAD** — rebuild (`evidence → validate → semantic → validate → intent → validate → adapt`, each validated exactly once,

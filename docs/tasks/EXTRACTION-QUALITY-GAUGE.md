@@ -955,193 +955,68 @@ honestly-qualified) path to "human-SpecForge in Rust."
   scanner, not by reading. `.3k.2j` owns wiring it into a driver.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.2e`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2j` · Status: `pending` (opened `2026-09-13` by `.3k.2e`) · Goal:
-  **a fail-closed check that no driver runs is not a check.** `scripts/measure_constraint_part_span.py`
-  was built by `.3k` precisely so that a change to the kind classifier's call-site topology would fail
-  closed rather than silently restratify its census, and `.3k` names `--check` and `--self-test` in its
-  verification. It is in no driver: not `scripts/check_doctrines.sh`, not `scripts/run_ci.sh`, not
-  `.githooks/`. Re-derived from each revision's own source with that revision's own scanner, it went RED
-  at `.3k.2a` — which introduced the typed gateway — and stayed RED through `.3k.2b` and `.3k.2c`, three
-  leaves that each reported green gates. `.3k.2e` repaired it and added the untyped-caller invariant, so
-  the content is current; what is missing is execution. Two questions the leaf must answer rather than
-  assume: which tier it belongs in (it is read-only, sub-second, and corpus-reading, so gate-tier is
-  plausible but the corpus dependency has to be checked against the tier contract), and whether the
-  same audit finds OTHER task-local scripts named in a leaf's verification and run by nothing — a set
-  claim, so it carries its enumerating command. Prerequisite: none. Verification: the check observed
-  RED from the driver on a deliberately moved call site; the script census re-derived; the enumeration
-  of unwired verification scripts published with the command that produced it.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2f` · Status: `done` (`2026-09-13`, CODE) · Goal: **a refusal that
-  says the constraint VOCABULARY has no slot for what a clause states belongs to the rule, not to one
-  caller.** `.3d`'s `is_relational_equality_constraint` and `.3k.1`'s `is_reference_magnitude_constraint`
-  make the same argument — *the vocabulary can say "this signal must be `HIGH`" and cannot say "this
-  operand is bounded by that one", so refuse rather than fabricate* — and both were evaluated only
-  inside `extract_signal_constraints`. The table-row reader called neither, so one sentence was refused
-  as a statement and published as a row.
-  Shipped: both predicates evaluated over the CLAUSE the row reader is already holding, which is this
-  producer's own unit and is also the scope `.3k.5` is moving the statement path's copies toward.
-  **Measured corpus effect: zero. That is the honest result and it is stated as a class, not as a
-  count.** With the row stratum judged (`.3k.2g`), `replay-constraints` is unchanged at 183 persisted /
-  137 reproduced / 46 not-reproduced, and no admitted row clause in the 26 judgeable documents matches
-  either predicate. The leaf ships on `.3k.1`'s footing — a live, demonstrable class with an empty
-  published population — and the demonstration is the observed-RED control, run through the REAL row
-  reader rather than a mirror:
-  *"ZETARANGE must not be greater than the size indicated by the ZETAOAS field"* → `ZETARANGE
-  must_be_stable, negated: true`, i.e. **"ZETARANGE must not be stable"** — the exact AMBA DTI
-  fabrication `.3k.1` closed in the statement path — and *"OMEGABURST must be equal to the value of
-  ZETAREADY"* → `OMEGABURST must_be_value VALUE`, the value lifted out of the phrase *the value of*.
-  Both vanish with the refusal wired and both return when it is removed.
-  **Honest limit, inherited not absorbed:** 51 of 78 documents have their table classifications
-  neutralized on load (`[[legacy-source-classifications-are-neutralized-on-load]]`), so "no admitted row
-  clause matches" is a statement about the 26 the producer can see. It is not a clean bill for the rest.
-  Prerequisite: `.3k.2e` — **waived**, deliberately. `.3k.2e` refuses a clause whose kind is UNTYPED;
-  this one refuses a clause whose kind types perfectly well and whose MEANING has no slot, which is why
-  the `must_be_value VALUE` shape above is invisible to `.3k.2e` and survives it. The two are
-  independent, and ordering them was an assumption `.3k.2g`'s re-sizing removed.
-  Verification: see the acceptance checklist below.
-  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2f`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2g` · Status: `done` (`2026-09-13`, CODE) · Goal: **the replay
-  instrument judged two of the three deterministic producers and said nothing about the third.**
-  `.3k.6` shipped `replay-constraints` so a change could be sized against what today's extractor
-  actually mints, and `.3k.2a`–`.3k.2d` each used it — while it filtered the judged set to `sigcon_*`
-  and `dyn_sigcon_*`. So `.3k.2c` had to state in prose that its retype *"is inside the row stratum,
-  which the replay does not judge"*, and `.3k.2d` had to restore a held-out bundle and rebuild a whole
-  document chain to prove that same stratum unmoved. An instrument a family sizes itself with cannot
-  have a producer-shaped hole in it.
-  Shipped: `replay_persisted_signal_constraints` takes the document's own `SourceIr` — which the
-  artifact already names, repository-root-relative — and composes the table-row pass exactly as the
-  build does (append after the statement paths, refine polarity BEFORE the dedup, then dedup against
-  the established count), with the build's own catalog (statement declarations ∪ the
-  signal-description tables' names). `row_sigcon_*` joins the judged set when and only when that pass
-  actually ran.
-  **The second half had to be measured rather than assumed, and it is the leaf's main result.** A
-  LEGACY `SourceIr` loads, and `neutralize_legacy_source_classifications` sets every `table_kind` to
-  `Unknown` — correctly, because only the current schema plus a verified proof ledger carries
-  classification authority. The row producer selects tables by `TableKind::SignalDescription`, so over
-  such an artifact it selects NONE and returns an empty result **indistinguishable from "this document
-  states no row obligation"**. Measured on AMBA LTI: its persisted SourceIR marks 25 tables
-  `signal_description`, and after a legacy load **0 of its 88 tables pass the producer's own gate**.
-  Reporting that as a judged stratum would publish a silent zero — the exact failure `.3k.6` exists to
-  retire. `SourceIr::carries_canonical_source_classifications` gates it, and the report publishes both
-  halves: **26 documents judged, 51 not** (51 legacy SourceIRs; one document is the named EvidenceIR
-  skip).
-  **Corpus result: 171 → 183 persisted deterministic records, 125 → 137 reproduced, `not_reproduced`
-  unchanged at 46.** All 12 published `row_sigcon_*` records reproduce — which re-derives, without a
-  rebuild, exactly what `.3k.2d` had to rebuild APB to establish, and extends it to AHB and AXI-L.
-  **This leaf's first act was to falsify a population `.3k.2d` published one commit earlier.**
-  `.3k.2e` was opened saying the row path's untyped fallback is *"17 of 17 wrong"*, from a Python
-  census that selected tables on the persisted `table_kind` field. The real producer selects on the
-  LOADED one, and over the 26 judgeable documents it mints **12 row records and not one more** — zero
-  on the untyped fallback, zero unpersisted. `.3k.2e` is re-sized in place; see its node.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2j` · Status: `done` (`2026-09-13`, DOCTRINE) · Goal: **a fail-closed
+  check that no driver runs is not a check — writing one is not adopting it.**
+  `scripts/measure_constraint_part_span.py` was built by `.3k` precisely so that a change to the kind
+  classifier's call-site topology would fail closed rather than silently restratify the census that
+  sized this whole container, and `.3k` names `--check` and `--self-test` in its verification. It was in
+  no driver: not `scripts/check_doctrines.sh`, not `scripts/run_ci.sh`, not `.githooks/`.
+  **Attributed by re-derivation, not by reading.** Running each revision's own scanner over that
+  revision's own `evidence.rs` (`git show <rev>:<path>`): green at `.3k.1`; RED from `.3k.2a`, which
+  introduced `classify_signal_constraint_kind_typed` so the bare classifier's only production caller
+  became the wrapper; still RED at `.3k.2c`. Three leaves shipped over it, each reporting a fully green
+  doctrine gate — because the gate never included it.
+  Shipped: `scripts/check_constraint_part_span.sh` (self-test then check, the order `CORPUS-FRONTIER`
+  states — a gate is not trusted on a day its own negatives have not been re-proven), registered
+  `CONSTRAINT-PART-SPAN|gate` with its `DOCTRINE_ENFORCEMENT.md` §10 row. Gate tier is earned rather
+  than assumed: `--check` is read-only, offline and sub-second, and touches the persisted corpus only
+  on the census path, never on `--check`.
+  **The set claim, with its enumeration, because "nothing else is unrun" is refuted by one
+  counterexample.** Of **86** script-shaped files under `scripts/`, `knowledge-map/scripts/` and
+  `tools/`, **28** are unreachable from any driver, git hook, CI workflow, or doctrine registry — and a
+  raw reachability count is a population, not a defect count, so it is classified before it is
+  published. Exactly **2** of the 28 offer a `--check` mode, i.e. claim gate semantics while nothing
+  executes them: this leaf's subject, and `scripts/validate_canonical_recovery_contract.py`. The second
+  is **already adjudicated here** — `RETAINED-BUNDLE-POPULATION-FROZEN` carries *"Does
+  `scripts/validate_canonical_recovery_contract.py` still have an owner?"* as an open question — so it
+  is named and left to its owner rather than re-opened. The remaining 26 are one-shot measurement probes
+  (`measure_*.py`, each of which produced a number for one leaf) and PDF utilities, none of which claims
+  a gate mode. The first pass of this census said 33 and was wrong: it missed that a doctrine registry
+  invokes a verifier by `argv` rather than by a shell reference, which is the same
+  derive-from-the-producer failure this container keeps finding.
   Prerequisite: none. Verification: see the acceptance checklist below.
-  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2g`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2h` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
-  **the row path's two remaining readers of a narrower vocabulary.** (a) `obligation_subject` decides
-  whether a description clause states an obligation by looking for `must`/`shall` only, so the modal
-  gap `.3k.2d` closed for the statement path is still open one function along: a row cell stating
-  *"X cannot be asserted while Y is high"* is `NotAnObligation` and the clause is dropped. (b) A
-  signal-description table split across pages emits continuation rows whose NAME cell is empty, and
-  `resolve_declared_signal_identifier("")` fails, so every obligation in the continuation is dropped —
-  AMBA LTI `table_0014` (*"Table B4.1 Continued from previous page"*) loses two, including
-  *"When LAMMUV is 1 and LAPM is 1, LAFLOW must not be Stall"*, the corpus's only genuine NEGATED VALUE
-  binding and therefore the only clause that would have given `.3k.2d`'s original mechanism a
-  population. Both are recall, both are in the row reader, and (b) decides whether the vocabulary slot
-  `MustBeValue` + `negated` is ever reached at all. Prerequisite: none. Verification: each half sized
-  over the corpus separately; the admitted set adjudicated; observed RED.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2i` · Status: `pending` (opened `2026-09-12` by `.3k.2d`) · Goal:
-  **the row path's generic-value arm, read.** The same census that sized `.3k.2e` found 9 admitted row
-  clauses reaching the `generic_value` arm, read as 4 right / 5 wrong. **Both numbers are withdrawn as
-  CURRENT by `.3k.2g`** for the same reason `.3k.2e`'s are: the census selected tables on the persisted
-  `table_kind` and the producer selects on the loaded one, so none of the 9 is reachable today. They are
-  the reading for 51 legacy documents whose classifications this build has not re-derived, and the leaf
-  must re-derive its own population with `replay-constraints` (row stratum judged) before it ships. Right: `LAPM must be 0`,
-  `LAPRIV must be 0`, `LRHWATTR must be 0`, `LRMECID must be 0`. Wrong, and each for its own reason:
-  *"LAPAS must be Non-secure or Secure"* publishes `NON` — the value binder splits at the hyphen, and
-  the clause is a DISJUNCTION the slot cannot hold either (×2); *"LRATTR must be Snoopable Write-Back"*
-  publishes `SNOOPABLE`, the first word of a two-word value; *"One write response must be sent for each
-  write command"* publishes `SENT`, a passive verb `.3k.2b`'s participle rule misses because `sent` does
-  not end in `ed`; *"… LRATTR must match LAATTR, with the exception of the allocation hint which must be
-  Allocate …"* publishes `ALLOCATE`, a value lifted from a different clause of the same sentence
-  (`.3k.3`'s span defect, in the row path). Prerequisite: `.3k.2e`. Verification: each of the 9
-  adjudicated; observed RED per rule; the corpus delta measured with the row stratum judged (`.3k.2g`).
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.2c` · Status: `done` (`2026-09-12`, CODE) · Goal: **the spelling
-  this corpus uses for a no-change obligation.** APB writes it as *"PAUSER must have the same value in
-  the Setup and Access phase of a transfer"* and *"… in every cycle during the Access phase"*; the
-  phrase table knew `must be stable`, `must remain stable`, `must hold` and nothing of this form, so
-  4 `row_sigcon_*` records reached the untyped fallback and were published as `must_be_stable` by
-  accident. They are the only reason `.3k.2a` had to leave the row path's fallback in place.
-  **Typed as `MustNotChange`**, because that is what the sentence says: the value is the SAME across
-  two phases, or across every cycle of one — it does not change. The table already reads *"must
-  remain stable"* (the same obligation over time) that way.
-  **The placement is the load-bearing decision, and it was measured.** A serialized signal-description
-  cell routinely carries BOTH obligations — *"• PAUSER must be valid when PSELx is asserted. • PAUSER
-  must have the same value …"* — and the first arm to match types the whole record. Ahead of the
-  validity arm, this phrase retyped APB `sigcon_0009`/`0010` from `must_be_value VALID` to
-  `must_not_change`, losing a fact the document states. Behind it, it fires exactly where nothing else
-  matched. Both the phrase and its position carry their own RED control.
-  **Measured: 4 records retyped, 0 added, 0 removed, one document** — APB `row_sigcon_0018`/`0019`/
-  `0021`/`0022`, `must_be_stable` → `must_not_change`; `sigcon_0009`/`0010` keep `must_be_value VALID`.
-  The 56 corpus statements containing *"have the same value"* are almost all descriptive
-  (*"implementations that have the same value"*, *"It does not have the same value"*) and are untouched
-  because the phrases carry their modal.
-  Prerequisite: none. Verification: see the acceptance checklist below.
-  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2c`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.3` · Status: `pending` · Goal: **the kind reads its own obligation
-  clause** — the original `.3k` goal, at its true size.
-  `classify_signal_constraint_kind(&text.to_ascii_lowercase())` becomes
-  `classify_signal_constraint_kind(&constraint_bearing_sentence(text).to_ascii_lowercase())` in
-  `extract_signal_constraints`, joining the subject, the condition and (since `.3i`) the negation,
-  which all already come from that span. **Population: 4 `sigcon_*` records.** AHB `sigcon_0002` is
-  the mechanism `INVARIANT-SHAPE-ADMISSION.3` reported without explaining: its clause is *"When the
-  Subordinate is initially selected, it must also monitor the status of HREADY…"*, which contains no
-  kind phrase at all, and the published `must_be_asserted` comes from the NEXT sentence, *"HSELx must
-  be asserted in the same cycle…"* — kind from one clause, condition from another. NVMe
-  `sigcon_0005`/`0006`/`0007` take `must_not_change` from a sentence two clauses later whose own
-  obligation is conditional on a capability bit.
-  **Inherited from `.3k.2b` (`2026-09-12`) — the same defect in the VALUE slot.** AXI
-  `WTAGUPDATE must_be_value UPDATED` survives every gate this family has built because its table cell
-  matches the `must be valid` arm on a phrase LATER in the cell while `extract_protocol_state_value`
-  binds from the FIRST `must be ` in the text, which is *"the tags in memory must be updated"*. The
-  arm matched on one span and its value came from another, so narrowing the classifier's span fixes
-  the value binder at the same time — re-measure the value slot here, not only the kind.
-  **The population must be re-derived with `replay-constraints` before this ships**: the 4 above are
-  a PUBLISHED count taken before `.3k.2a` and `.3k.2b` moved three of those documents.
-  Prerequisite: `.3k.2` (see the container's ordering rationale). Verification: the re-derived
-  population adjudicated individually; observed RED; the chain rebuilt for every document whose
-  artifacts move.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.4` · Status: `pending` · Goal: **the dynamic path's span
-  discipline.** After `.3i` it reads its negation from `constraint_bearing_sentence` while its
-  subject (`text_before_condition_marker(&statement.text)`), its value binder
-  (`extract_discovered_state_value_from_text` over the whole lowered statement) and its condition
-  (`extract_condition_clause(&statement.text)`) all read the WHOLE statement — so it is now the one
-  producer whose parts are provably drawn from two different spans. The fix is not to call
-  `constraint_bearing_sentence`: this path's records are minted by a value binding that need not be
-  modal, so the clause it needs is the BINDING-bearing clause. Define it, then apply it to all four
-  parts at once. Prerequisite: none. Verification: the population measured in-leaf against the real
-  binder (it cannot be mirrored — `discovered_values` is derived per document); observed RED; the
-  chain rebuilt for every document whose artifacts move.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2j`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j` · Status: `pending` (opened `2026-09-12` by
-  `INVARIANT-SHAPE-ADMISSION.5`) · Goal: **the LLM-primary constraint path applies none of the
-  positional spurious-subject gates this family built.** `.2.50a`, `.3e`, `.3g`, `.3h` and now
-  `INVARIANT-SHAPE-ADMISSION.5` are all wired as `subject_signals.retain(…)` in the two DETERMINISTIC
-  extractors only. `crates/specforge/src/ir/constraint_extract_llm.rs` has its own gates —
-  `ground_constraint` / `ground_constraint_typed`, which check catalog membership, drop invented
-  subjects and drop condition-only subjects — but nothing that reads WHERE in the sentence the subject
-  sits. So a model proposal is grounded on "is this a declared signal?" and never on "is this the
-  thing the sentence constrains?".
-  **Measured instance:** AXI-H `llm_sigcon_0025`/`0027` attribute `WTAGUPDATE must be deasserted` to
-  `WTAG` — the scan lifted a shorter declared name out of a longer identifier — and
-  `INVARIANT-SHAPE-ADMISSION.5`'s narrowing cannot reach them because they are not produced by the path
-  it gates. The census (`python3 scripts/measure_table_row_foreign_subject.py`) names them.
-  **Scope this before implementing.** The question is not "call the five retains from the LLM path
-  too": it is whether a grounded model proposal SHOULD be judged by a gate designed for a pattern
-  path's full-text scan, since the model is not scanning — it names a subject deliberately, and a gate
-  built to catch scanning artefacts may refuse a correct proposal the deterministic path could never
-  have made. Measure how many current `llm_sigcon_*` records each of the five would refuse before
-  wiring any of them.
-  Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
-  population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
-  for every document whose artifacts move.
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2j`
+
+- [x] **REPRODUCE / MEASURE** — the check's own history re-derived per revision with that revision's own
+  scanner over that revision's own `evidence.rs`: green at `1ada364a` (`.3k.1`), RED at `24a605e8`
+  (`.3k.2a`) and still RED at `a81d70ab` (`.3k.2c`). And the sibling census, classified rather than
+  counted: 86 script-shaped files, 28 unreachable from any driver/hook/workflow/doctrine registry, **2**
+  of those claiming `--check` semantics.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/check_doctrines.sh` is the registry and the script was
+  never added to it; `scripts/run_ci.sh` and `.githooks/pre-commit` both delegate to that registry, so
+  one omission removed all three enforcement legs at once. The script itself was correct and simply
+  never executed.
+- [x] **ADDRESSED (verified)** — `scripts/check_constraint_part_span.sh` registered as
+  `CONSTRAINT-PART-SPAN|gate`; the driver reports **PASS** and the count moves 13 → 14 executed
+  doctrines. **Two observed-RED controls, both run through the DRIVER rather than the script, because
+  what failed here was the wiring and not the check:** (a) making the row reader call the untyped
+  classifier directly fails `CONSTRAINT-PART-SPAN` in the doctrine report; (b) adding a third producer
+  (`zeta_probe_third_producer`) fails it naming the found set against the expected one — the exact drift
+  `.3k` built the script for. `crates/` restored byte-identically after both (`git diff --stat` empty).
+- [x] **NO REGRESSION** — no production code changes in this slice; `crates/` is byte-identical to the
+  previous commit. `scripts/check_doctrines.sh` reports **all 14 gate-tier doctrines PASS**, the meta-check
+  that every registered enforcer exists and is executable included. `cargo fmt --all --check`, `cargo
+  clippy --offline --all-targets -D warnings` and the whole workspace suite stay green; `kg-bench`
+  **156/156**.
+- [x] **GENERICITY (ADR 0006)** — enforcement wiring only; no extraction rule, no vocabulary, no
+  document, protocol or vendor name.
+- [x] **LOCKSTEP** — the adapter, the registry line, and the `DOCTRINE_ENFORCEMENT.md` §10 row are the
+  three surfaces that must agree and they are written together; the §10 row records how the gap was
+  found and the sibling enumeration, so the next reader inherits the census rather than the conclusion.
+  `TOOLBOX.md` needs no change: it catalogs diagnostic tools, and this script's entry is its doctrine
+  row. `RETAINED-BUNDLE-POPULATION-FROZEN` keeps the one sibling finding; it is named here, not moved.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2e`
 
@@ -1660,6 +1535,17 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-09-13` — **`.3k.2j` CLOSED (DOCTRINE) — the check `.3k` wrote is now a check anything runs.**
+  `scripts/measure_constraint_part_span.py --check` exists to fail closed when the kind classifier's
+  call-site topology moves, is named in `.3k`'s verification, and was in no driver. Re-derived per
+  revision with each revision's own scanner it was green at `.3k.1`, RED from `.3k.2a` — the typed
+  gateway — and still RED at `.3k.2c`: three leaves reported a green gate over a failing check.
+  Registered as `CONSTRAINT-PART-SPAN|gate` with its §10 row; the driver now executes 14 doctrines and
+  was observed RED on both drifts the script guards. The sibling enumeration is classified rather than
+  counted: 86 script-shaped files, 28 unreachable from any driver or doctrine registry, and exactly 2 of
+  those claim `--check` semantics — this one and `validate_canonical_recovery_contract.py`, whose
+  ownership `RETAINED-BUNDLE-POPULATION-FROZEN` already has open. The first pass said 33 and was wrong,
+  by missing that a doctrine registry invokes a verifier by `argv` rather than by a shell reference.
 - `2026-09-13` — **`.3k.2e` CLOSED (CODE) — proving the subject does not make the kind readable.** The
   table-row reader now goes through `classify_signal_constraint_kind_typed` too, so the terminal
   `MustBeStable` is unreachable as a published kind by any producer. `.3k.2a`'s asymmetry is superseded
