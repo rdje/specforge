@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > was the first vertical population historically unseen
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > was the fresh SWD 29 of 29 artifact promoted
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > was the repaired reviewed population published
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -270,6 +276,8 @@
   > what does SWD Figure B4-1 show (single SWDIO wire packet, bit-field time-phases, Host/Target/Host driver)
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > what does SpecForge do with must be compatible with all supported lane widths
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -290,11 +298,3 @@
   > what does check_book_current_truth.sh actually cover
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > what does check_proof_seal_currency.sh --total do
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > what does check_rolling_ledger_protocol --report actually measure
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what does converge --promote-constraints-llm do and when does it run
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > what does converge do after stabilization
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > what does current_snapshot_bullets_v1 treat as one record

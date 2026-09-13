@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is capture_signal_presence_rows and who shares it
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is captured_region_residuals
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is cited_table_ids
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what is content-based name-column detection / rotation offset remapping
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -209,6 +217,8 @@
   > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what is the difference between ingest batch activation and adaptive batch size
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > what is the difference between is_reference_magnitude_constraint and value_slot_states_a_relation
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > what is the difference between phases and transaction_phases
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
@@ -287,13 +297,3 @@
   > what is the per-record byte budget for a status record
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is the permission-vs-obligation gate / frame error class
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > what is the population of a kind-classifier change in evidence.rs
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is the presence-matrix structural gate and how many tables fire it
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > what is the present blocking point on the specification-to-executable-intent path
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)

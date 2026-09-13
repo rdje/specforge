@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is header-sourced enum naming landed / what did KG-ISF-COMPLETENESS.5.iv.a do (LANDED 2026-08-31: derive_header_sourced_enum_name in ir/evidence.rs runs LAST, after the signal-match loop and the .5.i-gated caption fallback, so it is strictly additive. Five clauses: one header row of two cells; the right cell names a description role; the left cell carries no POSITIONAL role and
+  > leaves exactly one identifier after structure/column-role words are stripped; no value cell is a positional range; at least one value cell parses as an encoding literal. 285 tables accepted in 9 documents. chain-currency 24/24 current at every stage, kg-bench 156/156, +8 tests)
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > is identifier truncation a separate extractor defect or the same empty-catalog gap
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > is intent-bearing content slipping through because nothing reads the full page
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
@@ -292,9 +297,3 @@
   > chains against 24 current ones)
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > was the SWD gold wrong (NO. seed_swd_derivation.json's 29 facts are real, independently verified statements of the ADI spec. The gold is faithful; what changed is that no production extractor may reach them through protocol identity)
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > was the first vertical population historically unseen
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > was the fresh SWD 29 of 29 artifact promoted

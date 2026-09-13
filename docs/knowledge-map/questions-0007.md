@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how many fact cards can SpecForge hold now
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how many falsification controls are cited by verified SpecForge claims
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -293,8 +297,3 @@
   > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > is first-header-appears-in-caption enough to detect a property table
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is header-sourced enum naming landed / what did KG-ISF-COMPLETENESS.5.iv.a do (LANDED 2026-08-31: derive_header_sourced_enum_name in ir/evidence.rs runs LAST, after the signal-match loop and the .5.i-gated caption fallback, so it is strictly additive. Five clauses: one header row of two cells; the right cell names a description role; the left cell carries no POSITIONAL role and
-  > leaves exactly one identifier after structure/column-role words are stripped; no value cell is a positional range; at least one value cell parses as an encoding literal. 285 tables accepted in 9 documents. chain-currency 24/24 current at every stage, kg-bench 156/156, +8 tests)
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > is identifier truncation a separate extractor defect or the same empty-catalog gap

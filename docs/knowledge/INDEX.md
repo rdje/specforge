@@ -1,12 +1,12 @@
 # Knowledge fact-card catalog
 > **AUTO-GENERATED — DO NOT EDIT.** Run `perl scripts/check_fact_card_catalog.pl --write`. [README](README.md) · [questions](../../KNOWLEDGE_MAP.md) · [decisions](../decisions/INDEX.md).
-> 283 fact cards route through 6 title parts; find an id inside a range, then open that part.
+> 284 fact cards route through 6 title parts; find an id inside a range, then open that part.
 
 | Part | Cards | First id | Last id |
 | --- | ---: | --- | --- |
-| [0001](../knowledge-catalog/titles-0001.md) | 56 | `aarch64-external-debug-guide-refresh-is-authority-empty` | `contested-priors` |
-| [0002](../knowledge-catalog/titles-0002.md) | 56 | `coresight-base-system-refresh-is-authority-empty` | `fsmgen-feedback-channel` |
-| [0003](../knowledge-catalog/titles-0003.md) | 56 | `fsmgen-ignores-signal-direction` | `normalized-bundle-retention-is-declared` |
-| [0004](../knowledge-catalog/titles-0004.md) | 56 | `offset-suffixed-dword-relative-bit-cells` | `section-header-register-field-extraction` |
-| [0005](../knowledge-catalog/titles-0005.md) | 56 | `section-header-register-identity-collapse` | `validation-snapshot-reviewed-boundary` |
-| [0006](../knowledge-catalog/titles-0006.md) | 3 | `value-binder-alphabetic-whole-word` | `worktree-doctrine-measurement-gitlink` |
+| [0001](../knowledge-catalog/titles-0001.md) | 56 | `a-relational-predicate-is-not-a-value` | `constraint-record-producer-strata` |
+| [0002](../knowledge-catalog/titles-0002.md) | 56 | `contested-priors` | `flow-arrow-direction-grammar` |
+| [0003](../knowledge-catalog/titles-0003.md) | 56 | `fsmgen-feedback-channel` | `nlp-coordination-already-handled` |
+| [0004](../knowledge-catalog/titles-0004.md) | 56 | `normalized-bundle-retention-is-declared` | `section-header-register-block-qualification` |
+| [0005](../knowledge-catalog/titles-0005.md) | 56 | `section-header-register-field-extraction` | `validate-explicit-artifact-path-contained-backannotation` |
+| [0006](../knowledge-catalog/titles-0006.md) | 4 | `validation-snapshot-reviewed-boundary` | `worktree-doctrine-measurement-gitlink` |

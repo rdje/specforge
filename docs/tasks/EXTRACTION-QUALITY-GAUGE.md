@@ -753,6 +753,15 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Shipped: pure `is_reference_magnitude_constraint` — a comparative marker IMMEDIATELY followed by a
   phrase naming another operand's attribute — wired beside `.3d`'s refusal in BOTH deterministic
   paths. +6 tests, `specforge-core` lib 1,435 → 1,440.
+  **Amended `2026-09-13` by `.3k.2k`: one of this leaf's controls pinned a fabrication.**
+  `a_magnitude_against_a_literal_still_yields_its_constraint` asserted that *"The value of ZETARANGE
+  must be greater than 0"* still yields a record and called that record a value binding. It is
+  `ZETARANGE must_be_value GREATER` — the comparative in the value slot, with the literal `0` the
+  sentence names nowhere in it. The line this leaf drew is real and stands: a LITERAL right operand is
+  not a REFERENCE magnitude and `is_reference_magnitude_constraint` correctly returns false for it. But
+  that is a difference between two REFUSALS, not between a refusal and a capture — the vocabulary has
+  no `at least` kind, so the literal shape ends as a residual too, reached by `.3k.2k`'s value-slot
+  rule instead. The control now pins this leaf's own gate verdict, which is what it was reaching for.
   **Honest limits, both named rather than absorbed:** (a) the four DTI records stay in the persisted
   artifact until that document is re-ingested, exactly as `.3h`'s NVMe `FFFF` record does; (b) the
   lead list is the measured one — extending it with `that supported by` / `the maximum` / `the
@@ -1129,6 +1138,51 @@ honestly-qualified) path to "human-SpecForge in Rust."
   because the phrases carry their modal.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.2c`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.2k` · Status: `done` (`2026-09-13`, CODE; opened the same day by
+  `.3k.3`'s addition measurement) · Goal: **a predicate that states a RELATION is not a value.**
+  `.3k.2b` asked the neighbouring question about the same slot — value or the obligation's VERB — and
+  refused the passive participle. This is the other way the slot fills with something that is not a
+  value: a predicate ADJECTIVE whose truth is not about the subject alone. NVMe states *"The ANA Group
+  Identifier (ANAGRPID) for each ANA Group shall be unique within the NVM subsystem"*; the generic arm
+  lifts `unique` and publishes `must_be_value UNIQUE`, and there is no state `UNIQUE` a signal equals.
+  It is `.3d`'s and `.3k.1`'s class one relation along — an inter-operand EQUALITY and a comparative
+  MAGNITUDE against a reference operand — and the constraint vocabulary has no slot for any of the
+  three. An honest residual keeps the statement counted as an uncaptured normative statement; a
+  fabricated value does not.
+  **Why it is opened here rather than inside `.3k.3`, and why now.** The container's ordering rationale
+  says `.3k.2` lands before `.3k.3` *"because narrowing the kind's span moves 3 of its 4 records onto
+  the ungated `generic_value` arm (NVMe would publish `ANAGRPID must_be_value UNIQUE`)"*. `.3k.3`'s
+  addition measurement ran the real producer under the narrowed span and that prediction came true
+  exactly: NVMe gains `ANA must_be_value` and `ANAGRPID must_be_value`. `.3k.2b` shipped the gate that
+  was supposed to stop this and its rule — refuse a PAST PARTICIPLE — does not reach an adjective. So
+  the arm is not finished, and `.3k.3` cannot land on top of it.
+  **Actionable population today: ZERO, and the leaf says so rather than implying coverage.** Over all
+  78 persisted artifacts, no judged `must_be_value` record carries a relational value: the census of
+  every published deterministic `must_be_value` value is `0`/`1`/`5`/`12`/`0B01`/`0B11`/`VALID`/`LOW`/
+  `NO`/`SET`/`PACKED`/`INVALID`/`INVALIDATED`/`UPDATED`. The class is nevertheless live and
+  demonstrable through the REAL producer on a REAL corpus sentence, which is the `.3k.1` footing
+  `.3k.2e`/`.3k.2f` also shipped on: hand `extract_normative_signal_constraints` NVMe
+  `statement_7397`'s own first obligation clause and today's code returns `must_be_value UNIQUE`.
+  **The discriminator is positional, not lexical (ADR 0006).** English marks the difference in the
+  grammar rather than in the word: a state is complete at the predicate (`Invalid`, `LOW`, `0b01`),
+  while a relation must name its second operand or its scope, and it does so with a preposition
+  IMMEDIATELY after the predicate — `unique within <scope>`, `compatible with <other>`, `less than
+  <other>`. No adjective list and no document vocabulary. `by` is deliberately NOT in the set: it
+  marks an AGENT, not an operand, and the participles it follows are already `.3k.2b`'s.
+  **Ordered after the three admissibility routes that `.3k.2b` measured**, so a document-declared
+  value, a logic level and a numeric literal are untouched: the test can only ever fire in the final
+  `everything else is admissible` branch `.3k.2b` left open.
+  **It caught a fabrication one leaf back.** `.3k.1`'s control
+  `a_magnitude_against_a_literal_still_yields_its_constraint` went RED, and it was right to: the record
+  it pinned is `ZETARANGE must_be_value GREATER`, the comparative lifted into the value slot, with the
+  literal `0` the sentence names nowhere in it. `.3k.1` described it as *"a value binding"*; it is not
+  one, and the vocabulary has no `at least` kind either, so a magnitude against a literal has no more
+  of a slot than a magnitude against a reference. The control now pins the property `.3k.1` actually
+  owns — its own gate's verdict on a literal operand — and the amendment is written into `.3k.1`.
+  **A control that asserts a record EXISTS pins whatever that record says**, fabrication included,
+  which is how this one survived a leaf written to remove fabrications.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.2k`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.3` · Status: `pending` · Goal: **the kind reads its own obligation
   clause** — the original `.3k` goal, at its true size.
   `classify_signal_constraint_kind(&text.to_ascii_lowercase())` becomes
@@ -1167,9 +1221,49 @@ honestly-qualified) path to "human-SpecForge in Rust."
   three — the serialized statement collapses them into one and keeps only the first"*). One record per
   clause, the way the row reader already works, is the shape to size — and that is recall, so it must be
   measured as an ADDITION before it is shipped as a narrowing.
-  Prerequisite: `.3k.2` (see the container's ordering rationale). Verification: the re-derived
-  population adjudicated individually; observed RED; the chain rebuilt for every document whose
-  artifacts move.
+  **ADDITION MEASURED `2026-09-13`, with the real producer, before any of it shipped** — the node asked
+  for exactly this and it changed the design twice. A prototype was built (one record per obligation
+  clause, every part read from that clause), `replay-constraints --json` was captured per document
+  before and after, and the two runs were diffed over the **74 documents comparable in both** (AHB,
+  AXI-L and APB-E drop out: the prototype moves their content, which stales their proofs and they then
+  refuse to LOAD — the standing hazard, and its first useful use as a signal).
+  **First result: +19 records, and −2, and the −2 are this leaf's own population.** NVMe `sigcon_0005`
+  and `0006` stop reproducing, which is the fabrication this leaf exists to remove; **not one other
+  persisted record is lost corpus-wide**. AHB `sigcon_0002` is not lost either — its third clause mints
+  the same subject and kind with the CONDITION its own clause states, so the trap recorded above is
+  avoided by reading every clause rather than by narrowing to the first.
+  **Second result, and the reason the first design was wrong: the whole-statement subject FALLBACK is
+  a cross-clause leak, and per-clause reading multiplies it.** When a clause's subject part yields no
+  signal the reader scans the entire statement, so every clause's kind is handed the same
+  statement-wide subject set. AXI `When the ACVALID signal is asserted the snoop address and control
+  signals on ACADDR, ACPROT, and ACSNOOP must not change… When ACVALID is asserted, it must remain
+  asserted until ACREADY is asserted` minted `ACADDR/ACPROT/ACSNOOP must_be_asserted`: the second
+  clause's obligation is about ACVALID, its own subject is the pronoun `it`, and the statement-wide
+  scan supplied the first clause's three signals. LTI minted `signal must_be_low` and
+  `LAFLOW must_be_low` the same way.
+  **Third result, and the missing piece: a FRONTED condition leaves the subject part empty.**
+  `text_before_condition_marker` cuts at the EARLIEST marker, so `When <cond>, <subject> must <kind>`
+  cuts at offset 0 — which is WHY the fallback fires so often, and why AHB `sigcon_0002` took its
+  subject from a different sentence than its condition in the first place. The main clause of a
+  fronted conditional begins after its comma. With that read and the fallback bounded by the
+  obligation, the fabrications above disappear, `LAOGV must_be_low` replaces the fragment
+  `LAOG must_be_low`, and the additions become **+22 on the same 74 documents**: AXI's five
+  `*VALID must remain asserted` handshake invariants, AXI's four `AWSTASH* must be driven LOW`,
+  LTI `LMOPENREQ must be asserted`, HBM2 `CKE must be driven LOW`, and the rest.
+  **Fourth result — the container's ordering rationale is confirmed, not assumed, and it blocks.**
+  NVMe's clause 1 (*"… shall be unique within the NVM subsystem"*) lands on the ungated `generic_value`
+  arm exactly as `.3k` predicted, so the prototype trades two fabrications for two others.
+  `EXTRACTION-QUALITY-GAUGE.3k.2k` was opened and landed for that, and this leaf resumes on top of it.
+  **Two open questions for the implementation, both raised by the measurement and neither yet decided:**
+  (a) APB's four `PAUSER`/`PWUSER must have the same value` clauses are then minted by BOTH the
+  statement path and the row path, with the same subject/kind/condition and different `source_text`, so
+  the merge key does not collapse them — decide whether that is a duplication to fix here or a
+  cross-producer question of its own; (b) eMMC mints `PARTITION must_not_change` from
+  `PARTITION\_ACCESS`, a fragment produced by the normalizer's escaped underscore, which is a
+  tokenization defect rather than a span defect.
+  Prerequisite: `.3k.2` (see the container's ordering rationale) — **satisfied `2026-09-13` by
+  `.3k.2k`**. Verification: the re-derived population adjudicated individually; observed RED; the chain
+  rebuilt for every document whose artifacts move.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.4` · Status: `pending` · Goal: **the dynamic path's span
   discipline.** After `.3i` it reads its negation from `constraint_bearing_sentence` while its
   subject (`text_before_condition_marker(&statement.text)`), its value binder
@@ -1204,6 +1298,53 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2k`
+
+- [x] **REPRODUCE / MEASURE** — the class demonstrated with the REAL producer on real corpus grammar:
+  `extract_signal_constraints` over NVMe `statement_7397`'s own obligation clause returns
+  `Some("must_be_value:UNIQUE")`, and over OpenCAPI `statement_0613`'s
+  `Some("must_be_value:COMPATIBLE")` — both captured as the observed-RED assertion output, not
+  predicted. Actionable population over the persisted corpus: **0**. The published deterministic
+  `must_be_value` census is `0`/`1`/`5`/`12`/`0B01`/`0B11`/`VALID`/`LOW`/`NO`/`SET`/`PACKED`/`INVALID`/
+  `INVALIDATED`/`UPDATED` and carries no relational value, so this leaf ships on the `.3k.1` footing
+  `.3k.2e`/`.3k.2f` also used: the class is live and demonstrable through the reader even where the
+  corpus has not yet published it. What makes it urgent rather than speculative is `.3k.3`'s addition
+  measurement, which ran the narrowed producer over all 78 artifacts and watched NVMe gain exactly the
+  two `must_be_value` records the container's ordering rationale predicted.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `classify_signal_constraint_kind`'s terminal `generic_value` arm via `is_admissible_state_value`.
+  `.3k.2b` gated that slot on ONE shape — the passive participle — and an adjective wears no participle
+  ending, so `unique`, `compatible` and `greater` walk straight through a gate built to stop
+  `invalidated`. The slot asks "is this word a value?" and had no way to notice that the predicate is
+  not satisfied by the subject alone.
+- [x] **ADDRESSED (verified)** — `value_slot_states_a_relation` refuses a predicate whose next word
+  introduces a second operand or a scope, reached only from `is_admissible_state_value`'s final branch
+  so the declared/level/numeric routes still win first; `protocol_state_value_and_complement` returns
+  the value and that next word from ONE scan, with `extract_protocol_state_value` delegating to it.
+  **Six controls in `mod extraction_quality_gauge_3k_2k`, two of them observed RED with the rule
+  removed** — `must_be_value:UNIQUE` and `must_be_value:COMPATIBLE` — and the file restored
+  byte-identically afterwards. The other four are the line the rule must not cross: a state complete at
+  the word still binds, `by` is not a relation marker, all three admissibility routes win first, and
+  the complement comes from the binder the value came from.
+- [x] **NO REGRESSION** — `replay-constraints --evidence-root generated/evidence_ir` is **identical
+  across the change: 183 persisted / 263 replayed / 137 reproduced / 126 unpersisted, over all 77
+  loadable documents**, so no persisted artifact moves and no chain rebuild is owed. `kg-bench`
+  **156/156**; `cargo fmt --all --check`, `cargo clippy --offline --all-targets -D warnings` and the
+  whole workspace suite green (`specforge-core` lib 1,468 → **1,474**). One existing control failed and
+  was CORRECTED rather than accommodated — see `.3k.1`'s amendment. `doctrine/production_genericity/
+  flow_census.json` re-derived and attributed: `analyzed_functions` +2, `helper_edges` +34.
+- [x] **GENERICITY (ADR 0006)** — universal English clause grammar: a predicate's complement marker.
+  No adjective list, no value vocabulary, no document, protocol or vendor name. The one lexical set is
+  a closed list of English prepositions, the same footing as `.3d`'s comparative markers, and `by` is
+  excluded by its grammatical ROLE rather than by taste.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` gains *"A predicate that names a scope or
+  another operand is not a value"* beside `.3k.2b`'s section, since both are about the same slot. The
+  chapter's existing *"A bound stated against another operand is not a value"* table asserted
+  `The value of PRANGE must be greater than 0` was **kept**; that is the sentence whose record this
+  leaf refuses, so the row and its paragraph are corrected in the same edit — the
+  `BOOK-METHOD-DOC`/`BOOK-BEHAVIOUR-CURRENCY` case of a changed rule leaving standing book text. KM card
+  `[[a-relational-predicate-is-not-a-value]]`.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.2j`
 

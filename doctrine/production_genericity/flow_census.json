@@ -25,19 +25,19 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2f-VOCABULARY-REFUSALS-BELONG-TO-THE-RULE",
-   "owner": "EXTRACTION-QUALITY-GAUGE.3k.2f",
-   "rationale": "The table-row reader now calls the two refusals that say the constraint vocabulary has no slot for what a clause states: `.3d`'s inter-operand equality and `.3k.1`'s comparative magnitude against a reference operand, both previously wired into the statement path alone. One guard clause over the clause the reader is already holding: one decision site and the two calls.",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.2k-A-RELATION-IS-NOT-A-VALUE",
+   "owner": "EXTRACTION-QUALITY-GAUGE.3k.2k",
+   "rationale": "The generic value arm now refuses a predicate that states a RELATION rather than a state (`shall be unique within <scope>`, `must be compatible with <other>`), the shape `.3k.2b`'s participle rule cannot reach. Two functions: the positional test itself, and one scan that returns the bound value together with the word immediately after it, so the value and its complement can never be read from two different binder occurrences.",
    "baseline": {
     "analyzed_functions": 2423,
-    "decision_sites": 13037,
-    "helper_edges": 15115,
+    "decision_sites": 13038,
+    "helper_edges": 15117,
     "semantic_macros": 1483
    },
    "delta": {
-    "analyzed_functions": 0,
-    "decision_sites": 1,
-    "helper_edges": 2,
+    "analyzed_functions": 2,
+    "decision_sites": 0,
+    "helper_edges": 34,
     "semantic_macros": 0
    }
   }

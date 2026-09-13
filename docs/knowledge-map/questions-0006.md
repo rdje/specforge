@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > how does the no-re-ingest canonical promotion protocol stay in place
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how does the published-assertion gate decide which surfaces are watched
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -14,6 +16,8 @@
   > how does the tiling gate keep register-bit recovery honest (no fabrication)
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > how does the value slot tell a state from a relation without an adjective list
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does validate classify a document / what is document_class
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -293,7 +297,3 @@
   > how many evidence artifacts have no validation report
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > how many fact cards can SpecForge hold
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > how many fact cards can SpecForge hold now
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > what does check_rolling_ledger_protocol --report actually measure
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > what does converge --promote-constraints-llm do and when does it run
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > what does converge do after stabilization
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > what does current_snapshot_bullets_v1 treat as one record
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > what does drop_unconditional_overlap_conflicts / unconditional_overlap_residual_packet do in ir/isf_ir.rs
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
@@ -290,11 +298,3 @@
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > what is bind_protocol_state_machines
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is capture_signal_presence_rows and who shares it
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is captured_region_residuals
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is cited_table_ids
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c

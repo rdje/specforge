@@ -157,6 +157,33 @@ asserted"* types as `must_be_value VALID` by an older and separate rule, where `
 phrase rather than from a value vocabulary; subjecting it to the same check was measured and reverted
 after it retyped seventeen correct records across two protocol specifications.
 
+## A predicate that names a scope or another operand is not a value
+
+The same slot fills with one more thing that is not a value. NVMe writes *"The ANA Group Identifier
+(ANAGRPID) for each ANA Group shall be unique within the NVM subsystem"*, which puts `unique` where a
+state belongs, and SpecForge published `must_be_value UNIQUE` — a state no signal can equal.
+
+The difference is in the grammar, not in the word. A state is complete at the predicate; a relation
+has to say what it holds *against*:
+
+| the document writes | what the slot holds |
+| --- | --- |
+| `AWTAGOP must be Invalid` | a state — complete at the word |
+| `... shall be unique within the NVM subsystem` | a relation — and the scope it holds over |
+| `... shall be compatible with all supported lane widths` | a relation — and its other operand |
+| `... must be greater than 0` | a relation — and the bound it is measured against |
+
+So the test is positional rather than a list of adjectives: a predicate immediately followed by a
+preposition that introduces an operand or a scope is refused, and the sentence stays counted as an
+uncaptured normative statement instead of becoming a fabricated value.
+
+*"by"* is deliberately not one of those prepositions. It marks who performs an action rather than
+what a relation holds against, and the passive obligations it follows are already refused by the rule
+above.
+
+The three routes that admit a value run first and are untouched: a word the document itself declares
+as a value, a logic level, and a numeric literal all bind however the sentence continues.
+
 ## An obligation that names no kind states no constraint
 
 The constraint vocabulary has a fixed set of kinds — stable, high, low, asserted, deasserted, must
@@ -270,15 +297,20 @@ SpecForge refuses the sentence instead. That is the same answer it already gives
 *equality* (*"X must be equal to the value of Y"*): an explicit residual is honest where a fabricated
 constraint is not, and the relation stays visible in the evidence for a later stage that can hold it.
 
-The line is drawn at what the comparison is made against, not at the comparison itself. A magnitude
-against a **literal** is an ordinary binding and still extracts:
+The line is drawn at what the comparison is made against, not at the comparison itself. This rule
+asks only whether the bound is another operand:
 
 | the document writes | SpecForge |
 | --- | --- |
-| `... must not be greater than the size indicated by the OAS field` | refused — the bound is another operand |
-| `... must not be wider than the value of the ALLOW_PW field` | refused — same shape |
-| `The value of PRANGE must be greater than 0` | kept — the bound is a literal |
-| `... sets DBI HIGH when the number of transitioning data bits within a byte is greater than 4` | kept — a count against a literal |
+| `... must not be greater than the size indicated by the OAS field` | refused here — the bound is another operand |
+| `... must not be wider than the value of the ALLOW_PW field` | refused here — same shape |
+| `The value of PRANGE must be greater than 0` | not refused here — the bound is a literal |
+| `... sets DBI HIGH when the number of transitioning data bits within a byte is greater than 4` | kept — a count against a literal, and the binding is the level |
+
+A magnitude against a literal is not a *reference* magnitude, so this rule leaves it alone. It does
+not follow that such a sentence yields a constraint: its value slot holds `greater`, which the
+scope-or-operand rule above refuses for its own reason. The vocabulary has no *at least* kind, so both
+shapes end as explicit residuals — they simply reach that answer through different rules.
 
 The reference phrase must follow the comparative immediately. A sentence that merely mentions "the
 value of X" somewhere and separately compares against a number is not this shape, and is untouched.

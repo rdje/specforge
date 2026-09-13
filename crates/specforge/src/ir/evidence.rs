@@ -10066,7 +10066,11 @@ fn classify_signal_constraint_kind_typed(
 /// specification declares one; logic levels and numeric literals are values by construction.
 ///
 /// Universal English grammar plus the document's own vocabulary — no value list (ADR 0006).
-fn is_admissible_state_value(value: &str, discovered_values: &HashSet<String>) -> bool {
+fn is_admissible_state_value(
+    value: &str,
+    discovered_values: &HashSet<String>,
+    lowered_clause: &str,
+) -> bool {
     if discovered_values.contains(value) {
         return true;
     }
@@ -10083,7 +10087,56 @@ fn is_admissible_state_value(value: &str, discovered_values: &HashSet<String>) -
     // Everything else is admissible unless it wears the passive participle's ending, which is what
     // a passive obligation's verb looks like. The length guard keeps short words that merely end in
     // those letters (`red`) out of the rule.
-    !(lowered.len() > 3 && lowered.ends_with("ed"))
+    if lowered.len() > 3 && lowered.ends_with("ed") {
+        return false;
+    }
+    // EXTRACTION-QUALITY-GAUGE.3k.2k — … or unless it states a RELATION rather than a state.
+    !value_slot_states_a_relation(lowered_clause)
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3k.2k — does the word in the value slot name a state the signal HOLDS,
+/// or a relation it STANDS IN?
+///
+/// `.3k.2b` asked the neighbouring question about the same slot — value or the obligation's VERB —
+/// and refused the passive participle. This is the other way the slot fills with something that is
+/// not a value: a predicate ADJECTIVE whose truth is not about the subject alone. NVMe writes *"The
+/// ANA Group Identifier (ANAGRPID) for each ANA Group shall be unique within the NVM subsystem"*, and
+/// the generic arm published `must_be_value UNIQUE`. There is no state `UNIQUE` a signal equals: the
+/// sentence says the identifier DIFFERS from every other one in a scope. It is the class `.3d` and
+/// `.3k.1` already refuse one relation along — an inter-operand EQUALITY and a comparative MAGNITUDE
+/// against a reference operand — and the constraint vocabulary has no slot for any of the three. An
+/// honest residual keeps the statement counted as an uncaptured normative statement, which is the
+/// accounting that keeps the gap visible; a fabricated value does not.
+///
+/// The discriminator is POSITIONAL, not lexical. English marks the difference in the grammar rather
+/// than in the word: a state is complete at the predicate (`Invalid`, `LOW`, `0b01`), while a
+/// relation must name its second operand or its scope, and it does so with a preposition IMMEDIATELY
+/// after the predicate. No adjective list and no document vocabulary (ADR 0006).
+///
+/// Reached only from [`is_admissible_state_value`]'s final branch, so a value the document declares,
+/// a logic level and a numeric literal are untouched — every route `.3k.2b` measured still wins
+/// first.
+fn value_slot_states_a_relation(lowered_clause: &str) -> bool {
+    /// Prepositions that introduce a relation's SECOND OPERAND or its SCOPE.
+    ///
+    /// `by` is deliberately absent: it marks an AGENT (*"must be invalidated by issuing commands"*),
+    /// not an operand, and the participles it follows are already refused above.
+    const RELATION_COMPLEMENT_MARKERS: &[&str] = &[
+        "within",
+        "across",
+        "among",
+        "between",
+        "throughout",
+        "in",
+        "with",
+        "to",
+        "from",
+        "than",
+        "as",
+    ];
+    protocol_state_value_and_complement(lowered_clause)
+        .and_then(|(_, complement)| complement)
+        .is_some_and(|complement| RELATION_COMPLEMENT_MARKERS.contains(&complement.as_str()))
 }
 
 /// EXTRACTION-QUALITY-GAUGE.3k.2d — the obligation modals a specification writes, reduced to the one
@@ -10245,7 +10298,7 @@ fn classify_signal_constraint_kind(
     } else {
         // Generic: try to find a protocol state value, under the same admissibility test.
         match extract_protocol_state_value(lowered) {
-            Some(value) if is_admissible_state_value(&value, discovered_values) => {
+            Some(value) if is_admissible_state_value(&value, discovered_values, lowered) => {
                 SignalConstraintKind::MustBeValue { value }
             }
             _ => SignalConstraintKind::MustBeStable,
@@ -10880,6 +10933,21 @@ fn extract_condition_clause(text: &str) -> Option<String> {
 /// `pub(crate)`: the LLM-primary constraint extractor reuses this same binder grammar to
 /// recover a value the model named but did not echo (`EXTRACTION-QUALITY-GAUGE.8`).
 pub(crate) fn extract_protocol_state_value(lowered: &str) -> Option<String> {
+    protocol_state_value_and_complement(lowered).map(|(value, _)| value)
+}
+
+/// The value a binder binds, together with the word IMMEDIATELY after it.
+///
+/// EXTRACTION-QUALITY-GAUGE.3k.2k — one scan, not two. The value and the question "does this
+/// predicate take a complement" are two questions about the same position in the same clause, and
+/// this family's recurring failure is exactly two readers of one clause drifting apart
+/// (`.3k.2d`: the negator and the kind table recognised different modals;
+/// `[[one-modal-vocabulary-per-constraint-record]]`). A second scan for the following word could
+/// find a different binder's occurrence than the one the value came from.
+///
+/// The complement is returned lower-cased and RAW — including when it is itself a filler — because
+/// the caller is asking about grammar, not about another value.
+fn protocol_state_value_and_complement(lowered: &str) -> Option<(String, Option<String>)> {
     const BINDERS: &[&str] = &["must be ", "shall be ", "must remain ", "shall remain "];
     // Words that are grammar/binding scaffolding, never the value itself.
     const FILLERS: &[&str] = &[
@@ -10890,11 +10958,15 @@ pub(crate) fn extract_protocol_state_value(lowered: &str) -> Option<String> {
             continue;
         };
         let rest = &lowered[pos + binder.len()..];
-        let value = rest
+        let mut words = rest
             .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
-            .find(|word| !word.is_empty() && !FILLERS.contains(word));
-        if let Some(value) = value {
-            return Some(value.to_ascii_uppercase());
+            .filter(|word| !word.is_empty())
+            .skip_while(|word| FILLERS.contains(word));
+        if let Some(value) = words.next() {
+            return Some((
+                value.to_ascii_uppercase(),
+                words.next().map(str::to_ascii_lowercase),
+            ));
         }
     }
     None
@@ -35787,7 +35859,9 @@ mod extraction_quality_gauge_3k_1 {
     //! *"OAS must not be stable"* — from a sentence about a range comparison. Measured population:
     //! 4 records, all in the pattern path, all in that one document; 0 in the dynamic, row and LLM
     //! paths. The controls below are the line the rule must not cross: a magnitude against a
-    //! LITERAL is a value binding and still extracts.
+    //! LITERAL is not a REFERENCE magnitude and this gate does not fire on it. (What such a sentence
+    //! then publishes is a different question, and `EXTRACTION-QUALITY-GAUGE.3k.2k` answers it: the
+    //! comparative in the value slot is not a value either.)
     use super::*;
 
     fn declarations(names: &[&str]) -> Vec<ExtractedStatement> {
@@ -35878,17 +35952,28 @@ mod extraction_quality_gauge_3k_1 {
     }
 
     /// The control that keeps the refusal from becoming a comparative ban: the SAME grammar with a
-    /// LITERAL right operand is an ordinary value binding and still extracts.
+    /// LITERAL right operand is not a REFERENCE magnitude, and this leaf's gate does not touch it.
+    ///
+    /// **Corrected `2026-09-13` by `EXTRACTION-QUALITY-GAUGE.3k.2k`.** This control used to assert
+    /// that the sentence still yields a RECORD, describing it as *"a value binding"*. It is not one:
+    /// the record it pinned was `ZETARANGE must_be_value GREATER` — the comparative lifted into the
+    /// value slot, with the literal `0` the sentence actually names nowhere in it. The constraint
+    /// vocabulary has no `at least` kind, so a magnitude against a literal has no more of a slot
+    /// than a magnitude against a reference does; the difference `.3k.1` measured is real, but it is
+    /// a difference between two REFUSALS, not between a refusal and a capture. The control now pins
+    /// the property this leaf owns — its own gate's verdict on the literal operand — which is what
+    /// it was reaching for, and leaves the value slot to the leaf that owns it.
     #[test]
-    fn a_magnitude_against_a_literal_still_yields_its_constraint() {
-        let records = pattern_records(
-            "The value of ZETARANGE must be greater than 0.",
-            &["ZETARANGE"],
-        );
+    fn a_magnitude_against_a_literal_is_not_a_reference_magnitude() {
+        let text = "The value of ZETARANGE must be greater than 0.";
         assert!(
-            !records.is_empty(),
-            "a magnitude against a literal is a value binding, not a relation"
+            !is_reference_magnitude_constraint(text),
+            "a literal right operand is not a reference magnitude"
         );
+        assert!(is_reference_magnitude_constraint(
+            "The value of ZETARANGE must not be greater than the size indicated by the ZETAOAS \
+             field."
+        ));
     }
 
     /// The dynamic path carries the same gate even though its measured population is zero, so the
@@ -36854,6 +36939,164 @@ mod extraction_quality_gauge_3k_2b {
                 &[]
             )),
             Some("must_be_value:VALID".to_string())
+        );
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_2k {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.2k` — a predicate that states a RELATION is not a value.
+    //! `.3k.2b` refused the passive participle in the value slot; this is the other way the slot
+    //! fills with something that is not a value. NVMe `statement_7397` states *"The ANA Group
+    //! Identifier (ANAGRPID) for each ANA Group shall be unique within the NVM subsystem"* and the
+    //! generic arm published `must_be_value UNIQUE` — a state no signal can equal. Every sentence
+    //! below is a real corpus shape with its identity alpha-renamed (ADR 0006).
+    use super::*;
+
+    fn records(
+        text: &str,
+        declared: &[&str],
+        enum_members: &[&str],
+    ) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        for (index, member) in enum_members.iter().enumerate() {
+            statements.push(ExtractedStatement {
+                statement_id: format!("enum_{index}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Enum ZETASTATES {member} = {index}."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        }
+        statements.push(ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_signal_constraints(&statements, &mut counter)
+    }
+
+    fn kind_of(records: &[SignalConstraintRecord]) -> Option<String> {
+        records.first().map(|record| match &record.constraint_kind {
+            SignalConstraintKind::MustBeValue { value } => format!("must_be_value:{value}"),
+            other => other.as_str().to_string(),
+        })
+    }
+
+    /// The defect, on NVMe `statement_7397`'s own grammar: a predicate whose truth is about a SCOPE
+    /// rather than about the subject alone. There is no state `UNIQUE` a signal equals, so the
+    /// clause types nothing and the statement path refuses it (`.3k.2a`).
+    #[test]
+    fn a_predicate_that_names_a_scope_is_not_a_value() {
+        assert_eq!(
+            kind_of(&records(
+                "The ZETAGRPID identifier shall be unique within the ZETAPOOL subsystem.",
+                &["ZETAGRPID"],
+                &[]
+            )),
+            None
+        );
+    }
+
+    /// The same shape naming a second OPERAND rather than a scope — the other half of the class,
+    /// and the one `.3d`/`.3k.1` refuse at the whole-clause level.
+    #[test]
+    fn a_predicate_that_names_a_second_operand_is_not_a_value() {
+        assert_eq!(
+            kind_of(&records(
+                "ZETALANE must be compatible with all supported lane widths.",
+                &["ZETALANE"],
+                &[]
+            )),
+            None
+        );
+        assert_eq!(
+            kind_of(&records(
+                "ZETAHOLD must be less than the maximum of ZETAVALID.",
+                &["ZETAHOLD"],
+                &[]
+            )),
+            None
+        );
+    }
+
+    /// The control that keeps this from becoming a refusal of the arm: a predicate that is complete
+    /// at the word states a real value and still binds. This is the live AXI `AWTAGOP must be
+    /// Invalid` that `.3k.2b` shipped its own override for.
+    #[test]
+    fn a_state_predicate_complete_at_the_word_still_binds() {
+        assert_eq!(
+            kind_of(&records("ZETATAGOP must be Invalid.", &["ZETATAGOP"], &[])),
+            Some("must_be_value:INVALID".to_string())
+        );
+    }
+
+    /// `by` marks an AGENT, not a relation's operand, and is deliberately outside the marker set.
+    /// The participles it usually follows are already refused by `.3k.2b`, so including it would buy
+    /// nothing and would cost this real OpenCAPI shape.
+    #[test]
+    fn the_agent_marker_by_is_not_a_relation_marker() {
+        assert_eq!(
+            kind_of(&records(
+                "ZETASTATE must be held in reset by the external enable.",
+                &["ZETASTATE"],
+                &[]
+            )),
+            Some("must_be_value:RESET".to_string())
+        );
+    }
+
+    /// The three admissibility routes `.3k.2b` measured still win first, so this test can only ever
+    /// fire where that leaf left `everything else is admissible`. Each line below carries a relation
+    /// marker immediately after its value and binds anyway.
+    #[test]
+    fn the_declared_level_and_numeric_routes_win_first() {
+        assert_eq!(
+            kind_of(&records(
+                "ZETASTATE must be Shared with the ZETAPEER.",
+                &["ZETASTATE"],
+                &["Shared"]
+            )),
+            Some("must_be_value:SHARED".to_string())
+        );
+        assert_eq!(
+            kind_of(&records(
+                "ZETAFMT must be 0 in every cycle.",
+                &["ZETAFMT"],
+                &[]
+            )),
+            Some("must_be_value:0".to_string())
+        );
+    }
+
+    /// One scan, not two: the complement must come from the SAME binder occurrence the value came
+    /// from. A second, independent search for a relation marker would find the later clause's
+    /// `unique within` and refuse a value the first clause states outright — the two-readers-of-one-
+    /// clause failure this family keeps paying for (`.3k.2d`).
+    #[test]
+    fn the_complement_comes_from_the_binder_the_value_came_from() {
+        assert_eq!(
+            kind_of(&records(
+                "ZETAOP must be Invalid and every identifier shall be unique within the pool.",
+                &["ZETAOP"],
+                &[]
+            )),
+            Some("must_be_value:INVALID".to_string())
         );
     }
 }

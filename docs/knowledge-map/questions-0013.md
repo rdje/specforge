@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > where does SpecForge canonicalize upstream artifact paths before serialization
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > where does SpecForge record a captured region that produced no fact
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where does SpecForge store temporary files and caches
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > where does SpecForge withhold template declarations
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > where does a register's byte offset come from when only the caption states it
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -208,6 +218,8 @@
   > which active task tree is next at the live document warning
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which active task tree now requires bounded evidence containment
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > which admissibility routes run before the relational test
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > which architecture owns work and which one verifies published claims
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
@@ -286,15 +298,3 @@
   > which documents declare signals from tables in the current stratum
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > which documents have a retained normalized bundle
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > which documents no longer reproduce their persisted SourceIR
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > which exact current state copies are not yet independently verified in SpecForge
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > which extraction commands does converge run directly
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > which fields may reviewed text normalization change
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > which formal signal declaration predicates does the dense prose authority gate accept
