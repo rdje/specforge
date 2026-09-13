@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > does the co-reference rule resurrect resolve_indexed_signal_family
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > does the constraint record source_text become the clause
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -295,5 +297,3 @@
   > how do I rebuild every retained chain after a production change
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how do I recover the source row behind a table_signal_declaration_provenance entry

@@ -83,6 +83,7 @@ that signal, so each `must`/`shall` clause in the cell is judged on its own:
 | nothing — the clause opens with the modal | `Must be valid when RVALID is asserted.` | the row's signal is the subject |
 | the row's own signal | `PSTRB must not be active during a read transfer.` | the row's signal is the subject |
 | a different nominal | `HBURST_WIDTH must be 0 or 3.` | **refused** — this constrains the width parameter |
+| a common noun an identifier stands beside | `WTAG bits must be valid … enabled by WSTRB.` | **refused** for `WSTRB` — the clause's own subject is `WTAG` |
 | a pronoun | `… it must remain constant throughout a burst transfer.` | **refused** — see below |
 
 The third row is the one that matters for precision. `HBURST_WIDTH must be 0 or 3` sits in `HBURST`'s
@@ -94,6 +95,32 @@ The statement-level readers, which see the row only as one serialized `| … | �
 exactly that: AHB's artifacts carried `HBURST must_be_value 0` and `HPROT must_be_value 0`, neither of
 which the document states. They now apply the same rule — a row keeps its "subject from the other
 cells" reading only when the obligation clause names no subject of its own.
+
+The fourth row is the same question one word further along. A description cell often writes its
+subject as a **descriptor with the identifier beside it** — `WTAG bits`, `the LASECSID signal`, `the
+QDENY output` — and the word immediately before the modal is then the descriptor, not the name. AXI
+published `WSTRB must be valid` from
+
+```text
+| Match | 0b11 | … WTAG bits must be valid for byte lanes that are enabled by WSTRB. |
+```
+
+because the clause appeared to have no subject of its own, so the row supplied one, and `WSTRB` —
+which the sentence reaches only inside its trailing `enabled by` phrase — was taken as a co-subject
+of a requirement about `WTAG`. Reading one token back fixes it, and **adjacency is what makes that
+token a premodifier**: it counts only when it is the identifier with nothing attached to it. That is
+not a detail. In
+
+```text
+| LASSID | Context | … When LASSIDV is LOW, this signal must be 0. … |
+```
+
+the nearest identifier-shaped token before `signal` is `LOW,` — which *closes* the fronted condition
+rather than opening the noun phrase — and the trailing comma is the only thing that says so. A rule
+that ignored it would refuse this row's own correct requirement. Measured across the corpus, reading
+the premodifier removes one record, the `WSTRB` fabrication above; the widest version of the same
+idea — withdraw the exemption whenever any identifier appears before the modal — removes twelve, and
+eleven of them are requirements the documents do state.
 
 The `HPROT` record is worth one more sentence, because the pipeline caught it twice by different
 means. AHB also says *"a Manager sets HPROT[0] HIGH, to indicate a data access"*, so the fabricated

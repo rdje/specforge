@@ -7440,23 +7440,61 @@ fn is_post_passive_binding_only_subject_in(text: &str, sentence: &str, subject: 
 /// `HBURST`/`HPROT` from `…_WIDTH must be …`, and AXI-H's `WTAG` from `WTAGUPDATE must be deasserted`,
 /// where the scan lifted the shorter declared name out of the longer one.
 ///
+/// `EXTRACTION-QUALITY-GAUGE.3k.7` — **the descriptor head is one word short of the identifier.**
+/// The first bullet above already says what a common-noun head IS: *"a DESCRIPTOR standing in for an
+/// identifier the cell names right beside it"*. When the identifier it stands in for is right beside
+/// it, the clause DOES name a subject of its own, and reading only the head cannot see it. AXI
+/// `| Match | 0b11 | … WTAG bits must be valid for byte lanes that are enabled by WSTRB. |` heads
+/// with `bits`, so the exemption stood and `WSTRB` — reachable only inside the trailing `enabled by`
+/// phrase — was published as a co-subject of an obligation about `WTAG`. So the head test extends by
+/// exactly one token: when the head carries no identifier of its own, the identifier PREMODIFYING it
+/// is the clause's subject.
+///
+/// Adjacency is what makes it a premodifier, and it is read structurally rather than assumed: the
+/// preceding token counts only when it is the identifier **raw**, so any punctuation between the two
+/// words — which ends a phrase rather than opening one — declines. That single condition is what
+/// separates `WTAG bits` from LTI's `When LASSIDV is LOW, this signal must be 0`, where the nearest
+/// identifier-shaped token is `LOW,` closing the fronted condition. A head that carries an identifier
+/// FRAGMENT but is not one (`LRPROT[0`, `11:00`) is left to the row exemption exactly as before: that
+/// spelling is not the tokenization the extractor lifts, so this gate cannot judge it.
+///
 /// Universal grammar only (ADR 0006 — no document, protocol, vendor, or token list).
 fn obligation_head_is_a_foreign_identifier(sentence: &str, lead: usize, subject: &str) -> bool {
-    let Some(head) = content_head(&sentence[..lead]) else {
+    let Some((head, premodifier)) = content_head_with_premodifier(&sentence[..lead]) else {
         // The clause opens with its modal: no subject of its own, so the row legitimately supplies
         // one. This is exactly what gate 2 was written for.
         return false;
     };
     // A single maximal uppercase run spanning the WHOLE head IS the identifier; anything else — a
     // common noun, a capitalised English word, a mixed-case name — is not.
-    let runs = uppercase_run_tokens(head);
-    let [(offset, run)] = runs.as_slice() else {
-        return false;
-    };
-    if *offset != 0 || run.len() != head.len() || run.len() < 2 {
+    if let Some(name) = whole_token_identifier(head) {
+        return !name.eq_ignore_ascii_case(subject);
+    }
+    // `.3k.7` — the head stands in for an identifier only when it carries none of its own.
+    if uppercase_run_tokens(head)
+        .iter()
+        .any(|(_, run)| run.len() >= 2)
+    {
         return false;
     }
-    !run.eq_ignore_ascii_case(subject)
+    let Some(name) = premodifier.and_then(whole_token_identifier) else {
+        return false;
+    };
+    !name.eq_ignore_ascii_case(subject)
+}
+
+/// `token` itself when it IS an identifier — a single maximal `[A-Z0-9_]` run of at least two
+/// characters spanning the whole token, the tokenization [`collect_subject_signal_tokens`] uses.
+///
+/// Whole-token is the load-bearing half. `LOW,` and `(AWSIZE` each contain an identifier run and are
+/// not identifiers in this position: the punctuation is a phrase boundary, and a gate that ignored it
+/// would read across the clause break it marks.
+fn whole_token_identifier(token: &str) -> Option<&str> {
+    let runs = uppercase_run_tokens(token);
+    let [(offset, run)] = runs.as_slice() else {
+        return None;
+    };
+    (*offset == 0 && run.len() == token.len() && run.len() >= 2).then_some(*run)
 }
 
 /// EXTRACTION-QUALITY-GAUGE.3g — recognize a SPURIOUS constraint subject lifted from a `Reg.Field`
@@ -10704,7 +10742,20 @@ fn obligation_subject(clause: &str) -> ObligationSubject<'_> {
 /// the same walk `resolve_pronoun_subject_anaphora` makes. `None` when nothing but helpers precede
 /// the modal, i.e. the clause carries no subject of its own.
 fn content_head(text: &str) -> Option<&str> {
-    text.split_whitespace().rev().find_map(|token| {
+    content_head_with_premodifier(text).map(|(head, _)| head)
+}
+
+/// The same head, with the RAW whitespace token that immediately precedes it —
+/// `EXTRACTION-QUALITY-GAUGE.3k.7`'s premodifier slot, where a common-noun head's identifier lives
+/// (`WTAG bits`, `the LASECSID signal`). [`content_head`] is this reading's first element, so the two
+/// cannot drift.
+///
+/// The premodifier is returned exactly as the text spells it, punctuation included: whether a token
+/// is adjacent to the head or closes the phrase before it is the caller's question, and trimming here
+/// would erase the evidence for it.
+fn content_head_with_premodifier(text: &str) -> Option<(&str, Option<&str>)> {
+    let mut tokens = text.split_whitespace().rev();
+    let head = tokens.by_ref().find_map(|token| {
         let word = token.trim_matches(|character: char| {
             !(character.is_ascii_alphanumeric() || character == '_')
         });
@@ -10712,7 +10763,8 @@ fn content_head(text: &str) -> Option<&str> {
             .iter()
             .any(|helper| word.eq_ignore_ascii_case(helper));
         (!word.is_empty() && !is_helper).then_some(word)
-    })
+    })?;
+    Some((head, tokens.next()))
 }
 
 /// Byte offset of `needle` in `haystack` at identifier boundaries, if present. Both are ASCII-lower.
@@ -36130,6 +36182,156 @@ mod invariant_shape_admission_5 {
         assert_eq!(content_head(" ZETAREADY is "), Some("ZETAREADY"));
         assert_eq!(content_head("   "), None);
         assert_eq!(content_head(" and to be "), None);
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_7 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.7` — a table row's subject exemption must not survive a clause
+    //! that has a subject of its own, and a DESCRIPTOR head hides one. `INVARIANT-SHAPE-ADMISSION.5`
+    //! withdrew the exemption when the obligation HEADS with a foreign identifier; it did not when the
+    //! identifier sits one token back, premodifying a common noun, so AXI's
+    //! `WTAG bits must be valid for byte lanes that are enabled by WSTRB` published `WSTRB` — a
+    //! subject reachable only inside its trailing `enabled by` phrase — as a co-subject.
+    //!
+    //! Every row below is a persisted corpus shape reproduced on invented names, so a control cannot
+    //! become a name list.
+    use super::*;
+
+    /// The refusal. AXI-L `sigcon_0027` / AXI-H `sigcon_0043`, the record this leaf exists to remove.
+    #[test]
+    fn a_premodifying_identifier_is_the_clauses_own_subject() {
+        let row = "| Match | 0b11 | The tags in the write must be checked against the Allocation Tag \
+                   values that are obtained from memory. OMEGATAG bits must be valid for byte lanes \
+                   that are enabled by OMEGASTRB. |";
+        let obligation =
+            "OMEGATAG bits must be valid for byte lanes that are enabled by OMEGASTRB.";
+        assert!(
+            is_post_passive_binding_only_subject_in(row, obligation, "OMEGASTRB"),
+            "OMEGASTRB is named only after the lead of an obligation about OMEGATAG"
+        );
+        assert!(
+            !is_post_passive_binding_only_subject_in(row, obligation, "OMEGATAG"),
+            "the clause's own subject is still kept"
+        );
+    }
+
+    /// And through the real producer: the row keeps the obligation it states and loses the one it
+    /// does not.
+    #[test]
+    fn the_producer_no_longer_mints_the_trailing_phrase_as_a_co_subject() {
+        let declarations = ExtractedStatement {
+            statement_id: "declarations".into(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: ["OMEGATAG", "OMEGASTRB", "OMEGATAGUPDATE"]
+                .iter()
+                .map(|name| format!("Signal {name} is input width 1."))
+                .collect::<Vec<_>>()
+                .join(" "),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let row = ExtractedStatement {
+            statement_id: "row".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text:
+                "| Match | 0b11 | OMEGATAGUPDATE must be deasserted. OMEGATAG bits must be valid \
+                   for byte lanes that are enabled by OMEGASTRB. |"
+                    .to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let mut counter = 0usize;
+        let records = extract_signal_constraints(&[declarations, row], &mut counter);
+        let subjects: Vec<&str> = records
+            .iter()
+            .map(|record| record.subject_signal.as_str())
+            .collect();
+        assert!(
+            !subjects.contains(&"OMEGASTRB"),
+            "OMEGASTRB is not a subject of this row: {records:?}"
+        );
+        assert!(
+            subjects.contains(&"OMEGATAG"),
+            "the obligation the clause does state is still minted: {records:?}"
+        );
+    }
+
+    /// The three shapes the corpus offers that a premodifier rule must NOT reach. Each is a live
+    /// replay record measured under the widest version of this rule, which removed all of them.
+    #[test]
+    fn a_token_that_closes_a_phrase_is_not_a_premodifier() {
+        for (row, subject, why) in [
+            // A fronted condition ends in a comma, so the nearest identifier-shaped token (`LOW,`)
+            // belongs to the condition, not to the noun phrase `this signal` (LTI `LASSID`).
+            (
+                "| ZETASSID | Context | SubstreamID. When ZETASSIDV is LOW, this signal must be 0. |",
+                "ZETASSID",
+                "comma closes the fronted condition",
+            ),
+            // A head that carries an identifier FRAGMENT is not a common noun, so the premodifier
+            // slot is never read (MMU-700 `LAPROT`).
+            (
+                "| ZETARPROT | Translation | ZETARPROT uses the same encoding as OMEGAPROT. If \
+                 ZETATRANS is SPEC, ZETARPROT[0] must be 0. |",
+                "OMEGAPROT",
+                "identifier-bearing head",
+            ),
+            // The same, with a digit-run head (NVMe `BADD`).
+            (
+                "| 63:00 | Buffer Address (ZETADD): the offset within the memory page is 0h, then \
+                 bits 11:00 shall be 0h. |",
+                "ZETADD",
+                "digit-run head",
+            ),
+        ] {
+            assert!(
+                !is_post_passive_binding_only_subject(row, subject),
+                "{why}: {subject} must keep its row context: {row:?}"
+            );
+        }
+    }
+
+    /// The premodifier reading itself — one definition, shared with [`content_head`], which is its
+    /// first element.
+    #[test]
+    fn the_premodifier_is_the_raw_token_immediately_before_the_head() {
+        assert_eq!(
+            content_head_with_premodifier(" OMEGATAG bits "),
+            Some(("bits", Some("OMEGATAG")))
+        );
+        assert_eq!(
+            content_head_with_premodifier(" the ZETASECSID signal "),
+            Some(("signal", Some("ZETASECSID")))
+        );
+        // punctuation is preserved, because whether it closes a phrase is the caller's question
+        assert_eq!(
+            content_head_with_premodifier(" is LOW, this signal "),
+            Some(("signal", Some("this")))
+        );
+        // helper words are skipped for the HEAD, so the premodifier is the token before that head
+        assert_eq!(
+            content_head_with_premodifier(" OMEGATAG bits are "),
+            Some(("bits", Some("OMEGATAG")))
+        );
+        assert_eq!(
+            content_head_with_premodifier(" OMEGABURST_WIDTH "),
+            Some(("OMEGABURST_WIDTH", None))
+        );
+        assert_eq!(content_head_with_premodifier("   "), None);
+    }
+
+    /// A token is the identifier only when it IS one, whole.
+    #[test]
+    fn only_a_whole_token_identifier_counts() {
+        assert_eq!(whole_token_identifier("OMEGATAG"), Some("OMEGATAG"));
+        assert_eq!(whole_token_identifier("LOW,"), None);
+        assert_eq!(whole_token_identifier("(OMEGATAG"), None);
+        assert_eq!(whole_token_identifier("bits"), None);
+        assert_eq!(whole_token_identifier("A"), None);
+        assert_eq!(whole_token_identifier("ZETAPROT[0"), None);
     }
 }
 

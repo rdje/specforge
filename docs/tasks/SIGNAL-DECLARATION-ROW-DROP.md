@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.3` closed; `.2c` deferred; `.2d` open)
+- Status: `active` (`2026-09-11`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.3` closed; `.2c` deferred; `.2d`/`.4` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
-- Last updated: `2026-09-11`
+- Last updated: `2026-09-13`
 - Owner: repo-local workflow
 
 ## Goal
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2`, `.3`
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-11`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2`, `.3`, `.4`
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -576,6 +576,44 @@ a long tail.
   Verification: pending
   Commit: pending
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `pending` (opened `2026-09-13` by
+  `EXTRACTION-QUALITY-GAUGE.3k.7`) · Goal: **the same silent drop one stage later — a declaration the
+  SemanticIR reader cannot finish parsing is discarded whole, direction included.**
+  This tree's `.0`–`.3` are about `synthesize_signal_declarations_from_table`, the EVIDENCE-stage
+  reader. `parse_explicit_signal_declaration` in `crates/specforge/src/ir/semantic.rs` is the reader
+  one stage down, and it ends with `if index != tokens.len() { return None; }`: a declaration whose
+  WIDTH it cannot consume to the end yields nothing at all, so a direction it has already parsed is
+  thrown away with it. There is no residual, no counter and no validation entry — the same silence
+  `.0` measured, at a different function.
+  **The consequence is not confined to the catalog.** `declared_signal_names` is built from the
+  interface records this parser produces, and the semantic grounding filter demotes every
+  `signal_constraint` whose subject is not in that set. So a dropped declaration silently deletes
+  every obligation the document states about that signal.
+  **Measured `2026-09-13` over all 77 documents with both artifacts: 83 signals are declared in
+  EvidenceIR and absent from the SemanticIR interface catalog, across 10 documents** — MMU-700 47,
+  AXI-H 9, AXI-L 9, GICv3 7, Avalon 5, CHI 2, ATB/CXS/LTI/eMMC 1 each. The population splits in two
+  and the strata need different answers:
+  * **17 carry a legitimate arithmetic width the parser stops short of** — AXI's
+    `Signal WSTRB is output width DATA_WIDTH / 8.`, `WPOISON`/`RPOISON`
+    (`ceil(DATA_WIDTH / 64)`), `RUSER` (`USER_DATA_WIDTH + USER_RESP_WIDTH`), the four `*IDCHK`
+    (`ceil((ID_W_WIDTH + int(Unique_ID_Support))/8)`). These are real losses: `WSTRB` is one of AXI's
+    core wires, its parity companion `WSTRBCHK` IS in the catalog, and AXI's own
+    *"An attached Subordinate must have its WSTRB input tied HIGH"* obligation is demoted to a
+    residual because of it.
+  * **66 carry a width the source row never stated as one** — MMU-700's
+    `Signal LAADDR is width 3'b000 , lavalid`, an upstream waveform/table misread. Refusing these may
+    well be CORRECT; refusing them **silently** is the defect either way, and their real fix is
+    upstream of this function.
+  **Do not widen the width grammar first.** The two questions are separable and the accounting one is
+  both cheaper and a precondition: make the refusal VISIBLE (a counted residual naming the signal and
+  the width text it could not read), which immediately tells the corpus which stratum each of the 83
+  is in. Only then decide whether a parsed DIRECTION should survive an unreadable width — that is a
+  behaviour change with its own population — and whether an arithmetic width expression should be
+  carried as opaque text rather than parsed.
+  Prerequisite: none. Verification: the 83 re-derived with the real reader and split by stratum;
+  observed RED; the chain rebuilt for every document whose artifacts move.
+  Commit: pending
+
 - ID: `SIGNAL-DECLARATION-ROW-DROP.3` · Status: `done` (`2026-09-11`) · Goal: **the declared spelling
   must be the document's spelling.** Under ADR 0037 case carries no alias authority, so emitting a
   case-variant the source never wrote mints an identifier rather than grounding one.
@@ -697,5 +735,8 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+1. `SIGNAL-DECLARATION-ROW-DROP.4` — 83 declared signals never reach the SemanticIR interface catalog,
+   and every obligation about them is demoted with them. Make the refusal visible before widening any
+   width grammar.
+2. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.

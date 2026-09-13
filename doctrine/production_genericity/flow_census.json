@@ -25,19 +25,19 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.5-A-RELATION-REFUSES-ITS-OWN-CLAUSE",
-   "rationale": "The two refusals that say the constraint vocabulary has no slot for what a clause states are evaluated over the OBLIGATION, in the statement path, and over the BINDING in the dynamic path, instead of over the whole statement. No new function: two guard clauses move inside the loops that already hold the clause.",
-   "owner": "EXTRACTION-QUALITY-GAUGE.3k.5",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.7-A-DESCRIPTOR-HEAD-STANDS-IN-FOR-AN-IDENTIFIER",
+   "rationale": "The table-row subject exemption is withdrawn when the obligation's common-noun head is PREMODIFIED by a foreign identifier, not only when the head IS one. Two functions: `content_head_with_premodifier` (which `content_head` now delegates to, so the two readings cannot drift) and `whole_token_identifier` (the single-run-spanning-the-whole-token test, previously inline in the head check and now shared with the premodifier check).",
+   "owner": "EXTRACTION-QUALITY-GAUGE.3k.7",
    "baseline": {
     "analyzed_functions": 2433,
-    "decision_sites": 13076,
+    "decision_sites": 13075,
     "helper_edges": 15320,
     "semantic_macros": 1485
    },
    "delta": {
-    "analyzed_functions": 0,
-    "decision_sites": -1,
-    "helper_edges": 0,
+    "analyzed_functions": 2,
+    "decision_sites": 4,
+    "helper_edges": 3,
     "semantic_macros": 0
    }
   }

@@ -1315,7 +1315,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: `.3k.2` (see the container's ordering rationale) — **satisfied `2026-09-13` by
   `.3k.2k`**. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.3`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.7` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.7` · Status: `done` (`2026-09-13`, CODE; opened the same day by
+  `.3k.3`) · Goal:
   **a table row's subject exemption survives a clause that has its own subject.**
   `is_post_passive_binding_only_subject` exempts a serialized table row from its pre-lead subject
   authority, because a row's other cells legitimately name the subject an obligation cell constrains.
@@ -1325,12 +1326,44 @@ honestly-qualified) path to "human-SpecForge in Rust."
   that: head `bits`, a common noun, so the exemption stands and `WSTRB` — reachable only inside the
   trailing `enabled by` phrase — is published as a co-subject of an obligation about `WTAG`.
   **The obvious rule was tried in `.3k.3` and MEASURED, and it is too wide:** withdrawing the
-  exemption whenever the clause names any identifier before its lead costs three reproduced persisted
-  records (MMU-700 `dyn_sigcon_0008`, RISC-V IOMMU `dyn_sigcon_0007`, NVMe `dyn_sigcon_0015`) and
-  removes AXI `AWSIZE`/`AWLEN`/`AWCMO` and LTI `LASSID`/`LRMECID` value records — and it reaches the
-  DYNAMIC path, which `.3k.4` owns, through the two-argument wrapper. Each of those eight must be
-  adjudicated individually before any version of this ships. Prerequisite: none. Verification: all
-  eight adjudicated; observed RED; the chain rebuilt for every document whose artifacts move.
+  exemption whenever the clause names any identifier before its lead costs reproduced persisted
+  records and removes AXI `AWSIZE`/`AWLEN`/`AWCMO` and LTI `LASSID`/`LRMECID` value records — and it
+  reaches the DYNAMIC path, which `.3k.4` owns, through the two-argument wrapper.
+  **RE-DERIVED `2026-09-13` by building that widest rule as a prototype and diffing
+  `replay-constraints` per document, and the node's own sizing was wrong in both directions.** The
+  wide rule removes **12 records over the 76 comparable documents**, not eight, and MMU-700
+  `dyn_sigcon_0008` is **not** among the reproduced ones — it stopped reproducing before this leaf
+  (its published condition comes from a different clause), so the cost in *reproduced persisted*
+  records is **2** (RISC-V IOMMU `dyn_sigcon_0007` `PDT`, NVMe `dyn_sigcon_0015` `BADD`). The two the
+  node did not name are OpenCAPI `sigcon_0003` `TLX` and AXI-H `sigcon_0043` `WSTRB` — and the second
+  is the defect itself, in the older specification, which is the class evidence this leaf needed.
+  **The shipped rule is one token wider than the head, and the corpus decided where it stops.** The
+  first bullet of `obligation_head_is_a_foreign_identifier`'s own doc comment already said what a
+  common-noun head IS — *"a DESCRIPTOR standing in for an identifier the cell names right beside
+  it"* — so when that identifier is right beside it the clause DOES name its own subject. The head
+  test now reads the PREMODIFIER when the head carries no identifier of its own, and the
+  premodifier counts only when the preceding token is the identifier **raw**. That single condition
+  is the whole difference between the two rules: it separates `WTAG bits` from LTI's
+  *"When LASSIDV is LOW, this signal must be 0"*, where the nearest identifier-shaped token is
+  `LOW,` closing the fronted condition rather than opening the noun phrase. A head that carries an
+  identifier FRAGMENT but is not one (`LRPROT[0`, `11:00`) is left to the row exemption unchanged,
+  because that spelling is not the tokenization the extractor lifts.
+  **Measured: the shipped rule removes exactly ONE record over the 76 comparable documents**
+  (AXI-H `sigcon_0043`), and all twelve the wide rule destroyed survive. Corpus replay
+  **200/127 → 199/126**, `not_reproduced` unchanged at 73. AXI-L rebuilt: **55 → 54**, the delta
+  being `sigcon_0027 WSTRB must_be_value VALID` and one `fact_provenance` entry; everything else in
+  the artifact is id renumbering, and the emitted `.isf` differs only in `tinv_sc_sigcon_*` numbering.
+  **A finding the rebuild produced, routed rather than absorbed: the fabrication never reached
+  SemanticIR, because `WSTRB` is not in AXI's declared catalog.** Both WSTRB records — the
+  fabrication and the REAL one (*"An attached Subordinate must have its WSTRB input tied HIGH"*) —
+  are demoted to residuals by the semantic grounding filter. `WSTRB` is declared in EvidenceIR
+  (`Signal WSTRB is output width DATA_WIDTH / 8.`) and dropped by
+  `parse_explicit_signal_declaration`, whose `index != tokens.len()` refusal discards the WHOLE
+  declaration — direction included — when it cannot finish the width expression. Nine AXI-L signals
+  are lost this way and every one has an arithmetic width. Owned by
+  `SIGNAL-DECLARATION-ROW-DROP.4`; fact card `[[arithmetic-width-drops-the-declaration]]`.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.7`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.8` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
   **one obligation, two producers, two records.** APB-E publishes `PAUSER must_be_value VALID`,
   `PAUSER must_not_change` ×2 and the three `PWUSER` equivalents **twice** — once as `sigcon_*` from
@@ -1578,6 +1611,49 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.7`
+
+- [x] **REPRODUCE / MEASURE** — `replay-constraints --json` captured per document for all 77 loadable
+  artifacts, then re-captured against a prototype of the WIDEST version of this rule and diffed on the
+  producer's own record identity. Baseline **200 persisted / 127 reproduced**; the wide rule removes
+  **12 records across 7 documents** and moves AXI-L's content (it then refuses to LOAD, which is the
+  standing hazard used as a signal). Every one of the twelve was read against its source and
+  adjudicated; the node's "three reproduced persisted records" is **2** — MMU-700 `dyn_sigcon_0008`
+  already fails to reproduce for an unrelated reason, which the verdict's `refused_by` confirms.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `obligation_head_is_a_foreign_identifier`: it reads `content_head` alone, so a clause whose subject
+  is a common noun premodified by an identifier (`WTAG bits`) presents a head that is not an
+  identifier, the `INVARIANT-SHAPE-ADMISSION.5` narrowing declines, gate 2 exempts the row, and gate 4
+  never runs. Observed RED on the pre-change producer with the two controls installed verbatim against
+  the restored original file: `is_post_passive_binding_only_subject_in` returns `false` for `OMEGASTRB`,
+  and `extract_signal_constraints` mints `sigcon_0003 OMEGASTRB MustBeValue { value: "VALID" }` from the
+  row. Live instance: AXI-L `sigcon_0027`, AXI-H `sigcon_0043`.
+- [x] **ADDRESSED (verified)** — the head test reads the premodifier when the head carries no
+  identifier, through one new `content_head_with_premodifier` that `content_head` now delegates to (so
+  the two readings cannot drift) and one new `whole_token_identifier` shared by both slots.
+  **Corpus: 200/127 → 199/126 over 77 documents, a single record removed, and it is this leaf's.**
+  AXI-L's chain rebuilt from its restored held-out bundle — `evidence → validate → semantic →
+  validate → intent → validate → adapt` — **55 → 54** signal constraints, `fact_provenance`
+  312 → 311 losing exactly `WSTRB|MustBeValue { value: "VALID" }|`, SemanticIR/IntentIR
+  `signal_constraints` unchanged at 53, `.isf` identical but for rule numbering. Bundle `diff -rq`
+  byte-identical before removal; retained population back to **24**.
+- [x] **NO REGRESSION** — wire golds `signal_constraint P=R=F1=1.000` with **fp=0** on AXI, APB and
+  AHB, and `temporal_rule 1.000` on AXI; `kg-bench` **156/156**; `cargo fmt --all --check` and
+  `cargo clippy --offline --all-targets -D warnings` clean; the whole workspace suite green
+  (`specforge-core` lib 1,503 → **1,508** passing, `specforge` 472, conformance 168, production-graph 8/8);
+  `flow_census.json` re-derived and attributed (+2 functions, +4 decision sites, +3 helper edges).
+  The 12 records the wide rule destroyed all survive, verified by diffing the shipped snapshot against
+  the baseline: the only difference corpus-wide is AXI-H `sigcon_0043`.
+- [x] **GENERICITY (ADR 0006)** — noun-phrase premodification plus an adjacency test that is pure
+  punctuation structure. No document, protocol, vendor, value or token list; the closed helper-word
+  list it walks is the one `content_head` already had.
+- [x] **LOCKSTEP** — the book's *"An obligation in a table cell belongs to whatever precedes its
+  modal"* section carried a disposition table whose "a different nominal" row was true only of a bare
+  identifier head; the descriptor row and the adjacency rule are added there, in the chapter that owns
+  this concern. No production rule was deleted or replaced, so no standing book text describes gone
+  behaviour. The KM card this slice adds is for the SemanticIR finding, not for this rule — the
+  durable fact here is the book's.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.5`
 
