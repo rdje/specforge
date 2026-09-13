@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > what does SPECFORGE_INGEST_SAVE_PAGE_IMAGES do
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what does SWD Figure B4-1 show (single SWDIO wire packet, bit-field time-phases, Host/Target/Host driver)
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > what does SpecForge do with must be compatible with all supported lane widths
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what does SpecForge take from a grounded author
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
@@ -288,13 +298,3 @@
   > what is ProtocolStateRecord / protocol_states / DBGTAPSM
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what is README.md's effective wrap column in SpecForge (about 94 bytes — that is the measured maximum of the population once the two drifted lines were reflowed; the enforced bound is 120 and the warning fires at 96)
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > what is REPLAY_PROJECTION_SHA256
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what is SWD's actual intent / protocol (from the spec)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > what is SerialFrameField / serial_frame_fields / SerialFramePhase
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what is SpecForge doing in academic or research terms
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > what is TimingIntentDisposition

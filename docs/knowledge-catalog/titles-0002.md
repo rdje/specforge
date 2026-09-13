@@ -47,6 +47,7 @@
 | [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md) | 2026-08-09 | `current` | Dormant serializable path fields require the portability contract before activation |
 | [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md) | 2026-06-15 | `current` | A constraint subject that is only ever a Reg.Field dotted cross-reference is dropped (not the cell's subject) |
 | [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md) | 2026-08-11 | `current` | Of the 33 documents that declare no signals, 32 have no declaration-bearing modality at all; one declares its… |
+| [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md) | 2026-09-13 | `current` | A Markdown backslash-escape fragments an identifier, the fragment is DECLARED as a signal, and its own synthe… |
 | [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |
 | [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md) | 2026-06-07 | `current` | eval-extraction scores the PERSISTED evidence_ir.json — rebuild before trusting a baseline (it can be stale) |
 | [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md) | 2026-06-09 | `current` | EvidenceIR build determinism — two HashSet-iteration leaks (relations + enum name) found & FIXED (EVIDENCE-… |
@@ -60,4 +61,3 @@
 | [extractor-path-architecture](../knowledge/extractor-path-architecture.md) | 2026-06-09 | `current` | The EvidenceIR extractor path is a flat bank of ~60 free functions wired in one build() — coherent IR targe… |
 | [fact-card-catalog](../knowledge/fact-card-catalog.md) | 2026-08-08 | `current` | Fact cards have a bounded derived human catalog distinct from question retrieval |
 | [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md) | 2026-08-12 | `superseded` | The evidence-composed trajectory gates current-binary replay coverage and recommends task .6 |
-| [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md) | 2026-08-15 | `current` | SpecForge's five portable architectures compose ownership, continuity, retrieval, enforcement, and claim evid… |

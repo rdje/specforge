@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > what is REPLAY_PROJECTION_SHA256
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what is SWD's actual intent / protocol (from the spec)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > what is SerialFrameField / serial_frame_fields / SerialFramePhase
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > what is SpecForge doing in academic or research terms
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > what is TimingIntentDisposition
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -287,13 +297,3 @@
   > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > what is the inter-annotator agreement of the eval gold
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > what is the line-size profile of SpecForge research records
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the live-document coverage authority
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > what is the measured peak day for workflow standards

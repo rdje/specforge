@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > what is the inter-annotator agreement of the eval gold
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what is the line-size profile of SpecForge research records
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the live-document coverage authority
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > what is the measured peak day for workflow standards
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > what is the message_field_catalog_dump measurement harness
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -287,13 +297,3 @@
   > where did the inference antecedent loss move after SPEC-TO-INTENT-ALIGNMENT.7b
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where did the root architecture catalog go
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > where do CCIX PER error structure fields land in the IR
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > where do DBID / TxnID / ReturnNID style names come from in CHI
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where do I log feedback or a suggestion to FSMGen
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)

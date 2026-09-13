@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > should the drifted SourceIR documents be re-ingested
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > temporal rule eval false positives root cause
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > temporal rule predicate atom vocabulary
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > torch MPS float64 error during ingest
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -151,6 +159,8 @@
   > what bounds the number of leaves a migrated task tree may declare
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > what breaks if the identifier tokenizer unescapes markdown
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > what breaks when I change doctrine/live_document_size/surfaces.jsonl (three separate surface_registry source pins go stale - in published_assertions.jsonl, book_quantitative_claims.jsonl and current_claim_census.jsonl - plus the durability.artifacts digests in claims.jsonl. Refresh the pins first, then the claim digests, then re-run the gate)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -288,13 +298,3 @@
   > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what does SPECFORGE_INGEST_RAM_SAMPLE_SECS do
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > what does SPECFORGE_INGEST_SAVE_PAGE_IMAGES do
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what does SWD Figure B4-1 show (single SWDIO wire packet, bit-field time-phases, Host/Target/Host driver)
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > what does SpecForge do with must be compatible with all supported lane widths
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli

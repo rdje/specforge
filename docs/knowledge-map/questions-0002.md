@@ -164,6 +164,8 @@
   > can the active-task evidence checker support the alignment task through data
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > can the downstream corpus chain be rebuilt without re-ingesting documents
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > can the escaped identifier problem be fixed by re-ingesting
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > can the owning section title supply the SWD frame phase (NO — 4 of 11 under a literal title-states-the-phase reading and 5 of 11 even counting any appearance of the phase word or its stem, so the ceiling is 5. Packet requests gives request for APnDP/RnW and Data transfers (WDATA and RDATA) gives data for WDATA/RDATA, but Start/Parity/Stop sit under B4.2 SWD protocol
   > operation, Park under B4.2.5 Protocol error response, A under Attributes, ACK under a table caption, DATAIN under OK or FAULT response to a DPACC or APACC access. No title contains the word phase)
@@ -296,5 +298,3 @@
   > do the wire-gold .isf carry over-width value literals (only AXI ihi0022_l has one — AWCMO; and AXI already fails strict on the orthogonal (port expr) error; APB/AHB/SWD have none; WIRE-BASED-100 measures extraction F1 not .isf bytes so it is orthogonal)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > do transactions lower to .isf (only those with composed steps; signal-set/channel/phase membership is recognised-but-unlowered)
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > do unfiltered SemanticIR conditional rules reach an emitted .isf

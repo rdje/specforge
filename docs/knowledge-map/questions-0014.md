@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > which corpus docs declare fields with a Field-titled column
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which corpus docs still yield nothing (the VLM frontier)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > which corpus documents are real signal-catalog capture misses
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > which corpus stages are measurable without re-ingesting a document
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which crate owns the source-to-intent vertical evaluator tests
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which current claim census counts are stable and which ones move
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which current claim census counts may be published and which must be read from the report
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
@@ -283,17 +297,3 @@
   > why can an extra blank line fail harmless layout comparison
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why can eval-extraction score only SWD/ADI and I2C
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why can the 80-record status window never be reached
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > why can the fact-card maximum not simply be raised from 198
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > why can the roadmap not be split safely at Markdown headings
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)

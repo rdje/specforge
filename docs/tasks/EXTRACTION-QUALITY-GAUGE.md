@@ -1347,19 +1347,64 @@ honestly-qualified) path to "human-SpecForge in Rust."
   before and after with that in mind. Prerequisite: none. Verification: the corpus-wide duplicate pair
   count re-derived with the producer; observed RED; the chain rebuilt for every document whose
   artifacts move.
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.9` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
-  **an escaped underscore splits an identifier the document never split.** The Markdown normalizer
-  emits `PARTITION\_ACCESS`, and `collect_subject_signal_tokens` splits on characters that are not
-  alphanumeric-or-underscore — so the backslash ends the token and `PARTITION` is lifted as a subject
-  the specification does not have. eMMC `statement_1214` mints `PARTITION must_not_change` from
-  *"… and will not change the PARTITION\_ACCESS bits"* this way; `EXTRACTION-QUALITY-GAUGE.3k.1`'s
-  own test comment records the same mechanism producing `ZETADTI` out of
-  `ZETADTI\_TBU\_CONDIS\_ACK`. This is a TOKENIZATION defect, not a span defect, which is why it is
-  not `.3k.3`'s. It must be sized against the whole persisted corpus before anything is changed: the
-  escape is emitted by the normalizer, so the fix may belong upstream of every extractor.
-  Prerequisite: none. Verification: the corpus population of backslash-split subjects measured with
-  the real tokenizer and adjudicated; observed RED; the chain rebuilt for every document whose
-  artifacts move.
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.9` · Status: `pending` — **re-derived and re-owned `2026-09-13`;
+  the premise it was opened on is wrong and the disposition is DO NOT SHIP YET, on evidence** (opened
+  `2026-09-13` by `.3k.3`) · Goal: **a Markdown escape fragments an identifier, and the fragment is
+  then DECLARED as a signal.**
+  `.3k.3` opened this as a tokenization nuisance: the normalizer emits `PARTITION\_ACCESS`,
+  `collect_subject_signal_tokens` splits on any character that is not alphanumeric-or-underscore, the
+  backslash ends the token, and eMMC mints `PARTITION must_not_change` about a signal the
+  specification does not have. `EXTRACTION-QUALITY-GAUGE.3k.1`'s own test comment records the same
+  mechanism producing `ZETADTI` out of `ZETADTI\_TBU\_CONDIS\_ACK`.
+  **Where the escape comes from, measured rather than assumed.** It is not SpecForge's: it is
+  Docling's, and it is CORRECT Markdown — an underscore inside an identifier must be escaped. The
+  persisted `SourceIr` carries **zero** occurrences (it stores structured table cells); the normalized
+  bundle carries them (`CONTEXTIDR\_EL1`); and EvidenceIR carries 2,908 in eMMC alone, because the
+  evidence stage reads the bundle's text. **So "fix it upstream" is not available**: re-ingest
+  reproduces it by construction, and both contaminated documents are frozen anyway, so an ingest-side
+  fix would reach neither of them. The fix has to be at the reader, which is also the only place that
+  reaches the frozen stratum — the same property that makes `replay-constraints` work.
+  **THE FINDING THAT MATTERS, and it is why this leaf must not be shipped from its opening premise.**
+  The fragmentation does not merely produce a bad subject: it produces a bad **DECLARATION**. eMMC's
+  statement set contains `Signal PARTITION is width 1.` and `Enum PARTITION NOT_DEFINED = 0.` — the
+  catalog holds the fragment, so every subject gate, polarity pass and relation reader downstream
+  treats it as authority. **And that defeats the repository's standard discriminator.** `.3g`/`.3h`/
+  `.3k.11` all use *standalone wins* — a candidate that occurs even once outside the suspect position
+  is never touched — and here the synthesized declarations ARE those standalone occurrences. **The
+  contamination manufactures its own evidence of innocence.** A census that does not exclude the
+  synthesized `Signal …`/`Enum …` forms reports this class as empty; the first cut of this
+  re-derivation did exactly that.
+  **The measured populations, three of them, and they are not the same size**
+  (`python3 scripts/measure_escaped_identifier_fragments.py`, shipped with this re-derivation,
+  `--self-test` 6/6):
+  * TEXT — **67 of 78 documents** carry an escaped identifier. Wide, and mostly provenance: a register
+    name in a section title is not intent.
+  * CATALOG — **18 declared names across 2 documents** exist ONLY as the head of an escaped compound:
+    17 in eMMC (`PARTITION` ← `PARTITION_ACCESS`, `PARTITIONING` ← `PARTITIONING_EN`, `POWER` ←
+    `POWER_CLASS`, `TAG` ← `TAG_UNIT_SIZE`, …) and 1 in GIC-600 (`REQUEST` ← `REQUEST_COMPLETE`).
+  * RECORDS — **0** published constraint subjects. Not one. The eMMC record `.3k.3` mints is not
+    persisted, so this becomes 1 only when that document's artifact is next refreshed.
+  **THE CALL: do not ship it now, and the reason is the measurement rather than the calendar.** The
+  only fix that reaches the two contaminated documents is a change to the shared identifier
+  tokenization — the seam the catalog, every subject reader, the polarity pass and the relation reader
+  all sit on — and it would move the identity layer of the **67** documents that carry the escape in
+  order to correct **18 names in 2** of them, with a published constraint effect of **zero**. This
+  family's own rule, applied twice already today, is that a rule nothing exercises does not ship
+  (`.3k.5`'s magnitude leads, and `.3k.2k`'s zero population shipped only because its class was
+  demonstrable through the real reader on a real sentence — this one's is not, in the records).
+  Shipping it would also be unmeasurable at handoff: `CHAIN-CURRENCY` re-executes the whole pipeline
+  and does not finish inside a session.
+  **What has to be true before it ships**, in order: (a) the corpus effect of unescaping at the
+  tokenization seam measured with `replay-constraints` AND with a full `scripts/check_doctrines.sh
+  --all`, run detached, because this moves declarations and not only constraints; (b) every current-schema
+  document that moves rebuilt and diffed (AXI-L carries `AWSNOOP\_WIDTH` and `WSTRB\_Present`, so it
+  will move); (c) the 18 names adjudicated individually — several are real English words (`POWER`,
+  `USER`, `CLASS`, `NUMBER`) whose removal from a catalog may withdraw records that are correct for
+  unrelated reasons; (d) a control for the CIRCULARITY above, so the next reader cannot re-derive this
+  as empty.
+  Prerequisite: none. Verification: the three populations re-derived with the shipped census; all 18
+  names adjudicated individually; observed RED; the chain rebuilt for every document whose artifacts
+  move; `--all` doctrines green.
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.10` · Status: `pending` (opened `2026-09-13` by `.3k.3`) · Goal:
   **a fronted condition that opens the STATEMENT carries no leading space.**
   `text_before_condition_marker` matches `" when "`, `" if "`, … with a leading space, so a condition

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > why do the CCIX specs extract almost no register fields
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > why do two constraints with different conditions not merge
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > why do unchanged PDF proof digests differ between isolated scratch roots
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > why do workflow standards remain an explicit target list
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why does ACE table_0275 stay flagged after presence capture
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -180,6 +194,8 @@
   > why does docs/tasks have no file count cap
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why does eMMC declare a signal called PARTITION
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > why does eMMC table_0020 declare HS400 as a signal
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
@@ -281,19 +297,3 @@
   > why does the batch size depend on total RAM instead of free memory
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > why does the chain-currency check ignore validation_reports
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > why does the corpus task reuse the active task evidence checker
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > why does the current generic frame grammar produce nothing on SWD (extract_serial_frame_fields admits a field only from a statement that itself carries a document-stated phase name AND a bit-range or named-bit parse. SWD states its phases in 61 statements and writes its fields — A[3:2], WDATA[31:0] — in different ones, so the two never coincide)
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why does the eMMC actor count drop 153 to 138 after .1c.i
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why does the emitted .isf default ~98% of signals to output and width 1
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why does the fact-card file count differ from the Knowledge Map fact count
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why does the fact-card landing have one line per card

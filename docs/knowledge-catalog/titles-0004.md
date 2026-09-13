@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
 | [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md) | 2026-08-10 | `current` | Normalized bundles are retained by declaration, and the declaration is gated |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
@@ -60,4 +61,3 @@
 | [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md) | 2026-08-08 | `current` | The roadmap has a bounded current view and exact history capsule |
 | [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md) | 2026-08-08 | `current` | The four root rolling ledgers use three explicit whole-record grammars |
 | [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md) | 2026-08-08 | `current` | Root user and architecture documents are bounded pointers to mdBook product contracts |
-| [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md) | 2026-06-07 | `current` | Misaligned signal tables (name column rotated to last) are extracted by content-based column detection |

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why can eval-extraction score only SWD/ADI and I2C
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why can the 80-record status window never be reached
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > why can the fact-card maximum not simply be raised from 198
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > why can the roadmap not be split safely at Markdown headings
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -284,17 +298,3 @@
   > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why do source derived ids need field aware alpha normalization
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why do the CCIX specs extract almost no register fields
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > why do two constraints with different conditions not merge
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > why do unchanged PDF proof digests differ between isolated scratch roots
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > why do workflow standards remain an explicit target list
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why does ACE table_0275 stay flagged after presence capture

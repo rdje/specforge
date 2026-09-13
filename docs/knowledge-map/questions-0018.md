@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > why is the default ingest threshold 131 pages on a 24 GiB host
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why is the dynamic path's subject search still statement-scoped
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why is the extraction-profile prior family not scoped by ProtocolFamily
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > why is the fact-card catalog about to run out of capacity
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > why is the first SPEC-TO-INTENT-ALIGNMENT.7c replay not publishable
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > why is the first trajectory snapshot diverging with insufficient history
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > why is the in-repo corpus tree outside the host-library refresh cohort
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why is the latest reviewed population replay not published
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > why is the metavariable test run after the identifier test
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -77,6 +95,8 @@
   > why was APB write_transfer / read_transfer membership only PCLK
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why was EXTRACTION-QUALITY-GAUGE.3k.9 not shipped
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)

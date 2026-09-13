@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md) | 2026-08-15 | `current` | SpecForge's five portable architectures compose ownership, continuity, retrieval, enforcement, and claim evid… |
 | [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md) | 2026-09-11 | `current` | A direction column may state the signal's flow rather than its port sense, and only a mirror test makes that… |
 | [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md) | 2026-06-04 | `current` | FSMGen feedback uses a bounded current channel and exact correspondence history |
 | [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md) | 2026-06-17 | `current` | FSMGen --strict --check does NOT validate or use a signal's declared direction (input/output) — driving a d… |
@@ -60,4 +61,3 @@
 | [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md) | 2026-06-10 | `current` | A subject absent from its own source sentence snaps to the sentence's declared token (edit distance 1, unambi… |
 | [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md) | 2026-06-05 | `current` | NLI entailment verifier — a semantic "does the source entail this claim?" grounding gate |
 | [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
-| [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |

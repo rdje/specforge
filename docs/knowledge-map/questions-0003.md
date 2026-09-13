@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > do unfiltered SemanticIR conditional rules reach an emitted .isf
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -44,6 +46,8 @@
   > does SemanticIR keep copyright and license text
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does SemanticIR preserve SWD protocol provenance and order
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > does SourceIR carry the markdown escape
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -294,7 +298,3 @@
   > does the authority empty repair preserve formal and system contract interfaces
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > does the co-reference rule resurrect resolve_indexed_signal_family
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > does the constraint record source_text become the clause
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > does the converge NLI pass measure quality or demote unsupported intent

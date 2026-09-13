@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > where do CCIX PER error structure fields land in the IR
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > where do DBID / TxnID / ReturnNID style names come from in CHI
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where do I log feedback or a suggestion to FSMGen
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > where do TimingConstraintRecord table provenance ids live
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
@@ -70,6 +80,8 @@
   > where does the NLI gate route a not-entailed contract
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > where does the SpecForge chipdoc source route currently resolve
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > where does the backslash underscore in EvidenceIR text come from
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
@@ -262,6 +274,8 @@
   > which canonical Markdown collections still rely only on git query
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > which caption grammar can supply a unit to every timing row
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > which census measures escaped identifier fragments
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > which checks pin the retained-bundle population at 24
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
@@ -284,17 +298,3 @@
   > which converter items earn no residual
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > which corpus PDFs are password/permission protected
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > which corpus docs declare fields with a Field-titled column
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which corpus docs still yield nothing (the VLM frontier)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > which corpus documents are real signal-catalog capture misses
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > which corpus stages are measurable without re-ingesting a document
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which crate owns the source-to-intent vertical evaluator tests
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which current claim census counts are stable and which ones move
