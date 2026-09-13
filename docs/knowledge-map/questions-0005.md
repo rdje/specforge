@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > how do I re-derive a published count per revision instead of at two endpoints
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > how do I re-derive the declaration-row notation populations
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > how do I re-score the WIRE-BASED-100 golds
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how do I read the labels inside a diagram
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > how do I rebuild every retained chain after a production change
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -157,6 +167,8 @@
   > how does SpecForge tell a generic channel-signal template from a signal catalogue
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > how does SpecForge tell a parametric width from a description sentence
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > how does SpecForge tell a property table from a signal table
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -285,15 +297,3 @@
   > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > how does the VLM understand tables / can a VLM read PDF tables
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how does the active task migration preserve non-ASCII legacy bytes
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > how does the adversarial PDF identity test preserve source bytes
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > how does the behavioral genericity gate prove negative-control sensitivity
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how does the claim gate find ignored or untracked scratch producers

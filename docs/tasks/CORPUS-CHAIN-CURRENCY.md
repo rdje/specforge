@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `done` (`.0`, `.1`, `.2`, `.3` complete)
+- Status: `active` (`2026-09-14`; `.0`-`.3` complete, **`.4` open** — the gate's own property is violated again)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
-- Last updated: `2026-08-10`
+- Last updated: `2026-09-14`
 - Owner: repo-local workflow
 
 ## Goal
@@ -114,6 +114,34 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   date, and reason. Six new fail-closed self-test cases take the check to 16/16. `TOOLBOX.md` §7.6 now tells a
   refresh **never** to run `clean --scope source-normalized` as routine, and the book's generated-artifacts
   chapter states the retention rule, its cost, and the declaration.
+
+- ID: `CORPUS-CHAIN-CURRENCY.4` · Status: `pending` (opened `2026-09-14` by `PROSE-NAME-CELL-DECLARATION.3`)
+  · Goal: **one document's persisted EvidenceIR no longer reproduces, and the gate that exists to say so
+  has not been able to run.** Found by a side-sweep, not by the gate: `evidence --dry-run` over all 24
+  documents holding a retained normalized bundle reproduces 23 of them byte for byte outside
+  `validation_reports` / `proof_context` / `proof_ledger`, and **I2C
+  (`um10204_rev7_0_2021_i2c_bus_specification`) does not**. The persisted artifact carries **9**
+  `signal_constraints` and **21** `fact_provenance` records where the current binary produces **3** and
+  **15**, with all 13 `conditional_rules` renumbered (`condrule_0019` → `condrule_0013`, …). The
+  direction of the delta matches the constraint-precision leaves (`EXTRACTION-QUALITY-GAUGE.3k.*`,
+  `INVARIANT-SHAPE-ADMISSION.*`) removing fabricated obligations — a document each of them moved and
+  none of them rebuilt.
+  **Proven not to be the finder's doing**: the delta is byte-identical with
+  `PROSE-NAME-CELL-DECLARATION.3`'s guard applied and with HEAD's `evidence.rs` restored, and I2C also
+  fails to reproduce at `1ada364a` (`EXTRACTION-QUALITY-GAUGE.3k.1`, `2026-09-12`), so the drift is at
+  least that old.
+  **The second half is the real subject, and it is the doctrine's own blind spot:** `CHAIN-CURRENCY`
+  re-executes the real pipeline for every persisted artifact, which is why
+  `scripts/check_doctrines.sh --all` did not finish in 50 minutes and has not been run since. A gate
+  that is too expensive to run is not a gate. Measure the full-corpus cost, then decide between an
+  incremental stage-scoped replay a slice can afford, a detached run whose result is recorded, and a
+  cheaper always-on proxy that fails closed — and do not widen the doctrine to excuse the drift.
+  Non-goal: rebuilding I2C's chain before the cost question is answered. A rebuild that lands without
+  the gate being runnable buys one document and leaves the blindness exactly where it was.
+  Prerequisite: none. Verification: the full evidence/semantic/intent/isf sweep run to completion and
+  its result recorded per document; the rebuild ordered per `[[retained-chain-rebuild-order]]` with one
+  `validate` per artifact; retention unchanged at 24 afterwards.
+  Commit: pending
 
 ## Measured corpus census (`2026-08-10`, `.1`) — the drift `.3` closes
 

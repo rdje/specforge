@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `PROSE-NAME-CELL-DECLARATION`
-- Status: `active` (`2026-09-12`; `.0`, `.1`, `.2`, `.4` done; `.3` pending — its blocker cleared)
+- Status: `active` (`2026-09-14`; `.0`-`.4` done; `.5` open — opened by `.3`'s census)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-11`
-- Last updated: `2026-09-12`
+- Last updated: `2026-09-14`
 - Owner: repo-local workflow
 
 ## Goal
@@ -64,7 +64,7 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
 
 ## Task Tree
 
-- ID: `PROSE-NAME-CELL-DECLARATION` · Status: `active` (`2026-09-12`) · Children: `.0`-`.4`
+- ID: `PROSE-NAME-CELL-DECLARATION` · Status: `active` (`2026-09-14`) · Children: `.0`-`.5`
 
 - ID: `PROSE-NAME-CELL-DECLARATION.0` · Status: `done` (`2026-09-12`) · Goal: **measure before proposing
   anything.** A read-only census over persisted SourceIR + EvidenceIR pairs: for every entry in
@@ -94,25 +94,61 @@ one phantom signal to five — the exact over-firing this repository keeps re-le
   entirely, reusing `.0`'s shape taxonomy. Scoring only; no row's declaration changes by this test.
   Commit: `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`
 
-- ID: `PROSE-NAME-CELL-DECLARATION.3` · Status: `pending` (`2026-09-12`; deferred by its own
-  adjudication and **unblocked the same day** — `[[ACTOR-NOUN-RELATION-DECLARATION]]`.1 removed the
-  phantom `Manager`/`Reset` declarations whose widths were this leaf's only live population, so
-  re-measure before re-applying: the rule text, margin and controls are recorded below) · Goal: **a width cell that is a sentence is
-  not a parametric width.** `infer_signal_table_row_width_hint` accepted
-  `The bus clock times all bus transfers. All signal timings are related to the rising edge of HCLK .
-  See Clock on page 7-72.` as `WidthHint::Parametric`, producing
-  `Signal Clock is width The bus clock times all bus transfers. …`. Measured: **2 of 601** current
-  width-bearing declarations carry a sentence-shaped width, and both are AHB `table_0004`.
-  The mechanism is independent of `.2` even though today's population was not: a parametric width is an
-  integrator-set expression (`ceil(DATA_WIDTH/8)`, `clog2(Num_RP_AR)` — 62 legitimate instances in the
-  current stratum), and nothing distinguishes it from prose today.
-  **`.2` took this leaf's current-stratum population to 0**, because both instances were AHB
-  `table_0004` and that table now reads its real name column. The leaf stays open and the honesty about
-  it is the point: a defect with no live instance is still a defect, and the next rotated table the
-  column score cannot reach will produce one again. Re-measure before designing, and be willing to
-  close this as *accepted, unexercised* rather than invent a population for it.
-  Prerequisite: none. Verification: all 62 legitimate parametric forms survive; corpus-wide count of
-  what is newly refused, with the sample adjudicated.
+- ID: `PROSE-NAME-CELL-DECLARATION.3` · Status: `done` (`2026-09-14`, CODE) · Children: `.5` · Goal: **a width cell that
+  is a sentence is not a parametric width.** `parse_table_width_hint_text` admits any cell holding one
+  ASCII letter, so a table whose width column has been handed a *description* declares the description
+  as the wire's width.
+  **The re-measurement the deferral demanded was run first, and it moved every number in this node.**
+  The leaf was deferred with the rule in hand and one instruction attached — re-measure, because `.2`
+  had removed the population it was sized against. Measured through a tracked census
+  (`scripts/measure_parametric_width_cell_shapes.py`, which replays the reader's own column selection
+  and reproduces **601 of 601** declared widths in the proof-carrying stratum):
+
+  - the current stratum holds **195 parametric width cells and 0 prose** — not the 6 recorded here.
+    Nothing in it moves, at either the cell or the declaration level;
+  - the wider legacy population **falsifies this node's own margin**. It recorded "the widest
+    legitimate expression is 5 tokens and the narrowest prose is 7"; real expressions reach **8**
+    (`LTI_MMU == True: 64 LTI_MMU == False: LTI_LRADDR_WIDTH`) and prose starts at **7**, so the two
+    classes overlap on length and no threshold separates them.
+
+  **Both conditions ship, and the census measured what each would cost alone** — which is the
+  justification the original 5-vs-7 margin was standing in for. The token bound alone refuses
+  `ceil((ID_R_WIDTH+1)/8) if ARIDUNQ is not present: ceil(ID_R_WIDTH/8)`; the terminator bound alone
+  refuses the three ternaries (`LTI_GPC == True ? 2:1`, `LTI_SSID_WIDTH > 0 ? 1:0`,
+  `LTI_MMU ? 8 : ceil(LTI_LRADDR_WIDTH/8)`), where `?` is an operator. Together: **47 cells, every one
+  prose, no legitimate expression in either stratum.**
+  **The blocker is gone and was verified gone, not assumed.** It was deferred because applying the rule
+  made AHB's phantom `Manager` declaration well-formed and took its interface count 42 → 62;
+  `[[ACTOR-NOUN-RELATION-DECLARATION]]`.1 removed that declaration, and AHB's EvidenceIR is byte-unchanged
+  under the guard.
+  **What it refuses, adjudicated**: 43 of the 47 are TileLink rows whose declared NAME is a single
+  letter — the defect `.5` now owns; 2 are MMU-700 field rows carrying a paragraph; 2 are real
+  identities (GIC `ARCHREV`, CXS `CXSCNTL`) declared width-only with a fabricated width, which become
+  rows the `.1` accounting counts as unread. That is `SIGNAL-DECLARATION-ROW-DROP.2e`'s trade exactly:
+  a visible refusal over a width the document never states.
+  Prerequisite: none. Verification: see the acceptance checklist below.
+  Commit: `PROSE-NAME-CELL-DECLARATION.3`
+
+- ID: `PROSE-NAME-CELL-DECLARATION.5` · Status: `pending` (opened `2026-09-14` by `.3`) · Goal: **a real
+  name column whose cells are two-token names scores ZERO, and the override hands the table its
+  neighbour.** `.2` made a cell score for its column only when the reader consumes it whole, which
+  stopped a prose column from scoring like a name column. It also stops a genuine name column whose
+  names contain a space. TileLink writes every signal that way — `c opcode`, `d param`, `c valid` —
+  so its `Signal | Type | Width | Description` channel tables score 0 on column 0, the content-based
+  override wins with the `Type` column's `{C, D, V, R}`, and the whole table rotates: the names become
+  single letters and the width column lands on `Description`. Four tables, 43 of the 47 prose width
+  cells `.3` refuses, and **every real TileLink signal name is unreachable**.
+  This is not `.1`'s question. `.1` asked whether to REFUSE a phrase name cell and answered no; this
+  asks whether a two-token cell can be READ, which `signal_names_in_name_cell` already does for the
+  comma form and refuses for the space form — measured, and for a stated reason: a comma is an author
+  enumerating (`[[declared-population-is-not-the-candidate-row-population]]`). A column-wide regularity
+  is a different instrument from a cell-local affix test and is the first thing to measure here.
+  **Census the corpus population of such columns before designing**, and expect the same discipline the
+  rest of this tree has needed: TileLink is legacy, so the recall claim must be made through the real
+  reader rather than through the persisted artifact.
+  Prerequisite: none. Verification: the population measured with the real reader and adjudicated;
+  observed RED; every current-stratum name column shown to keep its column.
+  Commit: pending
 
 - ID: `PROSE-NAME-CELL-DECLARATION.4` · Status: `done` (`2026-09-12`) · **The premise was a legacy fact:
   the current classifier already refuses the matrix.** The leaf was to decide whether a bus-mode matrix
@@ -354,60 +390,90 @@ sibling tree on a folded *spelling*, `.2` here on a *column* choice, and `.4` on
 Each time the artifact was read as a statement about behaviour. **Ask which producer wrote the field
 before treating it as a defect** — `[[persisted-table-kind-is-a-classifier-generation-artefact]]`.
 
-## `.3` — the rule is right, its only live effect is wrong (`2026-09-12`)
+## `.3` — re-measured, and the re-measurement moved every number (`2026-09-14`)
 
-`.3` was expected to close as *accepted, unexercised*: `.2` had taken its declared population to
-**0 of 601** current width-bearing declarations. It did not close that way, because measuring the
-mechanism rather than the declarations found a live population and then a blocker.
+Producer: `python3 scripts/measure_parametric_width_cell_shapes.py`. Read-only. It measures two
+populations and never conflates them: the **declarations** the reader emitted, read straight out of
+the persisted `extracted_statements` with no mirror involved, and the **width cells** the parser would
+admit, which replays the reader's column selection and therefore carries a join control.
 
-### The population, at two levels
+**The boundary was wrong on the first run and the control is what said so.** Scoped to tables whose
+persisted `table_kind` is `signal_description`, the join came back at **92.8%**, and every miss was
+AXI `table_0251` — `Name | Width | Source | Description`, 24 rows, persisted kind `unknown`, promoted
+to a signal table by `effective_table_kind` through corpus memory. The boundary is now that set
+**union** the tables named in `table_signal_declaration_provenance`, and the join is **601 of 601**.
+A census whose control is a number it can read back is a census that reports its own errors.
 
-| level | current stratum | legacy |
+### The population, at both levels
+
+| | current (proof-carrying) | legacy (inspection-only) |
 | --- | ---: | ---: |
-| declarations carrying a sentence-shaped width | **0** of 601 | 108 of 1,085 |
-| width **cells** the parser admits as `Parametric` | 178 | 294 |
-| of those, cells that read as prose | **6** | ~9 |
+| declaring rows examined | 685 | 2,889 |
+| width cells admitted as `Parametric` | **195** | 271 |
+| of those, cells that read as prose | **0** | **47** |
+| declarations carrying a prose width | **0** of 637 | 2 of 1,272 |
+| join control | 601/601 (100.0%) | 631/1,085 (58.2%) |
 
-The declared population is zero only because other gates happen to stop those six rows today. That is
-not stability: two of the six *were* declarations yesterday, and what removed them was `.2`, an
-unrelated change to which column a table's names are in.
+The legacy join rate is not a failure of the census and is not summed with the current one: an older
+emitter folded declared names to upper case, so a folded name cannot be matched back to the cell that
+produced it (`[[declared-spelling-is-the-document-spelling]]`, the same finding from a third
+direction). Two of its misses are the guard itself, and the census labels them as such.
 
-### The discriminator, and its measured margin
+### What this node recorded, and what is true
 
-Two conditions, both required, following the `WIRE-BASED-100.10e` precedent:
+`.3` recorded "**6** prose cells in 178 admitted" and a margin of "widest legitimate 5 tokens,
+narrowest prose 7". Neither survives:
 
-1. more than six expression tokens;
-2. a sentence terminator followed by whitespace.
+- the six were all rotated AHB tables, and `.2` repaired the rotation. **The current stratum is 0.**
+- legitimate expressions reach **8** tokens (`LTI_MMU == True: 64 LTI_MMU == False: LTI_LRADDR_WIDTH`,
+  and `ceil((ID_R_WIDTH+1)/8) if ARIDUNQ is not present: ceil(ID_R_WIDTH/8)` at 7) while the shortest
+  prose the rule selects is **7** (`Unique, per-link master source identifier. (Section 5.4)`). The
+  classes **overlap on length**. The earlier margin was an artefact of measuring one stratum.
 
-On the current stratum **the two select exactly the same 6 cells**, and all 6 are description sentences
-from rotated AHB tables. The cost side is a margin rather than a tuned threshold: the widest legitimate
-expression is **5** tokens (`ceil((ID_W_WIDTH + int(Unique_ID_Support))/8)`) and the narrowest prose is
-**7**; no legitimate form carries a terminator followed by a space, because a footnote marker rides the
-expression directly (`ceil(ADDR_WIDTH/8) a`).
+### The two conditions, and what each costs alone
 
-Written, and **observed RED**: without the guard the control declares
-`Signal ZETA_ALPHA is width The zeta clock times all zeta transfers. …`.
+The rule is a conjunction, and the census measured the price of each half rather than asserting it:
 
-### Why it is not shipped
+| condition applied alone | what it refuses that is REAL |
+| --- | --- |
+| more than six tokens | `ceil((ID_R_WIDTH+1)/8) if ARIDUNQ is not present: ceil(ID_R_WIDTH/8)`; `LTI_MMU == True: 64 LTI_MMU == False: LTI_LRADDR_WIDTH` |
+| a terminator before whitespace | `LTI_GPC == True ? 2:1`; `LTI_SSID_WIDTH > 0 ? 1:0`; `LTI_MMU ? 8 : ceil(LTI_LRADDR_WIDTH/8)` — `?` is an operator, not a question |
+| **both** | **nothing. 47 selected, all prose.** |
 
-The rule was applied and AHB's chain rebuilt to measure the blast radius rather than assume it.
-Declarations: 79 → 79, identical set. But **AHB's IntentIR interface count went 42 → 62**, and all 24
-additions are `…_manager` groupings.
+Each bound is the only thing saving a real width from the other. A footnote marker rides its
+expression directly (`ceil(ADDR_WIDTH/8) a`), carries no terminator, and is untouched.
 
-The cause is not the rule. AHB already declares `Manager` — an actor role, not a wire — through the
-relation→declaration path. Its statement read
-`Signal Manager is output width Exclusive okay, selected by the decoder. a.` and became
-`Signal Manager is output.` **Removing the garbage width made the phantom well-formed, and a
-well-formed phantom propagates.**
+### What it refuses, adjudicated row by row
 
-So the honest result is a deferral with the rule in hand, not a rule shipped. Publishing a 48% increase
-in one document's interface count, all phantom, to fix a width that no declaration currently carries is
-the wrong trade in both directions. The blocker is tracked as
-`[[ACTOR-NOUN-RELATION-DECLARATION]]`; when it closes, `.3` re-measures and ships.
+| what | count | the name the row would declare | verdict |
+| --- | ---: | --- | --- |
+| TileLink `table_0012`/`0013`/`0014`, both revisions | 43 | `C`, `D`, `V`, `R`, `F` | a phantom removed — and the cause is `.5` |
+| MMU-700 `table_0025` | 2 | `mtlbidx`, `mtlbway` | a 30-to-36-token paragraph removed; the row keeps whatever else it states |
+| GIC `table_0094`, CXS `table_0012` | 2 | `ARCHREV`, `CXSCNTL` | **the measured cost** — both are declared width-only, so the declaration goes, and the row is counted as `NoDirectionAndNoWidth` |
 
-This is `.2`-before-`.1` again, and it is becoming the tree's characteristic finding: **when two
-changes touch the same rows, the one that repairs the cause goes first, because the other one only
-changes how the defect looks.**
+The two lost identities are the `SIGNAL-DECLARATION-ROW-DROP.2e` trade, taken deliberately: a row
+counted as unread over a width the document never states. `ARCHREV`'s "width" is a bulleted list of
+architecture revisions; `CXSCNTL`'s is a sentence pointing at another table.
+
+### The current corpus does not move, and that was measured rather than argued
+
+`evidence --dry-run` was replayed for **all 27 rebuildable documents** — the 24 with a retained
+normalized bundle, plus AHB, APB and AXI restored from
+`generated/preserved/WIRE-BASED-100.10/*-normalized-bundle-held-out` for the run and removed again —
+and every one reproduces its persisted artifact byte for byte outside `validation_reports`,
+`proof_context` and `proof_ledger`. The preserved bundles are byte-identical before and after
+(`ahb a32ad8ab…78b90`) and retention is back at exactly **24**. The four current-stratum documents
+that declare from tables still LOAD through the semantic stage, so no proof was staled and no chain
+rebuild is owed.
+
+### A document that does NOT reproduce, and it is not this leaf's
+
+The same sweep found **I2C (`um10204_rev7_0_2021_i2c_bus_specification`) does not reproduce**: its
+persisted EvidenceIR carries 9 signal constraints and 21 fact-provenance records where the current
+binary produces 3 and 15, with 13 conditional rules renumbered. **Proven independent of this change** —
+the delta is byte-identical with the guard and with `git stash`'d HEAD — and it predates
+`EXTRACTION-QUALITY-GAUGE.3k.1`, which also fails to reproduce it. Tracked as
+`CORPUS-CHAIN-CURRENCY.4`; it is a chain-currency finding, not a width one.
 
 ## Acceptance Checklist (enforced) — `.2`, the tree's only production change
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_name_cell_shapes.py`: current stratum
@@ -466,13 +532,46 @@ changes how the defect looks.**
   fact about files); fact card `[[persisted-table-kind-is-a-classifier-generation-artefact]]` created.
   No production rule deleted or replaced, so no book text describes a behaviour that is now gone.
 
+## Acceptance Checklist (enforced) — `.3` (production change)
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_parametric_width_cell_shapes.py`: current
+  stratum 195 parametric width cells / **0 prose** / 0 declarations; legacy 271 / **47** / 2. Join
+  control 601/601 on the proof-carrying stratum, which is what caught the census's own first boundary
+  (`table_kind`-only: 92.8%, every miss AXI `table_0251`, a `table_kind: unknown` promoted by corpus
+  memory).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`
+  (`parse_table_width_hint_text`): a cell holding one ASCII letter is returned as
+  `WidthHint::Parametric` with nothing else asked of it, so a description in the width column becomes
+  the wire's width. Three call sites, all inside the width-hint path.
+- [x] **ADDRESSED (verified)** — `width_expression_reads_as_prose` refuses a cell that carries more
+  than six tokens **and** a sentence terminator before whitespace. Selection: 47 cells corpus-wide,
+  every one prose, adjudicated in the table above; 0 legitimate expressions in either stratum.
+- [x] **NO REGRESSION** — `cargo test` 472 / 168 / **1531** / 8 green (+2 controls; the
+  production-graph suite green after the flow census was rebased to this leaf); `cargo fmt --check`
+  and `cargo clippy --all-targets --all-features -D warnings` green; `scripts/check_doctrines.sh`
+  green. **The corpus does not move**: `evidence --dry-run` replayed over all 27 rebuildable documents
+  reproduces every persisted artifact, the three held-out bundles are byte-identical before and after
+  their restore, retention is back at 24, and the four table-declaring current documents still load
+  through the semantic stage — so no proof was staled and no chain rebuild is owed.
+  **Stated limit:** no gold can move either way. The refusal's whole population is legacy, and a
+  legacy document has no gold and cannot be rebuilt; the evidence here is the artifact replay and the
+  in-crate controls, not a score.
+- [x] **GENERICITY (ADR 0006)** — token count and punctuation shape only. No document, vendor,
+  protocol or English vocabulary; no word list. The controls run the same assertions over
+  alpha-renamed copies of every corpus form.
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/evidence-failure-modes.md` gains the section for this
+  rule, in the chapter that already owns the table reader's failure modes; the fact card
+  `[[a-width-cell-that-is-a-sentence-is-not-a-width]]` records the conjunction and its measured
+  margin. No production rule was deleted or replaced, so no book text describes a behaviour that is
+  now gone.
+
 ## Current Frontier
 
-1. `PROSE-NAME-CELL-DECLARATION.3` — **unblocked.** It was deferred because applying it made the phantom
-   `Manager` declaration well-formed and took AHB's interface count from 42 to 62;
-   `[[ACTOR-NOUN-RELATION-DECLARATION]]`.1 has since removed that declaration entirely, so the effect it
-   was blocked on cannot occur. **Re-measure before re-applying** — the six prose width cells were
-   measured against the old artifacts, and two of them belonged to statements that no longer exist.
+1. `PROSE-NAME-CELL-DECLARATION.5` — a real name column whose cells are two-token names scores zero
+   under `name_cell_is_read_whole`, so the override hands TileLink's four channel tables their `Type`
+   column and every real signal name in that specification is unreachable. Census the corpus population
+   of such columns before designing; the recall claim has to be made through the real reader, because
+   TileLink is legacy.
 
 ## Decisions
 
@@ -506,6 +605,24 @@ changes how the defect looks.**
 - `2026-09-12` — **no whitespace-family rule.** Its selection is 6 real pairs and 3 false positives,
   and the reason is structural rather than a tuning problem: a comma is an author enumerating.
 
+- `2026-09-14` — **`.3` shipped on a MEASURED zero current-stratum effect, not on a live defect.**
+  The precedent is `SIGNAL-DECLARATION-ROW-DROP.2e`: the class is demonstrable through the real reader
+  and the risk is measured at zero, which is not the same as an unmeasured zero effect. What
+  distinguishes it from a change that should wait is that the measurement ran over every rebuildable
+  document rather than over the tables the rule was written for.
+- `2026-09-14` — **the node's own margin was wrong and the correction is the leaf's main result.**
+  "Widest legitimate 5 tokens, narrowest prose 7" was measured on the proof-carrying stratum alone.
+  Over the whole corpus the classes overlap on length, so the rule is a conjunction whose two halves
+  each save a real width from the other — and each half's cost was measured rather than argued.
+- `2026-09-14` — **the census's boundary was corrected by its own control, before any number was
+  published.** A `table_kind == signal_description` boundary misses a table corpus memory promotes,
+  and the join rate said so at 92.8%. A mirror without a control is an assertion.
+- `2026-09-14` — **the TileLink finding was split to `.5` rather than folded into `.3`.** 43 of the 47
+  refusals are one cause — a real name column scoring zero — and that is a recall defect in `.2`'s own
+  rule. Refusing the prose width there is right whatever `.5` decides, but the two must not be argued
+  as one change; this tree's characteristic finding is that the repair of a cause goes first and
+  separately from the rule that changes how the defect looks.
+
 ## Open Questions
 
 - ~~Is there a shape-only discriminator at all?~~ **Answered by `.0`, for the forms that occur.** Five
@@ -523,6 +640,24 @@ changes how the defect looks.**
 None.
 
 ## Verification Log
+
+- `2026-09-14` — `.3`. Controls, both **observed RED** against the exact defect they guard:
+  `a_description_sentence_is_not_a_parametric_width` runs the real `synthesize_signal_declarations`
+  over TileLink `table_0013`'s shape, alpha-renamed, and without the guard declares
+  `Signal C is width Operation code. Identifies the type of message carried by the channel.
+  (Table 5.2).`; `a_width_expression_reads_as_prose_only_when_both_conditions_agree` was observed RED
+  **once per condition, applied alone** — with only the token bound it refuses
+  `ceil((ZETA_R_WIDTH+1)/8) if ZETAIDUNQ is not present: …`, with only the terminator bound it refuses
+  `ZETA_GPC == True ? 2:1`. Corpus replay: `evidence --dry-run` over all 24 retained documents plus
+  AHB/APB/AXI restored from `generated/preserved/WIRE-BASED-100.10/` and removed again — **27 of 27
+  reproduce**, preserved bundles byte-identical (`ahb a32ad8ab…78b90`, `apb 14128bbf…6651`,
+  `axi e1f69f08…f113`), retention back at 24, and `semantic --dry-run` still loads all four
+  table-declaring current documents. Census: `python3 scripts/measure_parametric_width_cell_shapes.py`,
+  read-only, no artifact written or mutated, join control 601/601.
+  **Out-of-scope finding, proven independent**: I2C does not reproduce, identically with the guard and
+  with HEAD's `evidence.rs` restored by `git stash`, and also fails to reproduce at `1ada364a`
+  (`EXTRACTION-QUALITY-GAUGE.3k.1`). Routed to `CORPUS-CHAIN-CURRENCY.4`; no attempt was made to fix it
+  inside this leaf.
 
 - `2026-09-12` — `.3`. The rule was implemented, controlled and measured, then **reverted**; the tree
   keeps it so re-applying is mechanical. Controls (both passed with the guard, RED without):
@@ -591,9 +726,17 @@ None.
 - `.2` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0` (`ba9e9a74`).
 - `.1` — `PROSE-NAME-CELL-DECLARATION.1` (`8199be47`).
 - `.4` — `PROSE-NAME-CELL-DECLARATION.4` (`c6d61393`).
-- `.3` — `PROSE-NAME-CELL-DECLARATION.3` (deferred).
+- `.3` — `PROSE-NAME-CELL-DECLARATION.3` (deferred `2026-09-12`; shipped `2026-09-14`).
 
 ## Changelog
+
+- `2026-09-14` — `.3` closed, and its own recorded numbers were corrected by the re-measurement it was
+  deferred pending. Current stratum: 195 parametric width cells, **0 prose**, 0 declarations, and all
+  27 rebuildable documents reproduce byte for byte. Legacy: 47 prose cells refused, 43 of them one
+  cause. The "5-token margin" does not survive the wider population — legitimate expressions reach 8
+  tokens and prose starts at 7 — so the rule is a conjunction and each half's cost was measured.
+  `.5` opened for the TileLink cause; an unrelated I2C chain-currency drift found by the same sweep was
+  proven independent and routed to `CORPUS-CHAIN-CURRENCY.4`.
 
 - `2026-09-11` — tree created from `SIGNAL-DECLARATION-ROW-DROP.2c`'s adjudication, which found 4 of 7
   enumerated-width cells to be a misclassified bus-mode matrix already minting `HS400` as a signal.

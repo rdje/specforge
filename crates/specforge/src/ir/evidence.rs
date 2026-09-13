@@ -4783,6 +4783,53 @@ fn parse_width_hint_from_covered_signal_cell(text: &str) -> Option<WidthHint> {
     parse_table_width_hint_text(trimmed)
 }
 
+/// PROSE-NAME-CELL-DECLARATION.3 — a width cell that is a SENTENCE is not a parametric width.
+///
+/// A parametric width is an expression the integrator sets: `ceil(DATA_WIDTH/8)`,
+/// `clog2(Num_RP_AR)`, `LTI_MMU ? 8 : ceil(LTI_LRADDR_WIDTH/8)`. `parse_table_width_hint_text`
+/// admits any cell holding one ASCII letter, so a table whose width column has been handed a
+/// *description* declares the description as the wire's width — TileLink writes
+/// `Signal C is width Operation code. Identifies the type of message carried by the channel.
+/// (Table 5.2).`, and MMU-700 writes a two-sentence paragraph about direct indexing.
+///
+/// **Two conditions, and each one is the only thing saving a real expression from the other.**
+/// Measured over every width cell the reader examines corpus-wide
+/// (`scripts/measure_parametric_width_cell_shapes.py`):
+///
+/// - *more than six tokens* alone refuses `ceil((ID_R_WIDTH+1)/8) if ARIDUNQ is not present:
+///   ceil(ID_R_WIDTH/8)` (7 tokens) and `LTI_MMU == True: 64 LTI_MMU == False: LTI_LRADDR_WIDTH`
+///   (8) — both real conditional widths;
+/// - *a terminator followed by whitespace* alone refuses the three ternaries
+///   `LTI_GPC == True ? 2:1`, `LTI_SSID_WIDTH > 0 ? 1:0` and
+///   `LTI_MMU ? 8 : ceil(LTI_LRADDR_WIDTH/8)`, where the `?` is an operator and not a question.
+///
+/// Together they select **47 cells, all of them prose, and no legitimate expression in either
+/// stratum** — 43 in TileLink, whose declared name is a single letter from the `Type` column, and
+/// 4 elsewhere. A footnote marker rides the expression directly (`ceil(ADDR_WIDTH/8) a`), so it
+/// carries no terminator and is untouched.
+///
+/// **The earlier reading of this margin does not survive the wider population and is corrected
+/// here**: the leaf recorded "the widest legitimate expression is 5 tokens and the narrowest prose
+/// is 7", measured when only the proof-carrying stratum was in view. Legitimate expressions reach
+/// **8** tokens and prose starts at **7**, so the two classes overlap on length and the conjunction
+/// is doing the work, not a threshold.
+///
+/// Shape only, no vocabulary (ADR 0006): this cannot tell what a word means, only that the cell
+/// carries more tokens than any expression in the corpus does *and* ends a clause the way an author
+/// ends a sentence.
+fn width_expression_reads_as_prose(expression: &str) -> bool {
+    /// The longest legitimate expression measured corpus-wide is 8 tokens; prose starts at 7, so
+    /// this bound alone cannot separate them and is never applied alone.
+    const PROSE_TOKEN_FLOOR: usize = 6;
+    if expression.split_whitespace().count() <= PROSE_TOKEN_FLOOR {
+        return false;
+    }
+    expression
+        .chars()
+        .zip(expression.chars().skip(1))
+        .any(|(character, next)| matches!(character, '.' | '?' | '!') && next.is_whitespace())
+}
+
 fn parse_table_width_hint_text(text: &str) -> Option<WidthHint> {
     let trimmed = text.trim();
     if trimmed.is_empty()
@@ -4797,6 +4844,9 @@ fn parse_table_width_hint_text(text: &str) -> Option<WidthHint> {
     }
 
     if trimmed.chars().any(|ch| ch.is_ascii_alphabetic()) {
+        if width_expression_reads_as_prose(trimmed) {
+            return None;
+        }
         return Some(WidthHint::Parametric(trimmed.to_string()));
     }
 
@@ -33552,6 +33602,138 @@ mod wire_based_100_5h {
             assert!(
                 !name_cell_is_read_whole(prose),
                 "{prose:?} is prose and must not score for its column"
+            );
+        }
+    }
+
+    /// PROSE-NAME-CELL-DECLARATION.3 — a description cell must not survive as a parametric width.
+    ///
+    /// This is TileLink `table_0013` reduced to its shape and alpha-renamed (ADR 0006): a four-column
+    /// `Signal | Type | Width | Description` table whose real name column holds two-token names, so
+    /// `name_cell_is_read_whole` scores it at ZERO and the content-based override hands the table its
+    /// `Type` column — which rotates the width column onto `Description`. Forty-three of the 47 prose
+    /// width cells measured corpus-wide are exactly this shape.
+    ///
+    /// Observed RED without the guard: every row declares
+    /// `Signal C is width Operation code. Identifies the type of message carried by the channel.
+    /// (Table 5.2).`
+    #[test]
+    fn a_description_sentence_is_not_a_parametric_width() {
+        let table = StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal", "Type", "Width", "Description"])],
+            body_rows: vec![
+                row(&[
+                    "zeta opcode",
+                    "C",
+                    "3",
+                    "Operation code. Identifies the type of message carried by the channel. \
+                     (Table 5.2)",
+                ]),
+                row(&[
+                    "zeta size",
+                    "C",
+                    "z",
+                    "Logarithm of the operation size: 2 n bytes. (Section 4.6)",
+                ]),
+                row(&[
+                    "zeta valid",
+                    "V",
+                    "1",
+                    "The sender is offering progress on an operation. (Section 4.1)",
+                ]),
+                row(&[
+                    "zeta ready",
+                    "R",
+                    "1",
+                    "The receiver accepted the offered progress. (Section 4.1)",
+                ]),
+            ],
+            row_count: 4,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut Vec::new(),
+        );
+        for statement in &stmts {
+            assert!(
+                !statement.text.contains(" width Operation code")
+                    && !statement.text.contains(" width Logarithm")
+                    && !statement.text.contains(" width The sender")
+                    && !statement.text.contains(" width The receiver"),
+                "a description cell must not be declared as a width, got {:?}",
+                statement.text
+            );
+        }
+    }
+
+    /// PROSE-NAME-CELL-DECLARATION.3 — both conditions are load-bearing, and the census measured
+    /// which real expression each one would cost on its own.
+    ///
+    /// The refused forms are the corpus's prose, alpha-renamed where they name a document's own
+    /// parameter; the admitted ones are every legitimate expression the census found that comes
+    /// CLOSE to one condition or the other. Neither list is a sample: the token bound and the
+    /// terminator bound are each violated by a real width somewhere in the corpus, which is why the
+    /// rule is a conjunction and not a threshold.
+    #[test]
+    fn a_width_expression_reads_as_prose_only_when_both_conditions_agree() {
+        for prose in [
+            "Operation code. Identifies the type of message carried by the channel. (Table 5.2)",
+            "Unique, per-link master source identifier. (Section 5.4)",
+            "The receiver accepted the offered progress. (Section 4.1)",
+            "14, 18, 22, 27, 33, 36, or 44 bits. Depends on ZETAMAXPKT and ZETAFLITWIDTH, \
+             See Table 4-2 on page 4-32.",
+            "When direct indexing is enabled, the width of this field is log 2 ( ZETA_DEPTH ) - \
+             log 2 ( ZETA_WAYS ). When direct indexing is not enabled, the width of this field \
+             is 0 .",
+        ] {
+            assert!(
+                width_expression_reads_as_prose(prose),
+                "{prose:?} is a description, not a width"
+            );
+            assert_eq!(
+                parse_table_width_hint_text(prose),
+                None,
+                "{prose:?} must not reach a declaration as a width"
+            );
+        }
+        for expression in [
+            // Over the token bound, saved by the terminator bound.
+            "ceil((ZETA_R_WIDTH+1)/8) if ZETAIDUNQ is not present: ceil(ZETA_R_WIDTH/8)",
+            "ZETA_MMU == True: 64 ZETA_MMU == False: ZETA_ADDR_WIDTH",
+            // Over the terminator bound, saved by the token bound: `?` is an operator here.
+            "ZETA_GPC == True ? 2:1",
+            "ZETA_SSID_WIDTH > 0 ? 1:0",
+            "ZETA_MMU ? 8 : ceil(ZETA_ADDR_WIDTH/8)",
+            // The widest legitimate forms in the proof-carrying stratum, and a footnote marker,
+            // which rides the expression directly and so carries no terminator.
+            "ceil((ID_W_WIDTH + int(Unique_ID_Support))/8)",
+            "USER_DATA_WIDTH + USER_RESP_WIDTH",
+            "DATA_WIDTH / 8",
+            "ceil(ADDR_WIDTH/8) a",
+        ] {
+            assert!(
+                !width_expression_reads_as_prose(expression),
+                "{expression:?} is an integrator-set width and must survive"
+            );
+            assert_eq!(
+                parse_table_width_hint_text(expression),
+                Some(WidthHint::Parametric(expression.to_string())),
+                "{expression:?} must still parse as a parametric width"
             );
         }
     }

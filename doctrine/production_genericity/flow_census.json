@@ -25,21 +25,21 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-     "authority_id": "SIGNAL-DECLARATION-ROW-DROP.2e-AN-ALIGNED-HEADER-IS-NOT-A-SHIFTED-ONE",
+     "authority_id": "PROSE-NAME-CELL-DECLARATION.3-A-WIDTH-CELL-THAT-IS-A-SENTENCE-IS-NOT-A-WIDTH",
      "baseline": {
-        "analyzed_functions": 2440,
-        "decision_sites": 13119,
-        "helper_edges": 15343,
+        "analyzed_functions": 2441,
+        "decision_sites": 13124,
+        "helper_edges": 15345,
         "semantic_macros": 1486
      },
      "delta": {
         "analyzed_functions": 1,
-        "decision_sites": 5,
-        "helper_edges": 2,
+        "decision_sites": 4,
+        "helper_edges": 1,
         "semantic_macros": 0
      },
-     "owner": "SIGNAL-DECLARATION-ROW-DROP.2e",
-     "rationale": "The content-based name-column override applies its result as a whole-table OFFSET, which is right for a header row shifted relative to the body and wrong when the header is aligned and the header scan matched a decoy - the rotation then carries the width column onto a neighbour. One function, `is_signal_name_column_header`, is the single definition of the name-column test, used to pick the column and again to ask whether the override's winner is the one the header already named."
+     "owner": "PROSE-NAME-CELL-DECLARATION.3",
+     "rationale": "A width cell holding one letter was admitted as a parametric width, so a table whose width column has been handed a description declared the description as the wire's width. One function, `width_expression_reads_as_prose`, asks two questions of the cell - more than six tokens, and a sentence terminator before whitespace - and each one alone was measured to refuse a real width, so the conjunction is the rule rather than either bound."
   }
  }
 }

@@ -203,6 +203,49 @@ nothing either way. Every rotation the margin was introduced for still overrides
 18 against 5, AHB `table_0033` 19 against 4 — and of the 27 proof-carrying documents, only AHB's
 EvidenceIR changed at all.
 
+### A width cell that is a sentence is not a width
+
+The same table reader takes a width from a column and asks very little of it: a whole number is a
+width, and anything holding at least one letter is a *parametric* width — an expression the
+integrator sets, such as `ceil(DATA_WIDTH/8)` or `clog2(Num_RP_AR)`. That is right for every form a
+specification actually writes, and it is also why a table whose width column has been handed a
+**description** declares the description as the wire's width:
+
+```text
+Signal C is width Operation code. Identifies the type of message carried by the channel. (Table 5.2).
+```
+
+Two conditions now separate an expression from prose, and neither works alone. A cell is prose when
+it carries **more than six whitespace tokens** *and* holds **a sentence terminator followed by a
+space**. Measured over every width cell the reader examines, each condition on its own refuses a real
+width: the token bound alone would refuse `ceil((ID_R_WIDTH+1)/8) if ARIDUNQ is not present:
+ceil(ID_R_WIDTH/8)` at seven tokens, and the terminator bound alone would refuse the ternaries
+`LTI_GPC == True ? 2:1` and `LTI_MMU ? 8 : ceil(LTI_LRADDR_WIDTH/8)`, where `?` is an operator and
+not a question. Together they select 47 cells corpus-wide, every one of them prose, and no legitimate
+expression in either stratum. A footnote marker rides its expression directly — `ceil(ADDR_WIDTH/8) a`
+— so it carries no terminator and is untouched.
+
+**A length threshold would not have done this, and the earlier reading of the margin is corrected
+here.** When only the proof-carrying stratum was in view the two classes looked separable by length,
+the longest expression being five tokens and the shortest prose seven. Across the whole corpus real
+expressions reach **eight** tokens while prose starts at **seven**, so the classes overlap and it is
+the conjunction doing the work.
+
+The population is the other half of the result, and it is worth stating plainly: in the
+proof-carrying stratum this refuses **nothing at all** — 195 parametric width cells, none of them
+prose, and no artifact moves. All 47 are in documents frozen at an older generation, and 43 of those
+are one shape: a four-column `Signal | Type | Width | Description` table whose real signal names are
+two-token phrases (`c opcode`, `d param`). Such a column scores zero under the whole-cell rule above,
+so the content-based correction hands the table its one-letter `Type` column and rotates the width
+onto the description. Refusing the sentence there removes a declaration named `C`, not a wire. The
+two rows where a real identity does go with it — one GIC and one CXS signal, both declared with a
+fabricated width and nothing else — become rows the accounting counts as unread, which is the whole
+point of counting them.
+
+The census is re-derivable with `python3 scripts/measure_parametric_width_cell_shapes.py`; its join
+control replays the reader's own column selection and must reproduce every declared width in the
+proof-carrying stratum.
+
 ### The same loss one stage later: a width the reader cannot finish reading
 
 Everything above is about the EVIDENCE stage, where a table row becomes a declaration. A second,

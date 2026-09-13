@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > how does the VLM understand tables / can a VLM read PDF tables
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how does the active task migration preserve non-ASCII legacy bytes
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > how does the adversarial PDF identity test preserve source bytes
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > how does the behavioral genericity gate prove negative-control sensitivity
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how does the claim gate find ignored or untracked scratch producers
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how does the claim gate reject ignored or untracked scratch producers
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -285,15 +297,3 @@
   > how many corpus refreshes remain after the GIC Overview Guide
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how many corpus refreshes remain after the OpenCAPI Certified note
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many corpus refreshes remain after the OpenCAPI Ready note
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how many corpus task ids and source regions must containment preserve
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > how many corpus/-sourced documents are there and how many are legacy
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current claim census candidates join exact evidence or registered annotations
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current claim evidence units are derived registered incomplete or excluded
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > how many current documents are behaviorally measurable
