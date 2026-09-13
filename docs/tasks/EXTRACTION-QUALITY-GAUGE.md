@@ -769,7 +769,8 @@ honestly-qualified) path to "human-SpecForge in Rust."
   relation at all, which would be right by accident and is owned by `.3k.5`.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-QUALITY-GAUGE.3k.1`
-- ID: `EXTRACTION-QUALITY-GAUGE.3k.5` · Status: `pending` (opened `2026-09-12` by `.3k.1`) · Goal:
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.5` · Status: `done` (`2026-09-13`, CODE; opened `2026-09-12` by
+  `.3k.1`) · Goal:
   **the refusal gates are statement-scoped while the records they suppress are clause-scoped.**
   `is_relational_equality_constraint` (`.3d`) and `is_reference_magnitude_constraint` (`.3k.1`) are
   both evaluated over the WHOLE statement, so a relation stated in one sentence refuses an obligation
@@ -782,9 +783,32 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Identifier … shall be unique"* → `must_be_value UNIQUE`, which is `.3k.2`'s class). Two more are
   unadjudicated. The magnitude leads this leaf owns (`that supported by`, `the maximum`, `the
   minimum`) can only be added once the span is decided: statement-scoped they refuse RISC-V IOMMU
-  `dyn_sigcon_0008`/`0009` for a relation in a later sentence. Prerequisite: `.3k.2` (so the
-  admitted-set is not a fabrication set). Verification: all 4 plus the new leads adjudicated
-  individually; observed RED; the chain rebuilt for every document whose artifacts move.
+  `dyn_sigcon_0008`/`0009` for a relation in a later sentence. **SHIPPED `2026-09-13` — the SPAN. The LEADS are deliberately NOT shipped, and
+  finding out why is this leaf's second result.** Both refusals now read the OBLIGATION in the
+  statement path and the BINDING in the dynamic path; the row reader has read them that way since
+  `.3k.2f`, so all three producers finally agree. **Corpus: replayed 302 → 302 and reproduced 127 →
+  127 across all 77 loadable documents — nothing moves, nothing is rebuilt.**
+  **The four statements this leaf was sized from no longer describe the code.** They were counted with
+  a Python mirror in `.3k.1`'s day; since then `.3k.3` made the statement path read per obligation and
+  `.3k.2k` refused a relational predicate in the value slot. The one record the node expected to
+  RECOVER (NVMe `statement_4474`) is not recovered, and the reason is worth keeping: it is refused by
+  `EXTRACTION-QUALITY-GAUGE.3e`'s descriptive-field-cell gate — a THIRD statement-scoped gate this
+  leaf does not own. The one it expected to EXPOSE (NVMe `statement_5826` → `must_be_value UNIQUE`)
+  cannot appear, because `.3k.2k` refuses it. **The prerequisite did its job in a way the node could
+  not have predicted: it emptied the admitted set instead of cleaning it.**
+  **The leads (`that supported by`, `the maximum`, `the minimum`) are unblocked and still unshipped.**
+  `.3k.1` could not add them because statement-scoped they refused RISC-V IOMMU `dyn_sigcon_0008`/
+  `0009` for a relation in a later sentence; clause-scoped that objection is gone, and the shapes are
+  live — `the maximum` follows a comparative **28** times in the corpus, `the minimum` **17**, `that
+  supported by` **6**, in sentences like *"a TID value that is greater than the maximum supported
+  TID"*. They are not added because **nothing reaches them**: in the statement path `.3k.2a` refuses a
+  clause that types no kind and `.3k.2k` refuses a value slot holding the comparative itself, so every
+  candidate is gone before this gate is asked, and I could not construct a reachable case. Adding
+  vocabulary no case exercises is what this family refuses to do. The reason is written into the
+  gate's own doc comment so the next reader inherits the measurement rather than the plan.
+  Prerequisite: `.3k.2` (so the admitted-set is not a fabrication set) — **satisfied**. Verification:
+  see the acceptance checklist below.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3k.5`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.6` · Status: `done` (`2026-09-12`, CODE) · Goal: **an instrument
   that answers "does today's extractor still produce this persisted record".** `.3k` sized its
   children from the persisted corpus and `.3k.1` then discovered the corpus is not one code
@@ -1509,6 +1533,45 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.5`
+
+- [x] **REPRODUCE / MEASURE** — `replay-constraints` over all 77 loadable documents: **302 replayed
+  and 127 reproduced, before and after — nothing moves.** The four statements the node was sized from
+  were counted with a Python mirror before `.3k.3` and `.3k.2k` existed, and neither survives as this
+  leaf's population: the record it expected to recover is refused by `.3e`'s descriptive-field-cell
+  gate, and the record it expected to expose is refused by `.3k.2k`. The class is nevertheless
+  demonstrable through the real reader, which is the `.3k.1` footing `.3k.2e`/`.3k.2f`/`.3k.2k`
+  shipped on.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`. Both
+  `is_relational_equality_constraint` (`.3d`) and `is_reference_magnitude_constraint` (`.3k.1`) were
+  evaluated over `&statement.text` in both deterministic statement-level producers, while the records
+  they suppress became clause-scoped in `.3k.3` and `.3k.4`. So a relation mentioned anywhere in a
+  statement refused every obligation that statement states — the container's own defect, on the
+  refusal side.
+- [x] **ADDRESSED (verified)** — the two guard clauses moved inside the loops that already hold the
+  clause: the obligation in `extract_signal_constraints`, the binding in
+  `extract_dynamic_signal_constraints` (both binders). **Three controls in
+  `mod extraction_quality_gauge_3k_5`, two observed RED with the refusals put back on the statement**
+  and the file restored byte-identically: a relation in another clause no longer refuses this
+  obligation, the clause that STATES the relation is still refused, and a statement stating both keeps
+  only what the vocabulary can hold.
+- [x] **NO REGRESSION** — corpus replay identical (302/127), so no persisted artifact moves and no
+  chain rebuild is owed; all 77 documents still load. Wire golds hold: `signal_constraint
+  P=R=F1=1.000` with **fp=0** on APB, AHB and AXI. `kg-bench` **156/156**; `cargo fmt --all --check`,
+  `cargo clippy --offline --all-targets -D warnings` and the whole workspace suite green
+  (`specforge-core` lib 1,500 → **1,503**). `flow_census.json` re-derived and attributed: one decision
+  site, no new function.
+- [x] **GENERICITY (ADR 0006)** — a scope change to two existing rules; no new vocabulary. The three
+  leads that WOULD have been vocabulary are explicitly not added, with the measurement recorded.
+- [x] **LOCKSTEP** — the book's *"A bound stated against another operand is not a value"* section says
+  *"Both readers now refuse, for the same reason, on the clause each is holding"* — which this leaf is
+  what finally makes true of all three producers, so the sentence stands and is now accurate rather
+  than aspirational. `is_reference_magnitude_constraint`'s doc comment asserted the gate *"is evaluated
+  over the whole statement"*; that is now false and is rewritten in the same edit, together with the
+  measurement that keeps the leads out. No KM card: the durable fact is
+  `[[one-record-per-obligation-clause]]`'s, and this leaf is its refusal-side completion rather than a
+  new mechanism.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.13`
 

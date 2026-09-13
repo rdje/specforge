@@ -25,19 +25,19 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.13-A-RECOMMENDATION-IS-NOT-A-REQUIREMENT",
-   "rationale": "The dynamic constraint path refuses a binding whose own clause the specification marks non-mandatory — a recommendation or a permission — while leaving a flat binding with no modal at all untouched, because that is what this producer exists to read. One predicate, applied to the clause each binder bound in.",
-   "owner": "EXTRACTION-QUALITY-GAUGE.3k.13",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3k.5-A-RELATION-REFUSES-ITS-OWN-CLAUSE",
+   "rationale": "The two refusals that say the constraint vocabulary has no slot for what a clause states are evaluated over the OBLIGATION, in the statement path, and over the BINDING in the dynamic path, instead of over the whole statement. No new function: two guard clauses move inside the loops that already hold the clause.",
+   "owner": "EXTRACTION-QUALITY-GAUGE.3k.5",
    "baseline": {
-    "analyzed_functions": 2432,
-    "decision_sites": 13072,
-    "helper_edges": 15316,
+    "analyzed_functions": 2433,
+    "decision_sites": 13076,
+    "helper_edges": 15320,
     "semantic_macros": 1485
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 4,
-    "helper_edges": 4,
+    "analyzed_functions": 0,
+    "decision_sites": -1,
+    "helper_edges": 0,
     "semantic_macros": 0
    }
   }

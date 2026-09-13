@@ -7076,12 +7076,16 @@ fn is_relational_equality_constraint(text: &str) -> bool {
 /// is left untouched: *"must be greater than 0"*, *"sets DBI HIGH when the number of transitioning
 /// data bits within a byte is greater than 4"*, *"speeds greater than 1 MHz"* all still extract.
 ///
-/// The lead list is deliberately the MEASURED one. Over the persisted corpus, extending it with
-/// `that supported by` / `the maximum` / `the minimum` refuses two further records (RISC-V IOMMU
-/// `dyn_sigcon_0008`/`0009`) whose own obligation clause states no relation — the relation is in a
-/// LATER sentence of the same statement. Refusing those here would be right by accident and wrong by
-/// construction, since this gate, like `.3d`'s, is evaluated over the whole statement; the span of
-/// the refusal itself is `EXTRACTION-QUALITY-GAUGE.3k.5`, and those leads belong to it.
+/// The lead list is deliberately the MEASURED one, and `EXTRACTION-QUALITY-GAUGE.3k.5` re-measured it
+/// after moving this gate onto the CLAUSE. `.3k.1` could not add `that supported by` / `the maximum`
+/// / `the minimum` because statement-scoped they refused RISC-V IOMMU `dyn_sigcon_0008`/`0009` for a
+/// relation in a LATER sentence — right by accident. Clause-scoped that objection is gone, and the
+/// three shapes are live in the corpus (`the maximum` 28 times after a comparative, `the minimum` 17,
+/// `that supported by` 6). **They are still not added, for a different reason: nothing reaches them.**
+/// In the statement path `.3k.2a` refuses a clause that types no kind and `.3k.2k` refuses a value
+/// slot holding the comparative itself, so every candidate is already gone before this gate is asked.
+/// Adding vocabulary no case exercises is what this family refuses to do; when a reachable instance
+/// appears, the leads are ready and the span no longer blocks them.
 ///
 /// Universal phrasing, no signal/vendor/document names (ADR 0006).
 fn is_reference_magnitude_constraint(text: &str) -> bool {
@@ -7805,11 +7809,6 @@ fn extract_dynamic_signal_constraints(
         // EXTRACTION-QUALITY-GAUGE.3k.1: the same refusal for a comparative MAGNITUDE against a
         // REFERENCE operand. Measured population here is ZERO — every current instance is in the
         // pattern path — and the gate is wired in both so the class cannot re-enter through this one.
-        if is_relational_equality_constraint(&statement.text)
-            || is_reference_magnitude_constraint(&statement.text)
-        {
-            continue;
-        }
 
         // The bound value is either a discovered enum value (`must be <value>` → MustBeValue),
         // OR — in an active "drive/set/tied <signal> LOW/HIGH" construction the discovered-value
@@ -7832,7 +7831,14 @@ fn extract_dynamic_signal_constraints(
             // EXTRACTION-QUALITY-GAUGE.3k.13 — a binding the specification itself marks optional is
             // not an invariant. Judged on the clause that BOUND, so a permission granted in one
             // sentence does not suppress the requirement stated in the next.
-            .filter(|(binding, _, _)| !binding_is_non_mandatory(binding));
+            .filter(|(binding, _, _)| !binding_is_non_mandatory(binding))
+            // EXTRACTION-QUALITY-GAUGE.3d / .3k.1, clause-scoped by `.3k.5`: a relation the
+            // constraint vocabulary has no slot for refuses the binding it is stated WITH, not every
+            // binding the statement happens to carry.
+            .filter(|(binding, _, _)| {
+                !is_relational_equality_constraint(binding)
+                    && !is_reference_magnitude_constraint(binding)
+            });
         let level_bindings: Vec<(&str, Vec<String>, SignalConstraintKind)> = if value_binding
             .is_some()
         {
@@ -7852,6 +7858,10 @@ fn extract_dynamic_signal_constraints(
                 .text
                 .split(['.', ';', '\u{2022}', '\n'])
                 .filter(|clause| !binding_is_non_mandatory(clause))
+                .filter(|clause| {
+                    !is_relational_equality_constraint(clause)
+                        && !is_reference_magnitude_constraint(clause)
+                })
                 .flat_map(|clause| {
                     logic_level_bindings(text_before_condition_marker(clause), &declared_signals)
                         .into_iter()
@@ -10958,12 +10968,10 @@ fn extract_signal_constraints(
         // EXTRACTION-QUALITY-GAUGE.3k.1: and a comparative MAGNITUDE against a REFERENCE operand
         // ("must not be greater than the size indicated by the OAS field") has no typed slot for the
         // same reason — the whole measured population of that gate is this path's, 4 DTI records.
-        // Both stay STATEMENT-scoped while the records below became clause-scoped: moving them onto
-        // the clause is `EXTRACTION-QUALITY-GAUGE.3k.5`, which owns the admitted set that widening
-        // creates and has its own measured population.
-        if is_relational_equality_constraint(text) || is_reference_magnitude_constraint(text) {
-            continue;
-        }
+        // EXTRACTION-QUALITY-GAUGE.3k.5 — both are now evaluated over the OBLIGATION, inside the
+        // loop below, for the reason this whole container exists: a relation stated in one clause
+        // must not refuse an obligation minted from another. The row reader has read them that way
+        // since `.3k.2f`; this is the statement path catching up.
 
         // EXTRACTION-QUALITY-GAUGE.3k.3 — one record per OBLIGATION, not one per statement.
         //
@@ -10980,6 +10988,20 @@ fn extract_signal_constraints(
         // and it is the shape `extract_signal_description_row_constraints` already has.
         let mut minted: HashSet<String> = HashSet::new();
         for obligation in constraint_bearing_sentences(text) {
+            // EXTRACTION-QUALITY-GAUGE.3d: an inter-signal/field EQUALITY ("X must be (less than or)
+            // equal to the value of Y") has no typed slot — refuse it here too (this pattern path
+            // mints the same garbage as the dynamic path otherwise). Honest residual over a
+            // fabricated fact. EXTRACTION-QUALITY-GAUGE.3k.1: and a comparative MAGNITUDE against a
+            // REFERENCE operand ("must not be greater than the size indicated by the OAS field") has
+            // no typed slot for the same reason.
+            // EXTRACTION-QUALITY-GAUGE.3k.5 — evaluated over THIS obligation, not over the
+            // statement: a cell whose descriptive body mentions a relation used to refuse every
+            // obligation the same cell states.
+            if is_relational_equality_constraint(obligation)
+                || is_reference_magnitude_constraint(obligation)
+            {
+                continue;
+            }
             // Every part of the record is read from this one obligation — the kind and the value
             // included, which were the last two parts still reading the whole statement.
             let lowered = obligation.to_ascii_lowercase();
@@ -37336,6 +37358,131 @@ mod extraction_quality_gauge_3k_2b {
                 &[]
             )),
             Some("must_be_value:VALID".to_string())
+        );
+    }
+}
+
+#[cfg(test)]
+mod extraction_quality_gauge_3k_5 {
+    //! `EXTRACTION-QUALITY-GAUGE.3k.5` — the two refusals that say the constraint VOCABULARY has no
+    //! slot for what a clause states (`.3d`'s inter-operand equality, `.3k.1`'s comparative magnitude
+    //! against a reference operand) were evaluated over the WHOLE statement while the records they
+    //! suppress are minted per obligation. So a relation mentioned in a cell's descriptive body
+    //! refused every obligation the same cell states. Every sentence below is a real corpus shape
+    //! with its identity alpha-renamed (ADR 0006).
+    use super::*;
+
+    fn records(
+        text: &str,
+        declared: &[&str],
+        enum_members: &[&str],
+    ) -> Vec<SignalConstraintRecord> {
+        let mut statements: Vec<ExtractedStatement> = declared
+            .iter()
+            .map(|name| ExtractedStatement {
+                statement_id: format!("declare_{name}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is input width 1."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            })
+            .collect();
+        for (index, member) in enum_members.iter().enumerate() {
+            statements.push(ExtractedStatement {
+                statement_id: format!("enum_{index}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Enum ZETASTATES {member} = {index}."),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        }
+        statements.push(ExtractedStatement {
+            statement_id: "obligation".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+        let mut counter = 0usize;
+        extract_signal_constraints(&statements, &mut counter)
+    }
+
+    fn shape(records: &[SignalConstraintRecord]) -> Vec<String> {
+        records
+            .iter()
+            .map(|record| {
+                format!(
+                    "{} {}",
+                    record.subject_signal,
+                    match &record.constraint_kind {
+                        SignalConstraintKind::MustBeValue { value } => {
+                            format!("must_be_value:{value}")
+                        }
+                        other => other.as_str().to_string(),
+                    }
+                )
+            })
+            .collect()
+    }
+
+    /// The defect: a cell stating a relation the vocabulary cannot hold AND, in another clause, an
+    /// ordinary value obligation. Statement-scoped, the relation refused both.
+    ///
+    /// The NVMe instance this leaf was sized from (`statement_4474`, a field cell whose descriptive
+    /// body reads *"contains the same value as reported in …"*) is NOT this control, and the reason
+    /// is worth keeping: that record is refused by `EXTRACTION-QUALITY-GAUGE.3e`'s
+    /// descriptive-field-cell gate, which is a THIRD statement-scoped gate and not one this leaf
+    /// owns. Scoping the two vocabulary refusals does not recover it, and saying so is the honest
+    /// version of "the measured population is zero".
+    #[test]
+    fn a_relation_in_another_clause_no_longer_refuses_this_obligation() {
+        assert_eq!(
+            shape(&records(
+                "ZETACOUNT must be equal to the value of ZETAREPORTED. ZETASTATE shall be 0.",
+                &["ZETACOUNT", "ZETAREPORTED", "ZETASTATE"],
+                &[]
+            )),
+            vec!["ZETASTATE must_be_value:0".to_string()]
+        );
+    }
+
+    /// The refusal itself is untouched where it belongs: the clause that STATES the relation still
+    /// mints nothing, because the vocabulary has no slot for it.
+    #[test]
+    fn the_clause_that_states_the_relation_is_still_refused() {
+        assert!(
+            records(
+                "ZETAFIELD must be equal to the value of ZETAREPORTED.",
+                &["ZETAFIELD", "ZETAREPORTED"],
+                &[]
+            )
+            .is_empty()
+        );
+        assert!(
+            records(
+                "ZETARANGE must not be greater than the size indicated by the ZETAOAS field.",
+                &["ZETARANGE", "ZETAOAS"],
+                &[]
+            )
+            .is_empty()
+        );
+    }
+
+    /// And a statement stating BOTH keeps the one the vocabulary can hold and refuses the one it
+    /// cannot — which is the whole point of moving the scope rather than removing the gate.
+    #[test]
+    fn a_statement_stating_both_keeps_only_what_the_vocabulary_can_hold() {
+        assert_eq!(
+            shape(&records(
+                "ZETARANGE must not be greater than the size indicated by the ZETAOAS field. \
+                 ZETAFIELD shall be 0.",
+                &["ZETARANGE", "ZETAOAS", "ZETAFIELD"],
+                &[]
+            )),
+            vec!["ZETAFIELD must_be_value:0".to_string()]
         );
     }
 }

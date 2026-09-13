@@ -7,24 +7,27 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.13` CLOSED `2026-09-13` (CODE)** — **a binding the specification itself marks optional is
-  not an invariant.** The dynamic path types a record from its VALUE BINDER and never from a modal — correctly, because a FLAT binding
-  (*"the FULL output is pulled HIGH"*) is a real invariant — so it had no modality gate at all and AHB published `HPROT must_be_high`
-  from *"It is RECOMMENDED that…"*. Population **2**, both adjudicated; corpus replayed 292 → 291, AHB 12 → 11. The gate is narrow on
-  purpose: only an EXPLICIT marker refuses, a mandatory modal in the same clause outranks a permission, and a permission in one sentence
-  does not suppress the next sentence's requirement — written any wider it would empty this reader out.
-- **Five leaves closed this session, all in `EXTRACTION-QUALITY-GAUGE.3k`, and the method is the result: BUILD THE CHANGE AS A PROTOTYPE
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.5` CLOSED `2026-09-13` (CODE)** — **a relation refuses the clause that STATES it, not
+  every obligation the statement carries.** `.3d`'s equality and `.3k.1`'s reference magnitude were evaluated over the whole statement
+  while the records they suppress became clause-scoped in `.3k.3`/`.3k.4`; all three producers now agree. Corpus **302 → 302 replayed,
+  127 → 127 reproduced — nothing moves, nothing rebuilt.** Its second result is why the LEADS (`that supported by`/`the maximum`/`the
+  minimum`) are unblocked and still **unshipped**: the shapes are live (51 corpus occurrences) but NOTHING REACHES THEM — `.3k.2a` and
+  `.3k.2k` refuse every candidate first. Adding vocabulary no case exercises is what this family refuses to do; the measurement is
+  written into the gate's own doc comment. The node's four sized statements no longer describe the code either: the prerequisite
+  (`.3k.2`) emptied the admitted set rather than cleaning it.
+- **Six leaves closed this session, all in `EXTRACTION-QUALITY-GAUGE.3k`, and the method is the result: BUILD THE CHANGE AS A PROTOTYPE
   AND MEASURE IT WITH `replay-constraints` BEFORE COMMITTING TO ITS DESIGN.** Every one had its shipped shape decided by a measurement
   that contradicted its own node, and none was predictable from reading the code. `.3k.2k` (a relational predicate is not a value) was
   opened by `.3k.3`'s measurement; `.3k.3` (one record per obligation) found that the narrowing it was written as would have DELETED a
   fact; `.3k.4` (the binding-bearing clause) rejected two wider shapes costing 30 records and 3 fabrications; `.3k.11` (a level belongs
-  to a signal) had three "obvious" pairing rules refuted, one of them by `WIRE-BASED-100.5i`'s alpha-invariance control going RED.
-- Next action: pick from the open `.3k` leaves, each carrying its own measured sizing — `.3k.5` (clause-scope the two vocabulary
-  refusals; 4 statements), `.3k.7` (AXI `WSTRB`; the obvious repair costs 3 reproduced records), `.3k.8` (statement/row duplication, 2
+  to a signal) had three "obvious" pairing rules refuted, one by `WIRE-BASED-100.5i`'s alpha-invariance control going RED; `.3k.13`
+  (a recommendation is not a requirement) and `.3k.5` each found their node's own sizing had been overtaken by a sibling leaf.
+- Next action: pick from the open `.3k` leaves, each carrying its own measured sizing — `.3k.7` (AXI `WSTRB`; the obvious repair costs 3 reproduced
+  records), `.3k.8` (statement/row duplication, 2
   records before `.3k.3` and 6 after), `.3k.9` (`PARTITION\_ACCESS` escaped-underscore fragment), `.3k.10` (statement-initial fronted
   condition), `.3k.12` (a predicate between a signal and its level). `.3j` (the LLM path's gates) is open and unsized.
 - In-flight uncommitted: none after this commit.
-- Blockers: none. Push cadence is **400** per director directive `2026-09-13`, FIXED there, so no push is due at 236; directive 16 still
+- Blockers: none. Push cadence is **400** per director directive `2026-09-13`, FIXED there, so no push is due at 237; directive 16 still
   gates it on full CI. `scripts/check_doctrines.sh --all` did not finish in 50 minutes — `CHAIN-CURRENCY` re-executes the real pipeline
   for every persisted artifact across four stages; budget hours and run it detached. Standing hazards: **an evidence-stage change that
   MOVES a current-schema artifact's content stales its proof and it then refuses to LOAD** — only AHB/AXI-L/APB-E are current-schema.
