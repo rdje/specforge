@@ -127,7 +127,7 @@ the durable conclusion is
 | `SIGNAL-CATALOG-CAPTURE-GAP.3` | `pending` | land the rule; re-measure precision and recall on the same documents that quantified the gap |
 | `SIGNAL-CATALOG-CAPTURE-GAP.4` | `pending` | stop the normalized-markdown escape from truncating underscore-bearing identifiers; measure the corpus-wide fixed-point move before landing |
 | `SIGNAL-CATALOG-CAPTURE-GAP.5` | `pending` | 14 of 78 `EvidenceIR` artifacts carry no validation report, so they have no `document_class`; decide whether that is a currency gap or a contract gap |
-| `SIGNAL-CATALOG-CAPTURE-GAP.6` | `pending` | a PARTIAL catalog: a check-signal relationship table names both sides and declares neither, so AMBA LPI holds 5 signals while its own tables name at least 11 |
+| `SIGNAL-CATALOG-CAPTURE-GAP.6` | `done` | measured: 2 real relationship tables in 1 legacy document, 18 names, **0 in the current stratum** — and the blocker is not the table shape but the `(direction, width)` admission gate, which is `SIGNAL-DECLARATION-ROW-DROP`'s |
 
 ## `.6` — a partial catalog, found from the other end (`2026-09-14`)
 
@@ -163,6 +163,50 @@ admits any two-column table would admit every glossary in the corpus. Size that 
 proposing anything, and check it against `SIGNAL-DECLARATION-ROW-DROP`'s own frontier before opening a
 second reader for the same rows.
 
+## `.6` — measured, and the blocker is not where the leaf looked (`2026-09-14`)
+
+The leaf opened on AMBA LPI: a catalog of **5** signals while `Table 3-2 Parity extended P-Channel check
+signal relationships` — typed `signal_description` — names **ten in five rows** and declares none. The
+proposed subject was a general shape: a two-column *relationship* table that names a signal in every cell
+of both columns.
+
+**Measured over every table the declaration reader examines, that shape is almost empty**: 3 tables
+corpus-wide, **0 in the current stratum**, and one of the three is a false positive —
+CoreSight `table_0047` is `name | description` (`TSCLK | Interface clock`), admitted only because
+"Interface clock" is two words beginning with an identifier-shaped token. The real population is **2
+tables in 1 document, 18 identifier cells**: LPI's `Table 2-2` (Q-Channel) and `Table 3-2` (P-Channel).
+A two-column shape rule is therefore one document's rule with a false positive already attached, which is
+this repository's standing finding arriving again.
+
+### Why the rows drop, traced through the real reader
+
+The reader gets further than the leaf assumed, and stops for the reason `SIGNAL-DECLARATION-ROW-DROP` owns:
+
+| step | result on `Standard P-Channel signal \| Associated check signal` |
+| --- | --- |
+| `is_signal_name_column_header` | matches **both** columns; `name_col` = 0, correctly |
+| name token | `PACTIVE`, `PSTATE`, `PREQ`, `PACCEPT`, `PDENY` — all accepted identifiers |
+| width column | no `width`/`size`/`bits` header — none |
+| `check_signal_col` | **found, at column 1** (`associated check signal` contains `check signal`) |
+| `covered_signal_col` | **not found** — the header says `standard p-channel signal`, not `signals covered` |
+| direction column | no `direction`/`source`/`destination` header — none |
+| outcome | `NoDirectionAndNoWidth`; every row dropped, and counted |
+
+So the identity is read, the table is typed, the name column is right, and the row is discarded because it
+offers **no attribute** — not because the reader cannot see the table.
+
+### The real question, and it is not this tree's
+
+**Must a declaration carry an attribute to carry an identity?** The reader requires a direction or a width
+before it will admit a signal exists, and a relationship table states neither: it states that `PACTIVE` is
+checked by `PACTIVECHK`, which is a fact about two signals that presupposes both. That is
+`SIGNAL-DECLARATION-ROW-DROP.1`'s thesis in a new form — the `(direction, width)` arm is the whole of the
+measured 18.3% loss — and the decision belongs there, sized against all 482 dropped rows rather than
+against LPI's ten.
+
+Recorded here so the next reader of this tree does not re-derive it, and so that a "relationship table"
+rule is not written for a population of two tables in one legacy document.
+
 ## Current Frontier
 
 `SIGNAL-CATALOG-CAPTURE-GAP.2` — one document is a confirmed capture miss and its declarations are located:
@@ -172,11 +216,11 @@ any code is written. The calibration already collected is the starting point —
 count after Wishbone's 32 is 13, and those 13 are software feature selectors, so the naive shape predicate
 alone is not safe.
 
-`SIGNAL-CATALOG-CAPTURE-GAP.6` is newly opened (`2026-09-14`) and is a *measurement* rather than a design:
-a check-signal relationship table names ten signals in five rows and declares none, which is why AMBA LPI's
-catalog holds 5 signals against at least 11 its own tables name. Size the corpus population of two-column
-relationship tables before proposing a reader, and settle with `SIGNAL-DECLARATION-ROW-DROP` which tree owns
-the rows.
+`SIGNAL-CATALOG-CAPTURE-GAP.6` closed `2026-09-14` with no rule: the two-column relationship shape is 2 real
+tables in 1 legacy document and 0 in the current stratum, and the rows drop on the `(direction, width)`
+admission gate rather than on the table shape. The question it exposes — must a declaration carry an
+attribute to carry an identity? — belongs to `SIGNAL-DECLARATION-ROW-DROP`, sized against all 482 dropped
+rows.
 
 `SIGNAL-CATALOG-CAPTURE-GAP.4` may be taken first if a smaller, independently valuable slice is preferred: it
 is a defect with a known cause and a known blast radius (67 of 78 documents), and it is orthogonal to the

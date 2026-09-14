@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.2d`/`.2f`/`.4b`/`.4c` open)
+- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.1d`/`.2d`/`.2f`/`.4b`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-13`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1`, `.1a`, `.1b`, `.1c`, `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4c`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1` (`.1a`–`.1d`), `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4c`)
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -666,6 +666,29 @@ a long tail.
   every document whose artifacts move.
   Commit: pending
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1d` · Status: `pending` (opened `2026-09-14` by
+  `SIGNAL-CATALOG-CAPTURE-GAP.6`) · Goal: **must a declaration carry an ATTRIBUTE to carry an IDENTITY?**
+  The `(direction, width)` arm — the whole of this tree's measured 18.3% loss — refuses a row that offers
+  neither. Every `.2*` leaf so far has answered it by teaching the reader to READ an attribute it was
+  missing (an arrow, a bit range, a rotated column). `SIGNAL-CATALOG-CAPTURE-GAP.6` found a class where
+  there is nothing to read: AMBA LPI's `Table 2-2`/`Table 3-2` state that `PACTIVE` is checked by
+  `PACTIVECHK` and give no direction and no width, because the fact they state is a RELATION that
+  presupposes both signals exist. Ten names in five rows, all dropped, and that document's catalog holds
+  five signals as a result.
+  **Traced, so the leaf starts from behaviour rather than suspicion**: the table is typed, `name_col` is
+  correctly 0, the identifiers are accepted, `check_signal_col` is even found at column 1 — and the row
+  still leaves by `NoDirectionAndNoWidth`. Nothing upstream is wrong.
+  **Size it against all 482, not against LPI's ten.** The question is general and the answer changes the
+  reader's admission rule, so the population is every dropped row in the corpus, classified by what its
+  row DOES offer: a name alone, a name and a relation, a name and prose. A rule that admits an identity
+  with no attribute mints a signal from any table cell that looks like an identifier — which is exactly
+  what `.2a`'s placeholder refusal and `ACTOR-NOUN-RELATION-DECLARATION.1`'s orthography rule exist to
+  stop — so the guard it needs must be sized in the same census.
+  Prerequisite: none. Verification: the 482 dropped rows classified and adjudicated; whatever is shipped
+  carries a corpus-wide count of what it newly admits and an adjudicated sample; every phantom the
+  existing refusals catch is shown to stay caught.
+  Commit: pending
+
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4c` · Status: `pending` (opened `2026-09-14` by the chain-currency
   sweep; **its opening premise was corrected the same day by tracing the conflict to its tables and the
   signal to its `.isf`**) · Goal: **a width conflict costs the signal its width in SemanticIR, and the
@@ -970,9 +993,12 @@ Ordered; PNT selects the first eligible leaf.
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone.
-1. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
+1. `SIGNAL-DECLARATION-ROW-DROP.1d` — **the tree's own thesis, asked directly**: must a declaration carry
+   an attribute to carry an identity? Every `.2*` leaf has answered it by reading one more attribute; LPI's
+   check-relationship tables have none to read. Size against all 482 dropped rows.
+2. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
    whether a parsed direction should survive an unreadable width.
-2. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a
+3. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a
    signal.
-3. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+4. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.
