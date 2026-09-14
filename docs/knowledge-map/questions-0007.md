@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how many USB4 Connection Manager page sidecars are repository relative
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how many USB4 Inter-Domain page sidecars are repository relative
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -204,6 +206,8 @@
   > how many tables corpus-wide are base-name templates
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how many task trees have an unowned named frontier
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > how many times has the identity-without-attribute question been answered
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -294,7 +298,3 @@
   > how was AXI constraint precision fixed
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > how was the 400 page Docling SIGKILL reproduced
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > how was the CHI field-constraint routing measured without re-ingesting the PDF
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)

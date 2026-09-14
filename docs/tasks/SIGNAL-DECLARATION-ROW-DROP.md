@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2e`/`.3`/`.4a`/`.4b`/`.4e` closed; `.2c` deferred; `.2d`/`.2f`/`.4c`/`.4d` open)
+- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2e`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2d`/`.2f`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
-- Last updated: `2026-09-14`
+- Last updated: `2026-09-15`
 - Owner: repo-local workflow
 
 ## Goal
@@ -720,7 +720,8 @@ a long tail.
   Verification: see the acceptance checklist below.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.4e`
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.4d` · Status: `pending` (opened `2026-09-14` by `.4b`) · Goal:
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4d` · Status: `done` (`2026-09-15`, PROBE/DOC; opened `2026-09-14`
+  by `.4b`) · Goal:
   **should a refused declaration's IDENTITY and DIRECTION survive its unreadable width?** `.4b` made
   the refusal visible and deliberately did not answer this: `parse_explicit_signal_declaration`
   discards a direction it has already parsed along with the width it cannot read, and admitting those
@@ -741,13 +742,58 @@ a long tail.
   **The prior ruling to beat:** `.1d` asked the same question at the row level one stage up and
   answered NO at **24% precision**, and `.4b`'s own adjudication of the no-attribute arms scored
   **1 in 8**. An affirmative answer here has to name what makes the width-unread arm different.
-  Non-goal: admitting an identity because MMU-700's 47 look like real LTI wires; four of them
-  (`LMACTIVE_7`, `LMASKCLOSE_7`, `LMOPENACK_7`, `LMOPENREQ_7`) carry an index-7 suffix with no
-  siblings, which is the shape of an expansion artifact rather than a declaration.
-  Prerequisite: `.4b`.
-  Verification: the latent population read by the REAL reader (not a mirror), adjudicated per
-  document; observed RED; the chain rebuilt for every document whose artifacts move.
-  Commit: pending
+
+  **ANSWERED `2026-09-15` (PROBE/DOC) — NO, and the largest sub-population is not even this leaf's.**
+  All **69 distinct identities** adjudicated against their source rows. The set does not divide into
+  "real wire" and "junk"; it divides into three groups with three different owners.
+
+  * **47 are MMU-700's LTI observation interface, and the document STATES their width.** Traced to
+    their tables rather than inferred: `table_0259` (*"Table B-6: LTI TBU observation interface
+    signals"*) and `table_0260` share the header
+    `SIGNALGRP<n> | Bits | Signal name | SIGQUAL<n> 4'b{MSB..LSB} | Number of cycles of delay`, and a
+    row reads `0 | [125:110] | latlbloc | 3'b000 , lavalid | 1`. The reader picked the **fourth**
+    column as the width and never read the **second**: `[125:110]` is 16 bits, plainly stated.
+    `3'b000 , lavalid` is a signal-qualifier expression, not a width, which is exactly why it cannot
+    be parsed as one. **Admitting the identity without a width here would be the wrong fix** — it
+    would permanently paper over a width the document writes on the same row. These belong to `.2f`
+    (*"a bit range is a width"*), whose blocking condition is visible in both tables' first body row:
+    `2 | [127:115] | Unused | - | -`.
+  * **18 are not signals at all**: Avalon's five section-heading rows (`FUNDAMENTAL`, `PIPELINE`,
+    `BURST`, `PACKET`, `RESETS`), AXI-H's four transaction names (`STASHONCESHARED`,
+    `STASHONCEUNIQUE`, `WRITEUNIQUEFULLSTASH`, `WRITEUNIQUEPTLSTASH`) plus the protocol name `ACE`,
+    GICv3's six peripheral-ID register FIELDS (`CLASS`, `JEDEC`, `DES_0`, `DES_1`, `PART_0`,
+    `PART_1`), eMMC's `NOTE`, and MMU-700's `group` — the last from the prose sentence *"Signal group
+    output ports are present on each component"*, which reaches this arm because `output` parses as a
+    direction. Admitting any of them mints a wire the document never declares.
+  * **4 are genuine losses, and each has a width the reader merely mis-parses**: `RUSERCHK`
+    (`ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)`, no operator in the source), `LASSIDCHK`
+    (`ceil((LTI_SSID_WIDTH +`, truncated), `ATBYTES` (`log 2 (DATA_WIDTH) -`, ingest-mangled) and
+    `CXSACTIVEREQ` (`1 bit`). The first three are the malformed expressions `.4a` deliberately
+    refuses. **The fourth prompted its own measurement and it too came back NO**: `width <N> bit(s)`
+    is a universal notation, and corpus-wide it is **9 refusals in ONE document** (CXS), of which
+    **7 of the 8 identities are already read elsewhere in the same document**, so the grammar would
+    recover exactly **one** identity — and CXS is legacy, so **zero** in the current stratum.
+  * **20 of the 47 carry a spelling the document never writes.** `LCVALID_0`…`LCVALID_7`,
+    `LCCTAG_0`…`LCCTAG_7` and the four index-7 singletons `LMACTIVE_7`, `LMASKCLOSE_7`,
+    `LMOPENACK_7`, `LMOPENREQ_7` are per-bit expansions of buses the document writes as
+    `lcvalid[7:0]`. That is an upstream fabrication question, not a reader question, and it is
+    another reason not to admit this group on identity alone.
+
+  **So the score is 32 of 69 at its most generous** — and the generous reading is wrong, because 47
+  of those 32-plus-15 are recoverable WITH their width by `.2f`. There is nothing left for an
+  identity-only admission to win: every real wire in the set either has a stated width the reader
+  should learn to read, or is one of four malformed source expressions. `.1d` answered 24%, `.4b`
+  answered 1-in-8, and this leaf answers NO for the third time on the same question — the pattern is
+  now strong enough to state as a rule: **an identity with no readable attribute is not a signal, and
+  a reader that cannot read the attribute should be taught the notation rather than allowed to drop
+  the attribute.**
+  Prerequisite: `.4b`, `.4e`.
+  Verification: `./target/release/specforge replay-declarations --evidence-root generated/evidence_ir
+  --json` (the REAL reader over all 78 artifacts, 0 skipped); every one of the 69 identities read
+  against its source row; MMU-700's two tables read cell-by-cell from the persisted `source_ir.json`;
+  the `width <N> bit(s)` population measured over the same replay. Read-only: no artifact written,
+  rebuilt or mutated. No code change, so no acceptance checklist applies.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.4d`
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.1d` · Status: `done` (`2026-09-14`, PROBE/DOC) · Children: `.1e` ·
   **Answered at the row level, and the answer is NO: 24% precision.** The question was whether a
@@ -929,6 +975,24 @@ a long tail.
   would settle it is contractually barred from the table path, and the row-shape question belongs to
   `PROSE-NAME-CELL-DECLARATION`. Measure the corpus population of bit-range width cells before
   implementing — a `Bits` column is common, and the blast radius is not this one table.
+
+  **POPULATION CORRECTED AND ENLARGED `2026-09-15` by `.4d`, which arrived at this table from the
+  other side.** `.4d` adjudicated the 69 identities the current reader refuses for an unreadable
+  width and found that **47 of them are this leaf's**, not 15 — MMU-700's LTI observation interface
+  across TWO tables (`table_0259`, captioned *"Table B-6: LTI TBU observation interface signals"*,
+  and its uncaptioned continuation `table_0260`), both with the header
+  `SIGNALGRP<n> | Bits | Signal name | SIGQUAL<n> 4'b{MSB..LSB} | Number of cycles of delay`.
+
+  **And the defect is not only that `[125:110]` is unreadable — it is that the reader is reading the
+  WRONG COLUMN.** On the row `0 | [125:110] | latlbloc | 3'b000 , lavalid | 1` it takes the fourth
+  column as the width and never looks at the second, so it fails on a signal-qualifier expression
+  while a plainly stated 16-bit width sits one cell away. Any fix here has to settle column choice,
+  not just bit-range parsing.
+  **The blocking condition is confirmed present in both tables**, as the first body row of each:
+  `2 | [127:115] | Unused | - | -`. So the `Unused` prerequisite is real and unchanged — but the
+  prize behind it is now 47 real widths rather than 15, which also means admitting these identities
+  WITHOUT a width (the `.4d` option) would have papered over a width the document states on the same
+  row. `.4d` refused it for exactly that reason.
   Prerequisite: `PROSE-NAME-CELL-DECLARATION` deciding the non-name row cell, or an equivalent
   structural refusal with its own measured population.
   Verification: the corpus population of bit-range width cells measured with the real reader and
@@ -1236,15 +1300,14 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `SIGNAL-DECLARATION-ROW-DROP.4d` — should a refused declaration's identity and direction survive an
-   unreadable width? **Now sizeable**: `.4e`'s replay gives 76 `width_text_unread` refusals with an
-   unrecovered identity across 9 documents (MMU-700 51, Avalon 8, GICv3 6, AXI-H 5, CXS 2, four
-   singletons). The two prior rulings on the same question scored 24% and 1-in-8.
-1. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
+0. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width, and `.4d` handed this leaf **47** real
+   MMU-700 widths instead of 15, plus a second defect: the reader picks the `SIGQUAL` column as the
+   width while the stated `Bits` column sits beside it. Still blocked on a row whose name cell is
+   `Unused` not being a declaration — confirmed present as the first body row of both tables.
+1. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+   the blast radius before touching `builtin_actor_taxonomy_role_in_text`.
+2. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
-   signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone.
-2. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a
-   signal.
-3. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
-   the blast radius before touching `builtin_actor_taxonomy_role_in_text`.
+   signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and
+   that default is owner-gated by `KG-ISF-COMPLETENESS.2a`, so this leaf stays parked behind it.

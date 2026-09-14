@@ -5,7 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
-| [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md) | 2026-09-14 | `current` | Admitting a declaration with an identity but no attribute is 24% precise — 14 real rows against 45 phantoms… |
+| [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md) | 2026-09-15 | `current` | Admitting a declaration with an identity but no attribute is 24% precise — 14 real rows against 45 phantoms… |
 | [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md) | 2026-09-13 | `current` | A logic level binds to the SIGNAL beside it, read through the document's own catalog — not to the verb that… |
 | [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md) | 2026-09-13 | `current` | The value slot admits a state, never a relation — a predicate followed by a preposition naming an operand o… |
 | [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md) | 2026-09-14 | `current` | `t PERIOD` and `a opcode` are the same cell shape and want DIFFERENT joins — only the document's own spelli… |

@@ -96,6 +96,8 @@
   > does SpecForge preserve certification workflow source evidence
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > does SpecForge read `Master -> Slave` as a direction
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > does SpecForge read a width written as N bit or N bits
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > does SpecForge read an enumerated width set like 8, 16, 32, 64
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -295,5 +297,3 @@
   > does specforge adapt remove an old actor isf when actor selection changes
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > does specforge handle coordinated drive/read objects (X drives A and B)
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > does specforge handle passive voice for actor-signal relations (X is driven by Y)

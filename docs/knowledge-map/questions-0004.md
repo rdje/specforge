@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > does specforge handle passive voice for actor-signal relations (X is driven by Y)
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > does specforge validate change the artifact it validates
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -296,5 +298,3 @@
   > how do I check whether the persisted corpus seal is stale
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > how do I clean up scratch after a slice
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > how do I clear a live-document line_bytes_each warning (reflow the few widest lines; do not partition, roll over, or raise the ceiling — nothing is running out)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > how does specforge drop a zero-evidence phantom actor like controller or agent
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
@@ -295,5 +297,3 @@
   > how many SpecForge mdBook doctests currently fail
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > how many TileLink name cells look like a split identifier
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many USB4 Connection Manager page sidecars are repository relative

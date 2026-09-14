@@ -17,11 +17,16 @@ answers:
   - "why is a grounding test against the declared catalog circular"
   - "does the Ax metavariable name a wire"
   - "does every column header being a name header separate a signal grid from a legend"
-date: 2026-09-14
+  - "should a declaration's identity survive a width the reader cannot read"
+  - "why are MMU-700's LTI observation-interface signals missing from its catalog"
+  - "is the SIGQUAL column a width"
+  - "does SpecForge read a width written as N bit or N bits"
+  - "how many times has the identity-without-attribute question been answered"
+date: 2026-09-15
 status: current
 tags: [evidence-ir, declarations, recall, precision, adr-0006, census-method, signal-declaration-row-drop]
-evidence: scripts/measure_dropped_row_offerings.py; crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations, DeclarationRowDropReason); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.1, .1d, .1e); docs/tasks/SIGNAL-CATALOG-CAPTURE-GAP.md (.6)
-reverify: "python3 scripts/measure_dropped_row_offerings.py — expect 4 documents carrying the accounting, 71 dropped rows, 71 joined (100.0%), 59 no_direction_and_no_width (36 prose / 15 names-another-signal / 8 nothing) and 12 name_not_an_identifier. A document rebuilt since gains accounting and changes these counts; the adjudication must then be redone."
+evidence: scripts/measure_dropped_row_offerings.py; crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations, DeclarationRowDropReason); crates/specforge/src/ir/semantic.rs (read_explicit_signal_declaration); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.1, .1d, .1e, .4b, .4d, .4e); docs/tasks/SIGNAL-CATALOG-CAPTURE-GAP.md (.6)
+reverify: "Semantic-stage leg (.4d): `./target/release/specforge replay-declarations --evidence-root generated/evidence_ir --json` — expect 186 `width_text_unread` refusals, 69 distinct unrecovered identities, of which 47 are MMU-700 rows whose `Bits` column states the width; and `width <N> bit(s)` matching 9 refusals in ONE document (CXS) recovering 1 identity. Evidence-stage leg: python3 scripts/measure_dropped_row_offerings.py — expect 4 documents carrying the accounting, 71 dropped rows, 71 joined (100.0%), 59 no_direction_and_no_width (36 prose / 15 names-another-signal / 8 nothing) and 12 name_not_an_identifier. A document rebuilt since gains accounting and changes these counts; the adjudication must then be redone."
 ---
 
 `synthesize_signal_declarations` refuses a row that offers neither a direction nor a width, and that
@@ -84,3 +89,35 @@ non-circular table-level test that separates them. Reopen only with a discrimina
 
 Links: [[declared-population-is-not-the-candidate-row-population]],
 [[a-width-cell-that-is-a-sentence-is-not-a-width]].
+
+## The same question, answered a third time — one stage later (`.4d`, `2026-09-15`)
+
+`SIGNAL-DECLARATION-ROW-DROP.4d` put the question to the SemanticIR reader instead of the
+EvidenceIR one: should a declaration whose WIDTH text cannot be read keep its identity and the
+direction already parsed? All **69** distinct identities the current reader refuses that way were
+adjudicated against their source rows (`replay-declarations`, the real reader over all 78 artifacts).
+**NO again**, and for a sharper reason than precision.
+
+* **47 are MMU-700's LTI observation interface, and the document STATES their width.** `table_0259`
+  (*"Table B-6: LTI TBU observation interface signals"*) and `table_0260` share the header
+  `SIGNALGRP<n> | Bits | Signal name | SIGQUAL<n> 4'b{MSB..LSB} | Number of cycles of delay`, and a row
+  reads `0 | [125:110] | latlbloc | 3'b000 , lavalid | 1`. The reader takes the **fourth** column as
+  the width and never reads the **second** — `[125:110]` is 16 bits, one cell away. So admitting the
+  identity without a width would permanently hide a stated width. These belong to
+  `SIGNAL-DECLARATION-ROW-DROP.2f`, whose `Unused` blocker is the first body row of both tables.
+* **18 are not signals**: Avalon section headings, AXI-H transaction names, GICv3 peripheral-ID
+  register FIELDS, eMMC `NOTE`, and `group` from the prose *"Signal group output ports are present on
+  each component"* — which reaches this arm at all only because `output` parses as a direction.
+* **4 are genuine losses with a width the reader mis-parses**, three of them malformed in the source.
+  The fourth, `CXSACTIVEREQ is width 1 bit`, prompted its own measurement: `width <N> bit(s)` matches
+  **9 refusals in ONE document**, 7 of whose 8 identities are already read elsewhere, so the grammar
+  recovers **one** identity corpus-wide and **zero** in the current stratum. Measured and refused.
+* **20 of the 47 carry a spelling the document never writes** — `LCVALID_0`…`_7`, `LCCTAG_0`…`_7` and
+  four index-7 singletons, per-bit expansions of buses written `lcvalid[7:0]`.
+
+**The rule this establishes, now on three independent measurements (24%, 1-in-8, and this one): an
+identity with no readable attribute is not a signal, and a reader that cannot read the attribute
+should be taught the notation rather than allowed to drop the attribute.** Reaching for
+identity-only admission is reaching past a fix that is usually sitting in the next column.
+
+See `[[declaration-replay-reads-the-legacy-stratum]]`, `[[arithmetic-width-drops-the-declaration]]`.

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > why must a check and the thing it checks not share a parent
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why must a co-reference key be rejected as a clause value
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why must a collection aggregate be at least files times per-file
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why must a current claim census candidate key include the semantic view
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > why must a gate never probe persisted artifacts with specforge validate
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why must a measurement window name the revision that closes it
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
