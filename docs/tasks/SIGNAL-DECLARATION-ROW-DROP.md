@@ -694,9 +694,11 @@ a long tail.
   **31 of APB-e's 32** emitted signals; the one current-stratum conflict, AHB `HBURST` (`3` against
   `HBURST_WIDTH`), likewise ships as `(output HBURST (width 1))` for a signal the document states as 3
   bits. The width-1 default is a far larger, pre-existing defect that this leaf does not own.
-  **The hold is therefore LIFTED: APB-e may be rebuilt.** The rebuild adds one `interface_signal_conflicts`
-  record and removes one `width_hint` at the SemanticIR boundary, and changes nothing in the emitted
-  `.isf`. That unblocks `CORPUS-CHAIN-CURRENCY.7`.
+  **The hold is therefore LIFTED, and the rebuild has since HAPPENED and confirmed the prediction.**
+  `CORPUS-CHAIN-CURRENCY.7` rebuilt APB-e on `2026-09-14`: `interface_signal_conflicts` 0 → 1, two
+  `actor_ports` records lose `width_hint`, and the emitted `.isf` `source_text` is **byte-identical at
+  4,029 bytes** — so the measurement this node was corrected by is now confirmed through the real chain
+  rather than by reading the pre-rebuild artifact. The APB wire gold is unchanged.
   What remains to decide: whether a contested width should be carried with its provenance and a
   contested flag, or refused outright — and that only matters once the emitter stops defaulting to 1, so
   size it against that question rather than alone. Corpus population: **1** current-stratum

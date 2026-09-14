@@ -206,7 +206,7 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   Verification: see the acceptance checklist below.
   Commit: `CORPUS-CHAIN-CURRENCY.6`
 
-- ID: `CORPUS-CHAIN-CURRENCY.7` · Status: `pending` (opened `2026-09-14` by `.6`) · Goal: **repair the
+- ID: `CORPUS-CHAIN-CURRENCY.7` · Status: `active` (opened `2026-09-14` by `.6`; **step 2 done the same day**) · Goal: **repair the
   two documents, then activate.** In order, because each step unblocks the next:
   1. ~~`SIGNAL-DECLARATION-ROW-DROP.4c` first.~~ **No longer a prerequisite** — `.4c`'s own premise was
      corrected on `2026-09-14` by tracing the two widths to their tables: APB-e states
@@ -214,7 +214,9 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
      matrix, so they genuinely differ and `.4a` is right to report a conflict. The rebuild costs one
      `width_hint` at the SemanticIR boundary and **changes no emitted `.isf`**: `PADDRCHK` already ships
      `(output PADDRCHK (width 1))`, as do 31 of APB-e's 32 signals.
-  2. Rebuild APB-e's chain from its (current) EvidenceIR, upstream-first, one `validate` per artifact.
+  2. ~~Rebuild APB-e's chain from its (current) EvidenceIR, upstream-first, one `validate` per
+     artifact.~~ **DONE `2026-09-14`** — see "`.7` step 2" below. The activated tier goes from 25 of 27
+     to **26 of 27 accepted** at both semantic and intent; the only remaining refusal is I2C.
   3. Re-ingest I2C: its normalized bundle is reclaimed, so `evidence` cannot replay it at all. Decide
      first whether a re-ingest is in this tree's scope or `CORPUS-COVERAGE`'s — a re-ingest replaces the
      document wholesale rather than repairing a drift, and it moves the retention declaration.
@@ -362,6 +364,48 @@ Honest limits of this measurement:
   generated-artifacts / doctrine-enforcement / SourceIR chapters, both retention fact cards, the corpus tree's
   corrected census, and the resume pointer agree before commit.
 
+## `.7` step 2 — APB-e rebuilt (`2026-09-14`)
+
+The first of the two drifted documents is repaired. Its EvidenceIR was already current and
+byte-unchanged, so the rebuild started at `semantic` and ran the documented order with **exactly one
+`validate` per artifact, strictly upstream-first**: `semantic` → `validate` → `intent` → `validate` →
+`adapt --target isf`. Pre-rebuild artifacts are held at
+`generated/preserved/CORPUS-CHAIN-CURRENCY.7/pre-rebuild/` (6 files, digest
+`8d1b9e13f605d81c45525433d7f26547c02f120c06cd6bafdfc3e7d5c588791f`).
+
+**What moved, and it is exactly what `.4` predicted and `SIGNAL-DECLARATION-ROW-DROP.4c` adjudicated:**
+
+| section | before | after |
+| --- | ---: | ---: |
+| `interface_signal_conflicts` | 0 | **1** (`PADDRCHK`, `width_mismatch`, `ADDR_WIDTH/8` against `ceil(ADDR_WIDTH/8)`) |
+| `actor_ports` | 64 | 64 — two records lose `width_hint` |
+| `interfaces` | 35 | 35 — one record changes |
+| `signal_connectivity` | 32 | 32 — one record changes |
+
+**What did NOT move, verified rather than assumed:**
+
+- the emitted `.isf` `source_text` is **byte-identical** (4,029 bytes before and after), and
+  `adapter.json` has **no** moved section outside the proof surfaces — which is the measurement
+  `SIGNAL-DECLARATION-ROW-DROP.4c` was corrected by, now confirmed through the real rebuild rather than
+  by reading the pre-rebuild artifact;
+- the APB wire gold is unchanged: `signal_constraint` 1.000 and, source-tolerant + filtered,
+  `actor_signal_relation` 1.000, before and after;
+- retention is exactly the declared **24** bundles;
+- the default (inert) `PROOF-SEAL-CURRENCY` gate passes.
+
+**The repair is measured at the gate that found it.** With `SPECFORGE_PROOF_SEAL_TOTAL_STAGES='semantic
+intent'`, the probe goes from **25 of 27** accepted at each of those stages to **26 of 27**, and the
+single remaining refusal at both is `um10204…i2c` — step 3.
+
+Every stage now replays clean for this document: `semantic --dry-run`, `intent --dry-run` and
+`adapt --dry-run` each reproduce the persisted artifact exactly.
+
+**One thing left as-is and stated rather than hidden**: `generated/adapters/isf/<apb-e>/validation_report.json`
+predates the rebuild. `specforge validate` accepts IR artifacts and not an adapter, the documented
+rebuild order ends at `adapt`, and the chain-currency comparison excludes `validation_reports` by
+construction — so nothing is stale by any gate's definition, but the file is older than the artifact
+beside it and a future leaf should decide whether an adapter's report has an owner.
+
 ## Acceptance Checklist (enforced) — `.6`
 
 - [x] **REPRODUCE / MEASURE** — `.4` and `.5`: 1 distinct seal per stage across 27 artifacts, so the
@@ -388,15 +432,28 @@ Honest limits of this measurement:
 
 ## Current Frontier
 
-1. `CORPUS-CHAIN-CURRENCY.7` — the repair, then the activation. **Unblocked**: APB-e's rebuild costs one
-   SemanticIR `width_hint` and no emitted `.isf` byte, so it may proceed; I2C still needs a re-ingest
-   decision. The per-stage tier is built, self-tested and one constant away from on.
+1. `CORPUS-CHAIN-CURRENCY.7` **step 3** — I2C. Its normalized bundle is reclaimed, so `evidence` cannot
+   replay it at all and a re-ingest replaces the document wholesale rather than repairing a drift. Decide
+   first whether that belongs to this tree or to `CORPUS-COVERAGE`, and note that it moves the retention
+   declaration. Step 2 (APB-e) is done: the activated tier is now 26 of 27 at semantic and intent, with
+   I2C the only refusal left. Step 4 — set `TOTAL_PROBE_STAGES='semantic intent'` — follows step 3 and
+   nothing else.
 2. Rebuilding the two drifted documents is **not** this tree's next step. I2C's rebuild is unblocked but
    its normalized bundle is reclaimed, so it needs a re-ingest rather than a replay; APB-e's is blocked
    by `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it today would publish that regression into a
    wire-gold document's chain.
 
 ## Verification Log
+
+- `2026-09-14` — `.7` step 2 (APB-e rebuild). Snapshot first:
+  `generated/preserved/CORPUS-CHAIN-CURRENCY.7/pre-rebuild/`, 6 files, digest `8d1b9e13…8791f`.
+  Order: `semantic` (write) → `validate` (once) → `intent` (write) → `validate` (once) →
+  `adapt --target isf` (write); `intent --dry-run` was run against the rebuilt SemanticIR BEFORE
+  writing intent, to prove the loader accepts it. Post-conditions, each measured: all three stages
+  replay CONTENT SAME; the emitted `.isf` `source_text` byte-identical at 4,029 bytes; `adapter.json`
+  with no moved section; `seed_apb` gold unchanged (1.000 / 1.000 filtered); retention 24; the default
+  seal gate green; and with the tier activated the semantic and intent probes go 25/27 → **26/27**, I2C
+  alone remaining.
 
 - `2026-09-14` — `.6`. `bash scripts/check_proof_seal_currency.sh --self-test` **20/20**, including the
   new 17b. **Observed RED** by emptying `TOTAL_PROBE_STAGES` and re-running: 19/20, 17b failing with
@@ -449,6 +506,7 @@ Honest limits of this measurement:
 - `.4` — `CORPUS-CHAIN-CURRENCY.4`.
 - `.5` — `CORPUS-CHAIN-CURRENCY.5`.
 - `.6` — `CORPUS-CHAIN-CURRENCY.6`.
+- `.7` step 2 — `CORPUS-CHAIN-CURRENCY.7` (APB-e rebuild).
 
 | Unit | Durable evidence |
 | --- | --- |
