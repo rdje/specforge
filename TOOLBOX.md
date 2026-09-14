@@ -449,16 +449,23 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 ### 7.2a-i `scripts/check_proof_seal_currency.sh` — the PROOF-SEAL-CURRENCY gate (gate-tier)
 - **WHAT:** reads the `ruleset_sha256` every persisted artifact records at all five chain stages for the
   proof-carrying stratum — a **total** census — then asks the current build's own canonical loader whether
-  it still accepts that seal, with one **representative** probe per *distinct* seal per stage. The probe is
+  it still accepts that seal. The probe's scope is **per stage**: `semantic` and `intent` are probed
+  TOTALLY (every censused artifact, active by default since `CORPUS-CHAIN-CURRENCY.9`), while `source-ir`
+  and `evidence` — whose probes replay extraction and cost an order of magnitude more — get one
+  **representative** per *distinct* seal and the check says it is blind there. The probe is
   the CONSUMING stage in `--dry-run`; never `specforge validate`, which is not idempotent and would
   invalidate the chain it claims to read. The terminal `adapters/isf` stage has no consumer, so it is
   censused and reported UNPROBED rather than counted as a pass.
+- **COST:** **1m12.7s** over the 27-document stratum, of which ~65 s is the two TOTAL stages; the whole
+  gate-tier driver is **5m24.5s-5m30.1s** (it was 7.4 s and 4m13.0s with the TOTAL stages sampled). `--total`,
+  which probes the extraction-replaying stages too, is **1m59.2s** and stays CI tier.
 - **WHEN:** automatically, on every commit through the doctrine driver — that is the point. Run it by hand
   after editing a stage root or `derivation.rs` if you want the answer before the hook gives it to you.
   Skips loudly and passes with no corpus.
 - **LIMIT:** a current seal is **not** content currency. Whether a persisted artifact is still what the
   current binary reproduces stays `CHAIN-CURRENCY`'s question at CI tier.
-- **HOW:** `bash scripts/check_proof_seal_currency.sh` (`--self-test` for its twenty fail-closed cases).
+- **HOW:** `bash scripts/check_proof_seal_currency.sh` (`--self-test` for its twenty-one fail-closed cases;
+  case 21 pins the shipped TOTAL-stage default itself, so emptying it goes RED).
   On a stale seal it names the remedy: `source_proof_migrate --write` for SourceIR (proof-only), or
   `scripts/rebuild_stage_cascade.sh --write` for every stage below it (a real content rebuild).
 - **WHICH BUILD ANSWERS:** this check, `check_chain_currency.sh` and `rebuild_stage_cascade.sh` all

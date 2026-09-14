@@ -68,7 +68,7 @@ other re-derivable trace.
 | `CLAIM-VERIFICATION` | structural + oracle | bounded claim records, tracked digest-current artifacts, executed source/known-bad-control commands, complete stale-check coverage, and publication IDs resolve together |
 | `PUBLISHED-ASSERTIONS` | deterministic-oracle | every published value in a governed prose region re-derives against its named producer field, because the producer is executed and its report compared — the one thing a digest binding cannot do, since a digest proves a region has not changed and never that its numbers still re-derive. A value may instead be gated by a control with a known-bad case, authored by a decision, or anchored to a revision; there is no outcome for a value carried because it has not moved lately. Two surfaces stating different values for one field fail without running anything, a set is compared as an enumeration rather than a size, and a record whose enumeration could include its own publishing surface must declare that exclusion |
 | `RESIDUAL-ACTIONABILITY` | derive-and-diff | the frozen required-residual contract still describes the artifact it claims to describe: its witness pins the tracked reviewed result by digest, its cell decomposition and published ratio re-derive from that result instead of being restated, and every typed residual cause resolves to a real carrier in production source or an honest `null`. It was added after the contract sat red for 43 commits — a later leaf legitimately republished the reviewed result and nothing required the frozen contract to be re-examined, which is precisely the drift an executable contract exists to prevent |
-| `PROOF-SEAL-CURRENCY` | oracle | every persisted artifact under `generated/` records a proof seal today's build still accepts — censused across every stage of the proof-carrying stratum, and probed through the product's own loader by running the consuming stage in dry-run form rather than by validating, which would mutate what it reads |
+| `PROOF-SEAL-CURRENCY` | oracle | every persisted artifact under `generated/` records a proof seal today's build still accepts — censused across every stage of the proof-carrying stratum, and probed through the product's own loader by running the consuming stage in dry-run form rather than by validating, which would mutate what it reads. Every artifact is probed at `semantic` and `intent`; the two stages whose probes replay extraction are sampled one per distinct seal, and the check says so |
 | `PROOF-SEAL-TOTAL` | oracle | the same census with every in-scope artifact probed individually at every non-terminal stage — the only way to see a divergence between documents that share a seal, and CI-tier because a per-document sweep is minutes rather than seconds |
 | `CHAIN-CURRENCY` | oracle | every proof-current artifact under `generated/` is exactly what today's binary reproduces from verified upstream authority; a legacy/proofless compatibility refusal is reported as an explicit unmeasurable frontier, while a stale current proof still fails — and retained normalized bundles match their declaration exactly |
 
@@ -324,14 +324,23 @@ specification in the corpus. The scoring oracle refused every gold for three com
 gate. It is the failure `CLAIM_VERIFICATION.md` tabulates as *a per-item assertion checked against
 per-container data*: it reproduces perfectly while getting it wrong.
 
-So the check now has two tiers and says which one it is running. The gate tier still samples — that is
-what a pre-commit hook can afford — but its output names the sample size and the class it cannot see.
+So the check now says which scope it is running, and the scope is decided **per stage** rather than per
+tier. Loading a persisted artifact and verifying its proof is cheap; replaying extraction from a
+normalized markdown bundle is not, and those are the two kinds of probe the chain contains. Since
+`2026-09-14` the gate tier therefore probes **every** document at `semantic` and at `intent`, and keeps
+sampling one per distinct seal at `source-ir` and `evidence` — where it still prints that it is blind.
 `--total` probes every document at every non-terminal stage and is registered as its own CI-tier
-doctrine. On this corpus the sampled run is four probes and the total run is 108. The script's own
-self-test pins the difference with a loader that accepts one document and refuses its same-seal
-neighbour: the sampled mode must miss it, and the total mode must name it.
+doctrine. On this corpus the fully sampled run is four probes, the gate-tier run is 56, and the total
+run is 108. The script's own self-test pins each half with a loader that accepts one document and
+refuses its same-seal neighbour: at a sampled stage the check must miss it, at a totally-probed stage it
+must name it, and — the case that was missing until the default was turned on — the *shipped default*
+must name it with no environment override in play, so quietly emptying the stage set goes red.
 
-That total run took about nineteen minutes until `2026-09-14`, and it now takes **just under two**. The
+Turning that on cost the gate a little over a minute, from 4m13s to 5m30s, and the case for paying it is the
+three commits above: a sample of one in twenty-seven had already passed over every wire-bearing
+specification in the corpus while the scoring oracle read them.
+
+That total run took about nineteen minutes until the same day, and it now takes **just under two**. The
 difference is not a change to what it proves — it is the cargo profile the check builds. Three commands
 replay the persisted corpus against the current build: this seal check, the `CHAIN-CURRENCY` content
 oracle, and the rebuild remedy that clears what they report. Each had its own copy of "build the binary

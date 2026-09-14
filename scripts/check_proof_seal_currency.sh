@@ -23,9 +23,12 @@
 # ── What it proves, and what it deliberately does not ──────────────────────────────────────────
 # PROVES: every persisted artifact in the proof-carrying stratum records a seal the CURRENT build's
 # canonical loader still accepts. The census is TOTAL — every in-scope artifact at every stage is
-# read — and the canonical probe is REPRESENTATIVE, one per distinct seal per stage. That is not a
-# sample: the census is what establishes representativeness, so a per-document seal divergence
-# raises the distinct count and earns its own probe rather than hiding behind a homogeneous one.
+# read. The PROBE's scope is a per-stage decision (`CORPUS-CHAIN-CURRENCY.6`): at `semantic` and
+# `intent` every censused artifact is probed individually, and at `source-ir` and `evidence` — whose
+# probes replay extraction and cost an order of magnitude more — one representative per distinct seal
+# is. Those two stages therefore keep a real blind spot, the check says so in its own output, and
+# `--total` (CI tier) closes it. This file used to argue that one probe per distinct seal is "not a
+# sample"; that argument is false and its counterexample is below.
 #
 # DOES NOT PROVE: that a persisted artifact is still the CONTENT the current binary reproduces from
 # its persisted input. That is a different and much heavier question, it belongs to CHAIN-CURRENCY
@@ -56,16 +59,22 @@
 #   full five-stage seal census (120 artifacts, ~2.5 GB)                    ~4.5 s
 #   four read-only canonical probes                                         ~5.2 s
 #   this check, end to end, over the real corpus                            14.1 s
-# The gate tier it joins measured 4 m 21 s without this check and 3 m 02 s with it, so run-to-run
-# variance dominates that comparison and the honest figure is this check's own 14.1 s. The prefilter
-# is what keeps the 54 legacy proofless artifacts from costing 2.96 s of parser time to prove a
-# ledger they do not have.
+# The prefilter is what keeps the 54 legacy proofless artifacts from costing 2.96 s of parser time to
+# prove a ledger they do not have.
 #
-# ALWAYS SAY WHICH BINARY A PROBE COST WAS MEASURED WITH. The four probes above were timed against
-# `target/debug/specforge`, which is what this check built until `2026-09-14`; the same four cost
-# 7.4 s end to end against `target/release/specforge`, which is what it builds now. The profile, its
-# full measurement table, and the evidence that it changes no verdict are in
+# ALWAYS SAY WHICH BINARY A PROBE COST WAS MEASURED WITH. Every figure above was timed against
+# `target/debug/specforge`, which is what this check built until `2026-09-14`; the same four probes
+# cost 7.4 s end to end against `target/release/specforge`, which is what it builds now. The profile,
+# its full measurement table, and the evidence that it changes no verdict are in
 # `scripts/lib/corpus_replay_binary.sh` (`CORPUS-CHAIN-CURRENCY.8`).
+#
+# ── Cost as it now stands (measured 2026-09-14, release profile, 27 in-scope documents) ────────
+#   this check, end to end, with `semantic` and `intent` probed TOTALLY   1m12.7 s
+#   the gate-tier driver around it                                        5m30.1 s
+# Before the per-stage TOTAL tier was activated (`CORPUS-CHAIN-CURRENCY.9`) those were 7.4 s and
+# 4m13.0s on the same tree, so the class the sampled tier could not see costs **+72-77 s, about +29%**
+# of the gate (two post-change samples: 5m30.1s and 5m24.5s). `--total`, which probes the
+# extraction-replaying stages too, is 1m59.2s and stays CI tier.
 #
 # Modes:
 #   --check      (default, gate tier) the total census and a SAMPLED probe — one representative per
@@ -153,7 +162,7 @@ remedy_for() {
 
 # ── Self-test: prove the controls are fail-CLOSED before trusting a PASS ────
 run_self_test() {
-  local work passed=0 total=20 output status
+  local work passed=0 total=21 output status
   work="$(mktemp -d)" || { fail_note 'cannot create a repository-local self-test workspace'; return 1; }
 
   local hex_a hex_b hex_c
@@ -343,8 +352,8 @@ run_self_test() {
   else fail_note "self-test 17: the SAMPLED stage was expected to MISS a divergent same-seal document (status $status)"; fi
 
   # 17b) ...and at a TOTAL stage the same divergence is CAUGHT by `--check`, by name. The stage set
-  #      is passed explicitly because the default ships EMPTY until the corpus repair lands, so this
-  #      control proves the mechanism rather than the current default.
+  #      is passed EXPLICITLY here on purpose, so this control proves the MECHANISM independently of
+  #      whatever the default happens to be; case 21 below pins the default itself.
   #      This is the property the corpus measurement bought: one distinct seal across the whole
   #      stratum made the sampled probe a 1-in-27 sample, while a refusal at `semantic` or `intent`
   #      costs ~1.2 s per document to find. Same stub shape, same seal, different stage.
@@ -363,6 +372,20 @@ run_self_test() {
     0:*) fail_note 'self-test 17b: a TOTAL stage passed over a document its own loader refuses' ;;
     *doc_c*) passed=$((passed + 1)) ;;
     *) fail_note "self-test 17b: a TOTAL stage failed without naming the divergent document (output '$output')" ;;
+  esac
+
+  # 21) THE DEFAULT ITSELF, which nothing tested while it shipped empty (CORPUS-CHAIN-CURRENCY.9).
+  #     17b proves the mechanism by passing the stage set in; this case passes NOTHING and requires
+  #     the shipped default to probe `semantic` TOTALLY, so an edit that silently empties it — or
+  #     narrows it to a stage that is not the one carrying the risk — goes RED here instead of
+  #     quietly restoring a 1-in-27 sample. Same stub, same seal, no environment override.
+  output="$(SPECFORGE_PROOF_SEAL_GENERATED_ROOT="$mini" \
+            SPECFORGE_PROOF_SEAL_BIN="$semantic_stub" \
+            "$ROOT/scripts/check_proof_seal_currency.sh" --check 2>&1)"; status=$?
+  case "$status:$output" in
+    0:*) fail_note 'self-test 21: the DEFAULT stage set passed over a document its own loader refuses' ;;
+    *doc_c*) passed=$((passed + 1)) ;;
+    *) fail_note "self-test 21: the default failed without naming the divergent document (output '$output')" ;;
   esac
 
   # 18) ...and `--total` catches exactly that document, by name.
@@ -413,39 +436,47 @@ fi
 # `.5` measured the obvious repair and refuted it: a census key that carries the recorded derivation
 # topology gives 27 distinct keys for 27 documents at every stage (root derivations included, because
 # each root's output/inputs digests are taken over its own document's content). Such a key IS
-# `--total`, which is 18m45s, so it buys nothing the tier does not already offer.
+# `--total`, so it buys nothing the tier does not already offer.
 #
-# What `--total`'s cost actually is, measured per stage rather than as one number: an accepted
-# `intent --dry-run` is 1.2 s and a refusal 0.24 s, because a refusal stops at the loader. The
-# expensive probes are `source-ir` and `evidence`, which replay EXTRACTION from the normalized
-# bundle. Probing every one of the 27 at the two cheap stages costs 30.3 s + 35.5 s = 66 s and finds
-# every refusal the corpus currently has.
+# What `--total`'s cost actually is, measured per stage rather than as one number: at the release
+# profile this check builds, an accepted `intent --dry-run` averages 1.2 s over the stratum (6.5 s for
+# its largest artifact, 0.00 s for its smallest) and a refusal 0.24 s, because a refusal stops at the
+# loader. The expensive probes are `source-ir` and `evidence`, which replay EXTRACTION from the
+# normalized bundle. Probing every one of the 27 at the two cheap stages costs 30.3 s + 35.5 s and
+# finds every refusal the corpus currently has.
 #
 # So sampling is right at source-ir and evidence and wrong at semantic and intent. The blindness the
 # sampled tier documents about itself is KEPT where it is paid for and REMOVED where it is not.
 #
-# ── WHY THIS SHIPS INERT, AND WHAT TURNS IT ON ──────────────────────────────
-# The mechanism is here, self-tested (17 and 17b) and measured; the default is EMPTY. Two things had
-# to be true before it could be switched on, and only one of them is.
+# ── THE STAGE SET IS ACTIVE (CORPUS-CHAIN-CURRENCY.9, `2026-09-14`) ─────────
+# `.6` shipped this mechanism INERT, with the default empty, because two things had to be true first
+# and neither was. Both were then made true and measured, not predicted:
 #
-# The corpus is no longer the obstacle. `CORPUS-CHAIN-CURRENCY.7` repaired both refusing documents on
-# `2026-09-14` — APB-e and I2C, each by a chain rebuild — and with the stage set forced on, the probe
-# reports 27 of 27 accepted at semantic and at intent, exit 0. That is measured, not predicted.
+#   THE CORPUS. `.7` repaired both refusing documents — APB-e and I2C, each by a chain rebuild — and
+#   the forced-on probe reported 27 of 27 accepted at semantic and at intent, exit 0.
 #
-# THE COST WAS, AND IT WAS A PROPERTY OF THE BINARY RATHER THAN OF THE PROBE. `.5` sized the two
-# stages at 66 s from `target/release/specforge`; this check built `target/debug/specforge`, where the
-# same sweep measured **12m57.9s** against 15.9 s for the sampled default. `CORPUS-CHAIN-CURRENCY.8`
-# measured both profiles cold and warm, found the debug-build argument inverted once the probe count
-# grew, and moved all three corpus-replay entrypoints to the release profile
-# (`scripts/lib/corpus_replay_binary.sh`, which carries the table and the no-verdict-change evidence).
+#   THE COST, which turned out to be a property of the BINARY rather than of the probe. `.5` sized the
+#   two stages from `target/release/specforge` while this check built `target/debug/specforge`, where
+#   the same sweep measured 12m57.9s against 15.9 s sampled. `.8` measured both profiles cold and warm,
+#   found the debug-build argument inverted once the probe count grew, and moved all three
+#   corpus-replay entrypoints to the release profile (`scripts/lib/corpus_replay_binary.sh`, which
+#   carries the table and the evidence that no verdict moves with it).
 #
-# AT THE PROFILE THIS CHECK NOW BUILDS, the activated stage set costs **69.8 s** against 7.4 s for the
-# sampled default, and it reports 27 of 27 accepted at semantic and at intent. Both obstacles named
-# above are therefore gone: the corpus was repaired by `.7`, and the cost by `.8`. The default below
-# is still EMPTY because turning it on is a tier decision with its own before/after evidence, and this
-# tree makes those one leaf at a time — it is `CORPUS-CHAIN-CURRENCY.9`. Activation remains one
-# constant (`TOTAL_PROBE_STAGES` -> 'semantic intent'); the controls already assert both halves.
-TOTAL_PROBE_STAGES="${SPECFORGE_PROOF_SEAL_TOTAL_STAGES-}"
+# WHAT ACTIVATION COSTS, measured before and after on the same tree rather than predicted: the
+# gate-tier driver goes from **4m13.0s** to **5m30.1s**, and a second post-change sample is 5m24.5s, so
+# **+72-77 s, about +29%** — run-to-run variance is seconds, not the delta. This check itself goes
+# from 7.4 s to **1m12.7s**: 54 more probes, and the census and build are paid once either way.
+#
+# WHAT IT BUYS is the class the sampled tier is documented as unable to see, and the price of not
+# seeing it has already been paid once here: at `48def695` all 27 evidence artifacts carried ONE seal,
+# one probe ran, the gate reported green — and the canonical loader was refusing 4 of the 27, every
+# wire-bearing specification in the corpus, for three commits, with the scoring oracle reading them
+# (`SIGNAL-DECLARATION-ROW-DROP.1b`). A sample of 1 in 27 cannot see that, and a minute is not too much
+# to pay for it on a gate that already costs four.
+#
+# An explicit empty value still turns it off for one run (`SPECFORGE_PROOF_SEAL_TOTAL_STAGES=''`),
+# which is how self-test 17b's RED is observed.
+TOTAL_PROBE_STAGES="${SPECFORGE_PROOF_SEAL_TOTAL_STAGES-semantic intent}"
 
 # probe_scope_for <stage> — 'total' or 'sample', honouring an explicit --total for every stage.
 probe_scope_for() {
@@ -633,9 +664,10 @@ if [ "$fail" -eq 0 ]; then
     note 'document per distinct seal, so it cannot see a per-document replay-topology divergence —'
     note 'measured once at 23 accepted / 4 refused under a single seal, and the corpus currently'
     note 'carries ONE seal per stage across 27 artifacts, so the sample is 1 in 27. The per-stage'
-    note 'TOTAL tier that closes this at semantic and intent is built and self-tested here and ships'
-    note 'INERT until CORPUS-CHAIN-CURRENCY.6 activates it. Run --total (CI tier) for the per-document'
-    note 'verdict, and CHAIN-CURRENCY for whether the content still reproduces.'
+    note 'TOTAL tier that closes this at semantic and intent is ACTIVE BY DEFAULT since'
+    note 'CORPUS-CHAIN-CURRENCY.9, so seeing this message means the stage set was emptied for this run'
+    note '(SPECFORGE_PROOF_SEAL_TOTAL_STAGES) and the check is knowingly blind here. Run --total (CI'
+    note 'tier) for the per-document verdict, and CHAIN-CURRENCY for whether the content reproduces.'
   fi
 else
   fail_note 'the persisted corpus is out of seal with the current build. Re-seal it under its owning'

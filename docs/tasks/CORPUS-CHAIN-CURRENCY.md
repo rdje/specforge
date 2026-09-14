@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-14`; `.0`-`.8` complete — corpus CURRENT and the replay profile is `release`; **`.9` open** — activate the per-stage TOTAL probe)
+- Status: `active` (`2026-09-14`; `.0`-`.9` ALL complete — corpus CURRENT, replay profile `release`, per-stage TOTAL probe ACTIVE; no eligible leaf)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-14`
@@ -280,22 +280,35 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   Verification: see the acceptance checklist below.
   Commit: `CORPUS-CHAIN-CURRENCY.8`
 
-- ID: `CORPUS-CHAIN-CURRENCY.9` · Status: `pending` (opened `2026-09-14` by `.8`) · Goal: **turn the
-  per-stage TOTAL probe on.** Both obstacles are gone and both were measured, not predicted: `.7`
-  repaired the corpus (27 of 27 accepted at semantic and at intent), and `.8` moved the profile, so the
-  activated stage set now costs **69.8 s** against 7.4 s for the sampled default — where at the debug
-  profile it cost **12m57.9s**. Activation is one constant (`TOTAL_PROBE_STAGES` → `'semantic intent'`)
-  and both halves are already asserted by self-tests 17 and 17b.
-  **What this leaf still owes is the tier decision's own evidence, which is why it is not folded into
-  `.8`.** Adding ~62 s to a gate that measures 4m44.7s is a ~22% increase paid on every commit, and the
-  case for it is that the sampled tier is a 1-in-27 sample that has already passed over four refused
-  wire-gold documents for three commits (`SIGNAL-DECLARATION-ROW-DROP.1b`). Measure the whole gate
-  before and after at the current profile, state the increase, and land it or state why not — do not
-  quote `.8`'s component number as if it were the gate's.
-  Prerequisite: `.8`. Verification: `scripts/check_doctrines.sh` timed before and after on the same
-  tree; the activated check green on the live corpus; self-tests 20/20 with the stage set at its new
-  default and observed RED with it emptied.
-  Commit: pending
+- ID: `CORPUS-CHAIN-CURRENCY.9` · Status: `done` (`2026-09-14`, CODE/DOC) · **The per-stage TOTAL probe
+  is ON, and the tier decision was measured on the whole gate rather than argued from a component.**
+  `TOTAL_PROBE_STAGES` now defaults to `'semantic intent'`. Measured before and after on the same tree:
+  the gate-tier driver **4m13.0s → 5m30.1s**, with a second post-change sample at 5m24.5s, so **+72-77 s,
+  about +29%**; this check itself **7.4 s →
+  1m12.7s**. Both obstacles `.6` named are gone and both were closed by measurement — the corpus by
+  `.7` (27 of 27 accepted at semantic and at intent), the cost by `.8` (the same sweep was 12m57.9s at
+  the debug profile).
+  **What that minute-and-a-bit buys is a class the sampled tier is documented as unable to see, and its price
+  has already been paid once in this repository.** At `48def695` all 27 evidence artifacts carried one
+  seal, so one probe ran and the gate reported green while the canonical loader refused **4 of the
+  27 — every wire-bearing specification in the corpus — for three commits**, with the scoring oracle
+  reading them (`SIGNAL-DECLARATION-ROW-DROP.1b`). A 1-in-27 sample cannot see that. Source-ir and
+  evidence stay sampled, because their probes replay extraction and are the expensive ones; the check
+  still prints that it is blind there, and `--total` (1m59.2s, CI tier) still closes it.
+  **The leaf's real addition is self-test 21, because nothing tested the DEFAULT.** `.6`'s controls 17
+  and 17b prove the *mechanism* — 17b passes the stage set in explicitly — so the shipped value itself
+  was unguarded, and an edit that quietly emptied it would have restored a 1-in-27 sample under a green
+  gate. Case 21 passes no override and requires the default to catch a divergent same-seal document at
+  `semantic`. Observed RED: with `SPECFORGE_PROOF_SEAL_TOTAL_STAGES=''` the suite reports **20/21**,
+  failing on exactly *"self-test 21: the DEFAULT stage set passed over a document its own loader
+  refuses"* and on nothing else.
+  **Two stale self-descriptions in the script were corrected rather than left standing**: its "what it
+  proves" header still claimed one probe per distinct seal "is not a sample" — an argument the same
+  file refutes eighty lines later — and the fully-sampled summary still told the reader the tier
+  "ships INERT until `CORPUS-CHAIN-CURRENCY.6` activates it". That branch now says the stage set must
+  have been emptied for this run and that the check is knowingly blind.
+  Verification: see the acceptance checklist below.
+  Commit: `CORPUS-CHAIN-CURRENCY.9`
 
 ## Measured corpus census (`2026-08-10`, `.1`) — the drift `.3` closes
 
@@ -641,19 +654,53 @@ commit and says so, rather than claiming a win it does not have yet.
   cases" (they have **22** and **20**), and `DOCTRINE_ENFORCEMENT.md` §10 repeated the chain-currency
   one. Nothing gates a self-test count, which is why all three drifted.
 
+## Acceptance Checklist (enforced) — `.9`
+
+- [x] **REPRODUCE / MEASURE** — the gate timed on the same tree immediately before the change:
+  **4m13.0s**, ALL 15 executed doctrines PASS, with this check contributing 7.4 s and reporting a
+  SAMPLED probe of 1 in 27 at semantic and at intent.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/check_proof_seal_currency.sh`: `TOTAL_PROBE_STAGES`
+  defaulted to empty, so `probe_scope_for` returned `sample` at every stage. The blindness that buys is
+  not hypothetical — `SIGNAL-DECLARATION-ROW-DROP.1b` is the case where it passed over 4 refused
+  wire-gold documents for three commits under one seal.
+- [x] **ADDRESSED (verified)** — the default is `'semantic intent'`; the live run now reports **TOTAL
+  probe: 27 of 27 accepted** at both stages, SAMPLED at source-ir and evidence, exit 0. Measured cost:
+  the check **1m12.7s**, the whole gate **5m30.1s** and **5m24.5s** on a second sample (+72-77 s, ~+29%),
+  ALL 15 executed doctrines PASS on every run.
+- [x] **NO REGRESSION** — self-tests **21/21**. Case 17 still proves the SAMPLED stages stay blind (its
+  stub refuses only at `source_ir/`), so activation did not silently widen what the cheap stages claim.
+  `bash -n` clean. No Rust changed, so `kg-bench` and the WIRE-BASED-100 golds are orthogonal by
+  construction and no persisted artifact moved.
+- [x] **OBSERVED RED** — `SPECFORGE_PROOF_SEAL_TOTAL_STAGES='' bash scripts/check_proof_seal_currency.sh
+  --self-test` reports **20/21**, failing on *"self-test 21: the DEFAULT stage set passed over a
+  document its own loader refuses"* and on nothing else. The new control fails for exactly the reason
+  it exists and the twenty older ones are unaffected.
+- [x] **GENERICITY (ADR 0006)** — the default names two stage ids the chain already defines
+  (`chain_stages`); no document, chip, vendor or protocol appears.
+- [x] **LOCKSTEP** — the script's own cost block, activation block, "what it proves" header and
+  fully-sampled summary now describe what it does; `DOCTRINE_ENFORCEMENT.md`'s `PROOF-SEAL-CURRENCY`
+  registry row, `TOOLBOX.md` §7.2a-i, the book's doctrine-enforcement chapter and
+  `[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]` carry the activation and its cost.
+  No production rule was deleted, so no chapter describes a behaviour that is gone.
+
 ## Current Frontier
 
-1. `CORPUS-CHAIN-CURRENCY.9` — activate the per-stage TOTAL probe. Both of the obstacles that held it
-   are measured gone: the corpus is CURRENT (27 of 27 accepted at semantic and at intent, `.7`) and the
-   cost at the profile the check now builds is **69.8 s** against 7.4 s sampled, where at the debug
-   profile it was 12m57.9s (`.8`). What is still owed is the TIER decision's own before/after evidence
-   on the whole gate, which measured 4m44.7s with the stage set inert.
+1. **This tree has no eligible leaf.** `.0`–`.9` are closed, the corpus is CURRENT (27 of 27 accepted at
+   semantic and at intent, retention exactly the declared 24 bundles), the replay profile is one shared
+   predicate, and the per-stage TOTAL probe is active and guarded by its own control. The tree stays
+   `active` only because `CHAIN-CURRENCY` and `PROOF-SEAL-TOTAL` are standing doctrines; new work here
+   should arrive as a measurement that finds something, not as a leaf opened to keep it open.
 2. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
-   I2C, and every stage of both replays CONTENT SAME. The corpus is current and the retention
-   declaration is exactly its 24 bundles.
+   I2C, and every stage of both replays CONTENT SAME.
 
 ## Verification Log
 
+- `2026-09-14` — `.9`. Gate timed before and after on the same tree: **4m13.0s → 5m30.1s**, a second
+  post-change sample **5m24.5s**, ALL 15
+  executed doctrines PASS both times; this check alone **7.4 s → 1m12.7s**, reporting TOTAL 27/27 at
+  semantic and at intent and SAMPLED at source-ir and evidence. Self-tests **21/21**; observed RED at
+  **20/21** with `SPECFORGE_PROOF_SEAL_TOTAL_STAGES=''`, failing only on the new case 21. Read-only:
+  every probe is a `--dry-run` and no persisted artifact moved.
 - `2026-09-14` — `.8`. Both profiles measured cold and warm before any edit, cold builds taken in
   throwaway `CARGO_TARGET_DIR` trees under `.project-data/tmp/` on the repository volume and reclaimed
   afterwards (5.1 GB, zero residue; `git status` clean across the whole measurement). Profile identity
@@ -742,6 +789,7 @@ commit and says so, rather than claiming a win it does not have yet.
 - `.7` step 2 — `CORPUS-CHAIN-CURRENCY.7` (APB-e rebuild).
 - `.7` steps 3-4 — `CORPUS-CHAIN-CURRENCY.7` (I2C rebuild; activation measured and held).
 - `.8` — `CORPUS-CHAIN-CURRENCY.8` (the corpus-replay binary profile).
+- `.9` — `CORPUS-CHAIN-CURRENCY.9` (the per-stage TOTAL probe activated).
 
 | Unit | Durable evidence |
 | --- | --- |

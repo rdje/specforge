@@ -1,6 +1,6 @@
 ---
 id: one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample
-title: The corpus carries ONE distinct proof seal per stage across 27 artifacts, so the gate-tier seal probe samples 1 in 27 — and it passed while the intent stage refused a wire-gold document
+title: The corpus carries ONE distinct proof seal per stage across 27 artifacts, so a per-seal probe samples 1 in 27 — it passed while the intent stage refused a wire gold, and semantic/intent are now probed TOTALLY
 answers:
   - "how long does check_chain_currency.sh take"
   - "how long does check_proof_seal_currency.sh --total take"
@@ -12,9 +12,11 @@ answers:
   - "which is cheaper, a seal check or a chain-currency replay"
   - "should PROOF-SEAL-TOTAL be raised to gate tier"
   - "how much does it cost to probe every artifact at the semantic and intent stages"
+  - "is the per-stage total seal probe active or inert"
+  - "what does activating the per-stage total probe cost the gate"
+  - "why does a self-test that passes its own configuration not test the default"
   - "would a topology-bearing seal key separate a refusing document"
-  - "why does the per-stage total seal probe ship inert"
-  - "what turns on the total probe at semantic and intent"
+  - "what turned on the total probe at semantic and intent"
   - "what does registered derivation output or input topology is stale mean"
   - "how do I find out which documents are chain-stale"
   - "which documents in the corpus are currently stale"
@@ -29,7 +31,7 @@ answers:
 date: 2026-09-14
 status: current
 tags: [doctrine, chain-currency, proof-seal, corpus, cost, build-profile, corpus-chain-currency]
-evidence: scripts/check_chain_currency.sh; scripts/check_proof_seal_currency.sh; scripts/lib/corpus_replay_binary.sh; docs/tasks/CORPUS-CHAIN-CURRENCY.md (.4, .5, .8); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.4c)
+evidence: scripts/check_chain_currency.sh; scripts/check_proof_seal_currency.sh; scripts/lib/corpus_replay_binary.sh; docs/tasks/CORPUS-CHAIN-CURRENCY.md (.4, .5, .8, .9); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.4c)
 reverify: "bash scripts/check_proof_seal_currency.sh --total — expect '1 distinct seal(s)' at source-ir, evidence, semantic, intent and isf-adapter, and a TOTAL probe that names any document its own loader refuses. Budget 2 minutes at the release profile the check now builds; budget 13 for bash scripts/check_chain_currency.sh. Run the second detached."
 ---
 
@@ -41,13 +43,14 @@ debug to release**:
 | --- | --- | ---: | ---: |
 | `check_chain_currency.sh` | the persisted artifact is the CONTENT the current binary reproduces | 28m00s | **12m38.2s** |
 | `check_proof_seal_currency.sh --total` | every persisted artifact's seal is ACCEPTED by the current build's canonical loader | 18m45s | **1m59.2s** |
-| `check_proof_seal_currency.sh` (gate tier) | the same, for one representative per distinct seal | 15.9 s | **7.4 s** |
+| `check_proof_seal_currency.sh` with every stage sampled | the same, for one representative per distinct seal | 15.9 s | **7.4 s** |
+| `check_proof_seal_currency.sh` **as it now ships** (gate tier) | the same, probing semantic and intent TOTALLY | — | **1m12.7s** |
 
 The two CI-tier runs together were ≈ 47 minutes — the whole of "`check_doctrines.sh --all` did not
 finish in 50 minutes" — and are now **14m37s**. Still not per-commit; comfortably per-push, which is
 where the CI policy already puts them.
 
-## The sampled tier is a 1-in-27 sample, because the corpus has one seal
+## A per-seal probe is a 1-in-27 sample, because the corpus has one seal
 
 `PROOF-SEAL-CURRENCY`'s gate tier probes **one representative per distinct seal per stage**, on the
 stated bet that a divergent document raises the distinct count and so earns its own probe. The census
@@ -70,7 +73,7 @@ measured, that key gives 27 distinct keys for 27 documents at every stage — ro
 because each root's `output_sha256`/`inputs_sha256` are digests over its own document's content. A
 topology-bearing key *is* `--total`.
 
-**The lever is the per-stage tier.** `--total`'s 18m45s is not spread evenly: an accepted
+**The lever is the per-stage tier.** `--total`'s cost is not spread evenly: an accepted
 `intent --dry-run` costs **1.2 s** and a refusal **0.24 s**, while the evidence and source-ir probes
 replay extraction from the normalized bundle. Probing every one of the 27 artifacts at just two stages
 costs **30.3 s** (semantic) + **35.5 s** (intent) = **66 s**, and finds every refusal the corpus
@@ -106,12 +109,31 @@ Three things that "keep debug because the build is cheaper" had wrong, each meas
 A build is a fixed cost and a probe is a per-document one, so the debug argument was right at four
 probes and wrong at fifty-four; the crossover is about two large documents.
 
-The per-stage mechanism is shipped (`probe_scope_for`, self-tests 17 and 17b) and **still inert**:
-`TOTAL_PROBE_STAGES` defaults to empty. Both obstacles are now gone — `CORPUS-CHAIN-CURRENCY.7` rebuilt
-both refusing documents on `2026-09-14` (APB-e, and I2C from its **retained** bundle; it was never
-reclaimed), and `.8` made the activated sweep cost **69.8 s** against 7.4 s sampled. What remains is the
-tier decision's own before/after evidence on the whole gate (4m44.7s with the set inert):
-**`CORPUS-CHAIN-CURRENCY.9`**.
+## The per-stage TOTAL probe is ACTIVE, and the default itself is now under a control
+
+`TOTAL_PROBE_STAGES` defaults to `'semantic intent'` since `CORPUS-CHAIN-CURRENCY.9` (`2026-09-14`).
+Both obstacles that held it were closed by measurement: `.7` rebuilt both refusing documents (APB-e, and
+I2C from its **retained** bundle — it was never reclaimed), and `.8` moved the replay profile.
+
+Measured before and after on the same tree:
+
+| | sampled everywhere | semantic + intent TOTAL |
+| --- | ---: | ---: |
+| `check_proof_seal_currency.sh` | 7.4 s | **1m12.7s** |
+| the whole gate-tier driver | 4m13.0s | **5m30.1s**, and 5m24.5s on a second sample (+72-77 s, ~+29%) |
+
+`source-ir` and `evidence` stay sampled — their probes replay extraction — and the check still prints
+that it is blind there; `--total` (1m59.2s, CI tier) closes them.
+
+**`.6`'s controls proved the mechanism, not the shipped value.** Self-test 17b passes the stage set in
+explicitly, so while the default was empty nothing tested it, and an edit that quietly emptied it would
+have restored a 1-in-27 sample under a green gate. **Case 21** passes no override and requires the
+default to catch a divergent same-seal document at `semantic`. Its RED is exact: with
+`SPECFORGE_PROOF_SEAL_TOTAL_STAGES=''` the suite reports **20/21**, failing only on *"self-test 21: the
+DEFAULT stage set passed over a document its own loader refuses"*.
+
+The general rule this leaf leaves behind: **a control that passes its own configuration in tests the
+mechanism, never the shipped default.** If a default carries the risk, one control must read it.
 
 ## What the sweep found, and the general law under it
 
