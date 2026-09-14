@@ -412,6 +412,69 @@ either, so a table that only corpus memory would promote to a signal description
 well — stated rather than assumed away, because an unmeasured stratum reported as zero is precisely
 the failure this command exists to end.
 
+## `replay-declarations`
+
+```bash
+cargo run -- replay-declarations generated/evidence_ir/<doc>/evidence_ir.json
+cargo run -- replay-declarations --evidence-root generated/evidence_ir
+```
+
+The same question as `replay-constraints`, one stage later and about a different producer: **does
+today's reader still declare the signals this artifact declares?**
+
+SemanticIR builds a document's signal catalog by reading each `Signal <name> is <direction> width
+<W>.` statement the evidence stage produced. That catalog decides far more than a list of wires —
+an obligation whose subject is not in it is demoted to a residual — so a declaration the reader
+cannot parse costs the document the signal *and* everything it says about it.
+
+Asking the persisted SemanticIR what the reader does is not an option for most of the corpus. The
+semantic stage refuses a legacy or proofless EvidenceIR outright:
+
+```text
+error: invalid stage artifact: EvidenceIR schema version 2 is legacy/proofless and inspection-only
+```
+
+51 of the 78 persisted documents answer that way, so their catalog was written by a binary that no
+longer exists here. Like the constraint replay, this command sidesteps that: the declaration surface
+depends only on the artifact's own statements, so it runs the real reader offline over **every**
+document, including the ones the chain refuses.
+
+```text
+command: replay-declarations
+opened: 463 (sentences that opened as `Signal <name> …`)
+read: 461
+distinct_read_names: 296
+refused: 2
+unrecovered: 2
+  no_direction_and_no_width: 1
+  width_text_unread: 1
+refused: no_direction_and_no_width names [statement_0623] <- Signal names are the base name, when …
+refused: width_text_unread RUSERCHK [statement_6182] <- Signal RUSERCHK is width ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)
+```
+
+Three things in that output are deliberate:
+
+- **A sentence that never opened as a declaration is not counted.** `opened` counts only sentences of
+  the form `Signal <name> …`; everything else is not an event, and reporting it would drown the real
+  refusals in ordinary prose.
+- **`unrecovered` is computed from this replay's own reading, never from the stored catalog.** A
+  specification commonly declares the same wire twice — a signal-description table and a version
+  matrix — and a refusal whose identity another statement declares successfully has lost nothing.
+  Joining against the stored catalog instead would answer a question about the binary that wrote it,
+  which is the substitution this command exists to refuse.
+- **The three refusal arms mean different things.** `no_direction_and_no_width` is nearly always
+  English prose that happens to open with the word "signal", because the evidence stage only
+  synthesizes a declaration from a row that yielded an attribute — the first line above is exactly
+  that. `width_text_unread` is the arm where a real declaration was lost: the reader had an attribute
+  in hand and threw the identity away with the width text it could not finish reading.
+
+Measured over the corpus on `2026-09-14`: 78 documents replayed and **none skipped**, 3,196 sentences
+opened as declarations, 2,927 read, 269 refused — 186 `width_text_unread`, 80
+`no_direction_and_no_width`, 3 `name_not_an_identifier` — and **94 identities** that no read
+declaration in their own document recovers, spread over 24 documents with one technical reference
+manual holding 49 of them. Run the command for the current figures; they move with every reader
+change, which is the point of having it.
+
 ## `corpus-cluster`
 
 Specifications from the same source tend to be *organised* the same way — the

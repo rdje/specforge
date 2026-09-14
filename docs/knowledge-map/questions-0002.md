@@ -178,6 +178,8 @@
   > can the SWD frame facts be recovered generically (not yet — it needs the phase stated in a section or paragraph to bind the fields in its scope rather than only within one sentence. That is document grammar, not protocol identity, so it is ADR-0006-admissible; owned by WIRE-BASED-100.8d)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > can the active-task evidence checker support the alignment task through data
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > can the declaration reader be run over a legacy or proofless EvidenceIR
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > can the downstream corpus chain be rebuilt without re-ingesting documents
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
@@ -296,5 +298,3 @@
   > do old SemanticIR phases create IntentIR behaviors
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > do signal presence records mint signals or declarations
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > do specforge extractors override applies_to / are any self-disabled opt-in

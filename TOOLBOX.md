@@ -200,6 +200,7 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 | "Is my change byte-identical on untouched docs (orthogonality proof)?" | [4.3 `--dry-run` old-vs-new diff](#43---dry-run--byte-identical-orthogonality-proof) |
 | "How trustworthy is the extracted constraint set?" | [5.1 `nli-verify`](#51-nli-verify-evidence-ir) |
 | "Does today's code still PRODUCE the records this artifact publishes?" | [5.5 `replay-constraints`](#55-replay-constraints-evidence-ir----evidence-root-root) |
+| "Does today's reader still DECLARE the signals this artifact declares?" | [5.6 `replay-declarations`](#56-replay-declarations-evidence-ir----evidence-root-root) |
 | "How faithfully did docling read the tables?" | [5.4 `grits-consensus`](#54-grits-consensus-witnesses-json) |
 | "What fraction of each document's intent reaches `.isf`?" | [6.1 `measure_isf_completeness.py`](#61-scriptsmeasure_isf_completenesspy) |
 | "Which documents form an extraction family / share a shape?" | [6.2 `corpus-cluster`](#62-corpus-cluster) |
@@ -350,6 +351,35 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   population you measured as zero (`[[legacy-source-classifications-are-neutralized-on-load]]`).
   Prior guidance is not applied either, so a table promoted to `SignalDescription` only by corpus
   memory is invisible here.
+
+### 5.6 `replay-declarations <evidence-ir>` / `--evidence-root <root>`
+- **WHAT:** re-runs the REAL SemanticIR declaration reader (`read_explicit_signal_declaration`) over a
+  persisted artifact's own `Signal <name> …` statements and reports what it READS, what it REFUSES and
+  under which of its three arms, and which refused identities no read declaration in the same document
+  mints.
+- **WHEN:** **before sizing any declaration-reader change, and whenever a catalog looks short.** The
+  sibling of §5.5, for the same measured reason one stage down: `specforge semantic` refuses 51 of the
+  78 persisted EvidenceIRs as legacy/proofless, so their SemanticIR catalog is an older binary's output
+  and a census over it says nothing about today's reader. `SIGNAL-DECLARATION-ROW-DROP.4b` measured the
+  cost of not having this: of the 75 signals declared in EvidenceIR and missing from the persisted
+  catalog, **74 are in documents the current chain cannot reproduce**.
+- **HOW:** `cargo run --manifest-path Cargo.toml -- replay-declarations generated/evidence_ir/<key>/evidence_ir.json`
+  or `-- replay-declarations --evidence-root generated/evidence_ir` for the corpus totals; `--json` for
+  the full report. Read-only: no provider, no write, and it reads the legacy/proofless stratum.
+- **OUTPUT:** `opened` (sentences that opened as a declaration — one that never did is not an event and
+  is not counted), `read`, `refused` split by arm (`name_not_an_identifier`,
+  `no_direction_and_no_width`, `width_text_unread`), and `unrecovered`; each refusal prints its
+  statement id and the sentence the reader saw.
+- **`unrecovered` IS COMPUTED FROM THIS REPLAY, NEVER FROM THE PERSISTED CATALOG.** A refusal whose
+  identity another statement declares successfully has lost nothing, and joining against the persisted
+  SemanticIR would answer a question about the binary that wrote it. Corpus population on
+  `2026-09-14`: 78 documents replayed, **0 skipped**, 3,196 sentences opened, 2,927 read, **269
+  refused** (186 `width_text_unread`, 80 `no_direction_and_no_width`, 3 `name_not_an_identifier`) and
+  **94 unrecovered identities** across 24 documents, MMU-700 alone holding 49.
+- **THE ARMS ARE NOT INTERCHANGEABLE** (`SIGNAL-DECLARATION-ROW-DROP.4b`). A `no_direction_and_no_width`
+  refusal is usually English prose that opens with the word "signal" — *"Signal names MUST adhere to
+  the rules of the native tool"* — because the evidence stage only ever synthesizes a declaration from
+  a row that yielded an attribute. `width_text_unread` is the arm where a real declaration was lost.
 
 ### 5.4 `grits-consensus <witnesses-json>`
 - **WHAT:** scores how faithfully Docling read a document's TABLES against a CROSS-TOOL consensus gold

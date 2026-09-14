@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2e`/`.3`/`.4a`/`.4b` closed; `.2c` deferred; `.2d`/`.2f`/`.4c`/`.4d` open)
+- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2e`/`.3`/`.4a`/`.4b`/`.4e` closed; `.2c` deferred; `.2d`/`.2f`/`.4c`/`.4d` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-14`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4d`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4e`)
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -577,7 +577,7 @@ a long tail.
   Commit: pending
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
-  `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` (`.4d`), `.4c` · Goal: **the same silent drop one stage later — a declaration the
+  `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` (`.4d`, `.4e`), `.4c` · Goal: **the same silent drop one stage later — a declaration the
   SemanticIR reader cannot finish parsing is discarded whole, direction included.**
   This tree's `.0`–`.3` are about `synthesize_signal_declarations_from_table`, the EVIDENCE-stage
   reader. `parse_explicit_signal_declaration` in `crates/specforge/src/ir/semantic.rs` is the reader
@@ -689,6 +689,37 @@ a long tail.
   Verification: see the acceptance checklist below.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.4b`
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4e` · Status: `done` (`2026-09-14`, CODE; opened `2026-09-14` by
+  `.4d`) · Goal: **`.4d` cannot be decided from persisted SemanticIR, so give the reader a replay that
+  reads a LEGACY artifact's own statements.**
+  `.4b` established that 74 of the 75 missing declarations live in documents the current chain
+  refuses, and that the only honest ways to see them are re-ingest or a replay of the real reader over
+  a persisted artifact's own `extracted_statements`. `replay-constraints`
+  (`EXTRACTION-QUALITY-GAUGE.3k.6`, `TOOLBOX.md` §5.5) already does exactly this for the constraint
+  producer and states why: *"a census over `generated/` measures what SpecForge PUBLISHED, which is a
+  different number from what today's extractor does."* The declaration reader has the same problem and
+  no such instrument.
+  **The declaration surface is a pure function of the statements**, with no `SourceIr` dependency and
+  no proof requirement, so it replays offline for all 78 documents — including the 51 the semantic
+  stage refuses. Report, per document: sentences that opened as `Signal <name> …`, how many the reader
+  READ, how many it REFUSED and under which of the three arms, and which refused identities no read
+  declaration in the same document mints. **That last set is recomputed from the replay's own read
+  declarations, never from the persisted catalog** — a legacy document's catalog is an older binary's
+  output, which is the whole reason this instrument exists.
+  Non-goal: changing the reader, or deciding `.4d`. This leaf ships the measurement instrument and the
+  corpus population it produces; the ruling is `.4d`'s.
+  **Shipped, and the corpus answers on all 78 documents with ZERO skipped.** `replay-declarations`
+  (`TOOLBOX.md` §5.6): **3,196** sentences opened as declarations, **2,927** read, **269 refused** —
+  186 `width_text_unread`, 80 `no_direction_and_no_width`, 3 `name_not_an_identifier` — and **94
+  unrecovered identities** across 24 documents. The persisted-artifact census reports 75 for the same
+  corpus and **74 of those are legacy**: two different populations, never summed.
+  **The instrument agrees with the real build where both can see.** On the current stratum the only
+  document with a `width_text_unread` refusal whose identity is unrecovered is AXI-L, and `.4b`'s
+  producer packet fired on exactly AXI-L — two independent paths, one answer.
+  Prerequisite: `.4b`.
+  Verification: see the acceptance checklist below.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.4e`
+
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4d` · Status: `pending` (opened `2026-09-14` by `.4b`) · Goal:
   **should a refused declaration's IDENTITY and DIRECTION survive its unreadable width?** `.4b` made
   the refusal visible and deliberately did not answer this: `parse_explicit_signal_declaration`
@@ -702,6 +733,11 @@ a long tail.
   artifact's own statements, the way `replay-constraints` already does for the constraint producer
   (`TOOLBOX.md` §5.5). **Build the replay before deciding**, because the alternative — reading the
   legacy artifacts and reasoning about what the reader would do — is the mirror the doctrine refuses.
+  **`.4e` BUILT that replay and its population has landed**, so this leaf is now sizeable: the
+  adjudication set is the **76** `width_text_unread` refusals whose identity no read declaration in
+  the same document recovers — MMU-700 51, Avalon 8, GICv3 6, AXI-H 5, CXS 2, and one each in AXI-L,
+  ATB, LTI and eMMC. Re-derive with
+  `./target/release/specforge replay-declarations --evidence-root generated/evidence_ir --json`.
   **The prior ruling to beat:** `.1d` asked the same question at the row level one stage up and
   answered NO at **24% precision**, and `.4b`'s own adjudication of the no-attribute arms scored
   **1 in 8**. An affirmative answer here has to name what makes the width-unread arm different.
@@ -1149,13 +1185,61 @@ a long tail.
   declaration` refuses exactly the sentences it refused before, so no book text describes behaviour
   that has gone away.
 
+## Acceptance Checklist — `.4e` (enforced)
+
+- [x] **REPRODUCE / MEASURE** — `.4b` measured that 74 of the 75 declarations missing from the
+  persisted SemanticIR catalog live in documents the current chain refuses, so the reader's real
+  behaviour was measurable on 27 of 78 documents. Re-derived here through the product:
+  `./target/release/specforge semantic generated/evidence_ir/<doc>/evidence_ir.json --dry-run`
+  refuses each of the nine legacy documents in that census with `EvidenceIR schema version 2 is
+  legacy/proofless and inspection-only`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — there was no instrument. `replay-constraints`
+  (`crates/specforge/src/commands/replay_constraints.rs`, `TOOLBOX.md` §5.5) solves exactly this for
+  the constraint producer and states the reason in its own header — *"a census over `generated/`
+  measures what SpecForge PUBLISHED"* — but the declaration reader in
+  `crates/specforge/src/ir/semantic.rs` had no counterpart, so every declaration-recall number came
+  from persisted SemanticIR written by other binaries.
+- [x] **ADDRESSED (verified)** — `replay_persisted_signal_declarations` runs the REAL reader
+  (`read_explicit_signal_declaration`) through the same sentence split `build_interfaces` uses, and
+  `specforge replay-declarations` exposes it per document or per corpus. **78 documents replayed, 0
+  skipped**: 3,196 opened, 2,927 read, 269 refused (186 `width_text_unread`, 80
+  `no_direction_and_no_width`, 3 `name_not_an_identifier`), 94 unrecovered identities across 24
+  documents, MMU-700 holding 49. **Cross-checked against the real build**: on the current stratum the
+  only document carrying a `width_text_unread` refusal with an unrecovered identity is AXI-L, and
+  `.4b`'s producer-side residual packet fires on exactly AXI-L — two independent paths, one answer.
+- [x] **NO REGRESSION** — purely additive: replaying all 27 chain-current documents against
+  `scripts/lib/stage_artifact_identity.sh` reports **0 of 27 semantic artifacts move**, so no rebuild
+  is required and no seal is touched. `kg-bench` **156/156**; wire golds `signal_constraint
+  P=R=F1=1.000 fp=0` on APB/AHB/AXI/SWD; `cargo fmt --all --check` and `cargo clippy --offline
+  --all-targets -- -D warnings` clean; workspace suite green (`specforge-core` lib 1,535 → **1,537**,
+  `specforge` 472, conformance 168, production-graph 8/8); `scripts/check_doctrines.sh` all executed
+  doctrines PASS. **RED observed**: dropping the `!read_names.contains(name)` filter from
+  `unrecovered_names` fails
+  `declaration_replay_does_not_call_a_signal_lost_when_another_statement_declares_it` by name.
+- [x] **GENERICITY (ADR 0006)** — the reason keys are three properties of a sentence's own shape; the
+  command reads no document, vendor or protocol vocabulary, and the identities it prints are artifact
+  text carried as provenance. Registered as `diagnostic.declaration_replay` /
+  `non_authoritative_root` / `diagnostics_only` in
+  `doctrine/production_genericity/information_flow_boundary.tsv` — the SECOND deliberate move of that
+  boundary, mirroring `EXTRACTION-QUALITY-GAUGE.3k.6`'s two rows for the constraint replay, and the
+  edit being required at all is the control working: a function that reads raw evidence and reaches
+  semantic control cannot land silently. `boundary_rows` **143 → 144**, `non_authoritative_regions`
+  **8 → 9**, both re-pinned with the reason. Classified `CliSurfaceRole::Diagnostic` in the CLI
+  surface registry, which refuses to compile-test until a new subcommand is classified.
+- [x] **LOCKSTEP** — `TOOLBOX.md` §5.6 (plus its routing row), the book's
+  `commands/quality-and-learning.md` gains a `replay-declarations` section beside `replay-constraints`,
+  and the fact card `[[declaration-replay-reads-the-legacy-stratum]]` carries the population and the
+  two reporting rules. **Producer sub-clause: no production rule was deleted or replaced** — nothing
+  the reader does changed, which is why 0 of 27 artifacts move.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
 0. `SIGNAL-DECLARATION-ROW-DROP.4d` — should a refused declaration's identity and direction survive an
-   unreadable width? Needs the latent population read by the REAL reader first; the current stratum
-   holds exactly one instance, and the two prior rulings on the same question scored 24% and 1-in-8.
+   unreadable width? **Now sizeable**: `.4e`'s replay gives 76 `width_text_unread` refusals with an
+   unrecovered identity across 9 documents (MMU-700 51, Avalon 8, GICv3 6, AXI-H 5, CXS 2, four
+   singletons). The two prior rulings on the same question scored 24% and 1-in-8.
 1. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the

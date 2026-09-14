@@ -76,6 +76,9 @@ pub enum Commands {
     RecoverRegisterBits(RecoverRegisterBitsArgs),
     /// Re-run the deterministic constraint producer over a persisted EvidenceIR's own statements and report which published records the current code still mints
     ReplayConstraints(ReplayConstraintsArgs),
+    /// Re-run the SemanticIR declaration reader over a persisted EvidenceIR's own `Signal …`
+    /// statements and report what it reads, what it refuses, and under which arm
+    ReplayDeclarations(ReplayDeclarationsArgs),
 }
 
 #[derive(Debug, Args)]
@@ -86,6 +89,20 @@ pub struct InspectArgs {
 
 #[derive(Debug, Args)]
 pub struct ReplayConstraintsArgs {
+    /// Persisted EvidenceIR JSON file to replay (read-only; never written back)
+    pub evidence_ir: Option<PathBuf>,
+    /// Replay every `<root>/<document>/evidence_ir.json` and report the corpus totals
+    #[arg(long)]
+    pub evidence_root: Option<PathBuf>,
+    /// Emit the full report as JSON instead of the human-readable summary
+    #[arg(long)]
+    pub json: bool,
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.4e — the declaration-reader sibling of `replay-constraints`, for the
+/// 51 documents whose persisted SemanticIR the current chain refuses.
+#[derive(Debug, Args)]
+pub struct ReplayDeclarationsArgs {
     /// Persisted EvidenceIR JSON file to replay (read-only; never written back)
     pub evidence_ir: Option<PathBuf>,
     /// Replay every `<root>/<document>/evidence_ir.json` and report the corpus totals

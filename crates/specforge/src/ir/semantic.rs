@@ -6682,6 +6682,115 @@ fn read_explicit_signal_declaration(text: &str) -> SignalDeclarationReading {
     })
 }
 
+/// SIGNAL-DECLARATION-ROW-DROP.4e — one refused declaration as the replay reports it.
+#[derive(Debug, Clone, Serialize)]
+pub struct DeclarationReplayRefusal {
+    /// The EvidenceIR statement the refused sentence came from.
+    pub statement_id: String,
+    /// The declared identity, or `None` when the name itself is not an identifier.
+    pub signal_name: Option<String>,
+    /// The refusal arm, as the reader itself named it.
+    pub reason: &'static str,
+    /// The sentence as the reader normalized it, so the artifact's own text is visible.
+    pub declaration_text: String,
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.4e — what one artifact's declaration surface looks like when the
+/// CURRENT reader is re-run over the statements that artifact carries.
+///
+/// The counterpart of `ConstraintReplayReport` for the declaration reader, and it exists for the
+/// same measured reason: a census over `generated/` reports what SpecForge PUBLISHED, and for 51 of
+/// 78 documents that is an older binary's output the current chain refuses outright. The declaration
+/// surface is a pure function of `extracted_statements` — no `SourceIr`, no proof — so it replays
+/// offline for every document.
+#[derive(Debug, Clone, Serialize)]
+pub struct DeclarationReplayReport {
+    /// Sentences that opened as `Signal <name> …`. A sentence that never opened that way is not an
+    /// event and is not counted.
+    pub opened_total: usize,
+    /// Sentences the reader read into a declaration.
+    pub read_total: usize,
+    /// Distinct identities those read declarations name.
+    pub read_names: Vec<String>,
+    /// Every refusal, in statement order.
+    pub refusals: Vec<DeclarationReplayRefusal>,
+    /// Refusal counts by arm, ordered by arm name.
+    pub refusals_by_reason: Vec<(&'static str, usize)>,
+    /// Refused identities that NO read declaration in this document mints.
+    ///
+    /// **Recomputed from this replay's own read set, never from the persisted SemanticIR catalog.**
+    /// A legacy document's catalog was written by a different binary, so joining against it would
+    /// answer a question about that binary rather than this one — the exact substitution
+    /// `replay-constraints` exists to refuse.
+    pub unrecovered_names: Vec<String>,
+}
+
+/// Re-run the declaration reader over one artifact's own statements (`SIGNAL-DECLARATION-ROW-DROP.4e`).
+///
+/// Runs the REAL reader — [`read_explicit_signal_declaration`], through the same sentence split
+/// `build_interfaces` uses — never a re-implementation, which would answer a question about itself
+/// (`CLAIM_VERIFICATION.md` §2). Pure and read-only.
+pub fn replay_persisted_signal_declarations(
+    statements: &[crate::ir::evidence::ExtractedStatement],
+) -> DeclarationReplayReport {
+    let mut opened_total = 0usize;
+    let mut read_names: BTreeSet<String> = BTreeSet::new();
+    let mut read_total = 0usize;
+    let mut refusals: Vec<DeclarationReplayRefusal> = Vec::new();
+    let mut by_reason: BTreeMap<&'static str, usize> = BTreeMap::new();
+
+    for statement in statements {
+        for sentence in normalize_sentence(&statement.text).split('.') {
+            match read_explicit_signal_declaration(sentence.trim()) {
+                SignalDeclarationReading::NotADeclaration => {}
+                SignalDeclarationReading::Read(declaration) => {
+                    opened_total += 1;
+                    read_total += 1;
+                    read_names.insert(declaration.signal_name);
+                }
+                SignalDeclarationReading::Refused(refused) => {
+                    opened_total += 1;
+                    let reason = declaration_refusal_reason(refused.refusal);
+                    *by_reason.entry(reason).or_insert(0) += 1;
+                    refusals.push(DeclarationReplayRefusal {
+                        statement_id: statement.statement_id.clone(),
+                        signal_name: refused.signal_name,
+                        reason,
+                        declaration_text: sentence.trim().to_string(),
+                    });
+                }
+            }
+        }
+    }
+
+    let unrecovered_names: Vec<String> = refusals
+        .iter()
+        .filter_map(|refusal| refusal.signal_name.clone())
+        .filter(|name| !read_names.contains(name))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect();
+
+    DeclarationReplayReport {
+        opened_total,
+        read_total,
+        read_names: read_names.into_iter().collect(),
+        refusals,
+        refusals_by_reason: by_reason.into_iter().collect(),
+        unrecovered_names,
+    }
+}
+
+/// The stable reason key for one refusal arm. Reader-local grammar: it names the refusal point,
+/// never a document, vendor, or protocol (ADR 0006).
+fn declaration_refusal_reason(refusal: SignalDeclarationRefusal) -> &'static str {
+    match refusal {
+        SignalDeclarationRefusal::NameNotAnIdentifier => "name_not_an_identifier",
+        SignalDeclarationRefusal::NoDirectionAndNoWidth => "no_direction_and_no_width",
+        SignalDeclarationRefusal::WidthTextUnread => "width_text_unread",
+    }
+}
+
 /// SIGNAL-DECLARATION-ROW-DROP.4b — every sentence in one EvidenceIR statement that opened as a
 /// declaration and was refused.
 ///
@@ -24565,6 +24674,67 @@ mod tests {
                 .is_none(),
             "a specification may declare the same wire twice; only a signal that reaches no \
              interface record has lost anything"
+        );
+    }
+
+    // -- SIGNAL-DECLARATION-ROW-DROP.4e: the declaration replay --
+
+    fn replay_statement(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn declaration_replay_counts_only_sentences_that_opened_as_declarations() {
+        let report = super::replay_persisted_signal_declarations(&[
+            replay_statement("s1", "Signal PSEL is input width 1."),
+            replay_statement(
+                "s2",
+                "Signal RUSERCHK is width ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8).",
+            ),
+            replay_statement(
+                "s3",
+                "Signal names MUST adhere to the rules of the native tool.",
+            ),
+            replay_statement("s4", "The transfer completes when READY is asserted."),
+        ]);
+        // `s4` never opened as a declaration, so it is not an event and is not counted.
+        assert_eq!(report.opened_total, 3);
+        assert_eq!(report.read_total, 1);
+        assert_eq!(report.read_names, vec!["PSEL".to_string()]);
+        assert_eq!(report.refusals.len(), 2);
+        assert_eq!(
+            report.refusals_by_reason,
+            vec![("no_direction_and_no_width", 1), ("width_text_unread", 1)]
+        );
+        assert_eq!(
+            report.unrecovered_names,
+            vec!["RUSERCHK".to_string(), "names".to_string()]
+        );
+        assert_eq!(report.refusals[0].statement_id, "s2");
+    }
+
+    #[test]
+    fn declaration_replay_does_not_call_a_signal_lost_when_another_statement_declares_it() {
+        // A specification commonly declares the same wire twice — a signal-description table and a
+        // version matrix. `unrecovered` is recomputed from THIS replay's own read declarations, so a
+        // refusal whose identity is read elsewhere in the same document is not a loss.
+        let report = super::replay_persisted_signal_declarations(&[
+            replay_statement("s1", "Signal WSTRB is width 1 bit."),
+            replay_statement("s2", "Signal WSTRB is output width 4."),
+        ]);
+        assert_eq!(report.refusals.len(), 1);
+        assert_eq!(report.read_names, vec!["WSTRB".to_string()]);
+        assert!(
+            report.unrecovered_names.is_empty(),
+            "WSTRB is read in s2, so its refusal in s1 loses no identity: {:?}",
+            report.unrecovered_names
         );
     }
 

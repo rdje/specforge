@@ -1532,6 +1532,10 @@ mod tests {
         // producer over a persisted artifact's own statements and reports what no longer comes out.
         // It writes nothing and promotes nothing, so it is a diagnostic, not a producer.
         ("replay-constraints", CliSurfaceRole::Diagnostic),
+        // SIGNAL-DECLARATION-ROW-DROP.4e — the same shape one stage later: it re-runs the
+        // SemanticIR declaration reader over a persisted artifact's own statements and reports
+        // what it reads and what it refuses. Read-only, writes nothing, promotes nothing.
+        ("replay-declarations", CliSurfaceRole::Diagnostic),
     ];
 
     #[test]

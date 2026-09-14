@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > do specforge extractors override applies_to / are any self-disabled opt-in
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > do text-reasoning tasks need a vision model
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
@@ -295,5 +297,3 @@
   > does specforge handle coordinated drive/read objects (X drives A and B)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > does specforge handle passive voice for actor-signal relations (X is driven by Y)
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > does specforge validate change the artifact it validates

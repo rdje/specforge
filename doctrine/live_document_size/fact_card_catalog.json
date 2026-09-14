@@ -73,13 +73,13 @@
  "planned_outputs": [
   {
    "metrics": {
-    "bytes": 1179,
+    "bytes": 1174,
     "line_bytes": 190,
     "lines": 12
    },
    "path": "docs/knowledge/INDEX.md",
    "role": "landing",
-   "sha256": "10e07c39e7fd795c43cecc49971e020a22ee0e61b826ed6a5e8e01fd250abaf8"
+   "sha256": "f491507b644801bbf4305ea6c259dd6239e5f97f4adef1fe561d42b98f3afcc8"
   },
   {
    "metrics": {
@@ -93,53 +93,53 @@
   },
   {
    "metrics": {
-    "bytes": 12779,
+    "bytes": 12833,
     "line_bytes": 276,
     "lines": 63
    },
    "path": "docs/knowledge-catalog/titles-0002.md",
    "role": "title_part",
-   "sha256": "06c6f3f595f0adc261393f015355c2d4816363e1429fc7d631d429ca88c262f8"
+   "sha256": "8cecb552297d09f6082682acb7ceecf9e09510214eeda99c7cb889cb66622f5f"
   },
   {
    "metrics": {
-    "bytes": 12289,
+    "bytes": 12266,
     "line_bytes": 270,
     "lines": 63
    },
    "path": "docs/knowledge-catalog/titles-0003.md",
    "role": "title_part",
-   "sha256": "396d31bd11951830949bc1e9062e4bd3a94cf5a8982a0a0c47808feae26b4c8b"
+   "sha256": "855420bb158f373bb5562aab233d077f5ddf7c2dca86a27c450eee27cd5a968c"
   },
   {
    "metrics": {
-    "bytes": 12646,
+    "bytes": 12633,
     "line_bytes": 284,
     "lines": 63
    },
    "path": "docs/knowledge-catalog/titles-0004.md",
    "role": "title_part",
-   "sha256": "81e94cf9b6b10ee338335cea72248f780cf48211e8f62d397ca6cbedd37c4a79"
+   "sha256": "e29d7f571f1e8f515502f0990a6810a111f73437b4cee92506f94c29fa7d9cbd"
   },
   {
    "metrics": {
-    "bytes": 12648,
+    "bytes": 12650,
     "line_bytes": 276,
     "lines": 63
    },
    "path": "docs/knowledge-catalog/titles-0005.md",
    "role": "title_part",
-   "sha256": "d5287d5e88738060c3ede56a0288a0133e49f9d0b2212a69455a878a28119f90"
+   "sha256": "24e7a1171878d20b9979794bf13d07b15d7ae72c0dddf4a03786dd737b84752b"
   },
   {
    "metrics": {
-    "bytes": 3643,
+    "bytes": 3874,
     "line_bytes": 254,
-    "lines": 22
+    "lines": 23
    },
    "path": "docs/knowledge-catalog/titles-0006.md",
    "role": "title_part",
-   "sha256": "2fbfc3832e402b4bf1a492ce858b2b6c84a0a7e9f04e5e8a160955c36e774b42"
+   "sha256": "eb110c959fbafb26e3a39bc53f1dc49188902cfdce8bfe463f59fe5112481d8c"
   }
  ],
  "schema_version": 1,

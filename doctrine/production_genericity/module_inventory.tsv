@@ -32,6 +32,7 @@ crates/specforge/src/commands/nlp_enrich.rs	application	application	e.iv	provide
 crates/specforge/src/commands/project_validation.rs	conformance	conformance	e.ii	quality characterization and rescan advice
 crates/specforge/src/commands/recover_register_bits.rs	application	application	e.iv	visual proposal must satisfy typed tiling proof
 crates/specforge/src/commands/replay_constraints.rs	conformance	conformance	e.ii	read-only replay of the deterministic constraint producer over persisted statements; measures what the current code still mints, never writes or promotes
+crates/specforge/src/commands/replay_declarations.rs	conformance	conformance	e.ii	read-only replay of the SemanticIR declaration reader over persisted statements; reports what it reads, what it refuses and under which arm, never writes or promotes
 crates/specforge/src/commands/rescan_plan.rs	conformance	conformance	e.ii	reviewable improvement plan, not extraction authority
 crates/specforge/src/commands/semantic.rs	application	application	e.ii	thin SemanticIR build command
 crates/specforge/src/commands/signal_resolve.rs	application	application	e.iv	provider proposal must resolve through symbol table

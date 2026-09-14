@@ -49,5 +49,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::AuditExtraction(args) => commands::audit_extraction::run(args),
         Commands::RecoverRegisterBits(args) => commands::recover_register_bits::run(args),
         Commands::ReplayConstraints(args) => commands::replay_constraints::run(args),
+        Commands::ReplayDeclarations(args) => commands::replay_declarations::run(args),
     }
 }
