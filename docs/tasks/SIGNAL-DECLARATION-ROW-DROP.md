@@ -993,11 +993,45 @@ a long tail.
   prize behind it is now 47 real widths rather than 15, which also means admitting these identities
   WITHOUT a width (the `.4d` option) would have papered over a width the document states on the same
   row. `.4d` refused it for exactly that reason.
+
+  **THE REQUIRED CENSUS IS DONE (`2026-09-15`, PROBE/DOC), and it moves both numbers.**
+  `python3 scripts/measure_bit_range_width_cells.py` (self-test 9/9) over all 78 persisted
+  SourceIR/EvidenceIR pairs. `[hi:lo]` appears in **167 rows of 15 `signal_description` tables across
+  4 documents**, and the population splits by the table's own header into two scopes that need
+  opposite answers:
+
+  * **SIGNAL scope** — the name column is headed `Signal name`: **9 tables, 130 rows, 81 already
+    declared, 49 not.** Of the 49, **17 are `Unused`** and **32 are real MMU-700 wires**
+    (`arid_m`, `aruser_TLBLOC`, `awlen_qtw`, `tdata_dti_dn[127:0]`, …).
+  * **GENERIC scope** — the name column is headed `Name` or `Field`: **6 tables, 37 rows, ZERO
+    already declared, all 37 would be newly minted.** Every one is a REGISTER FIELD in a table
+    SourceIR typed `signal_description`: eMMC *"Table 64 - CID Fields"*, MMU-700 *"Table 4-62:
+    TBU_LTI_PORT_RESOURCE_LIMIT register bit descriptions"* (`LTI_PORT_RESOURCE_LIMIT0`…`7`),
+    GICv3's Component/Peripheral Identification Registers (`CIDR0`…`3`), CHI-C2C's IwT entry fields.
+
+  **So the leaf's recorded trade of "15 recoveries for 2 phantoms" was right about neither side.**
+  Counting the two populations together for the first time — the 32 rows that would be newly admitted
+  PLUS the 47 `.4d` handed over, which already declare and would finally get a readable width instead
+  of `3'b000 , lavalid` — the prize is **79 real recoveries**. Unscoped, the cost is **54 phantoms**
+  (17 `Unused` + 37 register fields) for **59%**; scoped by the `Signal name` header it is **17** for
+  **82%**. The header test is the discriminator, and it is the same kind of document-grammar header
+  keyword this reader already uses, not a vocabulary (ADR 0006).
+
+  **One candidate unblocker for `Unused` was measured and REFUSED.** *A name cell that repeats inside
+  its own table does not identify a distinct wire* selects **237 rows against 2,734 unique, 37
+  distinct texts**. It catches the junk it was written for — `1` (65), `Output` (27), `Input` (19),
+  `Unused` (16), `Manager` (11), `Y`, `-`, `0`, `DATA_WIDTH` — but its selection also contains **real
+  signals legitimately described on more than one row**: `AxPROT` (8), `CXSCNTL` (7), `BRESP` (4),
+  `RRESP` (4), `CXSDATA` (3), and `ardomain_m`/`arqos_m`/`arprot_m`/`arcache_m`. A refusal that
+  removes those is not an unblocker, so the `Unused` prerequisite stands.
   Prerequisite: `PROSE-NAME-CELL-DECLARATION` deciding the non-name row cell, or an equivalent
-  structural refusal with its own measured population.
-  Verification: the corpus population of bit-range width cells measured with the real reader and
-  adjudicated; observed RED; the chain rebuilt for every document whose artifacts move.
-  Commit: pending
+  structural refusal with its own measured population — **the repeated-name candidate was measured
+  and does not qualify**.
+  Verification: the census above is read-only over persisted artifacts (its "already declares" join is
+  PUBLISHED state — 54 documents cannot be re-run at the evidence stage, so it is what SpecForge
+  emitted, not necessarily what today's extractor would). A shipping change still needs observed RED
+  and the chain rebuilt for every document whose artifacts move.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.2f` census
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.3` · Status: `done` (`2026-09-11`) · Goal: **the declared spelling
   must be the document's spelling.** Under ADR 0037 case carries no alias authority, so emitting a
@@ -1300,10 +1334,12 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width, and `.4d` handed this leaf **47** real
-   MMU-700 widths instead of 15, plus a second defect: the reader picks the `SIGQUAL` column as the
-   width while the stated `Bits` column sits beside it. Still blocked on a row whose name cell is
-   `Unused` not being a declaration — confirmed present as the first body row of both tables.
+0. `SIGNAL-DECLARATION-ROW-DROP.2f` — **census done; still blocked, and now correctly sized.** The
+   prize is **79 real recoveries** (32 newly admitted + the 47 `.4d` handed over) and the cost is
+   **17 `Unused` phantoms** once the rule is scoped by the `Signal name` header — which is also what
+   keeps 37 register-field rows out. The `Unused` prerequisite stands: the repeated-name candidate was
+   measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`, `CXSCNTL`, `CXSDATA`). It also needs
+   the width-COLUMN choice fixed, not only bit-range parsing.
 1. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.
 2. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two

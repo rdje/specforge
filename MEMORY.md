@@ -7,34 +7,32 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.4d` CLOSED `2026-09-15` (PROBE/DOC) — NO for the THIRD
-  time, and the biggest sub-population was not even this leaf's.** The question: should a declaration
-  refused for an unreadable WIDTH keep its identity and its already-parsed direction? All **69**
-  distinct refused identities adjudicated against their source rows via `replay-declarations`.
-  * **47 are MMU-700's LTI observation interface and the document STATES their width.** `table_0259`
-    (*"Table B-6: LTI TBU observation interface signals"*) + `table_0260` share
-    `SIGNALGRP<n> | Bits | Signal name | SIGQUAL<n> 4'b{MSB..LSB} | …`; the row is
-    `0 | [125:110] | latlbloc | 3'b000 , lavalid | 1`. **The reader takes the FOURTH column as the
-    width and never reads the SECOND** — `[125:110]` is 16 bits, one cell away. Handed to **`.2f`**,
-    now owning 47 real widths (not 15) + the column-choice defect; `Unused` is row 1 of both tables.
-  * **18 are not signals**: Avalon section headings, AXI-H transaction names, GICv3 peripheral-ID
-    register FIELDS, eMMC `NOTE`, and `group` from prose (which reaches this arm only because
-    `output` parses as a direction). 20 of the 47 also carry spellings the document never writes
-    (`LCVALID_0..7` from `lcvalid[7:0]`).
-  * **4 real losses**, three malformed in the source. The fourth (`CXSACTIVEREQ is width 1 bit`) got
-    its own measurement: `width <N> bit(s)` is **9 refusals in ONE document**, 7 of 8 identities
-    already read elsewhere → recovers **1** corpus-wide, **0** current. Measured and REFUSED.
-  **Rule now on three measurements (24% `.1d`, 1-in-8 `.4b`, this): an identity with no readable
-  attribute is not a signal; teach the notation rather than drop the attribute.**
-- Earlier: **`.4b`** made the refusal COUNTED AND NAMED (`semantic_unreadable_declaration_width`, one
-  arm only); **`.4e`** shipped `replay-declarations` (`TOOLBOX.md` §5.6) — 78 documents, **0 skipped**,
-  3,196 opened / 2,927 read / 269 refused / 94 unrecovered, which made `.4d` decidable at all.
-- Next action: **`SIGNAL-DECLARATION-ROW-DROP.2f`** — 47 real MMU-700 widths + the width-column
-  defect, still blocked on `PROSE-NAME-CELL-DECLARATION` deciding the `Unused` row. Then `.2d`;
-  `TEXT-LAYER-IDENTIFIER-SPLIT.1`; `EXTRACTION-QUALITY-GAUGE.3j` (unsized). `.4c` stays parked behind
-  the owner-gated `(width 1)` emitter default (`KG-ISF-COMPLETENESS.2a`).
+- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.2f` CENSUS DONE `2026-09-15` (PROBE/DOC) — still
+  blocked, and the leaf's recorded trade was wrong about BOTH sides.**
+  `python3 scripts/measure_bit_range_width_cells.py` (self-test 9/9) over all 78 SourceIR/EvidenceIR
+  pairs: `[hi:lo]` appears in **167 rows / 15 `signal_description` tables / 4 documents**, splitting by
+  the table's own header into two scopes needing opposite answers.
+  * **SIGNAL scope** (`Signal name` header): 9 tables, 130 rows, 81 already declared, **49 not** — of
+    which **17 are `Unused`** and **32 are real MMU-700 wires**.
+  * **GENERIC scope** (`Name`/`Field` header): 6 tables, 37 rows, **0 declared, all 37 newly minted**,
+    every one a REGISTER FIELD (eMMC CID fields, `LTI_PORT_RESOURCE_LIMIT0..7`, `CIDR0..3`).
+  **Counting both populations together for the first time** — the 32 newly admitted PLUS the 47 `.4d`
+  handed over (already declared, would finally get a readable width) — the prize is **79 real**; the
+  cost is **54 phantoms unscoped (59%)** or **17 scoped by the `Signal name` header (82%)**.
+  **One unblocker candidate measured and REFUSED**: *a name cell repeating inside its own table*
+  selects 237 rows / 37 texts and catches `1`(65)/`Output`(27)/`Input`(19)/`Unused`(16) — but also
+  **real** `AxPROT`(8), `CXSCNTL`(7), `BRESP`(4), `RRESP`(4), `CXSDATA`(3), four `ar*_m`. The `Unused`
+  prerequisite stands. `.2f` also needs the width-COLUMN choice fixed, not only bit-range parsing.
+- Earlier: **`.4d`** answered NO a third time (24% `.1d`, 1-in-8 `.4b`, this) — an identity with no
+  readable attribute is not a signal; teach the notation rather than drop the attribute. **`.4b`**
+  made the refusal COUNTED AND NAMED; **`.4e`** shipped `replay-declarations` (`TOOLBOX.md` §5.6) —
+  78 documents, **0 skipped**, 3,196 opened / 2,927 read / 269 refused / 94 unrecovered.
+- Next action: **`SIGNAL-DECLARATION-ROW-DROP.2d`** (census the actor-taxonomy blast radius before
+  touching `builtin_actor_taxonomy_role_in_text`); then `TEXT-LAYER-IDENTIFIER-SPLIT.1` (live VLM);
+  `EXTRACTION-QUALITY-GAUGE.3j` (unsized). `.2f` is blocked on the `Unused` row and `.4c` is parked
+  behind the owner-gated `(width 1)` emitter default (`KG-ISF-COMPLETENESS.2a`).
 - In-flight uncommitted: none. No background job outstanding.
-- Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 264; directive 16
+- Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 265; directive 16
   gates it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**
   `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` is at 2,878 of 3,000 lines; **`DOCTRINE_ENFORCEMENT.md`
   line 394 is 845 of the 1,024-byte `line_bytes_each` ceiling** — route new detail to §10 prose.
