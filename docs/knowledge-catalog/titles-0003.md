@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md) | 2026-08-13 | `current` | EvidenceIR protocol structure is document-derived and schema-3 proof-carrying |
 | [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md) | 2026-06-08 | `current` | audit-extraction — VLM proposer/verifier precision estimate over the broadened table-driven extraction |
 | [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md) | 2026-06-10 | `current` | The NLI extraction-quality gauge is persisted on EvidenceIR and re-measured by converge |
 | [extractor-path-architecture](../knowledge/extractor-path-architecture.md) | 2026-06-09 | `current` | The EvidenceIR extractor path is a flat bank of ~60 free functions wired in one build() — coherent IR targe… |
@@ -60,4 +61,3 @@
 | [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md) | 2026-08-08 | `current` | Two mdBook current-state facts are mechanically locked to their code seams |
 | [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md) | 2026-08-08 | `current` | The live book classifies illustrative fences explicitly and passes mdBook doctests |
 | [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md) | 2026-08-30 | `current` | The mdBook quantitative census verifies the mapping, not the totals, which the manual itself moves |
-| [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md) | 2026-08-15 | `current` | MEMORY.md has an exact 32,768-byte one-read ceiling |

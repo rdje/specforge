@@ -757,7 +757,10 @@ a long tail.
     be parsed as one. **Admitting the identity without a width here would be the wrong fix** — it
     would permanently paper over a width the document writes on the same row. These belong to `.2f`
     (*"a bit range is a width"*), whose blocking condition is visible in both tables' first body row:
-    `2 | [127:115] | Unused | - | -`.
+    `2 | [127:115] | Unused | - | -`. **Re-derived `2026-09-15`: 46 of the 48 sit in a row whose bit
+    cell states a width** — but only once the single-index form `[n]` is read alongside `[hi:lo]`, a
+    gap in `.2f`'s own notation spec that this hand-off exposed (`WDATA_QTW_DEMUXED` and the prose row
+    `group` are the two that do not).
   * **18 are not signals at all**: Avalon's five section-heading rows (`FUNDAMENTAL`, `PIPELINE`,
     `BURST`, `PACKET`, `RESETS`), AXI-H's four transaction names (`STASHONCESHARED`,
     `STASHONCEUNIQUE`, `WRITEUNIQUEFULLSTASH`, `WRITEUNIQUEPTLSTASH`) plus the protocol name `ACE`,
@@ -970,6 +973,10 @@ a long tail.
   number and a parametric string; `[125:110]` is neither, so a `Bits` column states a width this
   reader cannot use. `[hi:lo]` is `hi - lo + 1` — universal notation, no vocabulary — and it recovers
   MMU-700's 15 real observation-interface signals (`.2e` proved this through the real reader).
+  *(That 15 is `.2e`'s ONE-TABLE result through the real reader; the census below counts nine
+  tables from persisted artifacts and reaches 76, and it also had to read a notation `.2e` did
+  not need. Different populations, not a contradiction — read the census as this leaf's size and
+  `.2e`'s as the proven-through-the-reader floor.)*
   **It cannot ship until a row whose name cell is `Unused` stops being a declaration**, or it trades
   15 recoveries for 2 phantoms. That question is not this leaf's to answer: the orthography rule that
   would settle it is contractually barred from the table path, and the row-shape question belongs to
@@ -995,27 +1002,39 @@ a long tail.
   row. `.4d` refused it for exactly that reason.
 
   **THE REQUIRED CENSUS IS DONE (`2026-09-15`, PROBE/DOC), and it moves both numbers.**
-  `python3 scripts/measure_bit_range_width_cells.py` (self-test 9/9) over all 78 persisted
-  SourceIR/EvidenceIR pairs. `[hi:lo]` appears in **167 rows of 15 `signal_description` tables across
-  4 documents**, and the population splits by the table's own header into two scopes that need
-  opposite answers:
+  `python3 scripts/measure_bit_range_width_cells.py` (self-test 12/12) over all 78 persisted
+  SourceIR/EvidenceIR pairs.
 
-  * **SIGNAL scope** — the name column is headed `Signal name`: **9 tables, 130 rows, 81 already
-    declared, 49 not.** Of the 49, **17 are `Unused`** and **32 are real MMU-700 wires**
-    (`arid_m`, `aruser_TLBLOC`, `awlen_qtw`, `tdata_dti_dn[127:0]`, …).
-  * **GENERIC scope** — the name column is headed `Name` or `Field`: **6 tables, 37 rows, ZERO
-    already declared, all 37 would be newly minted.** Every one is a REGISTER FIELD in a table
+  **Its first cut published wrong numbers, and the reason is this leaf's own notation spec.** `.2f`
+  says *"`[hi:lo]` is `hi - lo + 1`"*, and the census was written to match — so both missed the
+  **single-index form `[n]`**, which is how these tables write every 1-bit wire:
+  `0 | [0] | lavalid | …`, `1 | [122] | laogv | …`, `2 | [37] | lrctag | …`. Reading only the ranged
+  form recovers the wide buses and silently drops **every valid/qualifier signal beside them** — the
+  handshake wires. It surfaced by asking whether `.4d`'s handed-over rows were even in bit-range rows
+  at all: on the ranged-only reading only **20 of 48** were, and that contradiction is what exposed
+  the gap. With `[n]` read as a width of 1, **46 of the 48** are. **`.2f` must therefore specify BOTH
+  forms**; a rule shipped from the leaf's text as written would carry the same hole.
+
+  Corrected population: a bit cell appears in **279 rows of 15 `signal_description` tables across 4
+  documents**, splitting by the table's own header into two scopes that need opposite answers:
+
+  * **SIGNAL scope** — the name column is headed `Signal name`: **9 tables, 241 rows, 146 already
+    declared, 95 not.** Of the 95, **19 are `Unused`** and **76 are real MMU-700 wires**
+    (`arid_m`, `arvalid_m`, `arready_m`, `aruser_TLBLOC`, `awlen_qtw`, `awakeup_qtw`, …).
+  * **GENERIC scope** — the name column is headed `Name` or `Field`: **6 tables, 38 rows, ZERO
+    already declared, all 38 would be newly minted.** Every one is a REGISTER FIELD in a table
     SourceIR typed `signal_description`: eMMC *"Table 64 - CID Fields"*, MMU-700 *"Table 4-62:
     TBU_LTI_PORT_RESOURCE_LIMIT register bit descriptions"* (`LTI_PORT_RESOURCE_LIMIT0`…`7`),
     GICv3's Component/Peripheral Identification Registers (`CIDR0`…`3`), CHI-C2C's IwT entry fields.
 
   **So the leaf's recorded trade of "15 recoveries for 2 phantoms" was right about neither side.**
-  Counting the two populations together for the first time — the 32 rows that would be newly admitted
-  PLUS the 47 `.4d` handed over, which already declare and would finally get a readable width instead
-  of `3'b000 , lavalid` — the prize is **79 real recoveries**. Unscoped, the cost is **54 phantoms**
-  (17 `Unused` + 37 register fields) for **59%**; scoped by the `Signal name` header it is **17** for
-  **82%**. The header test is the discriminator, and it is the same kind of document-grammar header
-  keyword this reader already uses, not a vocabulary (ADR 0006).
+  Counting the two populations together for the first time — the **76** rows that would be newly
+  admitted PLUS the **46** `.4d` handed over, which already declare and would finally get a readable
+  width instead of `3'b000 , lavalid` (disjoint sets: the 46 sit inside the 146 already-declared) —
+  the prize is **122 real recoveries**. Unscoped, the cost is **57 phantoms** (19 `Unused` + 38
+  register fields) for **68%**; scoped by the `Signal name` header it is **19** for **87%**. The
+  header test is the discriminator, and it is the same kind of document-grammar header keyword this
+  reader already uses, not a vocabulary (ADR 0006).
 
   **One candidate unblocker for `Unused` was measured and REFUSED.** *A name cell that repeats inside
   its own table does not identify a distinct wire* selects **237 rows against 2,734 unique, 37
@@ -1335,11 +1354,13 @@ a long tail.
 Ordered; PNT selects the first eligible leaf.
 
 0. `SIGNAL-DECLARATION-ROW-DROP.2f` — **census done; still blocked, and now correctly sized.** The
-   prize is **79 real recoveries** (32 newly admitted + the 47 `.4d` handed over) and the cost is
-   **17 `Unused` phantoms** once the rule is scoped by the `Signal name` header — which is also what
-   keeps 37 register-field rows out. The `Unused` prerequisite stands: the repeated-name candidate was
-   measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`, `CXSCNTL`, `CXSDATA`). It also needs
-   the width-COLUMN choice fixed, not only bit-range parsing.
+   prize is **122 real recoveries** (76 newly admitted + the 46 `.4d` handed over) and the cost is
+   **19 `Unused` phantoms** once the rule is scoped by the `Signal name` header — which is also what
+   keeps 38 register-field rows out. Three things it must carry that the leaf's text does not:
+   **both bit forms** (`[hi:lo]` AND the single-index `[n]`, which is how every 1-bit wire is
+   written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
+   the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
+   `CXSCNTL`, `CXSDATA`).
 1. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.
 2. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two

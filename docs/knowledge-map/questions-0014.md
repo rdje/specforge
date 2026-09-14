@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > where is legal administrative prose filtered
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > where is normalized staging removed from Docling metadata
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > where is parenthetical single-wire authority enforced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
@@ -278,6 +286,8 @@
   > which metrics govern specification-to-executable-intent progress
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
   > which nine semantic negative fault classes are tested
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > which notations must a bit-range width rule read
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > which notations of the 482 dropped rows have been recovered
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -288,13 +298,3 @@
   > which of the 482 dropped rows does the arrow form actually recover
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > which outcomes may a published value have
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > which persisted evidence docs carry message_field_records
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which persisted paths must exist and which may be historical references
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > which prepositions make a value slot a relation
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which production carrier already emits typed actionable residuals
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > which project rescan string fields are treated as filesystem paths

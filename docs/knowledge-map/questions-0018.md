@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why does validate fail with cumulative proof ledger does not retain the exact verified upstream prefix
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > why does workflow-standard capacity become 21
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > why doesn't SpecForge emit (contract eventually) anymore
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why doesn't SpecForge use TLA+
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > why doesn't fusion use the minimum confidence
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why doesn't the NLI-oracle conformal calibration produce a threshold
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > why doesn't the disk estimate use the page count
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
@@ -283,17 +297,3 @@
   > why is the reviewed dataset review-locked
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why is the snap trigger absence-from-sentence and not typing failure
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > why is the stage-staleness check zero-versus-some and not a count comparison
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why is the total proof-seal probe CI-tier rather than gate-tier
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why is there no fields-without-positions completeness gap
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why must PSEL not inherit VALID from the which means consequence
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)

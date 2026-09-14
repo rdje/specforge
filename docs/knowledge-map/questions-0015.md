@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > which persisted evidence docs carry message_field_records
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which persisted paths must exist and which may be historical references
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > which prepositions make a value slot a relation
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which production carrier already emits typed actionable residuals
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > which project rescan string fields are treated as filesystem paths
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -287,13 +297,3 @@
   > why did PREQ publish must_be_high when the row sets PREQ LOW
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > why did PRODUCTION-GRAPH-CENSUS-PIN.2's census have to be corrected twice
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why did RESERVED-only NOT ship as a header-naming exclusion (build_symbol_definitions keys members by NAME per document and drops any member whose value conflicts, so HALF the RESERVED-only cases are eliminated downstream with no name-side gate — 6 of 12 in the .5.iv census frame, 4 of 10 in the shipped-predicate frame, the SAME six survivors either way: SMMU
-  > STALL_MODEL/TTENDIAN/HTTU/PGS and CHI-C2C CONTFORMAT/EVENTTYPE. Those survivors are structurally indistinguishable from 31 legitimate single-distinct-member tables (TTL 0b00=NO_LEVEL_HINT_INFORMATION, CD2L, S1P, PRI, GRAN4K...), leaving only the word RESERVED itself as a discriminator — exactly the spec-assigned value vocabulary ADR 0006 forbids. Re-derive:
-  > scripts/measure_header_sourced_enum_naming.py --reserved-split)
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why did SWD protocol_state score 0/13 when the state names were right
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why did TL disappear from the OpenCAPI Ready Definition

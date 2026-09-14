@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > how do I clean up scratch after a slice
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > how do I clear a live-document line_bytes_each warning (reflow the few widest lines; do not partition, roll over, or raise the ceiling — nothing is running out)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -295,5 +297,3 @@
   > how does specforge currently capture transactions and why is it thin
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > how does specforge decide whether a description cell constrains the row's signal
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how does specforge declare a signal mentioned only in prose

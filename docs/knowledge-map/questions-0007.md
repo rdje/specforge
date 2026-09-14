@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > how many TileLink name cells look like a split identifier
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many USB4 Connection Manager page sidecars are repository relative
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -12,6 +14,8 @@
   > how many alignment task owners and routes survive migration
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > how many arrow-form direction cells exist corpus-wide
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > how many bit cells are in signal_description tables corpus-wide
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how many book claims describe behaviour the code no longer has
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -294,7 +298,3 @@
   > how to recover register field bit positions that live in the layout graphic, not the table
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how was AHB HREADY recovered for the temporal antecedent
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how was AXI constraint precision fixed
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > how was the 400 page Docling SIGKILL reproduced

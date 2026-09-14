@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why does SpecForge only treat an INTERIOR lower-case position as a placeholder
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > why does TileLink declare signals named C, D, V and R
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > why does TileLink lose its Signal column to its Type column
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does USB 3.2 declare no signals
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -159,6 +171,8 @@
   > why does one appositive never establish a signal alias
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > why does one register appear as several RegisterRecords / how are split register-field tables merged
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > why does reading only [hi:lo] bias a recall census toward wide buses
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -283,17 +297,3 @@
   > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > why does trimming a name token hide a placeholder
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why does validate fail with cumulative proof ledger does not retain the exact verified upstream prefix
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > why does workflow-standard capacity become 21
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > why doesn't SpecForge emit (contract eventually) anymore
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why doesn't SpecForge use TLA+
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > why doesn't fusion use the minimum confidence
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > why doesn't the NLI-oracle conformal calibration produce a threshold

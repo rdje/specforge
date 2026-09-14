@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > what must happen before the USB4 inter-domain corpus refresh can run
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what owns containment of the live document adoption task history
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > what owns live-document size limits and transition debt
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > what owns the SWD EvidenceIR to IntentIR projection gap
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -88,6 +94,8 @@
   > what was the must_be_value recall gap and how was it closed
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what were the initial 17-document held-out relation outcomes
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > what width is the cell [0]
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > what words stop walk_for_level_subjects
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -289,11 +297,3 @@
   > where is coordinated-object actor-signal relation extraction implemented
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > where is current binary replay evidence stored
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > where is legal administrative prose filtered
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > where is normalized staging removed from Docling metadata
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > where is parenthetical single-wire authority enforced

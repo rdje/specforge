@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why did RESERVED-only NOT ship as a header-naming exclusion (build_symbol_definitions keys members by NAME per document and drops any member whose value conflicts, so HALF the RESERVED-only cases are eliminated downstream with no name-side gate — 6 of 12 in the .5.iv census frame, 4 of 10 in the shipped-predicate frame, the SAME six survivors either way: SMMU
+  > STALL_MODEL/TTENDIAN/HTTU/PGS and CHI-C2C CONTFORMAT/EVENTTYPE. Those survivors are structurally indistinguishable from 31 legitimate single-distinct-member tables (TTL 0b00=NO_LEVEL_HINT_INFORMATION, CD2L, S1P, PRI, GRAN4K...), leaving only the word RESERVED itself as a discriminator — exactly the spec-assigned value vocabulary ADR 0006 forbids. Re-derive:
+  > scripts/measure_header_sourced_enum_naming.py --reserved-split)
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why did SWD protocol_state score 0/13 when the state names were right
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why did TL disappear from the OpenCAPI Ready Definition
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > why did USB 3.2 produce 918 interfaces and 556 adapter signals
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
@@ -116,6 +126,8 @@
   > why did the OpenCAPI Ready DL signal disappear
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > why did the SWD serial_frame_field score go from 11/11 to 0/11 (because SPEC-TO-INTENT-ALIGNMENT.6d.ii.c at 89d8dee7 on 2026-08-12 retired the protocol-name-bound frame extractor and its fixed phase enum on ADR 0006 genericity grounds; its own ledger entry says the exact comparison retires 22 fixed-phase frame and four named-operation records)
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > why did the bit-range census miss lavalid and lrvalid
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > why did the book quantitative checker separate record and array bounds
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -286,15 +298,3 @@
   > why does SpecForge keep normalized bundles instead of reclaiming them
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > why does SpecForge not read a leftward arrow as a flow
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why does SpecForge only treat an INTERIOR lower-case position as a placeholder
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > why does TileLink declare signals named C, D, V and R
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why does TileLink lose its Signal column to its Type column
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does USB 3.2 declare no signals

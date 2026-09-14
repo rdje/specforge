@@ -8,6 +8,7 @@
 | [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md) | 2026-09-15 | `current` | Admitting a declaration with an identity but no attribute is 24% precise — 14 real rows against 45 phantoms… |
 | [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md) | 2026-09-13 | `current` | A logic level binds to the SIGNAL beside it, read through the document's own catalog — not to the verb that… |
 | [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md) | 2026-09-13 | `current` | The value slot admits a state, never a relation — a predicate followed by a preposition naming an operand o… |
+| [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md) | 2026-09-15 | `current` | A bit-allocation column writes single-bit wires as `[n]`, not `[n:n]` — so a census or rule that reads only… |
 | [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md) | 2026-09-14 | `current` | `t PERIOD` and `a opcode` are the same cell shape and want DIFFERENT joins — only the document's own spelli… |
 | [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md) | 2026-09-14 | `current` | A prose width cell is refused by a CONJUNCTION (>6 tokens AND a terminator before whitespace) — each bound… |
 | [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | AArch64 External Debug Guide refresh is portable and authority-empty |
@@ -60,4 +61,3 @@
 | [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
 | [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md) | 2026-08-10 | `current` | CHAIN-CURRENCY replays every persisted corpus artifact against the current binary |
 | [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md) | 2026-08-30 | `current` | Published-claim controls bind exact known-bad evidence and reject scratch producers |
-| [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md) | 2026-08-30 | `current` | The local claim standard is a restatement, so currency is re-read section by section, not diffed |

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is the 4th portable architecture (doctrine enforcement)
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what is the AXI signal naming convention (channel prefix)
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what is the DOC-INTENT-TAXONOMY.1 corpus census
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -291,9 +297,3 @@
   > what must be rebuilt after moving the SpecForge repository
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > what must change together with the population replay orchestrator
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > what must happen before the USB4 inter-domain corpus refresh can run
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what owns containment of the live document adoption task history
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > what owns live-document size limits and transition debt

@@ -2,6 +2,13 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > is the frozen source to intent result current binary output
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the generic-TABLE enum conflation fixed / what did KG-ISF-COMPLETENESS.5.i do (LANDED 2026-06-24: derive_encoding_enum_name fallback keeps the candidate only when independently evidenced — a declared signal OR a column-header reference token of the table — else None; emitter isf_ir.rs gates the (types) block by emitted_enums() so a member-dropped enum leaves no orphan
+  > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > is the ingest drift purely additive
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -291,9 +298,3 @@
   > what bounds the number of leaves a migrated task tree may declare
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > what breaks if the identifier tokenizer unescapes markdown
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what breaks when I change doctrine/live_document_size/surfaces.jsonl (three separate surface_registry source pins go stale - in published_assertions.jsonl, book_quantitative_claims.jsonl and current_claim_census.jsonl - plus the durability.artifacts digests in claims.jsonl. Refresh the pins first, then the claim digests, then re-run the gate)
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > what breaks when build_fixture.py changes

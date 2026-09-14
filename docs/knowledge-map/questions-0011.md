@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > what happened in OpenCAPI Discovery Configuration refresh 46
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > what happened to WTAGUPDATE must_be_value UPDATED
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > what happened to the AArch64 External Debug Guide agent.isf
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what happened to the CoreSight Base System agent.isf
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -291,9 +297,3 @@
   > what is the .5.iii _WIDTH parameter-leak gate / is it landed / is it ADR-0006 safe (LANDED 2026-06-24: is_width_parameter_leak_member + a continue-skip in synthesize_encoding_declarations_for_enum after the .5.ii spine gate, known_signals threaded from the signal-match caller. Drops a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name
   > — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. AXI manager.isf now (BRESP (OKAY 0)(EXOKAY 1)...) + (AWCMO (CLEAN_AND_INVALIDATE
   > 0)(CLEAN_ONLY 1)); false RRESP/AXSNOOP/RCHUNK* _WIDTH enums gone; FSMGen --strict success/0; WIRE-BASED-100 1.000 before==after; kg-bench 156/156; run_ci GREEN lib 1718 +2)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is the 4th portable architecture (doctrine enforcement)
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what is the AXI signal naming convention (channel prefix)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what is the DOC-INTENT-TAXONOMY.1 corpus census

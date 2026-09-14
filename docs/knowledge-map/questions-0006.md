@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how does specforge declare a signal mentioned only in prose
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > how does specforge drop a zero-evidence phantom actor like controller or agent
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -295,5 +297,3 @@
   > how many Signal statements does the corpus carry
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > how many SpecForge mdBook doctests currently fail
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > how many TileLink name cells look like a split identifier

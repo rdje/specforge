@@ -116,6 +116,8 @@
   > does SpecForge use the full scope of a page's visual information
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > does Wishbone declare its signals in a table
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > does a Bits column write a single-bit signal as [n] or [n:n]
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does a PathBuf need portability handling before it has a producer
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -295,5 +297,3 @@
   > does source_ref identify one Docling item
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does specforge adapt remove an old actor isf when actor selection changes
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > does specforge handle coordinated drive/read objects (X drives A and B)

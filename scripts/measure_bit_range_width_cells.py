@@ -6,8 +6,8 @@ population of bit-range width cells before implementing — a `Bits` column is c
 radius is not this one table."*
 
 `parse_table_width_hint_text` reads a number and a parametric string, so `[125:110]` is neither and a
-`Bits` column states a width the reader cannot use. `[hi:lo]` is `hi - lo + 1` — universal notation,
-no vocabulary — and the leaf was sized at "15 recoveries for 2 phantoms" from one table.
+`Bits` column states a width the reader cannot use. `[hi:lo]` is `hi - lo + 1` and `[n]` is 1 — universal
+notation, no vocabulary — and the leaf was sized at "15 recoveries for 2 phantoms" from one table.
 
 The census reports two things the leaf did not have:
 
@@ -48,13 +48,16 @@ import os
 import re
 import sys
 
-BIT_RANGE = re.compile(r"^\[\s*(\d+)\s*:\s*(\d+)\s*\]$")
+# `[hi:lo]` is a slice; `[n]` is the SINGLE-BIT form the same tables use for every 1-bit wire.
+# Reading only the first form silently drops every valid/qualifier signal in the population — which is
+# exactly what the first cut of this census did, and what made its published trade wrong.
+BIT_RANGE = re.compile(r"^\[\s*(\d+)\s*(?::\s*(\d+)\s*)?\]$")
 # Header spellings that name a column of SIGNAL identities. Document grammar, not a chip, vendor or
 # protocol vocabulary (ADR 0006) — the same kind of header keyword the name-column override reads.
 SIGNAL_NAME_HEADERS = ("signal name", "signal", "signal role")
 # Header spellings that name a column of identities generally, including register fields.
 GENERIC_NAME_HEADERS = ("name", "field")
-SELF_TEST_CASES = 9
+SELF_TEST_CASES = 12
 
 
 def repo_root() -> str:
@@ -62,10 +65,17 @@ def repo_root() -> str:
 
 
 def bit_range_width(text: str) -> int | None:
-    """`[hi:lo]` -> `hi - lo + 1`, or `None` when the cell is not a bit range."""
+    """`[hi:lo]` -> `hi - lo + 1`, `[n]` -> 1, or `None` when the cell is not a bit range.
+
+    The single-index form is not a special case bolted on: in MMU-700's observation tables every
+    1-bit wire is written that way (`0 | [0] | lavalid | …`), so a rule that reads only `[hi:lo]`
+    recovers the wide buses and drops every handshake/qualifier signal beside them.
+    """
     match = BIT_RANGE.match(text.strip())
     if not match:
         return None
+    if match.group(2) is None:
+        return 1
     high, low = int(match.group(1)), int(match.group(2))
     return high - low + 1 if high >= low else None
 
@@ -225,6 +235,9 @@ def self_test() -> int:
 
     check("a bit range is inclusive on both ends", bit_range_width("[125:110]"), 16)
     check("a single-bit range is one bit", bit_range_width("[7:7]"), 1)
+    check("the single-INDEX form is one bit", bit_range_width("[0]"), 1)
+    check("a two-digit single index is one bit", bit_range_width("[122]"), 1)
+    check("an empty bracket states no width", bit_range_width("[]"), None)
     check("whitespace inside the brackets is tolerated", bit_range_width("[ 3 : 0 ]"), 4)
     check("a plain number is not a bit range", bit_range_width("16"), None)
     check("a reversed range states no width", bit_range_width("[0:7]"), None)

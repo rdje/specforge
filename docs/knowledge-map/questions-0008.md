@@ -2,10 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how was AXI constraint precision fixed
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > how was the 400 page Docling SIGKILL reproduced
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > how was the CHI field-constraint routing measured without re-ingesting the PDF
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > how was the bit-range census error caught
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > how was the eval gold checked for idiosyncrasy
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
@@ -291,10 +297,3 @@
   > is the extraction audit chip-spec-PDF agnostic (yes)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > is the figure-interior gap drift or standing
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > is the frozen source to intent result current binary output
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the generic-TABLE enum conflation fixed / what did KG-ISF-COMPLETENESS.5.i do (LANDED 2026-06-24: derive_encoding_enum_name fallback keeps the candidate only when independently evidenced — a declared signal OR a column-header reference token of the table — else None; emitter isf_ir.rs gates the (types) block by emitted_enums() so a member-dropped enum leaves no orphan
-  > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)

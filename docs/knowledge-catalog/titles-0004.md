@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md) | 2026-08-15 | `current` | MEMORY.md has an exact 32,768-byte one-read ceiling |
 | [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md) | 2026-06-10 | `current` | message_field_constraints — field-subject obligations are routed, not dropped (CHI TagOp/PBHA live) |
 | [message-field-records-surface](../knowledge/message-field-records-surface.md) | 2026-06-10 | `current` | message_field_records — the typed home for packet/flit message fields (CHI 106, C2C ≤189, CCIX ~50) |
 | [message-field-validate-integration](../knowledge/message-field-validate-integration.md) | 2026-06-11 | `current` | validate reports the message-field surfaces (5 metrics + inventory finding); class census and completeness ga… |
@@ -60,4 +61,3 @@
 | [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md) | 2026-08-27 | `current` | Residual actionability counts required residuals, not declared residual queries |
 | [research-record-size-profile](../knowledge/research-record-size-profile.md) | 2026-08-31 | `current` | Research-record line ceiling fits the population; an oversized record is a composite |
 | [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md) | 2026-09-10 | `current` | The retained normalized-bundle set can neither grow nor shrink, so a policy-mandated re-ingest has no complia… |
-| [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md) | 2026-08-27 | `current` | A retained chain must be validated stage by stage as it is rebuilt, not at the end |

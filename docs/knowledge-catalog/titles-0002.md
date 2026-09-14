@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md) | 2026-08-30 | `current` | The local claim standard is a restatement, so currency is re-read section by section, not diffed |
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
 | [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
@@ -60,4 +61,3 @@
 | [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md) | 2026-09-11 | `current` | Changing the content of an existing EvidenceIR rule field stales every persisted proof without moving the rul… |
 | [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md) | 2026-08-09 | `current` | Evidence signal-declaration catalogs panic when a match follows a multi-byte bullet |
 | [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md) | 2026-08-11 | `current` | EvidenceIR statement text comes from the normalized markdown, where `_` is escaped, so every underscore-beari… |
-| [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md) | 2026-08-13 | `current` | EvidenceIR protocol structure is document-derived and schema-3 proof-carrying |

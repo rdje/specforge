@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md) | 2026-08-27 | `current` | A retained chain must be validated stage by stage as it is rebuilt, not at the end |
 | [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
 | [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md) | 2026-08-28 | `current` | Changing the reviewed fixture builder is a three-way lockstep, not a one-file edit |
 | [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md) | 2026-08-15 | `current` | Fresh reviewed replay carrier gaps are repaired and clean publication is complete |
@@ -60,4 +61,3 @@
 | [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md) | 2026-08-12 | `current` | Timing constraints preserve explicit caption units and direct structured-table provenance |
 | [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md) | 2026-08-11 | `current` | Production timing observations now reach verified figure contracts through an optional typed EvidenceIR Figur… |
 | [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md) | 2026-08-10 | `current` | Scalar timing rows require independent source-cell geometry for parameter and populated value roles |
-| [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md) | 2026-08-10 | `current` | Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max… |

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > does specforge handle coordinated drive/read objects (X drives A and B)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > does specforge handle passive voice for actor-signal relations (X is driven by Y)
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
@@ -296,5 +298,3 @@
   > how do I check whether a persisted artifact field describes current behaviour
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how do I check whether the persisted corpus seal is stale
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > how do I clean up scratch after a slice
