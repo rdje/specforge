@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > which task owns the re-ingest decision
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which task tree crossed its live-document byte warning
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
@@ -295,5 +297,3 @@
   > why did removing false signals ADD conditional rules to SemanticIR
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > why did rendered_image.path contain normalized.staging
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why did retiring generic phases remove pure inferred actors

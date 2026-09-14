@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -12,6 +14,8 @@
   > why is a conditional rule in EvidenceIR but not in SemanticIR
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why is a constraint subject CLK when the document says CLK_I
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why is a debug probe 14 seconds and a release probe 1.2
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why is a digest binding not enough to watch a number in prose
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -294,7 +298,3 @@
   > why was elem_00017|informational_non_contract changed
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > why was nearest-heading anchoring rejected for capless table adoption
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > why was table_0004|toc_non_contract changed

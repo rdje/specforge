@@ -18,6 +18,8 @@ answers:
   - "what does registered derivation output or input topology is stale mean"
   - "how do I find out which documents are chain-stale"
   - "which documents in the corpus are currently stale"
+  - "which binary does check_proof_seal_currency.sh probe with"
+  - "why is a debug probe 14 seconds and a release probe 1.2"
 date: 2026-09-14
 status: current
 tags: [doctrine, chain-currency, proof-seal, corpus, cost, corpus-chain-currency]
@@ -67,16 +69,24 @@ replay extraction from the normalized bundle. Probing every one of the 27 artifa
 costs **30.3 s** (semantic) + **35.5 s** (intent) = **66 s**, and finds every refusal the corpus
 currently has. Sampling is right at source-ir and evidence and wrong at semantic and intent.
 
+**Those timings are `target/release/specforge`, and the check probes with `target/debug/specforge`** —
+deliberately, because the question is whether THIS COMMIT's build accepts the seal and a debug build is
+the cheapest way to get one. A debug probe is ~14 s against a release probe's 1.2 s, so the activated
+per-stage tier measures **13m01s**, not 66 s, against **15.99 s** for the sampled default. Always say
+which binary a probe cost was measured with.
+
 The per-stage mechanism is shipped (`probe_scope_for`, self-tests 17 and 17b) and **inert**:
-`TOTAL_PROBE_STAGES` defaults to empty because activating it fails the gate on a corpus that is
-genuinely broken and not yet repaired — APB-e needs a rebuild and I2C a re-ingest (its normalized bundle
-is reclaimed). A gate that fails closed over a broken corpus is correct and unlandable at the same time,
-so the mechanism lands and the activation waits (`CORPUS-CHAIN-CURRENCY.7`). Activation is one constant.
+`TOTAL_PROBE_STAGES` defaults to empty. The corpus obstacle is **gone** — `CORPUS-CHAIN-CURRENCY.7`
+rebuilt both refusing documents on `2026-09-14` (APB-e, and I2C from its **retained** bundle; it was
+never reclaimed) and the forced-on probe then reports **27 of 27 accepted at semantic and at intent**.
+What holds the activation now is cost, and only because of the binary profile above:
+**`CORPUS-CHAIN-CURRENCY.8`**.
 
 ## What the sweep found, and the general law under it
 
 - `um10204…i2c` — evidence CONTENT stale (`signal_constraints` 9 → 3, `fact_provenance` 21 → 15);
-  everything downstream blocked. Reproduces at `1ada364a`.
+  everything downstream blocked. Reproduces at `1ada364a`. **Rebuilt `2026-09-14`**, and the eight
+  removed constraints were fabrications the `.3k` series had already refused elsewhere.
 - `ihi0024_e…apb` — semantic CONTENT stale (`interface_signal_conflicts` 0 → 1, `PADDRCHK` loses its
   `width_hint`) and REFUSED by `intent` and `isf-adapter`. Reproduces at `956fbcce`; it is
   `SIGNAL-DECLARATION-ROW-DROP.4a`'s effect, tracked as `.4c`. **The conflict is real**: the document

@@ -90,6 +90,8 @@
   > which arrow spellings does the declaration reader accept
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > which behavioral genericity transforms cover rich PDF capture
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which binary does check_proof_seal_currency.sh probe with
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > which boot-volume Rust directories are allowed
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
@@ -296,5 +298,3 @@
   > which task owns the SourceIR reproducibility gap
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > which task owns the ingest conservation gap
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > which task owns the re-ingest decision

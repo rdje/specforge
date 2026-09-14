@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-14`; `.0`-`.6` complete, **`.7` open** — repair the two documents, then activate the per-stage tier)
+- Status: `active` (`2026-09-14`; `.0`-`.7` complete — corpus CURRENT; **`.8` open** — the check probes with a debug binary)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-14`
@@ -174,6 +174,11 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   The 18m45s belongs to the **evidence** and **source-ir** probes, which replay extraction from the
   normalized bundle — a different order of work from loading a persisted artifact and verifying its
   proof. Sampling is right there and wrong at semantic and intent.
+  **CORRECTED `2026-09-14` by `.7`: these timings were taken with `target/release/specforge`, and the
+  check builds and probes with `target/debug/specforge`.** A debug probe is ~14 s where a release probe
+  is 1.2 s, so the activated gate measures **13m01s**, not 66 s. The conclusion that the scope is a
+  per-stage question survives; the number that made it look affordable at gate tier does not, and the
+  profile is now `.8`.
   Verification: read-only. Distinct-key counts computed from the persisted `proof_ledger`s
   (`RegisteredDerivation` premises, full and `.root`-only); per-stage probe cost timed with `time` over
   every current-stratum artifact; both refusals reproduced in that run.
@@ -206,26 +211,52 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   Verification: see the acceptance checklist below.
   Commit: `CORPUS-CHAIN-CURRENCY.6`
 
-- ID: `CORPUS-CHAIN-CURRENCY.7` · Status: `active` (opened `2026-09-14` by `.6`; **step 2 done the same day**) · Goal: **repair the
-  two documents, then activate.** In order, because each step unblocks the next:
-  1. ~~`SIGNAL-DECLARATION-ROW-DROP.4c` first.~~ **No longer a prerequisite** — `.4c`'s own premise was
-     corrected on `2026-09-14` by tracing the two widths to their tables: APB-e states
-     `ceil(ADDR_WIDTH/8)` in `Table 5-1 Check signal descriptions` and `ADDR_WIDTH/8` in its version
-     matrix, so they genuinely differ and `.4a` is right to report a conflict. The rebuild costs one
-     `width_hint` at the SemanticIR boundary and **changes no emitted `.isf`**: `PADDRCHK` already ships
-     `(output PADDRCHK (width 1))`, as do 31 of APB-e's 32 signals.
-  2. ~~Rebuild APB-e's chain from its (current) EvidenceIR, upstream-first, one `validate` per
-     artifact.~~ **DONE `2026-09-14`** — see "`.7` step 2" below. The activated tier goes from 25 of 27
-     to **26 of 27 accepted** at both semantic and intent; the only remaining refusal is I2C.
-  3. Re-ingest I2C: its normalized bundle is reclaimed, so `evidence` cannot replay it at all. Decide
-     first whether a re-ingest is in this tree's scope or `CORPUS-COVERAGE`'s — a re-ingest replaces the
-     document wholesale rather than repairing a drift, and it moves the retention declaration.
-  4. Set `TOTAL_PROBE_STAGES='semantic intent'` and re-run: the gate must go green, and
-     `check_chain_currency.sh` must report every stage current.
-  Prerequisite: none (the `.4c` prerequisite was lifted `2026-09-14` — see step 1).
-  Verification: the gate observed RED before the repair
-  and GREEN after, with its runtime measured at both; `check_chain_currency.sh` clean; retention
-  unchanged at 24 unless the re-ingest deliberately moves it, in which case the declaration moves with it.
+- ID: `CORPUS-CHAIN-CURRENCY.7` · Status: `done` (`2026-09-14`, DATA/DOC) · Children: `.8` · **Both
+  documents repaired and the corpus is CURRENT; the activation is held for a reason that has nothing to
+  do with the corpus.**
+  **Step 2 — APB-e rebuilt.** See "`.7` step 2" below.
+  **Step 3 — I2C rebuilt, and this step's own premise was wrong.** `.4`, `.6` and this node all recorded
+  that I2C's normalized bundle was *reclaimed* and that it therefore needed a RE-INGEST rather than a
+  replay. Reading `doctrine/chain_currency/retained_bundles.json` shows **I2C is one of the declared 24
+  retained bundles**, and its bundle is on disk. The chain-currency sweep had said so all along — it
+  listed I2C under `evidence: 24 replayed … 1 stale`, i.e. *replayed and content-stale*, not under the
+  54 unmeasurable. The repair was a plain chain rebuild, not a re-ingest, and the retention declaration
+  never moved.
+  Rebuilt in the documented order with exactly one `validate` per artifact, upstream-first:
+  `evidence` → `validate` → `semantic` → `validate` → `intent` → `validate` → `adapt --target isf`,
+  with a `--dry-run` before each write to prove the loader accepts the upstream. Pre-rebuild artifacts
+  at `generated/preserved/CORPUS-CHAIN-CURRENCY.7/pre-rebuild-i2c/` (8 files, `1a3a49a2…50cf`).
+  **What it publishes is a precision WIN, not a repair of damage**: `signal_constraints` **9 → 3** and
+  `fact_provenance` 21 → 15. The eight removed records are exactly the shape the `.3k` series refused
+  and I2C never received — *"Every byte put on the USDA line must be eight bits long"* minted
+  `USDA must_be_high`; *"The UFm I²C-bus is a 2-wire push-pull serial bus that operates from DC to
+  5 MHz"* minted `USCL must_be_stable`; *"If the data line (SDA) is stuck LOW…"* minted
+  `SDA must_be_low` from a fault condition. All four stages then replay CONTENT SAME.
+  **Step 4 — measured, and held.** With the stage set forced on, the probe reports **27 of 27 accepted
+  at semantic and at intent, exit 0**: the corpus obstacle is gone. The activation is still held,
+  because switching it on measured **13m01s** against 15.9 s for the sampled default — and the reason
+  is a binary this leaf had not looked at. That is `.8`.
+  Verification: see the acceptance checklist below.
+  Commit: `CORPUS-CHAIN-CURRENCY.7`
+
+- ID: `CORPUS-CHAIN-CURRENCY.8` · Status: `pending` (opened `2026-09-14` by `.7`) · Goal: **the check
+  probes with a DEBUG binary, and every cost number this tree published was measured on a release one.**
+  `.5` sized the two total stages at **66 s** — `semantic --dry-run` ×27 at 30.3 s and `intent` ×27 at
+  35.5 s — from `target/release/specforge`, where an accepted intent probe is **1.2 s**.
+  `check_proof_seal_currency.sh` builds and probes with **`target/debug/specforge`** (`cargo build …
+  --bin specforge`), deliberately: the question it asks is whether THIS COMMIT's build accepts the
+  persisted seal, and a debug build is the cheapest way to obtain one. A debug probe costs **~14 s**, so
+  the activated gate measured **13m01s**, and `--total`'s 18m45s is the same fact from the other end.
+  **The trade is real in both directions and must be measured cold AND warm before the profile moves**:
+  a release build is ~35 s warm and then ~1.2 s per probe (~100 s all in, against ~780 s of debug
+  probing), but a cold release build of this workspace is minutes and would land on every clean checkout
+  and CI runner. A check that is fast only when the release profile happens to be warm has moved its
+  cost rather than removed it.
+  Non-goal: raising `PROOF-SEAL-TOTAL` to gate tier, and lowering what the check proves. The question is
+  the profile, not the tier and not the coverage.
+  Prerequisite: none. Verification: build and probe cost measured for both profiles, cold and warm, on
+  this machine and reasoned about for a CI runner; the sampled default's cost measured at the chosen
+  profile; the self-tests unchanged, since they pin the binary explicitly and are profile-independent.
   Commit: pending
 
 ## Measured corpus census (`2026-08-10`, `.1`) — the drift `.3` closes
@@ -406,6 +437,52 @@ rebuild order ends at `adapt`, and the chain-currency comparison excludes `valid
 construction — so nothing is stale by any gate's definition, but the file is older than the artifact
 beside it and a future leaf should decide whether an adapter's report has an owner.
 
+## `.7` step 3 — I2C rebuilt, and this tree's own premise corrected (`2026-09-14`)
+
+Three of this tree's nodes recorded that I2C's normalized bundle was **reclaimed**, so that it needed a
+re-ingest rather than a replay, and that the re-ingest would move the retention declaration. **All three
+were wrong.** `doctrine/chain_currency/retained_bundles.json` lists I2C among the declared **24 retained
+bundles**, and the bundle is on disk. The sweep had said so in its own output — I2C appears under
+`evidence: 24 replayed, 23 current, 1 stale`, i.e. replayed and CONTENT-stale, not among the 54
+unmeasurable. The error was reading the summary line's parenthetical ("normalized bundle reclaimed")
+as if it applied to the failing document rather than to the 54 it names.
+
+The repair was therefore a plain chain rebuild, in the documented order with exactly one `validate` per
+artifact, upstream-first: `evidence` → `validate` → `semantic` → `validate` → `intent` → `validate` →
+`adapt --target isf`, with a `--dry-run` before each write to prove the loader accepts its upstream.
+Pre-rebuild artifacts at `generated/preserved/CORPUS-CHAIN-CURRENCY.7/pre-rebuild-i2c/` (8 files, digest
+`1a3a49a2f827e3847e9133249e5f2034d283cbd76aff8c07f231509aac0850cf`).
+
+**What it publishes is a precision win.** `signal_constraints` **9 → 3**, `fact_provenance` 21 → 15,
+13 `conditional_rules` renumbered. The eight removed records are exactly the shape the
+`EXTRACTION-QUALITY-GAUGE.3k` series refused and that I2C never received:
+
+| removed record | the sentence it came from |
+| --- | --- |
+| `USDA must_be_high` | *"Every byte put on the USDA line must be eight bits long."* — the modal governs the length |
+| `USCL must_be_stable` | *"The UFm I²C-bus is a 2-wire push-pull serial bus that operates from DC to 5 MHz."* — no obligation at all |
+| `SDA must_be_low` | *"If the data line (SDA) is stuck LOW, the controller should send nine clock pulses."* — a fault condition |
+| `SDA must_be_stable` | *"When SDA remains HIGH during this ninth clock pulse, this is defined as the Not Acknowledge…"* — a definition |
+| `SCLH must_be_high` | *"After the not-acknowledge bit (A), and the SCLH line has been pulled-up to a HIGH…"* — a narration |
+
+All four stages then replay CONTENT SAME.
+
+## `.7` step 4 — the corpus obstacle is gone, and the cost one is not (`2026-09-14`)
+
+With `SPECFORGE_PROOF_SEAL_TOTAL_STAGES='semantic intent'` the probe reports **27 of 27 accepted at
+semantic and at intent, 0 refused, exit 0**. Both repairs are confirmed at the gate that found the
+drifts, and the corpus is current at every probeable stage.
+
+The activation is still held, and the reason is a binary this tree had not looked at. Switching the
+stage set on measured **13m01s** against **15.9 s** for the sampled default — because
+`check_proof_seal_currency.sh` builds and probes with **`target/debug/specforge`**, while `.5`'s 66 s
+sizing was measured with `target/release/specforge`. A debug probe is ~14 s where a release probe is
+1.2 s. `.5`'s number was right about the release binary and wrong about the gate, and that is corrected
+in `.5`'s node, in the script's own header, and in the fact card rather than left standing.
+
+Thirteen minutes per commit is not gate tier. The mechanism stays inert, the corpus stays clean, and
+the profile question is `.8`.
+
 ## Acceptance Checklist (enforced) — `.6`
 
 - [x] **REPRODUCE / MEASURE** — `.4` and `.5`: 1 distinct seal per stage across 27 artifacts, so the
@@ -432,18 +509,29 @@ beside it and a future leaf should decide whether an adapter's report has an own
 
 ## Current Frontier
 
-1. `CORPUS-CHAIN-CURRENCY.7` **step 3** — I2C. Its normalized bundle is reclaimed, so `evidence` cannot
-   replay it at all and a re-ingest replaces the document wholesale rather than repairing a drift. Decide
-   first whether that belongs to this tree or to `CORPUS-COVERAGE`, and note that it moves the retention
-   declaration. Step 2 (APB-e) is done: the activated tier is now 26 of 27 at semantic and intent, with
-   I2C the only refusal left. Step 4 — set `TOTAL_PROBE_STAGES='semantic intent'` — follows step 3 and
-   nothing else.
+1. `CORPUS-CHAIN-CURRENCY.8` — the binary profile. Every cost number this tree published was measured on
+   `target/release/specforge`; the check builds and probes with `target/debug/specforge`, which is ~12×
+   slower per probe and is why the activated tier measured 13m01s rather than 66 s. Measure both profiles
+   cold and warm before moving it — a check that is fast only when release happens to be warm has moved
+   its cost, not removed it. The corpus itself is CURRENT: 27 of 27 accepted at semantic and intent.
 2. Rebuilding the two drifted documents is **not** this tree's next step. I2C's rebuild is unblocked but
    its normalized bundle is reclaimed, so it needs a re-ingest rather than a replay; APB-e's is blocked
    by `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it today would publish that regression into a
    wire-gold document's chain.
 
 ## Verification Log
+
+- `2026-09-14` — `.7` steps 3 and 4. I2C rebuilt from its RETAINED bundle (snapshot
+  `generated/preserved/CORPUS-CHAIN-CURRENCY.7/pre-rebuild-i2c/`, 8 files, `1a3a49a2…50cf`) in the
+  documented order, one `validate` per artifact, a `--dry-run` before every write. Result:
+  `signal_constraints` 9 → 3, `fact_provenance` 21 → 15, and `evidence`/`semantic`/`intent`/`adapt` all
+  replay CONTENT SAME. With the stage set forced on, `check_proof_seal_currency.sh` reports **27 of 27
+  accepted at semantic and at intent, exit 0**.
+  **Cost correction, measured**: the activated run is **13m01s**; the sampled default is **15.99 s**;
+  self-tests **20/20** either way. Root cause established by reading the script's own build step — it
+  runs `cargo build --bin specforge` and probes `target/debug/specforge`, while `.5`'s 66 s sizing used
+  `target/release/specforge` (1.2 s per accepted intent probe against ~14 s). The activation was
+  reverted to inert in the same slice that measured it; the corpus repair stands.
 
 - `2026-09-14` — `.7` step 2 (APB-e rebuild). Snapshot first:
   `generated/preserved/CORPUS-CHAIN-CURRENCY.7/pre-rebuild/`, 6 files, digest `8d1b9e13…8791f`.
@@ -507,6 +595,7 @@ beside it and a future leaf should decide whether an adapter's report has an own
 - `.5` — `CORPUS-CHAIN-CURRENCY.5`.
 - `.6` — `CORPUS-CHAIN-CURRENCY.6`.
 - `.7` step 2 — `CORPUS-CHAIN-CURRENCY.7` (APB-e rebuild).
+- `.7` steps 3-4 — `CORPUS-CHAIN-CURRENCY.7` (I2C rebuild; activation measured and held).
 
 | Unit | Durable evidence |
 | --- | --- |

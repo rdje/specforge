@@ -414,18 +414,26 @@ fi
 # sampled tier documents about itself is KEPT where it is paid for and REMOVED where it is not.
 #
 # ── WHY THIS SHIPS INERT, AND WHAT TURNS IT ON ──────────────────────────────
-# The mechanism is here, self-tested (17 and 17b), and measured; the default is EMPTY. Turning it on
-# today would fail the gate on every commit, because the two documents it catches are genuinely
-# broken and are not yet repaired: APB-e's semantic artifact needs a rebuild, and I2C's normalized
-# bundle is reclaimed so it needs a re-ingest rather than a replay. A gate that fails closed over a
-# known-broken corpus is CORRECT and is also unlandable — so the mechanism ships and the activation
-# waits for the repair, rather than the contract being widened to accommodate a failure.
-# (APB-e's rebuild was briefly believed to be blocked by a regression in
-# `SIGNAL-DECLARATION-ROW-DROP.4c`; that was corrected the same day — the rebuild costs one SemanticIR
-# `width_hint` and no emitted `.isf` byte. `CORPUS-CHAIN-CURRENCY.7` owns the repair.)
+# The mechanism is here, self-tested (17 and 17b) and measured; the default is EMPTY. Two things had
+# to be true before it could be switched on, and only one of them is.
 #
-# ACTIVATION, when `.4c` has landed and both documents are rebuilt: set the default below to
-# 'semantic intent'. That is the whole change; the controls already assert both halves.
+# The corpus is no longer the obstacle. `CORPUS-CHAIN-CURRENCY.7` repaired both refusing documents on
+# `2026-09-14` — APB-e and I2C, each by a chain rebuild — and with the stage set forced on, the probe
+# reports 27 of 27 accepted at semantic and at intent, exit 0. That is measured, not predicted.
+#
+# THE COST IS, AND THE NUMBER THAT SAID OTHERWISE WAS MEASURED ON THE WRONG BINARY. `.5` sized the
+# two stages at 66 s from `target/release/specforge` (1.2 s per accepted intent probe). THIS CHECK
+# BUILDS AND USES `target/debug/specforge` (see the build below), deliberately, because the question
+# is whether THIS COMMIT's build accepts the persisted seal and a debug build is the cheapest way to
+# get one. A debug probe costs ~14 s, so the activated gate measured **13m01s** — against 15.9 s for
+# the sampled default. Thirteen minutes per commit is not gate tier, and the mechanism stays inert
+# rather than the cost being accepted quietly.
+#
+# ACTIVATION now turns on one question, not two: which BINARY PROFILE this check should probe with.
+# A release build costs ~35 s warm and then ~1.2 s per probe (~100 s all in) against a debug build's
+# ~780 s of probing; cold, a release build is minutes. That trade is `CORPUS-CHAIN-CURRENCY.8`, and it
+# must be measured cold and warm before the profile moves. Once it does, set the default below to
+# 'semantic intent' — the controls already assert both halves and the corpus is already clean.
 TOTAL_PROBE_STAGES="${SPECFORGE_PROOF_SEAL_TOTAL_STAGES-}"
 
 # probe_scope_for <stage> — 'total' or 'sample', honouring an explicit --total for every stage.

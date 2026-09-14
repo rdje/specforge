@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
@@ -295,5 +297,3 @@
   > why is TLAST cannot be tied LOW not extracted
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why is Vital Product Data (VPD) not a signal
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it

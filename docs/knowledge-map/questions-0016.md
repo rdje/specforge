@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why did retiring generic phases remove pure inferred actors
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -296,5 +298,3 @@
   > why does aggregate_composition support different health and ceiling counts
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > why does an .isf enum get dropped / held out of the emitted .isf
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
