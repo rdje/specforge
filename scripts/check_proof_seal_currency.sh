@@ -416,12 +416,13 @@ fi
 # ── WHY THIS SHIPS INERT, AND WHAT TURNS IT ON ──────────────────────────────
 # The mechanism is here, self-tested (17 and 17b), and measured; the default is EMPTY. Turning it on
 # today would fail the gate on every commit, because the two documents it catches are genuinely
-# broken and their repair is blocked: APB-e's semantic artifact carries the regression tracked as
-# `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it before that leaf lands would publish the
-# regression into a wire-gold chain; I2C's normalized bundle is reclaimed, so it needs a re-ingest
-# rather than a replay. A gate that fails closed over a known-broken corpus is CORRECT and is also
-# unlandable — so the mechanism ships and the activation waits for the repair, rather than the
-# contract being widened to accommodate a failure.
+# broken and are not yet repaired: APB-e's semantic artifact needs a rebuild, and I2C's normalized
+# bundle is reclaimed so it needs a re-ingest rather than a replay. A gate that fails closed over a
+# known-broken corpus is CORRECT and is also unlandable — so the mechanism ships and the activation
+# waits for the repair, rather than the contract being widened to accommodate a failure.
+# (APB-e's rebuild was briefly believed to be blocked by a regression in
+# `SIGNAL-DECLARATION-ROW-DROP.4c`; that was corrected the same day — the rebuild costs one SemanticIR
+# `width_hint` and no emitted `.isf` byte. `CORPUS-CHAIN-CURRENCY.7` owns the repair.)
 #
 # ACTIVATION, when `.4c` has landed and both documents are rebuilt: set the default below to
 # 'semantic intent'. That is the whole change; the controls already assert both halves.

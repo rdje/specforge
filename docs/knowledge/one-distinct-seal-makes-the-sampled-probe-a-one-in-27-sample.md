@@ -68,18 +68,21 @@ costs **30.3 s** (semantic) + **35.5 s** (intent) = **66 s**, and finds every re
 currently has. Sampling is right at source-ir and evidence and wrong at semantic and intent.
 
 The per-stage mechanism is shipped (`probe_scope_for`, self-tests 17 and 17b) and **inert**:
-`TOTAL_PROBE_STAGES` defaults to empty because activating it fails the gate on a corpus whose repair is
-blocked — APB-e by `SIGNAL-DECLARATION-ROW-DROP.4c`, I2C by a reclaimed normalized bundle. A gate that
-fails closed over a genuinely broken corpus is correct and unlandable at the same time, so the mechanism
-lands and the activation waits (`CORPUS-CHAIN-CURRENCY.7`). Activation is one constant.
+`TOTAL_PROBE_STAGES` defaults to empty because activating it fails the gate on a corpus that is
+genuinely broken and not yet repaired — APB-e needs a rebuild and I2C a re-ingest (its normalized bundle
+is reclaimed). A gate that fails closed over a broken corpus is correct and unlandable at the same time,
+so the mechanism lands and the activation waits (`CORPUS-CHAIN-CURRENCY.7`). Activation is one constant.
 
 ## What the sweep found, and the general law under it
 
 - `um10204…i2c` — evidence CONTENT stale (`signal_constraints` 9 → 3, `fact_provenance` 21 → 15);
   everything downstream blocked. Reproduces at `1ada364a`.
 - `ihi0024_e…apb` — semantic CONTENT stale (`interface_signal_conflicts` 0 → 1, `PADDRCHK` loses its
-  width) and REFUSED by `intent` and `isf-adapter`. Reproduces at `956fbcce`; it is
-  `SIGNAL-DECLARATION-ROW-DROP.4a`'s effect, tracked as `.4c`.
+  `width_hint`) and REFUSED by `intent` and `isf-adapter`. Reproduces at `956fbcce`; it is
+  `SIGNAL-DECLARATION-ROW-DROP.4a`'s effect, tracked as `.4c`. **The conflict is real**: the document
+  states `ceil(ADDR_WIDTH/8)` in `Table 5-1` and `ADDR_WIDTH/8` in its version matrix. The rebuild costs
+  one SemanticIR `width_hint` and **no emitted `.isf` byte** — that signal already ships
+  `(output PADDRCHK (width 1))`, as do 31 of APB-e's 32.
 
 **A leaf that changes a reader moves every document it does not rebuild**, and only a CI-tier sweep sees
 it. Both drifts here were found by a detached run, not by any gate, and both had been in the tree for

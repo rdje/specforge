@@ -667,38 +667,44 @@ a long tail.
   Commit: pending
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4c` · Status: `pending` (opened `2026-09-14` by the chain-currency
-  sweep) · Goal: **`.4a` turned one signal's width into a CONFLICT between two spellings of itself, and
-  the only reason it has not shipped is that its document was never rebuilt.**
-  APB-e states `PADDRCHK`'s width three times:
+  sweep; **its opening premise was corrected the same day by tracing the conflict to its tables and the
+  signal to its `.isf`**) · Goal: **a width conflict costs the signal its width in SemanticIR, and the
+  emitter then writes a width the document never stated.**
+  **What the leaf opened on, and what is actually true.** It opened reading `.4a` as a regression: APB-e
+  states `PADDRCHK`'s width three times, `.4a` made the footnote-marked form readable, and the interface
+  reader turned two spellings into a `width_mismatch` and dropped the width. Traced to their tables, the
+  two observations are **not two readings of one statement**:
 
   ```text
-  statement_0543  Signal PADDRCHK is width ceil(ADDR_WIDTH/8) a.
-  statement_0575  Signal PADDRCHK is width ADDR_WIDTH/8.
-  statement_0586  Signal PADDRCHK is output width ceil(ADDR_WIDTH/8) a.
+  table_0014  Table 5-1 Check signal descriptions
+              PADDRCHK | PADDR | ceil(ADDR_WIDTH/8) a | 1-8 | PSEL
+  table_0017  Signal | Width | Property | APB5 | APB4 | APB3 | APB2   (body rotated by one)
+              ADDR_WIDTH/8 | Check_Type | C | N | N | N | PADDRCHK
   ```
 
-  Before `.4a` the reader could not finish `ceil(ADDR_WIDTH/8) a` — the footnote marker left tokens
-  over — so only `ADDR_WIDTH/8` was seen and `PADDRCHK` carried it. `.4a` made that expression readable,
-  which is right, and the interface reader now sees two DIFFERENT strings for one signal, calls it a
-  `width_mismatch`, and **drops the width entirely**: `interface_signal_conflicts` 0 → 1, and
-  `PADDRCHK`'s `width_hint` disappears from every `actor_ports`, `interfaces` and `signal_connectivity`
-  record it had.
-  **The two spellings denote the same width**, and the same document writes both about the same signal.
-  A conflict between `X/8` and `ceil(X/8)` is a conflict between a value and a safer form of itself.
-  **This is measured on the artifact, not predicted**: `specforge semantic --dry-run` over APB-e's
-  persisted (and current) EvidenceIR reproduces it exactly, and it reproduces identically at `956fbcce`,
-  so it is `.4a`'s effect and not a later leaf's. It has not reached any published artifact only because
-  `.4a` rebuilt AXI and not APB-e — which is why `CORPUS-CHAIN-CURRENCY.4` found it and no gate did.
-  **Do not rebuild APB-e until this is decided.** A rebuild today publishes the regression into a
-  wire-gold document's chain; the persisted SemanticIR is currently the BETTER artifact, and the
-  intent stage already refuses to replay from it (`SemanticIR proof verification failed … stale`), so
-  APB-e's chain is stopped either way until this leaf lands.
-  The question to answer first is whether the conflict detector should compare width *expressions* at
-  all, or whether a footnote-marked and an unmarked spelling of one expression are one observation. Size
-  it against every `interface_signal_conflicts` record in the corpus before touching the comparison —
-  the same discipline `.4a` itself was held to.
-  Prerequisite: none. Verification: the corpus population of `width_mismatch` conflicts adjudicated
-  individually; observed RED; the chain rebuilt for every document whose artifacts move, APB-e first.
+  The document states `ceil(ADDR_WIDTH/8)` in the table that describes check signals and `ADDR_WIDTH/8`
+  in its version matrix, and those are **not the same width** for an `ADDR_WIDTH` that is not a multiple
+  of 8. **The conflict is real and reporting it is right**; `.4a` is not a regression and this leaf no
+  longer claims it is.
+  **The defect is what happens after the conflict.** A conflicted signal loses its `width_hint` from
+  every `actor_ports`, `interfaces` and `signal_connectivity` record, so the SemanticIR product boundary
+  carries no width for a signal the document does state a width for — twice.
+  **Blast radius, measured rather than asserted, and smaller than the leaf first said**: the emitted
+  `.isf` does **not** move. `PADDRCHK` already ships as `(output PADDRCHK (width 1))` today, and so do
+  **31 of APB-e's 32** emitted signals; the one current-stratum conflict, AHB `HBURST` (`3` against
+  `HBURST_WIDTH`), likewise ships as `(output HBURST (width 1))` for a signal the document states as 3
+  bits. The width-1 default is a far larger, pre-existing defect that this leaf does not own.
+  **The hold is therefore LIFTED: APB-e may be rebuilt.** The rebuild adds one `interface_signal_conflicts`
+  record and removes one `width_hint` at the SemanticIR boundary, and changes nothing in the emitted
+  `.isf`. That unblocks `CORPUS-CHAIN-CURRENCY.7`.
+  What remains to decide: whether a contested width should be carried with its provenance and a
+  contested flag, or refused outright — and that only matters once the emitter stops defaulting to 1, so
+  size it against that question rather than alone. Corpus population: **1** current-stratum
+  `width_mismatch` (AHB `HBURST`) and 48 legacy, of which the LTI and AXI-H ones are garbage widths from
+  the rotation defect (`LAVALID`, `RESETn`, `V` as "widths") rather than real disagreements.
+  Prerequisite: none. Verification: the corpus population above, adjudicated; the emitter's width
+  behaviour established before any change, because a width restored into a `(width 1)` emitter is
+  invisible.
   Commit: pending
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2e` · Status: `done` (`2026-09-13`, CODE; opened the same day by
@@ -958,9 +964,10 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `SIGNAL-DECLARATION-ROW-DROP.4c` — **first, because it blocks a rebuild.** `.4a` turned `PADDRCHK`'s
-   width into a `width_mismatch` between `ADDR_WIDTH/8` and `ceil(ADDR_WIDTH/8)` and dropped it; APB-e's
-   chain is stopped until the conflict comparison is decided.
+0. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
+   different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
+   that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
+   signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone.
 1. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
    whether a parsed direction should survive an unreadable width.
 2. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a

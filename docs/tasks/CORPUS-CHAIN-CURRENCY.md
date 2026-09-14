@@ -208,17 +208,20 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
 
 - ID: `CORPUS-CHAIN-CURRENCY.7` · Status: `pending` (opened `2026-09-14` by `.6`) · Goal: **repair the
   two documents, then activate.** In order, because each step unblocks the next:
-  1. `SIGNAL-DECLARATION-ROW-DROP.4c` decides whether `ADDR_WIDTH/8` and `ceil(ADDR_WIDTH/8)` are one
-     observation or two. Note that footnote-stripping alone does NOT settle it — the two spellings
-     differ by the `ceil(…)` as well — so that leaf owns a real expression-equivalence question and a
-     census of every `width_mismatch` in the corpus.
+  1. ~~`SIGNAL-DECLARATION-ROW-DROP.4c` first.~~ **No longer a prerequisite** — `.4c`'s own premise was
+     corrected on `2026-09-14` by tracing the two widths to their tables: APB-e states
+     `ceil(ADDR_WIDTH/8)` in `Table 5-1 Check signal descriptions` and `ADDR_WIDTH/8` in its version
+     matrix, so they genuinely differ and `.4a` is right to report a conflict. The rebuild costs one
+     `width_hint` at the SemanticIR boundary and **changes no emitted `.isf`**: `PADDRCHK` already ships
+     `(output PADDRCHK (width 1))`, as do 31 of APB-e's 32 signals.
   2. Rebuild APB-e's chain from its (current) EvidenceIR, upstream-first, one `validate` per artifact.
   3. Re-ingest I2C: its normalized bundle is reclaimed, so `evidence` cannot replay it at all. Decide
      first whether a re-ingest is in this tree's scope or `CORPUS-COVERAGE`'s — a re-ingest replaces the
      document wholesale rather than repairing a drift, and it moves the retention declaration.
   4. Set `TOTAL_PROBE_STAGES='semantic intent'` and re-run: the gate must go green, and
      `check_chain_currency.sh` must report every stage current.
-  Prerequisite: `SIGNAL-DECLARATION-ROW-DROP.4c`. Verification: the gate observed RED before the repair
+  Prerequisite: none (the `.4c` prerequisite was lifted `2026-09-14` — see step 1).
+  Verification: the gate observed RED before the repair
   and GREEN after, with its runtime measured at both; `check_chain_currency.sh` clean; retention
   unchanged at 24 unless the re-ingest deliberately moves it, in which case the declaration moves with it.
   Commit: pending
@@ -385,9 +388,9 @@ Honest limits of this measurement:
 
 ## Current Frontier
 
-1. `CORPUS-CHAIN-CURRENCY.7` — the repair, then the activation. It starts at
-   `SIGNAL-DECLARATION-ROW-DROP.4c`, which is not this tree's to do; the per-stage tier is built,
-   self-tested and one constant away from on.
+1. `CORPUS-CHAIN-CURRENCY.7` — the repair, then the activation. **Unblocked**: APB-e's rebuild costs one
+   SemanticIR `width_hint` and no emitted `.isf` byte, so it may proceed; I2C still needs a re-ingest
+   decision. The per-stage tier is built, self-tested and one constant away from on.
 2. Rebuilding the two drifted documents is **not** this tree's next step. I2C's rebuild is unblocked but
    its normalized bundle is reclaimed, so it needs a re-ingest rather than a replay; APB-e's is blocked
    by `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it today would publish that regression into a
