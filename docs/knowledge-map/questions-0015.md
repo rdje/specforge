@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > which root rolling ledger is currently above its rollover signal
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > which source modalities and IntentIR surfaces are required per chip-spec category
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which source modalities are represented in the first vertical population
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > which source-to-IntentIR categories are supported incomplete or unmeasurable
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -131,6 +139,8 @@
   > why are table-row sources exempt from the pre-bind constraint subject rule
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why are the 75 missing declared signals almost all legacy
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > why are the AHB gold negatives for statements 0561 and 0678 there
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -287,13 +297,3 @@
   > why did a paragraph gain words after re-ingest
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why did a signal declared in EvidenceIR never reach the semantic interface records
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why did a signal named `any` appear in an EvidenceIR artifact
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why did a signal named `name` appear in the Avalon interface specification
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why did a temporal conflict disappear when a signal constraint was removed
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs

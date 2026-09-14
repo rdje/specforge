@@ -837,6 +837,13 @@ impl SemanticIr {
             &ungrounded_conditional_rules,
             declared_signal_names.len(),
         ));
+        // SIGNAL-DECLARATION-ROW-DROP.4b: the same doctrine one reader over. A declaration the
+        // reader could not finish parsing is refused with a reason instead of vanishing, so a
+        // signal that never reaches the catalog is a record rather than a silence.
+        residual_decisions.extend(unreadable_declaration_residual_packet(
+            &context,
+            &interfaces,
+        ));
 
         // Merge state/transition records: formal syntax + VLM diagram observations.
         // VLM-sourced records are appended so they don’t replace existing formal records.
@@ -2990,6 +2997,45 @@ struct ParsedInterfaceSignalDeclaration {
     signal_name: String,
     direction_hint: Option<InterfaceSignalDirection>,
     width_hint: Option<WidthHint>,
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.4b — why [`read_explicit_signal_declaration`] refused a sentence that
+/// had already opened as a declaration.
+///
+/// Each variant is one of the reader's own refusal points, named where it fires. Nothing here is a
+/// derived taxonomy over the refused text: a classifier authored from a *description* of the reader
+/// is green exactly where it is blind, so the reader states its own reason.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum SignalDeclarationRefusal {
+    /// `Signal <token>` whose token is not an identifier, so no identity was declared at all.
+    NameNotAnIdentifier,
+    /// The predicate yielded neither a direction nor a width.
+    NoDirectionAndNoWidth,
+    /// Tokens remained unread after the attributes — the width text is not a width.
+    WidthTextUnread,
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.4b — one refused declaration, kept so the refusal can be counted and
+/// named rather than vanishing.
+#[derive(Debug, Clone)]
+struct RefusedSignalDeclaration {
+    /// The declared identity, when the reader got far enough to read one. `None` only for
+    /// [`SignalDeclarationRefusal::NameNotAnIdentifier`], where there is no identity to name.
+    signal_name: Option<String>,
+    refusal: SignalDeclarationRefusal,
+}
+
+/// The three outcomes of reading one sentence as a signal declaration.
+///
+/// `NotADeclaration` and `Refused` are deliberately distinct. A sentence that never opened as
+/// `Signal <name> …` is not an event — recording it would be the "absence is not an event" noise the
+/// residual doctrine refuses — while a sentence that DID open as a declaration and was then refused
+/// is a loss the artifact has to carry.
+#[derive(Debug)]
+enum SignalDeclarationReading {
+    NotADeclaration,
+    Refused(RefusedSignalDeclaration),
+    Read(ParsedInterfaceSignalDeclaration),
 }
 
 #[derive(Debug, Clone)]
@@ -6203,6 +6249,127 @@ fn ungrounded_promotion_residual_packet(
     })
 }
 
+/// SIGNAL-DECLARATION-ROW-DROP.4b — the declarations this reader refuses for an unreadable WIDTH,
+/// counted and named.
+///
+/// The precedent is `ungrounded_promotion_residual_packet` directly above, and the doctrine is the
+/// same one: demote, don't drop. The grounding filter there refuses a record canonical authority and
+/// says so; this reader refuses a *declaration* and said nothing at all, so a signal the document
+/// does declare could vanish from the catalog — and with it, under that same grounding filter, every
+/// obligation the document states about it.
+///
+/// **Exactly one of the reader's three refusal arms is reported, and the boundary was MEASURED
+/// rather than assumed.** Run over the 27-document current stratum, the reader refuses 11 sentences:
+/// 8 `no_direction_and_no_width`, 2 `name_not_an_identifier`, 1 `width_text_unread`. Adjudicating
+/// every one of them against its source statement, the first two arms are **entirely English prose
+/// that happens to open with the word "signal"** — *"Signal names MUST adhere to the rules of the
+/// native tool"*, *"Signal arrays are identified by a name followed by a set of parenthesis"* —
+/// which would publish `names`, `arrays`, `direction`, `is` and `at` as lost signals. Reporting all
+/// three arms scores **1 named identity in 8**; reporting this one scores **1 in 1**.
+///
+/// There is a structural reason the measurement came out that way, and it is why this is a boundary
+/// rather than a tuned threshold: EvidenceIR synthesizes a declaration only from a row that yielded
+/// at least one attribute (`.0`'s `_ => continue` arm drops the rest before any statement exists),
+/// so a `Signal …` sentence carrying NO direction and NO width cannot be a synthesized declaration
+/// at all. `width_text_unread` is the opposite case and is exactly `.4`'s subject: the reader had
+/// already read an attribute, then discarded the identity and the direction along with the width
+/// text it could not consume.
+///
+/// **Proportionate by construction, and only a real LOSS is reported.** A declaration may be refused
+/// in one statement and read in another — a specification commonly declares the same wire in a
+/// signal-description table and again in a version matrix — and a signal that reaches an interface
+/// record has lost nothing worth a residual.
+fn unreadable_declaration_residual_packet(
+    context: &SemanticContext,
+    interfaces: &[InterfaceRecord],
+) -> Option<ResidualDecisionPacket> {
+    let refused: Vec<RefusedSignalDeclaration> = context
+        .statements
+        .iter()
+        .flat_map(|statement| refused_explicit_signal_declarations(&statement.text))
+        .filter(|entry| match entry.refusal {
+            SignalDeclarationRefusal::WidthTextUnread => true,
+            SignalDeclarationRefusal::NameNotAnIdentifier
+            | SignalDeclarationRefusal::NoDirectionAndNoWidth => false,
+        })
+        .collect();
+    if refused.is_empty() {
+        return None;
+    }
+
+    let catalog: BTreeSet<&str> = interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .map(|record| record.signal_name.as_str())
+        .collect();
+    let lost: BTreeSet<&str> = refused
+        .iter()
+        .filter_map(|entry| entry.signal_name.as_deref())
+        .filter(|name| !catalog.contains(name))
+        .collect();
+    if lost.is_empty() {
+        return None;
+    }
+
+    let sample: Vec<&str> = lost
+        .iter()
+        .take(UNGROUNDED_PROMOTION_SAMPLE_LIMIT)
+        .copied()
+        .collect();
+    let elided = lost.len() - sample.len();
+    let named = if elided == 0 {
+        sample.join(", ")
+    } else {
+        format!("{}, and {elided} more", sample.join(", "))
+    };
+
+    let refused_total = refused.len();
+    let lost_total = lost.len();
+    Some(ResidualDecisionPacket {
+        packet_id: "semantic_unreadable_declaration_width".to_string(),
+        question: "Does a declaration whose width text cannot be read still declare a signal?"
+            .to_string(),
+        why_unresolved: format!(
+            "{refused_total} declaration(s) stated an attribute and were then refused because the \
+             width text could not be read to the end of the sentence; {lost_total} of the \
+             identities they name reach no interface record in this document: {named}. Refusing \
+             them may well be correct — a width the source row never stated is not a width, and a \
+             waveform or heading row is not a signal description — but the refusal used to leave no \
+             declaration, no residual, no counter and no validation entry, so the loss was \
+             invisible to every gate. The statements remain in EvidenceIR with their provenance. A \
+             sentence that merely opens with the English word \"signal\" and states no attribute at \
+             all is not counted here: it is not a declaration this pipeline ever synthesized."
+        ),
+        automation_confidence: AutomationConfidence::Medium,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "refuse_unreadable_declaration".to_string(),
+                description:
+                    "Keep refusing a declaration whose attributes cannot be read to the end of the \
+                     sentence, and carry the refusal as this residual."
+                        .to_string(),
+                downstream_impact:
+                    "The catalog stays grounded in declarations the reader could actually read, but \
+                     a real signal whose only declaration carries an unreadable width stays out of \
+                     the product boundary and every obligation about it is demoted with it."
+                        .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "admit_identity_without_width".to_string(),
+                description:
+                    "Admit the identity — and any direction already parsed — and leave the width \
+                     unset when the width text cannot be read."
+                        .to_string(),
+                downstream_impact:
+                    "The identity and its obligations return immediately, but a row that is not a \
+                     signal description at all — a waveform cell, a section heading, a note — \
+                     becomes a declared signal with no attribute to check it against."
+                        .to_string(),
+            },
+        ],
+    })
+}
+
 fn build_residual_decisions(
     context: &SemanticContext,
     interfaces: &[InterfaceRecord],
@@ -6431,6 +6598,21 @@ fn section_ids_for_statement(
 }
 
 fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignalDeclaration> {
+    match read_explicit_signal_declaration(text) {
+        SignalDeclarationReading::Read(declaration) => Some(declaration),
+        SignalDeclarationReading::NotADeclaration | SignalDeclarationReading::Refused(_) => None,
+    }
+}
+
+/// The declaration reader, stating its own refusal.
+///
+/// SIGNAL-DECLARATION-ROW-DROP.4b. The parse is byte-for-byte the one
+/// [`parse_explicit_signal_declaration`] has always performed; what is new is that each `return
+/// None` that follows a recognized `Signal <name> …` opening now names the refusal point instead of
+/// yielding an indistinguishable `None`. A refused declaration used to leave no declaration, no
+/// residual, no counter and no validation entry, which is the same silence `.0` measured for the
+/// body-row reader one stage up.
+fn read_explicit_signal_declaration(text: &str) -> SignalDeclarationReading {
     let normalized = normalize_sentence(text);
     let normalized = normalized
         .trim()
@@ -6438,10 +6620,15 @@ fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignal
         .trim_end_matches(':');
     let tokens: Vec<&str> = normalized.split_whitespace().collect();
     if tokens.len() < 3 || !tokens[0].eq_ignore_ascii_case("signal") {
-        return None;
+        return SignalDeclarationReading::NotADeclaration;
     }
 
-    let signal_name = parse_identifier(tokens[1])?;
+    let Some(signal_name) = parse_identifier(tokens[1]) else {
+        return SignalDeclarationReading::Refused(RefusedSignalDeclaration {
+            signal_name: None,
+            refusal: SignalDeclarationRefusal::NameNotAnIdentifier,
+        });
+    };
     let mut index = 2usize;
     if tokens
         .get(index)
@@ -6472,21 +6659,47 @@ fn parse_explicit_signal_declaration(text: &str) -> Option<ParsedInterfaceSignal
     }
 
     if direction_hint.is_none() && width_hint.is_none() {
-        return None;
+        return SignalDeclarationReading::Refused(RefusedSignalDeclaration {
+            signal_name: Some(signal_name),
+            refusal: SignalDeclarationRefusal::NoDirectionAndNoWidth,
+        });
     }
     // SIGNAL-DECLARATION-ROW-DROP.4a — the sentence must BE a declaration, so unread tokens normally
     // refuse it. A width EXPRESSION is the one exception: the tokens it leaves behind are the
     // qualifying prose a specification writes after a width (`… if ARIDUNQ is not present: …`), and
     // discarding the declaration for them throws away the identity and the direction as well.
     if index != tokens.len() && !width_expression_was_read {
-        return None;
+        return SignalDeclarationReading::Refused(RefusedSignalDeclaration {
+            signal_name: Some(signal_name),
+            refusal: SignalDeclarationRefusal::WidthTextUnread,
+        });
     }
 
-    Some(ParsedInterfaceSignalDeclaration {
+    SignalDeclarationReading::Read(ParsedInterfaceSignalDeclaration {
         signal_name,
         direction_hint,
         width_hint,
     })
+}
+
+/// SIGNAL-DECLARATION-ROW-DROP.4b — every sentence in one EvidenceIR statement that opened as a
+/// declaration and was refused.
+///
+/// The sentence split is the one [`parse_explicit_signal_declarations`] uses, so the read half and
+/// the refused half partition exactly the same population and neither can drift into counting a
+/// sentence the other never saw.
+fn refused_explicit_signal_declarations(text: &str) -> Vec<RefusedSignalDeclaration> {
+    normalize_sentence(text)
+        .split('.')
+        .filter_map(
+            |sentence| match read_explicit_signal_declaration(sentence.trim()) {
+                SignalDeclarationReading::Refused(refused) => Some(refused),
+                SignalDeclarationReading::NotADeclaration | SignalDeclarationReading::Read(_) => {
+                    None
+                }
+            },
+        )
+        .collect()
 }
 
 /// Parse every canonical signal declaration carried by one EvidenceIR statement. Markdown
@@ -24223,6 +24436,135 @@ mod tests {
         assert!(
             result.is_none(),
             "signal clk (2 tokens): expected None, got {result:?}"
+        );
+    }
+
+    // -- SIGNAL-DECLARATION-ROW-DROP.4b: the reader states its own refusal --
+
+    fn declaration_context(text: &str) -> super::SemanticContext {
+        super::SemanticContext {
+            statements: vec![super::StatementContext {
+                statement_id: "stmt_declaration".to_string(),
+                class: StatementClass::NormativeStatement,
+                text: text.to_string(),
+                related_visual_evidence_ids: Vec::new(),
+                section_ids: Vec::new(),
+                signals: Vec::new(),
+                supporting_table_ids: Vec::new(),
+            }],
+            section_anchors: Vec::new(),
+            visual_roles_by_id: HashMap::new(),
+            actor_signal_relations: Vec::new(),
+            signal_semantic_hints: Vec::new(),
+        }
+    }
+
+    fn catalog_with(signal_name: &str) -> Vec<super::InterfaceRecord> {
+        vec![super::InterfaceRecord {
+            interface_id: "if_catalog".to_string(),
+            signals: vec![signal_name.to_string()],
+            signal_records: vec![super::InterfaceSignalRecord {
+                signal_name: signal_name.to_string(),
+                direction_hint: None,
+                width_hint: None,
+                resolved_polarity: None,
+                semantic_tags: Vec::new(),
+                semantic_candidates: Vec::new(),
+                semantic_arbitration: None,
+                resolved_semantic_role: None,
+                semantic_grounding_strength: None,
+                semantic_consensus: None,
+                semantic_observations: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::High,
+            }],
+            supporting_statement_ids: Vec::new(),
+        }]
+    }
+
+    #[test]
+    fn declaration_reader_names_the_refusal_arm_that_fired() {
+        use super::{SignalDeclarationReading, SignalDeclarationRefusal};
+
+        assert!(matches!(
+            super::read_explicit_signal_declaration("The transfer completes."),
+            SignalDeclarationReading::NotADeclaration
+        ));
+        assert!(matches!(
+            super::read_explicit_signal_declaration("Signal PSEL is input width 1"),
+            SignalDeclarationReading::Read(_)
+        ));
+        // AXI's own malformed arithmetic: the reader gets a width token and then cannot consume the
+        // rest of the sentence, so the identity and any direction are discarded with it.
+        let refused = match super::read_explicit_signal_declaration(
+            "Signal RUSERCHK is width ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)",
+        ) {
+            SignalDeclarationReading::Refused(refused) => refused,
+            other => panic!("expected a refusal, got a different reading: {other:?}"),
+        };
+        assert_eq!(refused.signal_name.as_deref(), Some("RUSERCHK"));
+        assert_eq!(refused.refusal, SignalDeclarationRefusal::WidthTextUnread);
+        // English prose that merely opens with the word "signal" states no attribute at all.
+        assert!(matches!(
+            super::read_explicit_signal_declaration(
+                "Signal names MUST adhere to the rules of the native tool"
+            ),
+            SignalDeclarationReading::Refused(super::RefusedSignalDeclaration {
+                refusal: SignalDeclarationRefusal::NoDirectionAndNoWidth,
+                ..
+            })
+        ));
+        assert!(matches!(
+            super::read_explicit_signal_declaration("Signal 1234 is input width 1"),
+            SignalDeclarationReading::Refused(super::RefusedSignalDeclaration {
+                refusal: SignalDeclarationRefusal::NameNotAnIdentifier,
+                signal_name: None,
+            })
+        ));
+    }
+
+    #[test]
+    fn unreadable_declaration_width_is_counted_and_named() {
+        let context = declaration_context(
+            "Signal RUSERCHK is width ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8).",
+        );
+        let packet = super::unreadable_declaration_residual_packet(&context, &[])
+            .expect("a refused declaration that reaches no interface record is a residual");
+        assert_eq!(packet.packet_id, "semantic_unreadable_declaration_width");
+        assert!(
+            packet.why_unresolved.contains("RUSERCHK"),
+            "the packet must NAME the identity it lost: {}",
+            packet.why_unresolved
+        );
+    }
+
+    #[test]
+    fn prose_opening_with_signal_is_not_a_lost_declaration() {
+        // The measured boundary (`.4b`): over the 27-document current stratum the reader refuses 11
+        // sentences, and every one of the 10 that state NO attribute is English prose — "Signal
+        // names MUST adhere…", "Signal arrays are identified by…" — which would publish `names` and
+        // `arrays` as lost signals. EvidenceIR only ever synthesizes a declaration from a row that
+        // yielded an attribute, so a no-attribute sentence cannot be one.
+        let context = declaration_context(
+            "Signal names MUST adhere to the rules of the native tool in which the IP core is designed.",
+        );
+        assert!(
+            super::unreadable_declaration_residual_packet(&context, &[]).is_none(),
+            "a sentence that states no attribute is not a declaration this pipeline synthesized"
+        );
+    }
+
+    #[test]
+    fn a_refused_declaration_whose_identity_is_declared_elsewhere_is_not_a_loss() {
+        let context = declaration_context(
+            "Signal RUSERCHK is width ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8).",
+        );
+        assert!(
+            super::unreadable_declaration_residual_packet(&context, &catalog_with("RUSERCHK"))
+                .is_none(),
+            "a specification may declare the same wire twice; only a signal that reaches no \
+             interface record has lost anything"
         );
     }
 

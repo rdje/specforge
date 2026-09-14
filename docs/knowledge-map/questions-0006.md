@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > how does specforge fold an X interface relation subject onto the bare agent X
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -295,5 +297,3 @@
   > how many alignment task owners and routes survive migration
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > how many arrow-form direction cells exist corpus-wide
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > how many book claims describe behaviour the code no longer has

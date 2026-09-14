@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where is the SpecForge FSMGen feedback or handoff channel
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > where is the SpecForge trajectory controller engine
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > where is the U+F0B7 signal integrity panic in evidence extraction
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > where is the acceptance checklist a code change must satisfy
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > where is the authoritative chipdoc source library now
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -290,11 +298,3 @@
   > which reviewed cells still need a typed actionable residual
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > which root rolling ledger is currently above its rollover signal
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > which source modalities and IntentIR surfaces are required per chip-spec category
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which source modalities are represented in the first vertical population

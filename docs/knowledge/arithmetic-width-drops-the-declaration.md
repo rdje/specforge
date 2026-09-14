@@ -12,11 +12,16 @@ answers:
   - "does parse_explicit_signal_declaration keep the direction when it cannot read the width"
   - "why does removing a fabricated EvidenceIR constraint change nothing in SemanticIR"
   - "where is the declared-signal set that the semantic grounding filter uses built"
-date: 2026-09-13
+  - "does SemanticIR record a declaration it refused for an unreadable width"
+  - "what is the semantic_unreadable_declaration_width residual packet"
+  - "how many declarations does the SemanticIR reader refuse corpus-wide"
+  - "why are the 75 missing declared signals almost all legacy"
+  - "is a sentence opening with the word signal and no attribute a lost declaration"
+date: 2026-09-14
 status: current
 tags: [semantic-ir, signal-catalog, declaration, grounding-filter, axi, signal-declaration-row-drop, extraction-quality-gauge]
 evidence: crates/specforge/src/ir/semantic.rs (parse_explicit_signal_declaration, the `if index != tokens.len() { return None; }` arm; parse_width_expression; width_expression_length; build_interfaces; declared_signal_names; the signal_constraints grounding partition); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.4, .4a, .4b); docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.3k.7)
-reverify: "python3 scripts/measure_declared_signals_missing_from_semantic.py — expect 75 missing across 10 documents after SIGNAL-DECLARATION-ROW-DROP.4a; the AXI-L line must NOT show WSTRB"
+reverify: "python3 scripts/measure_declared_signals_missing_from_semantic.py — expect 75 missing across 10 documents after SIGNAL-DECLARATION-ROW-DROP.4a; the AXI-L line must NOT show WSTRB. Stratum: 9 of those 10 carry `\"schema_version\": 1` SemanticIR and `specforge semantic <doc>/evidence_ir.json --dry-run` refuses each with `EvidenceIR schema version 2 is legacy/proofless`, so 74 of the 75 are latent, not current. Refusal visibility: over the 27 chain-current documents exactly one carries `semantic_unreadable_declaration_width` (AXI-L, naming RUSERCHK) — `jq -r \".residual_decisions[].packet_id\" generated/semantic_ir/*/semantic_ir.json | sort | uniq -c`."
 ---
 
 `parse_explicit_signal_declaration` reads `Signal X is <direction> width <W>.` and ends with
@@ -59,6 +64,38 @@ strata, needing different answers:
   `.4a` also refuses (`ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)` has no operator,
   `ceil((LTI_SSID_WIDTH +` is truncated, `log 2 (DATA_WIDTH) -` is mangled) that residue is **69**,
   owned by `SIGNAL-DECLARATION-ROW-DROP.4b`.
+
+## `.4b`: the refusal is recorded, and the population is 74/75 LEGACY
+
+**The census mixes strata, and no node had said so.** Nine of its ten documents carry
+`"schema_version": 1` SemanticIR — an older binary's output that the current chain cannot reproduce,
+because `specforge semantic <doc>/evidence_ir.json --dry-run` refuses each of the nine with
+`EvidenceIR schema version 2 is legacy/proofless and inspection-only`. **The chain-current residue is
+1**: AXI-L's `RUSERCHK`. MMU-700's 47 is real and *latent* — it becomes observable when MMU-700 is
+re-ingested, not before. Any recall number read off this census is a statement about persisted
+artifacts, not about what today's reader does.
+
+**`read_explicit_signal_declaration` now states which refusal arm fired**, and
+`unreadable_declaration_residual_packet` carries one of the three as a
+`semantic_unreadable_declaration_width` residual: the declaration stated an attribute and was then
+refused because its width text could not be consumed to the end of the sentence, and the identity it
+names reaches no interface record anywhere in the document.
+
+**Only that one arm is reported, and the boundary was measured.** Over the 27 chain-current documents
+the reader refuses 11 sentences — 8 `no_direction_and_no_width`, 2 `name_not_an_identifier`, 1
+`width_text_unread`. Adjudicated against their source statements, all 10 in the first two arms are
+English prose that opens with the word "signal": *"Signal names MUST adhere to the rules of the
+native tool"*, *"Signal arrays are identified by a name followed by a set of parenthesis"*. Reporting
+all three arms publishes `names`, `arrays`, `direction`, `is` and `at` as lost wires — **1 real
+identity in 8**; reporting the one arm is **1 in 1**. The split is structural, not tuned: EvidenceIR
+synthesizes a declaration only from a row that yielded at least one attribute (`.0`'s `_ => continue`
+arm drops the rest before any statement exists), so a `Signal …` sentence with neither a direction nor
+a width cannot be a declaration this pipeline produced.
+
+AXI-L rebuilt `semantic → validate → intent → validate → adapt`: `residual_decisions` **0 → 1**,
+catalog unchanged at 296, `signal_constraints` unchanged at 56, and the emitted `.isf` `source_text`
+**byte-identical** at 31,691 bytes / 296 signals / 138 rules. Whether a refused declaration's identity
+and direction should SURVIVE its unreadable width is `SIGNAL-DECLARATION-ROW-DROP.4d`.
 
 ## Why this is easy to mistake for something else
 

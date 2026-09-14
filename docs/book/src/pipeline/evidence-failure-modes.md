@@ -303,10 +303,40 @@ Measured over the corpus on `2026-09-13`: **83 declared signals across ten docum
 the catalog**, of which 17 state an arithmetic width. Fourteen of those seventeen now read, and AXI's
 own catalog grows from 288 signals to 296 — `WSTRB` among them, which immediately restores the
 requirement *"An attached Subordinate must have its WSTRB input tied HIGH"* from a residual to a
-published constraint, and carries it into the emitted `.isf`. The remaining 69 are tracked as
-`SIGNAL-DECLARATION-ROW-DROP.4b`: most of them have a declaration whose width text the source row
-never stated as a width at all, which is a defect upstream of this reader — but the refusal is still
-silent, which is not.
+published constraint, and carries it into the emitted `.isf`.
+
+#### The refusal is no longer silent
+
+What remains is a declaration whose width text cannot be read at all — `Signal LAADDR is width
+3'b000 , lavalid`, which comes from a waveform table that is not a signal description. Refusing it is
+very likely correct. Refusing it *silently* is not, and that is now fixed: when a declaration states
+an attribute and is then refused because its width text cannot be consumed to the end of the
+sentence, and the identity it names reaches no interface record anywhere in the document, SemanticIR
+records a `semantic_unreadable_declaration_width` residual naming the signals it lost. The decision
+it poses — admit the identity without a width, or keep refusing — is carried with both candidate
+interpretations and their downstream impact, rather than being made by silence.
+
+Only one of the reader's three refusal arms is reported, and the boundary was measured rather than
+assumed. Measured on `2026-09-14` over the 27 chain-current documents, the reader refuses 11
+sentences: 8 state no direction and no width, 2 have a name that is not an identifier, and 1 is the
+unreadable width above.
+Adjudicated against their source statements, every sentence in the first two groups is ordinary
+English prose that happens to open with the word "signal" — *"Signal names MUST adhere to the rules
+of the native tool"*, *"Signal arrays are identified by a name followed by a set of parenthesis"* —
+so reporting all three arms would publish `names`, `arrays` and `at` as lost wires. There is a
+structural reason for that split: the evidence stage synthesizes a declaration only from a row that
+yielded at least one attribute, so a `Signal …` sentence carrying neither a direction nor a width
+cannot be a declaration this pipeline produced. Reporting all three arms names one real signal in
+eight; reporting the one arm names one in one.
+
+The residue is smaller than the corpus census suggests, and for a reason worth stating plainly:
+**nine of those ten documents carry a legacy SemanticIR that the current pipeline cannot rebuild** —
+`specforge semantic` refuses their EvidenceIR with `schema version 2 is legacy/proofless and
+inspection-only`. Their losses are real and *latent*: they become observable when the document is
+re-ingested, not before. On the chain-current corpus the loss is one signal in one document — AXI's
+`RUSERCHK`, whose stated width `ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)` is missing an operator in
+the source. Whether a refused declaration's identity and direction should survive its unreadable
+width is tracked as `SIGNAL-DECLARATION-ROW-DROP.4d`.
 
 ### What no shape can decide
 

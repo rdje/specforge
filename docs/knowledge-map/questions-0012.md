@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
@@ -192,6 +198,8 @@
   > what is the sample size of the gate-tier seal probe
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > what is the semantic_ungrounded_records_not_promoted residual packet
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > what is the semantic_unreadable_declaration_width residual packet
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -289,11 +297,3 @@
   > what prevents the word while in a license notice from becoming a gate
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > what produces the backslash in an EvidenceIR statement text
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > what proved that analysis commands can violate project data locality
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what real PDF proves the FigureRegion vertical path
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > what refuses a table whose headers are Mode Name and Bus Width

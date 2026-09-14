@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what conserves between the PDF and SourceIR
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what debug/diagnostic tools does specforge have (TOOLBOX.md)
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > what declaration catalog does the placeholder check read
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
@@ -291,9 +297,3 @@
   > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > what happens if someone runs clean --scope source-normalized on a declared document
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > what happens if the dynamic binder is run per clause
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > what happens to a constraint whose subject is a withheld template base name
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > what happens to a declaration whose width is an arithmetic expression

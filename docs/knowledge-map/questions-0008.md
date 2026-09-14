@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > how will SpecForge automatically detect convergence or divergence
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > how will the million-byte Knowledge Map be sharded without losing question retrieval
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > how will the oversized SpecForge roadmap be made bounded without losing its history
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -83,6 +87,8 @@
   > is a persisted table_kind evidence about the current classifier
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > is a repeated leading token enough to tell a split identifier from a phrase
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > is a sentence opening with the word signal and no attribute a lost declaration
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > is a subscript split the same defect as an underscore split
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -292,9 +298,3 @@
   > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > is the per-stage total seal probe active or inert
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > is the persisted corpus one code generation
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence

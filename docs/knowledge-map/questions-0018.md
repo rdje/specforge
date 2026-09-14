@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is DTI DOWNSTREAM not preserved as a heuristic only wire
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > why is HPROT constrained to 0 in the persisted AHB evidence
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -287,13 +297,3 @@
   > why must terminal task tree containment use two commits
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > why must the invariant comparator reject a semantic negative first
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why must the value and its following word come from one scan
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why not CTL for temporal behavior
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why not create a new corpus coverage continuation tree
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)

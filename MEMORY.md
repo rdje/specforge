@@ -7,43 +7,44 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- **`TEXT-LAYER-IDENTIFIER-SPLIT.2` CLOSED (PROBE/DOC) — NO RULE: the same cell shape wants TWO DIFFERENT
-  JOINS.** `a opcode` is `a_opcode`, `t PERIOD` is `tPERIOD`, and nothing in the cell says which. Name column
-  over 573 tables: tier A **9 / 2 reachable**, tier B **126 / 2** of which **81 TileLink, 0 reachable**. The
-  document's own spelling is exact — **2 of 126, right about both** — but both are in one LEGACY table (eMMC has
-  no retained bundle, evidence schema 2 vs 3), so a rule changes 0 declarations. `[[a-split-name-cell-does-not-say-which-join-it-wants]]`.
-- **`CLAIM-VERIFICATION-ADOPTION.7.3` CLOSED (CODE/DOC) — a SELF-TEST CASE COUNT is a published assertion;
-  THREE were stale at once** under a green gate. `scripts/report_self_test_totals.pl` emits each script's
-  DECLARED total and three `derived` assertions bind the TOOLBOX lines to it, so the count is published once.
-  It reads the declaration, not the self-test (`rebuild_stage_cascade.sh --self-test` builds the binary, 43.6 s),
-  and the declaration is self-guarding, so the legs compose. **RED**: `total=21`→`22` fails naming both values.
-- Active unit: **`CLAIM-VERIFICATION-ADOPTION.9` CLOSED `2026-09-14` (CODE/DOC) — the book census can now SEE
-  the numbers on the page.** Three sized changes: the four nouns with a RECORDED miss (13 lines; the
-  speculative 19-noun set was measured and refused); **up to TWO words between numeral and noun**, the gap the
-  noun list cannot close ("126 **name** cells") — 0 words catches 1 of 4 demonstrated misses, 2 catches **4 of
-  4**, a third adds 12 and catches nothing; and a **trailing word boundary**, a precision bug found by measuring
-  (`signals?` matched inside "PHY **Signal**ing"), removing exactly 5 false positives plus a list-marker strip.
-  **The noun-free option was REFUTED as a substitute**: 119 lines vs 61, overlapping by only 7. Denominator
-  **346 → 458** across 25 files, 458/458 adjudicated (112 dated, **1 `incomplete`** — kg-bench's live "156
-  tracked fixtures" — 1 authored threshold), **2 records DELETED** that had adjudicated false positives, one a
-  `3.` list index read as "3 shards". **RED**: reverting the gap fails new self-test case 20 by name. Residual,
-  asserted as bounds: three intervening words, and spelled numerals.
-- Earlier: **`CORPUS-CHAIN-CURRENCY` EXHAUSTED** (`.0`-`.9`). `.8` gave the three corpus-replay entrypoints ONE
-  binary predicate at the **release** profile (`--total` 18m45s → 1m59.2s; `check_chain_currency.sh` 28m00s →
-  12m38.2s; ≈47 min of CI doctrine → **14m37s**, byte-identical). `.9` turned the per-stage TOTAL probe ON (gate
-  **4m13.0s → 5m30.1s**) + **self-test 21**, which reads the SHIPPED DEFAULT.
-- Next action: **pick a tree** — `TEXT-LAYER-IDENTIFIER-SPLIT.1` (live VLM over three persisted figures),
-  `SIGNAL-DECLARATION-ROW-DROP.4b`/`.4c`/`.2d`/`.2f`, the unsized `.3j`. `.3k.9` stays `DO NOT SHIP YET`.
+- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.4b` CLOSED `2026-09-14` (CODE/DOC) — the SemanticIR
+  declaration reader's refusal is COUNTED AND NAMED, and the population it was opened on is 74/75
+  LEGACY.** `read_explicit_signal_declaration` returns `NotADeclaration | Refused(reason) | Read(_)`;
+  `unreadable_declaration_residual_packet` emits `semantic_unreadable_declaration_width` naming every
+  identity refused for an unreadable WIDTH that reaches no interface record anywhere in the document.
+  **Which of the three refusal arms to report was MEASURED**: over 27 chain-current documents the
+  reader refuses **11** sentences (8 `no_direction_and_no_width`, 2 `name_not_an_identifier`, 1
+  `width_text_unread`) and all **10** in the first two arms are English prose opening with the word
+  "signal", so all-three-arms publishes `names`/`arrays`/`is`/`at` as lost wires — **1 real in 8**
+  against **1 in 1**. Structural: `.0`'s `_ => continue` drops a no-attribute row before any statement.
+  **Premise correction no node had made: 9 of the census's 10 documents carry `schema_version: 1`
+  SemanticIR** and `semantic --dry-run` refuses all nine (`EvidenceIR schema version 2 is
+  legacy/proofless`), so MMU-700's 47 is LATENT; current-stratum residue is **1** (AXI-L `RUSERCHK`).
+  AXI-L rebuilt `semantic → validate → intent → validate → adapt → validate`: `residual_decisions`
+  **0 → 1**, catalog **296** and `signal_constraints` **56** unchanged, emitted `.isf`
+  **byte-identical** (31,691 B, 296 signals / 138 rules). **RED**: admitting `NoDirectionAndNoWidth`
+  fails `prose_opening_with_signal_is_not_a_lost_declaration` by name. Opened **`.4d`** — should the
+  identity and DIRECTION survive? — which must read the latent population with the REAL reader (a
+  `replay-constraints`-shaped replay), never a mirror; prior rulings scored **24%** (`.1d`) and
+  **1-in-8** (`.4b`).
+- Earlier: **`CLAIM-VERIFICATION-ADOPTION.9`** gave the book census two-word numeral→noun gaps and a
+  trailing word boundary (denominator **346 → 459**). **`TEXT-LAYER-IDENTIFIER-SPLIT.2` CLOSED — NO
+  RULE**: `a opcode`→`a_opcode` vs `t PERIOD`→`tPERIOD`, nothing in the cell says which.
+  **`CORPUS-CHAIN-CURRENCY` EXHAUSTED**: release-profile replay took ~47 min of CI doctrine to 14m37s.
+- Next action: **pick a tree** — `SIGNAL-DECLARATION-ROW-DROP.4d` (build the legacy-capable replay
+  first), `.4c`, `.2f`, `.2d`; `TEXT-LAYER-IDENTIFIER-SPLIT.1`; `EXTRACTION-QUALITY-GAUGE.3j` (unsized).
 - In-flight uncommitted: none. No background job outstanding.
-- Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 261; directive 16 gates it
-  on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**
-  `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` is at 2,878 of 3,000 lines; **`DOCTRINE_ENFORCEMENT.md` line 394 is
-  845 of the 1,024-byte `line_bytes_each` ceiling** — route new detail to §10 prose, never into that cell.
-  Standing hazards live in fact cards, not here; the ones that bite most often are
-  **[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]** (say which BINARY PROFILE a cost was
-  measured with — `release` everywhere now), **[[live-surface-edit-bookkeeping-chain]]** (a book-chapter insert
-  re-pins line-anchored regions in all three claim registries; a bulk digest refresh must NEVER touch a node
-  carrying `start_line`), **[[a-dropped-declaration-row-is-usually-not-a-signal]]** (a test scoring a table
-  against a catalog THAT TABLE FED is circular), and **a control that passes its own configuration tests the
-  MECHANISM, never the shipped default** (`CORPUS-CHAIN-CURRENCY.9`). A new `scripts/` file must be STAGED; the
-  doctrine driver runs no cargo gate; `evidence.rs` tests are in **`-p specforge-core`**. Cap: 50 lines.
+- Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 262; directive 16
+  gates it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**
+  `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` is at 2,878 of 3,000 lines; **`DOCTRINE_ENFORCEMENT.md`
+  line 394 is 845 of the 1,024-byte `line_bytes_each` ceiling** — route new detail to §10 prose.
+  Standing hazards live in fact cards; the ones that bite most often are
+  **[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]** (name the BINARY PROFILE a cost
+  was measured with — `release` everywhere), **[[live-surface-edit-bookkeeping-chain]]** (a book insert
+  re-pins line-anchored regions in all three claim registries AND moves the `shipped_behavior`
+  aggregate; a bulk digest refresh must NEVER touch a node carrying `start_line`),
+  **[[a-dropped-declaration-row-is-usually-not-a-signal]]** (scoring a table against a catalog THAT
+  TABLE FED is circular), and **a census over `generated/` mixes strata — 51 of 78 are legacy**
+  (`.4b`). A new `scripts/` file must be STAGED; the doctrine driver runs no cargo gate; a
+  semantic-producer change does NOT restamp the ruleset seal (its closure is the registry only) but
+  DOES move content, so rebuild every document the replay says moves. Cap: 50 lines.

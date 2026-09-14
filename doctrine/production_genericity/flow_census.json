@@ -25,21 +25,21 @@
  "volume": {
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total.",
   "aggregate_change": {
-     "authority_id": "PROSE-NAME-CELL-DECLARATION.3-A-WIDTH-CELL-THAT-IS-A-SENTENCE-IS-NOT-A-WIDTH",
+     "authority_id": "SIGNAL-DECLARATION-ROW-DROP.4b-A-REFUSED-DECLARATION-IS-COUNTED-AND-NAMED",
      "baseline": {
-        "analyzed_functions": 2441,
-        "decision_sites": 13124,
-        "helper_edges": 15345,
+        "analyzed_functions": 2442,
+        "decision_sites": 13128,
+        "helper_edges": 15346,
         "semantic_macros": 1486
      },
      "delta": {
-        "analyzed_functions": 1,
-        "decision_sites": 4,
-        "helper_edges": 1,
-        "semantic_macros": 0
+        "analyzed_functions": 3,
+        "decision_sites": 7,
+        "helper_edges": 40,
+        "semantic_macros": 1
      },
-     "owner": "PROSE-NAME-CELL-DECLARATION.3",
-     "rationale": "A width cell holding one letter was admitted as a parametric width, so a table whose width column has been handed a description declared the description as the wire's width. One function, `width_expression_reads_as_prose`, asks two questions of the cell - more than six tokens, and a sentence terminator before whitespace - and each one alone was measured to refuse a real width, so the conjunction is the rule rather than either bound."
+     "owner": "SIGNAL-DECLARATION-ROW-DROP.4b",
+     "rationale": "The SemanticIR declaration reader refused a sentence with an indistinguishable None, so a signal the document declares could leave the catalog with no declaration, no residual, no counter and no validation entry. Three functions land: `read_explicit_signal_declaration` is the same parse stating which of its three refusal arms fired, `refused_explicit_signal_declarations` collects them over one statement using the sentence split the reading half already uses, and `unreadable_declaration_residual_packet` carries the one arm measured to be a real loss. The `format!` that names the lost identities is the semantic macro."
   }
  }
 }

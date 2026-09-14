@@ -64,6 +64,8 @@
   > does SemanticIR keep copyright and license text
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does SemanticIR preserve SWD protocol provenance and order
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > does SemanticIR record a declaration it refused for an unreadable width
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > does SourceIR carry the markdown escape
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -295,5 +297,3 @@
   > does specforge handle passive voice for actor-signal relations (X is driven by Y)
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > does specforge validate change the artifact it validates
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > does specforge validate modify the artifact passed on the command line

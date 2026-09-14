@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > what happens if the dynamic binder is run per clause
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > what happens to a constraint whose subject is a withheld template base name
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > what happens to a declaration whose width is an arithmetic expression
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what happens to a figure that reaches no canonical carrier
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -291,9 +297,3 @@
   > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip

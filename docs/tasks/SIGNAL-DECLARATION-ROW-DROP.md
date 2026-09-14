@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.2d`/`.2f`/`.4b`/`.4c` open)
+- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2e`/`.3`/`.4a`/`.4b` closed; `.2c` deferred; `.2d`/`.2f`/`.4c`/`.4d` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
-- Last updated: `2026-09-13`
+- Last updated: `2026-09-14`
 - Owner: repo-local workflow
 
 ## Goal
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4c`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4d`)
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -577,7 +577,7 @@ a long tail.
   Commit: pending
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
-  `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` · Goal: **the same silent drop one stage later — a declaration the
+  `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` (`.4d`), `.4c` · Goal: **the same silent drop one stage later — a declaration the
   SemanticIR reader cannot finish parsing is discarded whole, direction included.**
   This tree's `.0`–`.3` are about `synthesize_signal_declarations_from_table`, the EVIDENCE-stage
   reader. `parse_explicit_signal_declaration` in `crates/specforge/src/ir/semantic.rs` is the reader
@@ -649,21 +649,68 @@ a long tail.
   emitted `.isf` goes **288 → 296 signals and 135 → 138 rules**. Nothing is removed anywhere.
   Prerequisite: none. Verification: see the acceptance checklist below.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.4a`
-- ID: `SIGNAL-DECLARATION-ROW-DROP.4b` · Status: `pending` (opened `2026-09-13` by `.4`) · Goal:
-  **a declaration whose width cannot be read at all is counted and named, not dropped in silence —
-  and then: should its DIRECTION survive?** After `.4a` the residue is **69**: MMU-700's 47 and the
-  other strata's unstated widths (GICv3 7, Avalon 5, CXS/eMMC 1 each), plus the three malformed
-  arithmetic expressions `.4a` refuses. Their declaration text is itself corrupt
-  (`Signal LAADDR is width 3'b000 , lavalid` comes from a table that is not a signal description), so
-  refusing them may well be CORRECT — the defect is that the refusal is invisible, exactly as `.0`
-  measured for the evidence-stage reader.
-  **The second question is the one with the blast radius and must be measured before it is answered:**
-  `parse_explicit_signal_declaration` discards the DIRECTION it has already parsed along with the
-  width it cannot read, and admitting those 69 identities would move MMU-700's catalog by 47 and
-  un-demote every constraint about them. Measure that as an ADDITION, adjudicated per document,
-  before shipping any of it. Prerequisite: `.4a`.
-  Verification: the residue counted and named by the real reader; observed RED; the chain rebuilt for
-  every document whose artifacts move.
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4b` · Status: `done` (`2026-09-14`, CODE; opened `2026-09-13` by
+  `.4`) · Children: `.4d` · Goal:
+  **a declaration whose width cannot be read at all is counted and named, not dropped in silence.**
+  The refusal itself is not the defect — `Signal LAADDR is width 3'b000 , lavalid` comes from a table
+  that is not a signal description, and refusing it is very likely CORRECT. The defect is that the
+  refusal leaves no record: no declaration, no residual, no counter, no validation entry, exactly as
+  `.0` measured for the evidence-stage reader one stage up.
+  **Split before implementation, and the reason is a measured correction to this node's own premise.**
+  It inherited a residue of "69", and the SECOND question — should a refused declaration's DIRECTION
+  survive? — was to be answered in the same leaf. That question is now `.4d`, because its population
+  is not what either node assumed.
+
+  **The residue this leaf inherited is 74/75 LEGACY, and no node had said so.** `.4a` re-derived the
+  corpus census at 75 and named four documents (AXI-H, CHI, ATB, LTI) whose recovery is latent because
+  their EvidenceIR is not current-schema. Reading the persisted SemanticIR schema of all ten documents
+  in that census says the same about six more: **nine of the ten carry `schema_version: 1`**, so their
+  catalog is an older binary's output that the current chain cannot reproduce. Re-derived through the
+  product rather than asserted — `specforge semantic <doc>/evidence_ir.json --dry-run` refuses all
+  nine with `EvidenceIR schema version 2 is legacy/proofless and inspection-only`. The
+  **current-stratum residue is 1**: AXI-L's `RUSERCHK`, whose stated width
+  `ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)` is malformed (no operator between the two parameters)
+  and which `.4a` deliberately refuses. MMU-700's 47 is real and it is **latent**, not current: it
+  becomes observable only when MMU-700 is re-ingested.
+  **Shipped.** `read_explicit_signal_declaration` is the same parse stating which of its three refusal
+  arms fired, and `unreadable_declaration_residual_packet` carries ONE of them —
+  `semantic_unreadable_declaration_width` — naming every identity that was refused for an unreadable
+  width and reaches no interface record. **Which arm to report was measured, not chosen.** Over the 27
+  chain-current documents the reader refuses **11** sentences: 8 `no_direction_and_no_width`, 2
+  `name_not_an_identifier`, 1 `width_text_unread`. Adjudicated against their source statements, **all
+  10 in the first two arms are English prose that opens with the word "signal"** — *"Signal names MUST
+  adhere to the rules of the native tool"*, *"Signal arrays are identified by a name followed by a set
+  of parenthesis"* — so reporting all three arms publishes `names`, `arrays`, `direction`, `is` and
+  `at` as lost wires: **1 real identity in 8**, against **1 in 1** for the single arm. The split is
+  structural rather than tuned: `.0`'s `_ => continue` arm drops a row with no attribute before any
+  statement exists, so a `Signal …` sentence carrying neither a direction nor a width cannot be a
+  declaration this pipeline synthesized.
+  Prerequisite: `.4a`.
+  Verification: see the acceptance checklist below.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.4b`
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.4d` · Status: `pending` (opened `2026-09-14` by `.4b`) · Goal:
+  **should a refused declaration's IDENTITY and DIRECTION survive its unreadable width?** `.4b` made
+  the refusal visible and deliberately did not answer this: `parse_explicit_signal_declaration`
+  discards a direction it has already parsed along with the width it cannot read, and admitting those
+  identities would move MMU-700's catalog by 47 and un-demote every constraint about them.
+  **The population this leaf must adjudicate is LATENT, and that is the first thing to size.** `.4b`
+  re-derived the stratum: 9 of the census's 10 documents carry legacy SemanticIR the current chain
+  refuses, so today the whole current-stratum population is **one** identity (AXI-L `RUSERCHK`) — far
+  too small to decide a rule on. The 74 latent ones are only observable through the real reader in one
+  of two ways: re-ingest, or a read-only replay that runs the current reader over a persisted
+  artifact's own statements, the way `replay-constraints` already does for the constraint producer
+  (`TOOLBOX.md` §5.5). **Build the replay before deciding**, because the alternative — reading the
+  legacy artifacts and reasoning about what the reader would do — is the mirror the doctrine refuses.
+  **The prior ruling to beat:** `.1d` asked the same question at the row level one stage up and
+  answered NO at **24% precision**, and `.4b`'s own adjudication of the no-attribute arms scored
+  **1 in 8**. An affirmative answer here has to name what makes the width-unread arm different.
+  Non-goal: admitting an identity because MMU-700's 47 look like real LTI wires; four of them
+  (`LMACTIVE_7`, `LMASKCLOSE_7`, `LMOPENACK_7`, `LMOPENREQ_7`) carry an index-7 suffix with no
+  siblings, which is the shape of an expansion artifact rather than a declaration.
+  Prerequisite: `.4b`.
+  Verification: the latent population read by the REAL reader (not a mirror), adjudicated per
+  document; observed RED; the chain rebuilt for every document whose artifacts move.
   Commit: pending
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.1d` · Status: `done` (`2026-09-14`, PROBE/DOC) · Children: `.1e` ·
@@ -1044,19 +1091,76 @@ a long tail.
   recall half is blocked. No production rule was deleted. No KM card: the fact is a defect that is now
   fixed, and the rule it establishes lives in the code's own contract.
 
+## Acceptance Checklist — `.4b` (enforced)
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declared_signals_missing_from_semantic.py`
+  (self-test 7/7): **75 declared signals across 10 documents** never reach the SemanticIR catalog. The
+  reader that refuses them says nothing: no declaration, no residual, no counter, no validation entry.
+  **The census's own stratum was then re-derived and it corrects the population**: nine of the ten
+  documents carry `"schema_version": 1` SemanticIR, and
+  `./target/release/specforge semantic generated/evidence_ir/<doc>/evidence_ir.json --dry-run` refuses
+  all nine with `EvidenceIR schema version 2 is legacy/proofless and inspection-only`. **74 of the 75
+  are latent; the chain-current residue is 1** (AXI-L `RUSERCHK`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs`,
+  `parse_explicit_signal_declaration`: three `return None` arms — a name that is not an identifier, no
+  direction and no width, and `index != tokens.len()` — are indistinguishable to every caller, so a
+  refusal cannot be told from "this sentence was never a declaration". `build_interfaces` is the only
+  producer of `InterfaceRecord::signal_records`, `declared_signal_names` is built from them, and the
+  grounding partition keeps a `signal_constraint` only when that set holds its subject — so the silent
+  refusal deletes the identity AND every obligation about it. Observed on AXI-L:
+  `Signal RUSERCHK is width ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8).` returns `None` because the
+  source expression has no operator between the two parameters.
+- [x] **ADDRESSED (verified)** — `read_explicit_signal_declaration` returns
+  `NotADeclaration | Refused(reason) | Read(_)`, and `unreadable_declaration_residual_packet` emits
+  `semantic_unreadable_declaration_width` naming every `width_text_unread` identity that reaches no
+  interface record. **Which arm to report was MEASURED**: over the 27 chain-current documents the
+  reader refuses 11 sentences (8 `no_direction_and_no_width`, 2 `name_not_an_identifier`, 1
+  `width_text_unread`), and adjudicating each against its source statement, all 10 in the first two
+  arms are English prose opening with the word "signal" — *"Signal names MUST adhere to the rules of
+  the native tool"*, *"Signal arrays are identified by a name followed by a set of parenthesis"*.
+  Reporting all three arms names `names`, `arrays`, `direction`, `is` and `at` as lost wires — **1
+  real identity in 8**; the single arm is **1 in 1**. Replay over all 27 with the shared
+  CHAIN-CURRENCY predicate (`scripts/lib/stage_artifact_identity.sh`): **exactly 1 document moves**,
+  `residual_decisions(0->1)`. AXI-L rebuilt `semantic → validate → intent → validate → adapt →
+  validate`: catalog unchanged **296**, `signal_constraints` unchanged **56**, `residual_decisions`
+  **0 → 1**, adapter residuals **30 → 31**, and the emitted `.isf` `source_text` **byte-identical** —
+  31,691 bytes, sha256 `7b1b67fe…`, 296 signals, 138 rules.
+- [x] **NO REGRESSION** — `kg-bench` **156/156**; wire golds re-scored from the persisted corpus,
+  `signal_constraint P=R=F1=1.000 fp=0` on APB/AHB/AXI/SWD and `temporal_rule 1.000` on
+  APB/AHB/AXI temporal; `scripts/check_chain_currency.sh` **evidence 24/24 current, semantic 27/27
+  current, intent 27/27 current, isf-adapter 27/27 current, 0 stale**; `cargo fmt --all --check` and
+  `cargo clippy --offline --all-targets -- -D warnings` clean; workspace suite green
+  (`specforge-core` lib 1,531 → **1,535** passing, `specforge` 472, conformance 168,
+  production-graph 8/8); `flow_census.json` re-derived and attributed (+3 functions, +7 decision
+  sites, +40 helper edges, +1 semantic macro). **RED observed**: widening the packet filter to admit
+  `NoDirectionAndNoWidth` fails `prose_opening_with_signal_is_not_a_lost_declaration` by name, and
+  reverting restores green.
+- [x] **GENERICITY (ADR 0006)** — the three refusal arms are properties of the sentence's own shape;
+  no document, vendor, protocol or signal vocabulary appears in the enum, the filter or the packet.
+  The named identities are document text carried as provenance, not as a rule input. No new
+  registered field: `SEMANTIC_RULE_FIELDS` stays at its existing count because the packet lands on
+  the already-registered `residual_decisions` surface, which is why the proof seal does not restamp.
+- [x] **LOCKSTEP** — the book's `pipeline/evidence-failure-modes.md`, which `.4a` extended with *"The
+  same loss one stage later"*, gains *"The refusal is no longer silent"*: the packet, the measured
+  one-arm boundary with its 1-in-8 against 1-in-1, and the legacy/current stratum correction. Fact
+  card `[[arithmetic-width-drops-the-declaration]]` updated in place with the `.4b` section, five new
+  question keys and a `reverify` that now pins both the stratum refusal and the packet census.
+  **Producer sub-clause: no production rule was deleted or replaced** — `parse_explicit_signal_
+  declaration` refuses exactly the sentences it refused before, so no book text describes behaviour
+  that has gone away.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
+0. `SIGNAL-DECLARATION-ROW-DROP.4d` — should a refused declaration's identity and direction survive an
+   unreadable width? Needs the latent population read by the REAL reader first; the current stratum
+   holds exactly one instance, and the two prior rulings on the same question scored 24% and 1-in-8.
+1. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone.
-1. `SIGNAL-DECLARATION-ROW-DROP.4b` — the `.1` branch is CLOSED: three table-level discriminators tried
-   and refuted, ~10 recoverable rows against 49 phantoms, and no non-circular test separates them.
-2. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
-   whether a parsed direction should survive an unreadable width.
-3. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a
+2. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a
    signal.
-4. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
+3. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
    the blast radius before touching `builtin_actor_taxonomy_role_in_text`.

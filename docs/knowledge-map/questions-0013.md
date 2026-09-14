@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > what proved that analysis commands can violate project data locality
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what real PDF proves the FigureRegion vertical path
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > what refuses a table whose headers are Mode Name and Bus Width
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what remains before the repaired reviewed population can be published
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -289,11 +297,3 @@
   > where is the LTL renderer for temporal rules
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > where is the SWD frame's field-to-phase membership actually stated (in Figure B4-1 SWD successful write operation and Figure B4-2 SWD successful read operation. Both are captured as visual assets picture_0038 and picture_0039, but their role is ambiguous and their only observation is the caption, so the diagram content was never read)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where is the SpecForge FSMGen feedback or handoff channel
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > where is the SpecForge trajectory controller engine
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > where is the U+F0B7 signal integrity panic in evidence extraction
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > where is the acceptance checklist a code change must satisfy

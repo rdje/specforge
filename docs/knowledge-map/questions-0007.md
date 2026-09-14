@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > how many book claims describe behaviour the code no longer has
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > how many bracketed placeholder name cells exist corpus-wide
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -62,6 +64,8 @@
   > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current governed Markdown surfaces are in the claim census
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > how many declarations does the SemanticIR reader refuse corpus-wide
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > how many declared names are spelled in a case the document never uses
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -294,7 +298,3 @@
   > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > how will SpecForge automatically detect convergence or divergence
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > how will the million-byte Knowledge Map be sharded without losing question retrieval

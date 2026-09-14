@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why did a signal named `any` appear in an EvidenceIR artifact
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why did a signal named `name` appear in the Avalon interface specification
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why did a temporal conflict disappear when a signal constraint was removed
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -288,13 +298,3 @@
   > why does a dynamic constraint record need no modal
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why does a magnitude against a literal still yield no record
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > why does a new SemanticIR have an empty gates array
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why does a new SemanticIR have an empty phases array
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > why does a persisted SourceIR table say signal_description when it is a characteristics matrix
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > why does a rebuild drop the extraction-quality gauge
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > why does a record in the persisted corpus not reproduce when I run the extractor on its source_text

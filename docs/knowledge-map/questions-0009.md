@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > is the persisted corpus one code generation
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > is the reviewed residual expected_keys redundant with its predicates
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
@@ -291,9 +297,3 @@
   > what class of defect does a given check still permit
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > what confidence axis correlates with extracted-constraint correctness
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what conserves between the PDF and SourceIR
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what debug/diagnostic tools does specforge have (TOOLBOX.md)
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > what declaration catalog does the placeholder check read

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does specforge validate modify the artifact passed on the command line
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > does specforge write to the input path I pass or to a canonical generated path
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -296,5 +298,3 @@
   > how do I clear a live-document line_bytes_each warning (reflow the few widest lines; do not partition, roll over, or raise the ceiling — nothing is running out)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how do I count the records in the status ledger
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > how do I decide between partitioning a research record and declaring a rollover for it

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > how do I decide between partitioning a research record and declaring a rollover for it
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -295,5 +297,3 @@
   > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > how does specforge fold an X interface relation subject onto the bare agent X
