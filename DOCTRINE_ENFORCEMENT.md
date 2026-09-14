@@ -532,7 +532,10 @@ what it kept. Both fail closed, and a deliberate reclamation is a `reclamations`
 owning leaf and reason — which is what "task-owned" means mechanically. The declaration is
 schema-closed (unknown, missing, mistyped, unsorted, duplicated, or self-contradictory fields are
 breaches), so it cannot decay into free-form prose. `--self-test` proves both comparison cores
-fail-closed in twenty-two cases before any PASS is trusted.
+fail-closed before any PASS is trusted; the exact case count is published once, in `TOOLBOX.md` §7.2a,
+where `perl scripts/report_self_test_totals.pl` re-derives it from the script on every commit. It is
+stated in one place because it was stated in three and all three went stale
+(`CLAIM-VERIFICATION-ADOPTION.7.3`).
 
 **The seal probe's scope is a per-stage decision, and it is ON at `semantic` and `intent`.** A probe
 that loads a persisted artifact and verifies its proof is cheap; one that replays extraction from a

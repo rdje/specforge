@@ -6,8 +6,9 @@
 - Status: `active` (`.0`–`.6`, `.6a`, `.6b`, `.10`, `.10a`, `.11`, `.11a`, `.7.0`, `.7.1`, `.7.1a`, `.7.2.0`, `.7.2.1`, `.7.2.1a` done — the surfaces publishing the census counts
   are now swept against an *enumerated* population rather than a remembered one, and the upstream standard is
   re-adopted with its refusals recorded; `.7` owns the gate that would have observed the drift, now scoped to
-  counts; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's blind spot, now
-  with a third measured demonstration)
+  counts; `.7.3` binds every published self-test case count to the script that declares it after three went
+  stale at once; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's
+  blind spot, now with a fourth demonstration and its step-(1) measurement taken)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
 - Last updated: `2026-08-30`
@@ -1304,6 +1305,40 @@ the workflow through the mdBook and repository review path.
   own Status line; census/book/claim --check and --report all green and unchanged; 17 relocations re-derived
   HEAD vs HEAD~1; doctrine gate`
   Commit: `CLAIM-VERIFICATION-ADOPTION.11a — re-derive .11's findings and correct the five that do not hold`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.7.3`
+  Status: `done` (`2026-09-14`, CODE/DOC)
+  Goal: a shell check's SELF-TEST CASE COUNT is a published assertion, and nothing bound one to its script
+  Result: **three were stale at once, under a fully green gate.** `TOOLBOX.md` §7.2a and §7.2a-i both said
+  "sixteen fail-closed cases" for checks that had reached **22** and **21**, and `DOCTRINE_ENFORCEMENT.md`
+  §10 repeated the first. They were found by hand while `CORPUS-CHAIN-CURRENCY.8` was editing the same
+  section — which is the "gate is gated on the author noticing" shape `.13` describes, and the reason
+  correcting the three numbers was not the fix.
+  **What ships is the binding.** `scripts/report_self_test_totals.pl` emits one JSON object with the
+  declared self-test total of each corpus-replay check, and three `derived` assertions in
+  `published_assertions.jsonl` bind the `TOOLBOX.md` lines to it. The count is now published in exactly
+  one place; `DOCTRINE_ENFORCEMENT.md` routes to that line instead of restating it, because a value
+  stated in three places is a value that will disagree in three places.
+  **The producer reads the DECLARED total rather than running the self-test, and that is a measured
+  choice, not a shortcut.** `scripts/rebuild_stage_cascade.sh --self-test` builds the `specforge` binary
+  and takes **43.6 s**, and `check_published_assertions.pl` executes every derived producer on every gate
+  run — binding a doc sentence to a 43-second build would have moved the cost of the fix onto every
+  commit. Reading the declaration is sound because the declaration is **self-guarding**: each script
+  compares `passed` against that same constant, so a case added without bumping it goes RED in the
+  script's own self-test, and a constant bumped without a case goes RED there too. The two legs compose
+  and neither is a digest over the other (`CLAIM_VERIFICATION.md` §2).
+  **Observed RED, and it is the real class rather than a fixture**: bumping `total=21` to `22` in
+  `check_proof_seal_currency.sh` without touching the document fails the gate with
+  *"'proof_seal_currency_self_test_total' re-derives to '22', published '21'"*. Reverted in the same
+  measurement. The reader's own `--self-test` is **5/5** and includes the two fail-closed cases that
+  matter: a script declaring two different totals, and a script with a `--self-test` mode whose total
+  cannot be read — both are breaches rather than silent omissions, because dropping one would let a
+  published count point at nothing while the report stayed valid JSON.
+  **Honest limit:** the binding covers the three scripts a document actually publishes a count for. A
+  fourth check that starts publishing one is not automatically governed — it needs a row in
+  `%SCRIPTS` and its own assertion. That is a registry, with the same "enumerate the population"
+  weakness every registry here has, and it is stated rather than hidden
+  Prerequisite: none
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
   Status: `pending`

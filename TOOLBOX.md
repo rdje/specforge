@@ -444,7 +444,8 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   actually on disk: a declared bundle that is gone, or a bundle no leaf declared, fails closed.
 - **WHEN:** after any shared-extractor or stage change, and before signing off a refresh — it is the
   measurement ADR 0025 decision 1 requires before attributing a delta. Skips loudly with no corpus.
-- **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its twenty-two fail-closed cases)
+- **HOW:** `bash scripts/check_chain_currency.sh`
+- **SELF-TEST:** `--self-test` runs 22 fail-closed cases before any PASS is trusted.
 
 ### 7.2a-i `scripts/check_proof_seal_currency.sh` — the PROOF-SEAL-CURRENCY gate (gate-tier)
 - **WHAT:** reads the `ruleset_sha256` every persisted artifact records at all five chain stages for the
@@ -464,9 +465,14 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   Skips loudly and passes with no corpus.
 - **LIMIT:** a current seal is **not** content currency. Whether a persisted artifact is still what the
   current binary reproduces stays `CHAIN-CURRENCY`'s question at CI tier.
-- **HOW:** `bash scripts/check_proof_seal_currency.sh` (`--self-test` for its twenty-one fail-closed cases;
-  case 21 pins the shipped TOTAL-stage default itself, so emptying it goes RED).
-  On a stale seal it names the remedy: `source_proof_migrate --write` for SourceIR (proof-only), or
+- **HOW:** `bash scripts/check_proof_seal_currency.sh`.
+- **SELF-TEST:** `--self-test` runs 21 fail-closed cases, the last of which pins the shipped
+  TOTAL-stage default itself, so emptying it goes RED.
+- **REMEDY SELF-TEST:** `bash scripts/rebuild_stage_cascade.sh --self-test` runs 14 fail-closed cases.
+  Every count on these three lines is re-derived on every commit from the script that declares it
+  (`perl scripts/report_self_test_totals.pl`), because all three were carried by hand and all three
+  went stale: `CLAIM-VERIFICATION-ADOPTION.7.3`.
+- **ON A STALE SEAL:** `source_proof_migrate --write` for SourceIR (proof-only), or
   `scripts/rebuild_stage_cascade.sh --write` for every stage below it (a real content rebuild).
 - **WHICH BUILD ANSWERS:** this check, `check_chain_currency.sh` and `rebuild_stage_cascade.sh` all
   replay the persisted corpus against the current build, so they share one binary predicate —
