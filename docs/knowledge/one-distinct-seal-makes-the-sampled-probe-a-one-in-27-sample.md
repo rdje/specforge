@@ -13,6 +13,8 @@ answers:
   - "should PROOF-SEAL-TOTAL be raised to gate tier"
   - "how much does it cost to probe every artifact at the semantic and intent stages"
   - "would a topology-bearing seal key separate a refusing document"
+  - "why does the per-stage total seal probe ship inert"
+  - "what turns on the total probe at semantic and intent"
   - "what does registered derivation output or input topology is stale mean"
   - "how do I find out which documents are chain-stale"
   - "which documents in the corpus are currently stale"
@@ -63,8 +65,13 @@ topology-bearing key *is* `--total`.
 `intent --dry-run` costs **1.2 s** and a refusal **0.24 s**, while the evidence and source-ir probes
 replay extraction from the normalized bundle. Probing every one of the 27 artifacts at just two stages
 costs **30.3 s** (semantic) + **35.5 s** (intent) = **66 s**, and finds every refusal the corpus
-currently has. Sampling is right at source-ir and evidence and wrong at semantic and intent
-(`CORPUS-CHAIN-CURRENCY.6`).
+currently has. Sampling is right at source-ir and evidence and wrong at semantic and intent.
+
+The per-stage mechanism is shipped (`probe_scope_for`, self-tests 17 and 17b) and **inert**:
+`TOTAL_PROBE_STAGES` defaults to empty because activating it fails the gate on a corpus whose repair is
+blocked — APB-e by `SIGNAL-DECLARATION-ROW-DROP.4c`, I2C by a reclaimed normalized bundle. A gate that
+fails closed over a genuinely broken corpus is correct and unlandable at the same time, so the mechanism
+lands and the activation waits (`CORPUS-CHAIN-CURRENCY.7`). Activation is one constant.
 
 ## What the sweep found, and the general law under it
 

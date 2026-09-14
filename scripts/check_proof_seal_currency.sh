@@ -99,10 +99,10 @@ specforge_activate_project_data "$ROOT"
 GENERATED_ROOT="${SPECFORGE_PROOF_SEAL_GENERATED_ROOT:-generated}"
 
 MODE=check
-PROBE_SCOPE=sample
+PROBE_SCOPE=default
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --check)     MODE=check; PROBE_SCOPE=sample ;;
+    --check)     MODE=check; PROBE_SCOPE=default ;;
     --total)     MODE=check; PROBE_SCOPE=total ;;
     --self-test) MODE=self-test ;;
     *) printf 'Usage: %s [--check|--total|--self-test]\n' "$0" >&2; exit 2 ;;
@@ -142,7 +142,7 @@ remedy_for() {
 
 # ── Self-test: prove the controls are fail-CLOSED before trusting a PASS ────
 run_self_test() {
-  local work passed=0 total=19 output status
+  local work passed=0 total=20 output status
   work="$(mktemp -d)" || { fail_note 'cannot create a repository-local self-test workspace'; return 1; }
 
   local hex_a hex_b hex_c
@@ -230,6 +230,13 @@ run_self_test() {
   cp "$work/compact.json" "$mini/source_ir/doc_a/source_ir.json"
   cp "$work/nested.json"  "$mini/source_ir/doc_b/source_ir.json"
   cp "$work/compact.json" "$mini/source_ir/doc_c/source_ir.json"
+  # CORPUS-CHAIN-CURRENCY.6 — the mini corpus reaches the SEMANTIC stage as well, because the probe
+  # scope is now a per-stage decision and a corpus that stops at source-ir cannot exercise it. All
+  # three semantic artifacts carry the SAME seal, which is the condition the sampling control needs.
+  mkdir -p "$mini/semantic_ir/doc_a" "$mini/semantic_ir/doc_b" "$mini/semantic_ir/doc_c"
+  cp "$work/compact.json" "$mini/semantic_ir/doc_a/semantic_ir.json"
+  cp "$work/compact.json" "$mini/semantic_ir/doc_b/semantic_ir.json"
+  cp "$work/compact.json" "$mini/semantic_ir/doc_c/semantic_ir.json"
 
   # A recording stub that ACCEPTS: every probe succeeds, so the gate must pass and must have asked.
   local accept_stub="$work/accepting-specforge"
@@ -304,14 +311,17 @@ run_self_test() {
   if [ "$status" -eq 0 ]; then passed=$((passed + 1))
   else fail_note "self-test 16: an absent corpus root did not skip loudly (status $status, output '$output')"; fi
 
-  # 17) THE SAMPLING CONTROL, and the reason this script has two modes. A loader that accepts
-  #     `doc_a` and REFUSES `doc_c` — which carries the SAME seal — must be invisible to the sampled
-  #     probe and caught by the total one. This is `.1b`'s shape in miniature: one seal, a divergent
-  #     document, and a gate that reported green over it for three commits.
+  # 17) THE SAMPLING CONTROL — now stated PER STAGE, because the scope is a per-stage decision
+  #     (CORPUS-CHAIN-CURRENCY.6). At a SAMPLED stage a loader that accepts `doc_a` and REFUSES
+  #     `doc_c` — same seal — is still invisible, and the check must keep saying so rather than
+  #     pretend to a coverage it does not pay for. This is `.1b`'s shape in miniature: one seal, a
+  #     divergent document, a gate green over it for three commits.
+  #     The stub refuses `doc_c` only when the probe reads it from `source_ir/`, so the divergence
+  #     lives at the sampled stage alone.
   local selective_stub="$work/selective-specforge"
   printf '%s\n' '#!/usr/bin/env bash' \
     'case "$*" in' \
-    '  *doc_c*) printf "EvidenceIR proof verification failed: registered derivation output or input topology is stale\n" >&2; exit 1 ;;' \
+    '  *source_ir/doc_c*) printf "EvidenceIR proof verification failed: registered derivation output or input topology is stale\n" >&2; exit 1 ;;' \
     'esac' \
     'exit 0' > "$selective_stub"
   chmod +x "$selective_stub"
@@ -319,7 +329,30 @@ run_self_test() {
             SPECFORGE_PROOF_SEAL_BIN="$selective_stub" \
             "$ROOT/scripts/check_proof_seal_currency.sh" --check 2>&1)"; status=$?
   if [ "$status" -eq 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 17: the sampled probe was expected to MISS a divergent same-seal document (status $status)"; fi
+  else fail_note "self-test 17: the SAMPLED stage was expected to MISS a divergent same-seal document (status $status)"; fi
+
+  # 17b) ...and at a TOTAL stage the same divergence is CAUGHT by `--check`, by name. The stage set
+  #      is passed explicitly because the default ships EMPTY until the corpus repair lands, so this
+  #      control proves the mechanism rather than the current default.
+  #      This is the property the corpus measurement bought: one distinct seal across the whole
+  #      stratum made the sampled probe a 1-in-27 sample, while a refusal at `semantic` or `intent`
+  #      costs ~1.2 s per document to find. Same stub shape, same seal, different stage.
+  local semantic_stub="$work/semantic-selective-specforge"
+  printf '%s\n' '#!/usr/bin/env bash' \
+    'case "$*" in' \
+    '  *semantic_ir/doc_c*) printf "SemanticIR proof verification failed: registered derivation output or input topology is stale\n" >&2; exit 1 ;;' \
+    'esac' \
+    'exit 0' > "$semantic_stub"
+  chmod +x "$semantic_stub"
+  output="$(SPECFORGE_PROOF_SEAL_GENERATED_ROOT="$mini" \
+            SPECFORGE_PROOF_SEAL_BIN="$semantic_stub" \
+            SPECFORGE_PROOF_SEAL_TOTAL_STAGES='semantic intent' \
+            "$ROOT/scripts/check_proof_seal_currency.sh" --check 2>&1)"; status=$?
+  case "$status:$output" in
+    0:*) fail_note 'self-test 17b: a TOTAL stage passed over a document its own loader refuses' ;;
+    *doc_c*) passed=$((passed + 1)) ;;
+    *) fail_note "self-test 17b: a TOTAL stage failed without naming the divergent document (output '$output')" ;;
+  esac
 
   # 18) ...and `--total` catches exactly that document, by name.
   output="$(SPECFORGE_PROOF_SEAL_GENERATED_ROOT="$mini" \
@@ -358,6 +391,53 @@ if [ "$MODE" = 'self-test' ]; then
   run_self_test
   exit "$?"
 fi
+
+# ── Which stages are probed TOTALLY, and why it is a per-stage question ──────
+# CORPUS-CHAIN-CURRENCY.6. The sampled tier probes one representative per distinct seal, and its
+# stated bet is that a divergent document raises the distinct count and so earns its own probe.
+# `.4` measured the corpus and the bet does not hold: there is ONE distinct seal per stage across
+# all 27 proof-carrying artifacts, so the sample is 1 in 27 — and it passed in a tree where the
+# `intent` stage refused a wire gold outright.
+#
+# `.5` measured the obvious repair and refuted it: a census key that carries the recorded derivation
+# topology gives 27 distinct keys for 27 documents at every stage (root derivations included, because
+# each root's output/inputs digests are taken over its own document's content). Such a key IS
+# `--total`, which is 18m45s, so it buys nothing the tier does not already offer.
+#
+# What `--total`'s cost actually is, measured per stage rather than as one number: an accepted
+# `intent --dry-run` is 1.2 s and a refusal 0.24 s, because a refusal stops at the loader. The
+# expensive probes are `source-ir` and `evidence`, which replay EXTRACTION from the normalized
+# bundle. Probing every one of the 27 at the two cheap stages costs 30.3 s + 35.5 s = 66 s and finds
+# every refusal the corpus currently has.
+#
+# So sampling is right at source-ir and evidence and wrong at semantic and intent. The blindness the
+# sampled tier documents about itself is KEPT where it is paid for and REMOVED where it is not.
+#
+# ── WHY THIS SHIPS INERT, AND WHAT TURNS IT ON ──────────────────────────────
+# The mechanism is here, self-tested (17 and 17b), and measured; the default is EMPTY. Turning it on
+# today would fail the gate on every commit, because the two documents it catches are genuinely
+# broken and their repair is blocked: APB-e's semantic artifact carries the regression tracked as
+# `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it before that leaf lands would publish the
+# regression into a wire-gold chain; I2C's normalized bundle is reclaimed, so it needs a re-ingest
+# rather than a replay. A gate that fails closed over a known-broken corpus is CORRECT and is also
+# unlandable — so the mechanism ships and the activation waits for the repair, rather than the
+# contract being widened to accommodate a failure.
+#
+# ACTIVATION, when `.4c` has landed and both documents are rebuilt: set the default below to
+# 'semantic intent'. That is the whole change; the controls already assert both halves.
+TOTAL_PROBE_STAGES="${SPECFORGE_PROOF_SEAL_TOTAL_STAGES-}"
+
+# probe_scope_for <stage> — 'total' or 'sample', honouring an explicit --total for every stage.
+probe_scope_for() {
+  if [ "$PROBE_SCOPE" = 'total' ]; then
+    printf 'total\n'
+    return 0
+  fi
+  case " $TOTAL_PROBE_STAGES " in
+    *" $1 "*) printf 'total\n' ;;
+    *)        printf 'sample\n' ;;
+  esac
+}
 
 # ── Corpus presence ─────────────────────────────────────────────────────────
 if [ ! -d "$GENERATED_ROOT/source_ir" ]; then
@@ -447,7 +527,8 @@ for stage in $(chain_stages); do
   # divergence the seal cannot express. TOTAL: every sealed artifact at this stage.
   REPS="$WORK/reps.$stage"
   distinct="$(awk -F'\t' '!seen[$2]++' "$SEALS" | wc -l | tr -d ' ')"
-  if [ "$PROBE_SCOPE" = 'total' ]; then
+  stage_scope="$(probe_scope_for "$stage")"
+  if [ "$stage_scope" = 'total' ]; then
     awk -F'\t' '{ print $2 "\t" $1 }' "$SEALS" > "$REPS"
   else
     awk -F'\t' '!seen[$2]++ { print $2 "\t" $1 }' "$SEALS" > "$REPS"
@@ -507,7 +588,7 @@ for stage in $(chain_stages); do
     note "$stage — canonical probe exists, and CHAIN-CURRENCY does not close the gap either (its"
     note "$stage — content comparison excludes the proof surface). The only loader that would answer"
     note "$stage — for it is \`specforge validate\`, which mutates the artifact and the chain above it."
-  elif [ "$PROBE_SCOPE" = 'total' ]; then
+  elif [ "$stage_scope" = 'total' ]; then
     note "$summary; TOTAL probe: $accepted of $sealed accepted, $rejected refused, $precondition_absent with no verdict"
   else
     note "$summary; SAMPLED probe ($probes of $sealed documents, one per distinct seal): $accepted accepted, $rejected refused, $precondition_absent with no verdict"
@@ -519,11 +600,21 @@ if [ "$fail" -eq 0 ]; then
     note 'every probeable persisted artifact is accepted by the current build, asked one document at a'
     note 'time. CHAIN-CURRENCY (CI tier) still owns whether those artifacts are the CONTENT the'
     note 'current binary reproduces.'
+  elif [ -n "$TOTAL_PROBE_STAGES" ]; then
+    note "every persisted artifact at [$TOTAL_PROBE_STAGES] is accepted by the current build, asked one"
+    note 'document at a time; the other stages are SAMPLED, one document per distinct seal, and cannot'
+    note 'see a per-document replay-topology divergence there — measured once at 23 accepted / 4'
+    note 'refused under a single seal. Their probes replay extraction and are the expensive ones, which'
+    note 'is why the tier is per stage (CORPUS-CHAIN-CURRENCY.5/.6). Run --total for the per-document'
+    note 'verdict at every stage, and CHAIN-CURRENCY for whether the content reproduces.'
   else
     note 'the sampled persisted artifacts carry seals the current build accepts. THIS IS A SAMPLE: one'
     note 'document per distinct seal, so it cannot see a per-document replay-topology divergence —'
-    note 'measured once at 23 accepted / 4 refused under a single seal. Run --total (CI tier) for the'
-    note 'per-document verdict, and CHAIN-CURRENCY for whether the content still reproduces.'
+    note 'measured once at 23 accepted / 4 refused under a single seal, and the corpus currently'
+    note 'carries ONE seal per stage across 27 artifacts, so the sample is 1 in 27. The per-stage'
+    note 'TOTAL tier that closes this at semantic and intent is built and self-tested here and ships'
+    note 'INERT until CORPUS-CHAIN-CURRENCY.6 activates it. Run --total (CI tier) for the per-document'
+    note 'verdict, and CHAIN-CURRENCY for whether the content still reproduces.'
   fi
 else
   fail_note 'the persisted corpus is out of seal with the current build. Re-seal it under its owning'

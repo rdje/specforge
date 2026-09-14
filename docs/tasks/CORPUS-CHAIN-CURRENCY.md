@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-14`; `.0`-`.5` complete, **`.6` open** — probe semantic and intent totally at gate tier, 66 s)
+- Status: `active` (`2026-09-14`; `.0`-`.6` complete, **`.7` open** — repair the two documents, then activate the per-stage tier)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-14`
@@ -179,21 +179,48 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   every current-stratum artifact; both refusals reproduced in that run.
   Commit: `CORPUS-CHAIN-CURRENCY.5`
 
-- ID: `CORPUS-CHAIN-CURRENCY.6` · Status: `pending` (opened `2026-09-14` by `.5`) · Goal: **probe the
-  semantic and intent stages TOTALLY at gate tier; keep source-ir and evidence sampled.** 66 seconds
-  buys the property the sampled tier is documented as wanting and currently cannot deliver: no
-  load-refusing artifact reaches a commit. Today's two would both have been caught on the commit that
-  caused them rather than days later by a detached sweep.
-  **State the cost rather than hide it**: the gate gains ~64 s (the two stages go from 1 probe each to
-  27 each). Directive 16 asks ordinary commits to run the checks that prove the main functionality still
-  behaves, and a wire-gold artifact its own consumer refuses is squarely that.
-  The doctrine's self-tests are the load-bearing part of this leaf, not the tier constant: **self-test 17
-  asserts that the sampled probe MISSES a divergent same-seal document**, which is the behaviour this
-  change removes at two stages and keeps at the other two. It must become a per-stage assertion rather
-  than be deleted, or the check will have lost the control that documents its own limit.
-  Prerequisite: none. Verification: the new tier observed RED against today's two refusing artifacts and
-  GREEN once they are rebuilt; the gate's runtime measured before and after; every existing self-test
-  re-run, with 17 restated per stage; `PROOF-SEAL-TOTAL` left registered at CI tier and unchanged.
+- ID: `CORPUS-CHAIN-CURRENCY.6` · Status: `done` (`2026-09-14`, CODE — **mechanism shipped INERT**) ·
+  Children: `.7` · Goal: **probe the semantic and intent stages TOTALLY at gate tier; keep source-ir
+  and evidence sampled.**
+  Shipped: `probe_scope_for <stage>` makes the probe scope a per-stage decision, `--total` still forces
+  total everywhere, and the summary lines report per stage which scope was used. 66 seconds buys the
+  property the sampled tier is documented as wanting and cannot currently deliver.
+  **It ships with the stage set EMPTY, and that is the leaf's real finding.** Turning it on was tried
+  and measured: the gate then FAILS on the live corpus, naming APB-e and I2C at both stages — correctly,
+  because both artifacts genuinely are refused by their own consumers. A gate that fails closed over a
+  known-broken corpus is right and is also **unlandable**: it blocks every commit until the repair, and
+  the repair is blocked twice over — APB-e by `SIGNAL-DECLARATION-ROW-DROP.4c` (rebuilding it today
+  publishes that regression into a wire-gold chain) and I2C by a reclaimed normalized bundle (it needs a
+  re-ingest, not a replay).
+  So the mechanism lands with its controls and the activation waits for the repair, rather than the
+  contract being widened to accommodate a failure. **Activation is one constant**
+  (`TOTAL_PROBE_STAGES` → `'semantic intent'`), and both halves are already asserted.
+  **The self-tests are where this leaf's weight is.** Self-test 17 — "the sampled probe MISSES a
+  divergent same-seal document" — is restated **per stage** rather than deleted: its stub now refuses
+  only at `source_ir/`, so it still proves the blindness the sampled tier pays for. New **17b** proves
+  the other half at a TOTAL stage with the same seal and the same stub shape, and the mini corpus gained
+  a semantic stage so the per-stage decision is exercisable at all. Observed RED: with the stage set
+  emptied, 17b fails with *"a TOTAL stage passed over a document its own loader refuses"*.
+  Measured: self-tests **20/20**; the default gate run is **15.9 s** and green; with the stage set
+  activated it is ~66 s longer and RED on exactly the two documents `.4`/`.5` found.
+  Verification: see the acceptance checklist below.
+  Commit: `CORPUS-CHAIN-CURRENCY.6`
+
+- ID: `CORPUS-CHAIN-CURRENCY.7` · Status: `pending` (opened `2026-09-14` by `.6`) · Goal: **repair the
+  two documents, then activate.** In order, because each step unblocks the next:
+  1. `SIGNAL-DECLARATION-ROW-DROP.4c` decides whether `ADDR_WIDTH/8` and `ceil(ADDR_WIDTH/8)` are one
+     observation or two. Note that footnote-stripping alone does NOT settle it — the two spellings
+     differ by the `ceil(…)` as well — so that leaf owns a real expression-equivalence question and a
+     census of every `width_mismatch` in the corpus.
+  2. Rebuild APB-e's chain from its (current) EvidenceIR, upstream-first, one `validate` per artifact.
+  3. Re-ingest I2C: its normalized bundle is reclaimed, so `evidence` cannot replay it at all. Decide
+     first whether a re-ingest is in this tree's scope or `CORPUS-COVERAGE`'s — a re-ingest replaces the
+     document wholesale rather than repairing a drift, and it moves the retention declaration.
+  4. Set `TOTAL_PROBE_STAGES='semantic intent'` and re-run: the gate must go green, and
+     `check_chain_currency.sh` must report every stage current.
+  Prerequisite: `SIGNAL-DECLARATION-ROW-DROP.4c`. Verification: the gate observed RED before the repair
+  and GREEN after, with its runtime measured at both; `check_chain_currency.sh` clean; retention
+  unchanged at 24 unless the re-ingest deliberately moves it, in which case the declaration moves with it.
   Commit: pending
 
 ## Measured corpus census (`2026-08-10`, `.1`) — the drift `.3` closes
@@ -332,17 +359,49 @@ Honest limits of this measurement:
   generated-artifacts / doctrine-enforcement / SourceIR chapters, both retention fact cards, the corpus tree's
   corrected census, and the resume pointer agree before commit.
 
+## Acceptance Checklist (enforced) — `.6`
+
+- [x] **REPRODUCE / MEASURE** — `.4` and `.5`: 1 distinct seal per stage across 27 artifacts, so the
+  sampled probe is 1 in 27; it passed while `intent` refused APB-e. Total probes cost 30.3 s (semantic)
+  + 35.5 s (intent) = 66 s and find every refusal the corpus has.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/check_proof_seal_currency.sh`: `PROBE_SCOPE` was a single
+  global, so the scope decision could not follow the cost, which differs by an order of magnitude
+  between the stages that replay extraction and the stages that only load and verify.
+- [x] **ADDRESSED (verified)** — `probe_scope_for <stage>` plus per-stage reporting; `--total` still
+  forces total everywhere. Ships with the stage set EMPTY and the reason stated in the script itself:
+  activating it fails the gate on a corpus whose repair is blocked, so the mechanism lands and the
+  activation waits. One constant turns it on.
+- [x] **NO REGRESSION** — self-test **20/20**; the default gate run is **15.9 s** and green on the live
+  corpus, and byte-for-byte the same verdict as before this change (all stages sampled). `bash -n`
+  clean. No Rust change, so no cargo gate and no artifact moves.
+- [x] **OBSERVED RED** — with `TOTAL_PROBE_STAGES` emptied, self-test **17b fails**: *"a TOTAL stage
+  passed over a document its own loader refuses"*. With it activated against the live corpus the check
+  fails naming APB-e and I2C at both stages, which is the behaviour `.7` will land.
+- [x] **GENERICITY (ADR 0006)** — the scope is keyed on the stage name the chain already defines
+  (`chain_stages`), not on any document, vendor or protocol.
+- [x] **LOCKSTEP** — the script's own header carries the measurement, the refutation of the
+  topology-key repair, and the activation instruction; `[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]`
+  records the same numbers. No behaviour was deleted, so no document describes a behaviour that is gone.
+
 ## Current Frontier
 
-1. `CORPUS-CHAIN-CURRENCY.6` — raise the semantic and intent probes to TOTAL at gate tier (66 s
-   measured), leaving source-ir and evidence sampled. The doctrine's self-test 17 — "the sampled probe
-   MISSES a divergent same-seal document" — must become a per-stage assertion rather than be deleted.
+1. `CORPUS-CHAIN-CURRENCY.7` — the repair, then the activation. It starts at
+   `SIGNAL-DECLARATION-ROW-DROP.4c`, which is not this tree's to do; the per-stage tier is built,
+   self-tested and one constant away from on.
 2. Rebuilding the two drifted documents is **not** this tree's next step. I2C's rebuild is unblocked but
    its normalized bundle is reclaimed, so it needs a re-ingest rather than a replay; APB-e's is blocked
    by `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it today would publish that regression into a
    wire-gold document's chain.
 
 ## Verification Log
+
+- `2026-09-14` — `.6`. `bash scripts/check_proof_seal_currency.sh --self-test` **20/20**, including the
+  new 17b. **Observed RED** by emptying `TOTAL_PROBE_STAGES` and re-running: 19/20, 17b failing with
+  *"a TOTAL stage passed over a document its own loader refuses"* — so the control asserts the
+  mechanism and not the default. Live corpus: the default run is green in **15.9 s**; with
+  `SPECFORGE_PROOF_SEAL_TOTAL_STAGES='semantic intent'` it is RED, naming
+  `ihi0024_e…apb` and `um10204…i2c` at semantic and at intent, with the non-stale-seal diagnostic.
+  `bash -n` clean. Read-only: the check writes nothing (its own self-test 13 proves that end to end).
 
 - `2026-09-14` — `.5`. Read-only throughout. Distinct-key counts computed from every current-stratum
   artifact's persisted `proof_ledger`, over its `RegisteredDerivation` premises: the full
@@ -386,6 +445,7 @@ Honest limits of this measurement:
 
 - `.4` — `CORPUS-CHAIN-CURRENCY.4`.
 - `.5` — `CORPUS-CHAIN-CURRENCY.5`.
+- `.6` — `CORPUS-CHAIN-CURRENCY.6`.
 
 | Unit | Durable evidence |
 | --- | --- |
