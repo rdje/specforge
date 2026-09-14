@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1d`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.1e`/`.2d`/`.2f`/`.4b`/`.4c` open)
+- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.2d`/`.2f`/`.4b`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-13`
@@ -679,7 +679,7 @@ a long tail.
 
   | table | rows | what it is | admitting the identity |
   | --- | ---: | --- | --- |
-  | AXI `table_0092` | 4 | a signal-name GRID — every cell is a real AXI signal (`AxLEN`, `AxSIZE`, `AxBURST`, …) | **real** |
+  | AXI `table_0092` | 4 | *adjudicated `real` here and **CORRECTED by `.1e`**: the cells are the `Ax` METAVARIABLE (`AxLEN`, `AxSIZE`), `AXLEN` is undeclared while `AWLEN`/`ARLEN` are, and the caption reads "Signals that should be the same in an exclusive sequence"* | **phantom** |
   | ADIv6 `table_0058` | 5 | pin equivalence — `SWDIOTMS \| SWDIO \| TMS` | **real** |
   | ADIv6 `table_0039` | 3 | `signal \| programmers' model`, rotated — `CDBGPWRUPREQ` … | **real** |
   | ADIv6 `table_0041` | 2 | `DBGTDO`, `DBGTRSTn` — JTAG-DP signals | **real** |
@@ -690,37 +690,63 @@ a long tail.
   | AXI `table_0265` | 6 | a LEGEND — `Y`, `YM`, `YS`, `O`, `NS` mean mandatory/optional | phantom |
   | AXI `table_0183`/`0184` | 5 | PARAMETER tables — `LOOP_W_WIDTH`, `USER_REQ_WIDTH` as wires | phantom |
 
-  **14 real against 45 phantom.** A rule that admits an identity with no attribute would mint 45 new
-  phantoms in the current stratum alone — width parameters, encoding names, and a legend — which is
+  **10 real against 49 phantom** (`.1d` first counted 14/45; `.1e`'s grounding test caught AXI
+  `table_0092`'s four rows as metavariables and the count is corrected here rather than left standing).
+  A rule that admits an identity with no attribute would mint 49 new phantoms in the current stratum — width parameters, encoding names, and a legend — which is
   precisely what `.2a`'s placeholder refusal and `ACTOR-NOUN-RELATION-DECLARATION.1`'s orthography rule
   exist to stop. The refusal stands.
   **What the census also shows is where the answer lives.** Every one of the ten tables is uniformly
   real or uniformly phantom — not one has a mix. **The decision is a property of the TABLE, not of the
   row**, which is the same conclusion `PROSE-NAME-CELL-DECLARATION.0` reached about eMMC's bus-mode
-  matrix from the other direction. Split to `.1e` with the four real tables named.
+  matrix from the other direction. Split to `.1e`, which then corrected one of this node's own verdicts.
   Verification: `python3 scripts/measure_dropped_row_offerings.py`, read-only, 71/71 joined; every row
   printed with its headers and its full source row, and adjudicated in the table above.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.1d`
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.1e` · Status: `pending` (opened `2026-09-14` by `.1d`) · Goal: **a
-  table that maps one signal to another declares both, and the discriminator is at the table.** `.1d`
-  measured that the four recoverable tables are uniformly real and the six others uniformly phantom, so
-  a table-level test is the only shape that can separate them. **Two candidates were tried against the
-  ten and both fail**, and they are recorded so they are not proposed again:
-  - *every column header is a name header* (`is_signal_name_column_header` per column) selects only
-    ADIv6 `table_0058`. AXI `table_0092`'s headers are literal signal names (`axid`, `axaddr`) and match
-    no name keyword at all;
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1e` · Status: `done` (`2026-09-14`, PROBE/DOC) · **Three table-level
+  discriminators tried, three refuted — and the third one corrected `.1d`'s own adjudication before it
+  was refuted.** The `.1` branch closes here: the refusal is correct and its residue is small and named.
+  **Two shape tests, refuted against the ten tables:**
+  - *every column header is a name header* selects only ADIv6 `table_0058`. AXI `table_0092`'s headers
+    are literal signal names (`AxID`, `AxADDR`) and match no name keyword at all;
   - *every body cell is an identifier* admits AXI `table_0265`, whose cells are `Y | Mandatory |
     Mandatory` — `Mandatory` is a lone word the identifier test accepts.
-  The property that actually holds over the four is that the table's cells are drawn from the SAME
-  vocabulary as the document's own declared catalog — which is a grounding test rather than a shape
-  test, and is the first thing to measure. **Size it against all ten tables and against every
-  `signal_description` table in the corpus before writing a rule**: a test that admits a table because
-  its cells look like names is how a legend becomes a catalog.
-  Prerequisite: none. Verification: the corpus population of such tables measured and adjudicated; the
-  six phantom tables above shown to stay refused; observed RED; the chain rebuilt for every document
-  whose artifacts move.
-  Commit: pending
+  **The grounding test — are the table's cells drawn from the document's own declared catalog? — earned
+  its keep by falsifying a hand verdict.** AXI `table_0092` scored **0.00** against a 297-name catalog,
+  which looked like a false negative until the names were checked: `AXLEN`, `AXSIZE` and `AXPROT` are
+  **undeclared** while `AWLEN`, `ARLEN`, `AWSIZE`, `ARSIZE` and `AWPROT` are all declared, and the
+  caption is *"Table A6.5: Signals that should be the same in an exclusive sequence"*. The cells are
+  AXI's `Ax` metavariable for a signal FAMILY, not a wire name; admitting them would mint `AXLEN`, which
+  the document never writes. **`.1d`'s count is corrected above from 14/45 to 10 real / 49 phantom —
+  17% precision, not 24%.**
+  **And then the test itself is refuted, for a stated methodological reason.** Scored over every
+  current-stratum boundary table, it looks strong — 28 of 58 at ≥ 0.50 — but that number is
+  **circular**: a table that DECLARED its own signals scores against a catalog it fed, so it trivially
+  reaches 1.00 (AXI `table_0246`–`0249` at 0.97–1.00). Excluding declaring tables leaves the population
+  a rule would actually act on, and it is tiny and bimodal:
+
+  | grounded ratio | non-declaring boundary tables (≥ 4 identifier cells) |
+  | --- | ---: |
+  | 0.00 | 9 |
+  | < 0.25 | 1 — ADIv6 `table_0108` at 0.12, the garbled body, phantom |
+  | 0.25 – 0.50 | **0** |
+  | 0.50 – 0.75 | **1** — ADIv6 `table_0058` at 0.55, the pin-equivalence table, REAL |
+  | ≥ 0.75 | 0 |
+
+  Any threshold in `(0.12, 0.55]` selects exactly **one table, five rows, no false positive**. That is a
+  clean separation and it is **one instance** — a threshold justified by a single positive is a rule
+  fitted to one table, which this tree has refused three times already.
+  **The test is also structurally blind to the best candidates.** ADIv6 `table_0041` holds real signals
+  and is excluded from the measurement entirely, because it PARTIALLY declares: a table that fed the
+  catalog cannot be scored against it. The partially-declaring tables are exactly where recall would
+  come from, and grounding cannot see them.
+  **What remains, stated so it is not re-derived**: ~10 recoverable rows in three ADIv6 tables, against
+  49 phantoms, with no vocabulary-free table-level test yet separating them. Reopen only with a
+  discriminator that survives all ten tables AND is not circular.
+  Verification: read-only. Grounding ratios computed from each document's own declared catalog
+  (`Signal X is …` statements plus `table_signal_declaration_provenance`); the metavariable finding
+  confirmed by checking `AXLEN`/`AWLEN`/`ARLEN` membership directly and by the table's caption.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.1e`
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4c` · Status: `pending` (opened `2026-09-14` by the chain-currency
   sweep; **its opening premise was corrected the same day by tracing the conflict to its tables and the
@@ -1026,10 +1052,8 @@ Ordered; PNT selects the first eligible leaf.
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone.
-1. `SIGNAL-DECLARATION-ROW-DROP.1e` — **the answer to `.1d` is at the TABLE.** Fourteen real rows against
-   forty-five phantom ones at the row level, but every one of the ten tables is uniformly real or uniformly
-   phantom. Two table-level discriminators are already tried and refuted in the node; the one that remains
-   is grounding the table's cells in the document's own catalog. Measure before writing a rule.
+1. `SIGNAL-DECLARATION-ROW-DROP.4b` — the `.1` branch is CLOSED: three table-level discriminators tried
+   and refuted, ~10 recoverable rows against 49 phantoms, and no non-circular test separates them.
 2. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
    whether a parsed direction should survive an unreadable width.
 3. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a

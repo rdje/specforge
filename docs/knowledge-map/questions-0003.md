@@ -296,5 +296,5 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > does the .5.iv.a header lever change any persisted artifact (NO — it is inert on the whole measurable stratum, proven not assumed: check_chain_currency.sh replays evidence/semantic/intent/isf-adapter for all 24 rebuildable documents against the patched binary and every persisted artifact is byte-identical. Exactly 1 of the 285 accepted tables sits in a rebuildable document
   > — the SMMU guide Table 3-1 that opened .5.iv — and it mints nothing because .5.ii drops its sentence members. The other 8 documents are legacy schema-1 chains the current binary refuses for canonical use until re-ingest)
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > does the Certified sibling confirm the OpenCAPI Ready glossary result
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > does the Ax metavariable name a wire

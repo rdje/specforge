@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what happens when a timing observation has no explicit tick-addressed samples
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > what happens when an obligation sentence cannot be located
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what happens when document intent category is unresolved
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
@@ -293,7 +297,3 @@
   > what is the SWD line state machine (reset/operating/protocol-error/lockout)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > what is the SpecForge trajectory controller
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is the `<role> channel signals` caption cue and how is it parsed

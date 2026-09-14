@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is the `<role> channel signals` caption cue and how is it parsed
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > what is the ambiguous_statements metric in validate
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
@@ -294,7 +298,3 @@
   > what should happen when a decision record approaches its per-file bound
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what signals belong to which AXI channel
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what stable order may production use for opaque signal collections
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > what stops a bounded snapshot from accreting chronology

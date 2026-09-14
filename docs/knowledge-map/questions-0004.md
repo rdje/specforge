@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > does the Certified sibling confirm the OpenCAPI Ready glossary result
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > does the Docling metadata sidecar store repository relative paths
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -295,5 +297,3 @@
   > how do I find out which documents are chain-stale
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how do I know my census script still mirrors the reader

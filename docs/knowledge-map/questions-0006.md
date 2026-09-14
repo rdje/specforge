@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how does specforge read free disk space without a new dependency
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how does specforge read system memory without a new dependency
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -295,5 +297,3 @@
   > how many constraint records have an escaped-fragment subject
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many converter text items does iterate_items yield across the corpus
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > how many corpus constraints need a negated form of extract_protocol_state_value

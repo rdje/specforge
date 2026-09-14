@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does an alphabetic constraint value require a word boundary but a numeric value does not
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > why does an evidence/converge build OOM on a doc with many multi-word actor names
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -293,7 +297,3 @@
   > why is Vital Product Data (VPD) not a signal
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why is Wishbone memory output data (DO) not a port
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
