@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > does the Docling metadata sidecar store repository relative paths
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > does the ISF adapter consume swd_operations or protocol_states
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does the ISF adapter lower actor-relative direction
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -293,7 +297,3 @@
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I know my census script still mirrors the reader
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > how do I let a Continued from previous page table contribute what its first page contributes
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how do I make the NLI verifier actively change extraction / demote claims

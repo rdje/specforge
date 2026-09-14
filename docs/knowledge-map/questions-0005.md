@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > how do I let a Continued from previous page table contribute what its first page contributes
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how do I make the NLI verifier actively change extraction / demote claims
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I measure a classifier change's blast radius before shipping it
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -293,7 +297,3 @@
   > how does specforge model the SWD serial frame / packet
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > how does specforge read free disk space without a new dependency
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does specforge read system memory without a new dependency
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how does specforge read total physical RAM without a new dependency

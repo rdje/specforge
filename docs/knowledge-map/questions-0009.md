@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > is there an AXLEN signal in the AMBA AXI specification
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > is tier-agreement a good confidence axis for conformal calibration
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > is upstream extraction or ISF expressiveness the next measured blocker
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > may a SourceIR table classifier look at the table before it
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > may a closed classifier role carry a qualifier (yes — e125aac7 admitted one balanced parenthesized qualifier for register carriers; WIRE-BASED-100.10 admits a generic interface noun as a whole word for the signal role)
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > may a value be published because a trajectory shows it has not moved
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > may fact cards be deleted or merged to free catalog capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -52,6 +64,8 @@
   > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > should a name recovered from a figure ground a table row identity
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > should a table row declare a signal when it states no direction and no width
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > should an oversized research record be split or should its ceiling be raised
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -283,17 +297,3 @@
   > what did real filenames expose in adversarial identity comparison
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > what did refresh 50 change in the OpenCAPI data link chain
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > what did running nli-verify on a real spec find
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what did statement 0114 say in the stale OpenCAPI Ready evidence
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > what did the OpenCAPI AFU address note prove about legal boilerplate
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the active PDF task containment census find
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what did the corpus promotion sweep measure (gauge deltas per doc)

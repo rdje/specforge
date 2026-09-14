@@ -70,6 +70,8 @@
   > can I apply the shared-prefix family test to whitespace
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > can I classify the 482 dropped rows from the runtime accounting
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > can I just rewrap a whole live document to a narrower column (only after checking the surface's other bounds — every line break you insert costs one line and, at a two-space continuation indent, two bytes, so a naive rewrap can trade one warning for two)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -296,5 +298,3 @@
   > do specforge extractors override applies_to / are any self-disabled opt-in
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > do text-reasoning tasks need a vision model
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > do the Pattern and Nlp extraction tiers find the same constraints

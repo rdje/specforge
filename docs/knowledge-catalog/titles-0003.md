@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [extractor-path-architecture](../knowledge/extractor-path-architecture.md) | 2026-06-09 | `current` | The EvidenceIR extractor path is a flat bank of ~60 free functions wired in one build() — coherent IR targe… |
 | [fact-card-catalog](../knowledge/fact-card-catalog.md) | 2026-08-08 | `current` | Fact cards have a bounded derived human catalog distinct from question retrieval |
 | [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md) | 2026-08-12 | `superseded` | The evidence-composed trajectory gates current-binary replay coverage and recommends task .6 |
 | [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md) | 2026-08-15 | `current` | SpecForge's five portable architectures compose ownership, continuity, retrieval, enforcement, and claim evid… |
@@ -60,4 +61,3 @@
 | [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md) | 2026-08-15 | `current` | MEMORY.md has an exact 32,768-byte one-read ceiling |
 | [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md) | 2026-06-10 | `current` | message_field_constraints — field-subject obligations are routed, not dropped (CHI TagOp/PBHA live) |
 | [message-field-records-surface](../knowledge/message-field-records-surface.md) | 2026-06-10 | `current` | message_field_records — the typed home for packet/flit message fields (CHI 106, C2C ≤189, CCIX ~50) |
-| [message-field-validate-integration](../knowledge/message-field-validate-integration.md) | 2026-06-11 | `current` | validate reports the message-field surfaces (5 metrics + inventory finding); class census and completeness ga… |

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > what did running nli-verify on a real spec find
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what did statement 0114 say in the stale OpenCAPI Ready evidence
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > what did the OpenCAPI AFU address note prove about legal boilerplate
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the active PDF task containment census find
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > what did the corpus promotion sweep measure (gauge deltas per doc)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > what did the corpus task evidence containment census find
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -24,6 +38,8 @@
   > what do I do with a published count no claim outcome fits
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > what do leading_section_number and is_descendant_section_number do
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > what do the rows the declaration reader drops actually offer
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -281,19 +297,3 @@
   > what happens when a timing observation has no explicit tick-addressed samples
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > what happens when an obligation sentence cannot be located
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what happens when document intent category is unresolved
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what happens when ingest cannot count PDF pages
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what happens when old identity-scoped prior memory is loaded
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what happens when the NLI provider is down
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what identifies the canonical inputs to generated Knowledge Map shards
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > what inputs define corpus KB managed block currentness
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > what is 64 in the status ledger
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is ADR 0019

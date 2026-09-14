@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md) | 2026-09-14 | `current` | Admitting a declaration with an identity but no attribute is 24% precise — 14 real rows against 45 phantoms… |
 | [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md) | 2026-09-13 | `current` | A logic level binds to the SIGNAL beside it, read through the document's own catalog — not to the verb that… |
 | [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md) | 2026-09-13 | `current` | The value slot admits a state, never a relation — a predicate followed by a preposition naming an operand o… |
 | [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md) | 2026-09-14 | `current` | A prose width cell is refused by a CONJUNCTION (>6 tokens AND a terminator before whitespace) — each bound… |
@@ -60,4 +61,3 @@
 | [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md) | 2026-08-30 | `current` | Published-claim controls bind exact known-bad evidence and reject scratch producers |
 | [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md) | 2026-08-30 | `current` | The local claim standard is a restatement, so currency is re-read section by section, not diffed |
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
-| [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |

@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > what is the ambiguous_statements metric in validate
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > what is the behavioral genericity held-out population
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what is the behavioural oracle for a coverage guard
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what is the bit-exact adjacency chain rule
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is the built-in RAM guard / autonomous memory safeguard during ingest
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is the canonical declared signal inventory key on SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -282,19 +298,3 @@
   > what stable order may production use for opaque signal collections
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > what stops a bounded snapshot from accreting chronology
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what structural cue separates a message-field table from a register-field table
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what structural cues recognize transactions universally (section anchors + enumeration tables)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what structural surfaces discriminate document class
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what table structure is required before port or pin vocabulary grants signal authority
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what task does the current trajectory controller rank next
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > what temporal logic backs temporal_rules
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what turns on the total probe at semantic and intent

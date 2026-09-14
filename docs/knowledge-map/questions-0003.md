@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > do the Pattern and Nlp extraction tiers find the same constraints
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > do the emergent clusters actually track real vendor/layout families
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -210,6 +212,8 @@
   > does every Frontier -> .x mention in a task tree resolve to a real leaf
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does every SWD protocol record receive an ISF adapter disposition
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > does every column header being a name header separate a signal grid from a legend
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > does every temporal_rule reach the .isf or a residual
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
@@ -294,7 +298,3 @@
   > — the SMMU guide Table 3-1 that opened .5.iv — and it mints nothing because .5.ii drops its sentence members. The other 8 documents are legacy schema-1 chains the current binary refuses for canonical use until re-ingest)
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > does the Certified sibling confirm the OpenCAPI Ready glossary result
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > does the Docling metadata sidecar store repository relative paths
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > does the ISF adapter consume swd_operations or protocol_states

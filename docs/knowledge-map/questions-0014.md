@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the normative IntentIR product contract
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > where is the per-author adopt-vs-defer provenance
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > where is the persisted source-to-IntentIR result snapshot
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > where is the register-field gold seed
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > where is the required-residual rule frozen
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > where is the reviewed source-to-intent dataset
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > where is the set of retained normalized bundles declared
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > where is the shared section-heading container-walk that .10f and .10g both use
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -260,6 +278,8 @@
   > which table minted Clock and Reset as AHB signals
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > which tables have a name column that scores zero under name_cell_is_read_whole
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > which tables would recover real signals if identity alone were enough
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > which task does the trajectory controller recommend first
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
@@ -278,23 +298,3 @@
   > which task tree crossed its live-document byte warning
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > which three legs must an actionable current claim name
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > which to_ascii_uppercase calls in the evidence stage emit a name
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > which topology contains the active corpus coverage task
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > which tree owns the empty-catalog grounding filter defect
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > which units mark a timing record as decibel domain
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification material is deliberately not adopted
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > which validate metrics/finding surface channel membership
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > who owns re-ingesting the legacy wire golds APB AHB AXI
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > who reads and writes docs tasks CORPUS-COVERAGE md
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree

@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why is a comma-separated signal family safe when a space-separated one is not
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why is a conditional rule in EvidenceIR but not in SemanticIR
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why is a constraint subject CLK when the document says CLK_I
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a digest binding not enough to watch a number in prose
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why is a fact-card aggregate ceiling the file bound times the per-file bound
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why is a field name accepted or rejected from a description cell
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why is a figure caption not coverage for the figure
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why is a file-level line ceiling not enough for a bounded snapshot
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a gate's own numeral grammar part of its contract
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > why is a gerund after while/when not a condition (action coordination)
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a glob list not enough to scope a claim gate
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > why is a green doctrine report not evidence that the branch builds cleanly
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > why is a green wire-protocol score not evidence that extraction is intact
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
@@ -274,26 +298,3 @@
   > why was the AXI write-address handshake invariant never extracted
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > why was the Arm Debug replay killed at 400 pages
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > why was the ISF explicit-FSM feature request withdrawn
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why was the at least timing paraphrase rejected
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > why was the deeper fix of unbinding artifact_layout from the replay topology not taken (it would change the frozen 38-family/170-field producer graph AND invalidate all 24 sealed chains at once, since every sealed proof was taken over a replay that already contains the location. Re-proving on relocation is bounded, keeps every existing seal valid, and cannot persist tampered
-  > content because write_to_disk re-verifies against an independent rebuild)
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > why was the production-genericity pipeline audit partitioned
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > why was the spike's 'manager Reads ARID' direction error not in production
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > why was the task-tree count in live-docs.md wrong
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > why were BDF DL and VPD removed from OpenCAPI Discovery
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why were PWR and OPEN promoted as conditional-rule consequent signals
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were RISC-V/TRM register tables unextracted (unknown table_kind)

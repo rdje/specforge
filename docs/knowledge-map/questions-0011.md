@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what happens when document intent category is unresolved
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what happens when ingest cannot count PDF pages
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what happens when old identity-scoped prior memory is loaded
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what happens when the NLI provider is down
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what identifies the canonical inputs to generated Knowledge Map shards
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > what inputs define corpus KB managed block currentness
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > what is 64 in the status ledger
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is ADR 0019
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > what is ADR 0024
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
@@ -281,19 +297,3 @@
   > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > what is the `<role> channel signals` caption cue and how is it parsed
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > what is the ambiguous_statements metric in validate
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > what is the behavioral genericity held-out population
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > what is the behavioural oracle for a coverage guard
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what is the bit-exact adjacency chain rule
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is the built-in RAM guard / autonomous memory safeguard during ingest

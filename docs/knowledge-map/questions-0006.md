@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how does specforge read system memory without a new dependency
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > how does specforge read total physical RAM without a new dependency
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -293,7 +297,3 @@
   > how many converter text items does iterate_items yield across the corpus
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > how many corpus constraints need a negated form of extract_protocol_state_value
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > how many corpus documents carry markdown-escaped underscores in their statements
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > how many corpus documents have a current-schema SourceIR

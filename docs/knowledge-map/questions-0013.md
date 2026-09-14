@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what structural cue separates a message-field table from a register-field table
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what structural cues recognize transactions universally (section anchors + enumeration tables)
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what structural surfaces discriminate document class
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what table structure is required before port or pin vocabulary grants signal authority
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what task does the current trajectory controller rank next
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > what temporal logic backs temporal_rules
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what turns on the total probe at semantic and intent
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -12,6 +28,8 @@
   > what were the initial 17-document held-out relation outcomes
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > what words stop walk_for_level_subjects
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > what would admitting an identity without an attribute cost
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > what would crossing cannot cost
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
@@ -279,21 +297,3 @@
   > where is the gate that stops an unknown-kind table from producing signal declarations (should_treat_table_as_top_level_signal_description, crates/specforge/src/ir/evidence.rs — the _ => continue width/direction arm is never reached for such a table)
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > where is the mdBook current-truth verifier
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the normative IntentIR product contract
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > where is the per-author adopt-vs-defer provenance
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > where is the persisted source-to-IntentIR result snapshot
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > where is the register-field gold seed
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > where is the required-residual rule frozen
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > where is the reviewed source-to-intent dataset
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > where is the set of retained normalized bundles declared
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)

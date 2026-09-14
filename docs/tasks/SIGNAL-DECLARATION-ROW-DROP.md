@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`/`.1b`/`.1c`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.1d`/`.2d`/`.2f`/`.4b`/`.4c` open)
+- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1d`/`.2a`/`.2b`/`.2e`/`.3`/`.4a` closed; `.2c` deferred; `.1e`/`.2d`/`.2f`/`.4b`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-13`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1` (`.1a`–`.1d`), `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4c`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4c`)
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -666,27 +666,60 @@ a long tail.
   every document whose artifacts move.
   Commit: pending
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.1d` · Status: `pending` (opened `2026-09-14` by
-  `SIGNAL-CATALOG-CAPTURE-GAP.6`) · Goal: **must a declaration carry an ATTRIBUTE to carry an IDENTITY?**
-  The `(direction, width)` arm — the whole of this tree's measured 18.3% loss — refuses a row that offers
-  neither. Every `.2*` leaf so far has answered it by teaching the reader to READ an attribute it was
-  missing (an arrow, a bit range, a rotated column). `SIGNAL-CATALOG-CAPTURE-GAP.6` found a class where
-  there is nothing to read: AMBA LPI's `Table 2-2`/`Table 3-2` state that `PACTIVE` is checked by
-  `PACTIVECHK` and give no direction and no width, because the fact they state is a RELATION that
-  presupposes both signals exist. Ten names in five rows, all dropped, and that document's catalog holds
-  five signals as a result.
-  **Traced, so the leaf starts from behaviour rather than suspicion**: the table is typed, `name_col` is
-  correctly 0, the identifiers are accepted, `check_signal_col` is even found at column 1 — and the row
-  still leaves by `NoDirectionAndNoWidth`. Nothing upstream is wrong.
-  **Size it against all 482, not against LPI's ten.** The question is general and the answer changes the
-  reader's admission rule, so the population is every dropped row in the corpus, classified by what its
-  row DOES offer: a name alone, a name and a relation, a name and prose. A rule that admits an identity
-  with no attribute mints a signal from any table cell that looks like an identifier — which is exactly
-  what `.2a`'s placeholder refusal and `ACTOR-NOUN-RELATION-DECLARATION.1`'s orthography rule exist to
-  stop — so the guard it needs must be sized in the same census.
-  Prerequisite: none. Verification: the 482 dropped rows classified and adjudicated; whatever is shipped
-  carries a corpus-wide count of what it newly admits and an adjudicated sample; every phantom the
-  existing refusals catch is shown to stay caught.
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1d` · Status: `done` (`2026-09-14`, PROBE/DOC) · Children: `.1e` ·
+  **Answered at the row level, and the answer is NO: 24% precision.** The question was whether a
+  declaration must carry an ATTRIBUTE to carry an IDENTITY, after
+  `SIGNAL-CATALOG-CAPTURE-GAP.6` found a class with no attribute to read.
+  **The population is the reader's own accounting, not a scan** (`scripts/measure_dropped_row_offerings.py`):
+  `.1` made the drop countable at runtime, so a dropped row here is one the real reader really dropped,
+  with the reason it recorded. That accounting exists only in documents rebuilt since `.1` — **4 of 27**
+  — and gives **71 dropped rows, 100% joined** back to their source row: 59 `no_direction_and_no_width`
+  and 12 `name_not_an_identifier`. `.0`'s corpus-wide 482 is a scan of all 78 artifacts and is a
+  different population; the two are never summed.
+
+  | table | rows | what it is | admitting the identity |
+  | --- | ---: | --- | --- |
+  | AXI `table_0092` | 4 | a signal-name GRID — every cell is a real AXI signal (`AxLEN`, `AxSIZE`, `AxBURST`, …) | **real** |
+  | ADIv6 `table_0058` | 5 | pin equivalence — `SWDIOTMS \| SWDIO \| TMS` | **real** |
+  | ADIv6 `table_0039` | 3 | `signal \| programmers' model`, rotated — `CDBGPWRUPREQ` … | **real** |
+  | ADIv6 `table_0041` | 2 | `DBGTDO`, `DBGTRSTn` — JTAG-DP signals | **real** |
+  | AXI `table_0199` | 10 | a PAS ENCODING — `Secure`, `Root`, `Realm`, `SA` | phantom |
+  | ADIv6 `table_0108` | 10 | a garbled body — name cells are `Out`, `TDI Out`, `TDO In` | phantom |
+  | AHB `table_0014` | 8 | the HBURST ENCODING — `SINGLE`, `INCR`, `WRAP4` | phantom |
+  | AHB `table_0019` | 6 | the HPROT ENCODING — `Opcode fetch`, `Data access` | phantom |
+  | AXI `table_0265` | 6 | a LEGEND — `Y`, `YM`, `YS`, `O`, `NS` mean mandatory/optional | phantom |
+  | AXI `table_0183`/`0184` | 5 | PARAMETER tables — `LOOP_W_WIDTH`, `USER_REQ_WIDTH` as wires | phantom |
+
+  **14 real against 45 phantom.** A rule that admits an identity with no attribute would mint 45 new
+  phantoms in the current stratum alone — width parameters, encoding names, and a legend — which is
+  precisely what `.2a`'s placeholder refusal and `ACTOR-NOUN-RELATION-DECLARATION.1`'s orthography rule
+  exist to stop. The refusal stands.
+  **What the census also shows is where the answer lives.** Every one of the ten tables is uniformly
+  real or uniformly phantom — not one has a mix. **The decision is a property of the TABLE, not of the
+  row**, which is the same conclusion `PROSE-NAME-CELL-DECLARATION.0` reached about eMMC's bus-mode
+  matrix from the other direction. Split to `.1e` with the four real tables named.
+  Verification: `python3 scripts/measure_dropped_row_offerings.py`, read-only, 71/71 joined; every row
+  printed with its headers and its full source row, and adjudicated in the table above.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.1d`
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.1e` · Status: `pending` (opened `2026-09-14` by `.1d`) · Goal: **a
+  table that maps one signal to another declares both, and the discriminator is at the table.** `.1d`
+  measured that the four recoverable tables are uniformly real and the six others uniformly phantom, so
+  a table-level test is the only shape that can separate them. **Two candidates were tried against the
+  ten and both fail**, and they are recorded so they are not proposed again:
+  - *every column header is a name header* (`is_signal_name_column_header` per column) selects only
+    ADIv6 `table_0058`. AXI `table_0092`'s headers are literal signal names (`axid`, `axaddr`) and match
+    no name keyword at all;
+  - *every body cell is an identifier* admits AXI `table_0265`, whose cells are `Y | Mandatory |
+    Mandatory` — `Mandatory` is a lone word the identifier test accepts.
+  The property that actually holds over the four is that the table's cells are drawn from the SAME
+  vocabulary as the document's own declared catalog — which is a grounding test rather than a shape
+  test, and is the first thing to measure. **Size it against all ten tables and against every
+  `signal_description` table in the corpus before writing a rule**: a test that admits a table because
+  its cells look like names is how a legend becomes a catalog.
+  Prerequisite: none. Verification: the corpus population of such tables measured and adjudicated; the
+  six phantom tables above shown to stay refused; observed RED; the chain rebuilt for every document
+  whose artifacts move.
   Commit: pending
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4c` · Status: `pending` (opened `2026-09-14` by the chain-currency
@@ -993,9 +1026,10 @@ Ordered; PNT selects the first eligible leaf.
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone.
-1. `SIGNAL-DECLARATION-ROW-DROP.1d` — **the tree's own thesis, asked directly**: must a declaration carry
-   an attribute to carry an identity? Every `.2*` leaf has answered it by reading one more attribute; LPI's
-   check-relationship tables have none to read. Size against all 482 dropped rows.
+1. `SIGNAL-DECLARATION-ROW-DROP.1e` — **the answer to `.1d` is at the TABLE.** Fourteen real rows against
+   forty-five phantom ones at the row level, but every one of the ten tables is uniformly real or uniformly
+   phantom. Two table-level discriminators are already tried and refuted in the node; the one that remains
+   is grounding the table's cells in the document's own catalog. Measure before writing a rule.
 2. `SIGNAL-DECLARATION-ROW-DROP.4b` — count and name the 69 the reader still refuses, then measure
    whether a parsed direction should survive an unreadable width.
 3. `SIGNAL-DECLARATION-ROW-DROP.2f` — a bit range is a width; blocked on a spacer row not being a
