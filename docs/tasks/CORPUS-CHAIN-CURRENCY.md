@@ -695,6 +695,17 @@ commit and says so, rather than claiming a win it does not have yet.
 
 ## Verification Log
 
+- `2026-09-14` — `.9`, closing audit of its own class. Self-test 21 guards ONE default; the question it
+  raises is whether any other self-tested doctrine check ships an unguarded one. Enumerated over every
+  `check_*.sh` plus `rebuild_stage_cascade.sh` that has a `--self-test`, covering **both** expansion forms
+  (`${VAR:-d}` and the `${VAR-d}` form the defect actually used — a first pass matched only the former and
+  missed the very variable in question, which is why the enumeration is stated with its pattern). The
+  complete population is seven: `SPECFORGE_PROOF_SEAL_TOTAL_STAGES` (`semantic intent` — the only one that
+  changes what a check PROVES, and the one case 21 now reads), three `*_GENERATED_ROOT` and one
+  `*_RETENTION_CONTRACT` whose defaults are PATHS exercised against the real corpus on every gate run, and
+  three `*_BIN`/`*_WORK` overrides defaulting to empty, which is the ordinary path every real run takes.
+  **So there is no second instance**: the behavioural default is the guarded one, and the rest are exercised
+  by the gate itself rather than by a control.
 - `2026-09-14` — `.9`. Gate timed before and after on the same tree: **4m13.0s → 5m30.1s**, a second
   post-change sample **5m24.5s**, ALL 15
   executed doctrines PASS both times; this check alone **7.4 s → 1m12.7s**, reporting TOTAL 27/27 at

@@ -135,6 +135,14 @@ DEFAULT stage set passed over a document its own loader refuses"*.
 The general rule this leaf leaves behind: **a control that passes its own configuration in tests the
 mechanism, never the shipped default.** If a default carries the risk, one control must read it.
 
+**The class was then enumerated rather than left as a warning.** Over every `check_*.sh` plus
+`rebuild_stage_cascade.sh` carrying a `--self-test`, and covering both `${VAR:-d}` and `${VAR-d}` (a
+first pass matched only the former and missed the very variable in question), the complete population of
+shipped defaults is seven: `SPECFORGE_PROOF_SEAL_TOTAL_STAGES` is the only one that changes what a check
+*proves*; three `*_GENERATED_ROOT` and one `*_RETENTION_CONTRACT` default to PATHS the gate exercises
+against the real corpus every commit; three `*_BIN`/`*_WORK` default to empty, the ordinary path. There
+is no second unguarded instance.
+
 ## What the sweep found, and the general law under it
 
 - `um10204…i2c` — evidence CONTENT stale (`signal_constraints` 9 → 3, `fact_provenance` 21 → 15);
