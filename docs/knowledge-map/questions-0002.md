@@ -101,6 +101,8 @@
   > can a declared semantic delta hide another undeclared change
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > can a load-refusing artifact pass the gate
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > can a reviewed gold key name the reason a region is not a contract
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -296,5 +298,3 @@
   > do text-reasoning tasks need a vision model
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > do the Pattern and Nlp extraction tiers find the same constraints
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > do the emergent clusters actually track real vendor/layout families

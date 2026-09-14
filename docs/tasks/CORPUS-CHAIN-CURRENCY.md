@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-14`; `.0`-`.3` complete, **`.4` open** — the gate's own property is violated again)
+- Status: `active` (`2026-09-14`; `.0`-`.4` complete, **`.5` open** — the sampled seal tier's key does not vary with what the loader checks)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-14`
@@ -115,32 +115,63 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   refresh **never** to run `clean --scope source-normalized` as routine, and the book's generated-artifacts
   chapter states the retention rule, its cost, and the declaration.
 
-- ID: `CORPUS-CHAIN-CURRENCY.4` · Status: `pending` (opened `2026-09-14` by `PROSE-NAME-CELL-DECLARATION.3`)
-  · Goal: **one document's persisted EvidenceIR no longer reproduces, and the gate that exists to say so
-  has not been able to run.** Found by a side-sweep, not by the gate: `evidence --dry-run` over all 24
-  documents holding a retained normalized bundle reproduces 23 of them byte for byte outside
-  `validation_reports` / `proof_context` / `proof_ledger`, and **I2C
-  (`um10204_rev7_0_2021_i2c_bus_specification`) does not**. The persisted artifact carries **9**
-  `signal_constraints` and **21** `fact_provenance` records where the current binary produces **3** and
-  **15**, with all 13 `conditional_rules` renumbered (`condrule_0019` → `condrule_0013`, …). The
-  direction of the delta matches the constraint-precision leaves (`EXTRACTION-QUALITY-GAUGE.3k.*`,
-  `INVARIANT-SHAPE-ADMISSION.*`) removing fabricated obligations — a document each of them moved and
-  none of them rebuilt.
-  **Proven not to be the finder's doing**: the delta is byte-identical with
-  `PROSE-NAME-CELL-DECLARATION.3`'s guard applied and with HEAD's `evidence.rs` restored, and I2C also
-  fails to reproduce at `1ada364a` (`EXTRACTION-QUALITY-GAUGE.3k.1`, `2026-09-12`), so the drift is at
-  least that old.
-  **The second half is the real subject, and it is the doctrine's own blind spot:** `CHAIN-CURRENCY`
-  re-executes the real pipeline for every persisted artifact, which is why
-  `scripts/check_doctrines.sh --all` did not finish in 50 minutes and has not been run since. A gate
-  that is too expensive to run is not a gate. Measure the full-corpus cost, then decide between an
-  incremental stage-scoped replay a slice can afford, a detached run whose result is recorded, and a
-  cheaper always-on proxy that fails closed — and do not widen the doctrine to excuse the drift.
-  Non-goal: rebuilding I2C's chain before the cost question is answered. A rebuild that lands without
-  the gate being runnable buys one document and leaves the blindness exactly where it was.
-  Prerequisite: none. Verification: the full evidence/semantic/intent/isf sweep run to completion and
-  its result recorded per document; the rebuild ordered per `[[retained-chain-rebuild-order]]` with one
-  `validate` per artifact; retention unchanged at 24 afterwards.
+- ID: `CORPUS-CHAIN-CURRENCY.4` · Status: `done` (`2026-09-14`, PROBE/DOC) · Children: `.5` · **Both
+  questions answered by running the thing: what is drifted, and what it costs to know.**
+  **Cost, measured on this machine with a warm build:** `check_chain_currency.sh` **28m00s**;
+  `check_proof_seal_currency.sh --total` **18m45s**. Together ≈ 47 minutes, which is what "`--all` did
+  not finish in 50 minutes" actually was — a number this tree can now stop restating as a mystery.
+  Neither is affordable per commit, both are affordable per push, and directive 16 already puts the
+  full gate at the push boundary. **So CHAIN-CURRENCY stays CI-tier and this leaf does not widen it.**
+  **Drift, measured:** evidence **23 of 24** current, semantic **25 of 27**, intent **25 of 27**,
+  isf-adapter **25 of 27**; retention exactly the declared 24 bundles.
+
+  | document | stage | what |
+  | --- | --- | --- |
+  | `um10204…i2c` | evidence | CONTENT stale — `signal_constraints` 9 → 3, `fact_provenance` 21 → 15, 13 `conditional_rules` renumbered; everything downstream then blocked |
+  | `ihi0024_e…apb` | semantic | CONTENT stale — `interface_signal_conflicts` 0 → 1 and `PADDRCHK` loses its width; the persisted artifact is **refused** by `intent` and by `isf-adapter` |
+
+  Both predate this leaf and both are attributed: I2C's delta reproduces at `1ada364a`, APB-e's at
+  `956fbcce`, each from its own byte-unchanged upstream artifact. APB-e's is not a bookkeeping gap but a
+  precision regression that has not shipped only because its document was never rebuilt — routed to
+  `SIGNAL-DECLARATION-ROW-DROP.4c`, which must land before APB-e is rebuilt.
+
+  **The real finding is the third one, and it is about the gate rather than the corpus.** A
+  load-REFUSING artifact is far cheaper to detect than a content-stale one, and a gate-tier doctrine
+  already exists for exactly that — `PROOF-SEAL-CURRENCY`, which probes the product's own canonical
+  loader. It passed on every run today while `intent` refuses APB-e's SemanticIR. Not a bug: it probes
+  **one representative per distinct seal per stage**, and the census says there is **1 distinct seal
+  across all 27 artifacts at every stage**. Its sample size is therefore **1 in 27**, and its own
+  `--total` mode — which probes all of them — catches both refusals in the same run, with the right
+  diagnostic (*"this is NOT the stale-seal diagnostic … find out why the loader refuses this
+  artifact"*).
+  The seal key does not vary with what the loader actually verifies. That is `.5`.
+  Verification: `bash scripts/check_chain_currency.sh` and
+  `bash scripts/check_proof_seal_currency.sh --total`, both run detached to completion with `time`;
+  per-document attribution by `semantic --dry-run` / `evidence --dry-run` at `956fbcce` and `1ada364a`
+  against the persisted artifacts. Read-only throughout: both checks replay with `--dry-run` and write
+  no artifact, and retention was 24 before and after.
+  Commit: `CORPUS-CHAIN-CURRENCY.4`
+
+- ID: `CORPUS-CHAIN-CURRENCY.5` · Status: `pending` (opened `2026-09-14` by `.4`) · Goal: **the
+  seal-census key does not vary with what the loader checks, so one probe stands for twenty-seven.**
+  `PROOF-SEAL-CURRENCY`'s sampled tier is built on a stated bet: *"a per-document seal divergence raises
+  the distinct count and earns its own probe rather than hiding behind a homogeneous one."* Measured
+  today, the corpus carries **1 distinct seal per stage across 27 artifacts**, and two of those
+  artifacts are refused by the canonical loader — so the bet does not hold, and the check's own header
+  already records an earlier case where it did not (4 of 27 refused behind one seal at `48def695`).
+  The refusal is `registered derivation '<stage>.claim.schema_version.root' output or input topology is
+  stale`: a property of the artifact's **recorded derivation topology**, which the seal digest does not
+  cover. Fold that into the census key and a refusing document becomes its own key and earns its own
+  probe — restoring the representativeness the tier is already documented as wanting, at the cost of one
+  extra probe rather than twenty-six.
+  **Measure before changing the key**: how many distinct keys the corpus would then carry per stage, and
+  what the sampled tier would cost at that count. A key that makes every document distinct has silently
+  become `--total` at gate tier, which is 18m45s and not admissible.
+  Non-goal: raising `PROOF-SEAL-TOTAL` to gate tier. It is 18m45s; the tier boundary is not the defect.
+  Prerequisite: none. Verification: the distinct-key count per stage before and after; the sampled tier
+  observed RED against today's two refusing artifacts; its runtime measured at the new key; the
+  doctrine's own self-tests extended, in particular the one that asserts the sampled probe MISSES a
+  divergent same-seal document (self-test 17), which this change is meant to make impossible.
   Commit: pending
 
 ## Measured corpus census (`2026-08-10`, `.1`) — the drift `.3` closes
@@ -279,7 +310,31 @@ Honest limits of this measurement:
   generated-artifacts / doctrine-enforcement / SourceIR chapters, both retention fact cards, the corpus tree's
   corrected census, and the resume pointer agree before commit.
 
+## Current Frontier
+
+1. `CORPUS-CHAIN-CURRENCY.5` — the sampled seal tier's key. Measure the distinct-key count per stage
+   under a topology-bearing key, and its runtime at that count, before changing anything: a key that
+   makes every document distinct has silently become `--total` at gate tier.
+2. Rebuilding the two drifted documents is **not** this tree's next step. I2C's rebuild is unblocked but
+   its normalized bundle is reclaimed, so it needs a re-ingest rather than a replay; APB-e's is blocked
+   by `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it today would publish that regression into a
+   wire-gold document's chain.
+
 ## Verification Log
+
+- `2026-09-14` — `.4`. `bash scripts/check_chain_currency.sh` run detached to completion: **28m00s real**
+  (26m49s user), exit 1, evidence 23/24 current + 54 unmeasurable, semantic 25/27, intent 25/27,
+  isf-adapter 25/27, retention exactly 24 before and after.
+  `bash scripts/check_proof_seal_currency.sh --total`: **18m44s real**, exit 1 — it catches BOTH refusals
+  with the correct non-stale-seal diagnostic, and its census reports **1 distinct seal per stage across
+  27 artifacts** at source-ir, evidence, semantic, intent and isf-adapter alike, which is what makes the
+  sampled tier a 1-in-27 sample.
+  Attribution, each from its own byte-unchanged upstream artifact: I2C's evidence delta reproduces at
+  `1ada364a`; APB-e's semantic delta reproduces at `956fbcce`. Neither is this session's doing.
+  Live confirmation of the gate gap: `specforge intent generated/semantic_ir/<apb-e>/semantic_ir.json
+  --dry-run` is REFUSED by the current build while `PROOF-SEAL-CURRENCY` (sampled, gate tier) passes in
+  the same working tree; AHB and AXI both load.
+  Read-only: every replay is `--dry-run`, no artifact was written, rebuilt or mutated.
 
 | Date | Boundary | Result |
 | --- | --- | --- |
@@ -297,6 +352,8 @@ Honest limits of this measurement:
 | `2026-08-10` | `.2` corpus-record audit | `.2.50`'s "184-file / 52,570,034-byte bundle" measured the document root; the bundle is 183 files / 51,754,156 bytes and the 815,878-byte difference is exactly its `source_ir.json`. Referential integrity confirmed complete — nothing lost. `.2.48`/`.2.49` records match their bundles exactly |
 
 ## Commit Log
+
+- `.4` — `CORPUS-CHAIN-CURRENCY.4`.
 
 | Unit | Durable evidence |
 | --- | --- |
