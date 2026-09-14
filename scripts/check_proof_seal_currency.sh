@@ -61,6 +61,12 @@
 # is what keeps the 54 legacy proofless artifacts from costing 2.96 s of parser time to prove a
 # ledger they do not have.
 #
+# ALWAYS SAY WHICH BINARY A PROBE COST WAS MEASURED WITH. The four probes above were timed against
+# `target/debug/specforge`, which is what this check built until `2026-09-14`; the same four cost
+# 7.4 s end to end against `target/release/specforge`, which is what it builds now. The profile, its
+# full measurement table, and the evidence that it changes no verdict are in
+# `scripts/lib/corpus_replay_binary.sh` (`CORPUS-CHAIN-CURRENCY.8`).
+#
 # Modes:
 #   --check      (default, gate tier) the total census and a SAMPLED probe — one representative per
 #                distinct seal per stage. Cheap enough for a pre-commit hook. Writes nothing.
@@ -118,6 +124,11 @@ fail_note() { printf '[proof-seal] FAIL: %s\n' "$1" >&2; }
 # about which artifacts are in scope, which seal they carry, or which loader answers for them would
 # leave a debt no compliant work could clear (`.11`).
 . "$ROOT/scripts/lib/proof_seal_scan.sh"
+
+# The third shared predicate of the same contract: WHICH BUILD answers for the corpus. It is one
+# file for the same reason the seal read is (`CORPUS-CHAIN-CURRENCY.8`), and it owns the measured
+# reason the profile is `release`.
+. "$ROOT/scripts/lib/corpus_replay_binary.sh"
 
 # The stale-seal diagnostic the product emits when a persisted ledger was proved under a ruleset the
 # current build no longer issues. Matching it is what lets the gate name the exact remedy instead of
@@ -421,19 +432,19 @@ fi
 # `2026-09-14` — APB-e and I2C, each by a chain rebuild — and with the stage set forced on, the probe
 # reports 27 of 27 accepted at semantic and at intent, exit 0. That is measured, not predicted.
 #
-# THE COST IS, AND THE NUMBER THAT SAID OTHERWISE WAS MEASURED ON THE WRONG BINARY. `.5` sized the
-# two stages at 66 s from `target/release/specforge` (1.2 s per accepted intent probe). THIS CHECK
-# BUILDS AND USES `target/debug/specforge` (see the build below), deliberately, because the question
-# is whether THIS COMMIT's build accepts the persisted seal and a debug build is the cheapest way to
-# get one. A debug probe costs ~14 s, so the activated gate measured **13m01s** — against 15.9 s for
-# the sampled default. Thirteen minutes per commit is not gate tier, and the mechanism stays inert
-# rather than the cost being accepted quietly.
+# THE COST WAS, AND IT WAS A PROPERTY OF THE BINARY RATHER THAN OF THE PROBE. `.5` sized the two
+# stages at 66 s from `target/release/specforge`; this check built `target/debug/specforge`, where the
+# same sweep measured **12m57.9s** against 15.9 s for the sampled default. `CORPUS-CHAIN-CURRENCY.8`
+# measured both profiles cold and warm, found the debug-build argument inverted once the probe count
+# grew, and moved all three corpus-replay entrypoints to the release profile
+# (`scripts/lib/corpus_replay_binary.sh`, which carries the table and the no-verdict-change evidence).
 #
-# ACTIVATION now turns on one question, not two: which BINARY PROFILE this check should probe with.
-# A release build costs ~35 s warm and then ~1.2 s per probe (~100 s all in) against a debug build's
-# ~780 s of probing; cold, a release build is minutes. That trade is `CORPUS-CHAIN-CURRENCY.8`, and it
-# must be measured cold and warm before the profile moves. Once it does, set the default below to
-# 'semantic intent' — the controls already assert both halves and the corpus is already clean.
+# AT THE PROFILE THIS CHECK NOW BUILDS, the activated stage set costs **69.8 s** against 7.4 s for the
+# sampled default, and it reports 27 of 27 accepted at semantic and at intent. Both obstacles named
+# above are therefore gone: the corpus was repaired by `.7`, and the cost by `.8`. The default below
+# is still EMPTY because turning it on is a tier decision with its own before/after evidence, and this
+# tree makes those one leaf at a time — it is `CORPUS-CHAIN-CURRENCY.9`. Activation remains one
+# constant (`TOTAL_PROBE_STAGES` -> 'semantic intent'); the controls already assert both halves.
 TOTAL_PROBE_STAGES="${SPECFORGE_PROOF_SEAL_TOTAL_STAGES-}"
 
 # probe_scope_for <stage> — 'total' or 'sample', honouring an explicit --total for every stage.
@@ -485,16 +496,17 @@ fi
 
 # ── The binary ──────────────────────────────────────────────────────────────
 # The question is whether THIS commit's build accepts the persisted seal, so the build is part of
-# the check. A tree that does not compile cannot answer it, and saying so is fail-closed.
+# the check. A tree that does not compile cannot answer it, and saying so is fail-closed. Which
+# build — and why it is the release profile — is `scripts/lib/corpus_replay_binary.sh`, shared with
+# the remedy and with CHAIN-CURRENCY so all three ask the same binary.
 BIN="${SPECFORGE_PROOF_SEAL_BIN:-}"
 if [ -z "$BIN" ]; then
-  if ! cargo build --manifest-path Cargo.toml --bin specforge >"$WORK/build.log" 2>&1; then
+  if ! BIN="$(corpus_replay_build "$WORK/build.log")"; then
     fail_note 'cargo could not build the specforge binary, so the persisted seal cannot be asked of'
     fail_note 'the current build. Fix the build first; this doctrine has no verdict without it.'
     cat "$WORK/build.log" >&2
     exit 1
   fi
-  BIN="${CARGO_TARGET_DIR:-$ROOT/target}/debug/specforge"
 fi
 if [ ! -x "$BIN" ]; then
   fail_note "$BIN is not an executable specforge binary"

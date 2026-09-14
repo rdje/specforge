@@ -115,6 +115,13 @@ adapter_emission_summary() {
 # it sources, so a change to the shared definition fails here first.
 . "$ROOT/scripts/lib/stage_artifact_identity.sh"
 
+# ── Which build answers ─────────────────────────────────────────────────────
+# Also defined ONCE, in scripts/lib/corpus_replay_binary.sh, for the same `.11` reason: this oracle,
+# PROOF-SEAL-CURRENCY and the rebuild remedy all replay the persisted corpus, and a disagreement
+# about WHICH BUILD they interrogate would make their verdicts incomparable. That file owns the
+# measured reason the profile is `release` (`CORPUS-CHAIN-CURRENCY.8`).
+. "$ROOT/scripts/lib/corpus_replay_binary.sh"
+
 # promoted_markdown_path <source_ir.json> — the normalized bundle entry the evidence replay needs.
 # Prints the repository-relative path, or nothing when the bundle was reclaimed.
 promoted_markdown_path() {
@@ -458,12 +465,11 @@ fi
 # Freshness is the toolchain's decision, never an mtime heuristic here.
 BUILD_LOG="$(mktemp)" || { fail_note 'cannot create a repository-local build log'; exit 1; }
 trap 'rm -f "$BUILD_LOG"' EXIT
-if ! cargo build --manifest-path Cargo.toml --bin specforge >"$BUILD_LOG" 2>&1; then
+if ! BIN="$(corpus_replay_build "$BUILD_LOG")"; then
   fail_note 'cargo could not build the specforge binary, so no replay is possible:'
   cat "$BUILD_LOG" >&2
   exit 1
 fi
-BIN="${CARGO_TARGET_DIR:-$ROOT/target}/debug/specforge"
 if [ ! -x "$BIN" ]; then
   fail_note "cargo reported success but $BIN is not an executable"
   exit 1

@@ -105,6 +105,11 @@ fail_note() { printf '[rebuild-cascade] FAIL: %s\n' "$1" >&2; }
 # `chain_stage_readonly_probe`, all resolving against this script's `GENERATED_ROOT` and `BIN`.
 . "$ROOT/scripts/lib/proof_seal_scan.sh"
 
+# The same contract's third predicate: WHICH BUILD answers. The gate reports the debt against one
+# binary and this remedy clears it with another only if they share this file
+# (`CORPUS-CHAIN-CURRENCY.8`), which also owns the measured reason the profile is `release`.
+. "$ROOT/scripts/lib/corpus_replay_binary.sh"
+
 # ── Stratum ─────────────────────────────────────────────────────────────────
 # A document is in scope when its persisted artifact carries a current proof ledger, and the seal
 # it carries is that ledger's own `ruleset_sha256`. Both questions are answered by
@@ -320,12 +325,11 @@ fi
 BIN="${SPECFORGE_REBUILD_CASCADE_BIN:-}"
 if [ -z "$BIN" ]; then
   BUILD_LOG="$WORK/build.log"
-  if ! cargo build --manifest-path Cargo.toml --bin specforge >"$BUILD_LOG" 2>&1; then
+  if ! BIN="$(corpus_replay_build "$BUILD_LOG")"; then
     fail_note 'cargo could not build the specforge binary, so no rebuild is possible:'
     cat "$BUILD_LOG" >&2
     exit 1
   fi
-  BIN="${CARGO_TARGET_DIR:-$ROOT/target}/debug/specforge"
 fi
 if [ ! -x "$BIN" ]; then
   fail_note "$BIN is not an executable specforge binary"

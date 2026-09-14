@@ -20,24 +20,31 @@ answers:
   - "which documents in the corpus are currently stale"
   - "which binary does check_proof_seal_currency.sh probe with"
   - "why is a debug probe 14 seconds and a release probe 1.2"
+  - "which cargo profile do the corpus replay checks build"
+  - "does a debug build and a release build accept the same persisted artifact"
+  - "why is scripts/lib/corpus_replay_binary.sh a shared predicate"
+  - "how long does a cold release build of this workspace take"
+  - "does a clean checkout or a CI runner pay for the corpus replay build"
+  - "how much of the corpus replay cost is a few large artifacts"
 date: 2026-09-14
 status: current
-tags: [doctrine, chain-currency, proof-seal, corpus, cost, corpus-chain-currency]
-evidence: scripts/check_chain_currency.sh; scripts/check_proof_seal_currency.sh; docs/tasks/CORPUS-CHAIN-CURRENCY.md (.4, .5); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.4c)
-reverify: "bash scripts/check_proof_seal_currency.sh --total — expect '1 distinct seal(s)' at source-ir, evidence, semantic, intent and isf-adapter, and a TOTAL probe that refuses the documents the sampled tier accepts. Budget 19 minutes; budget 28 for bash scripts/check_chain_currency.sh. Run both detached."
+tags: [doctrine, chain-currency, proof-seal, corpus, cost, build-profile, corpus-chain-currency]
+evidence: scripts/check_chain_currency.sh; scripts/check_proof_seal_currency.sh; scripts/lib/corpus_replay_binary.sh; docs/tasks/CORPUS-CHAIN-CURRENCY.md (.4, .5, .8); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.4c)
+reverify: "bash scripts/check_proof_seal_currency.sh --total — expect '1 distinct seal(s)' at source-ir, evidence, semantic, intent and isf-adapter, and a TOTAL probe that names any document its own loader refuses. Budget 2 minutes at the release profile the check now builds; budget 13 for bash scripts/check_chain_currency.sh. Run the second detached."
 ---
 
 Two CI-tier doctrines answer "is the persisted corpus still what this build produces". Measured on a
-warm build, `2026-09-14`:
+warm build, `2026-09-14`, **before and after `CORPUS-CHAIN-CURRENCY.8` moved the replay profile from
+debug to release**:
 
-| check | what it proves | cost |
-| --- | --- | ---: |
-| `check_chain_currency.sh` | the persisted artifact is the CONTENT the current binary reproduces | **28m00s** |
-| `check_proof_seal_currency.sh --total` | every persisted artifact's seal is ACCEPTED by the current build's canonical loader | **18m45s** |
-| `check_proof_seal_currency.sh` (gate tier) | the same, for one representative per distinct seal | seconds |
+| check | what it proves | debug | release |
+| --- | --- | ---: | ---: |
+| `check_chain_currency.sh` | the persisted artifact is the CONTENT the current binary reproduces | 28m00s | **12m38.2s** |
+| `check_proof_seal_currency.sh --total` | every persisted artifact's seal is ACCEPTED by the current build's canonical loader | 18m45s | **1m59.2s** |
+| `check_proof_seal_currency.sh` (gate tier) | the same, for one representative per distinct seal | 15.9 s | **7.4 s** |
 
-Together the two CI-tier runs are ≈ 47 minutes, which is the whole of "`check_doctrines.sh --all` did
-not finish in 50 minutes". Neither is affordable per commit; both are affordable per push, which is
+The two CI-tier runs together were ≈ 47 minutes — the whole of "`check_doctrines.sh --all` did not
+finish in 50 minutes" — and are now **14m37s**. Still not per-commit; comfortably per-push, which is
 where the CI policy already puts them.
 
 ## The sampled tier is a 1-in-27 sample, because the corpus has one seal
@@ -69,18 +76,42 @@ replay extraction from the normalized bundle. Probing every one of the 27 artifa
 costs **30.3 s** (semantic) + **35.5 s** (intent) = **66 s**, and finds every refusal the corpus
 currently has. Sampling is right at source-ir and evidence and wrong at semantic and intent.
 
-**Those timings are `target/release/specforge`, and the check probes with `target/debug/specforge`** —
-deliberately, because the question is whether THIS COMMIT's build accepts the seal and a debug build is
-the cheapest way to get one. A debug probe is ~14 s against a release probe's 1.2 s, so the activated
-per-stage tier measures **13m01s**, not 66 s, against **15.99 s** for the sampled default. Always say
-which binary a probe cost was measured with.
+## Always say which binary a probe cost was measured with — and since `.8` there is one answer
 
-The per-stage mechanism is shipped (`probe_scope_for`, self-tests 17 and 17b) and **inert**:
-`TOTAL_PROBE_STAGES` defaults to empty. The corpus obstacle is **gone** — `CORPUS-CHAIN-CURRENCY.7`
-rebuilt both refusing documents on `2026-09-14` (APB-e, and I2C from its **retained** bundle; it was
-never reclaimed) and the forced-on probe then reports **27 of 27 accepted at semantic and at intent**.
-What holds the activation now is cost, and only because of the binary profile above:
-**`CORPUS-CHAIN-CURRENCY.8`**.
+The 66 s above was `target/release/specforge`; the check built `target/debug/specforge`, where the same
+sweep costs **12m57.9s**. `CORPUS-CHAIN-CURRENCY.8` measured both profiles cold and warm and moved all
+three corpus-replay entrypoints — `check_chain_currency.sh`, `check_proof_seal_currency.sh` and the
+`rebuild_stage_cascade.sh` remedy — to the **release** profile through one shared predicate,
+`scripts/lib/corpus_replay_binary.sh`. They each carried their own copy of the build before; a gate and
+a remedy that disagree about *which loader answers* leave a debt no compliant work can clear, which is
+the same `.11` reason the seal read itself lives in one file.
+
+**The verdict is profile-independent and that was measured, not argued.** Proof verification is digest
+comparison and ordered-map lookup (`verify_ledger`/`validate_claim`, `crates/specforge/src/ir/derivation.rs`);
+the workspace has **no** `cfg(debug_assertions)` and the only two `debug_assert!`s on the proof path
+assert compile-time constants. Both profiles report 27 of 27 accepted at semantic and at intent, and
+AXI's **43,419,318-byte** `intent --dry-run` is byte-identical between them at the same SHA-256.
+
+**The cost is not.** One `intent --dry-run` over a 39.7 MB artifact is **63.1 s** at debug and **6.5 s**
+at release; over a 15.9 KB one it is 0.00 s at both. The thirteen minutes were never spread over the
+corpus — they were a few large artifacts deserialized by an unoptimized build.
+
+Three things that "keep debug because the build is cheaper" had wrong, each measured:
+
+- a **cold** release build of this workspace is **36.1 s**, not minutes — the dependency set is six crates;
+- it is never paid on a clean checkout or a hosted CI runner, because all three entrypoints skip on an
+  absent `generated/` **before** the build (**0.031 s, no cargo invocation at all**);
+- the release tree is the **smaller** one — 234 MB against debug's 1.1 GB.
+
+A build is a fixed cost and a probe is a per-document one, so the debug argument was right at four
+probes and wrong at fifty-four; the crossover is about two large documents.
+
+The per-stage mechanism is shipped (`probe_scope_for`, self-tests 17 and 17b) and **still inert**:
+`TOTAL_PROBE_STAGES` defaults to empty. Both obstacles are now gone — `CORPUS-CHAIN-CURRENCY.7` rebuilt
+both refusing documents on `2026-09-14` (APB-e, and I2C from its **retained** bundle; it was never
+reclaimed), and `.8` made the activated sweep cost **69.8 s** against 7.4 s sampled. What remains is the
+tier decision's own before/after evidence on the whole gate (4m44.7s with the set inert):
+**`CORPUS-CHAIN-CURRENCY.9`**.
 
 ## What the sweep found, and the general law under it
 

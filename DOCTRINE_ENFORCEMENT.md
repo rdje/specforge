@@ -532,7 +532,21 @@ what it kept. Both fail closed, and a deliberate reclamation is a `reclamations`
 owning leaf and reason — which is what "task-owned" means mechanically. The declaration is
 schema-closed (unknown, missing, mistyped, unsorted, duplicated, or self-contradictory fields are
 breaches), so it cannot decay into free-form prose. `--self-test` proves both comparison cores
-fail-closed in sixteen cases before any PASS is trusted.
+fail-closed in twenty-two cases before any PASS is trusted.
+
+**Which build answers for the corpus is one predicate, not three.** `CHAIN-CURRENCY`,
+`PROOF-SEAL-CURRENCY`/`PROOF-SEAL-TOTAL` and the `rebuild_stage_cascade.sh` remedy all replay the
+persisted corpus against the current build, and a gate and a remedy that disagreed about which loader
+answers for an artifact would leave a debt no compliant work could clear. The seal read and the chain
+table already live in `scripts/lib/proof_seal_scan.sh`, and content identity in
+`scripts/lib/stage_artifact_identity.sh`, for exactly that reason; the binary was the third such
+predicate and was copied out three times. `scripts/lib/corpus_replay_binary.sh` is its one home, and it
+owns the profile — **release** since `CORPUS-CHAIN-CURRENCY.8`, measured rather than assumed. The
+verdict is profile-independent (proof verification is digest comparison and ordered-map lookup; the
+workspace has no `cfg(debug_assertions)`, and a 43 MB `intent --dry-run` is byte-identical between the
+two profiles), while the cost is not: one probe over a 39.7 MB artifact is 6.5 s against 63.1 s. A cold
+release build of this workspace is 36 s, and neither profile is ever built on a corpus-less machine,
+because every one of the three entrypoints skips before it reaches the build.
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

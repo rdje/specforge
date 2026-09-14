@@ -327,9 +327,35 @@ per-container data*: it reproduces perfectly while getting it wrong.
 So the check now has two tiers and says which one it is running. The gate tier still samples — that is
 what a pre-commit hook can afford — but its output names the sample size and the class it cannot see.
 `--total` probes every document at every non-terminal stage and is registered as its own CI-tier
-doctrine. On this corpus the sampled run is four probes; the total run is 108, and takes about nineteen
-minutes. The script's own self-test pins the difference with a loader that accepts one document and
-refuses its same-seal neighbour: the sampled mode must miss it, and the total mode must name it.
+doctrine. On this corpus the sampled run is four probes and the total run is 108. The script's own
+self-test pins the difference with a loader that accepts one document and refuses its same-seal
+neighbour: the sampled mode must miss it, and the total mode must name it.
+
+That total run took about nineteen minutes until `2026-09-14`, and it now takes **just under two**. The
+difference is not a change to what it proves — it is the cargo profile the check builds. Three commands
+replay the persisted corpus against the current build: this seal check, the `CHAIN-CURRENCY` content
+oracle, and the rebuild remedy that clears what they report. Each had its own copy of "build the binary
+and use `target/debug/specforge`", which is one predicate written three times — the same hazard that
+put the seal reader and the content comparison into shared files. They now share
+`scripts/lib/corpus_replay_binary.sh`, and it selects the **release** profile.
+
+The reason is worth reading, because the obvious argument for debug is a good one that stopped being
+true. The question these checks ask is whether *this commit's* build accepts the artifact, so the build
+is part of the check, and a debug build is the cheapest way to obtain one. That holds only while the
+build dominates. A build is a fixed cost; a probe is a cost per document, and the probe is a
+deserialize-and-verify over artifacts that reach 84 MB — precisely what an unoptimized build is worst
+at. One probe over a 39.7 MB artifact costs 63 seconds at debug and 6.5 at release; over a 16 KB one it
+costs nothing at either. So the argument was right when a run was four probes and wrong when it became
+a hundred and eight, and the crossover is about two large documents.
+
+The verdict does not move, and that was measured rather than assumed: proof verification is digest
+comparison and ordered-map lookup, both profiles accept the same 27 of 27 artifacts, and a 43 MB
+`intent --dry-run` is byte-identical between them at the same SHA-256. The objections to release were
+measured too, and none survived — a cold release build of this workspace is 36 seconds rather than
+minutes, the release tree is the *smaller* one, and neither profile is ever built on a clean checkout or
+a hosted CI runner at all, because every one of the three commands skips on an absent corpus before it
+reaches the build. `CHAIN-CURRENCY` fell from 28 minutes to 12m38s in the same change, so the two
+CI-tier corpus doctrines together went from about 47 minutes to under 15.
 
 Four properties of that check are worth stating, because each is a mistake it would have been easy to
 make:

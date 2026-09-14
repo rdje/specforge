@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how do I find out which documents are chain-stale
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I know my census script still mirrors the reader
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -293,7 +297,3 @@
   > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how does specforge handle a signal table whose name column is not first
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how does specforge model the JTAG TAP / SWD state machine (FSM)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how does specforge model the SWD serial frame / packet

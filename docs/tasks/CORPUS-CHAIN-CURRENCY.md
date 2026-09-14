@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-14`; `.0`-`.7` complete — corpus CURRENT; **`.8` open** — the check probes with a debug binary)
+- Status: `active` (`2026-09-14`; `.0`-`.8` complete — corpus CURRENT and the replay profile is `release`; **`.9` open** — activate the per-stage TOTAL probe)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-14`
@@ -239,24 +239,62 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   Verification: see the acceptance checklist below.
   Commit: `CORPUS-CHAIN-CURRENCY.7`
 
-- ID: `CORPUS-CHAIN-CURRENCY.8` · Status: `pending` (opened `2026-09-14` by `.7`) · Goal: **the check
-  probes with a DEBUG binary, and every cost number this tree published was measured on a release one.**
-  `.5` sized the two total stages at **66 s** — `semantic --dry-run` ×27 at 30.3 s and `intent` ×27 at
-  35.5 s — from `target/release/specforge`, where an accepted intent probe is **1.2 s**.
-  `check_proof_seal_currency.sh` builds and probes with **`target/debug/specforge`** (`cargo build …
-  --bin specforge`), deliberately: the question it asks is whether THIS COMMIT's build accepts the
-  persisted seal, and a debug build is the cheapest way to obtain one. A debug probe costs **~14 s**, so
-  the activated gate measured **13m01s**, and `--total`'s 18m45s is the same fact from the other end.
-  **The trade is real in both directions and must be measured cold AND warm before the profile moves**:
-  a release build is ~35 s warm and then ~1.2 s per probe (~100 s all in, against ~780 s of debug
-  probing), but a cold release build of this workspace is minutes and would land on every clean checkout
-  and CI runner. A check that is fast only when the release profile happens to be warm has moved its
-  cost rather than removed it.
-  Non-goal: raising `PROOF-SEAL-TOTAL` to gate tier, and lowering what the check proves. The question is
-  the profile, not the tier and not the coverage.
-  Prerequisite: none. Verification: build and probe cost measured for both profiles, cold and warm, on
-  this machine and reasoned about for a CI runner; the sampled default's cost measured at the chosen
-  profile; the self-tests unchanged, since they pin the binary explicitly and are profile-independent.
+- ID: `CORPUS-CHAIN-CURRENCY.8` · Status: `done` (`2026-09-14`, CODE/DOC) · Children: `.9` · **The
+  profile moved to `release`, and the three things that made the trade look hard were all measured
+  false.** See the measurement table under "`.8` — both profiles, cold and warm" below.
+  **The cold objection does not exist.** A cold release build of this workspace — empty target tree —
+  is **36.1 s**, not minutes. The dependency set is six crates, so there is no cold cliff to pay for;
+  cold debug is 21.0 s, and the *release* tree is the smaller one at **234 MB** against debug's 1.1 GB.
+  **And it is not paid on a clean checkout or a CI runner at all.** All three corpus-replay entrypoints
+  skip on an absent `generated/` **before** they reach the build — measured at **0.031 s with no cargo
+  invocation** — because the corpus is untracked and those machines have none. The leaf's own premise,
+  "a cold release build … would land on every clean checkout and CI runner", was wrong twice.
+  **What actually decides it is that a build is a FIXED cost and a probe is a PER-DOCUMENT one**, so the
+  debug argument inverts with the probe count rather than being right or wrong in general. It was right
+  at four probes and wrong at fifty-four. The crossover is small: a release build costs ~27 s more than a
+  debug one after a real core edit, and a single large-document probe saves ~50 s, so **two large
+  documents pay for the build**.
+  **The verdict does not move, and that was measured rather than argued.** Both profiles report 27 of 27
+  accepted at semantic and at intent in the same working tree; AXI's **43,419,318-byte** `intent
+  --dry-run` is byte-identical between them (same SHA-256), so is Wishbone's 10,496,700-byte `semantic
+  --dry-run`, and a legacy artifact's refusal is the same string. That is what the code predicts:
+  verification is digest comparison and ordered-map lookup (`verify_ledger`/`validate_claim`,
+  `crates/specforge/src/ir/derivation.rs`), the workspace has **no** `cfg(debug_assertions)`, and the
+  only two `debug_assert!`s on the proof path assert COMPILE-TIME CONSTANTS. Debug assertions and
+  overflow panics stay `cargo test`'s job, in the dev profile, at CI.
+  **The scope is three entrypoints, not one, and that is the `.11` contract rather than a widening.**
+  `check_chain_currency.sh`, `check_proof_seal_currency.sh` and `rebuild_stage_cascade.sh` all replay the
+  persisted corpus against the current build, and each carried its own copy of `cargo build … --bin
+  specforge` + `target/debug/specforge`. A gate and a remedy that disagree about **which loader answers
+  for them** leave a debt no compliant work can clear — the reason the seal read and the chain table
+  already live in `scripts/lib/proof_seal_scan.sh`. The binary was the third shared predicate and the
+  only one still copied out. It is now `scripts/lib/corpus_replay_binary.sh`, which owns the profile, the
+  measurement table, and the no-verdict-change evidence.
+  **A rejected third option, measured rather than dismissed**: `profile.dev.opt-level=1` plus
+  `profile.dev.package."*".opt-level=3` probes AXI in **7.40 s** — within 14% of release — while keeping
+  debug assertions on. It is not taken here because it changes the build profile of the whole workspace
+  (every `cargo test`, `clippy` and hook invocation; 12.6 s incremental against debug's 5.3 s; a 1.5 GB
+  tree) to buy an assertion class this check does not exercise. It is recorded under `.8` rather than
+  discarded, because it is the right answer to a **different** question — workspace-wide dev build
+  speed — and the measurement is done.
+  Verification: see the acceptance checklist below.
+  Commit: `CORPUS-CHAIN-CURRENCY.8`
+
+- ID: `CORPUS-CHAIN-CURRENCY.9` · Status: `pending` (opened `2026-09-14` by `.8`) · Goal: **turn the
+  per-stage TOTAL probe on.** Both obstacles are gone and both were measured, not predicted: `.7`
+  repaired the corpus (27 of 27 accepted at semantic and at intent), and `.8` moved the profile, so the
+  activated stage set now costs **69.8 s** against 7.4 s for the sampled default — where at the debug
+  profile it cost **12m57.9s**. Activation is one constant (`TOTAL_PROBE_STAGES` → `'semantic intent'`)
+  and both halves are already asserted by self-tests 17 and 17b.
+  **What this leaf still owes is the tier decision's own evidence, which is why it is not folded into
+  `.8`.** Adding ~62 s to a gate that measures 4m44.7s is a ~22% increase paid on every commit, and the
+  case for it is that the sampled tier is a 1-in-27 sample that has already passed over four refused
+  wire-gold documents for three commits (`SIGNAL-DECLARATION-ROW-DROP.1b`). Measure the whole gate
+  before and after at the current profile, state the increase, and land it or state why not — do not
+  quote `.8`'s component number as if it were the gate's.
+  Prerequisite: `.8`. Verification: `scripts/check_doctrines.sh` timed before and after on the same
+  tree; the activated check green on the live corpus; self-tests 20/20 with the stage set at its new
+  default and observed RED with it emptied.
   Commit: pending
 
 ## Measured corpus census (`2026-08-10`, `.1`) — the drift `.3` closes
@@ -483,6 +521,58 @@ in `.5`'s node, in the script's own header, and in the fact card rather than lef
 Thirteen minutes per commit is not gate tier. The mechanism stays inert, the corpus stays clean, and
 the profile question is `.8`.
 
+## `.8` — both profiles, cold and warm (`2026-09-14`)
+
+Measured on this machine at `8126a072`, over the 27-document proof-carrying stratum. Cold builds were
+taken in throwaway `CARGO_TARGET_DIR` trees on the repository volume, so the working `target/` was never
+destroyed; each was reclaimed after its measurement.
+
+| measurement | debug | release |
+| --- | ---: | ---: |
+| cold build of `--bin specforge`, empty target tree | 21.0 s | **36.1 s** |
+| that cold target tree | 1.1 GB | **234 MB** |
+| warm no-op freshness check | 0.18 s | 0.06 s |
+| rebuild after a real edit in `crates/specforge/src/ir/evidence.rs` | 5.3 s | 32.6 s |
+| one `intent --dry-run`, AXI `semantic_ir.json` 39.7 MB | 63.1 s | **6.5 s** |
+| one `intent --dry-run`, ADIv6 `semantic_ir.json` 38.1 MB | 52.4 s | **5.2 s** |
+| one `intent --dry-run`, HBM `semantic_ir.json` 15.9 KB | 0.00 s | 0.00 s |
+| `check_proof_seal_currency.sh`, sampled default (4 probes + the 5-stage census) | 15.9 s | **7.4 s** |
+| the same with `TOTAL_PROBE_STAGES='semantic intent'` (54 probes) | **12m57.9s** | **69.8 s** |
+| `check_proof_seal_currency.sh --total`, the `PROOF-SEAL-TOTAL` CI doctrine | 18m45s | **1m59.2s** |
+| `check_chain_currency.sh`, the `CHAIN-CURRENCY` CI doctrine | 28m00s | **12m38.2s** |
+| absent corpus: the skip that happens before the build | 0.031 s, no cargo | 0.031 s, no cargo |
+
+**The two CI-tier doctrines together go from ≈ 47 minutes to 14m37s.** That is the whole of "`--all` did
+not finish in 50 minutes", and it is now a coffee break. The gain is not uniform, and the shape of the
+difference is the interesting part: `PROOF-SEAL-TOTAL` is 9.4× faster because every probe it makes is a
+deserialize-and-verify, which is exactly what an unoptimized build is worst at; `CHAIN-CURRENCY` is 2.2×
+because its evidence leg replays extraction from a normalized markdown bundle, where the work is text
+processing and I/O rather than parsing a 40 MB artifact.
+
+**One more thing this change fixes that is not about cost.** `TOOLBOX.md` already tells a reader to run
+the CLI as `./target/release/specforge`, and the corpus's own provenance cards record the hash of "the
+owning **release** binary" for the documents they describe. The persisted corpus was produced by release
+builds while the two doctrines that interrogate it used debug ones. They now agree.
+
+**The cost is concentrated in a handful of documents, not spread over the corpus.** A 15.9 KB artifact
+probes in 0.00 s at both profiles; a 39.7 MB one costs 63.1 s at debug and 6.5 s at release. So the
+thirteen minutes were never "27 documents × 14 s" — they were a few large artifacts deserialized by an
+unoptimized build, which is also why the release gain is a clean order of magnitude rather than a
+constant factor.
+
+**Per-commit arithmetic, with the commit mix measured rather than assumed** (43 of the last 100 commits
+touch `crates/**.rs`), for the check's own marginal cost:
+
+| | sampled default | activated at semantic + intent |
+| --- | ---: | ---: |
+| debug | 18.3 s | ~13 min |
+| release | 19.8 s | **~84 s** |
+
+At the sampled default the two profiles are a wash — release buys 8.5 s of probe and gives back 27 s of
+build on the 43% of commits that touch Rust. The whole reason to move is the activated tier, where it is
+**9.3× cheaper**, and that is `.9`. `.8` therefore makes the gate very slightly more expensive on a Rust
+commit and says so, rather than claiming a win it does not have yet.
+
 ## Acceptance Checklist (enforced) — `.6`
 
 - [x] **REPRODUCE / MEASURE** — `.4` and `.5`: 1 distinct seal per stage across 27 artifacts, so the
@@ -507,20 +597,75 @@ the profile question is `.8`.
   topology-key repair, and the activation instruction; `[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]`
   records the same numbers. No behaviour was deleted, so no document describes a behaviour that is gone.
 
+## Acceptance Checklist (enforced) — `.8`
+
+- [x] **REPRODUCE / MEASURE** — the whole table above, taken before anything was edited: both profiles,
+  cold and warm, per-probe and end to end, plus the corpus-absent skip at 0.031 s with no cargo
+  invocation and the commit mix at 43 of 100. `.7`'s 13m01s re-derives here as **12m57.9s**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/check_proof_seal_currency.sh`, `check_chain_currency.sh`
+  and `rebuild_stage_cascade.sh` each carried their own `cargo build … --bin specforge` +
+  `${CARGO_TARGET_DIR:-$ROOT/target}/debug/specforge`. The debug choice was argued from BUILD cost —
+  correctly, while a run was four probes — and nothing re-examined it when `.6` made a run fifty-four.
+  The cost is `serde_json` + derived `Deserialize` over 38–84 MB artifacts in an unoptimized build:
+  15.9 KB probes in 0.00 s at both profiles, 39.7 MB costs 63.1 s at debug and 6.5 s at release.
+- [x] **ADDRESSED (verified)** — `scripts/lib/corpus_replay_binary.sh` defines `corpus_replay_profile`
+  and `corpus_replay_build` once; all three entrypoints source it and no longer name a profile. The
+  sampled gate check goes **15.9 s → 7.4 s** and stays green with the identical verdict; the full
+  gate-tier driver run is **4m44.7s**, all 14 gate doctrines PASS with both CI-tier ones DEFER.
+- [x] **NO REGRESSION** — self-tests **20/20** (proof-seal), **22/22** (chain-currency), **14/14**
+  (rebuild-cascade) — they pin the binary through their own stub env vars and are profile-independent
+  by construction. `bash -n` clean on all three. **No verdict moves**: both profiles report 27 of 27
+  accepted at semantic and at intent, and the artifacts are byte-identical — AXI `intent --dry-run`
+  43,419,318 bytes at the same SHA-256, Wishbone `semantic --dry-run` 10,496,700 bytes, a legacy
+  refusal the same string. **Both CI-tier oracles re-run end to end at the new profile and are green
+  with their verdicts unchanged**: `check_proof_seal_currency.sh --total` **18m45s → 1m59.2s** (24/27
+  accepted at source-ir with the three held-out bundles reported as no-verdict, 27/27 at evidence,
+  semantic and intent), and `check_chain_currency.sh` **28m00s → 12m38.2s** (evidence 24/24 current,
+  semantic 27/27, intent 27/27, isf-adapter 27/27, retention exactly the declared 24). No Rust changed,
+  so `kg-bench` and the WIRE-BASED-100 golds are orthogonal by construction and no persisted artifact
+  moved.
+- [x] **OBSERVED RED** — staging was proved necessary rather than assumed: with the new lib present but
+  untracked the gate FAILS with *"claim-verification: untracked producer-shaped path
+  'scripts/lib/corpus_replay_binary.sh' exists under governed source roots"*, and passes once staged.
+- [x] **GENERICITY (ADR 0006)** — a cargo profile name; no document, chip, vendor or protocol is named
+  or read anywhere in the change.
+- [x] **LOCKSTEP** — `scripts/lib/corpus_replay_binary.sh` carries the measurement and the
+  no-verdict-change evidence; the proof-seal header's cost block now says which binary it was measured
+  with and its inert-activation block is restated for `.9`; `TOOLBOX.md` §7.2a-i gains a WHICH-BUILD
+  entry; `DOCTRINE_ENFORCEMENT.md` §10 gains the shared-predicate paragraph; the book's
+  doctrine-enforcement chapter and
+  `[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]` carry the new costs. No production
+  rule was deleted, so no chapter describes a behaviour that is gone.
+  **Two stale counts were found while doing this and corrected rather than left standing**: `TOOLBOX.md`
+  said both `check_chain_currency.sh` and `check_proof_seal_currency.sh` had "sixteen fail-closed
+  cases" (they have **22** and **20**), and `DOCTRINE_ENFORCEMENT.md` §10 repeated the chain-currency
+  one. Nothing gates a self-test count, which is why all three drifted.
+
 ## Current Frontier
 
-1. `CORPUS-CHAIN-CURRENCY.8` — the binary profile. Every cost number this tree published was measured on
-   `target/release/specforge`; the check builds and probes with `target/debug/specforge`, which is ~12×
-   slower per probe and is why the activated tier measured 13m01s rather than 66 s. Measure both profiles
-   cold and warm before moving it — a check that is fast only when release happens to be warm has moved
-   its cost, not removed it. The corpus itself is CURRENT: 27 of 27 accepted at semantic and intent.
-2. Rebuilding the two drifted documents is **not** this tree's next step. I2C's rebuild is unblocked but
-   its normalized bundle is reclaimed, so it needs a re-ingest rather than a replay; APB-e's is blocked
-   by `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it today would publish that regression into a
-   wire-gold document's chain.
+1. `CORPUS-CHAIN-CURRENCY.9` — activate the per-stage TOTAL probe. Both of the obstacles that held it
+   are measured gone: the corpus is CURRENT (27 of 27 accepted at semantic and at intent, `.7`) and the
+   cost at the profile the check now builds is **69.8 s** against 7.4 s sampled, where at the debug
+   profile it was 12m57.9s (`.8`). What is still owed is the TIER decision's own before/after evidence
+   on the whole gate, which measured 4m44.7s with the stage set inert.
+2. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
+   I2C, and every stage of both replays CONTENT SAME. The corpus is current and the retention
+   declaration is exactly its 24 bundles.
 
 ## Verification Log
 
+- `2026-09-14` — `.8`. Both profiles measured cold and warm before any edit, cold builds taken in
+  throwaway `CARGO_TARGET_DIR` trees under `.project-data/tmp/` on the repository volume and reclaimed
+  afterwards (5.1 GB, zero residue; `git status` clean across the whole measurement). Profile identity
+  proved by byte comparison, not by argument: AXI `intent --dry-run` **43,419,318 bytes, identical
+  SHA-256** between `target/debug/specforge` and `target/release/specforge`; Wishbone `semantic
+  --dry-run` 10,496,700 bytes identical; a legacy artifact's refusal string identical. After the change:
+  `check_proof_seal_currency.sh --self-test` **20/20**, `check_chain_currency.sh --self-test` **22/22**,
+  `rebuild_stage_cascade.sh --self-test` **14/14**; `scripts/check_doctrines.sh` **4m44.7s, 14 gate
+  doctrines PASS, 2 DEFER**; `check_proof_seal_currency.sh --total` **1m59.2s exit 0**;
+  `check_chain_currency.sh` **12m38.2s exit 0** — evidence 24/24 current, semantic 27/27, intent 27/27,
+  isf-adapter 27/27, retention exactly the declared 24 bundles. Read-only throughout: every probe is a
+  `--dry-run`, and no persisted artifact moved.
 - `2026-09-14` — `.7` steps 3 and 4. I2C rebuilt from its RETAINED bundle (snapshot
   `generated/preserved/CORPUS-CHAIN-CURRENCY.7/pre-rebuild-i2c/`, 8 files, `1a3a49a2…50cf`) in the
   documented order, one `validate` per artifact, a `--dry-run` before every write. Result:
@@ -596,6 +741,7 @@ the profile question is `.8`.
 - `.6` — `CORPUS-CHAIN-CURRENCY.6`.
 - `.7` step 2 — `CORPUS-CHAIN-CURRENCY.7` (APB-e rebuild).
 - `.7` steps 3-4 — `CORPUS-CHAIN-CURRENCY.7` (I2C rebuild; activation measured and held).
+- `.8` — `CORPUS-CHAIN-CURRENCY.8` (the corpus-replay binary profile).
 
 | Unit | Durable evidence |
 | --- | --- |

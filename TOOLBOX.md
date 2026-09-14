@@ -444,7 +444,7 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   actually on disk: a declared bundle that is gone, or a bundle no leaf declared, fails closed.
 - **WHEN:** after any shared-extractor or stage change, and before signing off a refresh — it is the
   measurement ADR 0025 decision 1 requires before attributing a delta. Skips loudly with no corpus.
-- **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its sixteen fail-closed cases)
+- **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its twenty-two fail-closed cases)
 
 ### 7.2a-i `scripts/check_proof_seal_currency.sh` — the PROOF-SEAL-CURRENCY gate (gate-tier)
 - **WHAT:** reads the `ruleset_sha256` every persisted artifact records at all five chain stages for the
@@ -458,9 +458,15 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   Skips loudly and passes with no corpus.
 - **LIMIT:** a current seal is **not** content currency. Whether a persisted artifact is still what the
   current binary reproduces stays `CHAIN-CURRENCY`'s question at CI tier.
-- **HOW:** `bash scripts/check_proof_seal_currency.sh` (`--self-test` for its sixteen fail-closed cases).
+- **HOW:** `bash scripts/check_proof_seal_currency.sh` (`--self-test` for its twenty fail-closed cases).
   On a stale seal it names the remedy: `source_proof_migrate --write` for SourceIR (proof-only), or
   `scripts/rebuild_stage_cascade.sh --write` for every stage below it (a real content rebuild).
+- **WHICH BUILD ANSWERS:** this check, `check_chain_currency.sh` and `rebuild_stage_cascade.sh` all
+  replay the persisted corpus against the current build, so they share one binary predicate —
+  `scripts/lib/corpus_replay_binary.sh`, the **release** profile since `CORPUS-CHAIN-CURRENCY.8`. Always
+  say which profile a probe cost was measured with: one `intent --dry-run` over a 39.7 MB artifact is
+  **6.5 s** at release and **63.1 s** at debug, and the whole sampled check is 7.4 s against 15.9 s. The
+  verdict is the same either way — measured byte-identical, same SHA-256, over a 43 MB IntentIR.
 
 ### 7.2b `scripts/check_corpus_frontier.sh` — the CORPUS-FRONTIER derive-and-diff gate
 - **WHAT:** derives the corpus cohort from each document's persisted SourceIR and diffs it against the explicit,
