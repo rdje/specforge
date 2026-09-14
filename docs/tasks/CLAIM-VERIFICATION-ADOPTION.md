@@ -7,8 +7,9 @@
   are now swept against an *enumerated* population rather than a remembered one, and the upstream standard is
   re-adopted with its refusals recorded; `.7` owns the gate that would have observed the drift, now scoped to
   counts; `.7.3` binds every published self-test case count to the script that declares it after three went
-  stale at once; `.8` tracks the census registry's own capacity; `.9` owns the candidate vocabulary's
-  blind spot, now with a fourth demonstration and its step-(1) measurement taken)
+  stale at once; `.8` tracks the census registry's own capacity; `.9` CLOSED the candidate vocabulary's
+  blind spot — four demonstrated nouns, up to two intervening words, a trailing-boundary precision fix,
+  458/458 adjudicated, and a grammar control that goes RED when the gap is reverted)
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
 - Last updated: `2026-08-30`
@@ -1341,7 +1342,7 @@ the workflow through the mdBook and repository review path.
   Prerequisite: none
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
-  Status: `pending`
+  Status: `done` (`2026-09-14`, CODE/DOC)
   Goal: stop the book quantitative census passing while it cannot see the numbers on the page
   Acceptance: `check_book_quantitative_claims.pl:is_candidate` decides what counts as a published
   quantity with one regex whose unit vocabulary is a **closed list** — `files`, `lines`, `bytes`,
@@ -1412,6 +1413,40 @@ the workflow through the mdBook and repository review path.
   author withdrew the count into the measurement record rather than register a region, which is the right
   interim move but is exactly the "gate is gated on the author noticing" shape `.13` describes. Worth adding
   to this leaf's measurement input: spelled numerals are a second gap, orthogonal to the noun list
+  **CLOSED (`2026-09-14`). The alarm now sees the values every demonstration published, and the fix is
+  three changes, each sized before it was made — which is what this leaf asked for and why it stayed open.**
+  **(a) Four nouns, one per demonstration.** `items`, `units`, `tables`, `cells` are the nouns with a
+  RECORDED miss. Cost: **13** new candidate lines. Speculative nouns were measured and NOT added — the
+  full 19-noun set costs 61 lines to buy 48 that no demonstration ever asked for.
+  **(b) Up to TWO words between the numeral and the noun, and this is the gap the noun list alone cannot
+  close.** The fourth demonstration published "126 **name** cells"; adding `cells` does not catch it,
+  because the noun never touches the numeral. The bound is measured, not chosen: 0 words catches **1 of
+  4** demonstrated misses, 1 catches **2 of 4**, **2 catches 4 of 4**, and a third word adds 12 lines
+  while catching nothing new. Cost of (a)+(b): **118** lines.
+  **(c) A trailing word boundary on the unit group — a precision bug this leaf found by measuring.**
+  `signals?` was matching inside "Gbps PHY **Signal**ing", `records?` inside "**record**ed once", and
+  `checks?` inside "catalog **check**er". The boundary removes exactly **5** lines and all 5 are false
+  positives of that shape. It also required stripping an ordered-list marker before matching, because
+  with the gap in place `5. Dependency-connected questions` reads as a count of questions.
+  **The "no nouns at all" option was measured and REFUTED as a replacement.** Four noun-free signals
+  (thousands-separated numeral, bolded numeral, `N -> M`, `N of M`) select **119** lines against the noun
+  route's 61, and they **overlap by only 7**: 112 are B-only and 54 are A-only. Neither subsumes the
+  other, so a noun-free rule is a COMPLEMENT and not a substitute. That is the measured answer to this
+  leaf's step (2), and it is why no noun-free clause ships here.
+  **The population is adjudicated, not stamped.** 114 new regions: **112** `excluded`
+  /`dated_boundary_evidence` (a measurement tied to a moment), **1** `incomplete` with all three legs
+  named — `quality/kg-bench.md:567` "currently runs all 156 tracked fixtures" is a LIVE claim and is
+  recorded as one rather than filed as history — and **1** `excluded`/`authored_threshold_or_choice` for
+  an ADR-declared ceiling. **Two existing region records were DELETED**: they adjudicated false
+  positives the precision fix removed, including a `3.` list index that had been read as "3 shards".
+  Denominator **346 -> 458** lines across **25** files, 458/458 adjudicated.
+  **RED observed on the real class.** The self-test gains a twentieth case that reads the GRAMMAR rather
+  than a record, because the failure this leaf exists to stop is not a malformed record but a quantity
+  the scanner cannot see. Reverting the gap to zero fails it by name on three of the four demonstrated
+  lines. It also asserts what must NOT be minted: a date, an identifier fragment, and a list marker.
+  **Honest residual:** three words between numeral and noun are still invisible, and spelled numerals
+  ("nine documents") remain a separate gap this leaf measured but did not close. Both are asserted as
+  bounds in the control rather than left for a reader to find
   **Fourth demonstration, and this leaf's own step (1) now measured (`2026-09-14`, produced by
   `TEXT-LAYER-IDENTIFIER-SPLIT.2`).** That slice added a paragraph to `pipeline/evidence-failure-modes.md`
   publishing "126 name cells" and "81 of them are TileLink's"; the frozen census reported **346 candidate

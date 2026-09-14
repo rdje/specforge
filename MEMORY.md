@@ -7,34 +7,33 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- **`TEXT-LAYER-IDENTIFIER-SPLIT.2` CLOSED (PROBE/DOC) — NO RULE: THE SAME CELL SHAPE WANTS TWO DIFFERENT
-  JOINS.** `a opcode` is `a_opcode` (underscore), `t PERIOD` is `tPERIOD` (concatenation), and nothing in the
-  cell says which. Over 573 boundary tables, in the column the reader reads: tier A **9 / 2 reachable**, tier B
-  **126 / 2** of which **81 are TileLink, 0 reachable**; 1,677 tier-B matches outside it are the false-positive
-  surface. **The document's own spelling is an exact discriminator** — **2 of 126, right about both** (eMMC
-  `table_0221`, which DECLARES), refusing all 81 TileLink cells. **Still no rule, for `.0`'s reason**: both are
-  in one LEGACY table, so it changes 0 declarations in the current stratum. `MAX_LEAD_CHARACTERS = 2` keeps
-  `AWSIZE, ARSIZE`/`HSELx a`/`Duty Cycle` untouched. `[[a-split-name-cell-does-not-say-which-join-it-wants]]`.
-- Active unit: **`CLAIM-VERIFICATION-ADOPTION.7.3` CLOSED `2026-09-14` (CODE/DOC) — a SELF-TEST CASE COUNT is a published assertion and
-  nothing bound one to its script; THREE were stale at once** under a green gate (TOOLBOX §7.2a/§7.2a-i said
-  "sixteen" for checks at **22** and **21**; DOCTRINE_ENFORCEMENT repeated one). Correcting them was NOT the fix:
-  `scripts/report_self_test_totals.pl` emits each script's DECLARED total and three `derived` assertions bind the
-  TOOLBOX lines to it, so the count is published once. It reads the declaration, not the self-test, because
-  `rebuild_stage_cascade.sh --self-test` builds the binary (43.6 s) and every derived producer runs on every
-  gate; the declaration is self-guarding, so the legs compose. **RED observed**: `total=21`→`22` fails the gate
-  naming both values. Reader self-test **5/5**.
-- **Book-census blind spot: 4th demonstration + `.9`'s step (1) measured, into `.9` which owns it.** "126 name
-  cells" is invisible because `cells` is not in the closed noun list; **527** book lines carry a `<number> <word>`
-  clause it cannot see, mostly noise — the real nouns are `constraints` 9, `tables` 7, `rows`/`behaviors`/
-  `statements` 6, `bits`/`cycles`/`invariants` 5, `cells`. **`.9` IS STILL OPEN — next to own.**
+- **`TEXT-LAYER-IDENTIFIER-SPLIT.2` CLOSED (PROBE/DOC) — NO RULE: the same cell shape wants TWO DIFFERENT
+  JOINS.** `a opcode` is `a_opcode`, `t PERIOD` is `tPERIOD`, and nothing in the cell says which. Name column
+  over 573 tables: tier A **9 / 2 reachable**, tier B **126 / 2** of which **81 TileLink, 0 reachable**. The
+  document's own spelling is exact — **2 of 126, right about both** — but both are in one LEGACY table (eMMC has
+  no retained bundle, evidence schema 2 vs 3), so a rule changes 0 declarations. `[[a-split-name-cell-does-not-say-which-join-it-wants]]`.
+- **`CLAIM-VERIFICATION-ADOPTION.7.3` CLOSED (CODE/DOC) — a SELF-TEST CASE COUNT is a published assertion;
+  THREE were stale at once** under a green gate. `scripts/report_self_test_totals.pl` emits each script's
+  DECLARED total and three `derived` assertions bind the TOOLBOX lines to it, so the count is published once.
+  It reads the declaration, not the self-test (`rebuild_stage_cascade.sh --self-test` builds the binary, 43.6 s),
+  and the declaration is self-guarding, so the legs compose. **RED**: `total=21`→`22` fails naming both values.
+- Active unit: **`CLAIM-VERIFICATION-ADOPTION.9` CLOSED `2026-09-14` (CODE/DOC) — the book census can now SEE
+  the numbers on the page.** Three sized changes: the four nouns with a RECORDED miss (13 lines; the
+  speculative 19-noun set was measured and refused); **up to TWO words between numeral and noun**, the gap the
+  noun list cannot close ("126 **name** cells") — 0 words catches 1 of 4 demonstrated misses, 2 catches **4 of
+  4**, a third adds 12 and catches nothing; and a **trailing word boundary**, a precision bug found by measuring
+  (`signals?` matched inside "PHY **Signal**ing"), removing exactly 5 false positives plus a list-marker strip.
+  **The noun-free option was REFUTED as a substitute**: 119 lines vs 61, overlapping by only 7. Denominator
+  **346 → 458** across 25 files, 458/458 adjudicated (112 dated, **1 `incomplete`** — kg-bench's live "156
+  tracked fixtures" — 1 authored threshold), **2 records DELETED** that had adjudicated false positives, one a
+  `3.` list index read as "3 shards". **RED**: reverting the gap fails new self-test case 20 by name. Residual,
+  asserted as bounds: three intervening words, and spelled numerals.
 - Earlier: **`CORPUS-CHAIN-CURRENCY` EXHAUSTED** (`.0`-`.9`). `.8` gave the three corpus-replay entrypoints ONE
   binary predicate at the **release** profile (`--total` 18m45s → 1m59.2s; `check_chain_currency.sh` 28m00s →
   12m38.2s; ≈47 min of CI doctrine → **14m37s**, byte-identical). `.9` turned the per-stage TOTAL probe ON (gate
   **4m13.0s → 5m30.1s**) + **self-test 21**, which reads the SHIPPED DEFAULT.
-- Next action: **`CLAIM-VERIFICATION-ADOPTION.9`** — measured and ready; widen the candidate grammar (curated
-  nouns vs. a noun-free signal), adjudicate the new population, add a RED control. Alternatives:
-  `TEXT-LAYER-IDENTIFIER-SPLIT.1` (live VLM over three persisted figures), `SIGNAL-DECLARATION-ROW-DROP.4b`/
-  `.4c`/`.2d`/`.2f`, the unsized `.3j`. `.3k.9` stays `DO NOT SHIP YET`.
+- Next action: **pick a tree** — `TEXT-LAYER-IDENTIFIER-SPLIT.1` (live VLM over three persisted figures),
+  `SIGNAL-DECLARATION-ROW-DROP.4b`/`.4c`/`.2d`/`.2f`, the unsized `.3j`. `.3k.9` stays `DO NOT SHIP YET`.
 - In-flight uncommitted: none. No background job outstanding.
 - Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 261; directive 16 gates it
   on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**

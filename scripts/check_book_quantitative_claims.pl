@@ -327,9 +327,32 @@ sub discover_candidates {
 
 sub is_candidate {
     my ($line) = @_;
+    # An ordered-list marker is not a quantity. It only became ambiguous when the optional adjective
+    # below was added: `5. Dependency-connected questions` reads as "5 <adjective> questions" and would
+    # publish a list index as a measured count. Strip the marker before matching, never the digits
+    # inside the sentence.
+    $line =~ s/^(\s*)[0-9]+\.\s+/$1/;
     my $number = qr/[0-9][0-9,._]*/;
-    my $units = qr/(?:files?|lines?|bytes?|records?|members?|facts?|questions?|shards?|cases?|tests?|checks?|surfaces?|claims?|fields?|families?|documents?|pages?|fixtures?|diagnostics?|commands?|doctrines?|signals?|registers?|artifacts?|rules?)/i;
-    return $line =~ /(?<![A-Za-z0-9_])(?:$number\s*%|$number\s*\/\s*$number|$number\s+$units)/ ? 1 : 0;
+    # CLAIM-VERIFICATION-ADOPTION.9. The unit vocabulary is a closed list and its blind spots are values
+    # no record can ever be asked for, so both halves of this clause are measured rather than guessed:
+    #   * `items`, `units`, `tables`, `cells` are the four nouns with a RECORDED miss — one per
+    #     demonstration in `.9`. Adding them costs 13 new candidate lines.
+    #   * up to TWO words may sit between the numeral and the noun. This is the third gap, and the one
+    #     the noun list alone cannot close: the demonstrations published "126 NAME cells", "56 EXACT
+    #     EVIDENCE units" and "464 CONVERTER TEXT items", where the noun never touches the numeral.
+    #     The bound is measured, not chosen: 0 words catches 1 of the 4 demonstrated misses, 1 catches
+    #     2, TWO catches 4 of 4, and a third word adds 12 more candidate lines while catching nothing
+    #     new. Total cost of both halves: 118 new candidate lines, and the sample is overwhelmingly
+    #     real published quantities ("53 of 56 Debug registers", "124 legacy tables", "39 public fields").
+    # THREE words between numeral and noun remain invisible; that residual bound is asserted in the
+    # self-test's grammar control rather than left for a reader to discover.
+    my $units = qr/(?:files?|lines?|bytes?|records?|members?|facts?|questions?|shards?|cases?|tests?|checks?|surfaces?|claims?|fields?|families?|documents?|pages?|fixtures?|diagnostics?|commands?|doctrines?|signals?|registers?|artifacts?|rules?|items?|units?|tables?|cells?)/i;
+    my $adjective = qr/(?:[A-Za-z][A-Za-z-]*\s+){0,2}/;
+    # The unit alternation had no TRAILING boundary, so `signals?` matched inside "Gbps PHY SIGNALing",
+    # `records?` inside "RECORDed once" and `checks?` inside "catalog CHECKer". Measured over the book:
+    # the boundary removes exactly 5 lines and every one of the 5 is a false positive of that shape.
+    # A precision fix, not a narrowing of what the alarm is for.
+    return $line =~ /(?<![A-Za-z0-9_])(?:$number\s*%|$number\s*\/\s*$number|$number\s+$adjective$units(?![A-Za-z]))/ ? 1 : 0;
 }
 
 sub validate_outcome {
@@ -897,6 +920,34 @@ sub run_self_test {
         }],
     );
     my ($passed, $total) = (0, 0);
+
+    # THE GRAMMAR CONTROL (CLAIM-VERIFICATION-ADOPTION.9). Every other case below mutates a RECORD;
+    # this one reads the candidate grammar itself, because the failure `.9` exists to stop is not a
+    # malformed record — it is a published quantity the scanner cannot see, which no record is ever
+    # asked for and which therefore passes silently. Each `must_see` line is a quantity a demonstration
+    # actually published while the census reported full coverage and exited 0.
+    {
+        $total++;
+        my @must_see = (
+            '126 name cells, and 81 of them are TileLink',        # .9 fourth demonstration
+            'contained 56 exact evidence units: 11 derived',      # .9 second demonstration
+            'the rule accepts 285 tables in nine documents',      # .9 third demonstration
+            '464 converter text items, 115 reaching a record',    # .9 first demonstration
+        );
+        # The other half of a grammar control: what it must NOT mint. A date, an identifier fragment and
+        # an ordered-list marker are not quantities, and the list marker only became ambiguous when the
+        # optional adjective was added.
+        my @must_not = (
+            'measured on 2026-08-28 and repaired later',
+            'the segment-0013 capsule is sealed',
+            '5. Dependency-connected questions stay in one class',
+        );
+        my @wrong = ((grep { !is_candidate($_) } @must_see), (grep { is_candidate($_) } @must_not));
+        die "book-quantitative-claims self-test 'candidate grammar' mis-classified: "
+            . join(' | ', @wrong) . "\n" if @wrong;
+        $passed++;
+    }
+
     for my $case (@cases) {
         $total++;
         my ($name, $expected_ok, $diagnostic, $mutate) = @$case;
@@ -919,7 +970,7 @@ sub run_self_test {
     # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
     # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
     # expected case count is therefore declared here, independently of the loop.
-    my $expected_cases = 19;
+    my $expected_cases = 20;
     die "book-quantitative-claims: self-test ran $total cases, declaration expects $expected_cases — "
         . "re-derive the declaration beside the suite\n"
         if $total != $expected_cases;
