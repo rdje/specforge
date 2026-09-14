@@ -251,6 +251,19 @@ the real name column — `VOH`/`VOL`/`VIH`/`VIL` in place of `Output HIGH voltag
 `Point to Point`. It costs no recall anywhere. The split identifier is a separate class, and the eMMC
 timing table that writes `t PERIOD` for `tPERIOD` carries it too.
 
+That second case is the reason SpecForge does not simply glue the two tokens back together, and it is
+worth being explicit about, because "just rejoin them" is the obvious suggestion. The two classes are
+indistinguishable in the cell: `a opcode` is `a_opcode` and wants an underscore, `t PERIOD` is
+`tPERIOD` and wants a concatenation, and both are a one-letter lead followed by a word. Over the whole
+corpus that shape appears in 126 name cells, and 81 of them are TileLink's — so a rule that
+concatenated would be wrong about nearly all of them, and wrong invisibly, since a concatenation
+leaves no seam to notice later. What does separate them is asking the document which spelling it uses:
+whether the concatenation appears anywhere in the document's own text picks out two cells, both of them
+real, and refuses all 81 of TileLink's, because TileLink never writes `aopcode` anywhere. Even that
+test does not earn a rule yet — both surviving cells are in a single table in a document frozen at an
+older generation, so the rule would change nothing today and its first real test would be a document
+nobody had measured. The census is `python3 scripts/measure_subscript_split_name_cells.py`.
+
 Both censuses are re-derivable: `python3 scripts/measure_parametric_width_cell_shapes.py` for the width
 cells, whose join control replays the reader's own column selection and must reproduce every declared
 width in the proof-carrying stratum, and `python3 scripts/measure_name_column_whole_cell_score.py` for

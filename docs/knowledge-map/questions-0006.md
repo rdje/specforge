@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how does specforge handle a signal table whose name column is not first
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > how does specforge model the JTAG TAP / SWD state machine (FSM)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
@@ -277,6 +283,8 @@
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > how many SpecForge mdBook doctests currently fail
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > how many TileLink name cells look like a split identifier
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many USB4 Connection Manager page sidecars are repository relative
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -289,11 +297,3 @@
   > how many arrow-form direction cells exist corpus-wide
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how many book claims describe behaviour the code no longer has
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > how many bracketed placeholder name cells exist corpus-wide
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > how many caption bindings does the corpus lose on re-ingest
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many captions does ingest discard
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how many captured figure regions does the retained corpus hold

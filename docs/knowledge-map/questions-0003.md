@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > do text-reasoning tasks need a vision model
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > do the Pattern and Nlp extraction tiers find the same constraints
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -202,6 +204,8 @@
   > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does docs/research have a file-count ceiling
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > does eMMC table_0221 declare from t PERIOD
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > does effective_table_kind promote an unknown table
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -293,7 +297,3 @@
   > does specforge validate change the artifact it validates
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does specforge validate modify the artifact passed on the command line
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > does specforge write to the input path I pass or to a canonical generated path
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > does suffix spelling authorize a PSEL to PSELX alias

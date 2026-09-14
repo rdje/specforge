@@ -109,6 +109,8 @@
   > can a reviewed gold key name the reason a region is not a contract
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > can a row-level rule refuse the eMMC bus-mode matrix
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > can a rule join two adjacent tokens in a name cell
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > can a section-title shape alone license a signal declaration
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -296,5 +298,3 @@
   > do signal presence records mint signals or declarations
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > do specforge extractors override applies_to / are any self-disabled opt-in
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > do text-reasoning tasks need a vision model

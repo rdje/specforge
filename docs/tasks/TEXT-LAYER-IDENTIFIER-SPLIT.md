@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `TEXT-LAYER-IDENTIFIER-SPLIT`
-- Status: `active` (`2026-09-14`; `.0` done — no rule; `.1`/`.2` open)
+- Status: `active` (`2026-09-14`; `.0`/`.2` done — no rule from either; **`.1` open** — the VLM/figure leg)
 - Roadmap lane: `R2` (extraction correctness / wire recall), with an ingest leg in `R15`
 - Created: `2026-09-14`
 - Last updated: `2026-09-14`
@@ -123,24 +123,60 @@ truncate and nothing to unescape.
   identity before any rule.
   Commit: pending
 
-- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.2` · Status: `pending` (opened `2026-09-14` by `.0`) · Goal: **a
-  subscript split has no separator, so nothing can be joined on.** eMMC `table_0221` declares from
-  `t PERIOD`, `t TLH , t THL`; the document writes `tPERIOD`, `tTLH`, `tTHL`. The join is
-  concatenation, not `<a>_<b>`, and the same cell also carries a comma family — so the one cell needs
-  two readings at once. Census the corpus population of a single-letter lead followed by an
-  upper-case continuation before proposing anything; a rule that concatenates two words is strictly
-  more dangerous than one that inserts an underscore, because it leaves no mark of having guessed.
-  Prerequisite: none. Verification: the population measured with the real reader and adjudicated;
-  observed RED; every legitimate multi-token name shape shown to survive.
-  Commit: pending
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.2` · Status: `done` (`2026-09-14`, PROBE/DOC) · **Measured; no
+  rule — and the census found something the leaf did not go looking for: the SAME CELL SHAPE carries
+  TWO DIFFERENT JOINS, and nothing in the cell says which.**
+  **The population, over all 573 boundary tables** (`python3 scripts/measure_subscript_split_name_cells.py`,
+  read-only). Scope is the column the reader actually reads — header-designated or reader-chosen —
+  because no other cell can become a declaration; the 1,677 matches outside it across 38 documents are
+  counted as the false-positive surface rather than dropped:
+
+  | signature, in the NAME column | cells | with an in-document concatenation |
+  | --- | ---: | ---: |
+  | tier A — continuation is UPPER-CASE (`t PERIOD`) | **9** | **2** |
+  | tier B — continuation is any word (`t PERIOD` *and* `a opcode`) | **126** | **2** |
+
+  **Tier B is what a naive "join two adjacent tokens" rule would take, and 81 of its 126 are
+  TileLink** — `a opcode`, `b param`, `c valid`, … across both revisions' five channel tables. Their
+  correct join is an **underscore** (`a_opcode`), never a concatenation (`aopcode`), and `.0` already
+  established that. So tier B is not a wider version of tier A: **it merges two classes whose joins
+  are different and whose cells are identical.** A rule keyed on the shape would be wrong about 124 of
+  126, and silently — concatenation leaves no mark of having guessed, which is exactly the danger this
+  leaf was opened to check.
+  **What separates them is the document's own spelling, and it separates them perfectly.** Asking
+  whether the document anywhere writes the CONCATENATION selects **2 of 126, and both are right**:
+  eMMC `table_0221` `t PERIOD` → `tPERIOD` and `t TLH , t THL` → `tTLH`/`tTHL`, the second being the
+  comma family and the split in one cell that this leaf was opened on. Every one of TileLink's 81 is
+  refused, correctly, because TileLink never writes `aopcode` anywhere — its joining spelling is
+  `a_opcode`, and `.0` found even that only as vector text inside three figures. **0 false positives
+  against a counter-population of 81 that has the same shape and the opposite answer** is the
+  strongest discrimination anything in this area has shown.
+  **And it still does not ship, for `.0`'s reason rather than a new one.** The entire correct
+  population is **one table in one document, and that document is legacy** — `jesd84_b50` cannot be
+  rebuilt, so a rule would change **zero declarations in the current stratum** and the next document
+  to exercise it would be its first test rather than its hundredth. `.0` refused a rule that was right
+  about 3 of 120 and inert; this one is right about 2 of 126 and inert for the same reason. The
+  measurement is the deliverable, and it is now reproducible.
+  **Two smaller facts worth keeping.** The `MAX_LEAD_CHARACTERS = 2` bound is what makes every
+  legitimate multi-token name shape survive untouched — `AWSIZE, ARSIZE`, `HSELx a`, `ARMPAM [10:0]`,
+  `PADDR [31:0]`, `Duty Cycle`, `Clock source` all select **nothing** at either tier, verified
+  directly against the reader's own tokenizer. And eMMC's remark column writes `C DEVICE` for
+  `CDEVICE`, so the class is not confined to the `t` family — but a remark cell is outside the name
+  column and cannot declare, so it is counted and not acted on.
+  Prerequisite: none. Verification: `python3 scripts/measure_subscript_split_name_cells.py` over all
+  78 persisted SourceIRs, read-only (no artifact written, rebuilt or mutated); every selection printed
+  for adjudication; the survival of the legitimate shapes checked against `token_pairs` directly.
+  Commit: `TEXT-LAYER-IDENTIFIER-SPLIT.2`
 
 ## Current Frontier
 
 1. `TEXT-LAYER-IDENTIFIER-SPLIT.1` — read the three TileLink timing diagrams and decide whether a name
    recovered from a figure may ground a table row's identity. The identity question is the leaf, not the
-   VLM call.
-2. `TEXT-LAYER-IDENTIFIER-SPLIT.2` — the subscript notation (`t PERIOD` for `tPERIOD`), which declares
-   and which no underscore-keyed rule can reach. Census first.
+   VLM call. **`.2` sharpened why it matters**: TileLink's 81 name cells are the counter-population that
+   makes every shape-only join rule wrong, and the only thing that refuses them is the absence of an
+   in-document spelling — which is exactly the evidence `.1` would go and fetch from the figures.
+   It needs a live VLM provider over three images and TileLink cannot be rebuilt (no retained bundle),
+   so the recovery has to be demonstrated on the persisted assets directly.
 
 ## Decisions
 
@@ -181,6 +217,14 @@ None.
 
 ## Verification Log
 
+- `2026-09-14` — `.2`. `python3 scripts/measure_subscript_split_name_cells.py` over all 78 persisted
+  SourceIRs / 573 boundary tables, read-only: name-column tier A **9 cells, 2 reachable**; tier B **126
+  cells, 2 reachable**, of which **81 are TileLink and 0 are reachable**; 1,677 tier-B matches outside
+  the name column across 38 documents reported as the false-positive surface. The two reachable cells
+  are eMMC `table_0221` r0c0 and r1c0, both in a table that DECLARES, both legacy. Legitimate shapes
+  (`AWSIZE, ARSIZE`, `HSELx a`, `ARMPAM [10:0]`, `PADDR [31:0]`, `Duty Cycle`, `Clock source`) select
+  nothing at either tier, checked directly against `token_pairs`. No artifact written, rebuilt or
+  mutated.
 - `2026-09-14` — `.0`. `python3 scripts/measure_split_identifier_name_cells.py` over all 573 boundary
   tables: 120 columns carry the signature (10 current, 110 legacy), each printed verbatim with its
   header, its cells, its role (header-designated / chosen / declaring) and any in-document join. Of the
@@ -202,6 +246,7 @@ None.
 
 - Opened in the commit that closed `PROSE-NAME-CELL-DECLARATION.5`.
 - `.0` — `TEXT-LAYER-IDENTIFIER-SPLIT.0`.
+- `.2` — `TEXT-LAYER-IDENTIFIER-SPLIT.2`.
 
 ## Changelog
 

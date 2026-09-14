@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > how do I file an FSMGen bug report or feature request
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > how do I find out which documents are chain-stale
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -78,6 +82,8 @@
   > how do I tell Clock source from c opcode
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I tell a comma family from a footnote marker from a phrase without a word list
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > how do I tell a concatenation join from an underscore join
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different
   > location than the one recorded in its artifact_layout)
@@ -291,9 +297,3 @@
   > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > how does specforge fold an X interface relation subject onto the bare agent X
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how does specforge handle a signal table whose name column is not first

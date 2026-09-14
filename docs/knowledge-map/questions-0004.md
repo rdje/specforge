@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > does specforge write to the input path I pass or to a canonical generated path
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > does suffix spelling authorize a PSEL to PSELX alias
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > does the .5.iv.a header lever change any persisted artifact (NO — it is inert on the whole measurable stratum, proven not assumed: check_chain_currency.sh replays evidence/semantic/intent/isf-adapter for all 24 rebuildable documents against the patched binary and every persisted artifact is byte-identical. Exactly 1 of the 285 accepted tables sits in a rebuildable document
   > — the SMMU guide Table 3-1 that opened .5.iv — and it mints nothing because .5.ii drops its sentence members. The other 8 documents are legacy schema-1 chains the current binary refuses for canonical use until re-ingest)
@@ -294,7 +298,3 @@
   > how do I count the records in the status ledger
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how do I decide between partitioning a research record and declaring a rollover for it
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > how do I file an FSMGen bug report or feature request

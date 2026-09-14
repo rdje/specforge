@@ -1377,6 +1377,20 @@ the workflow through the mdBook and repository review path.
   author withdrew the count into the measurement record rather than register a region, which is the right
   interim move but is exactly the "gate is gated on the author noticing" shape `.13` describes. Worth adding
   to this leaf's measurement input: spelled numerals are a second gap, orthogonal to the noun list
+  **Fourth demonstration, and this leaf's own step (1) now measured (`2026-09-14`, produced by
+  `TEXT-LAYER-IDENTIFIER-SPLIT.2`).** That slice added a paragraph to `pipeline/evidence-failure-modes.md`
+  publishing "126 name cells" and "81 of them are TileLink's"; the frozen census reported **346 candidate
+  lines / 346 adjudicated regions and passed**, unchanged, because `cells` is not in the list. The same
+  chapter already carried "195 parametric width cells" ungoverned for the same reason, so this is not a new
+  hole — it is the existing one, in the chapter that documents the class.
+  **The measurement this leaf asks for before any noun is added, taken corpus-wide:** **527** book lines
+  carry a `<number> <lower-case word>` clause the grammar does not see. That number is the *upper bound*, not
+  the work — most of its words are noise (`and` 25, `are` 9, `such` 8, `with` 6), which is precisely why the
+  list is closed. The real domain nouns inside it are few and countable: `constraints` 9, `tables` 7, `rows`
+  6, `behaviors` 6, `statements` 6, `bits` 5, `cycles` 5, `invariants` 5, plus `cells`. So a curated addition
+  of ~9 nouns is a bounded job with a knowable adjudication cost, and the "prefer a rule that enumerates no
+  nouns" option must be measured against that 527 upper bound rather than against a guess. Reproduce with the
+  regex in `check_book_quantitative_claims.pl:is_candidate` complemented by `<number>\s+[a-z][a-z-]{2,}`
   Prerequisite: none
 
 ## Current Frontier
