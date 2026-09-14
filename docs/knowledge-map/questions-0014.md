@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > where is the sole source to EvidenceIR canonical loss
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > where is the source-to-Intent vertical evaluation schema
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -296,5 +298,3 @@
   > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > who reads or writes the active PDF task tree
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > why a parallel field-constraint surface instead of a subject-kind discriminator

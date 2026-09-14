@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what did the corpus task evidence containment census find
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > what did the current claim census find
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
@@ -295,5 +297,3 @@
   > what is 64 in the status ledger
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is ADR 0019
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what is ADR 0024

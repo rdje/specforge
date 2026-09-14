@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-14`; `.0`-`.4` complete, **`.5` open** — the sampled seal tier's key does not vary with what the loader checks)
+- Status: `active` (`2026-09-14`; `.0`-`.5` complete, **`.6` open** — probe semantic and intent totally at gate tier, 66 s)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-14`
@@ -152,26 +152,48 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   no artifact, and retention was 24 before and after.
   Commit: `CORPUS-CHAIN-CURRENCY.4`
 
-- ID: `CORPUS-CHAIN-CURRENCY.5` · Status: `pending` (opened `2026-09-14` by `.4`) · Goal: **the
-  seal-census key does not vary with what the loader checks, so one probe stands for twenty-seven.**
-  `PROOF-SEAL-CURRENCY`'s sampled tier is built on a stated bet: *"a per-document seal divergence raises
-  the distinct count and earns its own probe rather than hiding behind a homogeneous one."* Measured
-  today, the corpus carries **1 distinct seal per stage across 27 artifacts**, and two of those
-  artifacts are refused by the canonical loader — so the bet does not hold, and the check's own header
-  already records an earlier case where it did not (4 of 27 refused behind one seal at `48def695`).
-  The refusal is `registered derivation '<stage>.claim.schema_version.root' output or input topology is
-  stale`: a property of the artifact's **recorded derivation topology**, which the seal digest does not
-  cover. Fold that into the census key and a refusing document becomes its own key and earns its own
-  probe — restoring the representativeness the tier is already documented as wanting, at the cost of one
-  extra probe rather than twenty-six.
-  **Measure before changing the key**: how many distinct keys the corpus would then carry per stage, and
-  what the sampled tier would cost at that count. A key that makes every document distinct has silently
-  become `--total` at gate tier, which is 18m45s and not admissible.
-  Non-goal: raising `PROOF-SEAL-TOTAL` to gate tier. It is 18m45s; the tier boundary is not the defect.
-  Prerequisite: none. Verification: the distinct-key count per stage before and after; the sampled tier
-  observed RED against today's two refusing artifacts; its runtime measured at the new key; the
-  doctrine's own self-tests extended, in particular the one that asserts the sampled probe MISSES a
-  divergent same-seal document (self-test 17), which this change is meant to make impossible.
+- ID: `CORPUS-CHAIN-CURRENCY.5` · Status: `done` (`2026-09-14`, PROBE/DOC) · Children: `.6` ·
+  **The key is not the lever, and the leaf's own proposal was refuted by the first measurement it
+  made.** `.4` proposed folding the recorded derivation topology into the seal-census key so a refusing
+  document would earn its own probe. Measured over the whole proof-carrying stratum, that key gives
+  **27 distinct keys for 27 documents** at evidence, semantic and intent alike — and so does the
+  narrower key over ROOT derivations only (39/89/139 root ids per stage, every one of them
+  document-specific, because `output_sha256` and `inputs_sha256` are digests over the document's own
+  content). A topology-bearing key *is* `--total`, which is 18m45s, exactly as this leaf's own warning
+  said it must not become.
+  **The lever is the per-stage TIER, and the measurement is unambiguous.** `--total`'s cost is not
+  spread evenly: an accepted `intent --dry-run` takes **1.2 s** and a refusal **0.24 s**, because a
+  refusal stops at the loader. A TOTAL probe — every one of the 27, no sampling — costs
+
+  | stage probed totally | wall clock | refusals found |
+  | --- | ---: | --- |
+  | semantic (27 evidence artifacts) | **30.3 s** | I2C |
+  | intent (27 semantic artifacts) | **35.5 s** | APB-e, I2C |
+  | **both** | **66 s** | **every refusal the corpus currently has** |
+
+  The 18m45s belongs to the **evidence** and **source-ir** probes, which replay extraction from the
+  normalized bundle — a different order of work from loading a persisted artifact and verifying its
+  proof. Sampling is right there and wrong at semantic and intent.
+  Verification: read-only. Distinct-key counts computed from the persisted `proof_ledger`s
+  (`RegisteredDerivation` premises, full and `.root`-only); per-stage probe cost timed with `time` over
+  every current-stratum artifact; both refusals reproduced in that run.
+  Commit: `CORPUS-CHAIN-CURRENCY.5`
+
+- ID: `CORPUS-CHAIN-CURRENCY.6` · Status: `pending` (opened `2026-09-14` by `.5`) · Goal: **probe the
+  semantic and intent stages TOTALLY at gate tier; keep source-ir and evidence sampled.** 66 seconds
+  buys the property the sampled tier is documented as wanting and currently cannot deliver: no
+  load-refusing artifact reaches a commit. Today's two would both have been caught on the commit that
+  caused them rather than days later by a detached sweep.
+  **State the cost rather than hide it**: the gate gains ~64 s (the two stages go from 1 probe each to
+  27 each). Directive 16 asks ordinary commits to run the checks that prove the main functionality still
+  behaves, and a wire-gold artifact its own consumer refuses is squarely that.
+  The doctrine's self-tests are the load-bearing part of this leaf, not the tier constant: **self-test 17
+  asserts that the sampled probe MISSES a divergent same-seal document**, which is the behaviour this
+  change removes at two stages and keeps at the other two. It must become a per-stage assertion rather
+  than be deleted, or the check will have lost the control that documents its own limit.
+  Prerequisite: none. Verification: the new tier observed RED against today's two refusing artifacts and
+  GREEN once they are rebuilt; the gate's runtime measured before and after; every existing self-test
+  re-run, with 17 restated per stage; `PROOF-SEAL-TOTAL` left registered at CI tier and unchanged.
   Commit: pending
 
 ## Measured corpus census (`2026-08-10`, `.1`) — the drift `.3` closes
@@ -312,15 +334,24 @@ Honest limits of this measurement:
 
 ## Current Frontier
 
-1. `CORPUS-CHAIN-CURRENCY.5` — the sampled seal tier's key. Measure the distinct-key count per stage
-   under a topology-bearing key, and its runtime at that count, before changing anything: a key that
-   makes every document distinct has silently become `--total` at gate tier.
+1. `CORPUS-CHAIN-CURRENCY.6` — raise the semantic and intent probes to TOTAL at gate tier (66 s
+   measured), leaving source-ir and evidence sampled. The doctrine's self-test 17 — "the sampled probe
+   MISSES a divergent same-seal document" — must become a per-stage assertion rather than be deleted.
 2. Rebuilding the two drifted documents is **not** this tree's next step. I2C's rebuild is unblocked but
    its normalized bundle is reclaimed, so it needs a re-ingest rather than a replay; APB-e's is blocked
    by `SIGNAL-DECLARATION-ROW-DROP.4c`, and rebuilding it today would publish that regression into a
    wire-gold document's chain.
 
 ## Verification Log
+
+- `2026-09-14` — `.5`. Read-only throughout. Distinct-key counts computed from every current-stratum
+  artifact's persisted `proof_ledger`, over its `RegisteredDerivation` premises: the full
+  `(derivation_id, output_sha256, inputs_sha256)` multiset gives **27 distinct keys for 27 documents** at
+  evidence, semantic and intent; restricting to `.root` derivations (39 / 89 / 139 ids) gives the same
+  27, because each root's digests are over that document's own content. Probe cost timed with `time`
+  over all 27: `semantic --dry-run` **30.3 s** total (1 refusal, I2C), `intent --dry-run` **35.5 s**
+  total (2 refusals, APB-e and I2C); a single accepted `intent --dry-run` is **1.2 s** and a refusal
+  **0.24 s**. No artifact written, rebuilt or mutated.
 
 - `2026-09-14` — `.4`. `bash scripts/check_chain_currency.sh` run detached to completion: **28m00s real**
   (26m49s user), exit 1, evidence 23/24 current + 54 unmeasurable, semantic 25/27, intent 25/27,
@@ -354,6 +385,7 @@ Honest limits of this measurement:
 ## Commit Log
 
 - `.4` — `CORPUS-CHAIN-CURRENCY.4`.
+- `.5` — `CORPUS-CHAIN-CURRENCY.5`.
 
 | Unit | Durable evidence |
 | --- | --- |

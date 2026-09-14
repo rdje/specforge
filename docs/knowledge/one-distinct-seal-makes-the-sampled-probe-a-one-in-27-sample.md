@@ -11,6 +11,8 @@ answers:
   - "can a load-refusing artifact pass the gate"
   - "which is cheaper, a seal check or a chain-currency replay"
   - "should PROOF-SEAL-TOTAL be raised to gate tier"
+  - "how much does it cost to probe every artifact at the semantic and intent stages"
+  - "would a topology-bearing seal key separate a refusing document"
   - "what does registered derivation output or input topology is stale mean"
   - "how do I find out which documents are chain-stale"
   - "which documents in the corpus are currently stale"
@@ -52,9 +54,17 @@ tree where `specforge intent …/ihi0024_e…apb/semantic_ir.json --dry-run` was
 stale-seal diagnostic … find out why the loader refuses this artifact"*.
 
 The refusal is a property of the artifact's recorded **derivation topology**, and the seal digest does
-not vary with it. That is the gap, and it is the key rather than the tier: raising `--total` to gate tier
-costs 18m45s, while folding the topology into the census key costs one extra probe
-(`CORPUS-CHAIN-CURRENCY.5`).
+not vary with it. Folding the topology into the census key looks like the cheap repair and **is not**:
+measured, that key gives 27 distinct keys for 27 documents at every stage — root derivations included,
+because each root's `output_sha256`/`inputs_sha256` are digests over its own document's content. A
+topology-bearing key *is* `--total`.
+
+**The lever is the per-stage tier.** `--total`'s 18m45s is not spread evenly: an accepted
+`intent --dry-run` costs **1.2 s** and a refusal **0.24 s**, while the evidence and source-ir probes
+replay extraction from the normalized bundle. Probing every one of the 27 artifacts at just two stages
+costs **30.3 s** (semantic) + **35.5 s** (intent) = **66 s**, and finds every refusal the corpus
+currently has. Sampling is right at source-ir and evidence and wrong at semantic and intent
+(`CORPUS-CHAIN-CURRENCY.6`).
 
 ## What the sweep found, and the general law under it
 

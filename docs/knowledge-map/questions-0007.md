@@ -178,6 +178,8 @@
   > how much disk do normalized bundles cost across the corpus
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how much disk do the retained normalized bundles cost
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how much does it cost to probe every artifact at the semantic and intent stages
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how much fact-card catalog index headroom remains
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -296,5 +298,3 @@
   > is ISF a single-actor or multi-actor format (per-actor — one .isf describes one actor/module; SpecForge's emit collapses to one initiator via select_initiator_actor; lowering cross-component topology would need a multi-actor emit, an architectural change not an emitter tweak)
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > is ISF the current SpecForge bottleneck
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is KG-ISF-TRANSACTIONS.2i unparked / what is the .2i decision (yes — FSMGen confirmed option a: ship the grounded per-phase membership grouping as IntentIR metadata, .isf byte-identical)

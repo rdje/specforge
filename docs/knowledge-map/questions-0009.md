@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > may fact cards be deleted or merged to free catalog capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > must a corpus refresh update the frontier declaration
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -295,5 +297,3 @@
   > what did the active PDF task containment census find
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > what did the corpus promotion sweep measure (gauge deltas per doc)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what did the corpus task evidence containment census find
