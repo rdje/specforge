@@ -16,13 +16,14 @@
   rotated). `.2h.0` WITHDREW `.2d`'s 124/15/6 for 106/13/4 (18 rows admitted on `O` = *Optional*).
   Core **1542**, corpus **78/78 byte-identical** — proves NO REGRESSION, **NOT** the recovery (all 4
   docs legacy proofless); controls + RED carry that.
-- Next action: **PARTITION `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md` before any further leaf there** —
-  it is at **278,514 of 278,528** (`task_evidence` `bytes_each`), 14 bytes; today's five leaves consumed
-  12.7 KB and `.13` was compressed twice to land. `ACTIVE-TASK-EVIDENCE-CONTAINMENT` is `done` and must
-  not be reopened, so the routing needs a new owner (candidate: a leaf under
-  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`). Then `SIGNAL-DECLARATION-ROW-DROP.2f` (122 recoveries,
-  blocked on the `Unused` refusal; must carry BOTH bit forms plus the width-COLUMN choice),
-  `TEXT-LAYER-IDENTIFIER-SPLIT.1`, `EXTRACTION-QUALITY-GAUGE.3j`; `.4c` behind `KG-ISF-COMPLETENESS.2a`.
+- Next action: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.21`** — partition
+  `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md`, **278,514 of 278,528** (`task_evidence.bytes_each`),
+  14 bytes. It BLOCKS every further leaf in that tree including the open `.16`. Do not widen the band
+  (health == enforcement, so widening removes the warning too). Then `SIGNAL-DECLARATION-ROW-DROP.2i`
+  (trapped-row doc claims an arrow arm it lacks; **0 of 663** rows, so fix the COMMENT),
+  `.2f` (122 recoveries, blocked on the `Unused` refusal), `COMMIT-GATE-SINGLE-RUN.0` (per-doctrine
+  timing on an IDLE machine), `TEXT-LAYER-IDENTIFIER-SPLIT.1`, `EXTRACTION-QUALITY-GAUGE.3j`;
+  `.4c` behind `KG-ISF-COMPLETENESS.2a`; `.2h.2` blocked on a per-row-layout census.
 - **`CLAIM-VERIFICATION-ADOPTION`, five closed `2026-09-15`.** **`.12`** `scripts/repin_claim_regions.py`
   (`TOOLBOX.md` §7.7; `COMMIT.md` routes to it) re-pins every `line_range_sha256` region BY CONTENT and
   **REFUSES ambiguity** — `sha256("\n")` matches every blank line, `live-docs.md` has **280 behind 163

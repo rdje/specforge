@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.21` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
-- Last updated: `2026-09-13`
+- Last updated: `2026-09-15`
 - Owner: repo-local workflow
 
 ## Goal
@@ -978,6 +978,39 @@ repeatable rollover/remedy paths and remain under their existing owners.
   included, so no cross-document route broke. No ceiling, milestone or bound moved.
   Commit: see log.
 
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.21`
+  Status: `pending` (opened `2026-09-15` by `CLAIM-VERIFICATION-ADOPTION.15`)
+  Goal: partition `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md`, which is 14 bytes from refusing its own
+  next leaf
+  Acceptance: the file is **278,514 of 278,528 bytes** (`task_evidence.bytes_each`, both bands). This is
+  the BYTE axis, not the `task_evidence.files` count this tree already removed in `.2a`/`.2c` — a
+  different bound on the same surface, and it is the one that now binds.
+  **Measured `2026-09-15`, and the growth is not historical drift but ordinary current work**: five
+  leaves closed that day (`.8`, `.12`, `.13`, `.14`, `.15`) took the file from **263,917 to 278,514**,
+  **+14.6 KB in one session**. `.13` had to be compressed TWICE to land, and `.15` could not add a note
+  to its own frontier table — the file can no longer document its own state, which is the operational
+  definition of "not writable" this tree exists to prevent.
+  **The pressure is structural, not stylistic.** `CLAIM-VERIFICATION-ADOPTION` is an ACTIVE tree with
+  `.16` already open and a standing pattern of closing leaves by measurement — each of which carries its
+  re-derivation commands and counts, which is exactly the evidence the doctrine requires and refuses to
+  let anyone trim. Compressing prose a third time would trade signoff evidence for bytes.
+  **Remedy to decide, not assumed** — `ACTIVE-TASK-EVIDENCE-CONTAINMENT` is `done` and states it must not
+  be reopened, so its mechanism is precedent, not owner. `.5` routed a constant preamble out of a task
+  file and `.19`/`.20` split a book chapter twice; the candidate shapes are (a) partition the closed
+  leaves into a bounded history file with an index, the way this tree's own history is held, or (b) route
+  per-leaf evidence blocks to a sibling under `docs/tasks/claim-verification-adoption/`, the way
+  `spec-to-intent-alignment/` and `corpus-coverage/` already are. Pick with a measured before/after and
+  a re-derivable index, not by taste.
+  **Do not widen `bytes_each`.** This tree's own doctrine is that no ceiling is widened to hide pressure
+  (`.2b` refused a banked increase on the very next commit), and the byte band here is health AND
+  enforcement at the same value, so a widening would remove the warning as well as the stop.
+  Blocks: any further `CLAIM-VERIFICATION-ADOPTION` leaf, including the already-open `.16`.
+  Prerequisite: none; found by `CLAIM-VERIFICATION-ADOPTION.15` while being refused the room to record
+  its own decision
+  Verification: `pending`
+  Commit: `pending`
+
+
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.20`
   Status: `pending` (opened `2026-09-13` by `.19`)
   Goal: stop re-splitting one chapter by deciding where an extraction rule documents itself
@@ -1063,7 +1096,8 @@ owner's `Status` line rather than from any mention of the surface.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0` | `done` | exact clean pressure and owner boundaries are pinned |
-| 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
+| 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21` | `pending` | `CLAIM-VERIFICATION-ADOPTION.md` is 14 bytes from refusing its own next leaf; +14.6 KB in one session and it can no longer record its own decisions |
+| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |

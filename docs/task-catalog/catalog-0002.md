@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `FSMGEN-REFRESH-INTEGRATE-8` | `done` | refresh the FSMGen pin and audit the new upstream delta | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-8.md) |
 | `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](../tasks/FSMGEN-SUBMODULE-BUMP.md) |
 | `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](../tasks/FULL-PAGE-INTENT-CAPTURE.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `R15C-CONVERGENCE-REPORT` | `done` | make the convergent extraction loop first-class + inspectable | [open](../tasks/R15C-CONVERGENCE-REPORT.md) |
 | `R15C-R15G-LEARNING-PLANE-BACKFILL` | `active` | own + audit the learning / eval / corpus lanes (in-progress) | [open](../tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 | `R16-CAPTURE-FIDELITY-GATES` | `done` | objective capture-fidelity metric (point #5) | [open](../tasks/R16-CAPTURE-FIDELITY-GATES.md) |
-| `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | schema-constrained + verified extraction (point #6 — the crux, continuous) | [open](../tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
 

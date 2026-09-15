@@ -22,6 +22,7 @@ Complete membership for this range. The bounded landing is
 | `CANONICAL-PROMOTION-SWEEP` | `done` | land the default LLM-primary constraint promotion across the corpus's canonical artifacts | [open](../tasks/CANONICAL-PROMOTION-SWEEP.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](../tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](../tasks/CLAIM-VERIFICATION-ADOPTION.md) |
+| `COMMIT-GATE-SINGLE-RUN` | `active` | every slice pays the full doctrine gate twice | [open](../tasks/COMMIT-GATE-SINGLE-RUN.md) |
 | `COMPLETENESS-CLOSURE-INVARIANTS` | `done` | first completeness miss-detectors (symbol closure + register tiling) | [open](../tasks/COMPLETENESS-CLOSURE-INVARIANTS.md) |
 | `COMPLETENESS-RECALL-GAUGE` | `done` | a calibrated capture–recapture recall estimate | [open](../tasks/COMPLETENESS-RECALL-GAUGE.md) |
 | `COMPLETENESS-RECALL-RELATIONS` | `done` | extend per-extractor tagging + recall gauge to actor-signal relations | [open](../tasks/COMPLETENESS-RECALL-RELATIONS.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-REFRESH-INTEGRATE-5` | `done` | refresh the FSMGen pin to the SHIPPED declarative storage fields + un-gate DOC-INTENT-TAXONOMY.4a.ii | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-5.md) |
 | `FSMGEN-REFRESH-INTEGRATE-6` | `done` | refresh the FSMGen pin and integrate the current upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-6.md) |
 | `FSMGEN-REFRESH-INTEGRATE-7` | `done` | refresh the FSMGen pin and integrate the latest upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-7.md) |
-| `FSMGEN-REFRESH-INTEGRATE-8` | `done` | refresh the FSMGen pin and audit the new upstream delta | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-8.md) |
 

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.4c` open)
+- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h.2`/`.2i`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-15`
@@ -100,9 +100,9 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-15`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2h`, `.2h.0`–`.2h.1`), `.3`, `.4` (`.4a`–`.4e`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-15`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2i`, `.2h.0`–`.2h.2`), `.3`, `.4` (`.4a`–`.4e`)
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`, `.2g`, `.2h`
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`–`.2i` (`.2h.0`–`.2h.2`)
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
   after the corpus population was measured: the two notations are independent changes with different
   payoffs (the arrow recovers rows; the enumerated width only sharpens rows the arrow already
@@ -985,6 +985,52 @@ a long tail.
   no production rule was deleted or replaced** — the fallback is additive and reachable only where no
   header names a direction column, which is why 0 of 78 documents move.
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.2` · Status: `pending` (opened `2026-09-15` by `.2h.1`) · Goal:
+  **a table whose rows disagree about WHERE the name column is.** `.2h.1` measured CoreSight TMC
+  `table_0074` and gave up its six readable rows deliberately; this leaf owns them so the decision is
+  tracked rather than merely recorded. The table heads `Signal | Type | Description` over a body whose
+  first SIX rows put the direction FIRST and the name LAST
+  (`Output | Valid signals in this cycle. | ATVALIDM`) and whose seventh is the ordinary layout
+  (`AFREADYM | Output | Data flush complete.`).
+  **Why the existing machinery cannot serve it.** The content-based name-column override (`.2e`) applies
+  a WHOLE-TABLE offset, because it was written for a header row SHIFTED relative to its body. On a table
+  whose rows disagree with each other it can be right for six rows or for one, never both — and `.2h.1`
+  measured what happens when a per-row-shaped table is handed a direction anyway: HBM2 `table_0076` went
+  from 0 declarations to **4 phantoms**. That is why `.2h.1`'s guard requires a header-designated name
+  column, and why this leaf exists instead of a widened rotation rule.
+  **Do not open this on one table.** The prerequisite is a corpus census of PER-ROW layout drift —
+  signal-description tables whose rows disagree about which column holds the identifier — with the
+  population and an adjudicated sample, exactly as `.0`/`.2b`/`.2h.0` required of their own rules. One
+  table is not a grammar; `.2h.0` paid for that lesson once already (18 rows admitted on `O`).
+  Known population so far: **6 rows, 1 table, 1 document** (legacy proofless, so 0 persisted artifacts
+  move either way).
+  Prerequisite: `.2h.1`, plus the per-row-layout census named above.
+  Verification: pending
+  Commit: pending
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2i` · Status: `pending` (opened `2026-09-15` by `.2g`) · Goal:
+  **the trapped-row reader claims parity with the body-row reader and does not have it.**
+  `synthesize_trapped_row_signal_declarations` documents itself as minting only *"under the body-row
+  path's own rules"*, and its direction chain does reproduce the explicit-literal, source-actor,
+  destination-actor and description-prose arms — but it has **no flow-arrow arm at all**, so the `.2b`
+  grammar the body-row path gained is silently absent one function away. A doc comment that asserts
+  parity it does not have is the defect, whether or not any row currently needs the missing arm.
+  **Measured `2026-09-15`, and the measurement is why this is a `pending` leaf and not a fix:
+  0 of 663 trapped rows across 37 tables carry a flow marker.** Adding the arm today would ship a rule
+  with no population behind it — exactly what `.2b` disqualified for the leftward arrow, and what
+  `.2h.0` then caught a census doing. So the bounded repair is to make the COMMENT honest now and add
+  the arm only when a trapped row needs it.
+  Two ways to close, and the leaf must pick one with evidence rather than by taste: correct the doc
+  comment to state the one arm it lacks and why (cost: nothing, population 0); or add the arm and accept
+  a rule with no population (refused by this tree's own standing rule unless the census moves).
+  **Re-derive before acting** — the population is a census over persisted SourceIR, so it moves when the
+  corpus does: count `header_rows[1..]` rows of `signal_description` tables whose direction-bearing cell
+  carries a `FLOW_ARROW_FORMS`/`FLOW_ARROW_DISQUALIFIERS` marker.
+  Prerequisite: `.2g`.
+  Verification: pending
+  Commit: pending
+
+
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
   `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` (`.4d`, `.4e`), `.4c` · Goal: **the same silent drop one stage later — a declaration the
   SemanticIR reader cannot finish parsing is discarded whole, direction included.**
@@ -1772,12 +1818,14 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`), so the leaf needs a different discriminator first.
-1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` (**not yet opened**) — CoreSight TMC `table_0074`'s six ATB
-   wires, the rows `.2h.1` deliberately gave up. The table is **mixed, not rotated**: six rows put the
-   name last and the seventh puts it first, so the whole-table offset `.2e` built for a shifted header
-   cannot serve it. Open this only with a measured population for per-row layout drift across the
-   corpus — one table is not a grammar, and `.2h.1` already paid for that lesson once.
-2. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
+1. `SIGNAL-DECLARATION-ROW-DROP.2i` — the trapped-row reader's doc comment claims parity with the
+   body-row reader and it has **no flow-arrow arm**. Population **0 of 663** trapped rows, so the
+   bounded repair is an honest comment, not a rule with no population. Cheap and prerequisite-free.
+2. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — CoreSight TMC `table_0074`'s six ATB wires, the rows `.2h.1`
+   deliberately gave up. The table is **mixed, not rotated** (six rows name-last, the seventh
+   name-first), so `.2e`'s whole-table offset cannot serve it. **Blocked on its own prerequisite**: a
+   corpus census of per-row layout drift. One table is not a grammar, and `.2h.0` paid for that lesson.
+3. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and
