@@ -1084,20 +1084,26 @@ the workflow through the mdBook and repository review path.
   **Producer sub-clause: no production rule was deleted or replaced.**
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.15`
-  Status: `pending` (tracking-only)
+  Status: `done` (`2026-09-15`) — decided, not built
   Goal: nothing executes `durability.stale_check`, so a staleness marker has no oracle behind it
-  Acceptance: `scripts/check_claim_verification.pl` executes `rederive.commands` and
-  `falsification.controls` when `--execute` is set, and never `durability.stale_check`.
-  `.14` measured the consequence: the one marker that was wrong (`309` vs `464`, wrong by 155 and wrong for
-  at least six commits) was the one nothing re-ran. Deciding to execute them needs an answer to what a
-  failing marker should DO — it is a STALENESS signal, not a correctness one, so failing the commit is
-  probably wrong and reporting it probably is not enough either. Size the population first: five claims
-  today, and `.14` already showed four of five use shape markers that cannot go stale.
-  Non-goal: widening the gate to fail on a stale marker without that decision; it would have failed `.14`'s
-  own commit and every commit before it.
+  Acceptance: `.14` found the one wrong marker was the one nothing re-ran, which reads as a missing
+  execution. **DECIDED: do not execute it — the field is not an unrun check, its producer already runs.**
+  1. **3 of the 5 would be SELF-INVOCATION**: `claim-verification-contract-published`,
+     `workflow-standard-capacity-profile` and `claim-provenance-gate-active` each declare
+     `perl scripts/check_claim_verification.pl --check` — the very binary that would execute it.
+  2. **The other 2 already run their sibling mode**: `mdbook-quantitative-census-frozen` and
+     `current-claim-census-frozen` declare `--check`, while their `rederive.commands` declare `--report`
+     on the SAME producer, and `rederive` runs every commit. Only a duplicate invocation is missing.
+  3. **A marker-shape validator was refused too, on measurement.** The cheap gate — reject a
+     `stdout_contains` carrying a digit — was tested against the registry: **9 of 17 carry one**, nearly
+     all legitimately (`20/20`, `27/27`, `8/8` are self-test CASE counts, constant until a case is
+     added). A per-commit counter and a constant are syntactically identical; only the producer
+     separates them, so no syntactic rule can.
+  Residual risk is `.14`'s defect, already forbidden by each record's own `assertion`; all five markers
+  are now shape-only. Reopen only for a `stale_check` whose argv is NOT covered by its `rederive`.
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.14`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: the five `stale_check` argv and all 17 markers enumerated from `claims.jsonl`.
+  Commit: see log
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.8`
   Status: `done` (`2026-09-15`)
