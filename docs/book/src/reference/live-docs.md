@@ -1417,6 +1417,20 @@ unverifiable claim on their landing pages. They adopt the shard once their parts
 Their indexes were at 49.4% and 67.2% of the same bound on `2026-08-31`, so the shape is the defect,
 not the schedule.
 
+`claim-verification-adoption` joined them on `2026-09-15` and adopted the sharded shape directly, because
+its parts do carry node blocks. Its root task file had reached fourteen bytes of headroom under the
+per-file byte ceiling for `docs/tasks/`, which is health and enforcement at the same value, so the tree
+could no longer record its own decisions; partitioning it left a bounded root at under three per cent of
+that ceiling. The cut is by reader concern rather than by size, and the losslessness claim is checked the
+way every other one here is: re-harvesting only the marker-delimited payloads out of the part files and
+concatenating them in declared order must reproduce the pre-migration file byte-for-byte.
+
+Registering a partitioned tree is not free, and the cost is visible in the registry rather than absorbed.
+Each one adds four surface records — index, semantic parts, route catalog, archived capsule — to
+`doctrine/live_document_size/surfaces.jsonl`, which declares its own `max_records`. That declaration is
+the one bound in the registry with no warning band beneath it, so it is tracked as a reachable stop by
+`LIVE-DOCUMENT-PRESSURE-HEADROOM.22` rather than discovered by the commit that trips it.
+
 
 ## Closed task trees — how each was implemented and verified
 

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.21` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-15`
@@ -979,7 +979,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.21`
-  Status: `pending` (opened `2026-09-15` by `CLAIM-VERIFICATION-ADOPTION.15`)
+  Status: `done` (`2026-09-15`; opened the same day by `CLAIM-VERIFICATION-ADOPTION.15`)
   Goal: partition `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md`, which is 14 bytes from refusing its own
   next leaf
   Acceptance: the file is **278,514 of 278,528 bytes** (`task_evidence.bytes_each`, both bands). This is
@@ -1007,6 +1007,75 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Blocks: any further `CLAIM-VERIFICATION-ADOPTION` leaf, including the already-open `.16`.
   Prerequisite: none; found by `CLAIM-VERIFICATION-ADOPTION.15` while being refused the room to record
   its own decision
+  **Shape (b), and the reason is that only one candidate has a writer.** The accepted active-task-evidence
+  contract (ADR 0039 topology, ADR 0046 sharded route catalog) already ships an atomic, rollback-safe
+  materializer, a derive-and-diff index/route-catalog/manifest, and a gate that refuses a byte the
+  contract does not derive. Shape (a) — a bounded history file with a hand-written index — has none of
+  those, so adopting it would have meant building a second containment mechanism to avoid reusing the
+  first. `ACTIVE-TASK-EVIDENCE-CONTAINMENT` stays closed: the contract is applied here, not reopened.
+  **Eleven parts cut by reader concern, not by size.** `program-foundation` (`.0`-`.5`),
+  `census-and-withdrawal` (`.6`-`.7`), `provenance-gate` (`.7.0`-`.7.2.1a`), `standard-readoption`
+  (`.8`, `.10`-`.11a`), `registry-capacity-and-repin` (`.12`-`.15`), `count-currency-and-grammar`
+  (`.7.3`, `.9`), `decisions`, `closure-records`, `acceptance-checklists`,
+  `verification-and-chronology`, and the one **active** part `current-and-open-work`, which carries the
+  only open leaf `.16`, the frontier table, and the open questions. Seventeen contiguous regions cover
+  lines 1-2801 with no gap and no overlap; a part owns several regions where its concern is not
+  contiguous in the accreted source, which is why no byte had to move to make the cut land.
+  Verification: **the partition is lossless, proved independently of the checker that wrote it.**
+  Re-harvesting only the marker-delimited payloads out of the eleven part FILES and concatenating them in
+  declared source order reproduces the committed pre-migration blob **byte-for-byte**, SHA-256
+  `938f909f88e71f3b335549232be4c5388a9d91a41846de5d1d15553b76c7674b` for all **278,514** bytes; the
+  archived capsule is that same blob; all **46** `- ID:` node declarations survive in the parts and all
+  46 are re-declared in the bounded root's owner registry. **The stop is gone, and the number says so**:
+  the root is **8,157 bytes — 2.9% of the 278,528-byte ceiling**, from 99.995%, and
+  `task_evidence.bytes_each` now reports `EXTRACTION-QUALITY-GAUGE.md` at 258,302 as the surface maximum.
+  No ceiling, health target, or milestone was widened anywhere. `perl scripts/check_active_task_evidence.pl
+  --contract doctrine/live_document_size/claim_verification_task_evidence.json --report` is
+  migrated/complete with **0 uncorroborated routes** — every one of the 46 declared lifecycles is
+  cross-checked against its own node's `Status:` line — and the route catalog's open set is exactly
+  `{.16}`. The bounded index is 40 lines of a 128-line health target. `scripts/check_doctrines.sh`: all
+  15 executed gate-tier doctrines PASS.
+  **Registration, stated because it is the part a reader cannot see from the diff.** Four surfaces join
+  `doctrine/live_document_size/surfaces.jsonl` (index, parts, route parts, archive), the contract joins
+  `scripts/check_task_evidence_contracts.sh`, the current-claim census denominator moves **41 -> 44**
+  with three included dispositions, and the one census evidence region the partition moved is re-pointed
+  by CONTENT — `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md:2347` to
+  `docs/tasks/claim-verification-adoption/acceptance-checklists.md:209`, digest unchanged and exactly one
+  candidate location, so the re-point could not land on the wrong line. Two `surface_disposition` records
+  restate the existing `task_evidence` dated-evidence exemption for bytes that did not change.
+  **One finding, owned rather than reported**: the surface registry is now **62 of its declared
+  `max_records: 64`**, and that bound has no warning band at all — `check_live_document_size.pl` errors
+  only when it is exceeded. The next partitioned tree needs four records and would fail the build with no
+  prior notice. `.22` owns it.
+  Commit: see log.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22`
+  Status: `pending` (opened `2026-09-15` by `.21`)
+  Goal: give the surface registry's own record capacity a warning band or a declared remedy
+  Acceptance: `doctrine/live_document_size/surfaces.jsonl` is **62 of its declared `max_records: 64`**
+  after `.21` registered four surfaces for one partitioned tree. The portable hard cap in
+  `scripts/check_live_document_size.pl` is **128**, so the declared bound is self-imposed and could move —
+  but the defect is not the number, it is the **shape**: `max_records` has **no milestone block and no
+  warning band**. The checker emits one unconditional error, `has more records than its declared
+  max_records`, and nothing warns below it. Every other bound this registry enforces on the surfaces it
+  describes carries `warning_pct`/`rollover_pct`; the registry does not apply that discipline to itself.
+  **The stop is reachable by ordinary compliant work and it is two records away.** One partitioned task
+  tree costs exactly four records — index, parts, route parts, archive — as `.21` just demonstrated, so
+  the next tree that needs containment fails the build with no prior notice, in the commit that is trying
+  to remove a different stop. That is the `LIVE-DOC-STOP-RISK` shape, and it is the shape this tree
+  exists to refuse.
+  **Two sibling registries measured at the same time, so the decision is taken over the class rather than
+  one file.** `doctrine/claim_verification/current_claim_census.jsonl` is **121 of `max_records: 128`**
+  and has the same milestone-free shape, but not the same risk: `CLAIM-VERIFICATION-ADOPTION.8` measured
+  its rollover lifecycle retiring records 2.6x faster than they accrete (127 -> 115 net over 120
+  revisions), so it has a remedy the surface registry lacks.
+  `doctrine/claim_verification/published_assertions.jsonl` is 41 of 128 and is not near anything.
+  Decide from measurement whether a registry's record count is a resource worth bounding at all — the
+  question `.2a` asked of the task plane and answered with ADR 0045 — or whether it needs the milestone
+  block every surface it governs already has. Do not simply raise 64; a raise with no band relocates the
+  same silent stop to 128, and the single-use ceiling-increase authority protocol (`.2b`, `.4b`) applies
+  to any raise that does land.
+  Prerequisite: none; found by `.21` while registering the four surfaces a partition requires
   Verification: `pending`
   Commit: `pending`
 
@@ -1096,7 +1165,8 @@ owner's `Status` line rather than from any mention of the surface.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0` | `done` | exact clean pressure and owner boundaries are pinned |
-| 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21` | `pending` | `CLAIM-VERIFICATION-ADOPTION.md` is 14 bytes from refusing its own next leaf; +14.6 KB in one session and it can no longer record its own decisions |
+| 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21` | `done` | partitioned under the accepted contract: the root is 8,157 bytes of 278,528 (2.9%, from 99.995%), lossless proved byte-for-byte against the committed blob |
+| 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22` | `pending` | registering one partitioned tree costs four surface records and the registry is now 62 of 64, with no warning band below the hard error |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
@@ -1114,6 +1184,20 @@ owner's `Status` line rather than from any mention of the surface.
 | 16 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` | `pending` | the reviewed validation snapshot refuses its fifth document at any marginal cost, and 78 built artifacts are waiting behind 4 reviewed |
 
 ## Decisions
+
+- `2026-09-15`: `.21` applies the existing active-task-evidence contract rather than authoring a second
+  containment shape, and the reason is availability of a writer, not similarity of the documents. The
+  contract ships an atomic root-last materializer with rollback, derive-and-diff index/route-catalog/
+  manifest generation, a marker-delimited losslessness proof, and a gate that refuses any byte it does
+  not derive; the alternative — a bounded history file with an index, the shape this tree's own history
+  uses — has none of them and would have had to be built and then gated. The cost of reuse is explicit
+  and is recorded rather than absorbed: four new surface records, which is what opened `.22`.
+
+- `2026-09-15`: state the relocation, as `.2a` and `.14a` did. `.21` does not remove
+  `task_evidence.bytes_each`; it moves the surface maximum off `CLAIM-VERIFICATION-ADOPTION.md` (278,514
+  of 278,528) onto `EXTRACTION-QUALITY-GAUGE.md` at 258,302, which is 92.7% of the same ceiling and is an
+  active tree with fifteen open leaves. The axis still binds, on a different file, and no band moved.
+  Partitioning bought this tree room; it did not retire the bound.
 
 - `2026-08-31`: split `.4` into `.4a`/`.4b`/`.4c`/`.4d` and apply ADR 0045 rather than raise the research
   ceiling. The measurement carries the decision on every axis this tree's Non-Goal cares about: the count is
@@ -1198,6 +1282,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-15` | `.21` | independent re-harvest of the marker payloads out of the eleven part files, concatenated in declared source order and compared with `git show HEAD:<path>`; capsule compared with the same blob; `- ID:` node sets compared across source, parts and the new root; `check_active_task_evidence.pl --report`; live-size, census, published-assertion and book gates; `scripts/check_doctrines.sh` | **lossless, proved without trusting the writer**: 278,514 bytes reproduce at SHA-256 `938f909f88e71f3b...` and all 46 node ids survive in both the parts and the root registry. Root 278,514 -> **8,157 bytes (2.9% of ceiling)**; 17 regions, 11 parts, 46 routes, **0 uncorroborated lifecycles**, open set exactly `{.16}`; index 40 of 128 lines. 990 Markdown files satisfy 61 governed surfaces; census 44 surfaces / 68 evidence units; all 15 executed gate-tier doctrines PASS |
 | `2026-08-31` | `.4d.i` self-audit | the four published findings re-derived on the director's challenge: dimension computation read from `check_live_document_size.pl`; `readme_entrypoint`'s surface record inspected for a declared remedy; the `changes` ledger `line_bytes` compared across its rollover; prior stale-table instances counted from this tree's own Changelog; `check_active_task_evidence.pl` contracts enumerated; the ledger record measured as the checker splits it | **three of four carried defects.** The extremal/accumulating contrast was wrong as stated (all three `_each` dimensions are maxima; only what they range over differs); "no rollover can act on a maximum" was too strong (it acts incidentally — measured 1629 -> 1629); "fourth instance" was an overcount (**third**, by the tree's own convention) and the frontier rule cited as this file's belongs to `docs/TASK_TREE.md`:201. A reply-only budget claim is withdrawn: the record is **2,337 bytes**, not the 1,994-byte draft, and `oversized_records` went **62 -> 63**. A **fourth** defect was then caught inside the first correction itself — "declares no `remedy` field" is true but vacuous, since no surface in the registry declares one; the checkable statement is that `rolling_ledgers.jsonl` names four sources and README appears there only as a reader. Finding 2 re-derived intact: 11 lines at 90-94 and one at 95, then a clean gap to 107/108, so the 96-byte warning sits one byte above the document's own column |
 | `2026-08-31` | `.4d.i` README | width population re-derived from `README.md`; block reflowed at successive columns; the three `current_claim_census.jsonl` README region digests recomputed before and after; `check_readme_policy.sh --check`; `check_derived_state_authorities.pl --contract rust_prerequisite_copies` | **108 -> 94 bytes (90.0% -> 78.3%) at 118 lines and 4,637 bytes unchanged.** Only two lines in the file exceeded 96 bytes and both sat in one five-line bullet; every other line was <= 95. Width 88 preserved the block's 5 lines / 423 bytes, width 87 spilled to 6 / 424, so 88 is the exact line-count-preserving boundary. Same words in the same order; lines 1-71 and 77-118 byte-identical. All three census region digests (L1, L30, L88-L104) re-derive **unchanged**, which a rewrap that moved lines would have broken |
 | `2026-08-31` | `.4d.i` snapshot | per-document line cost derived from `VALIDATION_SNAPSHOT.md` itself; contract read from `doctrine/live_document_size/validation_snapshot.json`; built-artifact population counted under `generated/intent_ir` | **the surface is not healthy and no ceiling fixes it.** Marginal cost per reviewed document is 163/147/112/110 lines over 12 fixed (12 + 532 = 544 exactly), so with 96 lines of headroom **the cheapest fifth document is refused**. Warning-to-refusal is 129 lines, below the largest normal update (163) alone, where the doctrine requires the largest update **plus** the rollover. Holding at four documents, ~6 further rescan recommendations fit at the measured 14.7 lines each. **78** built `intent_ir.json` artifacts stand against **4** reviewed: at the 133-line mean the surface is O(corpus) — roughly 10,400 lines against a 640 bound |
@@ -1215,6 +1300,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.21` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21 — partition the claim-verification task tree under the accepted contract` | 14 bytes of headroom became 270,371; the remedy is reuse of a gated writer, and its own cost (four surface records, 62 of 64) is owned by `.22` rather than absorbed |
 | `.4d.i` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i — classify both member warnings; README's dimension does not accumulate` | the width remedy is byte- and line-neutral by necessity, not by taste: README had 3 bytes and 2 lines of headroom, and its census pins are line-anchored. `.4d.ii` inherits a decided remedy class |
 | `.4c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled` | 639 -> 467 lines, zero bytes lost, proved against HEAD; the maximum relocates to a live-writer record `.4e` now owns, and the slice's own ledger record forced a paired rollover |
 | `.4b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority` | the banked-authority refusal observed RED at `3cf7f6d0` first |

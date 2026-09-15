@@ -133,6 +133,8 @@
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > has the CLAIM-VERIFICATION-ADOPTION task evidence migration completed
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -296,5 +298,3 @@
   > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I address exactly one converter item
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > how do I census which span a published constraint read its parts from

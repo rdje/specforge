@@ -6,45 +6,38 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.2h` CLOSED `2026-09-15` (`.2h.0` + `.2h.1` CODE) — a
-  column whose CELLS are the literal direction words IS the direction column.** RED: the dominant shape
-  emitted **`[]`**. Now **94 rows / 11 tables**; content not header, WHOLE cell not substring, resolved
-  AFTER the rotation remap. **94 not 106**: unscoped it took HBM2 `table_0076` from 0 to **4 PHANTOMS**
-  (`Signal X`/`V`/`Active`) because the name-column override had ALREADY mis-picked `Status` and those
-  rows were only dropped for having no direction — supplying one WOKE it. **Two guesses do not compose**
-  → fires only when the name column is header-designated; cost TMC `table_0074`'s 6 wires (MIXED, not
-  rotated). `.2h.0` WITHDREW `.2d`'s 124/15/6 for 106/13/4 (18 rows admitted on `O` = *Optional*).
-  Core **1542**, corpus **78/78 byte-identical** — proves NO REGRESSION, **NOT** the recovery (all 4
-  docs legacy proofless); controls + RED carry that.
-- Next action: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.21`** — partition
-  `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md`, **278,514 of 278,528** (`task_evidence.bytes_each`),
-  14 bytes. It BLOCKS every further leaf in that tree including the open `.16`. Do not widen the band
-  (health == enforcement, so widening removes the warning too). Then `SIGNAL-DECLARATION-ROW-DROP.2i`
-  (trapped-row doc claims an arrow arm it lacks; **0 of 663** rows, so fix the COMMENT),
-  `.2f` (122 recoveries, blocked on the `Unused` refusal), `COMMIT-GATE-SINGLE-RUN.0` (per-doctrine
-  timing on an IDLE machine), `TEXT-LAYER-IDENTIFIER-SPLIT.1`, `EXTRACTION-QUALITY-GAUGE.3j`;
-  `.4c` behind `KG-ISF-COMPLETENESS.2a`; `.2h.2` blocked on a per-row-layout census.
-- **`CLAIM-VERIFICATION-ADOPTION`, five closed `2026-09-15`.** **`.12`** `scripts/repin_claim_regions.py`
-  (`TOOLBOX.md` §7.7; `COMMIT.md` routes to it) re-pins every `line_range_sha256` region BY CONTENT and
-  **REFUSES ambiguity** — `sha256("\n")` matches every blank line, `live-docs.md` has **280 behind 163
-  pins**; **562 regions / 63 files**, RED **13/13**. **`.14`** a `stale_check` carried **"309 adjudicated
-  region(s)"** vs **464**, a per-commit counter its OWN assertion forbids; 1 of 5, now 0. **`.8`** closed
-  by MEASUREMENT — the lifecycle exists (rollover retires the rows it seals, 11 at `ab339652`, net
-  **127→115 over 120 revisions**) and runs **2.6× ahead**; inverts only below ~16-line prepends (42
-  today). **`.13`** do NOT widen the population — whole governed surfaces costs **4,987 records / +5.1
-  per commit** vs a sibling `max_records: 512`. **`.15`** do NOT execute `stale_check` — 3 of 5 declare
-  the binary that would run them (SELF-INVOCATION), the other 2 already run `--report` on the same
-  producer; a digit-rejecting validator was refused too (**9 of 17** markers carry a legitimate digit).
-  **`.16`** open (`N of M` only, **285 / 43 / +1.2 per commit**, own registry + lifecycle).
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.21` CLOSED `2026-09-15` — `CLAIM-VERIFICATION-ADOPTION.md`
+  is partitioned.** It stood at **278,514 of 278,528** bytes (health == enforcement, so no band left). Now a
+  **8,157-byte bounded root (2.9%)** over 11 semantic parts, a 40-line index, one route-catalog part and an
+  exact capsule, under `doctrine/live_document_size/claim_verification_task_evidence.json`. **Lossless proved
+  WITHOUT the writer**: re-harvesting only the marker payloads from the part FILES reproduces the committed
+  blob byte-for-byte, `938f909f88e71f3b…`, all 46 node ids intact. 46 routes, **0 uncorroborated lifecycles**,
+  open set exactly `{.16}`. **The stop RELOCATED, not removed** — `task_evidence.bytes_each` max is now
+  `EXTRACTION-QUALITY-GAUGE.md` at **258,302 / 278,528 (92.7%)**.
+- Next action: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.22`** — `surfaces.jsonl` is **62 of `max_records: 64`**
+  (portable hard cap 128) and that bound has **NO warning band**: one unconditional error, nothing below it.
+  One partitioned tree costs exactly **4** records, so the next one fails the build with no notice. Decide
+  whether a registry record count is a resource worth bounding (the `.2a`/ADR-0045 question) or whether it
+  needs the milestone block every surface it governs already has. Do NOT just raise 64.
+- **Then: prove the continuation path on the tree that just migrated.** Adding a leaf to
+  `CLAIM-VERIFICATION-ADOPTION` now means bounded root + the ONE active part `current-and-open-work` +
+  `root_required_literals` + `leaf_routes` + `--write` for index/routes/manifest. First leaf to add: the
+  **evidence-id convention has no gate** — the id suffix is the region's CONTENT digest prefix and **67 of
+  68** records held it; this slice's own INDEX.md line-3 edit broke the 68th and it was repaired by hand.
+- Also open: `SIGNAL-DECLARATION-ROW-DROP.2i` (trapped-row doc claims an arrow arm it lacks; **0 of 663**
+  rows, so fix the COMMENT), `.2f` (122 recoveries, blocked on the `Unused` refusal),
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.15`/`.16`/`.17`/`.18`/`.20`/`.4d.ii`,
+  `COMMIT-GATE-SINGLE-RUN.0` (per-doctrine timing on an IDLE machine), `TEXT-LAYER-IDENTIFIER-SPLIT.1`,
+  `EXTRACTION-QUALITY-GAUGE.3j`; `.4c` behind `KG-ISF-COMPLETENESS.2a`; `.2h.2` on a per-row-layout census.
 - In-flight uncommitted: none. No background job outstanding.
-- Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 270; directive 16
-  gates it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**
-  `EXTRACTION-QUALITY-GAUGE.md` 2,878/3,000 lines; `DOCTRINE_ENFORCEMENT.md` line 394 is 845 of its
-  1,024-byte ceiling. **Any new production Rust FUNCTION moves `flow_census.json`** — re-derive via
-  `aggregate_change`, never edit the literal; boundary counts (144/9) must NOT move. **After editing a
-  governed file run `python3 scripts/repin_claim_regions.py --check` then `--apply`**, and refresh
-  `shipped_behavior`. Standing hazards live in fact cards:
-  **[[a-cheap-structural-rule-overfires-until-you-read-its-selection]]** (adding recall can WAKE a
-  latent upstream bad guess), **[[actor-taxonomy-grows-in-pairs-not-terms]]**,
+- Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 271; directive 16 gates it
+  on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**
+  **Any new production Rust FUNCTION moves `flow_census.json`** — re-derive via `aggregate_change`, never edit
+  the literal; boundary counts (144/9) must NOT move. **After editing a governed file run
+  `python3 scripts/repin_claim_regions.py --check` then `--apply`**, and refresh `shipped_behavior`.
+  Standing hazards live in fact cards:
+  **[[claim-verification-task-evidence-migrated]]** (what a partition costs, and how to prove one lossless),
+  **[[live-surface-edit-bookkeeping-chain]]** (the 7-step chain one governed edit sets off),
+  **[[a-cheap-structural-rule-overfires-until-you-read-its-selection]]**, **[[actor-taxonomy-grows-in-pairs-not-terms]]**,
   **[[a-single-index-bit-cell-is-a-width-of-one]]**, **[[declaration-replay-reads-the-legacy-stratum]]**,
-  **[[prior-phrase-utf8-byte-as-char]]**, **[[live-surface-edit-bookkeeping-chain]]**, **[[a-dropped-declaration-row-is-usually-not-a-signal]]**.
+  **[[prior-phrase-utf8-byte-as-char]]**, **[[a-dropped-declaration-row-is-usually-not-a-signal]]**.
