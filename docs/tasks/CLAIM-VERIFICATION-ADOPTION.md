@@ -1077,7 +1077,7 @@ the workflow through the mdBook and repository review path.
   Commit: `pending`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.8`
-  Status: `pending` (tracking-only)
+  Status: `done` (`2026-09-15`)
   Goal: give `current_claim_census.jsonl` a lifecycle before it reaches its own bound
   Acceptance: the census registry declares `max_records: 128` and holds **109** (`2026-08-28`). It grows by
   **exactly one record per slice that prepends a rolling-ledger head**, because the first non-blank line of
@@ -1096,6 +1096,40 @@ the workflow through the mdBook and repository review path.
   moment, and the rule `.8` needs is concrete: retire an evidence row when the record head it was created
   for leaves the live window, rather than relocating it onto whatever line now sits at its offset
   Prerequisite: none; it blocks nothing today
+  **ANSWERED `2026-09-15`: the lifecycle this leaf asks for ALREADY EXISTS, and it runs measurably ahead
+  of the bound.** The rolling-ledger rollover *is* the retirement mechanism, exactly as this leaf's own
+  last paragraph proposed — and it has now been observed doing it a second time. At `ab339652`
+  (`WIRE-BASED-100.10c`, carrying `CHANGES-LEDGER-ROLLOVER.8` in the same transaction) the census went
+  **126 -> 115** as **11 `evidence-change-history-current-status-*` records** were retired: precisely the
+  rows whose regions the rollover had sealed into a segment.
+  **Measured over 120 revisions**, the registry does not accumulate — it went **127 -> 115, net -12**.
+  It grows `+1` per `CHANGES.md` prepend (25 such revisions in that window) and is reclaimed in blocks by
+  the rollover. It has been as high as **127 of 128** and come back.
+  **The question worth asking was not "is there a lifecycle" but "does the reclaim arrive before the
+  bound", and the margin is about 2.6x:**
+
+  | | current | trigger | prepends away |
+  | --- | ---: | ---: | ---: |
+  | census records | 115 / 128 (89.8 %) | the bound refuses the append | **13** |
+  | `CHANGES.md` lines | 1,414 / 1,800 target | rolls at 90 % = 1,620 | **~5** |
+  | `CHANGES.md` bytes | 204,698 / 255,000 target | rolls at 90 % = 229,500 | **~6** |
+
+  Mean prepend measured over the same window: **42 lines / 4,010 bytes**. So the ledger rolls — and
+  reclaims — about **eight prepends before** the census could refuse an append. The 89.8 % that looks
+  alarming in isolation is the normal top of a sawtooth.
+  **The inversion condition, named so a future session can check it rather than re-derive this:** the
+  census binds first only if the mean prepend falls below **about 16 lines** (13 x mean < 1,620 - 1,414).
+  Today's mean is 42, so entries would have to shrink by more than 60 %.
+  **Not done, deliberately:** no bound is raised and no retirement rule is added. A second mechanism would
+  compete with the rollover for the same rows — and this leaf's own evidence for urgency, the two dead
+  rows that had drifted onto blank lines, is now structurally prevented rather than merely cleaned up:
+  `CLAIM-VERIFICATION-ADOPTION.12`'s instrument REFUSES to relocate a region whose digest matches more
+  than one line, which is exactly the `01ba4719...546b` blank-line case.
+  Verification: record counts re-derived per revision from Git
+  (`git show <rev>:doctrine/claim_verification/current_claim_census.jsonl`), ledger fill from `wc` against
+  the `change_history` surface's declared health targets, mean prepend from the byte/line delta of
+  `CHANGES.md` across the 23 prepends in the window.
+  Commit: see log
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.10`
   Status: `done` (`2026-08-30`)
