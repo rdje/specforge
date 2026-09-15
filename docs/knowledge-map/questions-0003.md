@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > do old SemanticIR gates create IntentIR behaviors or constraints
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > do old SemanticIR phases create IntentIR behaviors
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > do signal presence records mint signals or declarations
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > do specforge extractors override applies_to / are any self-disabled opt-in
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
@@ -291,9 +297,3 @@
   > does scripts/check_doctrines.sh run cargo test or cargo fmt
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does select_initiator_actor choose the first or last equal maximum
-- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
-  > does source proof migration rerun Docling
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > does source_ref identify one Docling item
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > does specforge adapt remove an old actor isf when actor selection changes

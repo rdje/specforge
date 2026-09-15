@@ -103,8 +103,12 @@
   > can a declared semantic delta hide another undeclared change
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > can a learned prior make an actor name requester-like with no vocabulary (yes - learn_priors derives the role from the semantic role of the signals that actor drives; one decisive HandshakeValidLike consensus and no competing role is enough)
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > can a load-refusing artifact pass the gate
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > can a new actor-role term DESTROY existing relations (yes - unique_complementary_reader_actor_name mints a Reads relation only when the opposite role holds exactly one name, so a term that takes that set from one to two deletes every complementary relation the document had; measured on AMBA GFB with 'source')
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > can a reviewed gold key name the reason a region is not a contract
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -117,6 +121,8 @@
   > can a signal follow its logic level
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > can a signal name imply handshake clock reset polarity or direction
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > can a table's own subject give a flow a port sense without any taxonomy (no - measured: the actor common to every arrow cell is unique in only 2 of 11 arrow tables, because a two-party table names both parties in every cell, and against the 18 cells the taxonomy already admits the rule scores 0 agreements and 1 disagreement)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > can a table_kind unknown table declare signals
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
@@ -292,9 +298,3 @@
   > do field constraints pass the same grounding gates as signal constraints
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > do host-local source libraries define tracked corpus membership
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > do old SemanticIR gates create IntentIR behaviors or constraints
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > do old SemanticIR phases create IntentIR behaviors
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > do signal presence records mint signals or declarations

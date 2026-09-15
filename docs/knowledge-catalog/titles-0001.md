@@ -15,6 +15,7 @@
 | [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md) | 2026-08-09 | `current` | Active task legacy routes bind canonical IDs to exact source spellings |
 | [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md) | 2026-08-09 | `current` | Active task migration is a byte-safe root-last transaction |
 | [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md) | 2026-06-15 | `current` | Actor-signal drive/read DIRECTION is already correct in production (voice-separated verb lexicon); the prose… |
+| [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md) | 2026-09-15 | `current` | The actor-role taxonomy grows one PAIR at a time, and half a pair is worse than none — it masks the flow-ar… |
 | [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md) | 2026-08-09 | `current` | Successful adapter writes reconcile obsolete generated ISF siblings instead of retaining stale actors |
 | [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md) | 2026-08-10 | `current` | Organizational administration remains evidence but cannot establish engineering intent |
 | [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md) | 2026-06-04 | `current` | Per-author adopt/defer ledger — what SpecForge takes from / leaves out of each grounded author |
@@ -60,4 +61,3 @@
 | [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md) | 2026-06-23 | `current` | Cat-4 RISC-V CSR bit-position recovery (DOC-INTENT-TAXONOMY.4d.i) — NOT deterministically recoverable from… |
 | [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
 | [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md) | 2026-08-10 | `current` | CHAIN-CURRENCY replays every persisted corpus artifact against the current binary |
-| [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md) | 2026-08-30 | `current` | Published-claim controls bind exact known-bad evidence and reject scratch producers |

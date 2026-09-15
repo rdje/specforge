@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > how do I check whether a named frontier has an owning task-tree leaf
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > how do I check whether a persisted artifact field describes current behaviour
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how do I check whether the persisted corpus seal is stale
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > how do I clean up scratch after a slice
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -291,9 +297,3 @@
   > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge currently capture transactions and why is it thin
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > how does specforge decide whether a description cell constrains the row's signal

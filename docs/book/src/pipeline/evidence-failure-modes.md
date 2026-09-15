@@ -111,20 +111,56 @@ other direction path already uses, so this adds a notation rather than a vocabul
 safe is that **both sides must resolve, and they must agree**: reading the left side as a source and
 the right side as a destination has to yield the same port sense. A cell naming one recognised role
 beside one unrecognised name states a flow relative to an actor whose role is unknown; a cell whose
-two sides disagree contradicts itself; a cell containing two flows describes a bidirectional group,
-which has no single answer. All three fail closed, as does any reverse or bidirectional marker.
+two sides disagree contradicts itself; a cell containing two flows states both senses of one link and
+leaves the row under-determined. All three fail closed, as does any reverse or bidirectional marker.
 
 That mirror is not caution for its own sake — it is this reader's recurring lesson, that a cheap
 structural rule over-fires until a second condition is added. The numbers say how much it costs and
 what it buys. Across all 78 stored artifacts there are 83 arrow-bearing direction cells, in just two
 documents and 13 distinct wordings — few enough that the sample *is* the population. 18 are admitted,
-and every one of them is a genuine direction statement. The other 65 fail closed: 16 state two
-opposite flows in one cell, and 49 name actors the built-in role taxonomy does not know
-(`Distributor`, `ITS`, `Source → Sink`). Those 49 are a taxonomy question, deliberately left open
-rather than answered by widening a list that also decides how headings and prose are read.
+and every one of them is a genuine direction statement. The other 65 fail closed: 16 state both
+senses of one link in a single cell, and 49 name actors the built-in role taxonomy does not know
+(`Distributor`, `ITS`, `Source → Sink`). Those 49 were held open as a taxonomy question, because the
+same list also decides how headings and prose are read. They are now answered, and the answer is no.
 
 Of the 18, seven are rows that produced nothing before — five real wires recovered, and two that the
 template rule above now refuses. The rest already declared a width and simply gain their direction.
+
+### Why the unknown actors stay unknown
+
+Widening a list of role words looks like the obvious repair, and measuring it changed the answer.
+A census of every place that list is read — a signal row's direction cell, a section heading ending
+in " signals", a relation actor's name, and the rule that mints a reader for a driven signal — says
+three things.
+
+**A term is not the unit; a pair is.** The arrow needs *both* sides to resolve, so a word buys nothing
+unless the word opposite it is already known: adding `Sink` on its own changes nothing anywhere,
+because every cell naming a sink also names a source.
+
+**And half a pair is worse than none.** A direction cell is read literally before it is read as a
+flow, and the literal reading is handed the whole cell. So one known endpoint matches the cell,
+answers first, and returns *the same* port sense for both directions of the link — 28 rows, in the
+one measured case. Supplying both endpoints is what makes the cell ambiguous enough to fall through
+to the arrow reader, where it belongs. Nothing in the corpus trips this today, and a guard is tracked
+so that stays true.
+
+**The words themselves do not survive adjudication.** Six of the nine the corpus offers are product
+block names, which this project does not put in its readers; the document agrees they are not ports,
+heading those tables *Interblock*, *Interdomain* and *Interchip signals*. The one generic pair,
+source and sink, recovers eight rows and mis-directs twelve — `Clock source`, `Reset source` and
+`Interrupt source` are not actors, and the row beside each one already says `Input` in plain text —
+while also deleting a third specification's derived reader relations. Reading the flow against the
+table's own subject instead, with no vocabulary at all, resolves two tables out of eleven and
+disagrees with the reader on the one cell where both can speak.
+
+What the census did find is a larger and simpler population. Across the same 78 stored artifacts,
+**124 rows in 15 tables state their direction outright as `Input` or `Output`, in a column the
+direction scan never looks at, because the document heads it `Type`.** Three of those 15 still have to
+be judged one at a time — two are protocol-version matrices where `input` may be a property value
+rather than a port sense — but the rest need no vocabulary at all. Tracked as
+`SIGNAL-DECLARATION-ROW-DROP.2d` (the decision, re-derivable with
+`python3 scripts/measure_actor_taxonomy_blast_radius.py`), `.2g` (the guard) and `.2h` (the count
+above, re-derivable with `python3 scripts/measure_declaration_row_notations.py`).
 
 Two honest limits. First, this recovers about 3.7 % of the measured row loss, not a majority: the
 four specifications that lose *every* row contain no arrow cell at all, so their loss has another

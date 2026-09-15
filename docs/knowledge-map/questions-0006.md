@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge currently capture transactions and why is it thin
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > how does specforge decide whether a description cell constrains the row's signal
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how does specforge declare a signal mentioned only in prose
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -291,9 +297,3 @@
   > how many OpenCAPI Ready Definition paths are repository relative
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how many OpenCAPI Ready page paths are repository relative
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > how many Signal statements does the corpus carry
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > how many SpecForge mdBook doctests currently fail

@@ -448,6 +448,51 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   it consumes declared copy roles and contains no secondary path fallback. The neutral checker knows no local
   field IDs or roles and does not infer fields from dates, numbers, hash shapes, or prose.
 
+### 6.7 `scripts/measure_actor_taxonomy_blast_radius.py`
+
+- **WHAT:** read-only census of what a NEW term in `builtin_actor_taxonomy_role_in_text` would move,
+  across all four surfaces that read it — the direction cell of a signal row (S1), a section heading
+  ending in ` signals`/` inputs`/… (S2), a relation-actor name in the per-document by-role map (S3),
+  and `unique_complementary_reader_actor_name`, whose exactly-one-opposite-name condition makes S4
+  **non-monotone**: a new term can take a set from one name to two and DESTROY the complementary
+  `Reads` relations a document already mints. Verdicts are `gain` / `loss` / `flip` / `restage`, never
+  a bare count.
+- **WHEN:** **before adding any actor-role term, and before believing that a taxonomy gap is the reason
+  a direction cell fails closed.** `SIGNAL-DECLARATION-ROW-DROP.2d` measured the cost of guessing: the
+  obvious reading was "add the six names GIC-600 uses"; the census answered that six product names are
+  ADR-0006-forbidden, that the one admissible pair (`source`/`sink`) is 60 % false positives and
+  destroys a third document's relations, and that **a partial pair is worse than no pair** — one term
+  of a flow's two endpoints makes the literal actor-text reading answer before the arrow reader and
+  give the SAME direction to both senses of the link (3 pairs / 28 rows, measured).
+- **HOW:** `python3 scripts/measure_actor_taxonomy_blast_radius.py` for the discovered candidates and
+  their per-surface blast radius; `--vocabulary 'a=requester,b=completer'` to size a whole term SET at
+  once, which is the only unit that means anything; `--term 'x=completer'` for one hypothesis; `--json`
+  for the full report.
+- **OUTPUT:** site populations per surface (S1 3,940 / S2 300 / S3 771 on `2026-09-15`, S1
+  cross-checking §6.8's `body rows examined`); candidates DISCOVERED from the corpus, never listed, so
+  the script carries no vendor vocabulary; per-term changed sites with every distinct text printed
+  verbatim for adjudication; and under `--vocabulary`, **flow-sense collapses** — opposite flows between
+  one actor pair that the chain gives the same direction, the one oracle here that needs no vocabulary
+  of its own.
+- **IT CLASSIFIES A POPULATION AND IS NOT A CHECK ON THE RUST.** It replicates the taxonomy it measures,
+  so its agreement with the code carries no information (`CLAIM_VERIFICATION.md` §2); the independent
+  leg is the in-crate control suite. Its table boundary (`table_kind == signal_description`) is an
+  over-approximation of the producers' own gate, so every count is an upper bound.
+
+### 6.8 `scripts/measure_declaration_row_notations.py`
+
+- **WHAT:** read-only census of the notations that decide a signal-description row's fate in the
+  authoritative declaration reader — bracketed metavariable name cells, flow-arrow direction cells,
+  enumerated legal-width cells, and a COLUMN whose cells are the literal direction words in a table
+  whose header carries no `direction` keyword — each distinct form printed verbatim with its count.
+- **WHEN:** before teaching the reader any table notation, and to re-derive the `SIGNAL-DECLARATION-ROW-DROP`
+  populations. Same disclaimer as §6.7: it classifies the population, it does not check the Rust.
+- **HOW:** `python3 scripts/measure_declaration_row_notations.py` (`--json` for the report).
+- **OUTPUT** (`2026-09-15`, 78 documents / 602 tables / 3,940 body rows): 12 bracketed name cells,
+  83 flow-arrow cells (18 admitted, 16 two-sense link cells, 49 unresolved actors), 7 enumerated
+  widths, and **124 rows in 15 tables** under an unread literal direction column — the last reported
+  per TABLE, because a protocol-VERSION matrix can carry the same words as a property value.
+
 ---
 
 ## 7. Stage replay, build, and host

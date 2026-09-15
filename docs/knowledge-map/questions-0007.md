@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > how many Signal statements does the corpus carry
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > how many SpecForge mdBook doctests currently fail
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > how many TileLink name cells look like a split identifier
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -64,6 +70,8 @@
   > how many corpus refreshes remain after the OpenCAPI Certified note
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how many corpus refreshes remain after the OpenCAPI Ready note
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > how many corpus rows does the literal actor-text direction reading answer (476, and 0 of them carry a flow marker, so the masking hazard is latent rather than live)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -290,11 +298,3 @@
   > how to get a fresh eval-extraction baseline for a spec
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how to re-measure the message-field corpus yield
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how to re-score SWD derivation
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > how to read a chip-spec PDF when the Read tool refuses it
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how to recover register field bit positions that live in the layout graphic, not the table
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how was AHB HREADY recovered for the temporal antecedent

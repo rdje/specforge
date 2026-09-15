@@ -13,7 +13,7 @@ unreachable from the product. This census reads the persisted SourceIR corpus
 directly, so the population every `.2` child must adjudicate is enumerable
 whether or not its document can be rebuilt.
 
-Three notations, one per `.2` child, each a property of a cell's own shape — no
+Four notations, one per `.2` child, each a property of a cell's own shape — no
 document, vendor, or protocol vocabulary appears anywhere below (ADR 0006):
 
   * `placeholder`  (`.2a`) — a name cell whose leading token is wrapped in a
@@ -24,6 +24,13 @@ document, vendor, or protocol vocabulary appears anywhere below (ADR 0006):
     *flow* (`<driving actor> -> <receiving actor>`) rather than its port sense.
   * `enumerated-width` (`.2c`) — a width cell that lists the legal widths
     (`8, 16, 32, 64`) instead of naming one.
+  * `literal-direction-column` (`.2h`) — a COLUMN, not a cell: one whose body
+    cells are the literal direction words the reader already understands
+    (`Input`, `Output`, `InOut`), in a table whose header carries no `direction`
+    keyword, so `synthesize_signal_declarations` never looks at it. Reported per
+    table with the rows that would newly gain a direction, because the unit of
+    adjudication here is the table: a protocol-VERSION matrix can carry the same
+    words as a property value rather than a port sense.
 
 Every distinct cell form is printed verbatim with its count, so the selection can
 be adjudicated by hand rather than trusted by count — the standing finding of
@@ -62,6 +69,17 @@ COMPLETER_TERMS = [
     "subordinate", "slave", "responder", "multiplexor", "completer", "target",
 ]
 BRACKET_PAIRS = [("<", ">"), ("(", ")"), ("[", "]"), ("{", "}")]
+
+# The literal direction vocabulary `infer_signal_direction_from_actor_text` and the
+# explicit-direction-column branch already read, plus the single-letter and
+# abbreviated spellings a `Type` column uses. Closed class, no document vocabulary.
+LITERAL_DIRECTION_WORDS = {
+    "input", "output", "inout", "in", "out", "i", "o", "io",
+    "bidirectional", "bidir",
+}
+# A column qualifies when most of its non-empty cells are literal direction words.
+LITERAL_DIRECTION_MIN_CELLS = 3
+LITERAL_DIRECTION_MIN_SHARE = 0.6
 
 NAME_HEADER_TERMS = ["signal", "name", "port", "pin"]
 WIDTH_HEADER_TERMS = ["width", "size", "bits"]
@@ -183,6 +201,54 @@ def is_enumerated_width(text):
     return all(member.isdigit() and int(member) > 0 for member in members)
 
 
+def row_direction_is_already_known(row, headers, direction_cols):
+    """True when the reader already gets a direction for this row.
+
+    Mirrors the first three arms of `synthesize_signal_declarations`' priority
+    chain — the explicit literal, the source-like actor text, the destination-like
+    actor text — plus the flow-arrow arm, which is all this census can speak for.
+    """
+    for column in direction_cols:
+        if column >= len(row):
+            continue
+        text = row[column]["text"].strip()
+        lowered = text.lower()
+        if "output" in lowered or "input" in lowered:
+            return True
+        header = headers[column] if column < len(headers) else ""
+        kind = "destination" if ("destination" in header or "dest" in header) else "source"
+        if port_sense(text, kind) is not None:
+            return True
+        verdict, _ = classify_flow_arrow(text)
+        if verdict == "admitted":
+            return True
+    return False
+
+
+def literal_direction_columns(table, headers):
+    """Columns whose cells ARE the literal direction words, in a table with no `direction` header."""
+    if any("direction" in header for header in headers):
+        return []
+    body = table.get("body_rows", [])
+    if not body:
+        return []
+    columns = []
+    for column in range(max(len(row) for row in body)):
+        values = [
+            row[column]["text"].strip().lower()
+            for row in body
+            if column < len(row) and row[column]["text"].strip()
+        ]
+        if len(values) < LITERAL_DIRECTION_MIN_CELLS:
+            continue
+        literal = sum(1 for value in values if value in LITERAL_DIRECTION_WORDS)
+        if literal < max(LITERAL_DIRECTION_MIN_CELLS,
+                         int(LITERAL_DIRECTION_MIN_SHARE * len(values))):
+            continue
+        columns.append(column)
+    return columns
+
+
 def header_texts(table):
     header_rows = table.get("header_rows") or []
     if not header_rows:
@@ -225,6 +291,21 @@ def census(root):
                 verdicts[key] += 1
                 header = headers[column] if column < len(headers) else ""
                 forms[key][(document, header, text)] += 1
+
+            for column in literal_direction_columns(table, headers):
+                gained = [
+                    row for row in table.get("body_rows", [])
+                    if column < len(row)
+                    and row[column]["text"].strip().lower() in LITERAL_DIRECTION_WORDS
+                    and not row_direction_is_already_known(row, headers, direction_cols)
+                ]
+                if not gained:
+                    continue
+                key = ("literal-direction-column", "unread")
+                verdicts[key] += len(gained)
+                header = headers[column] if column < len(headers) else ""
+                forms[key][(document, header,
+                            f"{table.get('table_id')} headers={headers}")] += len(gained)
 
             for row in table.get("body_rows", []):
                 rows_seen += 1
@@ -294,7 +375,8 @@ def main():
     print(f"  documents                 : {result['documents']}")
     print(f"  signal_description tables : {result['signal_description_tables']}")
     print(f"  body rows examined        : {result['body_rows']}")
-    for notation in ("placeholder", "flow-arrow", "enumerated-width"):
+    for notation in ("placeholder", "flow-arrow", "enumerated-width",
+                     "literal-direction-column"):
         keys = [key for key in result["verdicts"] if key[0] == notation]
         total = sum(result["verdicts"][key] for key in keys)
         print()

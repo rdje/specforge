@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > does source proof migration rerun Docling
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > does source_ref identify one Docling item
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > does specforge adapt remove an old actor isf when actor selection changes
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > does specforge handle coordinated drive/read objects (X drives A and B)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -292,9 +298,3 @@
   > how do I change the reviewed source-to-intent fixture projection
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how do I check the mdBook for stale behavioural claims
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > how do I check whether a named frontier has an owning task-tree leaf
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > how do I check whether a persisted artifact field describes current behaviour
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how do I check whether the persisted corpus seal is stale

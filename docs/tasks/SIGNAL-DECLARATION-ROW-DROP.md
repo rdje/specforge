@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-14`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2e`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2d`/`.2f`/`.4c` open)
+- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2g`/`.2h`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-15`
@@ -100,9 +100,9 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-14`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2f`), `.3`, `.4` (`.4a`–`.4e`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-15`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2h`), `.3`, `.4` (`.4a`–`.4e`)
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`, `.2g`, `.2h`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
   after the corpus population was measured: the two notations are independent changes with different
   payoffs (the arrow recovers rows; the enumerated width only sharpens rows the arrow already
@@ -510,7 +510,9 @@ a long tail.
   SourceIR): **83** arrow cells in direction-bearing columns of `signal_description` tables, in exactly
   2 documents and 13 distinct cell forms — every one enumerable, so the sample is the population.
   **18 admit** (11 `Master → Slave` → `output`, 7 `Slave → Master` → `input`), **65 fail closed** — 16
-  two-flow cells (`ITS →Distributor Distributor →ITS`, genuinely bidirectional groups) and 49 whose
+  two-flow cells (`ITS →Distributor Distributor →ITS`; **`.2d` CORRECTED the reason — they are the
+  two senses of one link, under-determined because the sibling `Forward or reverse` column is
+  redundant with the arrow wherever its meaning is observable, not a selector**) and 49 whose
   actor names are outside the builtin taxonomy. Of the 18, **7 are rows that produce nothing today**
   and 11 currently emit a width-only declaration that would gain a direction. After `.2a`, 5 of those 7
   are real wires (`address`, `byteenable`, `readdata`, `writedata`, `burstcount`) and 2 are the
@@ -562,7 +564,7 @@ a long tail.
   `table_signal_declaration_provenance` confirms `HS400` is declared from `table_0020`.
   Commit: see log.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2d` · Status: `pending` · Goal: **decide what to do about the 49
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2d` · Status: `done` (`2026-09-15`) · Goal: **decide what to do about the 49
   arrow rows whose actors the taxonomy does not know.** `builtin_actor_taxonomy_role_in_text` knows
   four requester-like and six completer-like terms. Every GIC-600 arrow row names an actor outside that
   set (`Distributor`, `Redistributor`, `ITS`, `SPI Collator`, `Wake Request`, `Remote chip`), as do 9
@@ -572,7 +574,183 @@ a long tail.
   Census the blast radius of each candidate term corpus-wide before adding any, or decide that a flow
   between two document-named actors can be read relative to the table's own subject without a taxonomy
   at all. Non-goal: adding terms because they look obvious.
+
+  **ANSWERED `2026-09-15`: NO — extend neither the taxonomy nor a subject rule, and the census found a
+  hazard larger than the question it was asked.** Instrument:
+  `python3 scripts/measure_actor_taxonomy_blast_radius.py`, read-only over all 78 persisted SourceIR.
+  It enumerates the **four** consumption surfaces of `actor_taxonomy_role_in_text` — **S1** the
+  direction/source/destination cell of a signal row (3,940 sites), **S2** a section heading ending in
+  ` signals`/` inputs`/… (300), **S3** a relation-actor name entered into the per-document by-role map
+  (771), **S4** `unique_complementary_reader_actor_name`, which mints a `Reads` relation only when the
+  opposite role holds **exactly one** name and is therefore **not monotone**. Candidate terms are
+  DISCOVERED from the unresolved arrow sides, never listed, so the census carries no vocabulary of its
+  own: **9 terms, both documents** — `distributor` 40, `remote chip` 12, `spi collator` 12, `sink` 8,
+  `source` 8, `its` 6, `redistributor` 6, `wake request` 4, `interconnect` 1.
+
+  **Six findings, each measured, and the first two are why a term-by-term census was the wrong shape of
+  question.**
+  1. **`sink` alone changes ZERO sites.** A term closes an arrow only when the OTHER side already
+     resolves. The taxonomy does not grow one term at a time — it grows one PAIR at a time, and the
+     pair is the unit whose blast radius means anything. `--vocabulary` sizes a set; `--term` sizes a
+     term, and for this question the second answers nothing.
+  2. **A PARTIAL pair is worse than no pair at all, and the mechanism is a priority order.**
+     `infer_signal_direction_from_actor_text` is tried at priority 2 and is handed the **whole cell**;
+     `infer_signal_direction_from_flow_arrow` is tried at priority 4. A cell naming both endpoints of a
+     flow matches on whichever endpoint the taxonomy knows, so ONE term of a pair answers **before the
+     arrow is ever consulted — and answers the same for both senses of the link.** Measured,
+     `--vocabulary 'distributor=requester'`: **56** of the 83 arrow rows answered at
+     `actor_text:source`, and **3 actor pairs / 28 rows COLLAPSE** — `Distributor→ Remote chip` and
+     `Remote chip→ Distributor` both `output`. `remote chip` alone: 1 pair / 12 rows. With the
+     COMPLETE six-term GIC vocabulary the cell matches both roles, `(true, true)` returns `None`, the
+     arrow is reached, and **0 rows collapse / 58 of 83 agree with the stated flow**. The hazard is
+     *exactly* the partial vocabulary — which is how a taxonomy actually grows, and how a learned prior
+     arrives (`actor_taxonomy_role_in_text` falls through to corpus memory, and `learn_priors` derives
+     a role prior for an actor NAME from the semantic role of the signals it drives — one decisive
+     `HandshakeValidLike` consensus and no competing role makes it requester-like, no vocabulary).
+     **Today it is latent, not live: 0 of the corpus's 476 actor-text-answered rows carry a flow
+     marker.** Opened as **`.2g`**, whose whole job is to keep it that way.
+  3. **The GIC vocabulary is six product block names — ADR 0006 forbids it, and the document agrees.**
+     The four tables sit under **A.7 Interblock signals**, **A.8 Interdomain signals** and **A.9
+     Interchip signals**. A flow between two peer blocks has a port sense only relative to a chosen
+     subject, and those headings deliberately name two.
+  4. **`source` + `sink` is the one ADR-0006-admissible pair, and its selection fails adjudication 12
+     to 8.** The PAIR buys the 8 Avalon-ST rows (`sink` alone buys none, and costs nothing); every one
+     of the cost is `source`'s — **12 further S1 gains, all 12 wrong, and the document says so in the
+     same row**: GIC `table_0160`
+     `[<domain>]clk | Input | Clock source | Clock input.` → `output`; AXI-H `table_0008`
+     `ACLK | Clock source | Global clock signal.` → `output`; GFB `table_0003`
+     `FCLK | Clock source | 1 | Clock input for both Manager and Subordinate` → `output`. Worse, S4:
+     GFB's requester set goes `['manager']` → `['clock source', 'manager', 'reset source']`, so **every
+     complementary `Reads` relation that document mints is destroyed** — a regression in a document
+     containing no arrow cell at all. **60 % false positives; refused.**
+  5. **`interconnect` moves 92 sites to buy 1 cell** — 43 AXI-H relation cells and 3 MMU-700 section
+     headings re-roled for `Interconnect → Slave` — and an interconnect is neither requester nor
+     completer; it sits between them.
+  6. **`its` is the English possessive pronoun.** `normalized_text_contains_term` is a whole-token
+     match, and this taxonomy is read by section headings and prose relation subjects. Its 31 measured
+     sites today say nothing about the next document.
+
+  **The taxonomy-free alternative this node offered is refuted by its own oracle.** *Read the flow
+  relative to the table's own subject* has one mechanical form — the actor appearing on one side of
+  EVERY arrow cell in the table — and it resolves **2 of 11** arrow tables, because a well-formed
+  two-party table names both parties in every cell and the intersection is never unique. Graded against
+  the 18 cells the taxonomy already admits: **agrees 0, disagrees 1, no-subject 17.** The one cell where
+  both rules can speak, they conflict: Avalon `table_0014` picks `slave` as subject (a third party,
+  `Interconnect`, appears in the other cell) and flips `Master → Slave` from `output` to `input`. It is
+  a **competing authority, not a fallback**.
+
+  **CORRECTION to `.2b`'s record, and to the book.** Both describe the 16 two-arrow cells as *"genuinely
+  bidirectional groups"*. They are not. The cell lists both senses of a two-party link, and the table
+  carries a per-row sibling column `Forward or reverse`. What keeps them under-determined is a different
+  fact, and it is the one worth recording: **wherever that column's meaning is observable it is
+  REDUNDANT with the arrow, not a selector.** GIC `table_0173` writes
+  `icdctready | Reverse | SPI Collator→ Distributor` beside
+  `icdctvalid | Forward | Distributor →SPI Collator` — each single-arrow cell is already that row's own
+  resolved flow. So no corpus row demonstrates the column selecting between two listed arrows, and the
+  listed pair carries no forward-first convention. **The fail-closed verdict stands; its stated reason
+  was wrong.** This also forecloses the tempting next leaf ("just read the `Forward or reverse`
+  column") on evidence rather than on taste.
+
+  **What the census found instead** — the 49 stay closed, but the run opened two leaves with real
+  populations: **`.2g`** (the partial-vocabulary masking hazard, 0 rows today) and **`.2h`**
+  (**124 rows, 15 tables, 6 documents** whose direction is stated literally as `Input`/`Output` in a
+  column the header-keyword scan never looks at, because its header is `Type`) — the second of which
+  this slice also made re-derivable, as a fourth notation in the sibling census.
   Prerequisite: `.2b`.
+  Verification: see the `.2d` checklist below.
+  Commit: see log.
+
+## Acceptance Checklist — `.2d` (enforced)
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_actor_taxonomy_blast_radius.py` over all 78
+  persisted `source_ir.json`: **9** candidate terms discovered from the 49 fail-closed arrow sides;
+  site populations **S1 3,940 / S2 300 / S3 771** (S1 cross-checks against
+  `measure_declaration_row_notations.py`'s `body rows examined: 3940`). Blast radius per term, sites
+  changed: `distributor` **113**, `interconnect` **92/91**, `redistributor` **34**, `its` **31**,
+  `source` **24**, `remote chip` **24**, `spi collator` **24**, `wake request` **9**, `sink` **0**.
+  Deterministic: two consecutive runs byte-identical; `--json` parses. The `.2h` population the run
+  uncovered is re-derivable in the sibling census as its fourth notation:
+  `python3 scripts/measure_declaration_row_notations.py` reports
+  **`literal-direction-column: 124 cells`** across 15 tables.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`. The taxonomy is read at
+  four sites — `9705` (`infer_signal_direction_from_actor_text`, itself the two operand reads inside
+  `infer_signal_direction_from_flow_arrow` at `9775`/`9780`), `4314`
+  (`actor_name_and_role_from_section_heading`, consumed again at `4382`, `4507` and `9838`), `4369`
+  (`collect_local_actor_names_by_taxonomy_role`) and `4516` (the complementary reader). The blocking
+  mechanism for the 49 is the mirror condition at `9785` (`from_driver == from_receiver`), which a
+  single new term cannot satisfy — and the priority order in `synthesize_signal_declarations`
+  (`12345`–`12386`) is why a single new term is actively harmful: the literal actor-text read of the
+  whole cell precedes the arrow read of the same cell.
+- [x] **ADDRESSED (verified)** — the decision is the deliverable and it is **NO**, earned rather than
+  asserted: every admissible extension was sized and each failed on a measured number —
+  `sink` 0 sites; a partial pair 28 collapsed rows; `source` 12 of 20 gains wrong plus one document's
+  complementary relations destroyed; `interconnect` 92 sites for 1 cell; the GIC six forbidden by
+  ADR 0006 and by their own section headings; the subject rule 0 agreements against 1 disagreement.
+  The two real populations the run uncovered are **owned, not reported**: `.2g` and `.2h`.
+- [x] **NO REGRESSION** — **no Rust source, no fixture and no artifact is touched**, so no score,
+  gold, seal or `.isf` can move; the slice adds one read-only census script and updates records.
+  `bash scripts/check_doctrines.sh` all executed doctrines PASS. The census replicates the taxonomy
+  for classification only and says so in its own header — it is not, and may not be cited as, a check
+  on the Rust rule (`CLAIM_VERIFICATION.md` §2).
+- [x] **GENERICITY (ADR 0006)** — the census **discovers** its candidate terms from the corpus instead
+  of listing them, so the script carries no document, vendor or protocol vocabulary; the verbatim cell
+  forms it prints are artifact text carried as provenance. The decision it reaches is the ADR-0006
+  ruling itself: six of the nine candidates are product block names and are refused on that ground.
+- [x] **LOCKSTEP** — `TOOLBOX.md` §6.7 registers the census; the book's
+  `pipeline/evidence-failure-modes.md` replaces *"a cell containing two flows describes a bidirectional
+  group"* with the measured reason and closes *"those 49 are a taxonomy question, deliberately left
+  open"*; the fact card `[[actor-taxonomy-grows-in-pairs-not-terms]]` carries the pair rule, the
+  masking mechanism and the refuted subject rule; `[[flow-arrow-direction-grammar]]` gains the
+  correction; `TOOLBOX.md` §6.8 and the sibling census gain the `literal-direction-column` notation so
+  the `.2h` count the book now prints is re-derivable. **Producer sub-clause: no production rule was
+  deleted or replaced** — nothing the reader does changed, which is why no artifact moves.
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2g` · Status: `pending` (opened `2026-09-15` by `.2d`) · Goal: **a
+  cell that states a flow is not an actor name — make the literal reading decline it, so the arrow
+  reader is the one that judges it.** `synthesize_signal_declarations` tries
+  `infer_signal_direction_from_actor_text` on the whole source/destination cell at priority 2 and
+  `infer_signal_direction_from_flow_arrow` on the same cell at priority 4. When the taxonomy knows
+  **one** endpoint of a flow, the literal reading matches the whole cell, answers first, and returns
+  the SAME port sense for both senses of the link — `.2d` measured 3 actor pairs / **28 rows** collapse
+  under a one-term vocabulary, and 1 pair / 12 rows under another. The mirror condition `.2b` built to
+  keep the arrow honest is bypassed entirely, because the arrow is never consulted.
+  **Population today: 0.** Of the 476 corpus rows the literal reading currently answers, **none**
+  carries a flow marker, so the guard is free and the hazard is latent rather than live — but it is
+  reachable without any builtin change, through the learned-prior fall-through:
+  `actor_taxonomy_role_in_text` falls back to `CorpusMemory`, and `learn_priors::infer_actor_taxonomy_role`
+  mints a role prior for an actor NAME from the semantic role of the signals it drives — one decisive
+  `HandshakeValidLike` consensus and no competing role makes that name `RequesterLike`, with no
+  vocabulary involved at all.
+  The guard reuses the two existing constants rather than inventing a third spelling of "arrow":
+  a cell containing any `FLOW_ARROW_FORMS` or `FLOW_ARROW_DISQUALIFIERS` marker is a flow statement and
+  `infer_signal_direction_from_actor_text` must return `None` for it.
+  Non-goal: reordering the priority chain — the documented priority ("a column the table designates for
+  direction outranks a sentence") is right; what is wrong is which reader is handed a flow cell.
+  Prerequisite: `.2d`.
+  Verification: pending
+  Commit: pending
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h` · Status: `pending` (opened `2026-09-15` by `.2d`) · Goal: **a
+  direction column the header scan never looks at, because the document heads it `Type`.**
+  `synthesize_signal_declarations` finds its explicit direction column with
+  `header.contains("direction")` and reads the literal `input`/`output` only from that column. A table
+  headed `Signal name | Type | Source or destination | Description` states the direction outright in
+  `Type` and the reader takes none of it. **Measured `2026-09-15` over 78 persisted SourceIR: 124 rows
+  in 15 tables across 6 documents** would gain a direction from a column whose cells are literally
+  `Input`/`Output` — GIC-600 63, HBM2 27, CoreSight TMC 13, LTI 10, AXI-Stream 8, CoreSight SoC-600 3 —
+  and **12 of the 15 tables head that column `type`**; re-derivable as the `literal-direction-column`
+  notation of `python3 scripts/measure_declaration_row_notations.py` (`TOOLBOX.md` §6.8), which reports
+  it per TABLE because the table is the unit of adjudication. This is the same document (GIC-600) whose
+  `Clock source` rows `.2d` refused to direct through the taxonomy, and it is the reason the refusal
+  costs nothing: the row next door says `Input` in plain text.
+  **The selection needs adjudication before anything is read**, per this tree's standing rule. Three of
+  the 15 are suspect on their face and must be judged individually: LTI `table_0081` column `lti-d` and
+  AXI-Stream `table_0015` column `axi5-stream` are protocol-VERSION matrices where `input`/`output` may
+  be a property value rather than a port sense, and CoreSight TMC `table_0074` puts the literals in a
+  column headed `signal`, which is a shape defect, not a direction column.
+  Non-goal: matching a header vocabulary list. The admissible rule is a property of the column's own
+  CONTENT — a column whose cells are the literal direction words the reader already understands —
+  which is why it is a grammar and not a header dictionary (ADR 0006).
+  Prerequisite: none.
   Verification: pending
   Commit: pending
 
@@ -1101,7 +1279,9 @@ a long tail.
 - [x] **ADDRESSED (verified)** — after: the same fixture emits **3 declarations and drops nothing** —
   `Signal readdata is input.`, `Signal writedata is output.`, `Signal debugaccess is output width 1.`
   The 18-cell admitted set is adjudicated in full and is **100% genuine direction statements**; the 65
-  closed cells are adjudicated too (16 genuinely bidirectional, 49 a taxonomy gap owned by `.2d`).
+  closed cells are adjudicated too (16 two-sense link cells — `.2d` corrected "genuinely
+  bidirectional" to *under-determined, and the sibling column does not select*; 49 a taxonomy gap,
+  answered NO by `.2d`).
   Controls: `the_corpus_flow_arrow_forms_admit_only_the_mirrored_ones` enumerates **all 13 corpus cell
   forms**, so the control population is the corpus population;
   `a_flow_arrow_needs_both_sides_to_resolve_and_agree` pins the mirror (one side unknown, and two sides
@@ -1361,9 +1541,14 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`).
-1. `SIGNAL-DECLARATION-ROW-DROP.2d` — the actor-taxonomy gap behind 49 fail-closed arrow rows. Census
-   the blast radius before touching `builtin_actor_taxonomy_role_in_text`.
-2. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
+1. `SIGNAL-DECLARATION-ROW-DROP.2h` — **the biggest measured population this tree has left, and it
+   needs no vocabulary at all: 124 rows / 15 tables / 6 documents state `Input` or `Output` in plain
+   text in a column headed `Type`, which the direction scan never looks at.** Adjudicate the 15 first —
+   three of them are protocol-version matrices or a shape defect, not direction columns.
+2. `SIGNAL-DECLARATION-ROW-DROP.2g` — close the partial-vocabulary masking hazard `.2d` measured: the
+   literal actor-text reading must decline a cell carrying a flow marker. 0 rows move today, which is
+   the point — the guard is free now and is not free later.
+3. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and

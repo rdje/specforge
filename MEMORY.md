@@ -6,34 +6,32 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-
-- Active unit: **AUDIT OF THIS SESSION'S PUBLISHED FINDINGS COMPLETE `2026-09-15` — 17 claims
-  re-derived, 16 exact, ONE WRONG, withdrawn and replaced in `e7fab542`.**
-  **The wrong one: `.2f`'s trade.** `.2f`'s spec says *"`[hi:lo]` is `hi - lo + 1`"*; the census
-  inherited that spelling, so both missed the **single-index `[n]`** — how these tables write every
-  1-bit wire (`0 | [0] | lavalid`). The bias is not random — the dropped rows are exactly the
-  valid/qualifier/handshake signals — so it looked complete. **`.2f` must specify BOTH forms.**
-  **What caught it transfers — ask whether two published numbers COMPOSE**, don't re-read either:
-  `.4d` handed `.2f` 47 rows claiming a bit rule gives them a width; ranged-only **20 of 48** were even
-  in a bit cell, with `[n]` **46 of 48**. Adjudicate-the-selection and observe-RED would BOTH have
-  stayed green — `[[a-single-index-bit-cell-is-a-width-of-one]]`.
-  **Corrected `.2f` (self-test 12/12): 279 bit cells / 15 tables / 4 docs.** SIGNAL scope
-  (`Signal name` header) 241 rows, 146 declared, **95 not** (19 `Unused`, **76 real**); GENERIC scope
-  (`Name`/`Field`) 38 rows, **0 declared, all register FIELDS**. **Prize 122** (76 + 46 disjoint), cost
-  **19 scoped (87%)** / **57 unscoped (68%)**. BLOCKED on `Unused`: the repeated-name candidate
-  refuses real signals (`AxPROT`, `CXSCNTL`, `BRESP`, `RRESP`, `CXSDATA`).
-  **The other 16 re-derived EXACT** (enumeration + commands: the `e7fab542` commit body); both REDs
-  RE-EXECUTED and restored, **0 of 27** artifacts move, core lib **1537**, `--all` **ALL 17 PASS**.
-- Earlier: **`.4d`** answered NO a third time (24% `.1d`, 1-in-8 `.4b`, this) — an identity with no
-  readable attribute is not a signal; teach the notation rather than drop it. **`.4b`** made the
-  refusal COUNTED AND NAMED; **`.4e`** shipped `replay-declarations` (`TOOLBOX.md` §5.6), which is
-  what made `.4d` and the `.2f` census decidable on 78 documents instead of 27.
-- Next action: **`SIGNAL-DECLARATION-ROW-DROP.2d`** (census the actor-taxonomy blast radius before
-  touching `builtin_actor_taxonomy_role_in_text`); then `TEXT-LAYER-IDENTIFIER-SPLIT.1` (live VLM);
-  `EXTRACTION-QUALITY-GAUGE.3j` (unsized). `.4c` is parked behind the owner-gated `(width 1)` emitter
-  default (`KG-ISF-COMPLETENESS.2a`).
+- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.2d` CLOSED `2026-09-15` — the taxonomy question is
+  answered NO, and the census found a hazard bigger than the question.**
+  **The rule that generalises: the actor-role taxonomy grows one PAIR at a time, and half a pair is
+  worse than none.** `infer_signal_direction_from_actor_text` is tried at priority 2 on the WHOLE
+  cell, the flow-arrow reader at priority 4 — so ONE known endpoint answers before the arrow and gives
+  **both senses of a link the same direction** (`distributor` alone: 56 rows answered early, **3 pairs
+  / 28 rows collapse**). The complete 6-term vocabulary makes the cell `(true,true)` → `None` → 0
+  collapses. `sink` alone changes **0 sites**. Instrument:
+  `scripts/measure_actor_taxonomy_blast_radius.py` (`TOOLBOX.md` §6.7, `--vocabulary` sizes a SET).
+  Refused: six GIC names (ADR 0006; their tables are headed *Interblock/Interdomain/Interchip*),
+  `source`+`sink` (**12 of 20 gains wrong** — `Clock source` is not an actor — plus GFB's
+  complementary `Reads` destroyed), `interconnect` (92 sites for 1 cell). The taxonomy-free
+  subject rule is refuted by its own oracle: **agrees 0, disagrees 1**, resolves 2 of 11 tables.
+  **Also CORRECTED `.2b` and the book**: the 16 two-arrow cells are not "bidirectional groups" — the
+  sibling `Forward or reverse` column is REDUNDANT with the arrow wherever observable, not a selector.
+- Next action: **`SIGNAL-DECLARATION-ROW-DROP.2h`** — the biggest population this tree has left and it
+  needs no vocabulary: **124 rows / 15 tables / 6 documents** state `Input`/`Output` in plain text in a
+  column headed `Type`, which the direction scan never looks at (12 of 15 tables head it `type`).
+  **Adjudicate the 15 first** — LTI `table_0081` and AXI-Stream `table_0015` are protocol-VERSION
+  matrices and CoreSight TMC `table_0074` puts the literals under a `signal` header. Then **`.2g`**
+  (guard the masking: a flow-marked cell must not be read as an actor name; **0 of 476** actor-text
+  rows carry one today, so the guard is free now and not later), then `.2f` (blocked on `Unused`),
+  `TEXT-LAYER-IDENTIFIER-SPLIT.1`, `EXTRACTION-QUALITY-GAUGE.3j`. `.4c` parked behind
+  `KG-ISF-COMPLETENESS.2a`.
 - In-flight uncommitted: none. No background job outstanding.
-- Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 265; directive 16
+- Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 266; directive 16
   gates it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**
   `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` is at 2,878 of 3,000 lines; **`DOCTRINE_ENFORCEMENT.md`
   line 394 is 845 of the 1,024-byte `line_bytes_each` ceiling** — route new detail to §10 prose.
@@ -43,8 +41,8 @@
   `information_flow_boundary.tsv` row. **A book insert re-pins line-anchored regions in three claim
   registries — relocate BY CONTENT (find the line whose stored sha matches), never rehash in place** —
   and moves the `shipped_behavior` aggregate. Standing hazards live in fact cards:
-  **[[a-single-index-bit-cell-is-a-width-of-one]]** (a notation census that reads one spelling is
-  biased, not merely incomplete), **[[a-dropped-declaration-row-is-usually-not-a-signal]]**,
+  **[[actor-taxonomy-grows-in-pairs-not-terms]]**, **[[a-single-index-bit-cell-is-a-width-of-one]]**,
+  **[[a-dropped-declaration-row-is-usually-not-a-signal]]**,
   **[[declaration-replay-reads-the-legacy-stratum]]** (a census over `generated/` mixes strata — 51 of
   78 are legacy), **[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]** (name the
   BINARY PROFILE — `release` everywhere), **[[live-surface-edit-bookkeeping-chain]]**. Cap: 50 lines.
