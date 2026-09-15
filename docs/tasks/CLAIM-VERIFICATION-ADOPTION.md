@@ -905,7 +905,7 @@ the workflow through the mdBook and repository review path.
   Commit: `CLAIM-VERIFICATION-ADOPTION.7.2.1a — re-derive .7.2.1's findings and withdraw the three that do not hold`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.13`
-  Status: `pending` (tracking-only)
+  Status: `done` (`2026-09-15`)
   Goal: decide what watches a published value on a surface that carries no claim tag
   Acceptance: the eleventh instance landed on `CHANGES.md:56` and **no governed population reaches it**,
   which bounds what `.7` closed. Derived from the producers rather than from the code: the current-claim
@@ -930,6 +930,42 @@ the workflow through the mdBook and repository review path.
   are *more* actionable, which argues for the "whole governed surfaces" direction over the "author
   remembers a tag" one — but the decision stays open here rather than being taken in a leaf of another tree
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.2.1a`
+  **DECIDED `2026-09-15`: do NOT widen the discovered population; state the bound.** Both candidate
+  directions were argued, never costed. Costed with the book census's own `is_candidate` grammar:
+
+  | population | lines | files | growth |
+  | --- | ---: | ---: | --- |
+  | `docs/book/src/**` (existing frozen census) | **464** | 25 | frozen |
+  | `docs/tasks/**` — "whole governed surfaces" | **4,987** | 145 | **+5.1 / commit** (4,825 -> 4,987 / 32) |
+  | `docs/tasks/**` — decision-bearing `N of M` | **285** | 43 | **+1.2 / commit** (245 -> 284 / 32) |
+
+  Refused on cost: the frozen model needs one adjudicated region per candidate, so widening is **4,987
+  records on day one** — 10x the book registry beside it (`max_records: 512`) — then ~5/commit forever.
+  Raising a bound cannot rescue that. The narrow `N of M` shape IS what the twelfth instance argues for
+  (`.3i`'s *"18 of 349"* steered a successor's design for a day) and is buildable at 285, but +1.2/commit
+  is ~+480 per push cycle, so it needs its own registry AND lifecycle — opened as `.16`, sized.
+  Meanwhile the harm is bounded by something already shipped, which fired twice on `2026-09-15`: the rule
+  that a published population is re-derived, not inherited, caught `.2h.0` withdrawing `.2d`'s 124 for 106
+  and `.14` refusing a "4 of 5 stale" cascade. Neither was caught by a gate.
+  Verification: counts from the book census's `is_candidate` applied per file; growth per revision from
+  Git over 32 commits; `N of M` via `git grep -hoE '[0-9][0-9,]* of [0-9][0-9,]*'`.
+  Commit: see log
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.16`
+  Status: `pending` (tracking-only)
+  Goal: govern the number a task leaf publishes as the BASIS FOR A DECISION, not every quantity it writes
+  Acceptance: `.13` refused the wide population and sized this successor, so it starts costed. Population:
+  the decision-bearing `N of M` shape in `docs/tasks/**` — **285 lines / 43 files** on `2026-09-15`,
+  **+1.2 per commit** (245 -> 284 over 32 revisions). Two things decided before any code, and `.13` says
+  why neither is free: (a) its OWN registry — 285 beside the book's 464 is affordable, folding it into
+  `book_quantitative_claims.jsonl` breaches `max_records: 512` within a year; (b) its OWN lifecycle —
+  ~+480 over one 400-commit push cycle, so a frozen census refuses an append before the next push; `.8`
+  measured the working shape (reclaim in blocks, tied to a rollover that fires ahead of the bound).
+  Non-goal: every quantity in a task file — `.13` costed that at **4,987** and **+5.1/commit** and refused
+  it; do not re-open without a new argument.
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.13`
+  Verification: `pending`
+  Commit: `pending`
   Verification: `pending`
   Commit: `pending`
 
@@ -1014,51 +1050,38 @@ the workflow through the mdBook and repository review path.
   Acceptance: `mdbook-quantitative-census-frozen`'s `durability.stale_check.stdout_contains` read
   **`309 adjudicated region(s)`**. The checker reports **464**. The marker was wrong by 155 and had been
   wrong for a long time: at `HEAD~6` the registry already held **462** region records.
-  **Two independent things are wrong, and the second is why the first survived.**
-  1. **It contradicts its own claim.** That record's `assertion` says, in its own words, that its region and
-     candidate totals *"are per-commit counters, not constants — a commit that only edits a chapter moves
-     them, including the commit that edits this one — so they are derived on read"*. The `rederive` command
-     obeys that: its marker is the SHAPE `"phase":"frozen","regions":`. The `stale_check` on the same record
-     carried the counter the assertion forbids.
-  2. **No gate executes it.** `check_claim_verification.pl` runs `rederive.commands` and
-     `falsification.controls` (line ~163) and never `durability.stale_check`. So the one marker that was
-     wrong was also the one nothing re-ran — a marker with no oracle behind it.
+  **Two things are wrong, and the second is why the first survived.** (1) It **contradicts its own
+  claim**: that record's `assertion` says its totals *"are per-commit counters, not constants ... derived
+  on read"*, and its `rederive` marker is the SHAPE `"phase":"frozen","regions":` — the `stale_check`
+  carried the counter the assertion forbids. (2) **No gate executes it**: `check_claim_verification.pl`
+  runs `rederive.commands` and `falsification.controls` and never `durability.stale_check`, so the one
+  wrong marker was the one nothing re-ran.
   **Audited rather than spot-fixed**: all five claims' `stale_check` commands were executed. **One of five is
   stale**; the other four already use shape markers (`current surfaces (`, `claim-verification:`) and pass.
   So this is a single defect, not a class, and the repair is to make the fifth match the four.
-  Repair: the marker becomes `in 'frozen' phase with`, which still asserts the phase — the thing worth
-  asserting — and carries no count. Non-goal: executing `stale_check` from the gate. That is a real gap but a
-  different leaf: it needs a decision about what a failing staleness marker should DO, and widening the gate
-  to fail on it would have failed this commit and every commit before it.
+  Repair: the marker becomes `in 'frozen' phase with` — asserts the phase, carries no count. Non-goal:
+  executing `stale_check` from the gate (`.15`); widening it to fail would have failed every prior commit.
   Prerequisite: none
   Verification: see the `.14` checklist below
   Commit: see log
 
 ## Acceptance Checklist — `.14` (enforced)
 - [x] **REPRODUCE / MEASURE** — every claim's `durability.stale_check` executed and its
-  `stdout_contains` tested against the real stdout: **1 of 5 stale.**
-  `mdbook-quantitative-census-frozen` wants `309 adjudicated region(s)`; the checker prints
-  *"42 book files contain 464 prose candidate lines across 25 files in 'frozen' phase with **464**
-  adjudicated region(s)"*. `git show HEAD~6:doctrine/claim_verification/book_quantitative_claims.jsonl`
-  counts **462** region records, so the marker was already wrong before this session touched anything.
-- [x] **ROOT CAUSE (WHY + WHERE)** — `doctrine/claim_verification/claims.jsonl`,
-  `mdbook-quantitative-census-frozen.durability.stale_check.stdout_contains`. The marker carries a
-  per-commit counter, which that record's own `assertion` explicitly forbids and which its `rederive`
-  command correctly avoids by keying on the shape `"phase":"frozen","regions":`. It survived because
-  `scripts/check_claim_verification.pl` executes only `rederive.commands` and `falsification.controls`
-  — never `durability.stale_check`.
-- [x] **ADDRESSED (verified)** — the marker is now `in 'frozen' phase with`: it still asserts the frozen
-  phase and carries no count. Re-executed after the change, the command's stdout contains it; all five
-  `stale_check` markers now pass, **0 of 5 stale**.
-- [x] **NO REGRESSION** — no Rust, fixture or artifact is touched; one string in one registry record.
-  `perl scripts/check_claim_verification.pl --check` green, and `bash scripts/check_doctrines.sh` all
-  executed doctrines PASS.
-- [x] **GENERICITY (ADR 0006)** — a marker string in a claim registry; no document, vendor or protocol
-  vocabulary is involved.
-- [x] **LOCKSTEP** — the tree records the finding and the deliberately-unfixed gap (nothing executes
-  `stale_check`), and `[[current-claim-census-freeze]]`'s sibling lesson already covers the general rule
-  that a per-commit counter must be derived on read, not carried. **Producer sub-clause: no production
-  rule was deleted or replaced.**
+  `stdout_contains` tested against real stdout: **1 of 5 stale**.
+  `mdbook-quantitative-census-frozen` wants `309 adjudicated region(s)`; the checker prints *"… in
+  'frozen' phase with **464** adjudicated region(s)"*. `git show HEAD~6:…book_quantitative_claims.jsonl`
+  counts **462** region records, so it was wrong before this session touched anything.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `claims.jsonl`,
+  `mdbook-quantitative-census-frozen.durability.stale_check.stdout_contains`: a per-commit counter its
+  own `assertion` forbids and its `rederive` marker avoids, surviving because
+  `check_claim_verification.pl` executes only `rederive.commands` and `falsification.controls`.
+- [x] **ADDRESSED (verified)** — marker is now `in 'frozen' phase with`; re-executed, all five pass,
+  **0 of 5 stale**.
+- [x] **NO REGRESSION** — one string in one registry record; no Rust, fixture or artifact.
+  `check_claim_verification.pl --check` green; `scripts/check_doctrines.sh` all executed doctrines PASS.
+- [x] **GENERICITY (ADR 0006)** — a marker string; no document, vendor or protocol vocabulary.
+- [x] **LOCKSTEP** — the tree records the finding and the deliberately-unfixed gap (`.15`).
+  **Producer sub-clause: no production rule was deleted or replaced.**
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.15`
   Status: `pending` (tracking-only)
@@ -1102,11 +1125,10 @@ the workflow through the mdBook and repository review path.
   (`WIRE-BASED-100.10c`, carrying `CHANGES-LEDGER-ROLLOVER.8` in the same transaction) the census went
   **126 -> 115** as **11 `evidence-change-history-current-status-*` records** were retired: precisely the
   rows whose regions the rollover had sealed into a segment.
-  **Measured over 120 revisions**, the registry does not accumulate — it went **127 -> 115, net -12**.
-  It grows `+1` per `CHANGES.md` prepend (25 such revisions in that window) and is reclaimed in blocks by
-  the rollover. It has been as high as **127 of 128** and come back.
-  **The question worth asking was not "is there a lifecycle" but "does the reclaim arrive before the
-  bound", and the margin is about 2.6x:**
+  **Measured over 120 revisions** it does not accumulate: **127 -> 115, net -12**. It grows `+1` per
+  `CHANGES.md` prepend (25 in that window) and is reclaimed in blocks by the rollover; it has been at
+  **127 of 128** and come back. The question was not "is there a lifecycle" but "does the reclaim arrive
+  before the bound", and the margin is ~2.6x:
 
   | | current | trigger | prepends away |
   | --- | ---: | ---: | ---: |
@@ -1114,21 +1136,15 @@ the workflow through the mdBook and repository review path.
   | `CHANGES.md` lines | 1,414 / 1,800 target | rolls at 90 % = 1,620 | **~5** |
   | `CHANGES.md` bytes | 204,698 / 255,000 target | rolls at 90 % = 229,500 | **~6** |
 
-  Mean prepend measured over the same window: **42 lines / 4,010 bytes**. So the ledger rolls — and
-  reclaims — about **eight prepends before** the census could refuse an append. The 89.8 % that looks
-  alarming in isolation is the normal top of a sawtooth.
-  **The inversion condition, named so a future session can check it rather than re-derive this:** the
-  census binds first only if the mean prepend falls below **about 16 lines** (13 x mean < 1,620 - 1,414).
-  Today's mean is 42, so entries would have to shrink by more than 60 %.
-  **Not done, deliberately:** no bound is raised and no retirement rule is added. A second mechanism would
-  compete with the rollover for the same rows — and this leaf's own evidence for urgency, the two dead
-  rows that had drifted onto blank lines, is now structurally prevented rather than merely cleaned up:
-  `CLAIM-VERIFICATION-ADOPTION.12`'s instrument REFUSES to relocate a region whose digest matches more
-  than one line, which is exactly the `01ba4719...546b` blank-line case.
-  Verification: record counts re-derived per revision from Git
-  (`git show <rev>:doctrine/claim_verification/current_claim_census.jsonl`), ledger fill from `wc` against
-  the `change_history` surface's declared health targets, mean prepend from the byte/line delta of
-  `CHANGES.md` across the 23 prepends in the window.
+  Mean prepend over the same window: **42 lines / 4,010 bytes**. The ledger rolls — and reclaims — about
+  **eight prepends before** the census could refuse an append; 89.8 % is the normal top of a sawtooth.
+  **Inversion condition**, so a future session checks rather than re-derives: the census binds first only
+  if the mean prepend falls below **~16 lines** (13 x mean < 1,620 - 1,414). Today it is 42.
+  **Not done, deliberately:** no bound raised, no retirement rule added — a second mechanism would compete
+  with the rollover for the same rows, and this leaf's own urgency evidence (two dead rows collided on
+  blank lines) is now structurally prevented by `.12`'s refusal to relocate an ambiguous region.
+  Verification: record counts per revision from Git; ledger fill from `wc` against the `change_history`
+  surface's health targets; mean prepend from the byte/line delta of `CHANGES.md` across 23 prepends.
   Commit: see log
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.10`
@@ -1652,7 +1668,8 @@ the workflow through the mdBook and repository review path.
 | 30 | `CLAIM-VERIFICATION-ADOPTION.7.2.1` | `done` | two sentences repaired, 26 dated records written, unlisted closed at zero, and the registry is frozen |
 | 31 | `CLAIM-VERIFICATION-ADOPTION.12` | `done` | `scripts/repin_claim_regions.py` re-pins by content and REFUSES ambiguity; 562 regions, 13/13 RED matrix |
 | 32 | `CLAIM-VERIFICATION-ADOPTION.7.2.1a` | `done` | asked a third time; two findings re-derive exactly, three do not and are withdrawn |
-| 33 | `CLAIM-VERIFICATION-ADOPTION.13` | `pending` | a published value on a surface with no claim tag is watched by nothing; that bounds what `.7` closed |
+| 33 | `CLAIM-VERIFICATION-ADOPTION.13` | `done` | decided: do not widen — whole governed surfaces costs 4,987 records and +5.1/commit; the bound is stated |
+| 37 | `CLAIM-VERIFICATION-ADOPTION.16` | `pending` | govern the decision-bearing `N of M` population only: 285 lines / 43 files / +1.2 per commit, sized by `.13` |
 | 35 | `CLAIM-VERIFICATION-ADOPTION.14` | `done` | 1 of 5 stale_check markers carried a per-commit counter its own assertion forbids; nothing executes them |
 | 36 | `CLAIM-VERIFICATION-ADOPTION.15` | `pending` | nothing executes `durability.stale_check`, so a staleness marker has no oracle; decide what a failure should DO first |
 | 34 | `CLAIM-VERIFICATION-ADOPTION.7` | `done` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |

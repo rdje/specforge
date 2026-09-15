@@ -28,14 +28,14 @@
   of taking the first match — `sha256("\n")` matches every blank line, `live-docs.md` has **280 behind
   163 pins**; **562 regions / 63 files**, RED **13/13**. **`.14`** a `stale_check` carried **"309
   adjudicated region(s)"** vs the checker's **464** — a per-commit counter its OWN assertion forbids,
-  and nothing executes `stale_check`, so the wrong marker was the one with no oracle; 1 of 5, now 0.
-  **`.8`** closed by MEASUREMENT: the lifecycle already exists (the ledger rollover retires the rows it
-  seals, 11 at `ab339652`, net **127→115 over 120 revisions**) and runs **2.6× ahead** — census
-  **115/128 = 13 prepends**, `CHANGES.md` rolls in **~5**; inverts only if the mean prepend drops below
-  **~16 lines** (today 42).
-- Still open there: **`.15`** nothing executes `durability.stale_check` — decide what a failing
-  STALENESS marker should DO first; **`.13`** a published value on a surface with no claim tag is
-  watched by nothing.
+  and nothing executes `stale_check`; 1 of 5, now 0.
+  **`.8`** closed by MEASUREMENT: the lifecycle already exists (the rollover retires the rows it seals,
+  11 at `ab339652`, net **127→115 over 120 revisions**) and runs **2.6× ahead** — census **115/128 = 13
+  prepends**, `CHANGES.md` rolls in **~5**; inverts only if the mean prepend drops below ~16 lines (42
+  today). **`.13`** DECIDED: do NOT widen the published-assertion population — whole governed surfaces
+  costs **4,987 records / 145 files / +5.1 per commit** against a sibling `max_records: 512`; the bound
+  is stated instead. Still open: **`.15`** (nothing executes `stale_check`; decide what a failing
+  marker should DO first) and **`.16`** (`N of M` only, **285 / 43 / +1.2 per commit**, own registry + lifecycle).
 - In-flight uncommitted: none. No background job outstanding.
 - Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 270; directive 16
   gates it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**
