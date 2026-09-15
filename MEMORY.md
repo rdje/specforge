@@ -9,23 +9,23 @@
 - Active unit: **`SIGNAL-DECLARATION-ROW-DROP.2g` CLOSED `2026-09-15` (CODE) — a cell that states a
   FLOW is not an actor name.** `infer_signal_direction_from_actor_text` now declines any cell carrying
   a `FLOW_ARROW_FORMS`/`FLOW_ARROW_DISQUALIFIERS` marker, ahead of even the literal `input`/`output`
-  substring readings, so the flow reader judges it. **ALL 78 documents rebuild BYTE-IDENTICAL**
-  (`evidence --dry-run` before/after, 24 accepted / 54 refused both sides); core lib **1539**
-  (1537 + 2 controls), `specforge` 472, fmt + clippy clean.
+  substring readings, so the flow reader judges it. **ALL 78 rebuild BYTE-IDENTICAL** (`evidence
+  --dry-run` before/after); core lib **1539**, `specforge` 472, fmt + clippy clean.
   **The build corrected `.2d`: "latent" was only half true.** The CHAIN moves nothing (**0 of 476**
-  actor-text-answered rows are flow cells) but the FUNCTION was already wrong — RED observed,
+  actor-text rows are flow cells) but the FUNCTION was already wrong — RED observed,
   `infer_signal_direction_from_actor_text("Interconnect → Slave", DestinationLike, None)` =
-  **`Some("input")`**, a real Avalon `table_0014` cell. **A column header, not a rule, kept it out of
-  an artifact** (Avalon heads it `Direction`, so `source_col`/`dest_col` are `None`). Measured and NOT
-  acted on: `synthesize_trapped_row_signal_declarations` claims to mint "under the body-row path's own
-  rules" but has **no flow-arrow arm** — 0 of 663 trapped rows carry a marker.
+  **`Some("input")`**, a real Avalon `table_0014` cell: **a column header, not a rule, kept it out of
+  an artifact.** Measured and NOT acted on: `synthesize_trapped_row_signal_declarations` has **no
+  flow-arrow arm** despite its doc — 0 of 663 trapped rows carry a marker.
 - Next action: **`SIGNAL-DECLARATION-ROW-DROP.2h.1`** — read the unread literal direction column.
   `.2h.0` adjudicated and the number MOVED: **124 / 15 / 6 is WITHDRAWN, it is 106 rows / 13 tables /
   4 documents** (18 rows were admitted on `O`, which LTI `table_0081` and AXI-Stream `table_0015` use
-  for *Optional*; abbreviations measured 0 true / 18 false and are gone). **94 of 106 are
-  unconditional**; `.2h.1` must still answer whether the name-column rotation override covers
-  CoreSight TMC `table_0074` (direction first, name LAST, 6 real ATB wires) and count HBM2
-  `table_0076` as **2, not 6** (prose name column). Then `.2f` (blocked on `Unused`),
+  for *Optional*; abbreviations measured 0 true / 18 false and are gone). **94 of 106 unconditional.
+  SIZED: all 4 documents are LEGACY PROOFLESS — 0 persisted artifacts move, and 0 of the 24
+  rebuildable documents carry such a column, so a byte-identical corpus passes TRIVIALLY and is NOT
+  evidence; the oracle is an in-crate control over the corpus cell forms.** TMC `table_0074` is MIXED
+  not rotated (6 rows name-LAST, 1 name-first) so the whole-table offset cannot fix it; HBM2
+  `table_0076` yields **2, not 6**. Then `.2f` (blocked on `Unused`),
   `TEXT-LAYER-IDENTIFIER-SPLIT.1`, `EXTRACTION-QUALITY-GAUGE.3j`; `.4c` behind `KG-ISF-COMPLETENESS.2a`.
 - Also ready, measured this session, both in `CLAIM-VERIFICATION-ADOPTION`: **`.12`** (the per-slice
   region re-pin instrument — built in scratch and used 5×, relocates every `line_range_sha256` region

@@ -894,15 +894,51 @@ a long tail.
   pattern with this instance as its third. **Producer sub-clause: no production rule was deleted or
   replaced** — nothing the reader does changed.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.1` · Status: `pending` (opened `2026-09-15` by `.2h.0`) · Goal:
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.1` · Status: `pending` (opened `2026-09-15` by `.2h.0`; sized
+  the same day) · Goal:
   **read a column whose cells ARE the literal direction words, in a table whose header carries no
-  `direction` keyword.** Population, adjudicated: **106 rows / 13 tables / 4 documents**, of which
-  **94 are unconditional**. Two questions the implementation must answer before it counts its prize:
-  whether the existing content-based name-column override already remaps CoreSight TMC `table_0074`
-  (rotated: direction first, name last, 6 real ATB wires), and that HBM2 `table_0076` yields **2**
-  rather than 6, because its name column holds prose the identifier test already refuses.
+  `direction` keyword.** Population, adjudicated by `.2h.0`: **106 rows / 13 tables / 4 documents**,
+  of which **94 are unconditional**.
   Non-goal: a header vocabulary list, and any abbreviation — `.2h.0` measured that
   `i`/`o`/`io`/`in`/`out` have 0 true positives and 18 false ones in this corpus.
+
+  **SIZED `2026-09-15`, before implementation, and the sizing is the leaf's most important fact:
+  ALL FOUR documents are legacy proofless, so this change moves ZERO persisted artifacts.** Measured
+  by running the real command over every persisted SourceIR: GIC-600, HBM2, CoreSight TMC and
+  CoreSight SoC-600 each refuse with *"legacy proofless SourceIR schema 1 … is inspection-only and
+  must be rebuilt before canonical use"*. Of the 24 documents the current chain accepts, **0 carry a
+  literal direction column at all**. So no score, gold, seal or `.isf` can move, and
+  "byte-identical for all 78" is a NO-REGRESSION oracle that would pass **trivially** — it must not be
+  cited as evidence that the new reading works. The real evidence is an in-crate control over the
+  corpus's own cell forms, the way `.2b` enumerated all 13 arrow forms so the adjudicable sample was
+  the population. This is the standing stratum hazard with a number attached
+  (`[[declaration-replay-reads-the-legacy-stratum]]`).
+  **It is still worth building**, and the reason should be stated rather than assumed: the reader is
+  the product and the corpus is a snapshot of one moment's rebuildable set. `.4e` built
+  `replay-declarations` precisely so the 51-document legacy stratum stops being unmeasurable, and the
+  same argument applies here. What it must NOT do is claim a recovery the corpus can show.
+
+  **The rotation question `.2h.0` handed over is answered, and the answer is worse than "rotated".**
+  CoreSight TMC `table_0074` is **MIXED**, not rotated: six rows put the name LAST and the direction
+  FIRST, and the seventh is the ordinary layout —
+  ```
+  headers: Signal | Type | Description
+    Output   | Valid signals in this cycle fr… | ATVALIDM     <- name last
+    Input    | If there is valid data, that i… | ATREADYM     <- name last
+    …
+    AFREADYM | Output                          | Data flush … <- name FIRST
+  ```
+  The existing content-based name-column override applies a **whole-table offset** — it was written
+  for a header row shifted relative to its body (`.2e`), which is not this shape. On this table it can
+  be right for six rows or for one, never both. `.2h.1` must therefore measure what the override
+  actually does here rather than assume it helps, and the honest outcome may be that the seventh row
+  stays refused by the identifier test it already fails. **Do not widen the rotation rule to fit this
+  table**; a per-row layout is a different defect from a shifted header and wants its own leaf.
+
+  **Design constraint, from the same measurement.** The natural implementation extends
+  `explicit_dir_col` with a content fallback when no header contains `direction`. That column must be
+  detected **after** the rotation remap and must not itself be remapped — it is found where the words
+  actually are, so remapping it a second time would move it off them.
   Prerequisite: `.2h.0`.
   Verification: pending
   Commit: pending
@@ -1699,8 +1735,11 @@ Ordered; PNT selects the first eligible leaf.
    text in a column headed `Type`, which the direction scan never looks at.** `.2h.0` did the
    adjudication and it moved the number: **124 / 15 / 6 was published and is withdrawn** — 18 rows
    were admitted on `O`, which two protocol-VERSION presence matrices use for *Optional*. **94 of the
-   106 are unconditional**; the implementation must still answer whether the existing name-column
-   rotation override covers CoreSight TMC `table_0074`, and count HBM2 `table_0076` as 2, not 6.
+   106 are unconditional.** Sized before implementation: **all four documents are legacy proofless**,
+   so the change moves **0 persisted artifacts** and a byte-identical corpus would pass trivially —
+   the evidence has to be an in-crate control over the corpus's own cell forms. CoreSight TMC
+   `table_0074` is **mixed**, not rotated (six rows name-last, one name-first), so the whole-table
+   offset cannot fix it; HBM2 `table_0076` yields **2, not 6**.
    **`.2g` was taken ahead of this** (`2026-09-15`): it is prerequisite-free, moves 0 of 78 documents,
    and hardens the same direction chain `.2h` is about to grow a new arm on — so the guard lands
    before the chain changes, not after. Building it also found the hazard is not purely latent: the
