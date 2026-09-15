@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > why is the default ingest threshold 131 pages on a 24 GiB host
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)

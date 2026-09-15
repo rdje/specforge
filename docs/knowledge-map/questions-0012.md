@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what is source_batch in SourceIR
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > what is synthesize_register_field_tables
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
@@ -295,5 +297,3 @@
   > what modal words does obligation_is_negated accept
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > what model do converge / enrich / nlp-enrich use by default
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what model does the NLI verifier use

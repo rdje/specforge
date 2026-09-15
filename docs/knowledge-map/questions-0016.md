@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why did IntentIR proof verification fail after I validated SemanticIR
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > why did LIVE-DOCUMENT-PRESSURE-HEADROOM.4d reflow one bullet instead of rewrapping README.md
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -296,5 +298,3 @@
   > why does GIC 400 emit fifteen registers with missing access
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why does I2S SD remain a signal
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why does Instruction group not count as an ns unit and why does SMIN not count as min

@@ -7,6 +7,7 @@ answers:
   - "is it safe to put single-letter abbreviations in a notation census vocabulary (no - measured 0 true positives and 18 false ones corpus-wide for i/o/io/in/out; an abbreviation is not a notation until a document is shown to use it as one)"
   - "what is the difference between a census that OVER-fires and one that UNDER-reads (over-firing selects things that are not what you think, and the remedy is to read the selection; under-reading sees one spelling of a notation and misses the others, and the remedy is to census the spellings - both are 'a count is not an adjudication' but they fail in opposite directions)"
   - "how do I know a structural rule's selection is clean (print every distinct selected form verbatim with its count and read them; when the population is small enough the adjudicable sample IS the population, as with the 83 flow-arrow cells in 13 forms)"
+  - "can adding recall activate a bug that was previously harmless (yes - SIGNAL-DECLARATION-ROW-DROP.2h.1: the name-column override had already mis-picked HBM2 table_0076's Status column, but those rows were being dropped for having no direction; giving them one turned the inert bad guess into four phantom signals named X, V and Active)"
   - "why does a presence matrix look identical to a signal table to a structural rule (both are a name column beside a short-token column; N/O/C for not-present/optional/conditional occupies exactly the shape a Type column occupies, so only the meaning of the tokens separates them and only reading them recovers it)"
 date: 2026-09-15
 status: current
@@ -41,6 +42,19 @@ was **deferred on its own adjudication**, and the reason was worth more than the
 protocol-**version presence matrices**: `N` not-present, `O` optional, `C` conditional. Reading `O` as
 `Output` would have **declared `TREADY` an output because a presence matrix called it optional**.
 Corrected population: **106 rows, 13 tables, 4 documents**, every row admitted on the full word.
+
+**A fourth instance, and the only one where the over-firing rule was the AUTHOR'S OWN, not a census.**
+`SIGNAL-DECLARATION-ROW-DROP.2h.1` taught the reader to use a column whose cells are the literal
+direction words. Run unscoped against HBM2 `table_0076` — a table whose header row is itself data — it
+produced **`Signal X is input.`, `Signal V is output.`, `Signal Active is input.`**, read out of the
+`Status` column, where it had produced **nothing**. The mechanism is worth more than the instance:
+the pre-existing content name-column override had *already* guessed that column wrongly, and the guess
+was inert only because those rows were being DROPPED for having neither a direction nor a width.
+Supplying a direction woke a latent bad guess. **Two guesses do not compose** — the fix scopes the new
+rule to tables whose name column the header designates, at a measured cost of six genuine wires in one
+other table. The lesson generalises past censuses: adding recall to a pipeline can activate an upstream
+error that was previously harmless, and a rule's selection must be read *after* it is wired in, not
+only where it is defined.
 
 ## Why a presence matrix is indistinguishable by shape
 

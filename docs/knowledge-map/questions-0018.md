@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why does the live-document report show lines below the ceiling
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > why does the logic level pairing read the declaration catalog instead of the token shape
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
@@ -295,5 +297,3 @@
   > why is the channel role kept verbatim instead of mapped to address/data/response phases
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why is the constraint subject fallback bounded by the obligation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)

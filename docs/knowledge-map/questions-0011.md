@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > what fsmgen pin does SpecForge target for temporal properties
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -296,5 +298,3 @@
   > what is signal_presence_records and what does a SignalPresenceRecord hold
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > what is snap_subject_to_sentence_token and when does it fire
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what is source_batch in SourceIR

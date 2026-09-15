@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > is the drive/read direction correct for passive vs active prose relations
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -296,5 +298,3 @@
   > what are the final OpenCAPI Discovery artifact hashes
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what are the final remediated 17-document behavioral held-out outcomes
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > what are the first ranked trajectory gaps

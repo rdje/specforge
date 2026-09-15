@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > where is FigureRegion stored in EvidenceIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -296,5 +298,3 @@
   > which local models are pulled and what are they for
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > which logic level records did the pairing remove
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > which mdBook quantitative assertions still lack claim authority

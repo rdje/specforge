@@ -163,10 +163,22 @@ disagrees with the reader on the one cell where both can speak.
 
 What the census did find is a larger and simpler population. Across the same 78 stored artifacts,
 **106 rows in 13 tables state their direction outright as `Input` or `Output`, in a column the
-direction scan never looks at, because the document heads it `Type`.** No vocabulary is needed to read
-them; the work is tracked and not yet done.
+direction scan never looked at, because the document heads it `Type`.** No vocabulary is needed to read
+them, and **94 of them are read now**: when no header names a direction column, the reader falls back
+to a column whose *cells are* the direction words. It matches a whole cell rather than a substring, so
+a description full of sentences opening "Output enable…" can never carry the column.
 
-That figure was published as 124 for one revision, and reading the selection is what corrected it —
+**Twelve of the 106 are deliberately not read, and that decision cost a defect to learn.** Two of the
+thirteen tables are ones where the reader has to *guess* which column holds the signal name, because
+their header row is itself data. Given a direction, one of them stopped dropping its rows and started
+declaring signals called `X`, `V` and `Active` — read out of a column headed `Status`. It had declared
+nothing at all before. Two guesses do not compose: a table whose name column was inferred is not a
+table whose unnamed direction column can be trusted, so the rule now requires the name column to be the
+one the header designates. The cost is six genuine wires in the other such table, which puts its name
+last on six rows and first on the seventh — a per-row layout, not the shifted header the existing
+correction was built for, and a different problem than this one.
+
+The earlier figure was published as 124 for one revision, and reading the selection is what corrected it —
 which is this reader's most reliable lesson, now for the third time. Eighteen of those rows were
 admitted on the single letter `O`, and the two tables they came from use `O` for **optional**, beside
 `N` for not-present and `C` for conditional. They are presence matrices listing which signals each

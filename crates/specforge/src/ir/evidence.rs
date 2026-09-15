@@ -12180,6 +12180,85 @@ fn is_signal_name_column_header(header: &str) -> bool {
         || header.contains("pin")
 }
 
+/// The literal direction words this reader already understands, as a WHOLE cell value.
+///
+/// `SIGNAL-DECLARATION-ROW-DROP.2h.1` — deliberately no abbreviation. `.2h.0` censused the corpus and
+/// found `i`/`o`/`io`/`in`/`out` carry **0 true positives and 18 false ones**: AMBA LTI `table_0081`
+/// ("Summary of parity signal presence of each LTI version") and AXI-Stream `table_0015` write `O`
+/// for **Optional**, beside `N` for not-present and `C` for conditional. Reading that as `Output`
+/// would declare a handshake signal an output because a presence matrix called it optional.
+const LITERAL_DIRECTION_CELL_VALUES: [(&str, &str); 3] =
+    [("input", "input"), ("output", "output"), ("inout", "input")];
+
+/// A column whose CELLS are the literal direction words, for a table whose header names none.
+///
+/// `SIGNAL-DECLARATION-ROW-DROP.2h.1` — `synthesize_signal_declarations` finds its explicit direction
+/// column with `header.contains("direction")` and reads the literal `input`/`output` only there. A
+/// document that heads the same column `Type` states the direction outright and the reader takes none
+/// of it: measured over the persisted corpus, **106 rows in 13 tables** across four specifications,
+/// twelve of the thirteen heading it `type`.
+///
+/// The rule is a property of the column's own CONTENT, never a header vocabulary (ADR 0006): most of
+/// a column's non-empty cells must BE direction words. A presence matrix cannot reach it, because its
+/// cells are single letters and those are not direction words here.
+///
+/// Returned as an index into the row as it is actually laid out, so the caller must NOT put it
+/// through the rotation remap — it is already found where the words are.
+fn literal_direction_column(
+    table: &crate::ir::source::StructuredTableRecord,
+    header_texts: &[String],
+    name_column_is_header_designated: bool,
+) -> Option<usize> {
+    // Only when the table names no direction column of its own; an explicit header always wins.
+    if header_texts
+        .iter()
+        .any(|header| header.contains("direction"))
+    {
+        return None;
+    }
+    // MEASURED, not tidiness. HBM2 `table_0076`'s header row is itself data, so the content
+    // name-column override picks its `Status` column (`X`, `V`, `Active`). Giving that table a
+    // direction took it from 0 declarations to FOUR PHANTOMS — `Signal X is input.` — because the
+    // rows stopped being dropped for having neither a direction nor a width. Two guesses do not
+    // compose: a table whose name column the reader had to INFER is not one whose unnamed direction
+    // column it should trust. Cost, named: 6 readable rows in CoreSight TMC `table_0074`, which is
+    // MIXED rather than rotated (six rows name-last, one name-first) and wants its own answer.
+    if !name_column_is_header_designated {
+        return None;
+    }
+    let column_count = table.body_rows.iter().map(|row| row.len()).max()?;
+    (0..column_count).find(|&column| {
+        let values: Vec<&str> = table
+            .body_rows
+            .iter()
+            .filter_map(|row| row.get(column))
+            .map(|cell| cell.text.trim())
+            .filter(|text| !text.is_empty())
+            .collect();
+        // Three cells is the smallest population that can be a column rather than a coincidence,
+        // and a clear majority keeps a stray footnote or a blank from disqualifying a real one.
+        values.len() >= LITERAL_DIRECTION_MIN_CELLS
+            && values
+                .iter()
+                .filter(|text| literal_direction_cell_value(text).is_some())
+                .count()
+                * 2
+                > values.len()
+    })
+}
+
+/// The smallest cell population a literal direction column may have.
+const LITERAL_DIRECTION_MIN_CELLS: usize = 3;
+
+/// The port sense a whole cell states literally, or `None` when it states none.
+fn literal_direction_cell_value(text: &str) -> Option<&'static str> {
+    let normalized = text.trim().to_ascii_lowercase();
+    LITERAL_DIRECTION_CELL_VALUES
+        .iter()
+        .find(|(spelling, _)| *spelling == normalized)
+        .map(|(_, sense)| *sense)
+}
+
 fn synthesize_signal_declarations(
     table: &crate::ir::source::StructuredTableRecord,
     section_kind: SectionKind,
@@ -12334,7 +12413,12 @@ fn synthesize_signal_declarations(
         }
     };
     let width_col = remap(width_col);
-    let explicit_dir_col = remap(explicit_dir_col);
+    // SIGNAL-DECLARATION-ROW-DROP.2h.1 — when no header names a direction column, fall back to a
+    // column whose CELLS are the literal direction words. Resolved AFTER the remap and deliberately
+    // NOT put through it: the content scan finds the column where the words actually sit, so
+    // rotating it a second time would move it off them.
+    let explicit_dir_col = remap(explicit_dir_col)
+        .or_else(|| literal_direction_column(table, &header_texts, offset == 0));
     let source_col = remap(source_col);
     let dest_col = remap(dest_col);
 
@@ -12376,6 +12460,12 @@ fn synthesize_signal_declarations(
         let direction = explicit_dir_col
             .and_then(|col| row.get(col))
             .and_then(|cell| {
+                // A cell that IS a direction word answers first, whichever column found it
+                // (SIGNAL-DECLARATION-ROW-DROP.2h.1); a header-named direction column may also
+                // state it in prose, which the substring reading below still catches.
+                if let Some(sense) = literal_direction_cell_value(&cell.text) {
+                    return Some(sense);
+                }
                 let t = cell.text.to_ascii_lowercase();
                 if t.contains("output") {
                     Some("output")
@@ -32044,6 +32134,266 @@ mod wire_based_100_5h {
     }
     fn row(cells: &[&str]) -> Vec<StructuredTableCellRecord> {
         cells.iter().map(|t| cell(t)).collect()
+    }
+
+    /// `SIGNAL-DECLARATION-ROW-DROP.2h.1` — a column whose CELLS are the literal direction words,
+    /// in a table whose header names no direction column. Every shape below is a corpus shape:
+    /// `.2h.0` adjudicated all thirteen tables one at a time, and these are the four distinct forms
+    /// they take. The population is small enough to enumerate, so the adjudicable sample IS the
+    /// population — the standard `.2b` set for the arrow grammar.
+    #[test]
+    fn a_column_whose_cells_are_direction_words_is_the_direction_column() {
+        // The dominant corpus shape: `Signal name | Type | Source or destination | Description`,
+        // GIC-600 `table_0160`. Twelve of the thirteen tables head the column `type`.
+        let table = StructuredTableRecord {
+            table_id: "table_0160".to_string(),
+            asset_id: "asset_0160".to_string(),
+            page_id: None,
+            caption_text: Some("Table A-1  Common control signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&[
+                "Signal name",
+                "Type",
+                "Source or destination",
+                "Description",
+            ])],
+            body_rows: vec![
+                row(&["ZETACLK", "Input", "Clock source", "Clock input."]),
+                row(&["ZETARESETN", "Input", "Reset source", "Active-LOW reset."]),
+                row(&["ZETAWAKE", "Output", "Power controller", "Wake request."]),
+            ],
+            row_count: 3,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let (mut prov, mut accounting) = (Vec::new(), Vec::new());
+        let statements = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+        let texts: Vec<&str> = statements.iter().map(|s| s.text.as_str()).collect();
+        assert_eq!(
+            texts,
+            vec![
+                "Signal ZETACLK is input.",
+                "Signal ZETARESETN is input.",
+                "Signal ZETAWAKE is output.",
+            ],
+            "a Type column stating the port sense is the direction column"
+        );
+        // The `Source or destination` cells are exactly the ones `.2d` refused to read through the
+        // taxonomy (`Clock source` is not an actor). This is why that refusal costs nothing: the
+        // row next door says it in plain text, and says it correctly.
+        assert_eq!(
+            infer_signal_direction_from_actor_text(
+                "Clock source",
+                RelationTableColumnKind::SourceLike,
+                None,
+            ),
+            None
+        );
+    }
+
+    /// The two odd shapes `.2h.0` flagged, MEASURED rather than predicted — and the measurement is
+    /// why the rule is scoped to a header-designated name column. Both are corpus tables, and both
+    /// are ones the reader had to guess the name column for, so neither is recovered.
+    #[test]
+    fn a_table_whose_name_column_was_inferred_gets_no_literal_direction() {
+        // CoreSight TMC `table_0074` is MIXED, not rotated: six rows put the name LAST and the
+        // direction FIRST, the seventh is the ordinary layout. The content override moves the name
+        // column, so this table is out of scope and its six readable rows are NOT taken. That cost
+        // is deliberate and named: a per-row layout is a different defect from a shifted header.
+        let mixed = StructuredTableRecord {
+            table_id: "table_0074".to_string(),
+            asset_id: "asset_0074".to_string(),
+            page_id: None,
+            caption_text: Some("Table A-2 ATB master interface signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal", "Type", "Description"])],
+            body_rows: vec![
+                row(&["Output", "Valid signals in this cycle.", "ZETAVALIDM"]),
+                row(&["Input", "If there is valid data.", "ZETAREADYM"]),
+                row(&["Output", "Trace source ID.", "ZETAIDM"]),
+                row(&["Output", "Number of valid bytes.", "ZETABYTESM"]),
+                row(&["Output", "Trace data, LSB aligned.", "ZETADATAM"]),
+                row(&["Input", "Any data remaining in any buffer.", "ZETAFVALIDM"]),
+                row(&["ZETAFREADYM", "Output", "Data flush complete."]),
+            ],
+            row_count: 7,
+            col_count: 3,
+        };
+        let mut counter = 0usize;
+        let (mut prov, mut accounting) = (Vec::new(), Vec::new());
+        let statements = synthesize_signal_declarations(
+            &mixed,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+        assert!(
+            statements
+                .iter()
+                .all(|s| !s.text.contains(" is output.") && !s.text.contains(" is input.")),
+            "an inferred name column takes no direction from an unnamed column: {:?}",
+            statements
+                .iter()
+                .map(|s| s.text.as_str())
+                .collect::<Vec<_>>()
+        );
+
+        // HBM2 `table_0076` is why the condition exists. Its header row is itself data, and the
+        // content override picks its `Status` column — cells `X`, `V`, `Active`. Feeding THAT a
+        // direction took the table from 0 declarations to FOUR PHANTOMS (`Signal X is input.`,
+        // `Signal V is output.`), because the rows stopped being dropped for having neither a
+        // direction nor a width. Scoped out, it mints nothing at all.
+        let mangled = StructuredTableRecord {
+            table_id: "table_0076".to_string(),
+            asset_id: "asset_0076".to_string(),
+            page_id: None,
+            caption_text: Some("Table 74 Test Access Port Pin Status".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&[
+                "ZETARST_N",
+                "DA, MR8 OP",
+                "Pin name",
+                "Type",
+                "Status",
+            ])],
+            body_rows: vec![
+                row(&["L", "DA = L", "Other IEEE1500 inputs 1", "Input", "X"]),
+                row(&["L", "DA = L", "ZETAWSO", "Output", "V"]),
+                row(&["H", "DA = L", "Other IEEE1500 inputs 1", "Input", "Active"]),
+                row(&["H", "DA = L", "ZETAWSO", "Output", "V"]),
+            ],
+            row_count: 4,
+            col_count: 5,
+        };
+        let mut counter = 0usize;
+        let (mut prov, mut accounting) = (Vec::new(), Vec::new());
+        let statements = synthesize_signal_declarations(
+            &mangled,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+            &mut accounting,
+        );
+        let texts: Vec<&str> = statements.iter().map(|s| s.text.as_str()).collect();
+        assert!(
+            !texts.iter().any(|t| t.starts_with("Signal X ")
+                || t.starts_with("Signal V ")
+                || t.starts_with("Signal Active ")),
+            "the Status column must not become a signal catalogue: {texts:?}"
+        );
+    }
+
+    /// The guards that keep the same rule off a table that merely looks like one.
+    #[test]
+    fn a_literal_direction_column_needs_direction_words_and_no_named_direction_column() {
+        let build = |headers: &[&str], rows: Vec<Vec<StructuredTableCellRecord>>| {
+            let col_count = headers.len() as u32;
+            let row_count = rows.len() as u32;
+            StructuredTableRecord {
+                table_id: "table_0001".to_string(),
+                asset_id: "asset_0001".to_string(),
+                page_id: None,
+                caption_text: None,
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::SignalDescription,
+                header_rows: vec![row(headers)],
+                body_rows: rows,
+                row_count,
+                col_count,
+            }
+        };
+        let headers = |table: &StructuredTableRecord| -> Vec<String> {
+            table.header_rows[0]
+                .iter()
+                .map(|c| c.text.to_ascii_lowercase())
+                .collect()
+        };
+
+        // A presence matrix is the shape that must NOT reach this rule. AMBA LTI `table_0081`
+        // ("Summary of parity signal presence of each LTI version") and AXI-Stream `table_0015`
+        // write `O` for OPTIONAL beside `N` for not-present — `.2h.0` measured 18 such rows, and
+        // reading them as `Output` would declare a handshake signal an output because a matrix
+        // called it optional. Single letters are not direction words, so the column is not found.
+        let matrix = build(
+            &["Name", "LTI-A LTI-B LTI-C", "LTI-D"],
+            vec![
+                row(&["ZETAVALIDCHK", "N", "O"]),
+                row(&["ZETAVCCHK", "N", "O"]),
+                row(&["ZETACREDITCHK", "N", "O"]),
+            ],
+        );
+        assert_eq!(
+            literal_direction_column(&matrix, &headers(&matrix), true),
+            None
+        );
+
+        // A header that names a direction column always wins; the content scan never runs.
+        let named = build(
+            &["Signal", "Direction", "Type"],
+            vec![
+                row(&["ZETAONE", "Input", "Output"]),
+                row(&["ZETATWO", "Input", "Output"]),
+                row(&["ZETATHREE", "Input", "Output"]),
+            ],
+        );
+        assert_eq!(
+            literal_direction_column(&named, &headers(&named), true),
+            None
+        );
+
+        // Two cells are a coincidence, not a column.
+        let thin = build(
+            &["Signal", "Type", "Description"],
+            vec![
+                row(&["ZETAONE", "Input", "A described signal."]),
+                row(&["ZETATWO", "Output", "A described signal."]),
+            ],
+        );
+        assert_eq!(literal_direction_column(&thin, &headers(&thin), true), None);
+
+        // A description column that merely mentions a direction is not one either: the rule reads
+        // the WHOLE cell, so prose can never carry the column.
+        let prose = build(
+            &["Signal", "Type", "Description"],
+            vec![
+                row(&["ZETAONE", "Input", "Output enable for the bus."]),
+                row(&["ZETATWO", "Input", "Output data, LSB aligned."]),
+                row(&["ZETATHREE", "Input", "Output strobe."]),
+            ],
+        );
+        assert_eq!(
+            literal_direction_column(&prose, &headers(&prose), true),
+            Some(1)
+        );
+
+        // And the cell reading itself: a word, not a substring.
+        assert_eq!(literal_direction_cell_value("Output"), Some("output"));
+        assert_eq!(literal_direction_cell_value("  input "), Some("input"));
+        assert_eq!(literal_direction_cell_value("InOut"), Some("input"));
+        assert_eq!(literal_direction_cell_value("Output enable"), None);
+        assert_eq!(literal_direction_cell_value("O"), None);
+        assert_eq!(literal_direction_cell_value("N"), None);
+        assert_eq!(literal_direction_cell_value(""), None);
     }
 
     /// SIGNAL-DECLARATION-ROW-DROP.1 — the reader must account for every row it is handed,

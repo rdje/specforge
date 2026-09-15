@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what model does the NLI verifier use
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > what moved residual actionability from 4 of 16 to 8 of 16
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -296,5 +298,3 @@
   > where does the specforge chipdoc host library symlink currently resolve
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > where does the uppercase spelling in a declaration come from
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > where is FigureRegion stored in EvidenceIR

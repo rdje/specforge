@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > which mdBook quantitative assertions still lack claim authority
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > which mdBook quantitative census totals may be published and which must be read from the report
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > which metrics govern specification-to-executable-intent progress
@@ -295,5 +297,3 @@
   > why did HSELx must_be_asserted carry the wrong condition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > why did ISF renderability fall from 44 to 17
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why did IntentIR proof verification fail after I validated SemanticIR

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > do host-local source libraries define tracked corpus membership
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > do old SemanticIR gates create IntentIR behaviors or constraints
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -295,5 +297,3 @@
   > does sanitizing the module name break initiator port matching (no — from_intent_ir re-derives the initiator raw; actor_name is only the label)
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > does scripts/check_doctrines.sh run cargo clippy
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > does scripts/check_doctrines.sh run cargo test or cargo fmt

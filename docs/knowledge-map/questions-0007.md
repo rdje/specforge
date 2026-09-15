@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how many OpenCAPI Certified Definition paths are repository relative
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how many OpenCAPI Ready Definition paths are repository relative
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -296,5 +298,3 @@
   > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > how to express the JTAG TAP / SWD FSM in .isf

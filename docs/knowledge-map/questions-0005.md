@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > how do I change the reviewed source-to-intent fixture projection
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how do I check the mdBook for stale behavioural claims
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -295,5 +297,3 @@
   > how does production recover explicit inference antecedent state
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > how does register access differ from register field access
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how does retain_authoritative_interface_candidate_signals behave with an empty authority set

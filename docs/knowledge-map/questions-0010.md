@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > what are the first ranked trajectory gaps
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > what are the isf_protocol residual packet prefixes
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -295,5 +297,3 @@
   > what field holds the constrained signal name (signal_name vs subject_signal)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)

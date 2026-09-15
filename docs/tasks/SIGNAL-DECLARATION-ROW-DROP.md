@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h.0`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h.1`/`.4c` open)
+- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-15`
@@ -802,8 +802,8 @@ a long tail.
   the guard is additive and narrows one reader's input; every existing reading still means what the
   book says it means, which is why 0 of 78 documents move.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2h` · Status: `active` (`2026-09-15`; opened the same day by
-  `.2d`) · Children: `.2h.0` (adjudication, `done`), `.2h.1` (the reader, `pending`) · Goal: **a
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h` · Status: `done` (`2026-09-15`; opened the same day by
+  `.2d`) · Children: `.2h.0` (adjudication, `done`), `.2h.1` (the reader, `done`) · Goal: **a
   direction column the header scan never looks at, because the document heads it `Type`.**
   `synthesize_signal_declarations` finds its explicit direction column with
   `header.contains("direction")` and reads the literal `input`/`output` only from that column. A table
@@ -894,54 +894,96 @@ a long tail.
   pattern with this instance as its third. **Producer sub-clause: no production rule was deleted or
   replaced** — nothing the reader does changed.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.1` · Status: `pending` (opened `2026-09-15` by `.2h.0`; sized
-  the same day) · Goal:
-  **read a column whose cells ARE the literal direction words, in a table whose header carries no
-  `direction` keyword.** Population, adjudicated by `.2h.0`: **106 rows / 13 tables / 4 documents**,
-  of which **94 are unconditional**.
-  Non-goal: a header vocabulary list, and any abbreviation — `.2h.0` measured that
-  `i`/`o`/`io`/`in`/`out` have 0 true positives and 18 false ones in this corpus.
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.1` · Status: `done` (`2026-09-15`, CODE; opened the same day by
+  `.2h.0`) · Goal: **read a column whose cells ARE the literal direction words, in a table whose
+  header carries no `direction` keyword.** `synthesize_signal_declarations` finds its explicit
+  direction column with `header.contains("direction")` and reads the literal `input`/`output` only
+  there; a document that heads the same column `Type` states the direction outright and the reader
+  takes none of it.
+  Non-goal: a header vocabulary list, and any abbreviation — `.2h.0` measured `i`/`o`/`io`/`in`/`out`
+  at 0 true positives and 18 false ones.
 
-  **SIZED `2026-09-15`, before implementation, and the sizing is the leaf's most important fact:
-  ALL FOUR documents are legacy proofless, so this change moves ZERO persisted artifacts.** Measured
-  by running the real command over every persisted SourceIR: GIC-600, HBM2, CoreSight TMC and
-  CoreSight SoC-600 each refuse with *"legacy proofless SourceIR schema 1 … is inspection-only and
-  must be rebuilt before canonical use"*. Of the 24 documents the current chain accepts, **0 carry a
-  literal direction column at all**. So no score, gold, seal or `.isf` can move, and
-  "byte-identical for all 78" is a NO-REGRESSION oracle that would pass **trivially** — it must not be
-  cited as evidence that the new reading works. The real evidence is an in-crate control over the
-  corpus's own cell forms, the way `.2b` enumerated all 13 arrow forms so the adjudicable sample was
-  the population. This is the standing stratum hazard with a number attached
-  (`[[declaration-replay-reads-the-legacy-stratum]]`).
-  **It is still worth building**, and the reason should be stated rather than assumed: the reader is
-  the product and the corpus is a snapshot of one moment's rebuildable set. `.4e` built
-  `replay-declarations` precisely so the 51-document legacy stratum stops being unmeasurable, and the
-  same argument applies here. What it must NOT do is claim a recovery the corpus can show.
+  **Shipped: `literal_direction_column` + `literal_direction_cell_value`, resolved as a fallback for
+  `explicit_dir_col`.** Three properties, each forced by a measurement rather than chosen:
+  1. **Content, not header** — most of a column's non-empty cells must BE direction words
+     (ADR 0006). A presence matrix cannot reach it: its cells are single letters, and those are not
+     direction words here.
+  2. **Whole cell, not substring** — `literal_direction_cell_value` matches the trimmed cell exactly,
+     so a description column of sentences opening *"Output enable…"* can never carry the column.
+  3. **After the remap, never through it** — the scan finds the column where the words actually sit,
+     so putting it through the rotation offset would move it off them.
 
-  **The rotation question `.2h.0` handed over is answered, and the answer is worse than "rotated".**
-  CoreSight TMC `table_0074` is **MIXED**, not rotated: six rows put the name LAST and the direction
-  FIRST, and the seventh is the ordinary layout —
-  ```
-  headers: Signal | Type | Description
-    Output   | Valid signals in this cycle fr… | ATVALIDM     <- name last
-    Input    | If there is valid data, that i… | ATREADYM     <- name last
-    …
-    AFREADYM | Output                          | Data flush … <- name FIRST
-  ```
-  The existing content-based name-column override applies a **whole-table offset** — it was written
-  for a header row shifted relative to its body (`.2e`), which is not this shape. On this table it can
-  be right for six rows or for one, never both. `.2h.1` must therefore measure what the override
-  actually does here rather than assume it helps, and the honest outcome may be that the seventh row
-  stays refused by the identifier test it already fails. **Do not widen the rotation rule to fit this
-  table**; a per-row layout is a different defect from a shifted header and wants its own leaf.
-
-  **Design constraint, from the same measurement.** The natural implementation extends
-  `explicit_dir_col` with a content fallback when no header contains `direction`. That column must be
-  detected **after** the rotation remap and must not itself be remapped — it is found where the words
-  actually are, so remapping it a second time would move it off them.
+  **The prize is 94, not 106, and the reason is a defect this leaf created and then measured.**
+  The first implementation was unscoped. Run against HBM2 `table_0076` it produced
+  **`Signal X is input.`, `Signal V is output.`, `Signal Active is input.`, `Signal V is output.`** —
+  four phantoms from the table's `Status` column, where it had produced **nothing** before.
+  The mechanism is a composition of two guesses, neither wrong on its own: that table's header row is
+  itself data, so the pre-existing content name-column override picks `Status`; before this leaf those
+  rows were DROPPED for having neither a direction nor a width, so the bad guess was inert; supplying
+  a direction woke it. **Two guesses do not compose.** The guard is therefore that the fallback fires
+  only when the NAME column is the one the header designates (`offset == 0`):
+  * **94 rows / 11 tables recovered** — GIC-600 `table_0160`/`0161`/`0162`/`0163`/`0164`/`0170` (63),
+    HBM2 `table_0069`/`0077` (21), CoreSight TMC `table_0081`/`0083` (7), CoreSight SoC-600
+    `table_0041` (3). All eleven head their name column explicitly (`signal name` ×6, `signal` ×3,
+    `signals`, `symbol`).
+  * **HBM2 `table_0076`: 4 phantoms → 0.** The reason the guard exists.
+  * **CoreSight TMC `table_0074`: 6 real rows deliberately GIVEN UP.** Its six name-last rows are
+    genuine ATB wires, but the table is **MIXED, not rotated** — six rows name-last, the seventh
+    name-first — so the whole-table offset the override applies can be right for six or for one,
+    never both. A per-row layout is a different defect from the shifted header `.2e` built for, and it
+    wants its own leaf rather than a widened rule.
   Prerequisite: `.2h.0`.
-  Verification: pending
-  Commit: pending
+  Verification: see the `.2h.1` checklist below.
+  Commit: see log.
+
+## Acceptance Checklist — `.2h.1` (enforced)
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_row_notations.py`:
+  `literal-direction-column: 106 cells` across 13 tables in 4 documents, every row admitted on the
+  full word `input` (58) or `output` (48). Of the 13, eleven head their name column explicitly and are
+  in scope (**94 rows**); two do not and are excluded by the guard below.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `synthesize_signal_declarations`: `explicit_dir_col` is
+  `header_texts.iter().position(|h| h.contains("direction"))`, and the literal `input`/`output`
+  reading is reachable only through it. A table headed
+  `Signal name | Type | Source or destination | Description` therefore yields no direction at all, and
+  with no width either it hits the `(None, None)` arm `.0` measured. **Observed with the real reader**,
+  not read off the source: with the fallback replaced by a no-op the dominant corpus shape emits
+  `left: []` — three rows naming real wires, each with its port sense one column over, and **zero**
+  declarations.
+- [x] **ADDRESSED (verified)** — the same shape now emits
+  `Signal ZETACLK is input.` / `Signal ZETARESETN is input.` / `Signal ZETAWAKE is output.`
+  **RED observed** on `a_column_whose_cells_are_direction_words_is_the_direction_column`. The guard is
+  verified in both directions by `a_table_whose_name_column_was_inferred_gets_no_literal_direction`,
+  which drives both mis-shaped corpus tables through the real reader and asserts neither mints a
+  signal — the control that exists because the unscoped version minted four.
+  `a_literal_direction_column_needs_direction_words_and_no_named_direction_column` pins the four
+  refusals: a presence matrix (`N`/`O`), a header that already names a direction column, a two-cell
+  column, and prose that merely mentions a direction.
+- [x] **NO REGRESSION** — `cargo test --offline -p specforge-core --lib` **1542 passed, 0 failed**
+  (1539 + 3 controls); `-p specforge --lib` 472; `cargo fmt --all --check` clean;
+  `cargo clippy --offline --all-targets -- -D warnings` exit 0; `bash scripts/check_doctrines.sh` all
+  executed doctrines PASS. All 78 persisted SourceIR re-run through `evidence --dry-run` before and
+  after: **78/78 byte-identical**, 24 accepted / 54 refused both sides.
+  **That corpus leg is honest about what it proves and what it does not.** It is a real check — making
+  `explicit_dir_col` resolve where it returned `None` REORDERS the priority chain, so an accepted
+  document carrying such a column would have moved. None does: `.2h.1`'s whole population is legacy
+  proofless, and 0 of the 24 rebuildable documents carry a literal direction column at all. So it
+  earns the no-regression claim and carries **no** evidence that the recovery works. The controls and
+  the RED carry that.
+- [x] **GENERICITY (ADR 0006)** — the rule is a property of a column's own content: most cells must be
+  direction words the reader already understands. No header dictionary, no document, vendor or
+  protocol name, and no abbreviation — `.2h.0` measured those at 0 true / 18 false. The corpus-verbatim
+  shapes live only in the controls. **The boundary does not move**: `boundary_rows` **144**,
+  `non_authoritative_regions` **9**, because the scan reads the table record the reader already holds
+  and reaches no new control. The volume census is re-derived rather than re-pinned —
+  `flow_census.json` `aggregate_change` gains a `.2h.1`-owned delta of **+2 analyzed functions,
+  +9 decision sites, +6 helper edges**, two of those sites being the guard itself.
+- [x] **LOCKSTEP** — the book's `pipeline/evidence-failure-modes.md` turns its open `.2h` population
+  into what shipped, including the 0→4-phantom finding and why the six given-up rows are given up; the
+  fact card `[[a-cheap-structural-rule-overfires-until-you-read-its-selection]]` gains this as an
+  instance where the over-firing was the AUTHOR's new rule rather than a census. **Producer sub-clause:
+  no production rule was deleted or replaced** — the fallback is additive and reachable only where no
+  header names a direction column, which is why 0 of 78 documents move.
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
   `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` (`.4d`, `.4e`), `.4c` · Goal: **the same silent drop one stage later — a declaration the
@@ -1729,23 +1771,13 @@ Ordered; PNT selects the first eligible leaf.
    **both bit forms** (`[hi:lo]` AND the single-index `[n]`, which is how every 1-bit wire is
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
-   `CXSCNTL`, `CXSDATA`).
-1. `SIGNAL-DECLARATION-ROW-DROP.2h.1` — **the biggest measured population this tree has left, and it
-   needs no vocabulary at all: 106 rows / 13 tables / 4 documents state `Input` or `Output` in plain
-   text in a column headed `Type`, which the direction scan never looks at.** `.2h.0` did the
-   adjudication and it moved the number: **124 / 15 / 6 was published and is withdrawn** — 18 rows
-   were admitted on `O`, which two protocol-VERSION presence matrices use for *Optional*. **94 of the
-   106 are unconditional.** Sized before implementation: **all four documents are legacy proofless**,
-   so the change moves **0 persisted artifacts** and a byte-identical corpus would pass trivially —
-   the evidence has to be an in-crate control over the corpus's own cell forms. CoreSight TMC
-   `table_0074` is **mixed**, not rotated (six rows name-last, one name-first), so the whole-table
-   offset cannot fix it; HBM2 `table_0076` yields **2, not 6**.
-   **`.2g` was taken ahead of this** (`2026-09-15`): it is prerequisite-free, moves 0 of 78 documents,
-   and hardens the same direction chain `.2h` is about to grow a new arm on — so the guard lands
-   before the chain changes, not after. Building it also found the hazard is not purely latent: the
-   function already answers a real corpus cell wrongly, and only a column header keeps the chain from
-   asking it.
-3. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
+   `CXSCNTL`, `CXSDATA`), so the leaf needs a different discriminator first.
+1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` (**not yet opened**) — CoreSight TMC `table_0074`'s six ATB
+   wires, the rows `.2h.1` deliberately gave up. The table is **mixed, not rotated**: six rows put the
+   name last and the seventh puts it first, so the whole-table offset `.2e` built for a shifted header
+   cannot serve it. Open this only with a measured population for per-row layout drift across the
+   corpus — one table is not a grammar, and `.2h.1` already paid for that lesson once.
+2. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and

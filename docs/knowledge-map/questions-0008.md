@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > how to express the JTAG TAP / SWD FSM in .isf
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > how to get a fresh eval-extraction baseline for a spec
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
@@ -295,5 +297,3 @@
   > is the declaration drop a recall bug or correct refusal
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)

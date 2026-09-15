@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "SIGNAL-DECLARATION-ROW-DROP.2g-A-FLOW-CELL-IS-NOT-AN-ACTOR-NAME",
+   "authority_id": "SIGNAL-DECLARATION-ROW-DROP.2h.1-A-COLUMN-OF-DIRECTION-WORDS-IS-THE-DIRECTION-COLUMN",
    "baseline": {
-    "analyzed_functions": 2453,
-    "decision_sites": 13154,
-    "helper_edges": 15416,
+    "analyzed_functions": 2454,
+    "decision_sites": 13157,
+    "helper_edges": 15418,
     "semantic_macros": 1498
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 3,
-    "helper_edges": 2,
+    "analyzed_functions": 2,
+    "decision_sites": 9,
+    "helper_edges": 6,
     "semantic_macros": 0
    },
-   "owner": "SIGNAL-DECLARATION-ROW-DROP.2g",
-   "rationale": "The literal actor-text direction reading was handed whole cells that state a FLOW, and it answered them: with the guard removed, `infer_signal_direction_from_actor_text` reads the real corpus cell `Interconnect -> Slave` as `input`. `.2g` adds one production function, `cell_states_a_flow`, and one early return in `infer_signal_direction_from_actor_text`, so a cell carrying any `FLOW_ARROW_FORMS` or `FLOW_ARROW_DISQUALIFIERS` marker is left to `infer_signal_direction_from_flow_arrow`. That is the whole of the +1 analyzed function; the decision sites and helper edges are the guard's return and the marker predicate the analyzer derives from it. The boundary counts are untouched \u2014 the guard reads no new source, reaches no new control, and narrows one existing reader's input. All 78 persisted documents rebuild byte-identical."
+   "owner": "SIGNAL-DECLARATION-ROW-DROP.2h.1",
+   "rationale": "A document that heads its direction column `Type` states the port sense outright and the reader took none of it: `synthesize_signal_declarations` finds that column with header.contains(\"direction\") only. `.2h.1` adds two production functions - `literal_direction_column`, a content scan for a column whose CELLS are the literal direction words, and `literal_direction_cell_value`, which reads a whole cell rather than a substring - plus the fallback that resolves the first when no header names one, and the guard that fires it only when the NAME column is header-designated. That guard is two of the decision sites and it exists because the measurement demanded it: without it, HBM2 table_0076 went from 0 declarations to 4 phantoms. The boundary counts are untouched; all 78 persisted documents rebuild byte-identical, because no rebuildable document carries such a column."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

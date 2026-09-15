@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why does Instruction group not count as an ns unit and why does SMIN not count as min
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > why does Mode Name not count as a name role
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -295,5 +297,3 @@
   > why does the feedback protocol self test block derived state closure
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why does the live-document report show lines below the ceiling

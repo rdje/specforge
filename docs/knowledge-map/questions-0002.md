@@ -133,6 +133,8 @@
   > can a width be written as an arithmetic expression with spaces in it
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > can a width expression contain a question mark
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > can adding recall activate a bug that was previously harmless (yes - SIGNAL-DECLARATION-ROW-DROP.2h.1: the name-column override had already mis-picked HBM2 table_0076's Status column, but those rows were being dropped for having no direction; giving them one turned the inert bad guess into four phantom signals named X, V and Active)
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > can ambient validation reports define the tracked corpus KB validation page
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -296,5 +298,3 @@
   > do evidence/semantic/intent stream source_ir.json or load it all into memory
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > do field constraints pass the same grounding gates as signal constraints
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > do host-local source libraries define tracked corpus membership

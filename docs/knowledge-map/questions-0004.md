@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > does scripts/check_doctrines.sh run cargo test or cargo fmt
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does select_initiator_actor choose the first or last equal maximum
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
@@ -296,5 +298,3 @@
   > how do I address exactly one converter item
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > how do I census which span a published constraint read its parts from
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > how do I change the reviewed source-to-intent fixture projection
