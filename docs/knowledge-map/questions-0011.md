@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > what gives timing observation samples tick authority
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -296,5 +298,3 @@
   > what is synthesize_register_field_tables
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > what is table_states_a_property_rather_than_a_signal_inventory

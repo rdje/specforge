@@ -102,6 +102,8 @@
   > does SpecForge preserve certification workflow source evidence
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > does SpecForge read `Master -> Slave` as a direction
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > does SpecForge read a direction cell containing an arrow as an actor name (no - .2g guards it: infer_signal_direction_from_actor_text declines any cell carrying a FLOW_ARROW_FORMS or FLOW_ARROW_DISQUALIFIERS marker, ahead of even the literal input/output substring readings, so the flow reader judges it)
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > does SpecForge read a width written as N bit or N bits
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -295,5 +297,3 @@
   > does scripts/check_doctrines.sh run cargo clippy
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > does scripts/check_doctrines.sh run cargo test or cargo fmt
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > does select_initiator_actor choose the first or last equal maximum

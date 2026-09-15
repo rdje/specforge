@@ -1,5 +1,5 @@
 {
- "authority": "ADR 0025 decision 2 / DOCTRINE_ENFORCEMENT.md §3 — a census that reports is not a check. `check_production_genericity_flow.sh` already derives all eighteen counts on every commit; this is the declaration it compares them against, so a drift is caught at commit cadence instead of at push cadence by a cargo test.",
+ "authority": "ADR 0025 decision 2 / DOCTRINE_ENFORCEMENT.md \u00a73 \u2014 a census that reports is not a check. `check_production_genericity_flow.sh` already derives all eighteen counts on every commit; this is the declaration it compares them against, so a drift is caught at commit cadence instead of at push cadence by a cargo test.",
  "boundary": {
   "pinned": {
    "boundary_rows": 144,
@@ -17,29 +17,29 @@
    "source_types": 22,
    "trusted_regions": 11
   },
-  "rationale": "These describe the genericity boundary itself — which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point — it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact."
+  "rationale": "These describe the genericity boundary itself \u2014 which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point \u2014 it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact."
  },
  "contract_id": "production-genericity-flow-census",
  "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "SIGNAL-DECLARATION-ROW-DROP.4e-THE-DECLARATION-REPLAY-READS-THE-LEGACY-STRATUM",
+   "authority_id": "SIGNAL-DECLARATION-ROW-DROP.2g-A-FLOW-CELL-IS-NOT-AN-ACTOR-NAME",
    "baseline": {
-    "analyzed_functions": 2445,
-    "decision_sites": 13135,
-    "helper_edges": 15386,
-    "semantic_macros": 1487
+    "analyzed_functions": 2453,
+    "decision_sites": 13154,
+    "helper_edges": 15416,
+    "semantic_macros": 1498
    },
    "delta": {
-    "analyzed_functions": 8,
-    "decision_sites": 19,
-    "helper_edges": 30,
-    "semantic_macros": 11
+    "analyzed_functions": 1,
+    "decision_sites": 3,
+    "helper_edges": 2,
+    "semantic_macros": 0
    },
-   "owner": "SIGNAL-DECLARATION-ROW-DROP.4e",
-   "rationale": "The SemanticIR declaration reader had no instrument that could be pointed at the 51 documents the semantic stage refuses, so its behaviour was measurable on 27 of 78. `replay-declarations` re-runs the real reader over a persisted artifact's own `extracted_statements` — a pure function of those statements, needing no SourceIr and no proof — and reports read, refused by arm, and the identities no read declaration in the same document recovers. The functions are `replay_persisted_signal_declarations`, `declaration_refusal_reason`, and the command module's run/report seams; the printed report accounts for the semantic macros."
+   "owner": "SIGNAL-DECLARATION-ROW-DROP.2g",
+   "rationale": "The literal actor-text direction reading was handed whole cells that state a FLOW, and it answered them: with the guard removed, `infer_signal_direction_from_actor_text` reads the real corpus cell `Interconnect -> Slave` as `input`. `.2g` adds one production function, `cell_states_a_flow`, and one early return in `infer_signal_direction_from_actor_text`, so a cell carrying any `FLOW_ARROW_FORMS` or `FLOW_ARROW_DISQUALIFIERS` marker is left to `infer_signal_direction_from_flow_arrow`. That is the whole of the +1 analyzed function; the decision sites and helper edges are the guard's return and the marker predicate the analyzer derives from it. The boundary counts are untouched \u2014 the guard reads no new source, reaches no new control, and narrows one existing reader's input. All 78 persisted documents rebuild byte-identical."
   },
-  "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
+  "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
 }

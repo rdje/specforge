@@ -137,12 +137,20 @@ three things.
 unless the word opposite it is already known: adding `Sink` on its own changes nothing anywhere,
 because every cell naming a sink also names a source.
 
-**And half a pair is worse than none.** A direction cell is read literally before it is read as a
-flow, and the literal reading is handed the whole cell. So one known endpoint matches the cell,
-answers first, and returns *the same* port sense for both directions of the link — 28 rows, in the
-one measured case. Supplying both endpoints is what makes the cell ambiguous enough to fall through
-to the arrow reader, where it belongs. Nothing in the corpus trips this today, and a guard is tracked
-so that stays true.
+**And half a pair is worse than none.** A direction cell used to be read literally before it was read
+as a flow, and the literal reading was handed the whole cell. So one known endpoint matched the cell,
+answered first, and returned *the same* port sense for both directions of the link — 28 rows, in the
+one measured case.
+
+That is now impossible: **a cell carrying any flow marker is declined by the literal reading**, so the
+flow reader is the one that judges it. The guard reuses the arrow spellings the reader already knows
+rather than adding a third list, and it sits ahead of even the plain `input`/`output` substring
+match, because `Manager → Output buffer` is the same mistake one level down. It changes no stored
+artifact — none of the 476 rows the literal reading answers is a flow cell, and all 78 stored
+artifacts rebuild byte-identical — but it was not merely precautionary. Measured with the guard
+removed, the literal reading answers `Interconnect → Slave` with `input`: a real cell from a real
+table, read by the wrong reader, and the only thing standing between that answer and an artifact is
+that the specification happens to head the column `Direction` rather than `Source`.
 
 **The words themselves do not survive adjudication.** Six of the nine the corpus offers are product
 block names, which this project does not put in its readers; the document agrees they are not ports,

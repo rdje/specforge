@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2g`/`.2h`/`.4c` open)
+- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-15`
@@ -704,7 +704,8 @@ a long tail.
   the `.2h` count the book now prints is re-derivable. **Producer sub-clause: no production rule was
   deleted or replaced** — nothing the reader does changed, which is why no artifact moves.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2g` · Status: `pending` (opened `2026-09-15` by `.2d`) · Goal: **a
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2g` · Status: `done` (`2026-09-15`, CODE; opened the same day by
+  `.2d`) · Goal: **a
   cell that states a flow is not an actor name — make the literal reading decline it, so the arrow
   reader is the one that judges it.** `synthesize_signal_declarations` tries
   `infer_signal_direction_from_actor_text` on the whole source/destination cell at priority 2 and
@@ -713,21 +714,89 @@ a long tail.
   the SAME port sense for both senses of the link — `.2d` measured 3 actor pairs / **28 rows** collapse
   under a one-term vocabulary, and 1 pair / 12 rows under another. The mirror condition `.2b` built to
   keep the arrow honest is bypassed entirely, because the arrow is never consulted.
-  **Population today: 0.** Of the 476 corpus rows the literal reading currently answers, **none**
-  carries a flow marker, so the guard is free and the hazard is latent rather than live — but it is
-  reachable without any builtin change, through the learned-prior fall-through:
-  `actor_taxonomy_role_in_text` falls back to `CorpusMemory`, and `learn_priors::infer_actor_taxonomy_role`
-  mints a role prior for an actor NAME from the semantic role of the signals it drives — one decisive
-  `HandshakeValidLike` consensus and no competing role makes that name `RequesterLike`, with no
-  vocabulary involved at all.
   The guard reuses the two existing constants rather than inventing a third spelling of "arrow":
   a cell containing any `FLOW_ARROW_FORMS` or `FLOW_ARROW_DISQUALIFIERS` marker is a flow statement and
-  `infer_signal_direction_from_actor_text` must return `None` for it.
+  `infer_signal_direction_from_actor_text` returns `None` for it, **before** the literal
+  `input`/`output` substring readings — `Manager → Output buffer` is the same category error one level
+  down.
   Non-goal: reordering the priority chain — the documented priority ("a column the table designates for
   direction outranks a sentence") is right; what is wrong is which reader is handed a flow cell.
+
+  **The leaf opened saying the hazard was latent. Building it found that only HALF of that is true,
+  and the correction is the reason this is not a rule shipped ahead of its population.** Two different
+  things were being measured and `.2d` conflated them:
+  * **The CHAIN moves nothing.** Of the 476 corpus rows the literal reading currently answers, **0**
+    are flow-marked, so no declaration, artifact, score or seal changes. That is the NO-REGRESSION
+    claim and it holds.
+  * **The FUNCTION is already wrong about a real corpus cell.** Observed RED, not predicted:
+    `infer_signal_direction_from_actor_text("Interconnect → Slave", DestinationLike, None)` returns
+    **`Some("input")`** without the guard. `Interconnect → Slave` is an Avalon `table_0014` cell. The
+    only reason the corpus is unaffected is that Avalon heads that column `Direction`, so `source_col`
+    and `dest_col` are `None` and the chain never asks this reader. **The wrong answer exists today;
+    a column header is all that stands between it and an artifact.**
+  **Also measured in passing, and deliberately NOT acted on:**
+  `synthesize_trapped_row_signal_declarations` documents itself as minting "under the body-row path's
+  own rules", but it has **no flow-arrow arm at all** — an asymmetry the doc comment does not admit.
+  Population: **0 of 663 trapped rows across 37 tables** carry a flow marker, so it costs nothing today
+  and the guard changes nothing there. Recorded rather than fixed, because a rule with no population
+  behind it is exactly what `.2b` disqualified for the leftward arrow.
   Prerequisite: `.2d`.
-  Verification: pending
-  Commit: pending
+  Verification: see the `.2g` checklist below.
+  Commit: see log.
+
+## Acceptance Checklist — `.2g` (enforced)
+- [x] **REPRODUCE / MEASURE** — the corpus baseline, from the persisted SourceIR: the literal
+  actor-text reading answers **476** signal rows, and **0** of them carry a flow marker
+  (`FLOW_ARROW_FORMS` ∪ `FLOW_ARROW_DISQUALIFIERS`); the trapped-row path's 663 rows across 37 tables
+  carry **0** as well. The hazard is `.2d`'s `--vocabulary` measurement:
+  `python3 scripts/measure_actor_taxonomy_blast_radius.py --vocabulary 'distributor=requester'` reports
+  **56** arrow rows answered before the arrow and **3 actor pairs / 28 rows** whose two opposite flows
+  collapse to one direction; `--vocabulary 'remote chip=completer'` reports 1 pair / 12 rows.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `synthesize_signal_declarations`' direction chain: `infer_signal_direction_from_actor_text` is tried
+  on the WHOLE source/destination cell before `infer_signal_direction_from_flow_arrow` is tried on the
+  same cell. `actor_taxonomy_role_in_text` normalizes the arrow to whitespace, so a cell naming both
+  endpoints matches on whichever one the vocabulary knows — the same term, and therefore the same port
+  sense, for `A → B` and `B → A` alike. **Confirmed by running the real reader with the guard removed**,
+  not by reading the code: `infer_signal_direction_from_actor_text("Interconnect → Slave",
+  DestinationLike, None)` = `Some("input")` and `("Manager → Zetaalpha", SourceLike, None)` =
+  `Some("output")`, with `("Zetaalpha → Manager", SourceLike, None)` = `Some("output")` as well —
+  one direction for two opposite flows.
+- [x] **ADDRESSED (verified)** — `cell_states_a_flow` gates the function's first line; a cell carrying
+  any marker in either constant returns `None`, so the flow reader judges it. Verified per item:
+  the two cells above now return `None`; `infer_signal_direction_from_flow_arrow` still fails closed on
+  both (the unknown side, per `.2b`) and still admits `Manager → Subordinate` as `output`, because it
+  is handed the SIDES and never the whole cell; and every unmarked reading is untouched (`Manager`,
+  `Subordinate`, `Output`, `Input`, `Tie off` all answer exactly as before). **RED observed**: with the
+  guard replaced by a no-op, `a_cell_that_states_a_flow_is_not_read_as_an_actor_name` and
+  `the_corpus_flow_arrow_forms_are_all_declined_by_the_actor_text_reading` both FAIL, naming
+  `Manager → Zetaalpha` → `Some("output")` and `Interconnect → Slave` → `Some("input")`.
+- [x] **NO REGRESSION** — **byte-identical EvidenceIR for every document the corpus can re-run**:
+  all 78 persisted `source_ir.json` re-run through `specforge evidence --dry-run` on the
+  guard-removed baseline and on the guard, and `cmp` reports **0 changed** (accepted/refused counts
+  identical, and a refusal is byte-identical too). `cargo test --offline -p specforge-core --lib`
+  **1539 passed, 0 failed** (1537 + the 2 new controls); `cargo test --offline -p specforge --lib`
+  472 passed; `cargo fmt --all --check` clean; `cargo clippy --offline --all-targets -- -D warnings`
+  exit 0; `bash scripts/check_doctrines.sh` all executed doctrines PASS. No gold can move because no
+  artifact moves.
+- [x] **GENERICITY (ADR 0006)** — the guard reads the two constants the repository already owns
+  (`FLOW_ARROW_FORMS`, `FLOW_ARROW_DISQUALIFIERS`) and nothing else; no document, vendor or protocol
+  name enters it, and there is no third list to keep in step. The corpus-verbatim cells live only in
+  the control, which is where document text is allowed. **The genericity BOUNDARY does not move, and
+  the gate says so**: `boundary_rows` stays **144** and `non_authoritative_regions` **9** — the guard
+  reads no new source, reaches no new control, and only narrows one existing reader's input. What did
+  move is the volume census, and it is re-derived rather than re-pinned:
+  `doctrine/production_genericity/flow_census.json` `aggregate_change` now baselines at
+  `{2453, 13154, 15416, 1498}` with a `.2g`-owned delta of **+1 analyzed function** (`cell_states_a_flow`),
+  **+3 decision sites** and **+2 helper edges**. The drift failing the gate first is the control
+  working — a production function cannot land without being attributed to the leaf that added it.
+- [x] **LOCKSTEP** — the book's `pipeline/evidence-failure-modes.md` says which reader judges a flow
+  cell and why the literal reading declines it; `[[actor-taxonomy-grows-in-pairs-not-terms]]` records
+  that the guard shipped and the `Interconnect → Slave` correction;
+  `the_corpus_flow_arrow_forms_admit_only_the_mirrored_ones`' own comment loses `.2d`'s corrected
+  "bidirectional group" wording. **Producer sub-clause: no production rule was deleted or replaced** —
+  the guard is additive and narrows one reader's input; every existing reading still means what the
+  book says it means, which is why 0 of 78 documents move.
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2h` · Status: `pending` (opened `2026-09-15` by `.2d`) · Goal: **a
   direction column the header scan never looks at, because the document heads it `Type`.**
@@ -1545,9 +1614,11 @@ Ordered; PNT selects the first eligible leaf.
    needs no vocabulary at all: 124 rows / 15 tables / 6 documents state `Input` or `Output` in plain
    text in a column headed `Type`, which the direction scan never looks at.** Adjudicate the 15 first —
    three of them are protocol-version matrices or a shape defect, not direction columns.
-2. `SIGNAL-DECLARATION-ROW-DROP.2g` — close the partial-vocabulary masking hazard `.2d` measured: the
-   literal actor-text reading must decline a cell carrying a flow marker. 0 rows move today, which is
-   the point — the guard is free now and is not free later.
+   **`.2g` was taken ahead of this** (`2026-09-15`): it is prerequisite-free, moves 0 of 78 documents,
+   and hardens the same direction chain `.2h` is about to grow a new arm on — so the guard lands
+   before the chain changes, not after. Building it also found the hazard is not purely latent: the
+   function already answers a real corpus cell wrongly, and only a column header keeps the chain from
+   asking it.
 3. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the

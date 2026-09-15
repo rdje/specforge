@@ -9687,11 +9687,41 @@ fn actor_taxonomy_role_in_text(
     })
 }
 
+/// True when a cell carries any flow marker, forward or reverse.
+///
+/// `SIGNAL-DECLARATION-ROW-DROP.2g` — the two constants below are this repository's definition of
+/// "this cell states a flow", and the test reuses them rather than spelling out a third list.
+fn cell_states_a_flow(text: &str) -> bool {
+    FLOW_ARROW_FORMS
+        .iter()
+        .chain(FLOW_ARROW_DISQUALIFIERS.iter())
+        .any(|marker| text.contains(marker))
+}
+
 fn infer_signal_direction_from_actor_text(
     actor_text: &str,
     column_kind: RelationTableColumnKind,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Option<&'static str> {
+    // SIGNAL-DECLARATION-ROW-DROP.2g — a cell that states a FLOW is not an actor name, and only
+    // `infer_signal_direction_from_flow_arrow` may judge it.
+    //
+    // `synthesize_signal_declarations` tries this reading on the WHOLE cell at priority 2 and the
+    // flow-arrow reading on the same cell at priority 4. A cell naming both endpoints of a flow
+    // matches on whichever endpoint the vocabulary happens to know, so ONE known endpoint answers
+    // here — before the arrow is ever consulted — and answers THE SAME for both senses of the link.
+    // `.2d` measured that: one term of a pair collapsed 3 actor pairs / 28 corpus rows onto a single
+    // direction, and the mirror condition `.2b` built to keep the arrow honest was never reached.
+    // The complete pair makes the cell ambiguous and falls through correctly, so the hazard is
+    // exactly the PARTIAL vocabulary — which is how a taxonomy grows, and how a learned prior
+    // arrives (`actor_taxonomy_role_in_text` falls through to `CorpusMemory`).
+    //
+    // It costs nothing to close: of the 476 corpus rows this reading currently answers, NONE is a
+    // flow-marked cell. It is placed before the literal `input`/`output` substring readings on
+    // purpose — `Manager → Output buffer` is the same category error one level down.
+    if cell_states_a_flow(actor_text) {
+        return None;
+    }
     let lowered = actor_text.to_ascii_lowercase();
     if is_tie_off_actor_text(actor_text) {
         return Some("input");
@@ -32467,9 +32497,13 @@ mod wire_based_100_5h {
                 "{cell} states a flow between two roles the taxonomy knows"
             );
         }
-        // The 65 that fail closed, every distinct form. Two flows in one cell (16 rows) describe a
-        // bidirectional group; the rest name an actor the builtin taxonomy does not know, which is
-        // a taxonomy question (`.2d`), not an arrow question.
+        // The 65 that fail closed, every distinct form. Two flows in one cell (16 rows) state BOTH
+        // senses of one link — not a bidirectional group, as `.2d` corrected: a sibling
+        // `Forward or reverse` column sits beside every one of those rows, and it is REDUNDANT with
+        // the arrow wherever its meaning is observable, so it cannot select between two listed
+        // arrows and the row stays under-determined. The other 49 name an actor the builtin
+        // taxonomy does not know, and `.2d` answered that with a measured NO rather than a wider
+        // list: half a pair is worse than none.
         for cell in [
             "Redistributor→ Distributor Distributor→ Redistributor",
             "ITS →Distributor Distributor →ITS",
@@ -32490,6 +32524,118 @@ mod wire_based_100_5h {
                 None,
                 "{cell} must fail closed"
             );
+        }
+    }
+
+    /// `SIGNAL-DECLARATION-ROW-DROP.2g` — the literal actor-text reading must decline a cell that
+    /// states a flow, so the flow reader is the one that judges it. Without this, one known
+    /// endpoint answers for the WHOLE cell at an earlier priority and answers the same for both
+    /// senses of the link.
+    #[test]
+    fn a_cell_that_states_a_flow_is_not_read_as_an_actor_name() {
+        // The hazard in one pair. `Manager` is in the builtin taxonomy and `Zetaalpha` is not, so
+        // read as a bare actor name BOTH cells match on the same term and BOTH answer `output` —
+        // one direction for two opposite flows. Declining is what makes that impossible.
+        for cell in ["Manager → Zetaalpha", "Zetaalpha → Manager"] {
+            assert_eq!(
+                infer_signal_direction_from_actor_text(
+                    cell,
+                    RelationTableColumnKind::SourceLike,
+                    None,
+                ),
+                None,
+                "{cell} states a flow, so the actor-text reading must decline it"
+            );
+        }
+        // And the reader that may judge it fails closed on the unknown side, as `.2b` requires.
+        for cell in ["Manager → Zetaalpha", "Zetaalpha → Manager"] {
+            assert_eq!(infer_signal_direction_from_flow_arrow(cell, None), None);
+        }
+
+        // Every marker this repository recognises, forward and reverse, in both column kinds.
+        for marker in FLOW_ARROW_FORMS
+            .iter()
+            .chain(FLOW_ARROW_DISQUALIFIERS.iter())
+        {
+            let cell = format!("Manager {marker} Subordinate");
+            for column_kind in [
+                RelationTableColumnKind::SourceLike,
+                RelationTableColumnKind::DestinationLike,
+            ] {
+                assert_eq!(
+                    infer_signal_direction_from_actor_text(&cell, column_kind, None),
+                    None,
+                    "{cell} carries a flow marker"
+                );
+            }
+        }
+        // The guard precedes the literal substring readings on purpose: a flow whose receiving side
+        // happens to contain the word `output` is the same category error one level down.
+        assert_eq!(
+            infer_signal_direction_from_actor_text(
+                "Manager → Output buffer",
+                RelationTableColumnKind::SourceLike,
+                None,
+            ),
+            None
+        );
+
+        // A cell with NO marker is untouched — every existing reading still answers.
+        for (cell, expected) in [
+            ("Manager", "output"),
+            ("Subordinate", "input"),
+            ("Output", "output"),
+            ("Input", "input"),
+            ("Tie off", "input"),
+        ] {
+            assert_eq!(
+                infer_signal_direction_from_actor_text(
+                    cell,
+                    RelationTableColumnKind::SourceLike,
+                    None,
+                ),
+                Some(expected),
+                "{cell} names an actor or a port sense, not a flow"
+            );
+        }
+        // And the flow reader is unaffected, because it is handed the SIDES, never the whole cell.
+        assert_eq!(
+            infer_signal_direction_from_flow_arrow("Manager → Subordinate", None),
+            Some("output")
+        );
+    }
+
+    /// The corpus population the guard is sized against: every distinct arrow-bearing cell form,
+    /// none of which the actor-text reading may answer.
+    #[test]
+    fn the_corpus_flow_arrow_forms_are_all_declined_by_the_actor_text_reading() {
+        for cell in [
+            "Master → Slave",
+            "Slave → Master",
+            "Redistributor→ Distributor Distributor→ Redistributor",
+            "ITS →Distributor Distributor →ITS",
+            "Distributor→ Remote chip",
+            "Source → Sink",
+            "Distributor →SPI Collator",
+            "ITS →Distributor",
+            "Redistributor→ Distributor",
+            "SPI Collator→ Distributor",
+            "Remote chip→ Distributor",
+            "Distributor →Wake Request",
+            "Wake Request→ Distributor",
+            "Interconnect → Slave",
+            "Sink → Source",
+        ] {
+            for column_kind in [
+                RelationTableColumnKind::SourceLike,
+                RelationTableColumnKind::DestinationLike,
+            ] {
+                assert_eq!(
+                    infer_signal_direction_from_actor_text(cell, column_kind, None),
+                    None,
+                    "{cell} is a flow cell, whichever column names it"
+                );
+            }
         }
     }
 

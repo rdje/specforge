@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > where is adaptive_batch_pages / BatchSizePolicy in the code
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > where is build_fixture.py digest pinned
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
@@ -294,7 +298,3 @@
   > which mdBook quantitative census totals may be published and which must be read from the report
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > which metrics govern specification-to-executable-intent progress
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > which nine semantic negative fault classes are tested
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > which notations must a bit-range width rule read

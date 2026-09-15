@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many OpenCAPI Ready page paths are repository relative
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -71,7 +73,7 @@
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how many corpus refreshes remain after the OpenCAPI Ready note
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > how many corpus rows does the literal actor-text direction reading answer (476, and 0 of them carry a flow marker, so the masking hazard is latent rather than live)
+  > how many corpus rows does the literal actor-text direction reading answer (476, and 0 of them carry a flow marker - which is why the .2g guard moved no artifact, NOT evidence that the reader was right: with the guard removed it answers the real cell Interconnect -> Slave with input, and only the Direction column header kept the chain from asking it)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -296,5 +298,3 @@
   > how to express the JTAG TAP / SWD FSM in .isf
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > how to get a fresh eval-extraction baseline for a spec
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how to re-measure the message-field corpus yield

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -295,5 +297,3 @@
   > how many OpenCAPI Certified Definition paths are repository relative
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how many OpenCAPI Ready Definition paths are repository relative
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many OpenCAPI Ready page paths are repository relative

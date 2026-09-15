@@ -4,6 +4,7 @@ title: The actor-role taxonomy grows one PAIR at a time, and half a pair is wors
 answers:
   - "should I add a term to builtin_actor_taxonomy_role_in_text (measure it first with scripts/measure_actor_taxonomy_blast_radius.py; the answer for every candidate the corpus has produced so far is NO)"
   - "what is the blast radius of a new actor-role term (four surfaces: the direction cell of a signal row, a section heading ending in ' signals', a relation-actor name in the by-role map, and the complementary-reader's exactly-one-opposite-name condition, which is NOT monotone)"
+  - "does SpecForge read a direction cell containing an arrow as an actor name (no - .2g guards it: infer_signal_direction_from_actor_text declines any cell carrying a FLOW_ARROW_FORMS or FLOW_ARROW_DISQUALIFIERS marker, ahead of even the literal input/output substring readings, so the flow reader judges it)"
   - "why does adding one actor term make a flow-arrow cell WORSE rather than better (infer_signal_direction_from_actor_text is tried at priority 2 on the WHOLE cell and infer_signal_direction_from_flow_arrow at priority 4; one known endpoint matches the whole cell, answers first, and returns the same port sense for both senses of the link)"
   - "why does adding both endpoints of a flow to the taxonomy NOT mask the arrow (the cell then matches a requester term AND a completer term, the (true,true) arm returns None, and the arrow reader is reached)"
   - "can a new actor-role term DESTROY existing relations (yes - unique_complementary_reader_actor_name mints a Reads relation only when the opposite role holds exactly one name, so a term that takes that set from one to two deletes every complementary relation the document had; measured on AMBA GFB with 'source')"
@@ -12,12 +13,12 @@ answers:
   - "can a table's own subject give a flow a port sense without any taxonomy (no - measured: the actor common to every arrow cell is unique in only 2 of 11 arrow tables, because a two-party table names both parties in every cell, and against the 18 cells the taxonomy already admits the rule scores 0 agreements and 1 disagreement)"
   - "why do GIC-600's two-arrow direction cells stay closed even though a Forward or reverse column sits beside them (that column is REDUNDANT with the arrow wherever its meaning is observable - a single-arrow cell already states the row's own resolved flow - so no corpus row shows it selecting between two listed arrows)"
   - "can a learned prior make an actor name requester-like with no vocabulary (yes - learn_priors derives the role from the semantic role of the signals that actor drives; one decisive HandshakeValidLike consensus and no competing role is enough)"
-  - "how many corpus rows does the literal actor-text direction reading answer (476, and 0 of them carry a flow marker, so the masking hazard is latent rather than live)"
+  - "how many corpus rows does the literal actor-text direction reading answer (476, and 0 of them carry a flow marker - which is why the .2g guard moved no artifact, NOT evidence that the reader was right: with the guard removed it answers the real cell Interconnect -> Slave with input, and only the Direction column header kept the chain from asking it)"
 date: 2026-09-15
 status: current
 tags: [evidence-ir, declarations, signal-tables, actors, adr-0006, signal-declaration-row-drop, census]
-evidence: scripts/measure_actor_taxonomy_blast_radius.py; crates/specforge/src/ir/evidence.rs (builtin_actor_taxonomy_role_in_text; actor_taxonomy_role_in_text; infer_signal_direction_from_actor_text; infer_signal_direction_from_flow_arrow; actor_name_and_role_from_section_heading; collect_local_actor_names_by_taxonomy_role; unique_complementary_reader_actor_name; synthesize_signal_declarations); crates/specforge/src/commands/learn_priors.rs (infer_actor_taxonomy_role; infer_actor_taxonomy_role_from_term); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.2d, .2g, .2h)
-reverify: "python3 scripts/measure_actor_taxonomy_blast_radius.py — expect 9 discovered candidates, sites S1 3940 / S2 300 / S3 771, sink 0 sites changed, and the table-subject rule agrees 0 / disagrees 1; then python3 scripts/measure_actor_taxonomy_blast_radius.py --vocabulary 'distributor=requester' — expect 56 rows answered before the arrow and 3 flow-sense collapses over 28 rows"
+evidence: scripts/measure_actor_taxonomy_blast_radius.py; crates/specforge/src/ir/evidence.rs (builtin_actor_taxonomy_role_in_text; actor_taxonomy_role_in_text; infer_signal_direction_from_actor_text; infer_signal_direction_from_flow_arrow; actor_name_and_role_from_section_heading; collect_local_actor_names_by_taxonomy_role; unique_complementary_reader_actor_name; synthesize_signal_declarations); crates/specforge/src/commands/learn_priors.rs (infer_actor_taxonomy_role; infer_actor_taxonomy_role_from_term); crates/specforge/src/ir/evidence.rs (cell_states_a_flow; a_cell_that_states_a_flow_is_not_read_as_an_actor_name; the_corpus_flow_arrow_forms_are_all_declined_by_the_actor_text_reading); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.2d, .2g, .2h)
+reverify: "cargo test --offline -p specforge-core --lib a_cell_that_states_a_flow_is_not_read_as_an_actor_name; then python3 scripts/measure_actor_taxonomy_blast_radius.py — expect 9 discovered candidates, sites S1 3940 / S2 300 / S3 771, sink 0 sites changed, and the table-subject rule agrees 0 / disagrees 1; then python3 scripts/measure_actor_taxonomy_blast_radius.py --vocabulary 'distributor=requester' — expect 56 rows answered before the arrow and 3 flow-sense collapses over 28 rows"
 ---
 
 `builtin_actor_taxonomy_role_in_text` maps a piece of actor text to `RequesterLike` or
@@ -48,14 +49,25 @@ at `actor_text:source`, and **3 actor pairs / 28 rows collapse** — `Distributo
 with the stated flow.
 
 The mirror condition the arrow reader was built around is bypassed entirely, because the arrow reader
-never runs. Today this is **latent, not live**: of the **476** corpus rows the literal reading answers,
-**none** carries a flow marker. It is reachable without any builtin edit, through the learned-prior
-fall-through — `actor_taxonomy_role_in_text` consults `CorpusMemory`, and `learn_priors` derives a
-role prior for an actor NAME from the semantic role of the signals it drives: one decisive
-`HandshakeValidLike` consensus and no competing role makes that name requester-like, no vocabulary
-required.
-`SIGNAL-DECLARATION-ROW-DROP.2g` owns the guard: a cell carrying a flow marker states a flow, and only
-the flow reader may judge it.
+never runs.
+
+**`SIGNAL-DECLARATION-ROW-DROP.2g` closed this (`2026-09-15`):** `infer_signal_direction_from_actor_text`
+declines any cell carrying a marker from `FLOW_ARROW_FORMS` or `FLOW_ARROW_DISQUALIFIERS`, ahead of even
+the literal `input`/`output` substring readings, so the flow reader is the one that judges a flow cell.
+**All 78 persisted documents rebuild byte-identical**, because none of the **476** corpus rows the
+literal reading answers is a flow cell.
+
+**"Latent" was half right, and the correction matters.** The CHAIN moves nothing, but the FUNCTION was
+already wrong: measured with the guard removed,
+`infer_signal_direction_from_actor_text("Interconnect → Slave", DestinationLike, None)` returns
+`Some("input")`. That is a real Avalon `table_0014` cell. The only reason no artifact carried the wrong
+answer is that Avalon heads that column `Direction`, so `source_col` and `dest_col` are `None` and the
+chain never asks this reader — a column header, not a rule, was the thing keeping it out.
+
+The hazard was also reachable without any builtin edit, through the learned-prior fall-through:
+`actor_taxonomy_role_in_text` consults `CorpusMemory`, and `learn_priors` derives a role prior for an
+actor NAME from the semantic role of the signals it drives — one decisive `HandshakeValidLike`
+consensus and no competing role makes that name requester-like, no vocabulary required.
 
 ## The four surfaces, and the one that is not monotone
 

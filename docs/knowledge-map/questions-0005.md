@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > how do I check the mdBook for stale behavioural claims
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how do I check whether a named frontier has an owning task-tree leaf
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -295,5 +297,3 @@
   > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate

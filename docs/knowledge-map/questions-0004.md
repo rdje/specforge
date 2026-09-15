@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does select_initiator_actor choose the first or last equal maximum
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
   > does source proof migration rerun Docling
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -296,5 +298,3 @@
   > how do I census which span a published constraint read its parts from
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I change the reviewed source-to-intent fixture projection
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > how do I check the mdBook for stale behavioural claims

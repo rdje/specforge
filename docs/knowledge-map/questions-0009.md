@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > is the eval gold / answer key trustworthy or reliable
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
@@ -296,5 +298,3 @@
   > what are the isf_protocol residual packet prefixes
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what are the migrated alignment root index part and capsule metrics
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
