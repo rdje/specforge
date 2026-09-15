@@ -1033,6 +1033,102 @@ expect_history_case('ceiling history rejects unused banked authority', 0, qr/unu
     }];
     save_authorities($fixture);
 });
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.22a — .22 gave the registry header a warning band, and the band
+# could be silenced by raising the very bound it measured: the increase needed no authority and
+# produced no diagnostic. These six cases put the header inside the same single-use protocol that
+# already governs a surface ceiling, in both directions.
+expect_history_case('registry header increase rejects missing exact authority', 0, qr/surface registry increased header bounds without exact authority: max_records/, sub {
+    my ($fixture) = @_;
+    $fixture->{registry_meta}{max_records}++;
+    save_registry($fixture);
+});
+expect_history_case('registry header increase accepts one exact fresh authority', 1, qr/11 governed surfaces/, sub {
+    my ($fixture) = @_;
+    my $old = {
+        max_records => $fixture->{registry_meta}{max_records},
+        max_bytes => $fixture->{registry_meta}{max_bytes},
+    };
+    $fixture->{registry_meta}{max_records}++;
+    my $new = { %$old, max_records => $fixture->{registry_meta}{max_records} };
+    $fixture->{authorities} = [{
+        record_type => 'increase',
+        registry_id => 'control/surfaces.jsonl',
+        work_unit => 'fixture-registry-header-increase',
+        owner => 'fixture-maintainers',
+        rationale => 'Exercise exact one-change registry header authority.',
+        old => $old,
+        new => $new,
+    }];
+    save_registry($fixture);
+    save_authorities($fixture);
+});
+expect_history_case('registry header authority must match the exact new bounds', 0, qr/increased header bounds without exact authority/, sub {
+    my ($fixture) = @_;
+    my $old = {
+        max_records => $fixture->{registry_meta}{max_records},
+        max_bytes => $fixture->{registry_meta}{max_bytes},
+    };
+    $fixture->{registry_meta}{max_records} += 2;
+    # The authority names a different destination than the one actually written.
+    my $new = { %$old, max_records => $old->{max_records} + 1 };
+    $fixture->{authorities} = [{
+        record_type => 'increase',
+        registry_id => 'control/surfaces.jsonl',
+        work_unit => 'fixture-registry-header-mismatch',
+        owner => 'fixture-maintainers',
+        rationale => 'A near-miss authority must not authorise a different raise.',
+        old => $old,
+        new => $new,
+    }];
+    save_registry($fixture);
+    save_authorities($fixture);
+});
+expect_history_case('registry header authority is refused as banked when unused', 0, qr/unused or banked ceiling-increase authority/, sub {
+    my ($fixture) = @_;
+    my $bounds = {
+        max_records => $fixture->{registry_meta}{max_records},
+        max_bytes => $fixture->{registry_meta}{max_bytes},
+    };
+    $fixture->{authorities} = [{
+        record_type => 'increase',
+        registry_id => 'control/surfaces.jsonl',
+        work_unit => 'fixture-registry-banked',
+        owner => 'fixture-maintainers',
+        rationale => 'This unchanged registry authority must be rejected as banked.',
+        old => { %$bounds },
+        new => { %$bounds },
+    }];
+    save_authorities($fixture);
+});
+expect_case('an authority naming both a surface and a registry is refused', 0, qr/must name exactly one of surface_id or registry_id/, sub {
+    my ($fixture) = @_;
+    my $ceilings = surface($fixture, 'snapshot')->{enforcement_ceilings};
+    $fixture->{authorities} = [{
+        record_type => 'increase',
+        surface_id => 'snapshot',
+        registry_id => 'control/surfaces.jsonl',
+        work_unit => 'fixture-ambiguous-authority',
+        owner => 'fixture-maintainers',
+        rationale => 'An authority must authorise exactly one thing.',
+        old => { %$ceilings },
+        new => { %$ceilings },
+    }];
+    save_authorities($fixture);
+});
+expect_case('a registry authority naming another file is refused', 0, qr/does not name the surface registry/, sub {
+    my ($fixture) = @_;
+    $fixture->{authorities} = [{
+        record_type => 'increase',
+        registry_id => 'control/authorities.jsonl',
+        work_unit => 'fixture-foreign-registry',
+        owner => 'fixture-maintainers',
+        rationale => 'Only the surface registry header is inside this protocol.',
+        old => { max_records => 16, max_bytes => 32_768 },
+        new => { max_records => 17, max_bytes => 32_768 },
+    }];
+    save_authorities($fixture);
+});
+
 expect_history_case('maintained reference rejects reused aggregate authority', 0, qr/reused maintained-reference authority across aggregate change/, sub {
     my ($fixture) = @_;
     write_text($fixture->{root}, 'book/part.md', "# Maintained part\nextra\n");
@@ -1152,7 +1248,7 @@ if ($failures) {
 # to compare it against: delete a check and the line simply reports one fewer. The expected
 # count is declared here, independently of the suite, so a check removed — or one added and not
 # declared — fails instead of silently shrinking the coverage this reports.
-my $expected_checks = 99;
+my $expected_checks = 105;
 die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
     . "re-derive the declaration beside the suite\n"
     if $test_number != $expected_checks;

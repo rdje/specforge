@@ -43,6 +43,10 @@ my @errors;
 my @warnings;
 my $json = JSON::PP->new->canonical(1);
 my @dimensions = qw(files lines_each bytes_each lines_total bytes_total line_bytes_each);
+# The header bounds a registry declares over itself. Only the two that can be reached by
+# compliant growth are authorised here; the per-record and per-scalar caps bound authoring
+# shape rather than population, so raising one is not a capacity event.
+my @registry_bounds = qw(max_records max_bytes);
 my %valid_lifecycle = map { $_ => 1 } qw(
   bounded_snapshot rolling_ledger partitioned_canonical generated_projection
   archive_terminal frozen_legacy maintained_reference
@@ -69,8 +73,9 @@ validate_surface_schema($_) for @$surfaces;
 validate_authority_schema($_) for @$authorities;
 my %authority_surface_seen;
 for my $authority (@$authorities) {
-    my $id = $authority->{surface_id} // next;
-    problem("duplicate ceiling authority for surface '$id'") if $authority_surface_seen{$id}++;
+    my (undef, $id) = authority_key($authority);
+    next if !defined $id;
+    problem("duplicate ceiling authority for '$id'") if $authority_surface_seen{$id}++;
 }
 
 my @paths = markdown_paths();
@@ -505,21 +510,77 @@ sub validate_aggregate_composition_schema {
     return $valid ? $members : undef;
 }
 
+# An authority names exactly one of the two things this checker bounds: a SURFACE's enforcement
+# ceilings, or the surface registry's own HEADER bounds. The header was outside the protocol until
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.22a: raising max_records needed no authority, produced no
+# diagnostic, and silenced the .22 warning by removing the reason for it — the exact reprieve
+# .2b refused for a surface ceiling.
+sub authority_key {
+    my ($authority) = @_;
+    for my $field (qw(surface_id registry_id)) {
+        my $value = $authority->{$field};
+        return ($field, $value) if defined($value) && !ref($value) && $value ne '';
+    }
+    return ('surface_id', undef);
+}
+
 sub validate_authority_schema {
     my ($authority) = @_;
-    my $id = defined($authority->{surface_id}) && !ref($authority->{surface_id})
-        ? $authority->{surface_id}
-        : '<unknown>';
-    reject_unknown_fields($authority, "ceiling authority '$id'", qw(record_type surface_id work_unit owner rationale old new));
+    my ($field, $key) = authority_key($authority);
+    my $id = $key // '<unknown>';
+    reject_unknown_fields($authority, "ceiling authority '$id'", qw(record_type surface_id registry_id work_unit owner rationale old new));
     problem("ceiling authority '$id' must have record_type=increase")
         if ($authority->{record_type} // '') ne 'increase';
-    required_scalar($authority, $_, "ceiling authority '$id'") for qw(surface_id work_unit owner rationale);
+    problem("ceiling authority '$id' must name exactly one of surface_id or registry_id")
+        if defined($authority->{surface_id}) && defined($authority->{registry_id});
+    problem("ceiling authority '<unknown>' names no surface_id or registry_id") if !defined $key;
+    required_scalar($authority, $_, "ceiling authority '$id'") for qw(work_unit owner rationale);
+    if ($field eq 'registry_id') {
+        problem("ceiling authority '$id' does not name the surface registry")
+            if $id ne $registry_rel;
+        reject_unknown_fields($authority->{old}, "ceiling authority '$id' old", @registry_bounds);
+        reject_unknown_fields($authority->{new}, "ceiling authority '$id' new", @registry_bounds);
+        numeric_dimensions($authority->{old}, "ceiling authority '$id' old", 0, \@registry_bounds);
+        numeric_dimensions($authority->{new}, "ceiling authority '$id' new", 0, \@registry_bounds);
+        return;
+    }
     reject_unknown_fields($authority->{old}, "ceiling authority '$id' old", @dimensions);
     reject_unknown_fields($authority->{new}, "ceiling authority '$id' new", @dimensions);
     numeric_dimensions($authority->{old}, "ceiling authority '$id' old", 0);
     # `new` may carry the null a cardinality exemption introduces; validate_ceiling_history still requires it
     # to equal the surface's new ceilings exactly, so this cannot authorise a null the registry does not hold.
     numeric_dimensions($authority->{new}, "ceiling authority '$id' new", 1);
+}
+
+# The registry header's own bounds, compared across Git exactly as a surface's ceilings are.
+sub validate_registry_bound_history {
+    my ($meta, $authorities, $previous_text) = @_;
+    my %authority_for = map { my (undef, $key) = authority_key($_); ($key // '') => $_ }
+        grep { ($_->{record_type} // '') eq 'increase' && defined($_->{registry_id}) } @$authorities;
+    my $authority = $authority_for{$registry_rel};
+    my ($previous_meta) = grep { ($_->{record_type} // '') eq 'registry' }
+        map { my $r = eval { decode_json($_) }; (ref($r) eq 'HASH') ? $r : () }
+        grep { $_ ne '' } split /\n/, ($previous_text // '');
+    return (0) if ref($previous_meta) ne 'HASH';
+    my @increased = grep {
+        my $before = $previous_meta->{$_};
+        my $after = $meta->{$_};
+        defined($before) && defined($after) && $after > $before;
+    } @registry_bounds;
+    # No increase means the authority authorised nothing, which is precisely the banked case the
+    # caller must report — the same rule a surface authority is held to.
+    return (0) if !@increased;
+    my %old_subset = map { $_ => $previous_meta->{$_} } grep { defined $previous_meta->{$_} } @registry_bounds;
+    my %new_subset = map { $_ => $meta->{$_} } grep { defined $meta->{$_} } @registry_bounds;
+    if (!$authority
+        || $json->encode($authority->{old} // {}) ne $json->encode(\%old_subset)
+        || $json->encode($authority->{new} // {}) ne $json->encode(\%new_subset)
+        || !defined($authority->{work_unit}) || $authority->{work_unit} eq ''
+        || !defined($authority->{owner}) || $authority->{owner} eq ''
+        || !defined($authority->{rationale}) || $authority->{rationale} eq '') {
+        problem("surface registry increased header bounds without exact authority: " . join(', ', @increased));
+    }
+    return (1);
 }
 
 sub markdown_paths {
@@ -625,12 +686,12 @@ sub measure_paths {
 }
 
 sub numeric_dimensions {
-    my ($object, $label, $allow_null) = @_;
+    my ($object, $label, $allow_null, $vocabulary) = @_;
     if (ref($object) ne 'HASH') {
         problem("$label must be an object");
         return;
     }
-    for my $dimension (@dimensions) {
+    for my $dimension (@{ $vocabulary // \@dimensions }) {
         if (!exists $object->{$dimension}) {
             problem("$label lacks '$dimension'");
         } elsif (!defined $object->{$dimension}) {
@@ -1109,7 +1170,8 @@ sub validate_ceiling_history {
         push @previous_records, $record;
     }
     my %previous = map { ($_->{surface_id} // '') => $_ } @previous_records;
-    my %authority_for = map { ($_->{surface_id} // '') => $_ } grep { ($_->{record_type} // '') eq 'increase' } @$authorities;
+    my %authority_for = map { ($_->{surface_id} // '') => $_ }
+        grep { ($_->{record_type} // '') eq 'increase' && defined($_->{surface_id}) } @$authorities;
     my %used_authority;
     for my $current (@$current_surfaces) {
         my $id = $current->{surface_id} // next;
@@ -1153,9 +1215,12 @@ sub validate_ceiling_history {
             problem("surface '$id' increased ceiling dimensions without exact authority: " . join(', ', @increased));
         }
     }
+    $used_authority{$registry_rel} = 1
+        if validate_registry_bound_history($registry_meta, $authorities, $previous_text);
     for my $authority (@$authorities) {
-        my $id = $authority->{surface_id} // next;
-        problem("surface '$id' has unused or banked ceiling-increase authority")
+        my (undef, $id) = authority_key($authority);
+        next if !defined $id;
+        problem("'$id' has unused or banked ceiling-increase authority")
             if !$used_authority{$id};
     }
 }
