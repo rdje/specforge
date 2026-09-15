@@ -7,31 +7,31 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 
-- Active unit: **`SIGNAL-DECLARATION-ROW-DROP.2f` CENSUS DONE `2026-09-15` (PROBE/DOC), and its FIRST
-  CUT WAS WRONG — corrected `2026-09-15` under audit.** `.2f`'s own spec says *"`[hi:lo]` is
-  `hi - lo + 1`"* and the census matched it, so both missed the **single-index form `[n]`** — how these
-  tables write every 1-bit wire (`0 | [0] | lavalid`, `1 | [122] | laogv`, `2 | [37] | lrctag`).
-  Reading only the ranged form keeps the wide buses and drops **every valid/qualifier signal**.
-  **Caught by asking whether two published numbers COMPOSE**, not by re-reading: `.4d` handed `.2f` 47
-  rows claiming a bit rule would give them a width — ranged-only, just **20 of 48** were even in a bit
-  cell; with `[n]`, **46 of 48**. `.2f` must specify BOTH forms or ship the same hole.
-  Corrected (`--self-test 12/12`): **279 bit cells / 15 tables / 4 documents**.
-  * **SIGNAL scope** (`Signal name` header): 9 tables, 241 rows, 146 declared, **95 not** — **19
-    `Unused`**, **76 real** MMU-700 wires.
-  * **GENERIC scope** (`Name`/`Field`): 6 tables, 38 rows, **0 declared, all 38 newly minted**, every
-    one a REGISTER FIELD (eMMC CID fields, `LTI_PORT_RESOURCE_LIMIT0..7`, `CIDR0..3`).
-  **Prize 122 real** (76 newly admitted + 46 already-declared gaining a width; disjoint). Cost **19
-  scoped by the `Signal name` header (87%)**, **57 unscoped (68%)**. Still BLOCKED on `Unused`: the
-  *repeated-name* candidate refuses real signals — 237 rows / 37 texts, catching `1`(65)/`Output`(27)/
-  `Input`(19)/`Unused`(16) but also `AxPROT`(8), `CXSCNTL`(7), `BRESP`/`RRESP`(4), `CXSDATA`(3).
+- Active unit: **AUDIT OF THIS SESSION'S PUBLISHED FINDINGS COMPLETE `2026-09-15` — 17 claims
+  re-derived, 16 exact, ONE WRONG, withdrawn and replaced in `e7fab542`.**
+  **The wrong one: `.2f`'s trade.** `.2f`'s spec says *"`[hi:lo]` is `hi - lo + 1`"*; the census
+  inherited that spelling, so both missed the **single-index `[n]`** — how these tables write every
+  1-bit wire (`0 | [0] | lavalid`). The bias is not random — the dropped rows are exactly the
+  valid/qualifier/handshake signals — so it looked complete. **`.2f` must specify BOTH forms.**
+  **What caught it transfers — ask whether two published numbers COMPOSE**, don't re-read either:
+  `.4d` handed `.2f` 47 rows claiming a bit rule gives them a width; ranged-only **20 of 48** were even
+  in a bit cell, with `[n]` **46 of 48**. Adjudicate-the-selection and observe-RED would BOTH have
+  stayed green — `[[a-single-index-bit-cell-is-a-width-of-one]]`.
+  **Corrected `.2f` (self-test 12/12): 279 bit cells / 15 tables / 4 docs.** SIGNAL scope
+  (`Signal name` header) 241 rows, 146 declared, **95 not** (19 `Unused`, **76 real**); GENERIC scope
+  (`Name`/`Field`) 38 rows, **0 declared, all register FIELDS**. **Prize 122** (76 + 46 disjoint), cost
+  **19 scoped (87%)** / **57 unscoped (68%)**. BLOCKED on `Unused`: the repeated-name candidate
+  refuses real signals (`AxPROT`, `CXSCNTL`, `BRESP`, `RRESP`, `CXSDATA`).
+  **The other 16 re-derived EXACT** (enumeration + commands: the `e7fab542` commit body); both REDs
+  RE-EXECUTED and restored, **0 of 27** artifacts move, core lib **1537**, `--all` **ALL 17 PASS**.
 - Earlier: **`.4d`** answered NO a third time (24% `.1d`, 1-in-8 `.4b`, this) — an identity with no
-  readable attribute is not a signal; teach the notation rather than drop the attribute. **`.4b`**
-  made the refusal COUNTED AND NAMED; **`.4e`** shipped `replay-declarations` (`TOOLBOX.md` §5.6) —
-  78 documents, **0 skipped**, 3,196 opened / 2,927 read / 269 refused / 94 unrecovered.
+  readable attribute is not a signal; teach the notation rather than drop it. **`.4b`** made the
+  refusal COUNTED AND NAMED; **`.4e`** shipped `replay-declarations` (`TOOLBOX.md` §5.6), which is
+  what made `.4d` and the `.2f` census decidable on 78 documents instead of 27.
 - Next action: **`SIGNAL-DECLARATION-ROW-DROP.2d`** (census the actor-taxonomy blast radius before
   touching `builtin_actor_taxonomy_role_in_text`); then `TEXT-LAYER-IDENTIFIER-SPLIT.1` (live VLM);
-  `EXTRACTION-QUALITY-GAUGE.3j` (unsized). `.2f` is blocked on the `Unused` row and `.4c` is parked
-  behind the owner-gated `(width 1)` emitter default (`KG-ISF-COMPLETENESS.2a`).
+  `EXTRACTION-QUALITY-GAUGE.3j` (unsized). `.4c` is parked behind the owner-gated `(width 1)` emitter
+  default (`KG-ISF-COMPLETENESS.2a`).
 - In-flight uncommitted: none. No background job outstanding.
 - Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 265; directive 16
   gates it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**
