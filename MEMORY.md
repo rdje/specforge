@@ -19,14 +19,14 @@
   an artifact** (Avalon heads it `Direction`, so `source_col`/`dest_col` are `None`). Measured and NOT
   acted on: `synthesize_trapped_row_signal_declarations` claims to mint "under the body-row path's own
   rules" but has **no flow-arrow arm** — 0 of 663 trapped rows carry a marker.
-- Next action: **`SIGNAL-DECLARATION-ROW-DROP.2h`** — the biggest population left and it needs no
-  vocabulary: **124 rows / 15 tables / 6 documents** state `Input`/`Output` in plain text under a
-  column headed `Type` (12 of 15), which the direction scan never reads; re-derive with the
-  `literal-direction-column` notation of `scripts/measure_declaration_row_notations.py`.
-  **Adjudicate the 15 first** — LTI `table_0081` and AXI-Stream `table_0015` are protocol-VERSION
-  matrices, CoreSight TMC `table_0074` puts the literals under a `signal` header. Then `.2f` (blocked
-  on `Unused`), `TEXT-LAYER-IDENTIFIER-SPLIT.1`, `EXTRACTION-QUALITY-GAUGE.3j`; `.4c` parked behind
-  `KG-ISF-COMPLETENESS.2a`.
+- Next action: **`SIGNAL-DECLARATION-ROW-DROP.2h.1`** — read the unread literal direction column.
+  `.2h.0` adjudicated and the number MOVED: **124 / 15 / 6 is WITHDRAWN, it is 106 rows / 13 tables /
+  4 documents** (18 rows were admitted on `O`, which LTI `table_0081` and AXI-Stream `table_0015` use
+  for *Optional*; abbreviations measured 0 true / 18 false and are gone). **94 of 106 are
+  unconditional**; `.2h.1` must still answer whether the name-column rotation override covers
+  CoreSight TMC `table_0074` (direction first, name LAST, 6 real ATB wires) and count HBM2
+  `table_0076` as **2, not 6** (prose name column). Then `.2f` (blocked on `Unused`),
+  `TEXT-LAYER-IDENTIFIER-SPLIT.1`, `EXTRACTION-QUALITY-GAUGE.3j`; `.4c` behind `KG-ISF-COMPLETENESS.2a`.
 - Also ready, measured this session, both in `CLAIM-VERIFICATION-ADOPTION`: **`.12`** (the per-slice
   region re-pin instrument — built in scratch and used 5×, relocates every `line_range_sha256` region
   BY CONTENT across all three registries) and a NEW leaf for a stale carried count — `claims.jsonl`

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h`/`.4c` open)
+- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h.0`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h.1`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-15`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-15`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2h`), `.3`, `.4` (`.4a`–`.4e`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-15`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2h`, `.2h.0`–`.2h.1`), `.3`, `.4` (`.4a`–`.4e`)
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`, `.2b`, `.2c`, `.2d`, `.2e`, `.2f`, `.2g`, `.2h`
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -653,9 +653,11 @@ a long tail.
 
   **What the census found instead** — the 49 stay closed, but the run opened two leaves with real
   populations: **`.2g`** (the partial-vocabulary masking hazard, 0 rows today) and **`.2h`**
-  (**124 rows, 15 tables, 6 documents** whose direction is stated literally as `Input`/`Output` in a
+  (**106 rows, 13 tables, 4 documents** whose direction is stated literally as `Input`/`Output` in a
   column the header-keyword scan never looks at, because its header is `Type`) — the second of which
-  this slice also made re-derivable, as a fourth notation in the sibling census.
+  this slice also made re-derivable, as a fourth notation in the sibling census. **`.2d` first
+  published 124 / 15 / 6; `.2h`'s adjudication withdrew 18 rows and two whole tables, and the
+  corrected figure is the one above.**
   Prerequisite: `.2b`.
   Verification: see the `.2d` checklist below.
   Commit: see log.
@@ -670,7 +672,9 @@ a long tail.
   Deterministic: two consecutive runs byte-identical; `--json` parses. The `.2h` population the run
   uncovered is re-derivable in the sibling census as its fourth notation:
   `python3 scripts/measure_declaration_row_notations.py` reports
-  **`literal-direction-column: 124 cells`** across 15 tables.
+  **`literal-direction-column: 106 cells`** across 13 tables — **corrected from the 124 / 15 this
+  checklist first published**, after `.2h` adjudicated the selection and found 18 rows admitted on a
+  spelling no document uses for a direction.
 - [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`. The taxonomy is read at
   four sites — `9705` (`infer_signal_direction_from_actor_text`, itself the two operand reads inside
   `infer_signal_direction_from_flow_arrow` at `9775`/`9780`), `4314`
@@ -798,28 +802,108 @@ a long tail.
   the guard is additive and narrows one reader's input; every existing reading still means what the
   book says it means, which is why 0 of 78 documents move.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2h` · Status: `pending` (opened `2026-09-15` by `.2d`) · Goal: **a
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h` · Status: `active` (`2026-09-15`; opened the same day by
+  `.2d`) · Children: `.2h.0` (adjudication, `done`), `.2h.1` (the reader, `pending`) · Goal: **a
   direction column the header scan never looks at, because the document heads it `Type`.**
   `synthesize_signal_declarations` finds its explicit direction column with
   `header.contains("direction")` and reads the literal `input`/`output` only from that column. A table
   headed `Signal name | Type | Source or destination | Description` states the direction outright in
-  `Type` and the reader takes none of it. **Measured `2026-09-15` over 78 persisted SourceIR: 124 rows
-  in 15 tables across 6 documents** would gain a direction from a column whose cells are literally
-  `Input`/`Output` — GIC-600 63, HBM2 27, CoreSight TMC 13, LTI 10, AXI-Stream 8, CoreSight SoC-600 3 —
-  and **12 of the 15 tables head that column `type`**; re-derivable as the `literal-direction-column`
-  notation of `python3 scripts/measure_declaration_row_notations.py` (`TOOLBOX.md` §6.8), which reports
-  it per TABLE because the table is the unit of adjudication. This is the same document (GIC-600) whose
-  `Clock source` rows `.2d` refused to direct through the taxonomy, and it is the reason the refusal
-  costs nothing: the row next door says `Input` in plain text.
-  **The selection needs adjudication before anything is read**, per this tree's standing rule. Three of
-  the 15 are suspect on their face and must be judged individually: LTI `table_0081` column `lti-d` and
-  AXI-Stream `table_0015` column `axi5-stream` are protocol-VERSION matrices where `input`/`output` may
-  be a property value rather than a port sense, and CoreSight TMC `table_0074` puts the literals in a
-  column headed `signal`, which is a shape defect, not a direction column.
+  `Type` and the reader takes none of it. This is the same document (GIC-600) whose `Clock source`
+  rows `.2d` refused to direct through the taxonomy, and it is the reason that refusal costs nothing:
+  the row next door says `Input` in plain text.
   Non-goal: matching a header vocabulary list. The admissible rule is a property of the column's own
   CONTENT — a column whose cells are the literal direction words the reader already understands —
   which is why it is a grammar and not a header dictionary (ADR 0006).
+  **Split `2026-09-15`, by its own adjudication**: the census population moved before any reader was
+  written, so the measurement and the change are separate units with separate evidence.
+  Prerequisite: none. Verification: per child.
+  Commit: n/a (split)
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.0` · Status: `done` (`2026-09-15`) · Goal: **adjudicate the
+  selection before reading a single row**, per this tree's standing rule that a cheap structural rule
+  over-fires until someone looks at *what* it selects.
+  **It over-fired, and the published number was wrong.** `.2d` measured and published **124 rows in 15
+  tables across 6 documents**. Looking at all 15 one at a time: **18 of the 124 were admitted on the
+  single letter `O`, which those documents use for *Optional*, not Output.** AMBA LTI `table_0081`
+  ("Summary of parity signal presence of each LTI version") writes `LAVALIDCHK | N | O` and AXI-Stream
+  `table_0015` writes `TREADY … | O | O` beside a `property` column of `O`/`C` — presence matrices,
+  where `N` is not-present and `C` conditional. Reading `O` as `Output` would have declared **`TREADY`
+  an output because a presence matrix called it optional**.
+  **Corrected population: `literal-direction-column: 106 cells` — 106 rows, 13 tables, 4 documents**
+  (GIC-600 63, HBM2 27, CoreSight TMC 13, CoreSight SoC-600 3), **12 of the 13** heading the column
+  `type`. Every one of the 106 is admitted on the full word `Input` (58) or `Output` (48); after the
+  fix **no row in the corpus is admitted on an abbreviation**, which is why the abbreviations are gone
+  rather than special-cased.
+  **`.2d` predicted two of these three suspects and was specifically wrong about why.** It said the
+  version matrices were a risk "where `input` may be a property value rather than a port sense". The
+  word `input` never appears in them; the collision is with the one-letter spelling, which `.2d`'s own
+  census had put in the vocabulary on the assumption that `i`/`o`/`io` abbreviate the port senses.
+  Measured: those spellings have **0 true positives and 18 false ones** corpus-wide. An abbreviation is
+  not a notation until a document is shown to use it as one — the same bar `.2b` applied to the
+  leftward arrow.
+  **The remaining 13 tables, adjudicated one at a time:**
+  * **11 tables / 94 rows are clean** — a `Type` column stating the port sense of a named signal
+    beside it: GIC-600 `table_0160`–`0164`/`0170` (63), HBM2 `table_0069`/`0077` (21), CoreSight TMC
+    `table_0081`/`0083` (7), CoreSight SoC-600 `table_0041` (3). Spot-checked against the row's own
+    prose: `[<domain>]clk | Input | Clock source | Clock input.`, `CSYSREQ | Input | Requests an AXI
+    master i…`, `traceclk | Output | Output clock, that the T…`.
+  * **CoreSight TMC `table_0074` (6 rows) is ROTATED, not junk.** Its header reads
+    `Signal | Type | Description` over a body whose first cell is the direction and whose LAST cell is
+    the name (`Output | Valid signals in this cy… | ATVALIDM`). The signals are real ATB wires
+    (`ATVALIDM`, `ATREADYM`, `ATIDM[6:0]`, `ATBYTESM`). `.2h.1` must decide whether the existing
+    content-based name-column override already remaps this table, because if it does the rotation is
+    handled and if it does not these 6 rows need a different answer from the other 100.
+  * **HBM2 `table_0076` (6 rows) is mangled and MIXED.** Its header row is itself data
+    (`wrst_n | da[28], mr8 op[0] | pin name | type | status`), and its name column holds prose
+    (`Other IEEE1500 inputs 1`) beside a real pin (`WSO`). The existing identifier test refuses the
+    prose rows on its own, so this table needs no new rule — but its yield is 2, not 6, and `.2h.1`
+    must not count it as 6.
+  **Consequence, stated:** the prize is **106**, not 124; **94** of it is unconditional; **6** depends
+  on a rotation question `.2h.1` must answer; **6** is really about 2. Nothing is read yet.
   Prerequisite: none.
+  Verification: see the `.2h.0` checklist below.
+  Commit: see log.
+
+## Acceptance Checklist — `.2h.0` (enforced)
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_declaration_row_notations.py` before the fix:
+  `literal-direction-column: 124 cells` across 15 tables. Selection broken down by the literal word
+  that admitted each row: **`input` 58, `output` 48, `o` 18** — and `i`, `io`, `in`, `out` **0**. The
+  18 `o` rows are exactly AMBA LTI `table_0081` (10) and AXI-Stream `table_0015` (8). After the fix:
+  `literal-direction-column: 106 cells` across 13 tables, 4 documents.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/measure_declaration_row_notations.py`,
+  `LITERAL_DIRECTION_WORDS`. `.2d` seeded it with `i`, `o`, `io`, `in`, `out` alongside the full words,
+  reasoning that a `Type` column abbreviates. No corpus `Type` column does. Two protocol-VERSION
+  presence matrices do use `O`, for **Optional**, in a column whose cells are otherwise `N` and `C` —
+  the identical structural shape the census keys on, which is why a count could not tell them apart
+  and only reading them could.
+- [x] **ADDRESSED (verified)** — the abbreviated spellings are removed, not special-cased, because the
+  measurement says they carry no signal: 0 true positives against 18 false. Re-derived after the fix,
+  the census reports **106 cells / 13 tables**, every row admitted on `input` or `output`, and both
+  version matrices drop out entirely. The published figure is corrected in the `.2d` leaf, this tree's
+  frontier, `TOOLBOX.md` §6.8, `MEMORY.md` and the book chapter — withdrawn, not restated.
+- [x] **NO REGRESSION** — **no Rust, fixture or artifact is touched**; the change is one set literal in
+  a read-only diagnostic plus the records that published its output, so no score, gold, seal or `.isf`
+  can move. Determinism re-checked: two consecutive runs byte-identical.
+  `bash scripts/check_doctrines.sh` all executed doctrines PASS.
+- [x] **GENERICITY (ADR 0006)** — the corrected set is exactly the literal direction vocabulary the
+  production reader already understands; it names no document, vendor or protocol, and it shrank. The
+  verbatim corpus cells appear only in this leaf's adjudication, which is where document text belongs.
+- [x] **LOCKSTEP** — every surface carrying the withdrawn 124 is corrected in this commit
+  (`.2d` leaf ×2, frontier, `TOOLBOX.md` §6.8, `MEMORY.md`, `docs/book/src/pipeline/evidence-failure-modes.md`),
+  and the fact card `[[a-cheap-structural-rule-overfires-until-you-read-its-selection]]` records the
+  pattern with this instance as its third. **Producer sub-clause: no production rule was deleted or
+  replaced** — nothing the reader does changed.
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.1` · Status: `pending` (opened `2026-09-15` by `.2h.0`) · Goal:
+  **read a column whose cells ARE the literal direction words, in a table whose header carries no
+  `direction` keyword.** Population, adjudicated: **106 rows / 13 tables / 4 documents**, of which
+  **94 are unconditional**. Two questions the implementation must answer before it counts its prize:
+  whether the existing content-based name-column override already remaps CoreSight TMC `table_0074`
+  (rotated: direction first, name last, 6 real ATB wires), and that HBM2 `table_0076` yields **2**
+  rather than 6, because its name column holds prose the identifier test already refuses.
+  Non-goal: a header vocabulary list, and any abbreviation — `.2h.0` measured that
+  `i`/`o`/`io`/`in`/`out` have 0 true positives and 18 false ones in this corpus.
+  Prerequisite: `.2h.0`.
   Verification: pending
   Commit: pending
 
@@ -1610,10 +1694,13 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`).
-1. `SIGNAL-DECLARATION-ROW-DROP.2h` — **the biggest measured population this tree has left, and it
-   needs no vocabulary at all: 124 rows / 15 tables / 6 documents state `Input` or `Output` in plain
-   text in a column headed `Type`, which the direction scan never looks at.** Adjudicate the 15 first —
-   three of them are protocol-version matrices or a shape defect, not direction columns.
+1. `SIGNAL-DECLARATION-ROW-DROP.2h.1` — **the biggest measured population this tree has left, and it
+   needs no vocabulary at all: 106 rows / 13 tables / 4 documents state `Input` or `Output` in plain
+   text in a column headed `Type`, which the direction scan never looks at.** `.2h.0` did the
+   adjudication and it moved the number: **124 / 15 / 6 was published and is withdrawn** — 18 rows
+   were admitted on `O`, which two protocol-VERSION presence matrices use for *Optional*. **94 of the
+   106 are unconditional**; the implementation must still answer whether the existing name-column
+   rotation override covers CoreSight TMC `table_0074`, and count HBM2 `table_0076` as 2, not 6.
    **`.2g` was taken ahead of this** (`2026-09-15`): it is prerequisite-free, moves 0 of 78 documents,
    and hardens the same direction chain `.2h` is about to grow a new arm on — so the guard lands
    before the chain changes, not after. Building it also found the hazard is not purely latent: the

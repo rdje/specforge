@@ -490,8 +490,11 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **HOW:** `python3 scripts/measure_declaration_row_notations.py` (`--json` for the report).
 - **OUTPUT** (`2026-09-15`, 78 documents / 602 tables / 3,940 body rows): 12 bracketed name cells,
   83 flow-arrow cells (18 admitted, 16 two-sense link cells, 49 unresolved actors), 7 enumerated
-  widths, and **124 rows in 15 tables** under an unread literal direction column — the last reported
-  per TABLE, because a protocol-VERSION matrix can carry the same words as a property value.
+  widths, and **106 rows in 13 tables** under an unread literal direction column — the last reported
+  per TABLE, because the table is the unit of adjudication. That figure was **124 / 15 for one
+  revision**: `.2h.0` read all 15 and found 18 rows admitted on the single letter `O`, which two
+  protocol-VERSION presence matrices use for *Optional*. The abbreviated spellings are gone from the
+  census — measured 0 true positives, 18 false.
 
 ---
 

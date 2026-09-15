@@ -26,6 +26,8 @@
   > how do I find out which documents are chain-stale
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > how do I know a structural rule's selection is clean (print every distinct selected form verbatim with its count and read them; when the population is small enough the adjudicable sample IS the population, as with the 83 flow-arrow cells in 13 forms)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I know my census script still mirrors the reader
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -295,5 +297,3 @@
   > how does register access differ from register field access
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)

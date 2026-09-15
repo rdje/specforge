@@ -29,8 +29,9 @@ document, vendor, or protocol vocabulary appears anywhere below (ADR 0006):
     (`Input`, `Output`, `InOut`), in a table whose header carries no `direction`
     keyword, so `synthesize_signal_declarations` never looks at it. Reported per
     table with the rows that would newly gain a direction, because the unit of
-    adjudication here is the table: a protocol-VERSION matrix can carry the same
-    words as a property value rather than a port sense.
+    adjudication here is the table: a protocol-VERSION matrix carries
+    single-letter property values in exactly the same shape, and that is what
+    disqualified the abbreviated spellings (see LITERAL_DIRECTION_WORDS).
 
 Every distinct cell form is printed verbatim with its count, so the selection can
 be adjudicated by hand rather than trusted by count — the standing finding of
@@ -70,12 +71,20 @@ COMPLETER_TERMS = [
 ]
 BRACKET_PAIRS = [("<", ">"), ("(", ")"), ("[", "]"), ("{", "}")]
 
-# The literal direction vocabulary `infer_signal_direction_from_actor_text` and the
-# explicit-direction-column branch already read, plus the single-letter and
-# abbreviated spellings a `Type` column uses. Closed class, no document vocabulary.
+# Exactly the literal direction vocabulary the production reader already understands:
+# `infer_signal_direction_from_actor_text`'s `output`/`input` test plus the port senses
+# `is_meaningful_actor_term` names. Closed class, no document vocabulary.
+#
+# The single-letter spellings `i`/`o`/`io` and the short `in`/`out` were in this set for one
+# revision and are DELIBERATELY NOT here. Adjudicating the selection (`.2h`) found they had
+# **zero** true positives in the corpus and **18** false ones, all on `o`: AMBA LTI `table_0081`
+# ("Summary of parity signal presence of each LTI version") and AXI-Stream `table_0015` both use
+# `O` for **Optional** in a protocol-VERSION presence matrix, beside `N` for not-present and `C`
+# for conditional. Reading those as `Output` would have declared `TREADY` an output because a
+# presence matrix called it optional. An abbreviation is not a notation until a document is shown
+# to use it as one.
 LITERAL_DIRECTION_WORDS = {
-    "input", "output", "inout", "in", "out", "i", "o", "io",
-    "bidirectional", "bidir",
+    "input", "output", "inout", "bidirectional", "bidir",
 }
 # A column qualifies when most of its non-empty cells are literal direction words.
 LITERAL_DIRECTION_MIN_CELLS = 3

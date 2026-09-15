@@ -162,11 +162,20 @@ table's own subject instead, with no vocabulary at all, resolves two tables out 
 disagrees with the reader on the one cell where both can speak.
 
 What the census did find is a larger and simpler population. Across the same 78 stored artifacts,
-**124 rows in 15 tables state their direction outright as `Input` or `Output`, in a column the
-direction scan never looks at, because the document heads it `Type`.** Three of those 15 still have to
-be judged one at a time — two are protocol-version matrices where `input` may be a property value
-rather than a port sense — but the rest need no vocabulary at all. Tracked as
-`SIGNAL-DECLARATION-ROW-DROP.2d` (the decision, re-derivable with
+**106 rows in 13 tables state their direction outright as `Input` or `Output`, in a column the
+direction scan never looks at, because the document heads it `Type`.** No vocabulary is needed to read
+them; the work is tracked and not yet done.
+
+That figure was published as 124 for one revision, and reading the selection is what corrected it —
+which is this reader's most reliable lesson, now for the third time. Eighteen of those rows were
+admitted on the single letter `O`, and the two tables they came from use `O` for **optional**, beside
+`N` for not-present and `C` for conditional. They are presence matrices listing which signals each
+version of a protocol requires. Taking the abbreviation for a port sense would have declared a
+handshake signal an output because a table said it was optional. The census now reads only the whole
+words, because across every stored artifact the abbreviations matched nothing true and eighteen things
+false.
+
+Tracked as `SIGNAL-DECLARATION-ROW-DROP.2d` (the decision, re-derivable with
 `python3 scripts/measure_actor_taxonomy_blast_radius.py`), `.2g` (the guard) and `.2h` (the count
 above, re-derivable with `python3 scripts/measure_declaration_row_notations.py`).
 
