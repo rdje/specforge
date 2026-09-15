@@ -73,6 +73,13 @@ must never be edited merely to prove that it was reviewed.
 - `ROADMAP.md` changes only when program direction, milestones, or roadmap-level status changes.
 - A durable structural/causal fact gets a Knowledge Map fact card; generated `KNOWLEDGE_MAP.md` and
   `docs/knowledge-map/questions-*.md` must never be hand-edited.
+- **Editing any governed file re-pins the `line_range_sha256` regions below the edit, in all THREE
+  claim registries.** Do not do it by hand and do not write a throwaway: run
+  `python3 scripts/repin_claim_regions.py --check`, then `--apply`
+  (`CLAIM-VERIFICATION-ADOPTION.12`). It resolves each region by CONTENT and **refuses** when more
+  than one location matches — a blank-line region matches every blank line in the file, and a re-pin
+  that lands on the wrong one is invisible because the digest it was moved to match is the digest it
+  now has. A refusal is yours to decide; the tool writes nothing until it is resolved.
 
 All repository-internal Markdown paths are repository-root-relative. Host-local inputs use portable
 placeholders. `git_message_brief.txt` and `questions_keep_untracked.txt` remain untracked; the former

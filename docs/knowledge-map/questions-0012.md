@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is snap_subject_to_sentence_token and when does it fire
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what is source_batch in SourceIR
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -295,5 +297,3 @@
   > what message field metrics does validate emit
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > what modal words does obligation_is_negated accept
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > what model do converge / enrich / nlp-enrich use by default

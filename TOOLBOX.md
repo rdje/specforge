@@ -600,6 +600,25 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   review producer output before committing it, and verify the declared boundary read-only with
   `perl scripts/check_validation_snapshot_currentness.pl --check`.
 
+### 7.7 `scripts/repin_claim_regions.py`
+
+- **WHAT:** re-pins every `line_range_sha256` region in the three claim registries
+  (`current_claim_census.jsonl`, `book_quantitative_claims.jsonl`, `published_assertions.jsonl`) BY
+  CONTENT after a governed file changes — and **refuses rather than guessing** when a region's digest
+  matches more than one location, printing every candidate.
+- **WHEN:** every slice that edits a governed file or prepends to a rolling ledger. That shifts every
+  pinned row below the edit; there are **562 pinned regions across 63 files**.
+- **HOW:** `python3 scripts/repin_claim_regions.py --check` (report only), then `--apply`;
+  `--path <file>` scopes one governed file; `--self-test` runs the 13-case RED matrix.
+- **WHY IT REFUSES, AND WHY THAT IS THE POINT.** A re-pin that lands on the WRONG line is invisible,
+  because the digest it was moved to match is the digest it now has. `sha256("\n")` =
+  `01ba4719…546b` matches **every blank line** in a file, and `docs/book/src/reference/live-docs.md`
+  holds **280** of them behind **163** pins; `CLAIM-VERIFICATION-ADOPTION.8` recorded two rows that had
+  already drifted this way. So `locate()` returns every candidate, never the first, and on any refusal
+  the run writes **nothing** — all-or-nothing per registry.
+- **OUTPUT:** `moved` / `unchanged` counts, one line per move, and `REFUSED AMBIGUOUS|ABSENT|NO FILE`
+  with the candidate lines. Exit 1 on any refusal. Clean tree on `2026-09-15`: `unchanged 562`, exit 0.
+
 ### 7.5 Build & host (RAM-bounded)
 - **WHAT:** builds are RAM-constrained on this host. Monitor with `memory_pressure` (macOS); cap parallel
   jobs and kill at the danger line.

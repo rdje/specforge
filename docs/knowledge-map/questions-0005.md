@@ -58,6 +58,8 @@
   > how do I re-derive a published count per revision instead of at two endpoints
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > how do I re-derive the declaration-row notation populations
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I re-score the WIRE-BASED-100 golds
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -295,5 +297,3 @@
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > how does production recover explicit inference antecedent state
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > how does register access differ from register field access

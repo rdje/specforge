@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > why does the live-document report show lines below the ceiling
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -295,5 +297,3 @@
   > why is the bounded active task root written last
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > why is the channel role kept verbatim instead of mapped to address/data/response phases
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why is the constraint subject fallback bounded by the obligation

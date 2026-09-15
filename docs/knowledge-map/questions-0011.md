@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -296,5 +298,3 @@
   > what is select_initiator_actor / initiator_perspective_directions
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is signal_presence_records and what does a SignalPresenceRecord hold
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is snap_subject_to_sentence_token and when does it fire

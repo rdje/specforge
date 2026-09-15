@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > how does register access differ from register field access
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
@@ -295,5 +297,3 @@
   > how many CoreSight Base System page sidecars are repository relative
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how many Introducing CoreSight page paths are repository relative
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how many OpenCAPI AFU address note page paths are repository relative

@@ -4,6 +4,7 @@ title: Editing a live surface triggers a fixed chain of derived-state refreshes,
 answers:
   - "what else must I update after editing CHANGES.md (the prepend shifts every line-pinned region in doctrine/claim_verification/current_claim_census.jsonl - re-anchor them by CONTENT, never by offset - and the new line 1 needs its own excluded evidence record with scope_reason dated_rolling_ledger_evidence and an evidence_id suffixed with the first 12 hex of its line sha256)"
   - "what must I update after editing an mdBook chapter (re-anchor the line_range_sha256 regions in ALL THREE of book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl by content; any NEW candidate line needs its own region record plus a bumped expected_candidate_lines; and the book's line/byte totals stale the shipped_behavior aggregate_change authority in doctrine/live_document_size/surfaces.jsonl)"
+  - "how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)"
   - "which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)"
   - "what breaks when I change doctrine/live_document_size/surfaces.jsonl (three separate surface_registry source pins go stale - in published_assertions.jsonl, book_quantitative_claims.jsonl and current_claim_census.jsonl - plus the durability.artifacts digests in claims.jsonl. Refresh the pins first, then the claim digests, then re-run the gate)"
   - "what must I update after adding a Knowledge Map fact card (regenerate the projection with knowledge-map/scripts/gen_knowledge_map.sh, refresh fact_card_catalog.json planned_outputs from check_fact_card_catalog.pl --print-plan then --write, and bump the fact-card-catalog-count published assertion in published_assertions.jsonl together with its docs/knowledge/INDEX.md line-3 region sha)"
@@ -36,6 +37,11 @@ time, so knowing the whole chain up front turns several failed gate runs into on
    recompute the digest from the old offset, which would silently re-point a claim at different text.
    Measured once (`CORPUS-CHAIN-CURRENCY.8`, a 26-line insert mid-chapter): 4 assertion regions, 2 quantitative
    regions and 2 census evidence regions moved, every one of them by the same +26, with content unchanged.
+   **Since `CLAIM-VERIFICATION-ADOPTION.12` (`2026-09-15`) this is a tracked instrument, not hand work:**
+   `python3 scripts/repin_claim_regions.py --check` then `--apply`. It resolves by content across all
+   three registries and **refuses** when a digest matches more than one location — which is the whole
+   point, because a blank-line region matches every blank line in the file (280 of them in
+   `live-docs.md`) and a wrong landing is invisible. Do not re-introduce a first-match throwaway.
    The `evidence_id`/`claim_key` suffix is derived from the region's **content** digest, so a pure shift leaves
    every identifier valid and only the line numbers move.
 3. **Register what is genuinely new.** A new `CHANGES.md` opening record needs an `excluded` evidence record

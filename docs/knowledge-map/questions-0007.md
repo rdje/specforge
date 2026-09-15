@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how many OpenCAPI AFU address note page paths are repository relative
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how many OpenCAPI Certified Definition paths are repository relative
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
@@ -296,5 +298,3 @@
   > how should the current FSMGen gitlink in documentation be verified
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names

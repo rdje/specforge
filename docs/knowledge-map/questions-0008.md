@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > how to express the JTAG TAP / SWD FSM in .isf
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
@@ -295,5 +297,3 @@
   > is the corpus task migration contract locked
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > is the declaration drop a recall bug or correct refusal
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem

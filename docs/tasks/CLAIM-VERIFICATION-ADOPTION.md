@@ -934,7 +934,7 @@ the workflow through the mdBook and repository review path.
   Commit: `pending`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.12`
-  Status: `pending` (tracking-only)
+  Status: `done` (`2026-09-15`)
   Goal: make the per-slice registry re-pin a tracked instrument instead of an ad-hoc rewrite each time
   Acceptance: three registries pin regions by one-based line range plus SHA-256 —
   `current_claim_census.jsonl`, `book_quantitative_claims.jsonl`, and `published_assertions.jsonl` — so **every
@@ -954,8 +954,59 @@ the workflow through the mdBook and repository review path.
   Deliver a tracked script with its own RED matrix — ambiguous match, no match, a row whose content genuinely
   left the file — and route `COMMIT.md` to it. Do not widen a bound or relax a pin to avoid the work
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.7.2.1`
-  Verification: `pending`
-  Commit: `pending`
+
+  **DELIVERED `2026-09-15`: `scripts/repin_claim_regions.py`** (`--check` / `--apply` /
+  `--self-test`, `--path` to scope one governed file). It resolves every region BY CONTENT across all
+  three registries, and its whole design is the refusal the acceptance demanded: `locate()` returns
+  **every** start line whose window carries the recorded digest, never the first, and a region with
+  more than one candidate is **REFUSED with all candidates printed** — with a named note when the
+  digest is `01ba4719…546b`, the bare blank line. A region whose content left the file is refused as
+  `ABSENT`; a pinned path that no longer exists is refused as `NO FILE`. **On any refusal the tool
+  writes nothing at all**, so a run is all-or-nothing per registry and a diff shows the re-pins and
+  nothing else.
+
+  **Exposure, measured on the tracked tree `2026-09-15`: 562 pinned regions across 63 governed
+  files**, of which **0 are ambiguous, 0 absent and 0 pinned to a bare blank line today**. The hazard
+  is latent, and the blast radius is why it is worth an instrument rather than care:
+  `docs/book/src/reference/live-docs.md` holds **280 blank lines behind 163 pins**, so one drifted
+  row would have 280 candidate destinations and a hand repair would pick one silently. `.8` recorded
+  two rows that had already drifted this way.
+  **Demonstrated, not asserted**: a synthetic blank-line pin injected into a copy of the tree's own
+  census is refused with all 280 candidate lines listed, exit 1, registry byte-unchanged.
+  Verification: see the `.12` checklist below.
+  Commit: see log.
+
+## Acceptance Checklist — `.12` (enforced)
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/repin_claim_regions.py --check` over the tracked
+  tree: **`unchanged 562`**, exit 0 — 562 pinned `line_range_sha256` regions across 63 governed files
+  in the three registries. Blank-line ambiguity multiplier, per file:
+  `live-docs.md` 280 blank / 163 pins, `trajectory.md` 70 / 43, `TOOLBOX.md` 88 / 28,
+  `evidenceir.md` 226 / 23, `sourceir.md` 162 / 26.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the three registries pin evidence to a one-based line range plus
+  a digest of exactly those lines, so any insert above a row invalidates it. The repair was a
+  throwaway each time, and the throwaway's natural shape is *find the first line whose digest
+  matches* — which is wrong precisely when it matters: `sha256("\n")` = `01ba4719…546b` matches every
+  blank line in the file, so the first match is an arbitrary one. The re-pinned row then looks
+  perfectly valid, because the digest it was moved to match is the digest it now has.
+- [x] **ADDRESSED (verified)** — `locate()` enumerates all candidates; `classify()` returns
+  `moved` / `unchanged` / `AMBIGUOUS` / `ABSENT` / `NO FILE`; any refusal suppresses the write for the
+  whole run. **Demonstrated against the tree's own data**: a blank-line pin injected into a copy of
+  `current_claim_census.jsonl` against the real `live-docs.md` is refused, prints all **280** candidate
+  lines with the bare-blank-line note, exits 1, and leaves the registry byte-identical.
+- [x] **NO REGRESSION** — `python3 scripts/repin_claim_regions.py --self-test` **13/13** locate,
+  refusal and write-suppression cases pass, including: a blank line finds every candidate (not the
+  first), a repeated MULTI-LINE window is ambiguous too, a clean shift re-pins and exits zero, and each
+  of the three refusal classes writes nothing. `--check` over the live tree reports 562 unchanged and
+  exits 0, so the instrument agrees with the state four doctrine gates already accept. No Rust,
+  fixture or artifact is touched; `bash scripts/check_doctrines.sh` all executed doctrines PASS.
+- [x] **GENERICITY (ADR 0006)** — the tool knows three registry paths and one digest convention. It
+  reads no document, vendor or protocol vocabulary, and it derives every candidate from the governed
+  file's own bytes.
+- [x] **LOCKSTEP** — `COMMIT.md` routes the re-pin step to it instead of leaving it as hand work;
+  `TOOLBOX.md` §7.7 registers it; the fact card
+  `[[live-surface-edit-bookkeeping-chain]]` replaces its "re-anchor by content, never by offset"
+  instruction with the command that does it and cannot guess. **Producer sub-clause: no production
+  rule was deleted or replaced** — this is a repair instrument for derived state, not a producer.
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.8`
   Status: `pending` (tracking-only)
@@ -1497,7 +1548,7 @@ the workflow through the mdBook and repository review path.
 | 28 | `CLAIM-VERIFICATION-ADOPTION.7.1a` | `done` | the coverage grammar's blind spot is measured and closed, so the population it reports is the population that exists |
 | 29 | `CLAIM-VERIFICATION-ADOPTION.7.2.0` | `done` | scope is derived and fail-closed: an undeclared surface is an error, and each exemption states its reason |
 | 30 | `CLAIM-VERIFICATION-ADOPTION.7.2.1` | `done` | two sentences repaired, 26 dated records written, unlisted closed at zero, and the registry is frozen |
-| 31 | `CLAIM-VERIFICATION-ADOPTION.12` | `pending` | the per-slice region re-pin is hand work with a silent-wrong-line hazard; make it a tracked instrument |
+| 31 | `CLAIM-VERIFICATION-ADOPTION.12` | `done` | `scripts/repin_claim_regions.py` re-pins by content and REFUSES ambiguity; 562 regions, 13/13 RED matrix |
 | 32 | `CLAIM-VERIFICATION-ADOPTION.7.2.1a` | `done` | asked a third time; two findings re-derive exactly, three do not and are withdrawn |
 | 33 | `CLAIM-VERIFICATION-ADOPTION.13` | `pending` | a published value on a surface with no claim tag is watched by nothing; that bounds what `.7` closed |
 | 34 | `CLAIM-VERIFICATION-ADOPTION.7` | `done` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |

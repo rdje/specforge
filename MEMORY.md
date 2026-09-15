@@ -11,14 +11,12 @@
   reading was reachable only through a header containing `direction`, so `Signal name | Type | …`
   yielded nothing — RED observed, the dominant shape emitted **`[]`**. Now **94 rows / 11 tables**
   declare: content not header, WHOLE cell not substring, resolved AFTER the rotation remap.
-  **Prize is 94 not 106, and the 12 given up cost a defect to learn.** Unscoped, the rule took HBM2
-  `table_0076` from 0 declarations to **4 PHANTOMS** (`Signal X`/`V`/`Active`, from its `Status`
-  column): the name-column override had ALREADY mis-picked that column and the bad guess was inert
-  only because those rows were dropped for having no direction — supplying one WOKE it. **Two guesses
-  do not compose** → fires only when the name column is header-designated (`offset == 0`). Cost: TMC
-  `table_0074`'s 6 real ATB wires, given up — **MIXED not rotated** (6 rows name-LAST, 1 name-first),
-  so `.2e`'s whole-table offset cannot serve it. **`.2h.0` also WITHDREW `.2d`'s 124/15/6 for
-  106/13/4** — 18 rows were admitted on `O`, which two protocol-VERSION matrices use for *Optional*.
+  **Prize is 94 not 106.** Unscoped, the rule took HBM2 `table_0076` from 0 declarations to **4
+  PHANTOMS** (`Signal X`/`V`/`Active`, from `Status`): the name-column override had ALREADY mis-picked
+  that column, inert only because those rows were dropped for having no direction — supplying one WOKE
+  it. **Two guesses do not compose** → fires only when the name column is header-designated
+  (`offset == 0`). Cost: TMC `table_0074`'s 6 ATB wires, given up (**MIXED not rotated**). **`.2h.0`
+  also WITHDREW `.2d`'s 124/15/6 for 106/13/4** — 18 rows admitted on `O` = *Optional*.
   Evidence: core lib **1542** (+3 controls), `specforge` 472, fmt + clippy clean, corpus **78/78
   byte-identical** — which proves NO REGRESSION and **NOT** the recovery: all 4 documents are legacy
   proofless, so it necessarily passes. The controls and the RED carry the recovery.
@@ -27,12 +25,14 @@
   `CXSDATA`); must carry BOTH bit forms plus the width-COLUMN choice. Then
   `TEXT-LAYER-IDENTIFIER-SPLIT.1`, `EXTRACTION-QUALITY-GAUGE.3j`; `.4c` behind `KG-ISF-COMPLETENESS.2a`;
   `.2h.2` unopened (TMC `table_0074`, only with a measured per-row-layout population).
-- Also ready, in `CLAIM-VERIFICATION-ADOPTION`: **`.12`** (the region re-pin instrument — built in
-  scratch and used 7×, relocates every `line_range_sha256` region BY CONTENT across all three
-  registries) and a NEW leaf for a stale carried count — `claims.jsonl`
-  `mdbook-quantitative-census-frozen` `durability.stale_check.stdout_contains` says **"309 adjudicated
-  region(s)"**, the checker reports **464**, no gate executes `stale_check`, and that claim's own
-  assertion forbids carrying a per-commit counter.
+- **`CLAIM-VERIFICATION-ADOPTION.12` CLOSED `2026-09-15`: `scripts/repin_claim_regions.py`**
+  (`--check`/`--apply`/`--self-test`; `TOOLBOX.md` §7.7; `COMMIT.md` routes to it). Re-pins every
+  `line_range_sha256` region BY CONTENT across all three registries and **REFUSES ambiguity** instead
+  of taking the first match — `sha256("\n")` matches every blank line and `live-docs.md` has **280
+  behind 163 pins**. **562 regions / 63 files**, 0 ambiguous today; RED matrix **13/13**. Still open
+  there: a stale carried count — `claims.jsonl` `mdbook-quantitative-census-frozen`
+  `stale_check.stdout_contains` says **"309 adjudicated region(s)"**, the checker reports **464**, no
+  gate executes `stale_check`, and that claim's own assertion forbids carrying a per-commit counter.
 - In-flight uncommitted: none. No background job outstanding.
 - Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 269; directive 16
   gates it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**

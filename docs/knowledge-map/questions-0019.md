@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why is the constraint subject fallback bounded by the obligation
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)

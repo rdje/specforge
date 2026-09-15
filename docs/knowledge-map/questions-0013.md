@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > what model do converge / enrich / nlp-enrich use by default
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what model does the NLI verifier use
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -296,5 +298,3 @@
   > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > where does the specforge chipdoc host library symlink currently resolve
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > where does the uppercase spelling in a declaration come from
